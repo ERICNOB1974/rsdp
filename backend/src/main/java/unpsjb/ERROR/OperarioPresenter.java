@@ -1,4 +1,4 @@
-package unpsjb.labprog.backend.presenter;
+/*package unpsjb.labprog.backend.presenter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -7,19 +7,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import unpsjb.labprog.backend.Response;
-import unpsjb.labprog.backend.business.OperadorService;
-import unpsjb.labprog.backend.model.Operador;
-
+import unpsjb.labprog.backend.business.OperarioService;
+import unpsjb.labprog.backend.model.Operario;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.dao.DataIntegrityViolationException;
 
 @RestController
-@RequestMapping("operadores")
-public class OperadorPresenter{
+@RequestMapping("operarios")
+public class OperarioPresenter{
 
     @Autowired
-    OperadorService service;
+    OperarioService service;
 
     @RequestMapping(value = "/search/{term}", method = RequestMethod.GET)
     public ResponseEntity<Object> search (@PathVariable("term") String term){
@@ -33,20 +32,20 @@ public class OperadorPresenter{
 
     @RequestMapping(value ="/legajo/{legajo}", method = RequestMethod.GET)
     public ResponseEntity<Object> findById(@PathVariable("legajo") int legajo){
-        Operador aOperadorOrNull = service.findById(legajo);
-        return (aOperadorOrNull != null)?
-            Response.ok(aOperadorOrNull):
+        Operario aOperarioOrNull = service.findById(legajo);
+        return (aOperarioOrNull != null)?
+            Response.ok(aOperarioOrNull):
             Response.notFound();
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Object> create (@RequestBody Operador aOperador){
+    public ResponseEntity<Object> create (@RequestBody Operario aOperario){
         try {
             return Response.ok(
-                service.create(aOperador),
-                "Operario/a " + aOperador.getLegajo() + " " + aOperador.getNombre() + " ingresado/a correctamente");
-        } catch (DataIntegrityViolationException e){
-            return Response.error("El Operario no puede ser creado ya que existe un operario con ese nombre",e.getMessage());
+                service.create(aOperario), 
+                "Operario/a " + aOperario.getLegajo() + " " + aOperario.getNombre() + " ingresado/a correctamente");
+            } catch (DataIntegrityViolationException e){
+            return Response.error("El operario no puede ser creado ya que existe un operario con ese nombre",e.getMessage());
         }
     }
 
@@ -68,11 +67,11 @@ public class OperadorPresenter{
     }
 
     @RequestMapping(method=RequestMethod.PUT)
-    public ResponseEntity<Object> update(@RequestBody Operador aOperador){
-        if (aOperador.getLegajo() <= 0){
-            return Response.error(aOperador,"Debe especificar un id valido para poder modificar un operario.");
+    public ResponseEntity<Object> update(@RequestBody Operario aOperario){
+        if (aOperario.getLegajo() <= 0){
+            return Response.error(aOperario,"Debe especificar un id valido para poder modificar un operario.");
         }
-        return Response.ok(service.save(aOperador));
+        return Response.ok(service.save(aOperario));
     }
 
-}
+}*/

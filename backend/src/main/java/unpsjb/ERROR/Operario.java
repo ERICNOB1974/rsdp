@@ -1,7 +1,12 @@
-package unpsjb.labprog.backend.model;
+/*package unpsjb.labprog.backend.model;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,7 +15,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Operador {
+public class Operario {
 
     @Id 
     private int legajo;
@@ -18,5 +23,6 @@ public class Operador {
     private String nombre;
 
     private String categoria;
-}
 
+}
+*/
