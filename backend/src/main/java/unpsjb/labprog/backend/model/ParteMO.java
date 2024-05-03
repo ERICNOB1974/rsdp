@@ -1,13 +1,11 @@
-/*package unpsjb.labprog.backend.model;
+package unpsjb.labprog.backend.model;
 
-import java.sql.Time;
+import java.time.LocalTime;
 import java.util.Date;
-
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,28 +15,27 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PartesMO {
+public class ParteMO {
     
     @Id 
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    @Column(name = "fecha_turno_desde")
-    private Date fechaTurnoDesde;
-    
-    @Column(name = "hora_desde")
-    private Time horaDesde;
+    private Date fecha;
 
-    @Column(name = "hora_hasta")
-    private Time horaHasta;
+    private LocalTime horaDesde;
 
-    private Float horas;
+    private LocalTime horaHasta;
 
-    private String turno;
+    private float horas;
 
-    @Column(name = "operario_legajo")
     @ManyToOne
     private Operario operario;
 
+    @ManyToOne
+    private Proyecto proyecto;
+
+    @ManyToOne
+    private Tarea tarea;
+
 }
-*/

@@ -12,7 +12,6 @@ import { ProyectoService } from './proyecto.service';
 import { EmpresaService } from '../empresa/empresa.service';
 import { Tarea } from '../tarea/tarea';
 import { Empresa } from '../empresa/empresa';
-import { TareaService } from '../tarea/tarea.service';
 
 @Component({
   selector: 'app-proyecto-detail',
@@ -139,7 +138,6 @@ export class ProyectosDetailComponent {
     private router: Router,
     private proyectoService: ProyectoService,
     private empresaService: EmpresaService,
-    private tareaService: TareaService,
     private location: Location,
     private modalService: ModalService
   ) { }
@@ -172,7 +170,7 @@ export class ProyectosDetailComponent {
     this.proyectoService.save(this.proyecto).subscribe((dataPackage) => 
     {
       if (dataPackage.status != 200) {
-        this.modalService.error("Error", "Ya existe una proyecto con ese codigo!").then();
+        this.modalService.error("Error", <string>(<unknown>dataPackage.data)).then();
       } else {
         this.proyecto = <Proyecto>dataPackage.data;
         this.goBack();
@@ -205,34 +203,7 @@ export class ProyectosDetailComponent {
       ),
       tap(() => (this.searching = false))
     );
-
-    searchTarea = (text$: Observable<string>): Observable<any[]> =>
-    text$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      filter(term => term.length >= 3),
-      tap(() => (this.searching = true)),
-      switchMap((term) =>
-        this.tareaService
-          .search(term)
-          .pipe(
-            map((response) => {
-              let tareas = <Tarea[]>response.data;
-              return tareas.map(tarea => ({ descripcion: tarea.descripcion, codigo: tarea.codigo }));
-            })
-          )
-          .pipe(
-            tap(() => (this.searchFailed = false)),
-            catchError(() => {
-              this.searchFailed = true;
-              return of([]);
-            })
-          )
-      ),
-      tap(() => (this.searching = false))
-    );
   
-
   resultFormatEmpresa(value: any) {
     return value.nombre;
   }
@@ -262,18 +233,6 @@ export class ProyectosDetailComponent {
         }
       )
   }
-/*
-  //Funcion que me autocompleta el codigo cuando ingreso una tarea mediante el typeahead de descripcion
-  actualizarCodigo(selectedItem: any, index: number) {
-    this.proyecto.tareas[index].codigo = selectedItem.codigo;
-  }
-  
-  //Funcion que me borra el codigo en caso que yo modifique/borre la descripcion 
-  borrarCodigo(newDescription: string, index: number) {
-    if (!newDescription) {
-      this.proyecto.tareas[index].codigo = ''; 
-    }
-  }*/
   
   actualizarCUIT(selectedItem: any) {
     this.proyecto.empresa.cuit = selectedItem.cuit;
@@ -283,8 +242,6 @@ export class ProyectosDetailComponent {
     if (event && event.target && 'value' in event.target) {
         this.proyecto.empresa.cuit = '';
     }
-}
-
-
+  }
 
 }

@@ -3,36 +3,27 @@ package unpsjb.labprog.backend.business;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-import unpsjb.labprog.backend.model.Tarea;
+
+import unpsjb.labprog.backend.model.ParteMO;
+import unpsjb.labprog.backend.model.ResumenParteMO;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+
 import org.springframework.dao.DataIntegrityViolationException;
 
 @Service
-public class TareaService {
+public class ParteMOService {
     
     @Autowired
-    TareaRepository repository;
-
-    public List<Tarea> search (String term){
-        return repository.search("%" + term.toUpperCase() + "%");
-    }
-
-    public List<Tarea> findAll(){
-        List<Tarea> result = new ArrayList<>();
-        repository.findAll().forEach(e -> result.add(e));
-        return result;
-    }
+    ParteMORepository repository;
     
-    public Tarea findById(int id){
+    public ParteMO findById(int id){
         return repository.findById(id).orElse(null);
-    }
-
-    public Tarea findByCodigo(String codigo){
-        return repository.findByCodigo(codigo);
     }
 
     @Transactional
@@ -40,16 +31,24 @@ public class TareaService {
         try {
             repository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException("No se puede eliminar la tarea (...)", e);
+            throw new RuntimeException("No se puede eliminar el proyecto (...)", e);
         }
     }
 
-    public Page<Tarea> findByPage(int page, int size){
+    public Page<ParteMO> findByPage(int page, int size){
         return repository.findAll(PageRequest.of(page, size));
     }
 
+    public Collection<ResumenParteMO> informePartesPorFecha(Date fecha){
+        return repository.informePartesPorFecha(fecha);
+    }
+
+    public Collection<ResumenParteMO> informePartesGeneral(){
+        return repository.informePartesGeneral();
+    }
+
     @Transactional
-    public Tarea save(Tarea e){
+    public ParteMO save(ParteMO e){
         return repository.save(e);
     }
 

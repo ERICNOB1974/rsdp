@@ -30,11 +30,20 @@ import { Router, RouterOutlet } from '@angular/router';
 
               <div class="custom-select-container">
                 <select class="custom-select" style="margin-left: 40px;" (change)="onOptionSelected($event)">
-                  <option value="" selected disabled >Tareas</option>
-                  <option value="tareas">Listar</option>
-                  <option value="tareas/new">Nuevo</option>
+                  <option value="" selected disabled >Operarios</option>
+                  <option value="operarios">Listar</option>
+                  <option value="operarios/new">Nuevo</option>
                 </select>
               </div>
+
+              <div class="custom-select-container">
+                <select class="custom-select" style="margin-left: 40px;" (change)="onOptionSelected($event)">
+                  <option value="" selected disabled >Partes</option>
+                  <option value="partes/new">Nuevo</option>
+                  <option value="resumenes">Resumenes</option>
+                </select>
+              </div>
+
 
             </div>
           </nav>

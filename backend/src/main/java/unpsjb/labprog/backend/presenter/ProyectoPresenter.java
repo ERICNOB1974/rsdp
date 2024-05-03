@@ -9,10 +9,15 @@ import org.springframework.web.bind.annotation.RestController;
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.ProyectoService;
 import unpsjb.labprog.backend.model.Proyecto;
+import unpsjb.labprog.backend.model.ResumenParteMO;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.dao.DataIntegrityViolationException;
+import java.util.regex.Pattern;
+import java.util.Collection;
+import java.util.Date;
+import java.util.regex.Matcher;
 
 @RestController
 @RequestMapping("proyectos")
@@ -53,9 +58,26 @@ public class ProyectoPresenter{
             return Response.ok(
                 service.save(aProyecto), 
                 "Proyecto " + aProyecto.getCodigo() + " para " + aProyecto.getEmpresa().getNombre() + " ingresado correctamente");
-            } catch (DataIntegrityViolationException e){
-            return Response.error("El proyecto no puede ser creado ya que existe un proyecto con ese codigo",e.getMessage());
+        } catch (DataIntegrityViolationException e){
+            String nombreConstraint = identificarError(e.getMessage());
+            if (nombreConstraint.equals("uk_69qu6nmyn8o3el7x56j2l86uj")) { // Nombre de la constraint unique key del código del proyecto
+                return Response.error("El proyecto no puede ser creado ya que el código del proyecto ya existe",e.getMessage());
+            } else if (nombreConstraint.equals("uk_4r2284ccbe0tpx2vkue564t66")) { // Nombre de la constraint unique key de las tareas
+                return Response.error("El proyecto no puede ser creado debido a tareas repetidas",e.getMessage());
+            } else {
+                return Response.error("El proyecto no puede ser creado debido a una violación del constraint: " + nombreConstraint,e.getMessage());
+            }
         }
+    }
+    
+    private String identificarError(String errorMessage) {
+        String regex = "constraint \\[([^\\]]+)]";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(errorMessage);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return "Error desconocido";
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)

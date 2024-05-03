@@ -41,7 +41,7 @@ import { Empresa } from './empresa';
 
         </div>
         <button (click)="goBack()"  class="btn btn-danger">Atrás</button>
-        <button (click)="save()" class="btn btn-success" [disabled]="!nombre.valid || !cuit.valid || cuit.value.length !== 11 || cuitContieneCaracteres(empresa.cuit)">Guardar</button> 
+        <button (click)="save()" class="btn btn-success" [disabled]="!nombre.valid || !cuit.valid || cuit.value.length !== 11 || validarCuit(empresa.cuit)">Guardar</button> 
       </form>
     </div>
   `,
@@ -107,9 +107,10 @@ export class EmpresasDetailComponent {
     }
   }
 
-  cuitContieneCaracteres(cuit: string): boolean {
-    return /[a-zA-Z]/.test(cuit);
-  }  
+  validarCuit(cuit: string): boolean {
+    const regexCuit = /^(20|23|27|30|33)\d{8}\d$/;
+    return !regexCuit.test(cuit);
+  }
 
   ngOnInit() {
     this.get();

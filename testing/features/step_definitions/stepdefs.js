@@ -1,7 +1,6 @@
 const assert = require('assert');
 const { Given, When, Then } = require('cucumber');
 const {httpRequest} = require ('./request');
-const request = require('sync-request');
 
 Given('que se ingresa el cliente con {string}, {string} y {string}', 
 function (nombre, cuit, observaciones) {
@@ -20,8 +19,8 @@ function () {
 });
 
 Then('se espera la siguiente {string}', 
-function (expectedAnswer) {
-    assert.equal(this.response.message, expectedAnswer);
+function (respuesta) {
+    assert.equal(this.response.message, respuesta);
 });
 
 
@@ -67,8 +66,8 @@ function () {
 });
 
 Then('se obtiene la siguiente {string}', 
-function (expectedAnswer) {
-    assert.equal(this.response.message, expectedAnswer);
+function (respuesta) {
+    assert.equal(this.response.message, respuesta);
 });
 
 
@@ -104,3 +103,123 @@ function () {
 
     this.response = httpRequest('PUT', 'http://backend:8080/proyectos', JSON.stringify(this.proyecto));
 });
+
+
+
+
+
+
+
+
+
+
+Given('que se ingresa el operario con legajo {int}, con nombre {string} cuya categoría es {string} y pertenece al turno {string} a partir de {string}', 
+function (legajo, nombre, categoria, turno, fechaTurnoDesde) {
+    
+    this.operario = {
+        legajo: legajo,
+        nombre: nombre,
+        categoria: categoria,
+        turno: turno,
+        fechaTurnoDesde: fechaTurnoDesde
+    };
+
+});
+
+When('presiono el botón de guardar de operarios', 
+function () {
+
+    this.response = httpRequest('POST', 'http://backend:8080/operarios', JSON.stringify(this.operario));
+
+});
+
+
+
+
+
+
+
+
+
+
+Given('el operario con legajo {int} y nombre {string} que trabaja en el turno {string} desde {string}', 
+function (legajo, nombre, turno, fechaTurnoDesde) {
+
+    this.operario = httpRequest('GET',encodeURI(`http://backend:8080/operarios/legajo/${legajo}`)).data;
+
+});
+
+Given('que trabajó el día {string} para el proyecto {string} en la tarea {string} desde las {string} horas hasta las {string} horas', 
+function (fechaParte, proyecto, tarea, horaDesde, horaHasta) {
+    
+    this.proyecto = httpRequest('GET',encodeURI(`http://backend:8080/proyectos/codigo/${proyecto}`)).data;
+
+    this.tarea = httpRequest('GET',encodeURI(`http://backend:8080/tareas/codigo/${tarea}`)).data;
+
+    const horas = horaHasta-horaDesde;
+
+    this.parteMO = {
+        fecha: fechaParte,
+        horaDesde: horaDesde,
+        horaHasta: horaHasta,
+        horas: horaHasta-horaDesde,
+        operario: this.operario,
+        proyecto: this.proyecto,
+        tarea: this.tarea
+    };
+
+});
+
+When('se solicitan generar el parte', 
+function () {
+
+    this.response = httpRequest('POST', 'http://backend:8080/partes', JSON.stringify(this.parteMO));
+
+});
+
+Then('se obtiente {int} con {string}', 
+function (status, respuesta) {
+    assert.equal(this.response.status, status);
+    assert.equal(this.response.message, respuesta);
+});
+
+
+
+
+
+
+
+
+
+
+
+Given('los partes cargados', 
+function () {
+    
+});
+
+When('se solicitan obtener el resumen de partes por día y operario', 
+function () {
+    this.informe = httpRequest('GET',encodeURI(`http://backend:8080/partes`)).data;
+});
+
+Then('se obtiene el siguiente resumen', 
+function (docString) {
+    let expectedResumen = JSON.parse(docString); 
+  
+    for (let i = 0; i < expectedResumen.length; i++) {
+      let esperado = expectedResumen[i];
+      let obtenidoActual = this.informe[i];
+  
+      assert.equal(esperado.legajo, obtenidoActual.legajo);
+      assert.equal(esperado.nombre, obtenidoActual.nombre);
+      assert.equal(esperado.ingreso, obtenidoActual.ingreso);
+      assert.equal(esperado.egreso, obtenidoActual.egreso);
+      assert.equal(esperado.horas, obtenidoActual.horas);
+      assert.equal(esperado.horasPartes, obtenidoActual.horasPartes);
+    }
+  });
+  
+
+  
+  

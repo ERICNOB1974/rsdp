@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.TareaService;
 import unpsjb.labprog.backend.model.Tarea;
+
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -46,15 +47,17 @@ public class TareaPresenter{
             Response.notFound();
     }
 
+
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> create (@RequestBody Tarea aTarea){
         try {
             return Response.ok(
                 service.save(aTarea), 
-                "Tarea " + aTarea.getCodigo() + " ingresado correctamente");
-            } catch (DataIntegrityViolationException e){
-            return Response.error("La tarea no puede ser creado ya que existe una tarea con ese codigo",e.getMessage());
+                "Tarea " + aTarea.getCodigo() + " ingresada correctamente");
+        } catch (DataIntegrityViolationException e){
+            return Response.error("La tarea no puede ser creada ya que existe un tarea con ese codigo",e.getMessage());
         }
+            
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
@@ -63,7 +66,7 @@ public class TareaPresenter{
             service.delete(id);
             return Response.ok("Tarea " + id + " borrado con exito.");
         } catch (DataIntegrityViolationException e){
-            return Response.error("Tarea " + id + " no puede ser borrado",e.getMessage());
+            return Response.error("Tarea " + id + " no puede ser borrada",e.getMessage());
         }
     }
 
@@ -81,7 +84,7 @@ public class TareaPresenter{
         }
         return Response.ok(
             service.save(aTarea), 
-            "Tarea " + aTarea.getCodigo() + " ingresado correctamente");
+            "Tarea " + aTarea.getCodigo() + " ingresada correctamente");
     }
 
 }

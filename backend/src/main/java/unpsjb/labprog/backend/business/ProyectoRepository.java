@@ -9,7 +9,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface ProyectoRepository extends CrudRepository<Proyecto, Integer>,PagingAndSortingRepository<Proyecto, Integer>{
 
-    @Query("SELECT e FROM Proyecto e WHERE UPPER(e.codigo) LIKE ?1")
+    @Query("SELECT e FROM Proyecto e WHERE UPPER(e.descripcion) LIKE ?1")
     List<Proyecto> search(String term);
     
     @Query("SELECT e FROM Proyecto e WHERE e.codigo = ?1")

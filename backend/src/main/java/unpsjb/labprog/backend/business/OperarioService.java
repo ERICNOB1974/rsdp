@@ -1,4 +1,4 @@
-/*package unpsjb.labprog.backend.business;
+package unpsjb.labprog.backend.business;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +26,12 @@ public class OperarioService {
         return result;
     }
     
-    public Operario findById(int legajo){
-        return repository.findById(legajo).orElse(null);
+    public Operario findById(int id){
+        return repository.findById(id).orElse(null);
+    }
+
+    public Operario findByLegajo(int legajo){
+        return repository.findByLegajo(legajo).orElse(null);
     }
 
     @Transactional
@@ -35,16 +39,16 @@ public class OperarioService {
         try {
             return repository.save(aOperario);
         } catch (DataIntegrityViolationException e){
-            throw new RuntimeException("No se puede crear el cliente debido a que ya existe un cliente con ese nombre.");
+            throw new RuntimeException("No se puede crear el operario debido a que ya existe un operario con ese legajo.");
         }
     }
 
     @Transactional
-    public void delete(int legajo){
+    public void delete(int id){
         try {
-            repository.deleteByLegajo(legajo);
+            repository.deleteById(id);
         } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException("No se puede eliminar el cliente debido a que pertenece a un bordero.", e);
+            throw new RuntimeException("No se puede eliminar el operario (...).", e);
         }
     }
 
@@ -57,4 +61,4 @@ public class OperarioService {
         return repository.save(e);
     }
 
-}*/
+}

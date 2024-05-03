@@ -15,12 +15,15 @@ export class ProyectoService {
     private http: HttpClient
   ) { }
 
+  search(searchTerm: string): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.proyectosUrl}/search/${searchTerm}`);
+  }
+
   get(id: number): Observable<DataPackage>{
     return this.http.get<DataPackage>(`${this.proyectosUrl}/id/${id}`);
   }
 
   save (proyecto: Proyecto): Observable<DataPackage>{
-    console.log(proyecto);
     return proyecto.id 
     ? this.http.put<DataPackage>(this.proyectosUrl, proyecto)
     : this.http.post<DataPackage>(this.proyectosUrl, proyecto);

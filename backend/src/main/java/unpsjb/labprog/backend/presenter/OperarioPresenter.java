@@ -1,4 +1,4 @@
-/*package unpsjb.labprog.backend.presenter;
+package unpsjb.labprog.backend.presenter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +30,17 @@ public class OperarioPresenter{
         return Response.ok(service.findAll());
     }
 
+    @RequestMapping(value ="/id/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Object> findById(@PathVariable("id") int id){
+        Operario aOperarioOrNull = service.findById(id);
+        return (aOperarioOrNull != null)?
+            Response.ok(aOperarioOrNull):
+            Response.notFound();
+    }
+
     @RequestMapping(value ="/legajo/{legajo}", method = RequestMethod.GET)
-    public ResponseEntity<Object> findById(@PathVariable("legajo") int legajo){
-        Operario aOperarioOrNull = service.findById(legajo);
+    public ResponseEntity<Object> findByLegajo(@PathVariable("legajo") int legajo){
+        Operario aOperarioOrNull = service.findByLegajo(legajo);
         return (aOperarioOrNull != null)?
             Response.ok(aOperarioOrNull):
             Response.notFound();
@@ -45,17 +53,17 @@ public class OperarioPresenter{
                 service.create(aOperario), 
                 "Operario/a " + aOperario.getLegajo() + " " + aOperario.getNombre() + " ingresado/a correctamente");
             } catch (DataIntegrityViolationException e){
-            return Response.error("El operario no puede ser creado ya que existe un operario con ese nombre",e.getMessage());
+            return Response.error("El operario no puede ser creado ya que existe un operario con ese legajo",e.getMessage());
         }
     }
 
-    @RequestMapping(value = "/{legajo}", method = RequestMethod.DELETE)
-    public ResponseEntity<Object> delete(@PathVariable("legajo") int legajo){
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Object> delete(@PathVariable("id") int id){
         try {
-            service.delete(legajo);
-            return Response.ok("Operario " + legajo + " borrado con exito.");
+            service.delete(id);
+            return Response.ok("Operario " + id + " borrado con exito.");
         } catch (DataIntegrityViolationException e){
-            return Response.error("Operario " + legajo + " no puede ser borrado ya que pertenece a un bordero",e.getMessage());
+            return Response.error("Operario " + id + " no puede ser borrado (...)",e.getMessage());
         }
     }
 
@@ -74,4 +82,4 @@ public class OperarioPresenter{
         return Response.ok(service.save(aOperario));
     }
 
-}*/
+}

@@ -4,33 +4,37 @@ import { RouterModule } from '@angular/router';
 import { ModalService } from '../modal/modal.service';
 import { ResultsPage } from '../results-page';
 import { PaginationComponent } from '../pagination/pagination.component';
-import { TareaService } from './tarea.service';
+import { OperarioService } from './operario.service';
 
 @Component({
-  selector: 'app-tareas',
+  selector: 'app-operarios',
   standalone: true,
   imports: [CommonModule,RouterModule, PaginationComponent],
   template: `
     <div class="container mt-4">
-        <h2 class="text-light mb-4">Tareas</h2>
+        <h2 class="text-light mb-4">Operarios</h2>
         <div class="table-responsive">
             <table class="table table-dark table-hover">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Codigo</th>
-                        <th>Descripcion</th>
+                        <th>Legajo</th>
+                        <th>Nombre</th>
+                        <th>Categoria</th>
+                        <th>Turno</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let tarea of resultsPage.content; index as i">
-                    <td>{{AMOUNT_TAREAS * (this.currentPage - 1) + (i + 1)}}</td>
-                    <td>{{tarea.codigo}}</td>
-                    <td>{{tarea.descripcion}}</td>
+                    <tr *ngFor="let operario of resultsPage.content; index as i">
+                    <td>{{AMOUNT_OPERARIOS * (this.currentPage - 1) + (i + 1)}}</td>
+                    <td>{{operario.legajo}}</td>
+                    <td>{{operario.nombre}}</td>
+                    <td>{{operario.categoria}}</td>
+                    <td>{{operario.turno}}</td>
                     <td>
-                        <a routerLink="/tareas/{{tarea.id}}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
-                        <a (click)="remove(tarea.id)" routerLink="/tarea" class="btn btn-danger btn-sm"><i class="fa fa-remove"></i></a>
+                        <a routerLink="/operarios/{{operario.id}}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
+                        <a (click)="remove(operario.id)" routerLink="/operario" class="btn btn-danger btn-sm"><i class="fa fa-remove"></i></a>
                     </td>
                     </tr>
                 </tbody>
@@ -70,20 +74,20 @@ import { TareaService } from './tarea.service';
   }
 `]
 })
-export class TareasComponent {
+export class OperariosComponent {
   resultsPage: ResultsPage = <ResultsPage>{};
   pages!: number[];
   currentPage: number = 1;
-  AMOUNT_TAREAS = 4;
+  AMOUNT_OPERARIOS = 4;
 
   constructor(
-    private tareaService: TareaService,
+    private operarioService: OperarioService,
     private modalService: ModalService
   ){}
 
-  getTareas(): void { 
-    this.tareaService
-      .byPage(this.currentPage, this.AMOUNT_TAREAS)
+  getOperarios(): void { 
+    this.operarioService
+      .byPage(this.currentPage, this.AMOUNT_OPERARIOS)
       .subscribe(
         (dataPackage) => {
           this.resultsPage = <ResultsPage>dataPackage.data;
@@ -93,20 +97,20 @@ export class TareasComponent {
   }
 
   ngOnInit(){
-    this.getTareas();
+    this.getOperarios();
   }
 
   remove(id: number): void {
     let that = this;
-    this.modalService.confirm("Eliminar tarea", "¿Está seguro de que desea eliminar esta tarea?", "Si elimina esta tarea no la podrá utilizar luego").then(() => {
-      that.tareaService.remove(id).subscribe((dataPackage) => {
+    this.modalService.confirm("Eliminar operario", "¿Está seguro de que desea eliminar este operario?", "Si elimina este operario no lo podrá utilizar luego").then(() => {
+      that.operarioService.remove(id).subscribe((dataPackage) => {
         if (dataPackage.status != 200) {
-          that.modalService.error("Error", "La tarea no puede ser borrada ya que pertenece a un proyecto").then();
+          that.modalService.error("Error", "El operario no puede ser borrado ya que pertenece a un parte").then();
         } else {
           if (that.resultsPage.content.length === 1) {
             that.currentPage--;
           }
-          that.getTareas();
+          that.getOperarios();
         }
       });
     });
@@ -114,7 +118,7 @@ export class TareasComponent {
 
   onPageChangeRequested(page: number): void{
     this.currentPage = page;
-    this.getTareas();
+    this.getOperarios();
   }
 
 }

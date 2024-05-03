@@ -1,12 +1,9 @@
 package unpsjb.labprog.backend.business;
 
-import org.springframework.data.repository.Repository;
 import org.springframework.data.jpa.repository.Query;
-
 import unpsjb.labprog.backend.model.Empresa;
 import java.util.Optional;
 import java.util.List;
-
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
