@@ -30,11 +30,16 @@ public class ParteMOPresenter{
             Response.notFound();
     }
 
+    @RequestMapping(method = RequestMethod.GET)
+    public ResponseEntity<Object> findAll(){
+        return Response.ok(service.findAll());
+    }
+
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> create (@RequestBody ParteMO aParteMO){
         try {
         return Response.ok(
-            service.save(aParteMO), 
+            service.save(aParteMO),
             "Parte MO generado correctamente");
         } catch (DataIntegrityViolationException e){
             return Response.error("El parte no puede ser creado ya que existe un parte con ese id",e.getMessage());
@@ -63,7 +68,7 @@ public class ParteMOPresenter{
         return Response.ok(service.informePartesPorFecha(fecha));
     }
 
-    @RequestMapping()
+    @RequestMapping(value ="/informeGeneral", method = RequestMethod.GET)
     public ResponseEntity<Object> informePartesGeneral() {
         return Response.ok(service.informePartesGeneral());
     }

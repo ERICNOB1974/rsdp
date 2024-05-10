@@ -1,5 +1,5 @@
 {
-  "name": "restuix-testing",
+  "name": "partes-testing",
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
@@ -13,5 +13,10 @@
     "cucumber": "^6.0.7",
     "json-diff": "^1.0.3",
     "sync-request": "^6.1.0"
+  },
+  "dependencies": {
+    "js-remove-property": "^1.0.5",
+    "json-stable-stringify": "^1.1.1",
+    "lodash": "^4.17.21"
   }
 }

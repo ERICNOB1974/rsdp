@@ -18,8 +18,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   <div class="container mt-4">
       <h2 class="text-light mb-4">Resumen</h2>
       <div class="form-group">
-        <label for="fechaInput">Seleccionar Fecha:</label>
-        <input type="text" class="form-control" id="fechaInput" [(ngModel)]="fechaInput" placeholder="yyyy-mm-dd">
+        <label for="fecha">Fecha:</label>
+        <input type="date" class="form-control custom-date-input" [ngModel]="fechaString" (ngModelChange)="onFechaChange($event)" name="fecha" timezone="-03:00">
       </div>
       <div class="button-container">
         <button class="btn btn-primary mt-3" (click)="obtenerResumenPorFecha()">Obtener Resumen</button>
@@ -28,6 +28,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
         <table class="table table-dark table-hover">
           <thead>
             <tr>
+              <th scope="col">Fecha</th>              
               <th scope="col">Legajo</th>
               <th scope="col">Nombre</th>
               <th scope="col">Hora ingreso</th>
@@ -39,6 +40,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
           </thead>
           <tbody *ngIf="resultsPage && resultsPage.content && resultsPage.content.length > 0">
             <tr *ngFor="let resumen of resultsPage.content; index as i">
+              <td>{{ (resumen.fecha | date:'yyyy-MM-dd':'UTC') }}</td> 
               <td>{{ resumen.nombre }}</td>
               <td>{{ resumen.legajo }}</td>
               <td>{{ resumen.ingreso }}</td>
@@ -82,53 +84,52 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
       background-color: #c82333;
       border-color: #bd2130;
     }
+    .custom-date-input {
+    width: 200px; /* Define el ancho del campo de fecha */
+    }
   `]
 })
 export class ResumenesComponent {
   resultsPage: ResultsPage = <ResultsPage>{}; 
   pages!: number[];
   currentPage: number = 1;
-  fechaInput: string = '';
+  fecha!: Date;
   AMOUNT_RESUMEN = 10;
+  fechaString: string = '';
 
   constructor(
     private parteMOService: ParteMOService,
     private modalService: ModalService
   ) {}
 
+  onFechaChange(event: any) {
+    this.fecha = new Date(event);
+  }
+
   obtenerResumenPorFecha(): void {
-    if (this.fechaInput) {
+    if (this.fecha) {
+      // Convertir la fecha en formato 'YYYY-MM-DD'
+      const fechaFormateada: string = this.fecha.toISOString().slice(0, 10);
 
-      const [year, month, day] = this.fechaInput.split('-').map(Number);
-      const dateFormatRegex = /^\d{4}-\d{2}-\d{2}$/;
-
-      
-      if (!isNaN(year) && !isNaN(month) && !isNaN(day) && dateFormatRegex.test(this.fechaInput)) {
-        // Formatear la fecha en el formato yyyy-MM-dd
-        const fechaFormateada: string = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-        
-        this.parteMOService.informePartesPorFecha(fechaFormateada).subscribe((dataPackage) => {
-          const responseData = dataPackage.data;
-          if (Array.isArray(responseData)) {
-              this.resultsPage.content = responseData;
-              this.pages = Array.from(Array(this.resultsPage.totalPages).keys());
-          }
+      this.parteMOService.informePartesPorFecha(fechaFormateada).subscribe((dataPackage) => {
+        const responseData = dataPackage.data;
+        if (Array.isArray(responseData)) {
+          this.resultsPage.content = responseData;
+          this.pages = Array.from(Array(this.resultsPage.totalPages).keys());
+        }
+        if ((responseData as any[]).length === 0) {
+          this.modalService.error("ERROR", 'No se encontraron resultados para la fecha seleccionada.');
+        }
       });
-      
-        
-      } else {
-        this.modalService.error("ERROR", 'Fecha ingresada no válida.');
-      }
+    } else {
+      this.modalService.error("ERROR", 'Por favor seleccione una fecha.');
     }
   }
-  
-  
+
   ngOnInit() {
-    // this.getPartes();
   }
 
   onPageChangeRequested(page: number): void {
     this.currentPage = page;
-    // this.getPartes(); 
   }
 }

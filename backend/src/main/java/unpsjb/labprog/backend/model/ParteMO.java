@@ -1,11 +1,13 @@
 package unpsjb.labprog.backend.model;
 
 import java.time.LocalTime;
+import java.util.Collection;
 import java.util.Date;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -38,4 +40,10 @@ public class ParteMO {
     @ManyToOne
     private Tarea tarea;
 
+    @ManyToOne
+    private Estado estado;
+
+    /*@OneToMany
+    private Collection<LogValidacionParteMO> logValidacion;
+*/
 }

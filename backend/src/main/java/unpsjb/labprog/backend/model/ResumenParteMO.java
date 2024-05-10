@@ -1,6 +1,7 @@
 package unpsjb.labprog.backend.model;
 
 import java.time.LocalTime;
+import java.util.Date;
 
 public interface ResumenParteMO {
 
@@ -10,5 +11,6 @@ public interface ResumenParteMO {
     LocalTime getEgreso();
     LocalTime getHoras();
     LocalTime getHorasPartes();
+    Date getFecha();
     
 }

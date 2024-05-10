@@ -15,9 +15,5 @@ public interface OperarioRepository extends CrudRepository<Operario, Integer>,Pa
  
     @Query("SELECT e FROM Operario e WHERE e.legajo = ?1")
     Optional<Operario> findByLegajo(int legajo);
-/* 
-    @Modifying
-    @Query("DELETE FROM Operario e WHERE e.legajo = ?1")
-    void deleteByLegajo(int legajo);*/
-    
+
 }

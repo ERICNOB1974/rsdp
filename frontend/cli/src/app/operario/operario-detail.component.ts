@@ -56,16 +56,29 @@ import { OperarioService } from './operario.service';
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-              <label for="fecha">Fecha:</label>
-              <div ngbDropdown class="d-inline-block">
-                <button class="btn btn-outline-primary" id="dropdownCalendar" ngbDropdownToggle>
-                  Seleccionar Fecha
-                </button>
-                <div ngbDropdownMenu aria-labelledby="dropdownCalendar">
-                  <ngb-datepicker name="fecha" [(ngModel)]="fecha" [startDate]="fecha"></ngb-datepicker>
+            <div class="form-group text-light">
+            <form class="row row-cols-sm-auto" (ngSubmit)="get()">
+              <div class="col-12">
+                <div class="input-group">
+                  <input
+                    class="form-control"
+                    style="display: inline-block"
+                    placeholder="yyyy-mm-dd"
+                    name="fpp"
+                    ngbDatepicker
+                    [(ngModel)]="fecha"
+                    #fpp="ngbDatepicker"
+                    required
+                    readonly
+                  />
+                  <button
+                    class="btn btn-outline-secondary fa fa-calendar"
+                    (click)="fpp.toggle()"
+                    type="button"
+                  ></button>
                 </div>
               </div>
+            </form>
             </div>
             <button (click)="goBack()" class="btn btn-danger">Atrás</button>
             <button (click)="save()" [disabled]="!form.valid" class="btn btn-success">Guardar</button>
@@ -98,7 +111,7 @@ import { OperarioService } from './operario.service';
   `]
 })
 export class OperariosDetailComponent {
-  operario!: Operario;
+  operario!: Operario; 
   searching: boolean = false;
   searchFailed: boolean = false;
   fecha!: NgbDateStruct;
@@ -126,8 +139,8 @@ export class OperariosDetailComponent {
       this.operarioService.get(parseInt(id!))
         .subscribe((dataPackage) => {
           this.operario = <Operario>dataPackage.data;
-          const operarioFechaAux = new Date(this.operario.fechaTurnoDesde);
-          this.fecha = { year: operarioFechaAux.getFullYear(), month: operarioFechaAux.getMonth() + 1, day: operarioFechaAux.getDate() };          
+          const fechaAux = new Date(this.operario.fechaTurnoDesde);
+          this.fecha = { year: fechaAux.getFullYear(), month: fechaAux.getMonth() + 1, day: fechaAux.getDate()};
         });
     }
   }
@@ -137,11 +150,15 @@ export class OperariosDetailComponent {
   }
 
   save(): void {
+
     this.operario.fechaTurnoDesde = new Date(
       this.fecha.year,
       this.fecha.month - 1,
       this.fecha.day
     );
+
+    const fechaISO = this.operario.fechaTurnoDesde.toISOString().split('T')[0];
+    this.operario.fechaTurnoDesde = new Date(fechaISO);
 
     this.operarioService.save(this.operario).subscribe((dataPackage) => 
     {

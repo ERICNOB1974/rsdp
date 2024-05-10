@@ -1,6 +1,8 @@
 const assert = require('assert');
 const { Given, When, Then } = require('cucumber');
 const {httpRequest} = require ('./request');
+const ordenar = require('json-stable-stringify');
+const borrarAtributo = require('js-remove-property');
 
 Given('que se ingresa el cliente con {string}, {string} y {string}', 
 function (nombre, cuit, observaciones) {
@@ -195,31 +197,83 @@ function (status, respuesta) {
 
 Given('los partes cargados', 
 function () {
-    
+    return true;
 });
 
 When('se solicitan obtener el resumen de partes por día y operario', 
 function () {
-    this.informe = httpRequest('GET',encodeURI(`http://backend:8080/partes`)).data;
+    this.resumenObtenido = httpRequest('GET',encodeURI(`http://backend:8080/partes/informeGeneral`)).data;
 });
 
 Then('se obtiene el siguiente resumen', 
-function (docString) {
-    let expectedResumen = JSON.parse(docString); 
-  
-    for (let i = 0; i < expectedResumen.length; i++) {
-      let esperado = expectedResumen[i];
-      let obtenidoActual = this.informe[i];
-  
-      assert.equal(esperado.legajo, obtenidoActual.legajo);
-      assert.equal(esperado.nombre, obtenidoActual.nombre);
-      assert.equal(esperado.ingreso, obtenidoActual.ingreso);
-      assert.equal(esperado.egreso, obtenidoActual.egreso);
-      assert.equal(esperado.horas, obtenidoActual.horas);
-      assert.equal(esperado.horasPartes, obtenidoActual.horasPartes);
+function (resumenString) {
+    let resumenEsperado = JSON.parse(resumenString).resumenPartesMO;
+    
+    for (let res of this.resumenObtenido) {
+        delete res.fecha;
     }
-  });
-  
 
-  
-  
+    let resumenObtenidoOrdenado = ordenar(this.resumenObtenido);
+    
+    let resumenEsperadoOrdenado = ordenar(resumenEsperado);
+
+    assert.equal(resumenObtenidoOrdenado, resumenEsperadoOrdenado);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+Given('el siguiente listado de partes de mano de obra en estado a validar', 
+function (partesString) {
+
+    let partesEsperados = JSON.parse(partesString).partesMO;
+    this.partesObtenidos = httpRequest('GET',encodeURI(`http://backend:8080/partes`)).data;
+
+    for (let pmo of this.partesObtenidos) {
+        delete pmo.id;
+        delete pmo.horas;
+        delete pmo.estado.id;
+        delete pmo.operario.id;
+        delete pmo.operario.categoria;
+        delete pmo.operario.turno;
+        delete pmo.operario.fechaTurnoDesde;
+        delete pmo.proyecto.id;
+        delete pmo.proyecto.empresa;
+        delete pmo.proyecto.tareas;
+        delete pmo.tarea.id;
+        pmo.fecha = pmo.fecha.substring(0, 10);
+    }
+    for (let pmo of partesEsperados) {
+        delete pmo.id;
+        delete pmo.estado.id;
+        delete pmo.operario.id;
+        delete pmo.proyecto.id;
+        delete pmo.tarea.id;
+    }
+    let partesEsperadosOrdenados = ordenar(partesEsperados);
+    let partesObtenidosOrdenados = ordenar(this.partesObtenidos);
+
+    console.log(partesEsperadosOrdenados);
+    console.log(partesObtenidosOrdenados);
+
+    assert.equal(partesObtenidosOrdenados, partesEsperadosOrdenados);
+
+});
+
+When('se solicita validar los partes a la fecha {string}', 
+function () {
+    return 'pending';
+});
+
+Then('se obtiene la siguiente respuesta', 
+function (resumenString) {
+    return 'pending';
+});

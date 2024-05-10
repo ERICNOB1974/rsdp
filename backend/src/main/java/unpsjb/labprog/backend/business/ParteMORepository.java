@@ -14,6 +14,7 @@ public interface ParteMORepository extends CrudRepository<ParteMO, Integer>,Pagi
     @Query(value = 
     "SELECT pmo.operario.legajo as legajo, " +
     "pmo.operario.nombre as nombre, " +
+    "max(pmo.fecha) fecha, " +
     "MIN(pmo.horaDesde) as ingreso, " +
     "MAX(pmo.horaHasta) as egreso, " +
     "CAST(MAX(pmo.horaHasta) - MIN(pmo.horaDesde) as time) horas , " +
@@ -27,6 +28,7 @@ public interface ParteMORepository extends CrudRepository<ParteMO, Integer>,Pagi
     @Query(value = 
     "SELECT pmo.operario.legajo as legajo, " +
     "pmo.operario.nombre as nombre, " +
+    "max(pmo.fecha) fecha, " +
     "MIN(pmo.horaDesde) as ingreso, " +
     "MAX(pmo.horaHasta) as egreso, " +
     "CAST(MAX(pmo.horaHasta) - MIN(pmo.horaDesde) as time) horas , " +

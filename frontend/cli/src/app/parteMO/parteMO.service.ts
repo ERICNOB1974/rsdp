@@ -19,11 +19,14 @@ export class ParteMOService {
     return this.http.get<DataPackage>(`${this.partesUrl}/id/${id}`);
   }
 
-  save (parteMO: ParteMO): Observable<DataPackage>{
-    return parteMO.id 
-    ? this.http.put<DataPackage>(this.partesUrl, parteMO)
-    : this.http.post<DataPackage>(this.partesUrl, parteMO);
+  save(parteMO: ParteMO): Observable<DataPackage> {
+    if (!parteMO.id || parteMO.id < 0) {
+      return this.http.post<DataPackage>(this.partesUrl, parteMO);
+    } else {
+      return this.http.put<DataPackage>(this.partesUrl, parteMO);
+    }
   }
+  
 
   byPage(page: number, size: number): Observable<DataPackage>{
     return this.http.get<DataPackage>(`${this.partesUrl}/page?page=${page-1}&size=${size}`); 
