@@ -1,12 +1,12 @@
-package unpsjb.labprog.backend.model;
+/*package unpsjb.labprog.backend.model;
 
-import java.util.Date;
-
+import java.time.LocalTime;
+import java.util.Collection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,18 +15,18 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class LogValidacionParteMO {
+public class Turno {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+    
+    private String nombre;
 
-    private Date fecha;
+    private LocalTime horaDesde;
 
-    @ManyToOne
-    private Estado estado;
+    private LocalTime horaHasta;
 
-    @ManyToOne
-    private ValidacionParteMO validacionParteMO;
-
-}
+    @OneToMany(mappedBy = "turno")
+    private Collection<HistoricoTurno> operarios;
+}*/

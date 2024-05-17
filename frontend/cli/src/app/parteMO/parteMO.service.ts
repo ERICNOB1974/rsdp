@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { DataPackage } from '../data-package';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { ParteMO } from './parteMO';
+import { Operario } from '../operario/operario';
+import { Tarea } from '../tarea/tarea';
+import { Data } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -26,14 +29,13 @@ export class ParteMOService {
       return this.http.put<DataPackage>(this.partesUrl, parteMO);
     }
   }
-  
 
   byPage(page: number, size: number): Observable<DataPackage>{
     return this.http.get<DataPackage>(`${this.partesUrl}/page?page=${page-1}&size=${size}`); 
   }
 
   informePartesPorFecha(fecha: string): Observable<DataPackage>{
-    return this.http.get<DataPackage>(`${this.partesUrl}/informeFecha/${fecha}`);
+    return this.http.get<DataPackage>(`${this.partesUrl}/informe/${fecha}`);
   }
 
   remove(id: number): Observable<DataPackage>{

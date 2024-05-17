@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NgbCalendar, NgbDateStruct, NgbDatepickerModule, NgbModule, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbCalendar, NgbDateStruct, NgbDatepickerConfig, NgbDatepickerModule, NgbModule, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { ModalService } from '../modal/modal.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -38,15 +38,20 @@ import { OperarioService } from './operario.service';
                     </div>
                 </div>
             </div>
-            <div class="form-group text-light">
-                <label for="categoriaOperario">Categoria:</label>
-                <input name="categoriaOperario" placeholder="Ingrese la categoria" class="form-control" [(ngModel)]="operario.categoria" required #categoria="ngModel">
-                <div *ngIf="categoria.invalid && (categoria.dirty || categoria.touched)" class="alert">
-                    <div *ngIf="categoria.errors?.['required']">
-                        La categoria del operario es requerido
-                    </div>
-                </div>
+            <div class="custom-select-wrapper">
+              <label for="categoriaOperario">Categoría:</label>
+              <select name="categoriaOperario" class="form-control custom-select" [(ngModel)]="operario.categoria" required #categoria="ngModel">
+                  <option value="" disabled selected>Seleccione una categoría</option>
+                  <option value="Oficial Especializado">Oficial Especializado</option>
+                  <option value="Oficial Albañil">Oficial Albañil</option>
+                  <option value="Medio Oficial Albañil">Medio Oficial Albañil</option>
+                  <option value="Oficial Carpintero">Oficial Carpintero</option>
+                  <option value="Oficial Armador">Oficial Armador</option>
+                  <option value="Medio Oficial Armador">Medio Oficial Armador</option>
+                  <option value="Ayudante">Ayudante</option>
+                </select>
             </div>
+
             <div class="form-group text-light">
                 <label for="turnoOperario">Turno:</label>
                 <input name="turnoOperario" placeholder="Ingrese el turno" class="form-control" [(ngModel)]="operario.turno" required #turno="ngModel">
@@ -57,28 +62,28 @@ import { OperarioService } from './operario.service';
                 </div>
             </div>
             <div class="form-group text-light">
-            <form class="row row-cols-sm-auto" (ngSubmit)="get()">
-              <div class="col-12">
-                <div class="input-group">
-                  <input
-                    class="form-control"
-                    style="display: inline-block"
-                    placeholder="yyyy-mm-dd"
-                    name="fpp"
-                    ngbDatepicker
-                    [(ngModel)]="fecha"
-                    #fpp="ngbDatepicker"
-                    required
-                    readonly
-                  />
-                  <button
-                    class="btn btn-outline-secondary fa fa-calendar"
-                    (click)="fpp.toggle()"
-                    type="button"
-                  ></button>
+              <form class="row row-cols-sm-auto" (ngSubmit)="get()">
+                <div class="col-12">
+                  <div class="input-group">
+                    <input
+                      class="form-control"
+                      style="display: inline-block"
+                      placeholder="yyyy-mm-dd"
+                      name="fpp"
+                      ngbDatepicker
+                      [(ngModel)]="fecha"
+                      #fpp="ngbDatepicker"
+                      required
+                      readonly
+                    />
+                    <button
+                      class="btn btn-outline-secondary fa fa-calendar"
+                      (click)="fpp.toggle()"
+                      type="button"
+                    ></button>
+                  </div>
                 </div>
-              </div>
-            </form>
+              </form>
             </div>
             <button (click)="goBack()" class="btn btn-danger">Atrás</button>
             <button (click)="save()" [disabled]="!form.valid" class="btn btn-success">Guardar</button>
@@ -108,6 +113,7 @@ import { OperarioService } from './operario.service';
     label {
       font-weight: bold;
     }
+
   `]
 })
 export class OperariosDetailComponent {
@@ -123,8 +129,16 @@ export class OperariosDetailComponent {
     private empresaService: EmpresaService,
     private location: Location,
     private calendar: NgbCalendar,
-    private modalService: ModalService
-  ) { }
+    private modalService: ModalService,
+    private config: NgbDatepickerConfig
+    ) {
+      const currentDate = new Date();
+      this.config.maxDate = {
+        year: currentDate.getFullYear(),
+        month: currentDate.getMonth() + 1,  
+        day: currentDate.getDate()
+      }
+     }
 
   ngOnInit() {
     this.get();

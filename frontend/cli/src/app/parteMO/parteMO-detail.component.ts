@@ -104,14 +104,14 @@ import { NgbDateStruct, NgbDropdownModule, NgbTimepickerModule } from '@ng-boots
                   >
                 </div>
                 <div class="col-md-6">
-                  <label for="tarea">Tarea:</label>
+                  <label>Tarea:</label>
                   <div class="custom-select-wrapper">
-                      <select [(ngModel)]="tareaSeleccionada" name="tarea" class="form-control custom-select" required [disabled]="!filtrarTareasPorProyecto().length">
-                          <option *ngFor="let tarea of filtrarTareasPorProyecto()" [ngValue]="{ id: tarea.id, codigo: tarea.codigo,descripcion: tarea.descripcion }">{{ tarea.descripcion }}</option>
-                      </select>
-                      <div class="arrow"></div>
+                    <select [(ngModel)]="tareaSeleccionada" name="tarea" class="form-control custom-select" required [disabled]="!filtrarTareasPorProyecto().length">
+                      <option *ngFor="let tarea of filtrarTareasPorProyecto()" [ngValue]="{ id: tarea.id, codigo: tarea.codigo,descripcion: tarea.descripcion }">{{ tarea.descripcion }}</option>
+                    </select>
+                    <div class="arrow"></div>
                   </div>
-              </div>
+                </div>
                 <div class="input-group">
                   <div class="row mb-2">
                     <div class="col-12 col-md-4 mb-3">
@@ -240,6 +240,7 @@ export class PartesMODetailComponent {
   guardadoExitoso: boolean = false;
   msjError = "";
   tareaSeleccionada: { id: number, codigo: string,descripcion: string } = { id: -1, codigo: '',descripcion: '' };
+  tareasProyecto: Tarea[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -256,7 +257,7 @@ export class PartesMODetailComponent {
     const currentDate = new Date();
     this.config.maxDate = {
       year: currentDate.getFullYear(),
-      month: currentDate.getMonth() + 1,
+      month: currentDate.getMonth() + 1,  
       day: currentDate.getDate()
     }
    }

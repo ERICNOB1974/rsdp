@@ -1,5 +1,6 @@
-/*package unpsjb.labprog.backend.model;
+package unpsjb.labprog.backend.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,8 +23,7 @@ public class ValidacionParteMO {
 
     private String descripcion;
 
-    private String observaciones;
+    @Column
+    private Tipo tipo;
 
-    private String validador;
-
-}*/
+}

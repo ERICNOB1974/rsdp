@@ -1,6 +1,9 @@
 package unpsjb.labprog.backend.presenter;
 
+import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,7 +12,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.ParteMOService;
+import unpsjb.labprog.backend.business.TareaNoDisponibleException;
+import unpsjb.labprog.backend.model.Operario;
 import unpsjb.labprog.backend.model.ParteMO;
+import unpsjb.labprog.backend.model.Tarea;
+
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -37,13 +44,15 @@ public class ParteMOPresenter{
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> create (@RequestBody ParteMO aParteMO){
-        try {
-        return Response.ok(
-            service.save(aParteMO),
-            "Parte MO generado correctamente");
-        } catch (DataIntegrityViolationException e){
-            return Response.error("El parte no puede ser creado ya que existe un parte con ese id",e.getMessage());
-        }
+            try {
+                return Response.ok(
+                    service.create(aParteMO), 
+                    "Parte MO generado correctamente");
+            } catch (TareaNoDisponibleException e) {
+                return Response.error(
+    "Ya existe un parte con esa fecha, operario y tarea!",
+                e.getMessage());
+            }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
@@ -63,14 +72,14 @@ public class ParteMOPresenter{
         return Response.ok(service.findByPage(page, size));
     }
 
-    @RequestMapping(value ="/informeFecha/{fecha}", method = RequestMethod.GET)
-    public ResponseEntity<Object> informePartesPorFecha( @PathVariable("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha) {
+    @RequestMapping(value = {"/informe/{fecha}", "/informe/"}, method = RequestMethod.GET)
+    public ResponseEntity<Object> informePartesPorFecha(@PathVariable(value = "fecha", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> fecha) {
         return Response.ok(service.informePartesPorFecha(fecha));
     }
 
-    @RequestMapping(value ="/informeGeneral", method = RequestMethod.GET)
-    public ResponseEntity<Object> informePartesGeneral() {
-        return Response.ok(service.informePartesGeneral());
+    @RequestMapping(value = {"/validar/{fecha}"}, method = RequestMethod.GET)
+    public ResponseEntity<Object> validar(@PathVariable(value = "fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha) {
+        return Response.ok(service.validar(fecha));
     }
 
     @RequestMapping(method=RequestMethod.PUT)
@@ -78,8 +87,9 @@ public class ParteMOPresenter{
         if (aParteMO.getId() <= 0){
             return Response.error(aParteMO,"Debe especificar un id valido para poder modificar un parte.");
         }
+
         return Response.ok(
-            service.save(aParteMO), 
+            service.update(aParteMO), 
             "Parte " + aParteMO.getId() + " ingresado correctamente");
     }
 

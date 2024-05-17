@@ -43,7 +43,7 @@ public class ParteMO {
     @ManyToOne
     private Estado estado;
 
-    /*@OneToMany
-    private Collection<LogValidacionParteMO> logValidacion;
-*/
+    @OneToMany
+    private Collection<LogValidacionParteMO> logsValidacion;
+
 }

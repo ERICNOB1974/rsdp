@@ -5,7 +5,7 @@ import { ModalService } from '../modal/modal.service';
 import { ResultsPage } from '../results-page';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { ParteMOService } from './parteMO.service';
-import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateStruct, NgbDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -16,42 +16,62 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   imports: [CommonModule, RouterModule, PaginationComponent, FormsModule, NgbModule],
   template: `
   <div class="container mt-4">
-      <h2 class="text-light mb-4">Resumen</h2>
-      <div class="form-group">
-        <label for="fecha">Fecha:</label>
-        <input type="date" class="form-control custom-date-input" [ngModel]="fechaString" (ngModelChange)="onFechaChange($event)" name="fecha" timezone="-03:00">
-      </div>
-      <div class="button-container">
-        <button class="btn btn-primary mt-3" (click)="obtenerResumenPorFecha()">Obtener Resumen</button>
-      </div>
-      <div class="table-responsive mt-4">
-        <table class="table table-dark table-hover">
-          <thead>
-            <tr>
-              <th scope="col">Fecha</th>              
-              <th scope="col">Legajo</th>
-              <th scope="col">Nombre</th>
-              <th scope="col">Hora ingreso</th>
-              <th scope="col">Hora egreso</th>
-              <th scope="col">Horas</th>
-              <th scope="col">Horas partes</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody *ngIf="resultsPage && resultsPage.content && resultsPage.content.length > 0">
-            <tr *ngFor="let resumen of resultsPage.content; index as i">
-              <td>{{ (resumen.fecha | date:'yyyy-MM-dd':'UTC') }}</td> 
-              <td>{{ resumen.nombre }}</td>
-              <td>{{ resumen.legajo }}</td>
-              <td>{{ resumen.ingreso }}</td>
-              <td>{{ resumen.egreso }}</td>
-              <td>{{ resumen.horas }}</td>
-              <td>{{ resumen.horasPartes }}</td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+    <h2 class="text-light mb-4">Resumen</h2>
+    <div class="form-group text-light">
+      <form class="row row-cols-sm-auto" (ngSubmit)="get()">
+        <div class="col-12">
+          <div class="input-group">
+            <input
+              class="form-control"
+              style="display: inline-block"
+              placeholder="yyyy-mm-dd"
+              name="fpp"
+              ngbDatepicker
+              [(ngModel)]="fecha"
+              #fpp="ngbDatepicker"
+              required
+              readonly
+            />
+            <button
+              class="btn btn-outline-secondary fa fa-calendar"
+              (click)="fpp.toggle()"
+              type="button"
+            ></button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="button-container">
+      <button class="btn btn-primary mt-3" (click)="obtenerResumenPorFecha()">Obtener Resumen</button>
+    </div>
+    <div class="table-responsive mt-4">
+      <table class="table table-dark table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Fecha</th>
+            <th scope="col">Legajo</th>
+            <th scope="col">Nombre</th>
+            <th scope="col">Hora ingreso</th>
+            <th scope="col">Hora egreso</th>
+            <th scope="col">Horas</th>
+            <th scope="col">Horas partes</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody *ngIf="resultsPage && resultsPage.content && resultsPage.content.length > 0">
+          <tr *ngFor="let resumen of resultsPage.content; index as i">
+            <td>{{ (resumen.fecha | date:'yyyy-MM-dd':'UTC') }}</td>
+            <td>{{ resumen.nombre }}</td>
+            <td>{{ resumen.legajo }}</td>
+            <td>{{ resumen.ingreso }}</td>
+            <td>{{ resumen.egreso }}</td>
+            <td>{{ resumen.horas }}</td>
+            <td>{{ resumen.horasPartes }}</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <app-pagination
       [totalPages]="resultsPage.totalPages"
       [currentPage]="currentPage"
@@ -60,7 +80,6 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
       [hidden]="resultsPage.numberOfElements < 1"
     ></app-pagination>
   </div>
-
   `,
   styles: [`
     .container {
@@ -85,48 +104,65 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
       border-color: #bd2130;
     }
     .custom-date-input {
-    width: 200px; /* Define el ancho del campo de fecha */
+      width: 200px; /* Define el ancho del campo de fecha */
     }
   `]
 })
 export class ResumenesComponent {
-  resultsPage: ResultsPage = <ResultsPage>{}; 
+  resultsPage: ResultsPage = <ResultsPage>{};
   pages!: number[];
   currentPage: number = 1;
-  fecha!: Date;
+  fecha: NgbDateStruct | null = null;
   AMOUNT_RESUMEN = 10;
-  fechaString: string = '';
 
   constructor(
     private parteMOService: ParteMOService,
-    private modalService: ModalService
-  ) {}
-
-  onFechaChange(event: any) {
-    this.fecha = new Date(event);
-  }
-
-  obtenerResumenPorFecha(): void {
-    if (this.fecha) {
-      // Convertir la fecha en formato 'YYYY-MM-DD'
-      const fechaFormateada: string = this.fecha.toISOString().slice(0, 10);
-
-      this.parteMOService.informePartesPorFecha(fechaFormateada).subscribe((dataPackage) => {
-        const responseData = dataPackage.data;
-        if (Array.isArray(responseData)) {
-          this.resultsPage.content = responseData;
-          this.pages = Array.from(Array(this.resultsPage.totalPages).keys());
-        }
-        if ((responseData as any[]).length === 0) {
-          this.modalService.error("ERROR", 'No se encontraron resultados para la fecha seleccionada.');
-        }
-      });
-    } else {
-      this.modalService.error("ERROR", 'Por favor seleccione una fecha.');
+    private modalService: ModalService,
+    private config: NgbDatepickerConfig
+  ) {
+    const currentDate = new Date();
+    this.config.maxDate = {
+      year: currentDate.getFullYear(),
+      month: currentDate.getMonth() + 1,  
+      day: currentDate.getDate()
     }
   }
 
+  get(): void {
+    this.obtenerResumenPorFecha();
+  }
+
+  obtenerResumenPorFecha(): void {
+    let fechaFormateada = '';
+
+    if (this.fecha) {
+      const { year, month, day } = this.fecha;
+      fechaFormateada = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+    }
+
+    this.parteMOService.informePartesPorFecha(fechaFormateada).subscribe((dataPackage) => {
+      const responseData = dataPackage.data;
+      if (Array.isArray(responseData)) {
+        this.resultsPage.content = responseData;
+        this.pages = Array.from(Array(this.resultsPage.totalPages).keys());
+      }
+      if ((responseData as any[]).length === 0) {
+        this.modalService.error("ERROR", 'No se encontraron resultados para la fecha seleccionada.');
+      }
+    });
+  }
+
   ngOnInit() {
+    this.parteMOService.informePartesPorFecha('').subscribe((dataPackage) => {
+      const responseData = dataPackage.data;
+      if (Array.isArray(responseData)) {
+        this.resultsPage.content = responseData;
+        this.pages = Array.from(Array(this.resultsPage.totalPages).keys());
+      }
+      if ((responseData as any[]).length === 0) {
+        this.modalService.error("ERROR", 'No se encontraron resultados para la fecha seleccionada.');
+      }
+    });
   }
 
   onPageChangeRequested(page: number): void {
