@@ -14,5 +14,6 @@ export interface ParteMO {
     proyecto: Proyecto;
     tarea: Tarea;
     horas:Number;
+    logsValidacion: string[];
 
 }

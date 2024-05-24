@@ -1,12 +1,10 @@
 /*package unpsjb.labprog.backend.model;
 
 import java.time.LocalTime;
-import java.util.Collection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,6 +25,4 @@ public class Turno {
 
     private LocalTime horaHasta;
 
-    @OneToMany(mappedBy = "turno")
-    private Collection<HistoricoTurno> operarios;
 }*/

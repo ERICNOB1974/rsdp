@@ -38,6 +38,22 @@ export class ParteMOService {
     return this.http.get<DataPackage>(`${this.partesUrl}/informe/${fecha}`);
   }
 
+  validar(fecha: string): Observable<DataPackage>{
+    return this.http.get<DataPackage>(`${this.partesUrl}/validar/${fecha}`);
+  }
+
+  validarComoSupervisor(fecha: string,legajoOperario: string): Observable<DataPackage>{
+    return this.http.get<DataPackage>(`${this.partesUrl}/validarComoSupervisor/${fecha}/${legajoOperario}`);
+  }
+
+  rechazarComoSupervisor(fecha: string,legajoOperario: string): Observable<DataPackage>{
+    return this.http.get<DataPackage>(`${this.partesUrl}/rechazarComoSupervisor/${fecha}/${legajoOperario}`);
+  }
+
+  partesDeUnResumen(fecha: string,legajoOperario: string): Observable<DataPackage>{
+    return this.http.get<DataPackage>(`${this.partesUrl}/partesDeResumen/${fecha}/${legajoOperario}`);
+  }
+
   remove(id: number): Observable<DataPackage>{
     return this.http.delete<DataPackage>(`${this.partesUrl}/${id}`);
   }

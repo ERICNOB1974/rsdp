@@ -1,3 +1,4 @@
+// ModalService
 import { Injectable } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalComponent } from './modal.component';
@@ -6,14 +7,13 @@ import { ModalComponent } from './modal.component';
   providedIn: 'root'
 })
 export class ModalService {
+  constructor(private modalService: NgbModal) {}
 
-  constructor(private modalService: NgbModal) { }
-
-  confirm(title: string, message: string, description: string): Promise<any> {
+  confirm(title: string, message: string, htmlContent: string): Promise<any> {
     const modal = this.modalService.open(ModalComponent);
     modal.componentInstance.title = title;
     modal.componentInstance.message = message;
-    modal.componentInstance.description = description;
+    modal.componentInstance.htmlContent = htmlContent;
     return modal.result;
   }
 
@@ -23,5 +23,4 @@ export class ModalService {
     modal.componentInstance.message = message;
     return modal.result;
   }
-
 }

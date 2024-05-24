@@ -106,9 +106,9 @@ import { NgbDateStruct, NgbDropdownModule, NgbTimepickerModule } from '@ng-boots
                 <div class="col-md-6">
                   <label>Tarea:</label>
                   <div class="custom-select-wrapper">
-                    <select [(ngModel)]="tareaSeleccionada" name="tarea" class="form-control custom-select" required [disabled]="!filtrarTareasPorProyecto().length">
-                      <option *ngFor="let tarea of filtrarTareasPorProyecto()" [ngValue]="{ id: tarea.id, codigo: tarea.codigo,descripcion: tarea.descripcion }">{{ tarea.descripcion }}</option>
-                    </select>
+                  <select [(ngModel)]="tareaSeleccionada" name="tarea" class="form-control custom-select" required [disabled]="!filtrarTareasPorProyecto().length" [compareWith]="compararTareas">
+                    <option *ngFor="let tarea of filtrarTareasPorProyecto()" [ngValue]="{ id: tarea.id, codigo: tarea.codigo, descripcion: tarea.descripcion }">{{ tarea.descripcion }}</option>
+                  </select>
                     <div class="arrow"></div>
                   </div>
                 </div>
@@ -124,6 +124,7 @@ import { NgbDateStruct, NgbDropdownModule, NgbTimepickerModule } from '@ng-boots
                         name="hora_desde"
                         #hora_desde="ngModel"
                         (change)="calcularHoras()"
+                        step="60"
                       />
                     </div>
                     <div class="col-12 col-md-4 mb-3">
@@ -136,6 +137,7 @@ import { NgbDateStruct, NgbDropdownModule, NgbTimepickerModule } from '@ng-boots
                         name="hora_hasta"
                         #hora_hasta="ngModel"
                         (change)="calcularHoras()"
+                        step="60"
                       />
                     </div>
                     <div class="col-12 col-md-4 mb-3">
@@ -336,9 +338,24 @@ export class PartesMODetailComponent {
         .subscribe((dataPackage) => {
           this.parteMO = <ParteMO>dataPackage.data;
           const fechaAux = new Date(this.parteMO.fecha);
-          this.fecha = { year: fechaAux.getFullYear(), month: fechaAux.getMonth() + 1, day: fechaAux.getDate() };
+        fechaAux.setDate(fechaAux.getDate() + 1); // Sumar un día
+        this.fecha = { year: fechaAux.getFullYear(), month: fechaAux.getMonth() + 1, day: fechaAux.getDate() };
+          this.calcularHoras();
+          if (this.parteMO.tarea && this.parteMO.tarea.id) {
+            this.tareaSeleccionada = {
+              id: this.parteMO.tarea.id,
+              codigo: this.parteMO.tarea.codigo || '',
+              descripcion: this.parteMO.tarea.descripcion || ''
+            };
+          } else {
+            this.tareaSeleccionada = { id: -1, codigo: '', descripcion: '' };
+          }
         });
     }
+  }
+
+  compararTareas(tarea1: { id: number, codigo: string, descripcion: string }, tarea2: { id: number, codigo: string, descripcion: string }): boolean {
+    return tarea1 && tarea2 ? tarea1.id === tarea2.id : tarea1 === tarea2;
   }
 
   goBack() {
@@ -375,10 +392,15 @@ export class PartesMODetailComponent {
         this.tareaSeleccionada = {id: -1, descripcion: '', codigo: ''};
         this.guardadoExitoso = true;
 
-        //Ocultar mensaje de guardado exitoso luego de 3 segundos
-        setTimeout(() => {
-          this.guardadoExitoso = false;
-        }, 3000);
+        const id = this.route.snapshot.paramMap.get('id');
+        if (id !== 'new') {
+          this.goBack();
+        } else {
+          //Ocultar mensaje de guardado exitoso luego de 3 segundos
+          setTimeout(() => {
+            this.guardadoExitoso = false;
+          }, 3000);
+        }
 
       } else {
         this.msjError = <string><unknown>dataPackage.data;

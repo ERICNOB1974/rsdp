@@ -1,3 +1,4 @@
+// ModalComponent
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -8,16 +9,14 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   imports: [CommonModule],
   template: `
     <div class="modal-header">
-      <h4 class="modal-title" id="modal-title">{{title}}</h4>
+      <h4 class="modal-title" id="modal-title">{{ title }}</h4>
       <button type="button" class="btn-close" (click)="modal.dismiss()"></button>
     </div>
     <div class="modal-body">
       <p>
-        <strong>{{message}}</strong>
+        <strong>{{ message }}</strong>
       </p>
-      <p *ngIf="description">
-        <strong>{{description}}</strong>
-      </p>
+      <div [innerHtml]="htmlContent"></div>
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">Cancelar</button>
@@ -27,10 +26,9 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
   styles: ``
 })
 export class ModalComponent {
-  constructor(public modal: NgbActiveModal){
+  constructor(public modal: NgbActiveModal) {}
 
-  }
   title = "";
   message = "";
-  description = "";
+  htmlContent = "";
 }

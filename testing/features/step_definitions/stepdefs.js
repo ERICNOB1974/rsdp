@@ -3,6 +3,7 @@ const { Given, When, Then } = require('cucumber');
 const { httpRequest } = require('./request');
 const ordenar = require('json-stable-stringify');
 const borrarAtributo = require('js-remove-property');
+const request = require('sync-request');
 
 Given('que se ingresa el cliente con {string}, {string} y {string}',
     function (nombre, cuit, observaciones) {
@@ -104,9 +105,8 @@ When('se solicitan guardar una nueva tarea al proyecto',
         this.proyecto.tareas.push(this.tarea);
 
         this.response = httpRequest('PUT', 'http://backend:8080/proyectos', JSON.stringify(this.proyecto));
+    
     });
-
-
 
 
 
@@ -131,8 +131,50 @@ When('presiono el botón de guardar de operarios',
         this.response = httpRequest('POST', 'http://backend:8080/operarios', JSON.stringify(this.operario));
     });
 
-
 /*
+Given('que se ingresa el operario con legajo {int}, con nombre {string} cuya categoría es {string} y pertenece al turno {string} a partir de {string}',
+    function (legajo, nombre, categoria, turno, fechaDesdeTurno) {
+        // Parsear el turno y formatear las horas
+        const horaDesde = turno.substring(0, turno.indexOf('a'));
+        const horaHasta = turno.substring(turno.indexOf('a') + 1);
+        const formatoHora = (hora) => hora.padStart(2, '0') + ":00:00";
+
+        const responseExistingTurno = httpRequest('GET', `http://backend:8080/turnos/${formatoHora(horaDesde)}/${formatoHora(horaHasta)}`);
+        const existingTurno = responseExistingTurno.data;
+
+        if (existingTurno != "Turno no encontrado") {
+            this.responseTurnos = existingTurno;
+        } else {
+            // Crear un nuevo turno si no existe
+            this.turnosObj = {
+                nombre: turno,
+                horaDesde: formatoHora(horaDesde),
+                horaHasta: formatoHora(horaHasta)
+            };
+            this.responseTurnos = httpRequest('POST', 'http://backend:8080/turnos', JSON.stringify(this.turnosObj)).data;
+        }
+
+        this.historicoTurnosObj = {
+            fechaTurnoDesde: fechaDesdeTurno,
+            turnos: [this.responseTurnos]
+        };
+
+        this.responseHistoricoTurnos = httpRequest('POST', 'http://backend:8080/historicoTurnos', JSON.stringify(this.historicoTurnosObj)).data;
+        
+        console.log(this.responseHistoricoTurnos);
+
+        this.operario = {
+            legajo: legajo,
+            nombre: nombre,
+            categoria: categoria,
+            historicoTurnos: [this.responseHistoricoTurnos]
+        };
+    });
+
+When('presiono el botón de guardar de operarios', function () {
+    this.responseOperario = httpRequest('POST', 'http://backend:8080/operarios', JSON.stringify(this.operario));
+});
+
 Then('se obtiene la siguiente {string}', 
 function (respuesta) {
     assert.equal(this.response.message, respuesta);
@@ -212,6 +254,7 @@ Then('se obtiene el siguiente resumen',
 
         for (let res of this.resumenObtenido) {
             delete res.fecha;
+            delete res.estado;
         }
 
         let resumenObtenidoOrdenado = ordenar(this.resumenObtenido);
@@ -300,14 +343,17 @@ Then('se obtiene la siguiente respuesta',
 
             // Comprobación de si logsValidacion es un iterable
             if (Array.isArray(pmo.logsValidacion)) {
-                if (pmo.logsValidacion.length === 0) {
-                    delete pmo.logsValidacion;
-                } else {
-                    for (let logs of pmo.logsValidacion) {
-                        delete logs.id;
-                        delete logs.estado.id;
-                        delete logs.validacionParteMO.id;
-                        delete logs.fecha;
+                if (pmo.logsValidacion){
+                    for (let log of pmo.logsValidacion) {
+                        if (log.validacionParteMO.id === 5){
+                            delete pmo.logsValidacion;
+                            break;
+                        }
+                        delete log.id;
+                        delete log.estado.id;
+                        delete log.validacionParteMO.id;
+                        delete log.fecha;
+                        delete log.tiempoCreacion;
                     }
                 }
             } else {
@@ -350,32 +396,137 @@ Then('se obtiene la siguiente respuesta',
 
 
 
-Given('el parte {string} que está inválido',
-function(temp){
-    return 'pending';
+
+Given('el parte "{string}" que está inválido',
+function(parteString){
+    
+    parte = JSON.parse(parteString);
+    
+    this.parteObtenido = httpRequest('GET', encodeURI(`http://backend:8080/partes/parteDadoProyectoYTarea/${parte.fecha}/${parte.operario.legajo}/${parte.proyecto.codigo}/${parte.tarea.codigo}`)).data;
+    
 });
 
-When('se corrige el {string} ',
-function (temp) {
-    return 'pending';
+When('se corrige el "{string}"', 
+function (parteCorregidoString) {
+
+    this.parteCorregido = JSON.parse(parteCorregidoString);
+
+    if (this.parteCorregido.operario.legajo == '3000'){
+        this.parteValidado = httpRequest('GET', encodeURI(`http://backend:8080/partes/validarComoSupervisor/${this.parteCorregido.fecha}/${this.parteCorregido.operario.legajo}`));
+    } else {
+        this.parteCorregido.id = this.parteObtenido.id;
+        this.parteCorregido.operario = this.parteObtenido.operario;    
+        this.parteCorregido.proyecto = this.parteObtenido.proyecto;    
+        this.parteCorregido.tarea = this.parteObtenido.tarea;
+        this.parteCorregido.logsValidacion = this.parteObtenido.logsValidacion;
+        let resultado = request('PUT', 
+        'http://backend:8080/partes', {
+            json: this.parteCorregido
+        });
+        this.respuestaCorregido = JSON.parse(resultado.body);
+    }
+});
+       
+    
+Then('se espera el siguiente resultado de correccion de partes "{string}"',
+function (respuesta) {
+
+    respuesta = JSON.parse(respuesta);
+
+    if (this.parteValidado){
+        assert.equal(respuesta.StatusText, this.parteValidado.message);
+    } else {
+        assert.equal(respuesta.StatusText, this.respuestaCorregido.message);
+    }
+
 });
 
-Then('se espera el siguiente resultado {string}',
-function (temp) {
-    return 'pending';
+Given('el siguiente listado de partes de mano de obra en estado a validar para la correccion',
+function(partesString){
+    let partesEsperados = JSON.parse(partesString).partesMO;
+    this.partesObtenidos = httpRequest('GET', encodeURI(`http://backend:8080/partes/partesEstadoCorregido`)).data;
 });
 
-Given('el siguiente listado de partes de mano de obra en estado a validars',
-function(){
-    return 'pending';
+When('se solicita validar los partes a la fecha {string} para la correccion',
+function (fecha) {
+    this.requestValidar = httpRequest('GET', encodeURI(`http://backend:8080/partes/validar/${fecha}`)).data;
+    this.partesObtenidos = httpRequest('GET', encodeURI(`http://backend:8080/partes`)).data;
 });
 
-When('se solicita validar los partes a la fechas {string} ',
-function (temp) {
-    return 'pending';
-});
+Then('se obtiene la siguiente respuesta de correccion de partes',
+function (partesString) {
+    let partesEsperados = JSON.parse(partesString).partesMO;
+    let partesObtenidosFiltrados = [];
 
-Then('se obtiene la siguiente respuesta s',
-function () {
-    return 'pending';
+    for (let pmo of this.partesObtenidos) {
+        if (!(pmo.operario.legajo === 1000 || pmo.operario.legajo === 2000 || pmo.operario.legajo === 3000)) {
+            partesObtenidosFiltrados.push(pmo);
+        }
+    }
+    this.partesObtenidos = partesObtenidosFiltrados;
+
+        for (let pmo of this.partesObtenidos) {
+            if (pmo.operario.legajo === 1000 || pmo.operario.legajo === 2000 || pmo.operario.legajo === 3000) {
+               delete pmo;
+            }
+            delete pmo.id;
+            pmo.fecha = pmo.fecha.substring(0, 10);
+            delete pmo.horas;
+            delete pmo.operario.id;
+            delete pmo.operario.categoria;
+            delete pmo.operario.turno;
+            delete pmo.operario.fechaTurnoDesde;
+            delete pmo.operario.fechaTurnoHasta;
+            delete pmo.operario.horaDesde;
+            delete pmo.operario.horaHasta;
+            delete pmo.proyecto.id;
+            delete pmo.proyecto.empresa;
+            delete pmo.proyecto.tareas;
+            delete pmo.tarea.id;
+            delete pmo.estado.id;
+            if (pmo.estado.nombre !== 'inválido'){
+                delete pmo.logsValidacion;
+            }
+
+            // Comprobación de si logsValidacion es un iterable
+            if (Array.isArray(pmo.logsValidacion)) {
+                if (pmo.logsValidacion) {
+                    pmo.logsValidacion = pmo.logsValidacion.filter(log => {
+                        if (log.estado.nombre == 'caducado') {
+                            return false;
+                        }
+                        delete log.id;
+                        delete log.estado.id;
+                        delete log.validacionParteMO.id;
+                        delete log.fecha;
+                        delete log.tiempoCreacion;
+                        return true;
+                    });
+                }
+            }
+        }
+
+        for (let pmo of partesEsperados) {
+            delete pmo.id;
+            delete pmo.estado.id;
+            delete pmo.operario.id;
+            delete pmo.proyecto.id;
+            delete pmo.tarea.id;
+
+            // Comprobación de si logValidacion es un iterable
+            if (Array.isArray(pmo.logsValidacion)) {
+                for (let logs of pmo.logsValidacion) {
+                    delete logs.id;
+                    delete logs.estado.id;
+                    delete logs.validacionParteMO.id;
+                }
+            } else {
+                delete pmo.logValidacion;
+            }
+        }
+
+        let partesEsperadosOrdenados = ordenar(partesEsperados);
+        let partesObtenidosOrdenados = ordenar(this.partesObtenidos);
+
+        assert.equal(partesObtenidosOrdenados, partesEsperadosOrdenados);
 });

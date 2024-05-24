@@ -35,6 +35,12 @@ public class ParteMOService {
     OperarioService operarioService;
 
     @Autowired
+    ProyectoService proyectoService;
+
+    @Autowired
+    TareaService tareaService;
+
+    @Autowired
     ValidacionParteMOService validacionParteMOService;
 
     @Autowired
@@ -53,7 +59,6 @@ public class ParteMOService {
     @Transactional
     public void delete(int id) {
         repository.deleteById(id);
-
     }
 
     public Page<ParteMO> findByPage(int page, int size) {
@@ -64,39 +69,89 @@ public class ParteMOService {
         return repository.informePartesPorFecha(fecha);
     }
 
-    public Object validar(Date fecha) {
+    /* public Collection<ResumenParteMO> informePartesALaFecha(Optional<Date> fecha) {
+        return repository.informePartesALaFecha(fecha);
+    } */
+
+    public Object validar(Optional<Date> fecha) {
         Collection<ResumenParteMO> resumen = repository.informePartesALaFecha(fecha);
         for (ResumenParteMO resPMO : resumen) {
             Operario operario = operarioService.findByLegajo(resPMO.getLegajo());
             List<ParteMO> partes = this.partesDeUnResumen(operario, resPMO.getFecha());
+            this.invalidarLogs(partes);
             for (ParteMO parteMO : partes) {
-                parteMO.setEstado(estadoService.estadoValido());    //Seteo por defecto todos en valido, despues si son invalidos se cambia.
+                boolean esValido = true;
+                //parteMO.setEstado(estadoService.estadoValido());    //Seteo por defecto todos en valido, despues si son invalidos se cambia.
                 if (resPMO.getHoras().isBefore(resPMO.getHorasPartes())) {
                     invalidarParte(parteMO);
                     ValidacionParteMO validacion = validacionParteMOService.superposicionHoraria();
                     agregarLog(resPMO.getFecha(), estadoService.estadoGeneradoLog(), parteMO, validacion);
+                    esValido = false;
                 }
                 if (resPMO.getIngreso().isBefore(operario.getHoraDesde())
-                        || (resPMO.getEgreso().isAfter(operario.getHoraHasta()))) {
+                || (resPMO.getEgreso().isAfter(operario.getHoraHasta()))) {
                     invalidarParte(parteMO);
                     ValidacionParteMO validacion = validacionParteMOService.fueraDeTurno();
                     agregarLog(resPMO.getFecha(), estadoService.estadoGeneradoLog(), parteMO, validacion);
+                    esValido = false;
                 } else {
                     if (resPMO.getIngreso().isAfter(operario.getHoraDesde())
-                            || (resPMO.getEgreso().isBefore(operario.getHoraHasta()))) {
+                    || (resPMO.getEgreso().isBefore(operario.getHoraHasta()))) {
                         invalidarParte(parteMO);
                         ValidacionParteMO validacion = validacionParteMOService.incumpleHorario();
                         agregarLog(resPMO.getFecha(), estadoService.estadoGeneradoLog(), parteMO, validacion);
+                        esValido = false;
                     }
                 }
                 if (resPMO.getHoras().isAfter(resPMO.getHorasPartes())) {
                     invalidarParte(parteMO);
                     ValidacionParteMO validacion = validacionParteMOService.huecoHorario();
                     agregarLog(resPMO.getFecha(), estadoService.estadoGeneradoLog(), parteMO, validacion);
+                    esValido = false;
+                }
+                if (esValido){
+                    parteMO.setEstado(estadoService.estadoValido()); 
+                    ValidacionParteMO validacion =validacionParteMOService.valido();
+                    agregarLog(resPMO.getFecha(), estadoService.estadoGeneradoLog(), parteMO, validacion);
                 }
             }
         }
         return resumen;
+    }
+
+    public Object validarComoSupervisor(String legajoOperario, Date fecha) {
+        List<ParteMO> partes = this.partesDeUnResumen(operarioService.findByLegajo(Integer.parseInt(legajoOperario)), fecha);
+        this.invalidarLogs(partes);
+        for (ParteMO parteMO : partes) {
+            parteMO.setEstado(estadoService.estadoValidado()); 
+            ValidacionParteMO validacion = validacionParteMOService.validado();  
+            this.agregarLog(parteMO.getFecha(),estadoService.estadoGeneradoLog(), parteMO, validacion);
+            repository.save(parteMO); 
+        }
+        return partes;
+    }
+
+    public Object rechazarComoSupervisor(String legajoOperario, Date fecha) {
+        List<ParteMO> partes = this.partesDeUnResumen(operarioService.findByLegajo(Integer.parseInt(legajoOperario)), fecha);
+        this.invalidarLogs(partes);
+        for (ParteMO parteMO : partes) {
+            parteMO.setEstado(estadoService.estadoRechazado()); 
+            ValidacionParteMO validacion = validacionParteMOService.rechazado();  
+            this.agregarLog(parteMO.getFecha(),estadoService.estadoGeneradoLog(), parteMO, validacion);
+            repository.save(parteMO); 
+        }
+        return partes;
+    }
+
+    private void invalidarLogs(List<ParteMO> partes) {
+        Estado estadoCaducado = estadoService.estadoCaducadoLog();
+    
+        for (ParteMO parte : partes) {
+            Collection<LogValidacionParteMO> logsValidacion = parte.getLogsValidacion();
+            for (LogValidacionParteMO log : logsValidacion) {
+                log.setEstado(estadoCaducado);
+            }
+        }
     }
 
     private void invalidarParte(ParteMO parteMO) {
@@ -128,6 +183,13 @@ public class ParteMOService {
         }
 
         parteMO.setEstado(estadoService.estadoGenerado());
+        List<ParteMO> partes = this.partesDeUnResumen(operarioService.findByLegajo(parteMO.getOperario().getLegajo()), parteMO.getFecha());
+        for (ParteMO parte : partes) {
+            if (parte.getEstado() != estadoService.estadoCorregido() && parte.getEstado() != estadoService.estadoGenerado()){
+                parte.setEstado(estadoService.estadoCorregido()); 
+                repository.save(parte); 
+            }
+        }
         long minutos = Duration.between(parteMO.getHoraDesde(), parteMO.getHoraHasta()).toMinutes();
         float horas = minutos / 60.0f; // Le indico que tiene que tener decimales
         parteMO.setHoras(horas);
@@ -144,14 +206,34 @@ public class ParteMOService {
             }
         }
         return false;
+    }
 
+    public List<ParteMO> partesDeUnResumen (String legajoOperario, Date fecha){
+        return repository.partesDeUnResumen(operarioService.findByLegajo(Integer.parseInt(legajoOperario)), fecha);
+    }
+
+    public ParteMO parteDadoProyectoYTarea (Date fecha, String legajoOperario, String codigoProyecto, String codigoTarea){
+        return repository.parteDadoProyectoYTarea(fecha,operarioService.findByLegajo(Integer.parseInt(legajoOperario)),proyectoService.findByCodigo(codigoProyecto), tareaService.findByCodigo(codigoTarea));
+    }
+
+    public List<ParteMO> partesConEstadoInvalido() {
+        return repository.partesConEstadoInvalido();
+    }
+
+    public List<ParteMO> partesConEstadoCorregido() {
+        return repository.partesConEstadoCorregido();
     }
 
     @Transactional
     public ParteMO update(ParteMO parteMO) {
+    
+        long minutos = Duration.between(parteMO.getHoraDesde(), parteMO.getHoraHasta()).toMinutes();
+        float horas = minutos / 60.0f; // Le indico que tiene que tener decimales
+        parteMO.setHoras(horas);
 
+        parteMO.setEstado(estadoService.estadoCorregido());
         List<ParteMO> partes = partesDeUnResumen(parteMO.getOperario(), parteMO.getFecha());
-
+        this.invalidarLogs(partes);
         for (ParteMO parte : partes) {
             if (parte.getEstado() != estadoService.estadoCorregido()) {
                 parte.setEstado(estadoService.estadoCorregido());

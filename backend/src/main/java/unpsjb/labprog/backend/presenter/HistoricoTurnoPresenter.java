@@ -21,13 +21,9 @@ public class HistoricoTurnoPresenter{
     
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> create (@RequestBody HistoricoTurno aHistoricoTurno){
-        try {
             return Response.ok(
                 service.save(aHistoricoTurno), 
                 "Historico " + aHistoricoTurno.getId() + " ingresado correctamente");
-        } catch (DataIntegrityViolationException e){
-            return Response.error("El historico no puede ser creada ya que existe un tarea con ese codigo",e.getMessage());
-        }
     }
 
 }*/

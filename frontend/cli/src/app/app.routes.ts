@@ -9,6 +9,7 @@ import { PartesMODetailComponent } from './parteMO/parteMO-detail.component';
 import { ResumenesComponent } from './parteMO/resumenParteMO.component';
 import { OperariosComponent } from './operario/operario.component';
 import { OperariosDetailComponent } from './operario/operario-detail.component';
+import { PartesMOComponent } from './parteMO/parteMO.component';
 export const routes: Routes = [
 
     {path: '', component: HomeComponent},
@@ -17,6 +18,7 @@ export const routes: Routes = [
     {path: 'proyectos', component: ProyectosComponent},
     {path: 'proyectos/:id', component: ProyectosDetailComponent},
     {path: 'partes/:id', component: PartesMODetailComponent},
+    {path: 'partes/:fecha/:legajoOperario', component: PartesMOComponent},
     {path: 'operarios', component: OperariosComponent},
     {path: 'operarios/:id', component: OperariosDetailComponent},
     {path: 'resumenes', component: ResumenesComponent}

@@ -1,15 +1,15 @@
 /*package unpsjb.labprog.backend.model;
 
-import java.time.LocalTime;
+import java.util.Collection;
 import java.util.Date;
-
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -27,12 +27,13 @@ public class HistoricoTurno {
     private Date fechaTurnoDesde;
 
     private Date fechaTurnoHasta;
+    
+    @ManyToMany
+    @JoinTable(
+        name = "historico_turno_turno",
+        joinColumns = @JoinColumn(name = "historico_turno_id"), 
+        inverseJoinColumns = @JoinColumn(name = "turno_id") 
+    )
+    private Collection<Turno> turnos;
 
-    @ManyToOne
-    @JoinColumn(name = "turno_id")
-    private Turno turno;
-
-    @ManyToOne
-    @JoinColumn(name = "operario_id")
-    private Operario operario;
 }*/

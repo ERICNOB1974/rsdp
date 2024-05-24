@@ -23,12 +23,24 @@ public class EstadoService {
         return repository.findById(3).orElse(null);
     }
     
+    public Estado estadoValidado(){
+        return repository.findById(4).orElse(null);
+    }
+
     public Estado estadoCorregido(){
         return repository.findById(5).orElse(null);
+    }
+
+    public Estado estadoRechazado(){
+        return repository.findById(6).orElse(null);
     }
     
     public Estado estadoGeneradoLog(){
         return repository.findById(10).orElse(null);
+    }
+
+    public Estado estadoCaducadoLog(){
+        return repository.findById(11).orElse(null);
     }
 
 }

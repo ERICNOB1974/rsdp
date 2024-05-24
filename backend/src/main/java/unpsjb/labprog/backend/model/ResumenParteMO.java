@@ -12,5 +12,6 @@ public interface ResumenParteMO {
     LocalTime getHoras();
     LocalTime getHorasPartes();
     Date getFecha();
-    
+    String getEstado();
+
 }

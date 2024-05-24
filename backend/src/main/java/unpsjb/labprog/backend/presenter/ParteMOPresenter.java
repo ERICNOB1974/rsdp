@@ -77,9 +77,44 @@ public class ParteMOPresenter{
         return Response.ok(service.informePartesPorFecha(fecha));
     }
 
-    @RequestMapping(value = {"/validar/{fecha}"}, method = RequestMethod.GET)
-    public ResponseEntity<Object> validar(@PathVariable(value = "fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha) {
+    /* @RequestMapping(value = {"/informe/{fecha}", "/informe/"}, method = RequestMethod.GET)
+    public ResponseEntity<Object> informePartesALaFecha(@PathVariable(value = "fecha", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> fecha) {
+        return Response.ok(service.informePartesPorFecha(fecha));
+    } */
+
+    @RequestMapping(value = {"/validar/{fecha}", "/validar/"}, method = RequestMethod.GET)
+    public ResponseEntity<Object> validar(@PathVariable(value = "fecha", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> fecha) {
         return Response.ok(service.validar(fecha));
+    }
+
+    @RequestMapping(value = {"/validarComoSupervisor/{fecha}/{legajoOperario}"}, method = RequestMethod.GET)
+    public ResponseEntity<Object> validarComoSupervisor(@PathVariable(value = "fecha", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha, @PathVariable(value = "legajoOperario") String legajoOperario) {
+        return Response.ok(service.validarComoSupervisor(legajoOperario, fecha),"Parte MO alterado correctamente");
+    }
+
+    @RequestMapping(value = {"/rechazarComoSupervisor/{fecha}/{legajoOperario}"}, method = RequestMethod.GET)
+    public ResponseEntity<Object> rechazarComoSupervisor(@PathVariable(value = "fecha", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha, @PathVariable(value = "legajoOperario") String legajoOperario) {
+        return Response.ok(service.rechazarComoSupervisor(legajoOperario, fecha),"Parte MO alterado correctamente");
+    }
+
+    @RequestMapping(value = {"/partesDeResumen/{fecha}/{legajoOperario}"}, method = RequestMethod.GET)
+    public ResponseEntity<Object> partesDeUnResumen(@PathVariable(value = "fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha, @PathVariable(value = "legajoOperario") String legajoOperario) {
+        return Response.ok(service.partesDeUnResumen(legajoOperario,fecha));
+    }
+
+    @RequestMapping(value = {"/parteDadoProyectoYTarea/{fecha}/{legajoOperario}/{codigoProyecto}/{codigoTarea}"}, method = RequestMethod.GET)
+    public ResponseEntity<Object> parteDadoProyectoYTarea(@PathVariable(value = "fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha, @PathVariable(value = "legajoOperario") String legajoOperario, @PathVariable(value = "codigoProyecto") String codigoProyecto, @PathVariable(value = "codigoTarea") String codigoTarea) {
+        return Response.ok(service.parteDadoProyectoYTarea(fecha,legajoOperario,codigoProyecto,codigoTarea));
+    }
+
+    @RequestMapping(value = {"/partesEstadoInvalido"}, method = RequestMethod.GET)
+    public ResponseEntity<Object> partesConEstadoInvalido() {
+        return Response.ok(service.partesConEstadoInvalido());
+    }
+
+    @RequestMapping(value = {"/partesEstadoCorregido"}, method = RequestMethod.GET)
+    public ResponseEntity<Object> partesConEstadoCorregido() {
+        return Response.ok(service.partesConEstadoCorregido());
     }
 
     @RequestMapping(method=RequestMethod.PUT)
@@ -90,7 +125,7 @@ public class ParteMOPresenter{
 
         return Response.ok(
             service.update(aParteMO), 
-            "Parte " + aParteMO.getId() + " ingresado correctamente");
+            "Parte MO alterado correctamente");
     }
 
 }

@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ModalService } from '../modal/modal.service';
 import { ResultsPage } from '../results-page';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { ParteMOService } from './parteMO.service';
-import { NgbDateStruct, NgbDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDateStruct, NgbDatepickerConfig, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -40,21 +40,24 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
           </div>
         </div>
       </form>
-    </div>
-    <div class="button-container">
-      <button class="btn btn-primary mt-3" (click)="obtenerResumenPorFecha()">Obtener Resumen</button>
+      <div class="button-container" style="display: flex; justify-content: left;">
+        <button class="btn btn-primary mt-3" (click)="obtenerResumenPorFecha()">Obtener Resumen</button>
+        <button class="btn btn-primary mt-3 " style="margin-left: 10px;"(click)="validar()">Validar</button>
+      </div>
     </div>
     <div class="table-responsive mt-4">
       <table class="table table-dark table-hover">
         <thead>
           <tr>
             <th scope="col">Fecha</th>
-            <th scope="col">Legajo</th>
             <th scope="col">Nombre</th>
+            <th scope="col">Legajo</th>
             <th scope="col">Hora ingreso</th>
             <th scope="col">Hora egreso</th>
             <th scope="col">Horas</th>
             <th scope="col">Horas partes</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Ver partes</th>
             <th></th>
           </tr>
         </thead>
@@ -67,6 +70,10 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
             <td>{{ resumen.egreso }}</td>
             <td>{{ resumen.horas }}</td>
             <td>{{ resumen.horasPartes }}</td>
+            <td>{{ resumen.estado }}</td>
+            <td>
+              <a routerLink="/partes/{{(resumen.fecha | date:'yyyy-MM-dd':'UTC')}}/{{resumen.legajo}}" class="btn btn-primary btn-sm"><i class="fa fa-eye"></i></a>
+            </td>
             <td></td>
           </tr>
         </tbody>
@@ -114,11 +121,12 @@ export class ResumenesComponent {
   currentPage: number = 1;
   fecha: NgbDateStruct | null = null;
   AMOUNT_RESUMEN = 10;
+  partesDeResumen: any[] = [];
 
   constructor(
     private parteMOService: ParteMOService,
     private modalService: ModalService,
-    private config: NgbDatepickerConfig
+    private config: NgbDatepickerConfig,
   ) {
     const currentDate = new Date();
     this.config.maxDate = {
@@ -152,6 +160,39 @@ export class ResumenesComponent {
     });
   }
 
+  validar(): void {
+    let fechaFormateada = '';
+
+    if (this.fecha) {
+      const { year, month, day } = this.fecha;
+      fechaFormateada = `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+    }
+
+    this.parteMOService.validar(fechaFormateada).subscribe((dataPackage) => {
+      const responseData = dataPackage.data;
+      if (Array.isArray(responseData)) {
+        this.resultsPage.content = responseData;
+        this.fecha = null;
+        this.obtenerResumenPorFecha();
+      }
+    });
+
+
+  }
+
+/*
+  partesDeUnResumen(fecha: string, legajo: string): void {
+    this.parteMOService.partesDeUnResumen(fecha, legajo).subscribe((dataPackage) => {
+      const responseData = dataPackage.data;
+      if (Array.isArray(responseData)) {
+        this.partesDeResumen = responseData;
+      }
+      if ((responseData as any[]).length === 0) {
+        this.modalService.error("ERROR", 'No se encontraron partes para el resumen seleccionado.');
+      }
+    });
+  }
+  */
   ngOnInit() {
     this.parteMOService.informePartesPorFecha('').subscribe((dataPackage) => {
       const responseData = dataPackage.data;

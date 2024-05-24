@@ -36,5 +36,9 @@ public class TurnoService {
         return null;
     }
 
-}
-*/
+    @Transactional
+    public Turno save(Turno e){
+        return repository.save(e);
+    }
+
+}*/

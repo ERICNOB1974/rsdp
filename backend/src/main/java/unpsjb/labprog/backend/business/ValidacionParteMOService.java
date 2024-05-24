@@ -25,20 +25,33 @@ public class ValidacionParteMOService {
         return result;
     }
 
+    public ValidacionParteMO incumpleHorario(){
+        return repository.findById(1).orElse(null);
+    }
+    
+    
+    public ValidacionParteMO superposicionHoraria(){
+        return repository.findById(2).orElse(null);
+    }
+    
+    public ValidacionParteMO huecoHorario(){
+        return repository.findById(3).orElse(null);
+    }
+    
     public ValidacionParteMO fueraDeTurno(){
         return repository.findById(4).orElse(null);
     }
 
-    public ValidacionParteMO incumpleHorario(){
-        return repository.findById(1).orElse(null);
+    public ValidacionParteMO valido(){
+        return repository.findById(5).orElse(null);
     }
 
-    public ValidacionParteMO huecoHorario(){
-        return repository.findById(3).orElse(null);
+    public ValidacionParteMO validado(){
+        return repository.findById(6).orElse(null);
     }
 
-    public ValidacionParteMO superposicionHoraria(){
-        return repository.findById(2).orElse(null);
+    public ValidacionParteMO rechazado(){
+        return repository.findById(7).orElse(null);
     }
 
     public ValidacionParteMO findById(int id){

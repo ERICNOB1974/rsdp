@@ -8,5 +8,7 @@ export interface ResumenParteMO {
     egreso:Time;
     horas:Time;
     horasPartes:Time;
+    estado:string;
+    content: ResumenParteMO[];
 
 }

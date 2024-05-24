@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,5 +29,12 @@ public class LogValidacionParteMO {
 
     @ManyToOne
     private ValidacionParteMO validacionParteMO;
+
+    private Date tiempoCreacion;
+
+    @PrePersist
+    protected void onCreate() {
+        tiempoCreacion = new Date();
+    }
 
 }

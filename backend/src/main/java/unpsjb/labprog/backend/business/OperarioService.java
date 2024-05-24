@@ -54,7 +54,7 @@ public class OperarioService {
             // Guardar el operario
             return repository.save(aOperario);
         } catch (DataIntegrityViolationException e) {
-            throw new RuntimeException("No se puede crear el operario debido a que ya existe un operario con ese legajo.");
+            throw new RuntimeException("Error");
         }
     }
 
