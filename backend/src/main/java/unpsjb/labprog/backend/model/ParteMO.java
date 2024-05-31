@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,6 +45,7 @@ public class ParteMO {
     private Estado estado;
 
     @OneToMany
+    @OrderBy("tiempoCreacion DESC")
     private Collection<LogValidacionParteMO> logsValidacion;
 
 }

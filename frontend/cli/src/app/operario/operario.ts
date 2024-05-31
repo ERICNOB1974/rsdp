@@ -1,10 +1,11 @@
-export interface Operario {
+import { HistoricoTurno } from "./historicoTurno";
 
+export interface Operario {
     id: number;
     legajo: string;
     nombre: string;
     categoria: string;
-    turno: string;
     fechaTurnoDesde: Date;
-
-}
+    historicoTurnos: HistoricoTurno[];
+  }
+  

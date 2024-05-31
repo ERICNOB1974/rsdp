@@ -53,7 +53,7 @@ public class ValidacionParteMOService {
     public ValidacionParteMO rechazado(){
         return repository.findById(7).orElse(null);
     }
-
+    
     public ValidacionParteMO findById(int id){
         return repository.findById(id).orElse(null);
     }

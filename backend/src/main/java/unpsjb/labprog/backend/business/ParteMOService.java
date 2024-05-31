@@ -7,8 +7,11 @@ import org.springframework.transaction.annotation.Transactional;
 import unpsjb.labprog.backend.model.ParteMO;
 import unpsjb.labprog.backend.model.ResumenParteMO;
 import unpsjb.labprog.backend.model.Tarea;
+import unpsjb.labprog.backend.model.TipoTurno;
 import unpsjb.labprog.backend.model.ValidacionParteMO;
+import unpsjb.labprog.backend.business.validar.ValidadorParteMO;
 import unpsjb.labprog.backend.model.Estado;
+import unpsjb.labprog.backend.model.HistoricoTurno;
 import unpsjb.labprog.backend.model.LogValidacionParteMO;
 import unpsjb.labprog.backend.model.Operario;
 
@@ -17,7 +20,10 @@ import org.springframework.data.domain.PageRequest;
 import java.util.List;
 import java.util.Optional;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -41,24 +47,36 @@ public class ParteMOService {
     TareaService tareaService;
 
     @Autowired
+    TipoTurnoService tipoTurnoService;
+
+    @Autowired
     ValidacionParteMOService validacionParteMOService;
 
     @Autowired
     LogValidacionParteMOService logValidacionParteMOService;
+
+    @Autowired
+    private List<ValidadorParteMO> validadores;
 
     public ParteMO findById(int id) {
         return repository.findById(id).orElse(null);
     }
 
     public List<ParteMO> findAll() {
-        List<ParteMO> result = new ArrayList<>();
-        repository.findAll().forEach(e -> result.add(e));
-        return result;
+        return repository.findAll();
     }
 
-    @Transactional
-    public void delete(int id) {
-        repository.deleteById(id);
+    public Object anularParte(int id) {
+        ParteMO parteMO = repository.findById(id).orElse(null);
+        List<ParteMO> partes = partesDeUnResumen(parteMO.getOperario(), parteMO.getFecha());
+        parteMO.setEstado(estadoService.estadoAnulado());
+        for (ParteMO parte : partes) {
+            if (parte.getEstado() != estadoService.estadoAnulado()) {
+                parte.setEstado(estadoService.estadoCorregido());
+                repository.save(parte);
+            }
+        }
+        return repository.save(parteMO);
     }
 
     public Page<ParteMO> findByPage(int page, int size) {
@@ -69,61 +87,34 @@ public class ParteMOService {
         return repository.informePartesPorFecha(fecha);
     }
 
-    /* public Collection<ResumenParteMO> informePartesALaFecha(Optional<Date> fecha) {
-        return repository.informePartesALaFecha(fecha);
-    } */
-
     public Object validar(Optional<Date> fecha) {
-        Collection<ResumenParteMO> resumen = repository.informePartesALaFecha(fecha);
-        for (ResumenParteMO resPMO : resumen) {
-            Operario operario = operarioService.findByLegajo(resPMO.getLegajo());
-            List<ParteMO> partes = this.partesDeUnResumen(operario, resPMO.getFecha());
-            this.invalidarLogs(partes);
-            for (ParteMO parteMO : partes) {
-                boolean esValido = true;
-                //parteMO.setEstado(estadoService.estadoValido());    //Seteo por defecto todos en valido, despues si son invalidos se cambia.
-                if (resPMO.getHoras().isBefore(resPMO.getHorasPartes())) {
-                    invalidarParte(parteMO);
-                    ValidacionParteMO validacion = validacionParteMOService.superposicionHoraria();
-                    agregarLog(resPMO.getFecha(), estadoService.estadoGeneradoLog(), parteMO, validacion);
-                    esValido = false;
-                }
-                if (resPMO.getIngreso().isBefore(operario.getHoraDesde())
-                || (resPMO.getEgreso().isAfter(operario.getHoraHasta()))) {
-                    invalidarParte(parteMO);
+        for (ResumenParteMO resPMO : repository.informePartesALaFecha(fecha)) {
+            this.invalidarLogs(this.partesDeUnResumen(operarioService.findByLegajo(resPMO.getLegajo()), resPMO.getFecha()));
+            for (ParteMO parteMO : this.partesDeUnResumen(operarioService.findByLegajo(resPMO.getLegajo()), resPMO.getFecha())) {
+                if (tipoTurnoService.obtenerHorario(resPMO.getLegajo(), resPMO.getFecha()) == null){
+                    this.invalidarParte(parteMO);
                     ValidacionParteMO validacion = validacionParteMOService.fueraDeTurno();
-                    agregarLog(resPMO.getFecha(), estadoService.estadoGeneradoLog(), parteMO, validacion);
-                    esValido = false;
-                } else {
-                    if (resPMO.getIngreso().isAfter(operario.getHoraDesde())
-                    || (resPMO.getEgreso().isBefore(operario.getHoraHasta()))) {
-                        invalidarParte(parteMO);
-                        ValidacionParteMO validacion = validacionParteMOService.incumpleHorario();
-                        agregarLog(resPMO.getFecha(), estadoService.estadoGeneradoLog(), parteMO, validacion);
-                        esValido = false;
-                    }
+                    this.agregarLog(resPMO.getFecha(), estadoService.estadoGeneradoLog(), parteMO, validacion);
+                    continue;
                 }
-                if (resPMO.getHoras().isAfter(resPMO.getHorasPartes())) {
-                    invalidarParte(parteMO);
-                    ValidacionParteMO validacion = validacionParteMOService.huecoHorario();
-                    agregarLog(resPMO.getFecha(), estadoService.estadoGeneradoLog(), parteMO, validacion);
-                    esValido = false;
+                parteMO.setEstado(estadoService.estadoValido()); //Todos empiezan en valido
+                for (ValidadorParteMO validador : validadores) {
+                    validador.validar(resPMO, parteMO);
                 }
-                if (esValido){
-                    parteMO.setEstado(estadoService.estadoValido()); 
-                    ValidacionParteMO validacion =validacionParteMOService.valido();
+                if (parteMO.getEstado().equals(estadoService.estadoValido())) {
+                    ValidacionParteMO validacion = validacionParteMOService.valido();
                     agregarLog(resPMO.getFecha(), estadoService.estadoGeneradoLog(), parteMO, validacion);
                 }
             }
         }
-        return resumen;
+        return repository.informePartesALaFecha(fecha);
     }
 
     public Object validarComoSupervisor(String legajoOperario, Date fecha) {
         List<ParteMO> partes = this.partesDeUnResumen(operarioService.findByLegajo(Integer.parseInt(legajoOperario)), fecha);
         this.invalidarLogs(partes);
         for (ParteMO parteMO : partes) {
-            parteMO.setEstado(estadoService.estadoValidado()); 
+            parteMO.setEstado(estadoService.estadoValidado());     
             ValidacionParteMO validacion = validacionParteMOService.validado();  
             this.agregarLog(parteMO.getFecha(),estadoService.estadoGeneradoLog(), parteMO, validacion);
             repository.save(parteMO); 
@@ -154,7 +145,7 @@ public class ParteMOService {
         }
     }
 
-    private void invalidarParte(ParteMO parteMO) {
+    public void invalidarParte(ParteMO parteMO) {
 
         parteMO.setEstado(estadoService.estadoInvalido());
         repository.save(parteMO);
@@ -233,7 +224,6 @@ public class ParteMOService {
 
         parteMO.setEstado(estadoService.estadoCorregido());
         List<ParteMO> partes = partesDeUnResumen(parteMO.getOperario(), parteMO.getFecha());
-        this.invalidarLogs(partes);
         for (ParteMO parte : partes) {
             if (parte.getEstado() != estadoService.estadoCorregido()) {
                 parte.setEstado(estadoService.estadoCorregido());
@@ -243,6 +233,27 @@ public class ParteMOService {
 
         return repository.save(parteMO);
 
+    }
+
+    public String obtenerEstadoTrabajo(Operario operario, Date fecha) {
+
+        // Convertir Date a LocalDate para utilizar ChronoUnit.DAYS.between
+        LocalDate fechaConsulta = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        
+        TipoTurno tipoTurno = tipoTurnoService.obtenerTurno(operario, fecha);
+        
+        // Convertir la fecha de inicio del turno a LocalDate
+        LocalDate fechaInicioTurno = tipoTurno.getFechaArranque().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        
+        long diasTrabajados = ChronoUnit.DAYS.between(fechaInicioTurno, fechaConsulta);
+        int ciclo = tipoTurno.getDiasTrabajo() + tipoTurno.getDiasFranco();
+        int diaEnElCiclo = (int) (diasTrabajados % ciclo);
+
+        if (diaEnElCiclo < tipoTurno.getDiasTrabajo()) {
+            return "Trabajando";
+        } else {
+            return "Franco";
+        }
     }
 
 }

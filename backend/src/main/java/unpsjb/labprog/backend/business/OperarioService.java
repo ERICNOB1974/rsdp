@@ -40,7 +40,7 @@ public class OperarioService {
 
     public Operario create(Operario aOperario) {
         try {
-            String turno = aOperario.getTurno();
+            /*String turno = aOperario.getTurno();
             String[] turnoParts = turno.split("a");
 
             // Parsear la hora desde y hasta el turno
@@ -50,7 +50,7 @@ public class OperarioService {
             // Establecer las horas en el objeto Operario
             aOperario.setHoraDesde(horaDesde);
             aOperario.setHoraHasta(horaHasta);
-
+*/
             // Guardar el operario
             return repository.save(aOperario);
         } catch (DataIntegrityViolationException e) {

@@ -16,6 +16,7 @@ import { Proyecto } from '../proyecto/proyecto';
 import { ProyectoService } from '../proyecto/proyecto.service';
 import { TareaService } from '../tarea/tarea.service';
 import { NgbDateStruct, NgbDropdownModule, NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
+import { SharedService } from '../shared.service';
 
 @Component({
   selector: 'app-parte-detail',
@@ -54,18 +55,7 @@ import { NgbDateStruct, NgbDropdownModule, NgbTimepickerModule } from '@ng-boots
               <div class="row">
                 <div class="col-md-6">
                   <label for="operario">Operario:</label>
-                  <input 
-                    [(ngModel)]="parteMO.operario"
-                    name="operario"
-                    placeholder="Operario"
-                    class="form-control"
-                    required
-                    [ngbTypeahead]="searchOperario"
-                    [editable]=false
-                    [resultFormatter]="resultFormatNombre"
-                    [inputFormatter]="inputFormatNombre"
-                    (input)="borrarCamposAutocompletados($event)"
-                  >
+                  <input [(ngModel)]="parteMO.operario" name="operario" placeholder="Operario" class="form-control" required [ngbTypeahead]="searchOperario" [editable]=false [resultFormatter]="resultFormatNombre" [inputFormatter]="inputFormatNombre" (ngModelChange)="asignarTurnoOperario(parteMO.operario)" />
                 </div>
                 <div class="col-md-6">
                   <label for="legajoOperario">Legajo:</label>
@@ -80,14 +70,7 @@ import { NgbDateStruct, NgbDropdownModule, NgbTimepickerModule } from '@ng-boots
                 </div>
                 <div class="col-md-6">
                   <label for="turnoOperario">Turno:</label>
-                  <input 
-                    [(ngModel)]="parteMO.operario.turno"
-                    name="turnoOperario"
-                    placeholder="Turno"
-                    class="form-control"
-                    readonly
-                    [style.opacity]="0.6"
-                  >
+                  <input [(ngModel)]="turnoOperario" name="turnoOperario" placeholder="Turno" class="form-control" readonly [style.opacity]="0.6" />
                 </div>
                 <div class="col-md-6">
                   <label for="proyecto">Proyecto:</label>
@@ -106,9 +89,9 @@ import { NgbDateStruct, NgbDropdownModule, NgbTimepickerModule } from '@ng-boots
                 <div class="col-md-6">
                   <label>Tarea:</label>
                   <div class="custom-select-wrapper">
-                  <select [(ngModel)]="tareaSeleccionada" name="tarea" class="form-control custom-select" required [disabled]="!filtrarTareasPorProyecto().length" [compareWith]="compararTareas">
-                    <option *ngFor="let tarea of filtrarTareasPorProyecto()" [ngValue]="{ id: tarea.id, codigo: tarea.codigo, descripcion: tarea.descripcion }">{{ tarea.descripcion }}</option>
-                  </select>
+                    <select [(ngModel)]="tareaSeleccionada" name="tarea" class="form-control custom-select" required [disabled]="!filtrarTareasPorProyecto().length" [compareWith]="compararTareas">
+                      <option *ngFor="let tarea of filtrarTareasPorProyecto()" [ngValue]="{ id: tarea.id, codigo: tarea.codigo, descripcion: tarea.descripcion }">{{ tarea.descripcion }}</option>
+                    </select>
                     <div class="arrow"></div>
                   </div>
                 </div>
@@ -241,8 +224,9 @@ export class PartesMODetailComponent {
   horaDesdeMayorQueHasta: boolean = false;
   guardadoExitoso: boolean = false;
   msjError = "";
-  tareaSeleccionada: { id: number, codigo: string,descripcion: string } = { id: -1, codigo: '',descripcion: '' };
+  tareaSeleccionada: { id: number, codigo: string, descripcion: string } = { id: -1, codigo: '', descripcion: '' };
   tareasProyecto: Tarea[] = [];
+  turnoOperario!: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -254,15 +238,16 @@ export class PartesMODetailComponent {
     private location: Location,
     private calendar: NgbCalendar,
     private modalService: ModalService,
-    private config: NgbDatepickerConfig
+    private config: NgbDatepickerConfig,
+    private sharedService: SharedService
   ) {
     const currentDate = new Date();
     this.config.maxDate = {
       year: currentDate.getFullYear(),
-      month: currentDate.getMonth() + 1,  
+      month: currentDate.getMonth() + 1,
       day: currentDate.getDate()
     }
-   }
+  }
 
   ngOnInit() {
     this.get();
@@ -316,10 +301,14 @@ export class PartesMODetailComponent {
       !(this.parteMO.horaHasta instanceof Date && this.parteMO.horaHasta.getTime() === new Date().getTime()) &&   //Pŕegunta si horadesde y horahasta son de tipo date vacio.
       !!this.parteMO.operario.nombre &&
       !!this.parteMO.operario.legajo &&
-      !!this.parteMO.operario.turno &&
+      !!this.parteMO.operario.historicoTurnos &&
+      !!this.parteMO.operario.historicoTurnos[0] &&
+      !!this.parteMO.operario.historicoTurnos[0].tipoTurno &&
+      !!this.parteMO.operario.historicoTurnos[0].tipoTurno.nombre &&
       !!this.parteMO.proyecto &&
       !!this.parteMO.proyecto.descripcion &&
       this.horas !== '' &&
+      this.tareaSeleccionada.id !== -1 &&
       this.tareaSeleccionada.descripcion !== '' &&
       this.tareaSeleccionada.codigo !== '';
   }
@@ -333,14 +322,22 @@ export class PartesMODetailComponent {
         tarea: <Tarea>{}
       }
       this.fecha = this.calendar.getToday();
+
+      /* this.sharedService.currentData.subscribe(data => {
+        if (data) {
+          this.parteMO.operario = data.operario;
+          this.fecha = data.fecha;
+        }
+      }); */
     } else {
       this.parteMOService.get(parseInt(id!))
         .subscribe((dataPackage) => {
           this.parteMO = <ParteMO>dataPackage.data;
           const fechaAux = new Date(this.parteMO.fecha);
-        fechaAux.setDate(fechaAux.getDate() + 1); // Sumar un día
-        this.fecha = { year: fechaAux.getFullYear(), month: fechaAux.getMonth() + 1, day: fechaAux.getDate() };
+          fechaAux.setDate(fechaAux.getDate() + 1);
+          this.fecha = { year: fechaAux.getFullYear(), month: fechaAux.getMonth() + 1, day: fechaAux.getDate() };
           this.calcularHoras();
+          this.asignarTurnoOperario(this.parteMO.operario);
           if (this.parteMO.tarea && this.parteMO.tarea.id) {
             this.tareaSeleccionada = {
               id: this.parteMO.tarea.id,
@@ -380,7 +377,7 @@ export class PartesMODetailComponent {
 
     this.parteMO.horas = parseFloat(totalHoras);
 
-    this.parteMO.tarea = { id: this.tareaSeleccionada.id, codigo: this.tareaSeleccionada.codigo,descripcion: this.tareaSeleccionada.descripcion };
+    this.parteMO.tarea = { id: this.tareaSeleccionada.id, codigo: this.tareaSeleccionada.codigo, descripcion: this.tareaSeleccionada.descripcion };
 
     this.parteMOService.save(this.parteMO).subscribe(dataPackage => {
       if (dataPackage.status === 200) {
@@ -389,7 +386,7 @@ export class PartesMODetailComponent {
         this.parteMO.horaHasta = new Date();
         this.horas = '';
         this.parteMO.id = -1;
-        this.tareaSeleccionada = {id: -1, descripcion: '', codigo: ''};
+        this.tareaSeleccionada = { id: -1, descripcion: '', codigo: '' };
         this.guardadoExitoso = true;
 
         const id = this.route.snapshot.paramMap.get('id');
@@ -409,6 +406,17 @@ export class PartesMODetailComponent {
 
 
     });
+  }
+
+  asignarTurnoOperario(operario: Operario) {
+    if (operario && operario.historicoTurnos && operario.historicoTurnos.length > 0) {
+      if (operario.historicoTurnos[0].tipoTurno != null){
+        this.turnoOperario = operario.historicoTurnos[0].tipoTurno.nombre;
+      }  
+    
+    } else {
+      this.turnoOperario = '';
+    }
   }
 
   searchOperario = (text$: Observable<string>): Observable<any[]> =>
@@ -508,7 +516,9 @@ export class PartesMODetailComponent {
   borrarCamposAutocompletados(event: any) {
     if (event && event.target && 'value' in event.target) {
       this.parteMO.operario.legajo = '';
-      this.parteMO.operario.turno = '';
+      if (this.parteMO.operario.historicoTurnos[0].tipoTurno != null){
+        this.parteMO.operario.historicoTurnos[0].tipoTurno.nombre = '';
+      }
     }
   }
 

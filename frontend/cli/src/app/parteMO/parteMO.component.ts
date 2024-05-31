@@ -1,17 +1,18 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ModalService } from '../modal/modal.service';
 import { ResultsPage } from '../results-page';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { ParteMOService } from './parteMO.service';
 import { LogValidacionParteMO } from './logValidacionParteMO';
 import { Location } from '@angular/common';
+import { SharedService } from '../shared.service';
 
 @Component({
   selector: 'app-parte',
   standalone: true,
-  imports: [CommonModule,RouterModule, PaginationComponent],
+  imports: [CommonModule, RouterModule, PaginationComponent],
   template: `
     <div class="container mt-4">
         <h2 class="text-light mb-4">Partes</h2>
@@ -32,17 +33,18 @@ import { Location } from '@angular/common';
                 </thead>
                 <tbody>
                     <tr *ngFor="let parteMO of resultsPage.content; index as i">
-                    <td>{{AMOUNT_PARTES * (this.currentPage - 1) + (i + 1)}}</td>
-                    <td>{{(parteMO.fecha | date:'yyyy-MM-dd':'UTC')}}</td>
-                    <td>{{parteMO.operario.nombre}}</td>
-                    <td>{{parteMO.horaDesde}}</td>
-                    <td>{{parteMO.horaHasta}}</td>
-                    <td>{{parteMO.proyecto.descripcion}}</td>
-                    <td>{{parteMO.tarea.descripcion}}</td>
-                    <td>{{parteMO.estado.nombre}}</td>
-                    <td>
-                        <a routerLink="/partes/{{parteMO.id}}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
-                    </td>
+                        <td>{{AMOUNT_PARTES * (this.currentPage - 1) + (i + 1)}}</td>
+                        <td>{{parteMO.fecha | date:'yyyy-MM-dd':'UTC'}}</td>
+                        <td>{{parteMO.operario.nombre}}</td>
+                        <td>{{parteMO.horaDesde}}</td>
+                        <td>{{parteMO.horaHasta}}</td>
+                        <td>{{parteMO.proyecto.descripcion}}</td>
+                        <td>{{parteMO.tarea.descripcion}}</td>
+                        <td>{{parteMO.estado.nombre}}</td>
+                        <td>
+                            <a routerLink="/partes/{{parteMO.id}}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
+                            <button *ngIf="parteMO.estado.nombre !== 'anulado'" (click)="anularParte(parteMO.id)" class="btn btn-danger btn-sm">Anular</button>
+                        </td>
                     </tr>
                 </tbody>
               </table>
@@ -56,6 +58,12 @@ import { Location } from '@angular/common';
                 <button class="btn btn-primary mt-3" (click)="validarComoSupervisor()">Validar forzado</button>
                 <button class="btn btn-primary mt-3" (click)="rechazarComoSupervisor()" style="margin-left: 10px;">Rechazar</button>
               </div>
+              <div class="button-container" style="display: flex; justify-content: right;">
+                <button class="btn btn-success btn-sm" (click)="irACrearParte()">
+                    Añadir Parte
+                </button>
+              </div>
+
         </div>
         <h3 class="text-light mb-4 mt-4">Logs de Validación</h3>
       <div class="table-responsive">
@@ -106,7 +114,7 @@ import { Location } from '@angular/common';
     background-color: #c82333;
     border-color: #bd2130;
   }
-`]
+  `]
 })
 export class PartesMOComponent {
   resultsPage: ResultsPage = <ResultsPage>{};
@@ -116,16 +124,28 @@ export class PartesMOComponent {
   logsValidacion: LogValidacionParteMO[] = [];
   validacionPorSupervisorExitosa: boolean = false;
   rechazarComoSupervisorExitoso: boolean = false;
+  fecha: string = '';
+  legajoOperario : string = '';
 
   constructor(
     private parteMOService: ParteMOService,
     private modalService: ModalService,
     private location: Location,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router,
+    private sharedService: SharedService  
   ){}
 
   goBack() {
     this.location.back();
+  }
+
+  irACrearParte(): void {
+    const fecha = this.route.snapshot.paramMap.get('fecha');
+    const legajoOperario = this.route.snapshot.paramMap.get('legajoOperario');
+    if (fecha && legajoOperario) {
+      this.router.navigate([`partes/new`]);
+    }
   }
 
   getPartes(): void {
@@ -133,6 +153,8 @@ export class PartesMOComponent {
     const legajoOperario = this.route.snapshot.paramMap.get('legajoOperario');
 
     if (fecha && legajoOperario) {
+      this.fecha = fecha;
+      this.legajoOperario = legajoOperario;
       this.parteMOService.partesDeUnResumen(fecha, legajoOperario).subscribe((dataPackage) => {
         const responseData = dataPackage.data;
         if (Array.isArray(responseData)) {
@@ -142,15 +164,18 @@ export class PartesMOComponent {
             this.logsValidacion = this.resultsPage.content[0].logsValidacion;
           }
         }
+        this.sharedService.changeData({
+          fecha: this.fecha,
+          operario: this.resultsPage.content[0].operario
+        }); 
         if ((responseData as any[]).length === 0) {
-          this.modalService.error("ERROR", 'No se encontraron partes para el resumen (Raro).');
+          this.modalService.error("Atención", 'No hay más partes para el resumen.');
         }
       });
     }
   }
 
   validarComoSupervisor(): void {
-
     const fecha = this.route.snapshot.paramMap.get('fecha');
     const legajoOperario = this.route.snapshot.paramMap.get('legajoOperario');
     if (fecha && legajoOperario){
@@ -167,12 +192,9 @@ export class PartesMOComponent {
         }, 3000);
       });
     }
-
   }
 
   rechazarComoSupervisor(): void {
-    let fechaFormateada = '';
-
     const fecha = this.route.snapshot.paramMap.get('fecha');
     const legajoOperario = this.route.snapshot.paramMap.get('legajoOperario');
     if (fecha && legajoOperario){
@@ -189,8 +211,17 @@ export class PartesMOComponent {
         }, 3000);
       });
     }
-
   }
+
+  anularParte(id: number): void {
+      this.parteMOService.anularParte(id).subscribe((dataPackage) => {
+        if (dataPackage.status !== 200) {
+          this.modalService.error("Error", "El parte no puede ser anulado").then();
+        } else {
+          this.getPartes();
+        }
+      });
+  };
 
   ngOnInit(){
     this.getPartes();
@@ -200,5 +231,4 @@ export class PartesMOComponent {
     this.currentPage = page;
     this.getPartes();
   }
-
 }

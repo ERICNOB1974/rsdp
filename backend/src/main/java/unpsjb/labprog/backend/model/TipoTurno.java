@@ -1,16 +1,14 @@
 package unpsjb.labprog.backend.model;
 
-import java.util.Collection;
+import java.time.LocalTime;
 import java.util.Date;
+import java.util.List;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,17 +17,24 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class HistoricoTurno {
+public class TipoTurno {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-
-    private Date fechaTurnoDesde;
-
-    private Date fechaTurnoHasta;
     
-    @ManyToOne
-    private TipoTurno tipoTurno;
+    private String tipo;
+
+    private String nombre;
+
+    private int diasTrabajo;
+
+    private int diasFranco;
+
+    private Date fechaArranque;
+    
+    @OrderBy("orden ASC")
+    @OneToMany
+    private List<Horario> horarios;
 
 }

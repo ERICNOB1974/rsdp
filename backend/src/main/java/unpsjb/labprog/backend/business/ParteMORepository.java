@@ -5,6 +5,7 @@ import unpsjb.labprog.backend.model.ParteMO;
 import unpsjb.labprog.backend.model.Proyecto;
 import unpsjb.labprog.backend.model.ResumenParteMO;
 import unpsjb.labprog.backend.model.Tarea;
+import unpsjb.labprog.backend.model.TipoTurno;
 
 import java.util.Date;
 import java.util.List;
@@ -27,7 +28,7 @@ public interface ParteMORepository extends CrudRepository<ParteMO, Integer>,Pagi
     "CAST(SUM(pmo.horaHasta - pmo.horaDesde) as time) as horasPartes," +  
     "ANY_VALUE(pmo.estado.nombre) as estado " +
     "FROM ParteMO pmo " +
-    "WHERE pmo.fecha = COALESCE(:fecha,pmo.fecha) " +
+    "WHERE pmo.fecha = COALESCE(:fecha,pmo.fecha) AND (pmo.estado.nombre <> 'anulado') " +
     "GROUP BY pmo.operario.legajo, pmo.operario.nombre, pmo.fecha " +
     "ORDER BY pmo.fecha DESC")
     Collection<ResumenParteMO> informePartesPorFecha(@Param("fecha") Optional<Date> fecha);
@@ -50,7 +51,7 @@ public interface ParteMORepository extends CrudRepository<ParteMO, Integer>,Pagi
     @Query(value =
     "SELECT pmo "  +
     "FROM ParteMO pmo " + 
-    "WHERE (pmo.operario = :operario) AND (pmo.fecha = :fecha) " +
+    "WHERE (pmo.operario = :operario) AND (pmo.fecha = :fecha) AND (pmo.estado.nombre <> 'anulado')" +
     "ORDER BY pmo.horaDesde ASC")
     List<ParteMO> partesDeUnResumen(@Param("operario") Operario operario, @Param("fecha") Date fecha);
 
@@ -71,5 +72,11 @@ public interface ParteMORepository extends CrudRepository<ParteMO, Integer>,Pagi
     "FROM ParteMO pmo " +
     "WHERE (pmo.operario = :operario) AND (pmo.fecha = :fecha) AND (pmo.proyecto = :proyecto) AND (pmo.tarea = :tarea)")
     ParteMO parteDadoProyectoYTarea(@Param("fecha") Date fecha, @Param("operario") Operario operario, @Param("proyecto") Proyecto proyecto, @Param("tarea") Tarea tarea);
+
+    @Query(value = 
+    "SELECT e " +
+    "FROM ParteMO e " +
+    "ORDER BY id ASC")
+    List<ParteMO> findAll();
 
 }

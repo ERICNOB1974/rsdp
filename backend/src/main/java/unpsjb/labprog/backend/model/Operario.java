@@ -65,17 +65,9 @@ public class Operario {
     
     private String nombre;
 
-    private String turno;
-
     private String categoria;
-    
-    private Date fechaTurnoDesde;
 
-    private Date fechaTurnoHasta;
-
-    private LocalTime horaDesde;
-
-    private LocalTime horaHasta;
-
+    @OneToMany
+    private Collection<HistoricoTurno> historicoTurnos;
 
 }

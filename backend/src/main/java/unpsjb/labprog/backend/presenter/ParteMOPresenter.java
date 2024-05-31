@@ -55,13 +55,13 @@ public class ParteMOPresenter{
             }
     }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<Object> delete(@PathVariable("id") int id){
+    @RequestMapping(value = "/anularParte/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Object> anularParte(@PathVariable("id") int id){
         try {
-            service.delete(id);
-            return Response.ok("Parte " + id + " borrado con exito.");
+            service.anularParte(id);
+            return Response.ok("Parte " + id + " anulado con exito.");
         } catch (DataIntegrityViolationException e){
-            return Response.error("Parte " + id + " no puede ser borrado",e.getMessage());
+            return Response.error("Parte " + id + " no puede ser anulado",e.getMessage());
         }
     }
 
@@ -85,7 +85,7 @@ public class ParteMOPresenter{
     @RequestMapping(value = {"/validar/{fecha}", "/validar/"}, method = RequestMethod.GET)
     public ResponseEntity<Object> validar(@PathVariable(value = "fecha", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> fecha) {
         return Response.ok(service.validar(fecha));
-    }
+    } 
 
     @RequestMapping(value = {"/validarComoSupervisor/{fecha}/{legajoOperario}"}, method = RequestMethod.GET)
     public ResponseEntity<Object> validarComoSupervisor(@PathVariable(value = "fecha", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha, @PathVariable(value = "legajoOperario") String legajoOperario) {

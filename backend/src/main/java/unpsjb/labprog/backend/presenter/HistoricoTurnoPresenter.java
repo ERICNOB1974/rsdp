@@ -1,4 +1,4 @@
-/*package unpsjb.labprog.backend.presenter;
+package unpsjb.labprog.backend.presenter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +10,6 @@ import unpsjb.labprog.backend.business.HistoricoTurnoService;
 import unpsjb.labprog.backend.model.HistoricoTurno;
 
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.dao.DataIntegrityViolationException;
 
 @RestController
 @RequestMapping("historicoTurnos")
@@ -26,4 +25,4 @@ public class HistoricoTurnoPresenter{
                 "Historico " + aHistoricoTurno.getId() + " ingresado correctamente");
     }
 
-}*/
+}

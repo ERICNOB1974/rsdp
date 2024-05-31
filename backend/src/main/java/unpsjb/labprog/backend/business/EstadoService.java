@@ -34,6 +34,10 @@ public class EstadoService {
     public Estado estadoRechazado(){
         return repository.findById(6).orElse(null);
     }
+
+    public Estado estadoAnulado(){
+        return repository.findById(7).orElse(null);
+    }
     
     public Estado estadoGeneradoLog(){
         return repository.findById(10).orElse(null);

@@ -115,7 +115,7 @@ When('se solicitan guardar una nueva tarea al proyecto',
 
 
 
-Given('que se ingresa el operario con legajo {int}, con nombre {string} cuya categoría es {string} y pertenece al turno {string} a partir de {string}',
+/* Given('que se ingresa el operario con legajo {int}, con nombre {string} cuya categoría es {string} y pertenece al turno {string} a partir de {string}',
     function (legajo, nombre, categoria, turno, fechaTurnoDesde) {
         this.operario = {
             legajo: legajo,
@@ -130,8 +130,8 @@ When('presiono el botón de guardar de operarios',
     function () {
         this.response = httpRequest('POST', 'http://backend:8080/operarios', JSON.stringify(this.operario));
     });
+ */
 
-/*
 Given('que se ingresa el operario con legajo {int}, con nombre {string} cuya categoría es {string} y pertenece al turno {string} a partir de {string}',
     function (legajo, nombre, categoria, turno, fechaDesdeTurno) {
         // Parsear el turno y formatear las horas
@@ -139,29 +139,25 @@ Given('que se ingresa el operario con legajo {int}, con nombre {string} cuya cat
         const horaHasta = turno.substring(turno.indexOf('a') + 1);
         const formatoHora = (hora) => hora.padStart(2, '0') + ":00:00";
 
-        const responseExistingTurno = httpRequest('GET', `http://backend:8080/turnos/${formatoHora(horaDesde)}/${formatoHora(horaHasta)}`);
-        const existingTurno = responseExistingTurno.data;
-
-        if (existingTurno != "Turno no encontrado") {
-            this.responseTurnos = existingTurno;
-        } else {
-            // Crear un nuevo turno si no existe
-            this.turnosObj = {
-                nombre: turno,
-                horaDesde: formatoHora(horaDesde),
-                horaHasta: formatoHora(horaHasta)
-            };
-            this.responseTurnos = httpRequest('POST', 'http://backend:8080/turnos', JSON.stringify(this.turnosObj)).data;
+        if (legajo === 1000 || legajo === 2000 || legajo === 3000){
+            this.tipoTurno = httpRequest('GET', `http://backend:8080/tipoTurnos/id/1`).data;
+        }
+        if (legajo === 4000 || legajo === 5000 || legajo === 6000){
+            this.tipoTurno = httpRequest('GET', `http://backend:8080/tipoTurnos/id/2`).data;
+        } 
+        if (legajo === 7000){
+            this.tipoTurno = httpRequest('GET', `http://backend:8080/tipoTurnos/id/3`).data;
+        }
+        if (legajo === 8000){
+            this.tipoTurno = httpRequest('GET', `http://backend:8080/tipoTurnos/id/4`).data;
         }
 
         this.historicoTurnosObj = {
             fechaTurnoDesde: fechaDesdeTurno,
-            turnos: [this.responseTurnos]
+            tipoTurno: this.tipoTurno
         };
 
         this.responseHistoricoTurnos = httpRequest('POST', 'http://backend:8080/historicoTurnos', JSON.stringify(this.historicoTurnosObj)).data;
-        
-        console.log(this.responseHistoricoTurnos);
 
         this.operario = {
             legajo: legajo,
@@ -175,11 +171,11 @@ When('presiono el botón de guardar de operarios', function () {
     this.responseOperario = httpRequest('POST', 'http://backend:8080/operarios', JSON.stringify(this.operario));
 });
 
-Then('se obtiene la siguiente {string}', 
+Then('se espera la siguiente {string} de operarios', 
 function (respuesta) {
-    assert.equal(this.response.message, respuesta);
-});
-*/
+    assert.equal(this.responseOperario.message, respuesta);
+}); 
+
 
 
 
@@ -292,6 +288,7 @@ Given('el siguiente listado de partes de mano de obra en estado a validar',
             delete pmo.operario.fechaTurnoHasta;
             delete pmo.operario.horaDesde;
             delete pmo.operario.horaHasta;
+            delete pmo.operario.historicoTurnos;
             delete pmo.proyecto.id;
             delete pmo.proyecto.empresa;
             delete pmo.proyecto.tareas;
@@ -335,6 +332,7 @@ Then('se obtiene la siguiente respuesta',
             delete pmo.operario.fechaTurnoHasta;
             delete pmo.operario.horaDesde;
             delete pmo.operario.horaHasta;
+            delete pmo.operario.historicoTurnos;
             delete pmo.proyecto.id;
             delete pmo.proyecto.empresa;
             delete pmo.proyecto.tareas;
@@ -479,6 +477,7 @@ function (partesString) {
             delete pmo.operario.fechaTurnoHasta;
             delete pmo.operario.horaDesde;
             delete pmo.operario.horaHasta;
+            delete pmo.operario.historicoTurnos;
             delete pmo.proyecto.id;
             delete pmo.proyecto.empresa;
             delete pmo.proyecto.tareas;
