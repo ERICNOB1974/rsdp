@@ -31,7 +31,7 @@ import { OperarioService } from './operario.service';
                     <td>{{operario.legajo}}</td>
                     <td>{{operario.nombre}}</td>
                     <td>{{operario.categoria}}</td>
-                    <td>{{operario.turno}}</td>
+                    <td>{{turnoVigente(operario)}}</td>
                     <td>
                         <a routerLink="/operarios/{{operario.id}}" class="btn btn-primary btn-sm"><i class="fa fa-pencil"></i></a>
                         <a (click)="remove(operario.id)" routerLink="/operario" class="btn btn-danger btn-sm"><i class="fa fa-remove"></i></a>
@@ -78,7 +78,7 @@ export class OperariosComponent {
   resultsPage: ResultsPage = <ResultsPage>{};
   pages!: number[];
   currentPage: number = 1;
-  AMOUNT_OPERARIOS = 4;
+  AMOUNT_OPERARIOS = 6;
 
   constructor(
     private operarioService: OperarioService,
@@ -94,6 +94,24 @@ export class OperariosComponent {
           this.pages = Array.from(Array(this.resultsPage.totalPages).keys())
         }
       );
+  }
+
+  turnoVigente(operario: any): String {
+    const historicos = operario.historicoTurnos;
+  
+    const fechaHoy = new Date().toISOString().split('T')[0];
+  
+    for (let ht of historicos) {
+      const fechaDesde = ht.fechaTurnoDesde.split('T')[0];
+      const fechaHasta = ht.fechaTurnoHasta ? ht.fechaTurnoHasta.split('T')[0] : null;
+  
+  
+      if (!fechaHasta || (fechaHoy >= fechaDesde && fechaHoy <= fechaHasta)) {
+        return ht.tipoTurno.nombre;
+      }
+    }
+  
+    return '';
   }
 
   ngOnInit(){

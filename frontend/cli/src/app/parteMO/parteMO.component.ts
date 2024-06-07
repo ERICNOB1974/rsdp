@@ -144,14 +144,14 @@ export class PartesMOComponent {
     const fecha = this.route.snapshot.paramMap.get('fecha');
     const legajoOperario = this.route.snapshot.paramMap.get('legajoOperario');
     if (fecha && legajoOperario) {
-      this.router.navigate([`partes/new`]);
+      this.router.navigate([`partes/nuevo`]);
     }
   }
 
   getPartes(): void {
     const fecha = this.route.snapshot.paramMap.get('fecha');
     const legajoOperario = this.route.snapshot.paramMap.get('legajoOperario');
-
+  
     if (fecha && legajoOperario) {
       this.fecha = fecha;
       this.legajoOperario = legajoOperario;
@@ -160,20 +160,28 @@ export class PartesMOComponent {
         if (Array.isArray(responseData)) {
           this.resultsPage.content = responseData;
           this.pages = Array.from(Array(this.resultsPage.totalPages).keys());
+  
+          // Ordenar los logsvalidacion por id de forma asc
+          this.resultsPage.content.sort((a, b) => a.logsValidacion.id - b.logsValidacion.id);
+  
           if (this.resultsPage.content.length > 0) {
+            // Obtener el logsvalidacion con id mas chico
             this.logsValidacion = this.resultsPage.content[0].logsValidacion;
           }
         }
-        this.sharedService.changeData({
-          fecha: this.fecha,
-          operario: this.resultsPage.content[0].operario
-        }); 
+  
         if ((responseData as any[]).length === 0) {
           this.modalService.error("Atención", 'No hay más partes para el resumen.');
         }
+
+        this.sharedService.changeData({
+          fecha: this.fecha,
+          operario: this.resultsPage.content[0].operario
+        });
       });
     }
   }
+  
 
   validarComoSupervisor(): void {
     const fecha = this.route.snapshot.paramMap.get('fecha');

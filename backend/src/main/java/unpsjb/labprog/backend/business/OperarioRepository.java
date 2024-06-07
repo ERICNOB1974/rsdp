@@ -10,7 +10,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 public interface OperarioRepository extends CrudRepository<Operario, Integer>,PagingAndSortingRepository<Operario, Integer>{
 
-    @Query("SELECT e FROM Operario e JOIN e.historicoTurnos ht WHERE UPPER(e.nombre) LIKE ?1 AND (ht.fechaTurnoHasta IS NULL)")
+    @Query("SELECT e FROM Operario e WHERE UPPER(e.nombre) LIKE ?1")
     List<Operario> search(String term);
  
     @Query("SELECT e FROM Operario e WHERE e.legajo = ?1")

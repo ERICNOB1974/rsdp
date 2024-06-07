@@ -1,6 +1,6 @@
 package unpsjb.labprog.backend.presenter;
 
-import java.util.Collection;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
 
@@ -11,15 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import unpsjb.labprog.backend.Response;
+import unpsjb.labprog.backend.business.NoExisteTurnoException;
 import unpsjb.labprog.backend.business.ParteMOService;
-import unpsjb.labprog.backend.business.TareaNoDisponibleException;
-import unpsjb.labprog.backend.model.Operario;
 import unpsjb.labprog.backend.model.ParteMO;
-import unpsjb.labprog.backend.model.Tarea;
-
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @RestController
@@ -48,9 +46,9 @@ public class ParteMOPresenter{
                 return Response.ok(
                     service.create(aParteMO), 
                     "Parte MO generado correctamente");
-            } catch (TareaNoDisponibleException e) {
+            } catch (NoExisteTurnoException e) {
                 return Response.error(
-    "Ya existe un parte con esa fecha, operario y tarea!",
+    "Turno no disponible",
                 e.getMessage());
             }
     }
@@ -73,14 +71,13 @@ public class ParteMOPresenter{
     }
 
     @RequestMapping(value = {"/informe/{fecha}", "/informe/"}, method = RequestMethod.GET)
-    public ResponseEntity<Object> informePartesPorFecha(@PathVariable(value = "fecha", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> fecha) {
-        return Response.ok(service.informePartesPorFecha(fecha));
+    public ResponseEntity<Object> informePartesPorFecha(
+        @PathVariable(value = "fecha", required = false)
+        @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> fecha,
+        @RequestParam(defaultValue = "0") int page, 
+        @RequestParam(defaultValue = "10") int size) {
+        return Response.ok(service.informePartesPorFecha(fecha,page,size));
     }
-
-    /* @RequestMapping(value = {"/informe/{fecha}", "/informe/"}, method = RequestMethod.GET)
-    public ResponseEntity<Object> informePartesALaFecha(@PathVariable(value = "fecha", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> fecha) {
-        return Response.ok(service.informePartesPorFecha(fecha));
-    } */
 
     @RequestMapping(value = {"/validar/{fecha}", "/validar/"}, method = RequestMethod.GET)
     public ResponseEntity<Object> validar(@PathVariable(value = "fecha", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> fecha) {
@@ -115,6 +112,32 @@ public class ParteMOPresenter{
     @RequestMapping(value = {"/partesEstadoCorregido"}, method = RequestMethod.GET)
     public ResponseEntity<Object> partesConEstadoCorregido() {
         return Response.ok(service.partesConEstadoCorregido());
+    }
+
+    @RequestMapping(value = {"/invalidos/{fecha}","/invalidos/"}, method = RequestMethod.GET)
+    public ResponseEntity<Object> getInvalidosPage(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @PathVariable("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> fecha) {
+ 
+        return ResponseEntity.ok(service.getInvalidosPage(fecha, page, size));
+    }
+    @RequestMapping(value = {"/validos/{fecha}","/validos/"}, method = RequestMethod.GET)
+    public ResponseEntity<Object> getValidosPage(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @PathVariable("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> fecha) {
+   
+        return ResponseEntity.ok(service.getValidosPage(fecha, page, size));
+    }
+    
+    @RequestMapping(value = {"/todos/{fecha}","/todos/"}, method = RequestMethod.GET)
+    public ResponseEntity<Object> getTodosPage(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @PathVariable("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> fecha) {
+    
+        return ResponseEntity.ok(service.getTodosPage(fecha, page, size));
     }
 
     @RequestMapping(method=RequestMethod.PUT)

@@ -1,7 +1,6 @@
 package unpsjb.labprog.backend.presenter;
 
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
-import unpsjb.labprog.backend.business.OperarioService;
 import unpsjb.labprog.backend.business.TipoTurnoService;
 import unpsjb.labprog.backend.model.Horario;
 import unpsjb.labprog.backend.model.TipoTurno;
@@ -40,7 +38,17 @@ public class TipoTurnoPresenter{
         if (aHorarioOrNull != null) {
             return Response.ok(aHorarioOrNull);
         } else {
-            return Response.error("Horario no encontrado", null);
+            return Response.error(null,"Este operario no esta trabajando en esta fecha!");
+        }
+    } 
+
+    @RequestMapping(value = "/obtenerTurno/{operarioLegajo}/{fecha}", method = RequestMethod.GET)
+    public ResponseEntity<Object> obtenerTurno(@PathVariable("operarioLegajo") int operarioLegajo, @PathVariable("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha) {
+        TipoTurno aTipoTurnoOrNull = service.obtenerTurno(operarioLegajo, fecha);
+        if (aTipoTurnoOrNull != null) {
+            return Response.ok(aTipoTurnoOrNull);
+        } else {
+            return Response.error(null,"No existe un turno de ese operario en esa fecha!");
         }
     } 
 
@@ -58,6 +66,11 @@ public class TipoTurnoPresenter{
             } catch (DataIntegrityViolationException e){
             return Response.error("El TipoTurno no puede ser cread ya que existe un TipoTurno con ese codigo",e.getMessage());
         }
+    }
+
+    @RequestMapping(value = "/search/{term}", method = RequestMethod.GET)
+    public ResponseEntity<Object> search (@PathVariable("term") String term){
+        return Response.ok(service.search(term));
     }
 
 }

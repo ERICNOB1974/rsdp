@@ -9,7 +9,6 @@ import unpsjb.labprog.backend.business.ParteMOService;
 import unpsjb.labprog.backend.business.ValidacionParteMOService;
 import unpsjb.labprog.backend.model.ParteMO;
 import unpsjb.labprog.backend.model.ResumenParteMO;
-import unpsjb.labprog.backend.model.ValidacionParteMO;
 
 @Component
 public class SuperposicionHorariaValidador extends ValidadorParteMO {
@@ -25,12 +24,12 @@ public class SuperposicionHorariaValidador extends ValidadorParteMO {
     private ParteMOService service;
 
     @Override
-    public void validar(ResumenParteMO resPMO, ParteMO parteMO) {
+    public boolean validar(ResumenParteMO resPMO, ParteMO parteMO) {
         if (resPMO.getHoras().isBefore(resPMO.getHorasPartes())) {
             service.invalidarParte(parteMO);
-            ValidacionParteMO validacion = validacionParteMOService.superposicionHoraria();
-            service.agregarLog(resPMO.getFecha(), estadoService.estadoGeneradoLog(), parteMO, validacion);
+            service.agregarLog(resPMO.getFecha(), estadoService.estadoGeneradoLog(), parteMO, validacionParteMOService.superposicionHoraria());
         }
+        return true;
     }
 
 }

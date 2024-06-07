@@ -11,13 +11,14 @@ import { OperarioService } from './operario.service';
 import { TipoTurnoService } from './tipoTurno.service';
 import { TipoTurno } from './tipoTurno';
 import { HistoricoTurno } from './historicoTurno';
+import { Observable, catchError, debounceTime, distinctUntilChanged, filter, map, of, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-operario-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgbTypeaheadModule, NgbDatepickerModule,FormsModule,NgbModule],
+  imports: [CommonModule, FormsModule, NgbTypeaheadModule, NgbDatepickerModule, FormsModule, NgbModule],
   template: `
-  <div class="container mt-4">
+<div class="container-xl mt-4">
     <div *ngIf="operario">
         <h2>
             {{ operario && operario.legajo ? "Operario N° " + operario.legajo : "Nuevo operario" }}
@@ -41,62 +42,123 @@ import { HistoricoTurno } from './historicoTurno';
                     </div>
                 </div>
             </div>
-            <div class="custom-select-wrapper">
-              <label for="categoriaOperario">Categoría:</label>
-              <select name="categoriaOperario" class="form-control custom-select" [(ngModel)]="operario.categoria" required #categoria="ngModel">
-                <option value="" disabled selected>Seleccione una categoría</option>
-                <option value="Oficial Especializado">Oficial Especializado</option>
-                <option value="Oficial Albañil">Oficial Albañil</option>
-                <option value="Medio Oficial Albañil">Medio Oficial Albañil</option>
-                <option value="Oficial Carpintero">Oficial Carpintero</option>
-                <option value="Oficial Armador">Oficial Armador</option>
-                <option value="Medio Oficial Armador">Medio Oficial Armador</option>
-                <option value="Ayudante">Ayudante</option>
-              </select>
-            </div>
             <div class="form-group text-light">
-              <div class="col-md-6">
-                <label>Turno:</label>
-                <div class="custom-select-wrapper">
-                  <select [(ngModel)]="tipoTurnoSeleccionado" name="tipoTurno" class="form-control custom-select" required>
-                    <option value="" disabled selected>Seleccione un tipo de turno</option>
-                    <option *ngFor="let turno of tipoTurnos" [ngValue]="turno">{{ turno.nombre }}</option>
-                  </select>
-                </div>
-              </div>
+                <label for="categoriaOperario">Categoría:</label>
+                <select name="categoriaOperario" class="form-control custom-select" [(ngModel)]="operario.categoria" required #categoria="ngModel">
+                    <option value="" disabled selected>Seleccione una categoría</option>
+                    <option value="Oficial Especializado">Oficial Especializado</option>
+                    <option value="Oficial Albañil">Oficial Albañil</option>
+                    <option value="Medio Oficial Albañil">Medio Oficial Albañil</option>
+                    <option value="Oficial Carpintero">Oficial Carpintero</option>
+                    <option value="Oficial Armador">Oficial Armador</option>
+                    <option value="Medio Oficial Armador">Medio Oficial Armador</option>
+                    <option value="Ayudante">Ayudante</option>
+                </select>
             </div>
-            <div class="form-group text-light">
-              <form class="row row-cols-sm-auto" (ngSubmit)="get()">
-                <div class="col-12">
-                  <div class="input-group">
-                    <input
-                      class="form-control"
-                      style="display: inline-block"
-                      placeholder="yyyy-mm-dd"
-                      name="fpp"
-                      ngbDatepicker
-                      [(ngModel)]="fecha"
-                      #fpp="ngbDatepicker"
-                      required
-                      readonly
-                    />
-                    <button
-                      class="btn btn-outline-secondary fa fa-calendar"
-                      (click)="fpp.toggle()"
-                      type="button"
-                    ></button>
-                  </div>
-                </div>
-              </form>
+            <div class="table-responsive">
+                <table class="table table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Fecha desde</th>
+                            <th>Fecha hasta</th>
+                            <th>Turnos</th> 
+                            <th>
+                                <button (click)="agregarHistoricoTurno()" class="btn btn-success">
+                                    Agregar
+                                </button>
+                            </th>
+                        </tr>
+                    </thead>
+                  <tbody>
+                  <tr *ngFor="let historicoTurno of operario.historicoTurnos; index as i">
+                    <td>{{i}}</td>
+                    <td>
+                      <div class="form-group text-light">
+                        <form class="row row-cols-sm-auto">
+                          <div class="col-12">
+                            <div style="display: flex;">
+                              <input
+                                class="form-control"
+                                style="margin-right: 5px;"
+                                placeholder="yyyy-mm-dd"
+                                name="fppDesde"
+                                ngbDatepicker
+                                [(ngModel)]="historicoTurno.fechaTurnoDesde"
+                                #fppDesde="ngbDatepicker"
+                                required
+                                readonly
+                                (ngModelChange)="habilitarFechaHasta(historicoTurno)"
+                              />
+                              <button
+                                class="btn btn-outline-secondary fa fa-calendar"
+                                (click)="fppDesde.toggle()"
+                                type="button"
+                              ></button>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="form-group text-light">
+                        <form class="row row-cols-sm-auto">
+                          <div class="col-12">
+                            <div style="display: flex;">
+                              <input
+                                class="form-control"
+                                style="margin-right: 5px;" 
+                                placeholder="yyyy-mm-dd"
+                                name="fppHasta"
+                                ngbDatepicker
+                                [(ngModel)]="historicoTurno.fechaTurnoHasta"
+                                #fppHasta="ngbDatepicker"
+                                [disabled]="!historicoTurno.fechaTurnoDesde"
+                                [minDate]="historicoTurno.fechaTurnoDesde"
+                                required
+                                readonly
+                              />
+                              <button
+                                class="btn btn-outline-secondary fa fa-calendar"
+                                (click)="fppHasta.toggle()"
+                                type="button"
+                              ></button>
+                            </div>
+                          </div>
+                        </form>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="col-md-7">
+                        <input 
+                          [(ngModel)]="historicoTurno.tipoTurno"
+                          name="tipoTurno{{i}}"
+                          placeholder="tipoTurno"
+                          class="form-control"
+                          required
+                          [ngbTypeahead]="searchTipoTurnos"
+                          [editable]=false
+                          [resultFormatter]="resultFormatNombre"
+                          [inputFormatter]="inputFormatNombre"
+                        >
+                      </div>
+                    </td>
+                    <td>
+                      <button (click)="borrarHistoricoTurno(historicoTurno)" class = "btn btn-default">
+                        <i class="fa fa-remove"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <button (click)="goBack()" class="btn btn-danger">Atrás</button>
-            <button (click)="save()" [disabled]="!form.valid" class="btn btn-success">Guardar</button>
-        </form>
-    </div>
+          </form>
+          <button (click)="goBack()" class="btn btn-danger">Atrás</button>
+          <button (click)="save()" [disabled]="!isFormValid() || !form.valid" class="btn btn-success">Guardar</button>
+        </div>
 </div>
-
   `,
-    styles: [`
+  styles: [`
     .container {
       background-color: #222;
       color: #fff;
@@ -125,6 +187,7 @@ import { HistoricoTurno } from './historicoTurno';
       border-right: 5px solid transparent;
       border-top: 5px solid #666; 
     }
+    
     label {
       font-weight: bold;
     }
@@ -132,37 +195,23 @@ import { HistoricoTurno } from './historicoTurno';
   `]
 })
 export class OperariosDetailComponent {
-  operario!: Operario; 
+  operario!: Operario;
   searching: boolean = false;
   searchFailed: boolean = false;
-  fecha!: NgbDateStruct;
-  tipoTurnos: TipoTurno[] = [];
-  tipoTurnoSeleccionado: TipoTurno | null = null;
-  historicoTurno: HistoricoTurno = {
-    id: -1,
-    fechaTurnoDesde: new Date(),
-    fechaTurnoHasta: null,
-    tipoTurno: null
-  };
-  
+  msjError!: string;
+  fechaHastaHabilitado: any;
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private operarioService: OperarioService,
-    private empresaService: EmpresaService,
     private tipoTurnoService: TipoTurnoService,
     private location: Location,
     private calendar: NgbCalendar,
     private modalService: ModalService,
-    private config: NgbDatepickerConfig
+    private datepickerConfig: NgbDatepickerConfig
   ) {
-    const currentDate = new Date();
-    this.config.maxDate = {
-      year: currentDate.getFullYear(),
-      month: currentDate.getMonth() + 1,
-      day: currentDate.getDate()
-    };
+    this.datepickerConfig.maxDate = { year: 2044, month: 12, day: 31 };
+    this.datepickerConfig.minDate = { year: 1970, month: 1, day: 1 };
   }
 
   ngOnInit() {
@@ -172,58 +221,178 @@ export class OperariosDetailComponent {
   get() {
     const id = this.route.snapshot.paramMap.get('id');
     if (id === 'new') {
-      this.operario = <Operario>{}
-      this.fecha = this.calendar.getToday();
-      this.getTipoTurnos();
+      this.operario = <Operario>{
+        historicoTurnos: <HistoricoTurno[]>[]
+      }
     } else {
       this.operarioService.get(parseInt(id!))
         .subscribe((dataPackage) => {
           this.operario = <Operario>dataPackage.data;
-          const fechaAux = new Date(this.operario.fechaTurnoDesde);
-          this.fecha = { year: fechaAux.getFullYear(), month: fechaAux.getMonth() + 1, day: fechaAux.getDate()};
+          if (this.operario.historicoTurnos && this.operario.historicoTurnos.length > 0) {
+            this.operario.historicoTurnos.forEach(historicoTurno => {
+              if (historicoTurno.fechaTurnoDesde) {
+                if (!(historicoTurno.fechaTurnoDesde instanceof Date)) {
+                  historicoTurno.fechaTurnoDesde = new Date(historicoTurno.fechaTurnoDesde as unknown as string);
+                }
+                historicoTurno.fechaTurnoDesde.setDate(historicoTurno.fechaTurnoDesde.getDate() + 1); // Incrementar un día
+                historicoTurno.fechaTurnoDesde = this.convertDateToNgbDateStruct(historicoTurno.fechaTurnoDesde as Date);
+              }
+
+              if (historicoTurno.fechaTurnoHasta) {
+                if (!(historicoTurno.fechaTurnoHasta instanceof Date)) {
+                  historicoTurno.fechaTurnoHasta = new Date(historicoTurno.fechaTurnoHasta as unknown as string);
+                }
+                historicoTurno.fechaTurnoHasta.setDate(historicoTurno.fechaTurnoHasta.getDate() + 1); // Incrementar un día
+                historicoTurno.fechaTurnoHasta = this.convertDateToNgbDateStruct(historicoTurno.fechaTurnoHasta as Date);
+              }
+            });
+          }
         });
     }
   }
-  
-  getTipoTurnos(): void {
-    this.tipoTurnoService.findAll()
-      .subscribe((dataPackage) => {
-        this.tipoTurnos =  <TipoTurno[]> dataPackage.data;
-        console.info(this.tipoTurnos);
-      });
-  }
+
+  searchTipoTurnos = (text$: Observable<string>): Observable<any[]> =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      filter(term => term.length >= 3),
+      tap(() => (this.searching = true)),
+      switchMap((term) =>
+        this.tipoTurnoService
+          .search(term)
+          .pipe(
+            map((response) => {
+              let tipoTurnos = <TipoTurno[]>response.data;
+              return tipoTurnos;
+            })
+          )
+          .pipe(
+            tap(() => (this.searchFailed = false)),
+            catchError(() => {
+              this.searchFailed = true;
+              return of([]);
+            })
+          )
+      ),
+      tap(() => (this.searching = false))
+    );
 
   goBack() {
     this.location.back();
   }
 
-  save(): void {
+  private isObjectEmpty(obj: any): boolean {
+    return obj && typeof obj === 'object' && Object.keys(obj).length === 0;
+  }
 
-    this.historicoTurno.fechaTurnoDesde = new Date(
-      this.fecha.year,
-      this.fecha.month - 1,
-      this.fecha.day
-    );
-
-    const fechaISO = this.historicoTurno.fechaTurnoDesde.toISOString().split('T')[0];
-    
-    this.historicoTurno.fechaTurnoDesde = new Date(fechaISO);
-    this.historicoTurno.tipoTurno = this.tipoTurnoSeleccionado;
-
-    if (!this.operario.historicoTurnos) {
-      this.operario.historicoTurnos = [];
+  isFormValid(): boolean {
+    if (!this.operario.historicoTurnos || this.operario.historicoTurnos.length === 0) {
+      return false;
     }
-    this.operario.historicoTurnos.push(this.historicoTurno);
 
-    this.operarioService.save(this.operario).subscribe((dataPackage) => 
-    {
-      if (dataPackage.status != 200) {
-        this.modalService.error("Error", <string>(<unknown>dataPackage.data)).then();
-      } else {
-        this.operario = <Operario>dataPackage.data;
-        this.goBack();
+    let contadorHistoricoIncompleto = 0;
+
+    for (let historicoTurno of this.operario.historicoTurnos) {
+      if (!historicoTurno.fechaTurnoDesde || this.isObjectEmpty(historicoTurno.tipoTurno) || !historicoTurno.tipoTurno) {
+        return false; // Hay un turno sin fecha desde o con tipoTurno vacío
+      }
+      if (!historicoTurno.fechaTurnoHasta) {
+        contadorHistoricoIncompleto++;
+        if (contadorHistoricoIncompleto > 1) {
+          return false; // Hay más de un turno sin fecha hasta
+        }
+      }
+    }
+
+    return true;
+  }
+
+  save(): void {
+    this.operario.historicoTurnos.forEach(ht => {
+      ht.fechaTurnoDesde = this.formatDate(ht.fechaTurnoDesde);
+      if (ht.fechaTurnoHasta != null) {
+        ht.fechaTurnoHasta = this.formatDate(ht.fechaTurnoHasta);
       }
     });
+    this.operarioService.save(this.operario).subscribe(dataPackage => {
+      if (dataPackage.status === 200) {
+        this.operario = <Operario>dataPackage.data;
+        this.goBack();
+      } else {
+        this.msjError = <string><unknown>dataPackage.data;
+        this.modalService.error("Error", this.msjError);
+        this.operario.historicoTurnos.forEach(ht => {
+          ht.fechaTurnoDesde = this.convertStringToDateStruct(ht.fechaTurnoDesde);
+          if (ht.fechaTurnoHasta != null) {
+            ht.fechaTurnoHasta = this.convertStringToDateStruct(ht.fechaTurnoHasta);
+          }
+        });
+      }
+    });
+  }
+
+  formatDate(date: any) {
+    if (date && date.year && date.month && date.day) {
+      const year = date.year;
+      const month = date.month.toString().padStart(2, '0');
+      const day = date.day.toString().padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+    return null;
+  }
+
+  convertStringToDateStruct(dateString: string): NgbDateStruct | null {
+    const parts = dateString.split('-');
+    if (parts.length === 3) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10);
+      const day = parseInt(parts[2], 10);
+      if (!isNaN(year) && !isNaN(month) && !isNaN(day)) {
+        return { year, month, day };
+      }
+    }
+    return null;
+  }
+
+  agregarHistoricoTurno() {
+    const today = this.calendar.getToday();
+    this.operario.historicoTurnos.push({
+      fechaTurnoDesde: null,
+      fechaTurnoHasta: null,
+      tipoTurno: <TipoTurno>{}
+    });
+  }
+
+  borrarHistoricoTurno(historicoTurno: HistoricoTurno) {
+    this.modalService.confirm("Eliminar historico turno", "¿Está seguro de borrar este historico turno?", "El cambio no se confirmará hasta que no guarde el operario")
+      .then(
+        (_) => {
+          let historicoTurnos = this.operario.historicoTurnos;
+          historicoTurnos.splice(historicoTurnos.indexOf(historicoTurno), 1);
+        }
+      )
+  }
+
+  private convertDateToNgbDateStruct(date: Date): NgbDateStruct {
+    return {
+      year: date.getFullYear(),
+      month: date.getMonth() + 1,
+      day: date.getDate()
+    };
+  }
+
+  resultFormatNombre(value: any) {
+    return value.nombre;
+  }
+
+  inputFormatNombre(value: any) {
+    return value ? value.nombre : null;
+  }
+
+  habilitarFechaHasta(historicoTurno: HistoricoTurno) {
+    if (historicoTurno.fechaTurnoDesde) {
+      historicoTurno.fechaTurnoHasta = null; 
+    }
   }
 
 }

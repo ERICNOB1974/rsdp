@@ -1,8 +1,5 @@
 package unpsjb.labprog.backend.presenter;
 
-import java.sql.Date;
-
-import java.util.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.TareaService;
-import unpsjb.labprog.backend.model.Operario;
 import unpsjb.labprog.backend.model.Tarea;
 
 import org.springframework.web.bind.annotation.RequestBody;

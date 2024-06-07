@@ -29,6 +29,10 @@ export class TipoTurnoService {
     : this.http.post<DataPackage>(this.tipoTurnosUrl, operario);
   }
 
+  obtenerTurno(operarioLegajo: string, fecha: string): Observable<DataPackage>{
+    return this.http.get<DataPackage>(`${this.tipoTurnosUrl}/obtenerTurno/${operarioLegajo}/${fecha}`);
+  }
+
   byPage(page: number, size: number): Observable<DataPackage>{
     return this.http.get<DataPackage>(`${this.tipoTurnosUrl}/page?page=${page-1}&size=${size}`); 
   }

@@ -115,56 +115,36 @@ When('se solicitan guardar una nueva tarea al proyecto',
 
 
 
-/* Given('que se ingresa el operario con legajo {int}, con nombre {string} cuya categoría es {string} y pertenece al turno {string} a partir de {string}',
-    function (legajo, nombre, categoria, turno, fechaTurnoDesde) {
-        this.operario = {
-            legajo: legajo,
-            nombre: nombre,
-            categoria: categoria,
-            turno: turno,
-            fechaTurnoDesde: fechaTurnoDesde
-        };
-    });
-    
-When('presiono el botón de guardar de operarios',
-    function () {
-        this.response = httpRequest('POST', 'http://backend:8080/operarios', JSON.stringify(this.operario));
-    });
- */
 
-Given('que se ingresa el operario con legajo {int}, con nombre {string} cuya categoría es {string} y pertenece al turno {string} a partir de {string}',
+
+    Given('que se ingresa el operario con legajo {int}, con nombre {string} cuya categoría es {string} y pertenece al turno {string} a partir de {string}',
     function (legajo, nombre, categoria, turno, fechaDesdeTurno) {
-        // Parsear el turno y formatear las horas
-        const horaDesde = turno.substring(0, turno.indexOf('a'));
-        const horaHasta = turno.substring(turno.indexOf('a') + 1);
-        const formatoHora = (hora) => hora.padStart(2, '0') + ":00:00";
-
         if (legajo === 1000 || legajo === 2000 || legajo === 3000){
             this.tipoTurno = httpRequest('GET', `http://backend:8080/tipoTurnos/id/1`).data;
         }
-        if (legajo === 4000 || legajo === 5000 || legajo === 6000){
+         else if (legajo === 4000 || legajo === 5000 || legajo === 6000){
             this.tipoTurno = httpRequest('GET', `http://backend:8080/tipoTurnos/id/2`).data;
         } 
-        if (legajo === 7000){
+        else if (legajo <= 28000) {
             this.tipoTurno = httpRequest('GET', `http://backend:8080/tipoTurnos/id/3`).data;
-        }
-        if (legajo === 8000){
+        } else {
             this.tipoTurno = httpRequest('GET', `http://backend:8080/tipoTurnos/id/4`).data;
         }
+        
 
         this.historicoTurnosObj = {
             fechaTurnoDesde: fechaDesdeTurno,
+            fechaTurnoHasta: null,
             tipoTurno: this.tipoTurno
         };
-
-        this.responseHistoricoTurnos = httpRequest('POST', 'http://backend:8080/historicoTurnos', JSON.stringify(this.historicoTurnosObj)).data;
 
         this.operario = {
             legajo: legajo,
             nombre: nombre,
             categoria: categoria,
-            historicoTurnos: [this.responseHistoricoTurnos]
+            historicoTurnos: [] 
         };
+        this.operario.historicoTurnos.push(this.historicoTurnosObj);
     });
 
 When('presiono el botón de guardar de operarios', function () {
@@ -174,7 +154,7 @@ When('presiono el botón de guardar de operarios', function () {
 Then('se espera la siguiente {string} de operarios', 
 function (respuesta) {
     assert.equal(this.responseOperario.message, respuesta);
-}); 
+});
 
 
 
@@ -183,8 +163,8 @@ function (respuesta) {
 
 
 
-Given('el operario con legajo {int} y nombre {string} que trabaja en el turno {string} desde {string}',
-    function (legajo, nombre, turno, fechaTurnoDesde) {
+Given('el operario con legajo {int} y nombre {string}',
+    function (legajo,nombre) {
 
         this.operario = httpRequest('GET', encodeURI(`http://backend:8080/operarios/legajo/${legajo}`)).data;
 
@@ -241,17 +221,19 @@ Given('los partes cargados',
 
 When('se solicitan obtener el resumen de partes por día y operario',
     function () {
-        this.resumenObtenido = httpRequest('GET', encodeURI(`http://backend:8080/partes/informe/`)).data;
+        this.resumenObtenido = httpRequest('GET', encodeURI(`http://backend:8080/partes/informe/?page=0&size=500`)).data;
     });
 
 Then('se obtiene el siguiente resumen',
     function (resumenString) {
         let resumenEsperado = JSON.parse(resumenString).resumenPartesMO;
 
-        for (let res of this.resumenObtenido) {
+        for (let res of this.resumenObtenido.content) {
             delete res.fecha;
             delete res.estado;
         }
+
+        this.resumenObtenido = (this.resumenObtenido.content).filter(res => res.legajo <= 6000);
 
         let resumenObtenidoOrdenado = ordenar(this.resumenObtenido);
 
@@ -303,6 +285,9 @@ Given('el siguiente listado de partes de mano de obra en estado a validar',
             delete pmo.proyecto.id;
             delete pmo.tarea.id;
         }
+
+        this.partesObtenidos = this.partesObtenidos.filter(res => res.operario.legajo <= 6000);
+
         let partesEsperadosOrdenados = ordenar(partesEsperados);
         let partesObtenidosOrdenados = ordenar(this.partesObtenidos);
 
@@ -358,6 +343,9 @@ Then('se obtiene la siguiente respuesta',
                 delete pmo.logsValidacion;
             }
         }
+
+
+        this.partesObtenidos = this.partesObtenidos.filter(res => res.operario.legajo <= 6000);
 
         for (let pmo of partesEsperados) {
             delete pmo.id;
@@ -463,69 +451,71 @@ function (partesString) {
     }
     this.partesObtenidos = partesObtenidosFiltrados;
 
-        for (let pmo of this.partesObtenidos) {
-            if (pmo.operario.legajo === 1000 || pmo.operario.legajo === 2000 || pmo.operario.legajo === 3000) {
-               delete pmo;
-            }
-            delete pmo.id;
-            pmo.fecha = pmo.fecha.substring(0, 10);
-            delete pmo.horas;
-            delete pmo.operario.id;
-            delete pmo.operario.categoria;
-            delete pmo.operario.turno;
-            delete pmo.operario.fechaTurnoDesde;
-            delete pmo.operario.fechaTurnoHasta;
-            delete pmo.operario.horaDesde;
-            delete pmo.operario.horaHasta;
-            delete pmo.operario.historicoTurnos;
-            delete pmo.proyecto.id;
-            delete pmo.proyecto.empresa;
-            delete pmo.proyecto.tareas;
-            delete pmo.tarea.id;
-            delete pmo.estado.id;
-            if (pmo.estado.nombre !== 'inválido'){
-                delete pmo.logsValidacion;
-            }
-
-            // Comprobación de si logsValidacion es un iterable
-            if (Array.isArray(pmo.logsValidacion)) {
-                if (pmo.logsValidacion) {
-                    pmo.logsValidacion = pmo.logsValidacion.filter(log => {
-                        if (log.estado.nombre == 'caducado') {
-                            return false;
-                        }
-                        delete log.id;
-                        delete log.estado.id;
-                        delete log.validacionParteMO.id;
-                        delete log.fecha;
-                        delete log.tiempoCreacion;
-                        return true;
-                    });
-                }
-            }
+    for (let pmo of this.partesObtenidos) {
+        if (pmo.operario.legajo === 1000 || pmo.operario.legajo === 2000 || pmo.operario.legajo === 3000) {
+            delete pmo;
+        }
+        delete pmo.id;
+        pmo.fecha = pmo.fecha.substring(0, 10);
+        delete pmo.horas;
+        delete pmo.operario.id;
+        delete pmo.operario.categoria;
+        delete pmo.operario.turno;
+        delete pmo.operario.fechaTurnoDesde;
+        delete pmo.operario.fechaTurnoHasta;
+        delete pmo.operario.horaDesde;
+        delete pmo.operario.horaHasta;
+        delete pmo.operario.historicoTurnos;
+        delete pmo.proyecto.id;
+        delete pmo.proyecto.empresa;
+        delete pmo.proyecto.tareas;
+        delete pmo.tarea.id;
+        delete pmo.estado.id;
+        if (pmo.estado.nombre !== 'inválido'){
+            delete pmo.logsValidacion;
         }
 
-        for (let pmo of partesEsperados) {
-            delete pmo.id;
-            delete pmo.estado.id;
-            delete pmo.operario.id;
-            delete pmo.proyecto.id;
-            delete pmo.tarea.id;
-
-            // Comprobación de si logValidacion es un iterable
-            if (Array.isArray(pmo.logsValidacion)) {
-                for (let logs of pmo.logsValidacion) {
-                    delete logs.id;
-                    delete logs.estado.id;
-                    delete logs.validacionParteMO.id;
-                }
-            } else {
-                delete pmo.logValidacion;
+        // Comprobación de si logsValidacion es un iterable
+        if (Array.isArray(pmo.logsValidacion)) {
+            if (pmo.logsValidacion) {
+                pmo.logsValidacion = pmo.logsValidacion.filter(log => {
+                    if (log.estado.nombre == 'caducado') {
+                        return false;
+                    }
+                    delete log.id;
+                    delete log.estado.id;
+                    delete log.validacionParteMO.id;
+                    delete log.fecha;
+                    delete log.tiempoCreacion;
+                    return true;
+                });
             }
         }
+    }
 
-        let partesEsperadosOrdenados = ordenar(partesEsperados);
-        let partesObtenidosOrdenados = ordenar(this.partesObtenidos);
+    this.partesObtenidos = this.partesObtenidos.filter(res => res.operario.legajo <= 6000);
 
-        assert.equal(partesObtenidosOrdenados, partesEsperadosOrdenados);
+    for (let pmo of partesEsperados) {
+        delete pmo.id;
+        delete pmo.estado.id;
+        delete pmo.operario.id;
+        delete pmo.proyecto.id;
+        delete pmo.tarea.id;
+
+        // Comprobación de si logValidacion es un iterable
+        if (Array.isArray(pmo.logsValidacion)) {
+            for (let logs of pmo.logsValidacion) {
+                delete logs.id;
+                delete logs.estado.id;
+                delete logs.validacionParteMO.id;
+            }
+        } else {
+            delete pmo.logValidacion;
+        }
+    }
+
+    let partesEsperadosOrdenados = ordenar(partesEsperados);
+    let partesObtenidosOrdenados = ordenar(this.partesObtenidos);
+
+    assert.equal(partesObtenidosOrdenados, partesEsperadosOrdenados);
 });

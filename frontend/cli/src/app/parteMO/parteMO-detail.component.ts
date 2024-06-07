@@ -17,6 +17,8 @@ import { ProyectoService } from '../proyecto/proyecto.service';
 import { TareaService } from '../tarea/tarea.service';
 import { NgbDateStruct, NgbDropdownModule, NgbTimepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedService } from '../shared.service';
+import { TipoTurno } from '../operario/tipoTurno';
+import { TipoTurnoService } from '../operario/tipoTurno.service';
 
 @Component({
   selector: 'app-parte-detail',
@@ -41,6 +43,7 @@ import { SharedService } from '../shared.service';
                   #fpp="ngbDatepicker"
                   required
                   readonly
+                  (ngModelChange)="onFechaChange()"
                 />
                 <button
                   class="btn btn-outline-secondary fa fa-calendar"
@@ -55,7 +58,19 @@ import { SharedService } from '../shared.service';
               <div class="row">
                 <div class="col-md-6">
                   <label for="operario">Operario:</label>
-                  <input [(ngModel)]="parteMO.operario" name="operario" placeholder="Operario" class="form-control" required [ngbTypeahead]="searchOperario" [editable]=false [resultFormatter]="resultFormatNombre" [inputFormatter]="inputFormatNombre" (ngModelChange)="asignarTurnoOperario(parteMO.operario)" />
+                  <input 
+                    [(ngModel)]="parteMO.operario" 
+                    name="operario" 
+                    placeholder="Operario" 
+                    class="form-control" 
+                    required 
+                    [ngbTypeahead]="searchOperario" 
+                    [editable]= true 
+                    [resultFormatter]="resultFormatNombre" 
+                    [inputFormatter]="inputFormatNombre" 
+                    (ngModelChange)="onOperarioSelected($event)" 
+                    (input)="borrarCamposAutocompletados($event)" 
+                  />
                 </div>
                 <div class="col-md-6">
                   <label for="legajoOperario">Legajo:</label>
@@ -70,7 +85,14 @@ import { SharedService } from '../shared.service';
                 </div>
                 <div class="col-md-6">
                   <label for="turnoOperario">Turno:</label>
-                  <input [(ngModel)]="turnoOperario" name="turnoOperario" placeholder="Turno" class="form-control" readonly [style.opacity]="0.6" />
+                  <input 
+                    [(ngModel)]="turnoOperario" 
+                    name="turnoOperario" 
+                    placeholder="Turno" 
+                    class="form-control" 
+                    readonly 
+                    [style.opacity]="0.6" 
+                  />
                 </div>
                 <div class="col-md-6">
                   <label for="proyecto">Proyecto:</label>
@@ -97,30 +119,28 @@ import { SharedService } from '../shared.service';
                 </div>
                 <div class="input-group">
                   <div class="row mb-2">
-                    <div class="col-12 col-md-4 mb-3">
+                    <div class="col-12 col-md-3 mb-3">
                       <label for="codigo">Hora desde:</label>
                       <input
                         type="time"
-                        class="form-control form-control-sm"
+                        class="form-control"
                         [(ngModel)]="parteMO.horaDesde"
                         required
                         name="hora_desde"
                         #hora_desde="ngModel"
                         (change)="calcularHoras()"
-                        step="60"
                       />
                     </div>
-                    <div class="col-12 col-md-4 mb-3">
+                    <div class="col-12 col-md-3 mb-3">
                       <label for="codigo">Hora hasta:</label>
                       <input
                         type="time"
-                        class="form-control form-control-sm"
+                        class="form-control"
                         [(ngModel)]="parteMO.horaHasta"
                         required
                         name="hora_hasta"
                         #hora_hasta="ngModel"
                         (change)="calcularHoras()"
-                        step="60"
                       />
                     </div>
                     <div class="col-12 col-md-4 mb-3">
@@ -141,6 +161,9 @@ import { SharedService } from '../shared.service';
                 </div>
                 <div *ngIf="guardadoExitoso" class="alert alert-success mb-3" role="alert">
                   <strong>Atención:</strong> El parte se ha guardado correctamente.
+                </div>
+                <div *ngIf="turnoInexistente" class="alert alert-danger mb-3" role="alert">
+                  <strong>Atención:</strong> No existe turno para este operario en la fecha indicada. 
                 </div>
               </div>
             </div>
@@ -219,6 +242,7 @@ export class PartesMODetailComponent {
   searching: boolean = false;
   searchFailed: boolean = false;
   fecha!: NgbDateStruct;
+  fechaSeleccionada: any;
   horas: string = '';
   selectedTime!: string;
   horaDesdeMayorQueHasta: boolean = false;
@@ -227,14 +251,16 @@ export class PartesMODetailComponent {
   tareaSeleccionada: { id: number, codigo: string, descripcion: string } = { id: -1, codigo: '', descripcion: '' };
   tareasProyecto: Tarea[] = [];
   turnoOperario!: string;
+  turnoInexistente: boolean = false;
+  operario!: Operario;
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private parteMOService: ParteMOService,
     private operarioService: OperarioService,
     private proyectoService: ProyectoService,
     private tareaService: TareaService,
+    private tipoTurnoService: TipoTurnoService,
     private location: Location,
     private calendar: NgbCalendar,
     private modalService: ModalService,
@@ -247,6 +273,12 @@ export class PartesMODetailComponent {
       month: currentDate.getMonth() + 1,
       day: currentDate.getDate()
     }
+    this.sharedService.currentData.subscribe(data => {
+      if (data) {
+        this.operario = data.operario;
+        this.fechaSeleccionada = data.fecha;
+      }
+    });
   }
 
   ngOnInit() {
@@ -302,42 +334,57 @@ export class PartesMODetailComponent {
       !!this.parteMO.operario.nombre &&
       !!this.parteMO.operario.legajo &&
       !!this.parteMO.operario.historicoTurnos &&
-      !!this.parteMO.operario.historicoTurnos[0] &&
-      !!this.parteMO.operario.historicoTurnos[0].tipoTurno &&
-      !!this.parteMO.operario.historicoTurnos[0].tipoTurno.nombre &&
       !!this.parteMO.proyecto &&
       !!this.parteMO.proyecto.descripcion &&
       this.horas !== '' &&
       this.tareaSeleccionada.id !== -1 &&
       this.tareaSeleccionada.descripcion !== '' &&
-      this.tareaSeleccionada.codigo !== '';
+      this.tareaSeleccionada.codigo !== '' &&
+      this.turnoOperario !== '';
   }
 
   get() {
     const id = this.route.snapshot.paramMap.get('id');
-    if (id === 'new') {
+    if (id === 'nuevo') {
+      if (this.operario != null) {
+        this.parteMO = <ParteMO>{
+          operario: this.operario,
+          proyecto: <Proyecto>{},
+          tarea: <Tarea>{}
+        }
+        this.turnoOperario = this.operario.historicoTurnos[0].tipoTurno.nombre;
+        if (typeof this.fechaSeleccionada === 'string') {
+          const [year, month, day] = this.fechaSeleccionada.split('-').map(Number);
+          this.fecha = { year, month, day };
+        } else {
+          this.fecha = this.fechaSeleccionada;
+        }
+        console.info(this.operario);
+      }
+    } else if (id === 'new') {
       this.parteMO = <ParteMO>{
         operario: <Operario>{},
         proyecto: <Proyecto>{},
         tarea: <Tarea>{}
       }
       this.fecha = this.calendar.getToday();
-
-      /* this.sharedService.currentData.subscribe(data => {
-        if (data) {
-          this.parteMO.operario = data.operario;
-          this.fecha = data.fecha;
-        }
-      }); */
     } else {
+      console.info(id);
       this.parteMOService.get(parseInt(id!))
         .subscribe((dataPackage) => {
           this.parteMO = <ParteMO>dataPackage.data;
           const fechaAux = new Date(this.parteMO.fecha);
           fechaAux.setDate(fechaAux.getDate() + 1);
           this.fecha = { year: fechaAux.getFullYear(), month: fechaAux.getMonth() + 1, day: fechaAux.getDate() };
+          if (this.parteMO.horaDesde) {
+            this.parteMO.horaDesde = this.formatTime(new Date('1970-01-01T' + this.parteMO.horaDesde));
+          }
+          if (this.parteMO.horaHasta) {
+            this.parteMO.horaHasta = this.formatTime(new Date('1970-01-01T' + this.parteMO.horaHasta));
+          }
+  
           this.calcularHoras();
-          this.asignarTurnoOperario(this.parteMO.operario);
+          this.obtenerTurnoOperario(this.parteMO.operario.legajo, this.fecha);
           if (this.parteMO.tarea && this.parteMO.tarea.id) {
             this.tareaSeleccionada = {
               id: this.parteMO.tarea.id,
@@ -350,6 +397,7 @@ export class PartesMODetailComponent {
         });
     }
   }
+  
 
   compararTareas(tarea1: { id: number, codigo: string, descripcion: string }, tarea2: { id: number, codigo: string, descripcion: string }): boolean {
     return tarea1 && tarea2 ? tarea1.id === tarea2.id : tarea1 === tarea2;
@@ -393,7 +441,6 @@ export class PartesMODetailComponent {
         if (id !== 'new') {
           this.goBack();
         } else {
-          //Ocultar mensaje de guardado exitoso luego de 3 segundos
           setTimeout(() => {
             this.guardadoExitoso = false;
           }, 3000);
@@ -408,18 +455,7 @@ export class PartesMODetailComponent {
     });
   }
 
-  asignarTurnoOperario(operario: Operario) {
-    if (operario && operario.historicoTurnos && operario.historicoTurnos.length > 0) {
-      if (operario.historicoTurnos[0].tipoTurno != null){
-        this.turnoOperario = operario.historicoTurnos[0].tipoTurno.nombre;
-      }  
-    
-    } else {
-      this.turnoOperario = '';
-    }
-  }
-
-  searchOperario = (text$: Observable<string>): Observable<any[]> =>
+  searchOperario = (text$: Observable<string>): Observable<Operario[]> =>
     text$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
@@ -444,6 +480,33 @@ export class PartesMODetailComponent {
       ),
       tap(() => (this.searching = false))
     );
+
+  onOperarioSelected(operario: Operario) {
+    if (operario) {
+      this.obtenerTurnoOperario(operario.legajo, this.fecha);
+    }
+  }
+
+  onFechaChange() {
+    this.onOperarioSelected(this.parteMO.operario);
+  }
+
+
+  obtenerTurnoOperario(legajo: string, fecha: NgbDateStruct) {
+    const fechaISO = this.fecha.year + '-' + this.fecha.month + '-' + this.fecha.day;
+    this.tipoTurnoService.obtenerTurno(legajo, fechaISO).subscribe((dataPackage) => {
+      if (dataPackage.status === 200) {
+        this.turnoInexistente = false;
+        const tipoTurno = <TipoTurno>dataPackage.data;
+        if (tipoTurno && tipoTurno.nombre) {
+          this.turnoOperario = tipoTurno.nombre;
+        }
+      } else {
+        this.turnoOperario = '';
+        this.turnoInexistente = true;
+      }
+    });
+  }
 
   searchProyecto = (text$: Observable<string>): Observable<any[]> =>
     text$.pipe(
@@ -516,10 +579,14 @@ export class PartesMODetailComponent {
   borrarCamposAutocompletados(event: any) {
     if (event && event.target && 'value' in event.target) {
       this.parteMO.operario.legajo = '';
-      if (this.parteMO.operario.historicoTurnos[0].tipoTurno != null){
-        this.parteMO.operario.historicoTurnos[0].tipoTurno.nombre = '';
-      }
+      this.turnoOperario = '';
     }
   }
+
+  formatTime(date: Date): string {
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  }  
 
 }

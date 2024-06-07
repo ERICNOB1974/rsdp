@@ -24,7 +24,7 @@ export class OperarioService {
   }
 
   save (operario: Operario): Observable<DataPackage>{
-    return operario.id 
+    return operario.id
     ? this.http.put<DataPackage>(this.operariosUrl, operario)
     : this.http.post<DataPackage>(this.operariosUrl, operario);
   }

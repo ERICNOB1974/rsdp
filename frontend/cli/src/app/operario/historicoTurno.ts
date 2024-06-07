@@ -1,9 +1,8 @@
+import { NgbDateStruct } from "@ng-bootstrap/ng-bootstrap";
 import { TipoTurno } from "./tipoTurno";
 
 export interface HistoricoTurno {
-    id: number;
-    fechaTurnoDesde: Date;
-    fechaTurnoHasta: Date | null;
-    tipoTurno: TipoTurno | null;
+    fechaTurnoDesde: any;
+    fechaTurnoHasta: any;
+    tipoTurno: TipoTurno;
 }
-  

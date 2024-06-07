@@ -11,7 +11,6 @@ import unpsjb.labprog.backend.business.ValidacionParteMOService;
 import unpsjb.labprog.backend.model.Operario;
 import unpsjb.labprog.backend.model.ParteMO;
 import unpsjb.labprog.backend.model.ResumenParteMO;
-import unpsjb.labprog.backend.model.ValidacionParteMO;
 
 @Component
 public class IncumpleHorarioValidador extends ValidadorParteMO {
@@ -30,7 +29,7 @@ public class IncumpleHorarioValidador extends ValidadorParteMO {
     private ParteMOService service;
 
     @Override
-    public void validar(ResumenParteMO resPMO, ParteMO parteMO) {
+    public boolean validar(ResumenParteMO resPMO, ParteMO parteMO) {
         Operario operario = parteMO.getOperario();
         if ((!(resPMO.getIngreso().isBefore(tipoTurnoService.obtenerHoraDesde(operario, resPMO.getFecha()))
                 || (resPMO.getEgreso().isAfter(tipoTurnoService.obtenerHoraHasta(operario, resPMO.getFecha())))))
@@ -38,9 +37,10 @@ public class IncumpleHorarioValidador extends ValidadorParteMO {
                         || (resPMO.getEgreso()
                                 .isBefore(tipoTurnoService.obtenerHoraHasta(operario, resPMO.getFecha()))))) {
             service.invalidarParte(parteMO);
-            ValidacionParteMO validacion = validacionParteMOService.incumpleHorario();
-            service.agregarLog(resPMO.getFecha(), estadoService.estadoGeneradoLog(), parteMO, validacion);
+            service.agregarLog(resPMO.getFecha(), estadoService.estadoGeneradoLog(), parteMO,
+                    validacionParteMOService.incumpleHorario());
         }
+        return true;
     }
 
 }

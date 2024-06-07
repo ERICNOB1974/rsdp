@@ -1,7 +1,6 @@
 package unpsjb.labprog.backend.model;
 
 import java.time.LocalTime;
-import java.util.Collection;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

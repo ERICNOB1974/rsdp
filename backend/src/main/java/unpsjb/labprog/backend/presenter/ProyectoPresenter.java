@@ -9,14 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.ProyectoService;
 import unpsjb.labprog.backend.model.Proyecto;
-import unpsjb.labprog.backend.model.ResumenParteMO;
 
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.dao.DataIntegrityViolationException;
+
 import java.util.regex.Pattern;
-import java.util.Collection;
-import java.util.Date;
 import java.util.regex.Matcher;
 
 @RestController

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+/* import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { DataPackage } from '../data-package';
 import { HttpClient } from '@angular/common/http';
@@ -40,4 +40,4 @@ export class HistoricoTurnoService {
     return this.http.delete<DataPackage>(`${this.historicoTurnosUrl}/${id}`);
   }
 
-}
+} */

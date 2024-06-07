@@ -1,7 +1,6 @@
 package unpsjb.labprog.backend.business;
 
 import unpsjb.labprog.backend.model.Operario;
-import unpsjb.labprog.backend.model.ParteMO;
 import unpsjb.labprog.backend.model.TipoTurno;
 
 import java.util.Date;
@@ -25,5 +24,8 @@ public interface TipoTurnoRepository extends CrudRepository<TipoTurno, Integer>,
     "FROM TipoTurno e " +
     "ORDER BY id ASC")
     List<TipoTurno> findAll();
+
+    @Query("SELECT e FROM TipoTurno e WHERE UPPER(e.nombre) LIKE ?1")
+    List<TipoTurno> search(String term);
 
 }

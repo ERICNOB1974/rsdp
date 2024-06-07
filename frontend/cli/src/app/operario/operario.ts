@@ -5,7 +5,6 @@ export interface Operario {
     legajo: string;
     nombre: string;
     categoria: string;
-    fechaTurnoDesde: Date;
     historicoTurnos: HistoricoTurno[];
   }
   

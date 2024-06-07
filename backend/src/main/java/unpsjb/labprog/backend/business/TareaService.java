@@ -4,15 +4,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import unpsjb.labprog.backend.model.Operario;
 import unpsjb.labprog.backend.model.Tarea;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 
 import org.springframework.dao.DataIntegrityViolationException;
 

@@ -34,8 +34,20 @@ export class ParteMOService {
     return this.http.get<DataPackage>(`${this.partesUrl}/page?page=${page-1}&size=${size}`); 
   }
 
-  informePartesPorFecha(fecha: string): Observable<DataPackage>{
-    return this.http.get<DataPackage>(`${this.partesUrl}/informe/${fecha}`);
+  getInvalidosPage(fecha: any,page: number, size: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.partesUrl}/invalidos/${fecha}?page=${page - 1}&size=${size}`);
+  }
+
+  getValidosPage(fecha: any,page: number, size: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.partesUrl}/validos/${fecha}?page=${page - 1}&size=${size}`);
+  }
+
+  getTodosPage(fecha: any,page: number, size: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.partesUrl}/todos/${fecha}?page=${page - 1}&size=${size}`);
+  }
+
+  informePartesPorFecha(fecha: any,page: number, size: number): Observable<DataPackage>{
+    return this.http.get<DataPackage>(`${this.partesUrl}/informe/${fecha}?page=${page - 1}&size=${size}`);
   }
 
   validar(fecha: string): Observable<DataPackage>{
