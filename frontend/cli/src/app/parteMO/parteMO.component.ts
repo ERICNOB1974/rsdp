@@ -8,6 +8,9 @@ import { ParteMOService } from './parteMO.service';
 import { LogValidacionParteMO } from './logValidacionParteMO';
 import { Location } from '@angular/common';
 import { SharedService } from '../shared.service';
+import { TipoTurnoService } from '../operario/tipoTurno.service';
+import { Horario } from '../operario/horario';
+import { Observable, map, of } from 'rxjs';
 
 @Component({
   selector: 'app-parte',
@@ -23,6 +26,7 @@ import { SharedService } from '../shared.service';
                         <th>#</th>
                         <th>Fecha</th>
                         <th>Operario</th>
+                        <th>Horario</th>
                         <th>Hora desde</th>
                         <th>Hora hasta</th>
                         <th>Proyecto</th>
@@ -36,6 +40,7 @@ import { SharedService } from '../shared.service';
                         <td>{{AMOUNT_PARTES * (this.currentPage - 1) + (i + 1)}}</td>
                         <td>{{parteMO.fecha | date:'yyyy-MM-dd':'UTC'}}</td>
                         <td>{{parteMO.operario.nombre}}</td>
+                        <td>{{ obtenerHorario() | async }}</td>
                         <td>{{parteMO.horaDesde}}</td>
                         <td>{{parteMO.horaHasta}}</td>
                         <td>{{parteMO.proyecto.descripcion}}</td>
@@ -92,29 +97,7 @@ import { SharedService } from '../shared.service';
       </div>
     </div>
   `,
-  styles: [`
-  .container {
-    background-color: #222;
-    padding: 20px;
-    border-radius: 10px;
-  }
-  .btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-  }
-  .btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
-  }
-  .btn-danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
-  }
-  .btn-danger:hover {
-    background-color: #c82333;
-    border-color: #bd2130;
-  }
-  `]
+  styleUrls: ['../../styles.css']
 })
 export class PartesMOComponent {
   resultsPage: ResultsPage = <ResultsPage>{};
@@ -126,6 +109,7 @@ export class PartesMOComponent {
   rechazarComoSupervisorExitoso: boolean = false;
   fecha: string = '';
   legajoOperario : string = '';
+  horario: string = '';
 
   constructor(
     private parteMOService: ParteMOService,
@@ -133,7 +117,8 @@ export class PartesMOComponent {
     private location: Location,
     private route: ActivatedRoute,
     private router: Router,
-    private sharedService: SharedService  
+    private sharedService: SharedService,
+    private tipoTurnoService: TipoTurnoService
   ){}
 
   goBack() {
@@ -161,7 +146,6 @@ export class PartesMOComponent {
           this.resultsPage.content = responseData;
           this.pages = Array.from(Array(this.resultsPage.totalPages).keys());
   
-          // Ordenar los logsvalidacion por id de forma asc
           this.resultsPage.content.sort((a, b) => a.logsValidacion.id - b.logsValidacion.id);
   
           if (this.resultsPage.content.length > 0) {
@@ -181,7 +165,6 @@ export class PartesMOComponent {
       });
     }
   }
-  
 
   validarComoSupervisor(): void {
     const fecha = this.route.snapshot.paramMap.get('fecha');
@@ -235,6 +218,27 @@ export class PartesMOComponent {
     this.getPartes();
   }
 
+  obtenerHorario(): Observable<string> {
+    if (this.horario) {
+      return of(this.horario);
+    } else {
+      return this.tipoTurnoService.obtenerHorario(this.legajoOperario, this.fecha).pipe(
+        map((dataPackage) => {
+          const horario = <Horario>dataPackage.data;
+          if (horario == null) {
+            this.horario = "Franco"; 
+            return this.horario;
+          } else {
+            const horaDesde = horario.horaDesde.substring(0, 2);
+            const horaHasta = horario.horaHasta.substring(0, 2); 
+            this.horario = horaDesde + 'a' + horaHasta; 
+            return this.horario;
+          }
+        })
+      );
+    }
+  }
+  
   onPageChangeRequested(page: number): void{
     this.currentPage = page;
     this.getPartes();

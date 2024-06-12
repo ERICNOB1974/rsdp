@@ -33,6 +33,10 @@ export class TipoTurnoService {
     return this.http.get<DataPackage>(`${this.tipoTurnosUrl}/obtenerTurno/${operarioLegajo}/${fecha}`);
   }
 
+  obtenerHorario(operarioLegajo: string, fecha: string): Observable<DataPackage>{
+    return this.http.get<DataPackage>(`${this.tipoTurnosUrl}/obtenerHorario/${operarioLegajo}/${fecha}`);
+  }
+
   byPage(page: number, size: number): Observable<DataPackage>{
     return this.http.get<DataPackage>(`${this.tipoTurnosUrl}/page?page=${page-1}&size=${size}`); 
   }

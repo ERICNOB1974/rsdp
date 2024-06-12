@@ -1,6 +1,5 @@
 package unpsjb.labprog.backend.presenter;
 
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.Optional;
 
@@ -11,13 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import unpsjb.labprog.backend.Response;
-import unpsjb.labprog.backend.business.NoExisteTurnoException;
 import unpsjb.labprog.backend.business.ParteMOService;
+import unpsjb.labprog.backend.business.exception.NoExisteTurnoException;
 import unpsjb.labprog.backend.model.ParteMO;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @RestController
@@ -100,8 +98,8 @@ public class ParteMOPresenter{
     }
 
     @RequestMapping(value = {"/parteDadoProyectoYTarea/{fecha}/{legajoOperario}/{codigoProyecto}/{codigoTarea}"}, method = RequestMethod.GET)
-    public ResponseEntity<Object> parteDadoProyectoYTarea(@PathVariable(value = "fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha, @PathVariable(value = "legajoOperario") String legajoOperario, @PathVariable(value = "codigoProyecto") String codigoProyecto, @PathVariable(value = "codigoTarea") String codigoTarea) {
-        return Response.ok(service.parteDadoProyectoYTarea(fecha,legajoOperario,codigoProyecto,codigoTarea));
+    public ResponseEntity<Object> parteDadoOperarioFechaProyectoYTarea(@PathVariable(value = "fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Date fecha, @PathVariable(value = "legajoOperario") String legajoOperario, @PathVariable(value = "codigoProyecto") String codigoProyecto, @PathVariable(value = "codigoTarea") String codigoTarea) {
+        return Response.ok(service.parteDadoOperarioFechaProyectoYTarea(fecha,legajoOperario,codigoProyecto,codigoTarea));
     }
 
     @RequestMapping(value = {"/partesEstadoInvalido"}, method = RequestMethod.GET)
@@ -120,15 +118,16 @@ public class ParteMOPresenter{
             @RequestParam(defaultValue = "10") int size,
             @PathVariable("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> fecha) {
  
-        return ResponseEntity.ok(service.getInvalidosPage(fecha, page, size));
+        return ResponseEntity.ok(service.obtenerInvalidos(fecha, page, size));
     }
+    
     @RequestMapping(value = {"/validos/{fecha}","/validos/"}, method = RequestMethod.GET)
     public ResponseEntity<Object> getValidosPage(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @PathVariable("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> fecha) {
    
-        return ResponseEntity.ok(service.getValidosPage(fecha, page, size));
+        return ResponseEntity.ok(service.obtenerValidos(fecha, page, size));
     }
     
     @RequestMapping(value = {"/todos/{fecha}","/todos/"}, method = RequestMethod.GET)
@@ -137,7 +136,7 @@ public class ParteMOPresenter{
             @RequestParam(defaultValue = "10") int size,
             @PathVariable("fecha") @DateTimeFormat(pattern = "yyyy-MM-dd") Optional<Date> fecha) {
     
-        return ResponseEntity.ok(service.getTodosPage(fecha, page, size));
+        return ResponseEntity.ok(service.obtenerTodos(fecha, page, size));
     }
 
     @RequestMapping(method=RequestMethod.PUT)

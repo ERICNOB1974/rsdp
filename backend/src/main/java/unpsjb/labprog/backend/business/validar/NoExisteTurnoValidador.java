@@ -12,7 +12,7 @@ import unpsjb.labprog.backend.model.ParteMO;
 import unpsjb.labprog.backend.model.ResumenParteMO;
 
 @Component
-public class FrancoValidador extends ValidadorParteMO {
+public class NoExisteTurnoValidador extends ValidadorParteMO {
 
     @Autowired
     private TipoTurnoService tipoTurnoService;
@@ -29,12 +29,9 @@ public class FrancoValidador extends ValidadorParteMO {
 
     @Override
     public void validar(ResumenParteMO resPMO, ParteMO parteMO) {
-        if (tipoTurnoService.obtenerTurno(parteMO.getOperario().getLegajo(), resPMO.getFecha()) == null){
-            return;
-        }
-        if (tipoTurnoService.obtenerHorario(parteMO.getOperario().getLegajo(), resPMO.getFecha()) == null) {
+        if (tipoTurnoService.obtenerTurno(parteMO.getOperario().getLegajo(), resPMO.getFecha()) == null) {
             service.invalidarParte(parteMO);
-            service.agregarLog(resPMO.getFecha(), estadoService.estadoGeneradoLog(), parteMO, validacionParteMOService.franco());
+            service.agregarLog(resPMO.getFecha(), estadoService.estadoGeneradoLog(), parteMO, validacionParteMOService.noExisteTurno());
         }
     }
 

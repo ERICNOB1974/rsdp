@@ -8,6 +8,7 @@ import unpsjb.labprog.backend.model.ParteMO;
 import unpsjb.labprog.backend.model.ResumenParteMO;
 import unpsjb.labprog.backend.model.TipoTurno;
 import unpsjb.labprog.backend.model.ValidacionParteMO;
+import unpsjb.labprog.backend.business.exception.NoExisteTurnoException;
 import unpsjb.labprog.backend.business.validar.ValidadorParteMO;
 import unpsjb.labprog.backend.model.Estado;
 import unpsjb.labprog.backend.model.LogValidacionParteMO;
@@ -15,7 +16,6 @@ import unpsjb.labprog.backend.model.Operario;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Optional;
@@ -64,16 +64,16 @@ public class ParteMOService {
         return repository.findAll();
     }
 
-    public Page<ResumenParteMO> getInvalidosPage(Optional<Date> fecha, int page, int size) {
-        return repository.getInvalidos(fecha, PageRequest.of(page, size));
+    public Page<ResumenParteMO> obtenerInvalidos(Optional<Date> fecha, int page, int size) {
+        return repository.obtenerInvalidos(fecha, PageRequest.of(page, size));
     }
 
-    public Page<ResumenParteMO> getValidosPage(Optional<Date> fecha, int page, int size) {
-        return repository.getValidos(fecha, PageRequest.of(page, size));
+    public Page<ResumenParteMO> obtenerValidos(Optional<Date> fecha, int page, int size) {
+        return repository.obtenerValidos(fecha, PageRequest.of(page, size));
     }
 
-    public Page<ResumenParteMO> getTodosPage(Optional<Date> fecha, int page, int size) {
-        return repository.getTodos(fecha, PageRequest.of(page, size));
+    public Page<ResumenParteMO> obtenerTodos(Optional<Date> fecha, int page, int size) {
+        return repository.obtenerTodos(fecha, PageRequest.of(page, size));
     }
 
     public Object anularParte(int id) {
@@ -99,15 +99,11 @@ public class ParteMOService {
 
     public Object validar(Optional<Date> fecha) {
         for (ResumenParteMO resPMO : repository.informePartesALaFecha(fecha)) {
-            this.invalidarLogs(
-                    this.partesDeUnResumen(operarioService.findByLegajo(resPMO.getLegajo()), resPMO.getFecha()));
-            for (ParteMO parteMO : this.partesDeUnResumen(operarioService.findByLegajo(resPMO.getLegajo()),
-                    resPMO.getFecha())) {
-                parteMO.setEstado(estadoService.estadoValido()); // Todos empiezan en valido
+            this.invalidarLogs(this.partesDeUnResumen(operarioService.findByLegajo(resPMO.getLegajo()), resPMO.getFecha()));
+            for (ParteMO parteMO : this.partesDeUnResumen(operarioService.findByLegajo(resPMO.getLegajo()),resPMO.getFecha())) {
+                parteMO.setEstado(estadoService.estadoValido()); 
                 for (ValidadorParteMO validador : validadores) {
-                    if (!validador.validar(resPMO, parteMO)) {
-                        break;
-                    }
+                    validador.validar(resPMO, parteMO);
                 }
                 if (parteMO.getEstado().equals(estadoService.estadoValido())) {
                     agregarLog(resPMO.getFecha(), estadoService.estadoGeneradoLog(), parteMO, validacionParteMOService.valido());
@@ -188,12 +184,8 @@ public class ParteMOService {
             }
         }
         long minutos = Duration.between(parteMO.getHoraDesde(), parteMO.getHoraHasta()).toMinutes();
-        float horas = minutos / 60.0f; // Le indico que tiene que tener decimales
+        float horas = minutos / 60.0f;
         parteMO.setHoras(horas);
-
-        if (tipoTurnoService.obtenerTurno(parteMO.getOperario().getLegajo(), parteMO.getFecha()) == null) {
-            throw new NoExisteTurnoException();
-        }
 
         return repository.save(parteMO);
 
@@ -203,9 +195,9 @@ public class ParteMOService {
         return repository.partesDeUnResumen(operarioService.findByLegajo(Integer.parseInt(legajoOperario)), fecha);
     }
 
-    public ParteMO parteDadoProyectoYTarea(Date fecha, String legajoOperario, String codigoProyecto,
+    public ParteMO parteDadoOperarioFechaProyectoYTarea(Date fecha, String legajoOperario, String codigoProyecto,
             String codigoTarea) {
-        return repository.parteDadoProyectoYTarea(fecha, operarioService.findByLegajo(Integer.parseInt(legajoOperario)),
+        return repository.parteDadoOperarioFechaProyectoYTarea(fecha, operarioService.findByLegajo(Integer.parseInt(legajoOperario)),
                 proyectoService.findByCodigo(codigoProyecto), tareaService.findByCodigo(codigoTarea));
     }
 
@@ -221,7 +213,7 @@ public class ParteMOService {
     public ParteMO update(ParteMO parteMO) {
 
         long minutos = Duration.between(parteMO.getHoraDesde(), parteMO.getHoraHasta()).toMinutes();
-        float horas = minutos / 60.0f; // Le indico que tiene que tener decimales
+        float horas = minutos / 60.0f;
         parteMO.setHoras(horas);
 
         parteMO.setEstado(estadoService.estadoCorregido());
@@ -239,12 +231,10 @@ public class ParteMOService {
 
     public String obtenerEstadoTrabajo(Operario operario, Date fecha) {
 
-        // Convertir Date a LocalDate para utilizar ChronoUnit.DAYS.between
         LocalDate fechaConsulta = fecha.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
         TipoTurno tipoTurno = tipoTurnoService.obtenerTurno(operario.getLegajo(), fecha);
 
-        // Convertir la fecha de inicio del turno a LocalDate
         LocalDate fechaInicioTurno = tipoTurno.getFechaArranque().toInstant().atZone(ZoneId.systemDefault())
                 .toLocalDate();
 

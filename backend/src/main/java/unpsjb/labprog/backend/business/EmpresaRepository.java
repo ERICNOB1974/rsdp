@@ -10,7 +10,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 public interface EmpresaRepository extends CrudRepository<Empresa, Integer>,PagingAndSortingRepository<Empresa, Integer>{
 
     @Query("SELECT e FROM Empresa e WHERE UPPER(e.nombre) LIKE ?1")
-    List<Empresa> search(String term);
+    List<Empresa> search(String termino);
 
     @Query("SELECT e FROM Empresa e WHERE e.cuit = ?1")
     Optional<Empresa> findByCuit(String cuit);

@@ -53,37 +53,7 @@ import { Router, RouterOutlet } from '@angular/router';
       </div>
     </div>
   `,
-  styles: [`
-    .container {
-      background-color: #222;
-      color: #fff;
-      padding: 20px;
-      border-radius: 10px;
-    }
-    .btn-black {
-      background-color: #222;
-      color: #fff;
-      border: 1px solid #222;
-    }
-    .btn-black:hover {
-      background-color: #444;
-      border-color: #444;
-    }
-    .btn-danger {
-      background-color: #dc3545;
-      border-color: #dc3545;
-    }
-    .btn-danger:hover {
-      background-color: #c82333;
-      border-color: #bd2130;
-    }
-    .form-group {
-      margin-bottom: 20px;
-    }
-    label {
-      font-weight: bold;
-    }
-  `]
+  styleUrls: ['../styles.css']
 })
 export class AppComponent {
   constructor(private router: Router) {}

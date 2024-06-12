@@ -105,32 +105,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 </div>
 
   `,
-  styles: [`
-    .container {
-      background-color: #222;
-      padding: 20px;
-      border-radius: 10px;
-    }
-    .btn-primary {
-      background-color: #007bff;
-      border-color: #007bff;
-    }
-    .btn-primary:hover {
-      background-color: #0056b3;
-      border-color: #0056b3;
-    }
-    .btn-danger {
-      background-color: #dc3545;
-      border-color: #dc3545;
-    }
-    .btn-danger:hover {
-      background-color: #c82333;
-      border-color: #bd2130;
-    }
-    .custom-date-input {
-      width: 200px; /* Define el ancho del campo de fecha */
-    }
-  `]
+  styleUrls: ['../../styles.css']
 })
 export class ResumenesComponent implements OnInit {
   resultsPage: ResultsPage = <ResultsPage>{};
@@ -185,38 +160,38 @@ export class ResumenesComponent implements OnInit {
     }
     switch (this.filtroSeleccionado) {
       case 'invalidos':
-        this.parteMOService.getInvalidosPage(fechaFormateada, this.currentPage, this.AMOUNT_RESUMEN).subscribe((dataPackage) => {
+        this.parteMOService.obtenerInvalidos(fechaFormateada, this.currentPage, this.AMOUNT_RESUMEN).subscribe((dataPackage) => {
           const responseData = <ResultsPage><unknown>dataPackage;
           if (Array.isArray(responseData.content)) {
             this.pages = Array.from(Array(this.resultsPage.totalPages).keys());
             this.resultsPage = <ResultsPage>responseData;
           }
           if (responseData.content.length === 0) {
-            this.modalService.error("ERROR", 'No se encontraron resultados para la fecha seleccionada.');
+            this.modalService.error("ERROR", 'No se encontraron resultados.');
           }
         });
         break;
       case 'validos':
-        this.parteMOService.getValidosPage(fechaFormateada, this.currentPage, this.AMOUNT_RESUMEN).subscribe((dataPackage) => {
+        this.parteMOService.obtenerValidos(fechaFormateada, this.currentPage, this.AMOUNT_RESUMEN).subscribe((dataPackage) => {
           const responseData = <ResultsPage><unknown>dataPackage;
           if (Array.isArray(responseData.content)) {
             this.pages = Array.from(Array(this.resultsPage.totalPages).keys());
             this.resultsPage = <ResultsPage>responseData;
           }
           if (responseData.content.length === 0) {
-            this.modalService.error("ERROR", 'No se encontraron resultados para la fecha seleccionada.');
+            this.modalService.error("ERROR", 'No se encontraron resultados.');
           }
         });
         break;
       case 'todos':
-        this.parteMOService.getTodosPage(fechaFormateada, this.currentPage, this.AMOUNT_RESUMEN).subscribe((dataPackage) => {
+        this.parteMOService.obtenerTodos(fechaFormateada, this.currentPage, this.AMOUNT_RESUMEN).subscribe((dataPackage) => {
           const responseData = <ResultsPage><unknown>dataPackage;
           if (Array.isArray(responseData.content)) {
             this.pages = Array.from(Array(this.resultsPage.totalPages).keys());
             this.resultsPage = <ResultsPage>responseData;
           }
           if (responseData.content.length === 0) {
-            this.modalService.error("ERROR", 'No se encontraron resultados para la fecha seleccionada.');
+            this.modalService.error("ERROR", 'No se encontraron resultados.');
           }
         });
         break;

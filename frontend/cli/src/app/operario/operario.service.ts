@@ -37,4 +37,9 @@ export class OperarioService {
     return this.http.delete<DataPackage>(`${this.operariosUrl}/${id}`);
   }
 
+  byNombre(page: number, size: number ,textoBusqueda: string): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.operariosUrl}/pageOperario?page=${page - 1}&size=${size}&textoBusqueda=${textoBusqueda}`
+    );
+  }
+
 }

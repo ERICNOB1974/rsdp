@@ -4,11 +4,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import unpsjb.labprog.backend.business.exception.NoExisteTurnoException;
+import unpsjb.labprog.backend.business.exception.SuperposicionDeFechasException;
 import unpsjb.labprog.backend.model.HistoricoTurno;
 import unpsjb.labprog.backend.model.Operario;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,6 +66,7 @@ public class OperarioService {
             if (historicoTurno.getFechaTurnoDesde().before(historicoTurno.getTipoTurno().getFechaArranque())){
                 throw new NoExisteTurnoException();
             }
+            
         }
 
         return repository.save(aOperario);
@@ -103,15 +108,23 @@ public class OperarioService {
         }
     
         if (fechaHastaActual == null) {
-            fechaHastaActual = new Date(Long.MAX_VALUE); // Consideramos como una fecha en el futuro lejano
+            fechaHastaActual = new Date(Long.MAX_VALUE); // Fecha exageradamente grande
         }
     
         if (fechaHastaSiguiente == null) {
-            fechaHastaSiguiente = new Date(Long.MAX_VALUE); // Consideramos como una fecha en el futuro lejano
+            fechaHastaSiguiente = new Date(Long.MAX_VALUE);
         }
     
-        // Verificamos si los rangos se superponen
         return fechaDesdeActual.getTime()<=(fechaHastaSiguiente.getTime()) && fechaDesdeSiguiente.getTime()<=(fechaHastaActual.getTime());
     }
     
+    public Page<Operario> findByNombre(int page, int size, String textoBusqueda) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by("nombre").ascending());
+        if (textoBusqueda == null || textoBusqueda.trim().isEmpty()) {
+            return repository.findAll(pageRequest);
+        }
+        return repository.findByNombre("%" + textoBusqueda.toLowerCase() + "%",
+                pageRequest);
+    }
+
 }

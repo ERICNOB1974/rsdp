@@ -8,7 +8,6 @@ import unpsjb.labprog.backend.business.EstadoService;
 import unpsjb.labprog.backend.business.ParteMOService;
 import unpsjb.labprog.backend.business.TipoTurnoService;
 import unpsjb.labprog.backend.business.ValidacionParteMOService;
-import unpsjb.labprog.backend.model.Operario;
 import unpsjb.labprog.backend.model.ParteMO;
 import unpsjb.labprog.backend.model.ResumenParteMO;
 
@@ -29,14 +28,16 @@ public class FueraDeTurnoValidador extends ValidadorParteMO {
     private ParteMOService service;
 
     @Override
-    public boolean validar(ResumenParteMO resPMO, ParteMO parteMO) {
-        Operario operario = parteMO.getOperario();
-        if ((resPMO.getIngreso().isBefore(tipoTurnoService.obtenerHoraDesde(operario, resPMO.getFecha()))
-                || (resPMO.getEgreso().isAfter(tipoTurnoService.obtenerHoraHasta(operario, resPMO.getFecha()))))) {
+    public void validar(ResumenParteMO resPMO, ParteMO parteMO) {
+        if (tipoTurnoService.obtenerTurno(parteMO.getOperario().getLegajo(), resPMO.getFecha()) == null){
+            return;
+        }
+        if (tipoTurnoService.obtenerHorario(parteMO.getOperario().getLegajo(), resPMO.getFecha()) == null){
+            return;
+        }
+        if (resPMO.getIngreso().isBefore(tipoTurnoService.obtenerHoraDesde(parteMO.getOperario(), resPMO.getFecha())) || (resPMO.getEgreso().isAfter(tipoTurnoService.obtenerHoraHasta(parteMO.getOperario(), resPMO.getFecha())))) {
             service.invalidarParte(parteMO);
             service.agregarLog(resPMO.getFecha(), estadoService.estadoGeneradoLog(), parteMO, validacionParteMOService.fueraDeTurno());
         }
-        return true;
     }
-
 }

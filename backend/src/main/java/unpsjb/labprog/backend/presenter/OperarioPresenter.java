@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import unpsjb.labprog.backend.Response;
-import unpsjb.labprog.backend.business.NoExisteTurnoException;
 import unpsjb.labprog.backend.business.OperarioService;
-import unpsjb.labprog.backend.business.SuperposicionDeFechasException;
+import unpsjb.labprog.backend.business.exception.NoExisteTurnoException;
+import unpsjb.labprog.backend.business.exception.SuperposicionDeFechasException;
 import unpsjb.labprog.backend.model.Operario;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -92,6 +92,14 @@ public class OperarioPresenter{
         } catch (NoExisteTurnoException e) {
             return Response.error("No existe turno para esa fecha desde!", e.getMessage());
         }
+    }
+
+    @RequestMapping(value = "/pageOperario", method = RequestMethod.GET)
+    public ResponseEntity<Object> findByNombre(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String textoBusqueda) {
+        return Response.ok(service.findByNombre(page, size, textoBusqueda));
     }
 
 }

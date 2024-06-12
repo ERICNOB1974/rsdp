@@ -1,11 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { DataPackage } from '../data-package';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { ParteMO } from './parteMO';
-import { Operario } from '../operario/operario';
-import { Tarea } from '../tarea/tarea';
-import { Data } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -34,15 +31,15 @@ export class ParteMOService {
     return this.http.get<DataPackage>(`${this.partesUrl}/page?page=${page-1}&size=${size}`); 
   }
 
-  getInvalidosPage(fecha: any,page: number, size: number): Observable<DataPackage> {
+  obtenerInvalidos(fecha: any,page: number, size: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.partesUrl}/invalidos/${fecha}?page=${page - 1}&size=${size}`);
   }
 
-  getValidosPage(fecha: any,page: number, size: number): Observable<DataPackage> {
+  obtenerValidos(fecha: any,page: number, size: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.partesUrl}/validos/${fecha}?page=${page - 1}&size=${size}`);
   }
 
-  getTodosPage(fecha: any,page: number, size: number): Observable<DataPackage> {
+  obtenerTodos(fecha: any,page: number, size: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.partesUrl}/todos/${fecha}?page=${page - 1}&size=${size}`);
   }
 

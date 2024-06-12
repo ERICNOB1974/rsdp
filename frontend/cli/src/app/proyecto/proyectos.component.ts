@@ -50,29 +50,7 @@ import { ProyectoService } from './proyecto.service';
         </div>
     </div>
   `,
-  styles: [`
-  .container {
-    background-color: #222;
-    padding: 20px;
-    border-radius: 10px;
-  }
-  .btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-  }
-  .btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
-  }
-  .btn-danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
-  }
-  .btn-danger:hover {
-    background-color: #c82333;
-    border-color: #bd2130;
-  }
-`]
+  styleUrls: ['../../styles.css']
 })
 export class ProyectosComponent {
   resultsPage: ResultsPage = <ResultsPage>{};
@@ -109,7 +87,12 @@ export class ProyectosComponent {
           if (that.resultsPage.content.length === 1) {
             that.currentPage--; 
           }
-          that.proyectoService.remove(id).subscribe(dataPackage => that.getProyectos());
+          that.proyectoService.remove(id).subscribe(dataPackage => {
+            if (dataPackage.status != 200) {
+              that.modalService.error("Error", <string>(<unknown>dataPackage.data)).then();
+            }
+            that.getProyectos();
+          });
         }
       );
   }

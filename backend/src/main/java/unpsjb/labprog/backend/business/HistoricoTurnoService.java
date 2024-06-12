@@ -13,8 +13,8 @@ public class HistoricoTurnoService {
     HistoricoTurnoRepository repository;
 
     @Transactional
-    public HistoricoTurno save(HistoricoTurno e){
-        return repository.save(e);
+    public HistoricoTurno save(HistoricoTurno historicoTurno){
+        return repository.save(historicoTurno);
     }
 
 }

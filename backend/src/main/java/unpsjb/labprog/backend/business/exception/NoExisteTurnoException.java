@@ -1,4 +1,4 @@
-package unpsjb.labprog.backend.business;
+package unpsjb.labprog.backend.business.exception;
 
 public class NoExisteTurnoException extends Exception {
     public NoExisteTurnoException() {

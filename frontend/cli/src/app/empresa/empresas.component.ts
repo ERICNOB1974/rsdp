@@ -48,29 +48,7 @@
         ></app-pagination>
       </div>
     `,
-    styles: [`
-      .container {
-        background-color: #222;
-        padding: 20px;
-        border-radius: 10px;
-      }
-      .btn-primary {
-        background-color: #007bff;
-        border-color: #007bff;
-      }
-      .btn-primary:hover {
-        background-color: #0056b3;
-        border-color: #0056b3;
-      }
-      .btn-danger {
-        background-color: #dc3545;
-        border-color: #dc3545;
-      }
-      .btn-danger:hover {
-        background-color: #c82333;
-        border-color: #bd2130;
-      }
-    `]
+    styleUrls: ['../../styles.css']
   })
   export class EmpresasComponent {
     resultsPage: ResultsPage = <ResultsPage>{};

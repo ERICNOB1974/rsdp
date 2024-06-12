@@ -1,4 +1,3 @@
-import { NgbDateStruct } from "@ng-bootstrap/ng-bootstrap";
 import { TipoTurno } from "./tipoTurno";
 
 export interface HistoricoTurno {

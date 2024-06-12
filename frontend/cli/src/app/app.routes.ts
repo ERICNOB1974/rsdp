@@ -1,6 +1,5 @@
-import { Routes, RouterModule } from '@angular/router';
+import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { NgModule } from '@angular/core';
 import { EmpresasComponent } from './empresa/empresas.component';
 import { EmpresasDetailComponent } from './empresa/empresas-detail.component';
 import { ProyectosComponent } from './proyecto/proyectos.component';

@@ -9,7 +9,6 @@ import unpsjb.labprog.backend.model.Tarea;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.time.LocalDate;
 import java.util.Collection;
 
 import org.springframework.data.domain.Page;
@@ -74,7 +73,7 @@ public interface ParteMORepository extends CrudRepository<ParteMO, Integer>,Pagi
     "SELECT pmo " +
     "FROM ParteMO pmo " +
     "WHERE (pmo.operario = :operario) AND (pmo.fecha = :fecha) AND (pmo.proyecto = :proyecto) AND (pmo.tarea = :tarea)")
-    ParteMO parteDadoProyectoYTarea(@Param("fecha") Date fecha, @Param("operario") Operario operario, @Param("proyecto") Proyecto proyecto, @Param("tarea") Tarea tarea);
+    ParteMO parteDadoOperarioFechaProyectoYTarea(@Param("fecha") Date fecha, @Param("operario") Operario operario, @Param("proyecto") Proyecto proyecto, @Param("tarea") Tarea tarea);
 
     @Query(value = 
     "SELECT e " +
@@ -91,7 +90,7 @@ public interface ParteMORepository extends CrudRepository<ParteMO, Integer>,Pagi
     + "WHERE (pmo.fecha = COALESCE(:fecha,pmo.fecha)) AND lower(pmo.estado.nombre) IN ('inválido','corregido','rechazado') "
     + "GROUP BY pmo.operario.legajo, pmo.operario.nombre, pmo.fecha "
     + "ORDER BY pmo.fecha DESC")
-    Page<ResumenParteMO> getInvalidos(@Param("fecha") Optional<Date> fecha, Pageable pageable);
+    Page<ResumenParteMO> obtenerInvalidos(@Param("fecha") Optional<Date> fecha, Pageable pageable);
 
     @Query(value = "SELECT pmo.fecha as fecha, pmo.operario.legajo as legajo, pmo.operario.nombre as nombre, "
         + "MIN(pmo.horaDesde) as ingreso, MAX(pmo.horaHasta) as egreso, "
@@ -102,7 +101,7 @@ public interface ParteMORepository extends CrudRepository<ParteMO, Integer>,Pagi
         + "WHERE (pmo.fecha = COALESCE(:fecha,pmo.fecha)) AND lower(pmo.estado.nombre) IN ('válido','validado') "
         + "GROUP BY pmo.operario.legajo, pmo.operario.nombre, pmo.fecha "
         + "ORDER BY pmo.fecha DESC")
-    Page<ResumenParteMO> getValidos(@Param("fecha") Optional<Date> fecha, Pageable pageable);
+    Page<ResumenParteMO> obtenerValidos(@Param("fecha") Optional<Date> fecha, Pageable pageable);
 
     @Query(value = "SELECT pmo.fecha as fecha, pmo.operario.legajo as legajo, pmo.operario.nombre as nombre, "
         + "MIN(pmo.horaDesde) as ingreso, MAX(pmo.horaHasta) as egreso, "
@@ -113,6 +112,6 @@ public interface ParteMORepository extends CrudRepository<ParteMO, Integer>,Pagi
         + "WHERE (pmo.fecha = COALESCE(:fecha,pmo.fecha)) AND lower(pmo.estado.nombre) != 'anulado' "
         + "GROUP BY pmo.operario.legajo, pmo.operario.nombre, pmo.fecha "
         + "ORDER BY pmo.fecha DESC")
-    Page<ResumenParteMO> getTodos(@Param("fecha") Optional<Date> fecha, Pageable pageable);
+    Page<ResumenParteMO> obtenerTodos(@Param("fecha") Optional<Date> fecha, Pageable pageable);
 
 }

@@ -4,7 +4,7 @@ import { ModalService } from '../modal/modal.service';
 import { debounceTime, distinctUntilChanged, map, of, tap, switchMap, catchError, Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Location } from '@angular/common';
 import { filter } from 'rxjs/operators';
 import { Proyecto } from './proyecto';
@@ -49,6 +49,7 @@ import { Empresa } from '../empresa/empresa';
                             placeholder="CUIT"
                             class="form-control"
                             readonly
+                            [style.opacity]="0.6"
                         >
                     </div>
                 </div>
@@ -99,7 +100,7 @@ import { Empresa } from '../empresa/empresa';
                 </table>
             </div>
             <button (click)="goBack()" class="btn btn-danger">Atrás</button>
-            <button (click)="save()" [disabled]="!form.valid" class="btn btn-success">Guardar</button>
+            <button (click)="save()" [disabled]="!form.valid || !isFormValid()" class="btn btn-success">Guardar</button>
         </form>
     </div>
 </div>
@@ -135,7 +136,6 @@ export class ProyectosDetailComponent {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router,
     private proyectoService: ProyectoService,
     private empresaService: EmpresaService,
     private location: Location,
@@ -161,7 +161,6 @@ export class ProyectosDetailComponent {
     }
   }
   
-
   goBack() {
     this.location.back();
   }
@@ -242,6 +241,10 @@ export class ProyectosDetailComponent {
     if (event && event.target && 'value' in event.target) {
         this.proyecto.empresa.cuit = '';
     }
+  }
+
+  isFormValid(): boolean {
+    return this.proyecto.tareas.length > 0;
   }
 
 }

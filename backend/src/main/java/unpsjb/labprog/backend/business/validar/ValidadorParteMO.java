@@ -5,7 +5,6 @@ import unpsjb.labprog.backend.model.ResumenParteMO;
 
 public abstract class ValidadorParteMO {
 
-    public abstract boolean validar(ResumenParteMO resPMO, ParteMO parteMO);
+    public abstract void validar(ResumenParteMO resPMO, ParteMO parteMO);
 
 }
-

@@ -20,9 +20,9 @@ public class ValidacionParteMOService {
     EstadoService estadoService;
 
     public List<ValidacionParteMO> findAll(){
-        List<ValidacionParteMO> result = new ArrayList<>();
-        repository.findAll().forEach(e -> result.add(e));
-        return result;
+        List<ValidacionParteMO> resultado = new ArrayList<>();
+        repository.findAll().forEach(e -> resultado.add(e));
+        return resultado;
     }
 
     public ValidacionParteMO incumpleHorario(){
@@ -57,6 +57,10 @@ public class ValidacionParteMOService {
     public ValidacionParteMO franco(){
         return repository.findById(8).orElse(null);
     }
+
+    public ValidacionParteMO noExisteTurno(){
+        return repository.findById(9).orElse(null);
+    }
     
     public ValidacionParteMO findById(int id){
         return repository.findById(id).orElse(null);
@@ -72,8 +76,8 @@ public class ValidacionParteMOService {
     }
 
     @Transactional
-    public ValidacionParteMO save(ValidacionParteMO e){
-        return repository.save(e);
+    public ValidacionParteMO save(ValidacionParteMO validacionParteMO){
+        return repository.save(validacionParteMO);
     }
 
 }

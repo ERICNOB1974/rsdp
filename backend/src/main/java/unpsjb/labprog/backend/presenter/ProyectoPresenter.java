@@ -84,7 +84,7 @@ public class ProyectoPresenter{
             service.delete(id);
             return Response.ok("Proyecto " + id + " borrado con exito.");
         } catch (DataIntegrityViolationException e){
-            return Response.error("Proyecto " + id + " no puede ser borrado",e.getMessage());
+            return Response.error("El proyecto no puede ser borrado ya que pertenece a un parte",e.getMessage());
         }
     }
 

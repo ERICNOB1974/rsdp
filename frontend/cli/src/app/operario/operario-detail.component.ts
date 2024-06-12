@@ -5,7 +5,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
-import { EmpresaService } from '../empresa/empresa.service';
 import { Operario } from './operario';
 import { OperarioService } from './operario.service';
 import { TipoTurnoService } from './tipoTurno.service';
@@ -26,10 +25,20 @@ import { Observable, catchError, debounceTime, distinctUntilChanged, filter, map
         <form #form="ngForm">
             <div class="form-group text-light">
                 <label for="legajoOperario">Legajo:</label>
-                <input name="legajoOperario" placeholder="Ingrese el legajo" class="form-control" [(ngModel)]="operario.legajo" required #legajo="ngModel">
+                <input 
+                    name="legajoOperario" 
+                    placeholder="Ingrese el legajo" 
+                    class="form-control" 
+                    [(ngModel)]="operario.legajo" 
+                    required 
+                    pattern="[0-9]+" 
+                    #legajo="ngModel">
                 <div *ngIf="legajo.invalid && (legajo.dirty || legajo.touched)" class="alert">
                     <div *ngIf="legajo.errors?.['required']">
-                        El legajo del operario es requerido
+                        El legajo del operario es requerido.
+                    </div>
+                    <div *ngIf="legajo.errors?.['pattern']">
+                        El legajo del operario debe contener solo números.
                     </div>
                 </div>
             </div>
@@ -158,41 +167,7 @@ import { Observable, catchError, debounceTime, distinctUntilChanged, filter, map
         </div>
 </div>
   `,
-  styles: [`
-    .container {
-      background-color: #222;
-      color: #fff;
-      padding: 20px;
-      border-radius: 10px;
-    }
-    .btn-danger {
-      background-color: #dc3545;
-      border-color: #dc3545;
-    }
-    .btn-danger:hover {
-      background-color: #c82333;
-      border-color: #bd2130;
-    }
-    .form-group {
-      margin-bottom: 20px;
-    }
-    .arrow {
-      position: absolute;
-      top: 50%;
-      right: 10px;
-      transform: translateY(-50%);
-      width: 0;
-      height: 0;
-      border-left: 5px solid transparent;
-      border-right: 5px solid transparent;
-      border-top: 5px solid #666; 
-    }
-    
-    label {
-      font-weight: bold;
-    }
-    
-  `]
+  styleUrls: ['../../styles.css']
 })
 export class OperariosDetailComponent {
   operario!: Operario;
@@ -281,7 +256,7 @@ export class OperariosDetailComponent {
     this.location.back();
   }
 
-  private isObjectEmpty(obj: any): boolean {
+  isObjectEmpty(obj: any): boolean {
     return obj && typeof obj === 'object' && Object.keys(obj).length === 0;
   }
 
@@ -290,17 +265,9 @@ export class OperariosDetailComponent {
       return false;
     }
 
-    let contadorHistoricoIncompleto = 0;
-
     for (let historicoTurno of this.operario.historicoTurnos) {
       if (!historicoTurno.fechaTurnoDesde || this.isObjectEmpty(historicoTurno.tipoTurno) || !historicoTurno.tipoTurno) {
         return false; // Hay un turno sin fecha desde o con tipoTurno vacío
-      }
-      if (!historicoTurno.fechaTurnoHasta) {
-        contadorHistoricoIncompleto++;
-        if (contadorHistoricoIncompleto > 1) {
-          return false; // Hay más de un turno sin fecha hasta
-        }
       }
     }
 
@@ -355,7 +322,6 @@ export class OperariosDetailComponent {
   }
 
   agregarHistoricoTurno() {
-    const today = this.calendar.getToday();
     this.operario.historicoTurnos.push({
       fechaTurnoDesde: null,
       fechaTurnoHasta: null,
@@ -373,7 +339,7 @@ export class OperariosDetailComponent {
       )
   }
 
-  private convertDateToNgbDateStruct(date: Date): NgbDateStruct {
+  convertDateToNgbDateStruct(date: Date): NgbDateStruct {
     return {
       year: date.getFullYear(),
       month: date.getMonth() + 1,

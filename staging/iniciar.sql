@@ -53,6 +53,7 @@ INSERT INTO validacion_partemo (id, tipo, nombre, descripcion) VALUES(5,0,'váli
 INSERT INTO validacion_partemo (id, tipo, nombre, descripcion) VALUES(6,0,'validado','Este parte está validado por un supervisor');
 INSERT INTO validacion_partemo (id, tipo, nombre, descripcion) VALUES(7,0,'rechazado','Este parte fue rechazado por un supervisor');
 INSERT INTO validacion_partemo (id, tipo, nombre, descripcion) VALUES(8,0,'Está de franco','Este operario esta de franco!');
+INSERT INTO validacion_partemo (id, tipo, nombre, descripcion) VALUES(9,0,'No existe el turno','Este operario en esta fecha no tiene un turno asignado!');
 
 INSERT INTO categoria (id, nombre) VALUES (1,'Oficial Especializado');
 INSERT INTO categoria (id, nombre) VALUES (2,'Oficial Albañil');

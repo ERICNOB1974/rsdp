@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
-import { NgbDatepickerModule, NgbTypeaheadModule, NgbCalendar, NgbTimeStruct, NgbDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { NgbDatepickerModule, NgbTypeaheadModule, NgbCalendar, NgbDatepickerConfig } from '@ng-bootstrap/ng-bootstrap';
 import { ModalService } from '../modal/modal.service';
 import { debounceTime, distinctUntilChanged, map, of, tap, switchMap, catchError, Observable } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute} from '@angular/router';
 import { Location } from '@angular/common';
 import { filter } from 'rxjs/operators';
 import { Operario } from '../operario/operario';
@@ -19,6 +19,7 @@ import { NgbDateStruct, NgbDropdownModule, NgbTimepickerModule } from '@ng-boots
 import { SharedService } from '../shared.service';
 import { TipoTurno } from '../operario/tipoTurno';
 import { TipoTurnoService } from '../operario/tipoTurno.service';
+import { Horario } from '../operario/horario';
 
 @Component({
   selector: 'app-parte-detail',
@@ -111,9 +112,9 @@ import { TipoTurnoService } from '../operario/tipoTurno.service';
                 <div class="col-md-6">
                   <label>Tarea:</label>
                   <div class="custom-select-wrapper">
-                    <select [(ngModel)]="tareaSeleccionada" name="tarea" class="form-control custom-select" required [disabled]="!filtrarTareasPorProyecto().length" [compareWith]="compararTareas">
-                      <option *ngFor="let tarea of filtrarTareasPorProyecto()" [ngValue]="{ id: tarea.id, codigo: tarea.codigo, descripcion: tarea.descripcion }">{{ tarea.descripcion }}</option>
-                    </select>
+                  <select #selectTareas [(ngModel)]="tareaSeleccionada" name="tarea" class="form-control custom-select" required [disabled]="!filtrarTareasPorProyecto().length" [compareWith]="compararTareas">
+                    <option *ngFor="let tarea of filtrarTareasPorProyecto()" [ngValue]="{ id: tarea.id, codigo: tarea.codigo, descripcion: tarea.descripcion }">{{ tarea.descripcion }}</option>
+                  </select>
                     <div class="arrow"></div>
                   </div>
                 </div>
@@ -253,6 +254,7 @@ export class PartesMODetailComponent {
   turnoOperario!: string;
   turnoInexistente: boolean = false;
   operario!: Operario;
+  @ViewChild('selectTareas') selectTareas!: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
@@ -292,7 +294,6 @@ export class PartesMODetailComponent {
       return [];
     }
   }
-
 
   calcularHoras() {
     if (this.parteMO.horaDesde && this.parteMO.horaHasta) {
@@ -339,8 +340,7 @@ export class PartesMODetailComponent {
       this.horas !== '' &&
       this.tareaSeleccionada.id !== -1 &&
       this.tareaSeleccionada.descripcion !== '' &&
-      this.tareaSeleccionada.codigo !== '' &&
-      this.turnoOperario !== '';
+      this.tareaSeleccionada.codigo !== '';
   }
 
   get() {
@@ -352,14 +352,13 @@ export class PartesMODetailComponent {
           proyecto: <Proyecto>{},
           tarea: <Tarea>{}
         }
-        this.turnoOperario = this.operario.historicoTurnos[0].tipoTurno.nombre;
         if (typeof this.fechaSeleccionada === 'string') {
           const [year, month, day] = this.fechaSeleccionada.split('-').map(Number);
           this.fecha = { year, month, day };
         } else {
           this.fecha = this.fechaSeleccionada;
         }
-        console.info(this.operario);
+        this.obtenerTurnoOperario(this.parteMO.operario.legajo);
       }
     } else if (id === 'new') {
       this.parteMO = <ParteMO>{
@@ -384,7 +383,7 @@ export class PartesMODetailComponent {
           }
   
           this.calcularHoras();
-          this.obtenerTurnoOperario(this.parteMO.operario.legajo, this.fecha);
+          this.obtenerTurnoOperario(this.parteMO.operario.legajo);
           if (this.parteMO.tarea && this.parteMO.tarea.id) {
             this.tareaSeleccionada = {
               id: this.parteMO.tarea.id,
@@ -398,7 +397,6 @@ export class PartesMODetailComponent {
     }
   }
   
-
   compararTareas(tarea1: { id: number, codigo: string, descripcion: string }, tarea2: { id: number, codigo: string, descripcion: string }): boolean {
     return tarea1 && tarea2 ? tarea1.id === tarea2.id : tarea1 === tarea2;
   }
@@ -445,7 +443,9 @@ export class PartesMODetailComponent {
             this.guardadoExitoso = false;
           }, 3000);
         }
-
+        setTimeout(() => {
+          this.selectTareas.nativeElement.focus();
+        });
       } else {
         this.msjError = <string><unknown>dataPackage.data;
         this.modalService.error("Error", this.msjError);
@@ -483,7 +483,7 @@ export class PartesMODetailComponent {
 
   onOperarioSelected(operario: Operario) {
     if (operario) {
-      this.obtenerTurnoOperario(operario.legajo, this.fecha);
+      this.obtenerTurnoOperario(operario.legajo);
     }
   }
 
@@ -491,16 +491,25 @@ export class PartesMODetailComponent {
     this.onOperarioSelected(this.parteMO.operario);
   }
 
-
-  obtenerTurnoOperario(legajo: string, fecha: NgbDateStruct) {
+  obtenerTurnoOperario(legajo: string) {
     const fechaISO = this.fecha.year + '-' + this.fecha.month + '-' + this.fecha.day;
     this.tipoTurnoService.obtenerTurno(legajo, fechaISO).subscribe((dataPackage) => {
       if (dataPackage.status === 200) {
         this.turnoInexistente = false;
         const tipoTurno = <TipoTurno>dataPackage.data;
         if (tipoTurno && tipoTurno.nombre) {
-          this.turnoOperario = tipoTurno.nombre;
+          this.turnoOperario = tipoTurno.nombre + " / ";
         }
+        this.tipoTurnoService.obtenerHorario(legajo, fechaISO).subscribe((dataPackage) => {
+          const horario = <Horario>dataPackage.data;
+          if (horario == null){
+            this.turnoOperario = this.turnoOperario + "Franco";
+          } else {
+            const horaDesde = horario.horaDesde.substring(0, 2);
+            const horaHasta = horario.horaHasta.substring(0, 2); 
+            this.turnoOperario = this.turnoOperario + horaDesde + "a" + horaHasta;
+          }
+        });
       } else {
         this.turnoOperario = '';
         this.turnoInexistente = true;

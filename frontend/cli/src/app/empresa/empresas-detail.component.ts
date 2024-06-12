@@ -2,7 +2,7 @@ import { CommonModule, Location, UpperCasePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { NgbDateStruct, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { ModalService } from '../modal/modal.service';
 import { EmpresaService } from './empresa.service';
 import { Empresa } from './empresa';
@@ -45,28 +45,7 @@ import { Empresa } from './empresa';
       </form>
     </div>
   `,
-  styles: [`
-    .container {
-      background-color: #222;
-      color: #fff;
-      padding: 20px;
-      border-radius: 10px;
-    }
-    .btn-danger {
-      background-color: #dc3545;
-      border-color: #dc3545;
-    }
-    .btn-danger:hover {
-      background-color: #c82333;
-      border-color: #bd2130;
-    }
-    .form-group {
-      margin-bottom: 20px;
-    }
-    label {
-      font-weight: bold;
-    }
-  `]
+  styleUrls: ['../../styles.css']
 })
 export class EmpresasDetailComponent {
   empresa!: Empresa;

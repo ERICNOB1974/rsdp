@@ -105,7 +105,7 @@ When('se solicitan guardar una nueva tarea al proyecto',
         this.proyecto.tareas.push(this.tarea);
 
         this.response = httpRequest('PUT', 'http://backend:8080/proyectos', JSON.stringify(this.proyecto));
-    
+
     });
 
 
@@ -117,20 +117,9 @@ When('se solicitan guardar una nueva tarea al proyecto',
 
 
 
-    Given('que se ingresa el operario con legajo {int}, con nombre {string} cuya categoría es {string} y pertenece al turno {string} a partir de {string}',
+Given('que se ingresa el operario con legajo {int}, con nombre {string} cuya categoría es {string} y pertenece al turno {int} a partir de {string}',
     function (legajo, nombre, categoria, turno, fechaDesdeTurno) {
-        if (legajo === 1000 || legajo === 2000 || legajo === 3000){
-            this.tipoTurno = httpRequest('GET', `http://backend:8080/tipoTurnos/id/1`).data;
-        }
-         else if (legajo === 4000 || legajo === 5000 || legajo === 6000){
-            this.tipoTurno = httpRequest('GET', `http://backend:8080/tipoTurnos/id/2`).data;
-        } 
-        else if (legajo <= 28000) {
-            this.tipoTurno = httpRequest('GET', `http://backend:8080/tipoTurnos/id/3`).data;
-        } else {
-            this.tipoTurno = httpRequest('GET', `http://backend:8080/tipoTurnos/id/4`).data;
-        }
-        
+        this.tipoTurno = httpRequest('GET', `http://backend:8080/tipoTurnos/id/${turno}`).data;
 
         this.historicoTurnosObj = {
             fechaTurnoDesde: fechaDesdeTurno,
@@ -142,19 +131,20 @@ When('se solicitan guardar una nueva tarea al proyecto',
             legajo: legajo,
             nombre: nombre,
             categoria: categoria,
-            historicoTurnos: [] 
+            historicoTurnos: []
         };
         this.operario.historicoTurnos.push(this.historicoTurnosObj);
     });
 
-When('presiono el botón de guardar de operarios', function () {
-    this.responseOperario = httpRequest('POST', 'http://backend:8080/operarios', JSON.stringify(this.operario));
-});
+When('presiono el botón de guardar de operarios',
+    function () {
+        this.responseOperario = httpRequest('POST', 'http://backend:8080/operarios', JSON.stringify(this.operario));
+    });
 
-Then('se espera la siguiente {string} de operarios', 
-function (respuesta) {
-    assert.equal(this.responseOperario.message, respuesta);
-});
+Then('se espera la siguiente {string} de operarios',
+    function (respuesta) {
+        assert.equal(this.responseOperario.message, respuesta);
+    });
 
 
 
@@ -164,7 +154,7 @@ function (respuesta) {
 
 
 Given('el operario con legajo {int} y nombre {string}',
-    function (legajo,nombre) {
+    function (legajo, nombre) {
 
         this.operario = httpRequest('GET', encodeURI(`http://backend:8080/operarios/legajo/${legajo}`)).data;
 
@@ -176,8 +166,6 @@ Given('que trabajó el día {string} para el proyecto {string} en la tarea {stri
         this.proyecto = httpRequest('GET', encodeURI(`http://backend:8080/proyectos/codigo/${proyecto}`)).data;
 
         this.tarea = httpRequest('GET', encodeURI(`http://backend:8080/tareas/codigo/${tarea}`)).data;
-
-        const horas = horaHasta - horaDesde;
 
         this.parteMO = {
             fecha: fechaParte,
@@ -221,19 +209,20 @@ Given('los partes cargados',
 
 When('se solicitan obtener el resumen de partes por día y operario',
     function () {
-        this.resumenObtenido = httpRequest('GET', encodeURI(`http://backend:8080/partes/informe/?page=0&size=500`)).data;
+        this.resumenObtenido = httpRequest('GET', encodeURI(`http://backend:8080/partes/informe/?page=0&size=500`)).data.content;
     });
 
 Then('se obtiene el siguiente resumen',
     function (resumenString) {
         let resumenEsperado = JSON.parse(resumenString).resumenPartesMO;
 
-        for (let res of this.resumenObtenido.content) {
+        for (let res of this.resumenObtenido) {
             delete res.fecha;
             delete res.estado;
         }
 
-        this.resumenObtenido = (this.resumenObtenido.content).filter(res => res.legajo <= 6000);
+        this.resumenObtenido.sort((a, b) => a.legajo - b.legajo);
+        resumenEsperado.sort((a, b) => a.legajo - b.legajo);
 
         let resumenObtenidoOrdenado = ordenar(this.resumenObtenido);
 
@@ -278,6 +267,7 @@ Given('el siguiente listado de partes de mano de obra en estado a validar',
             delete pmo.estado.id;
             delete pmo.logsValidacion;
         }
+
         for (let pmo of partesEsperados) {
             delete pmo.id;
             delete pmo.estado.id;
@@ -285,8 +275,6 @@ Given('el siguiente listado de partes de mano de obra en estado a validar',
             delete pmo.proyecto.id;
             delete pmo.tarea.id;
         }
-
-        this.partesObtenidos = this.partesObtenidos.filter(res => res.operario.legajo <= 6000);
 
         let partesEsperadosOrdenados = ordenar(partesEsperados);
         let partesObtenidosOrdenados = ordenar(this.partesObtenidos);
@@ -326,9 +314,9 @@ Then('se obtiene la siguiente respuesta',
 
             // Comprobación de si logsValidacion es un iterable
             if (Array.isArray(pmo.logsValidacion)) {
-                if (pmo.logsValidacion){
+                if (pmo.logsValidacion) {
                     for (let log of pmo.logsValidacion) {
-                        if (log.validacionParteMO.id === 5){
+                        if (log.validacionParteMO.id === 5) {
                             delete pmo.logsValidacion;
                             break;
                         }
@@ -343,9 +331,6 @@ Then('se obtiene la siguiente respuesta',
                 delete pmo.logsValidacion;
             }
         }
-
-
-        this.partesObtenidos = this.partesObtenidos.filter(res => res.operario.legajo <= 6000);
 
         for (let pmo of partesEsperados) {
             delete pmo.id;
@@ -371,7 +356,7 @@ Then('se obtiene la siguiente respuesta',
 
         assert.equal(partesObtenidosOrdenados, partesEsperadosOrdenados);
 
-});
+    });
 
 
 
@@ -384,138 +369,128 @@ Then('se obtiene la siguiente respuesta',
 
 
 Given('el parte "{string}" que está inválido',
-function(parteString){
-    
-    parte = JSON.parse(parteString);
-    
-    this.parteObtenido = httpRequest('GET', encodeURI(`http://backend:8080/partes/parteDadoProyectoYTarea/${parte.fecha}/${parte.operario.legajo}/${parte.proyecto.codigo}/${parte.tarea.codigo}`)).data;
-    
-});
+    function (parteString) {
 
-When('se corrige el "{string}"', 
-function (parteCorregidoString) {
+        parte = JSON.parse(parteString);
 
-    this.parteCorregido = JSON.parse(parteCorregidoString);
+        this.parteObtenido = httpRequest('GET', encodeURI(`http://backend:8080/partes/parteDadoProyectoYTarea/${parte.fecha}/${parte.operario.legajo}/${parte.proyecto.codigo}/${parte.tarea.codigo}`)).data;
 
-    if (this.parteCorregido.operario.legajo == '3000'){
-        this.parteValidado = httpRequest('GET', encodeURI(`http://backend:8080/partes/validarComoSupervisor/${this.parteCorregido.fecha}/${this.parteCorregido.operario.legajo}`));
-    } else {
-        this.parteCorregido.id = this.parteObtenido.id;
-        this.parteCorregido.operario = this.parteObtenido.operario;    
-        this.parteCorregido.proyecto = this.parteObtenido.proyecto;    
-        this.parteCorregido.tarea = this.parteObtenido.tarea;
-        this.parteCorregido.logsValidacion = this.parteObtenido.logsValidacion;
-        let resultado = request('PUT', 
-        'http://backend:8080/partes', {
-            json: this.parteCorregido
-        });
-        this.respuestaCorregido = JSON.parse(resultado.body);
-    }
-});
-       
-    
+    });
+
+When('se corrige el "{string}"',
+    function (parteCorregidoString) {
+
+        this.parteCorregido = JSON.parse(parteCorregidoString);
+
+        if (this.parteCorregido.estado.nombre == 'validado') {
+            this.parteValidado = httpRequest('GET', encodeURI(`http://backend:8080/partes/validarComoSupervisor/${this.parteCorregido.fecha}/${this.parteCorregido.operario.legajo}`));
+        } else {
+            this.parteCorregido.id = this.parteObtenido.id;
+            this.parteCorregido.operario = this.parteObtenido.operario;
+            this.parteCorregido.proyecto = this.parteObtenido.proyecto;
+            this.parteCorregido.tarea = this.parteObtenido.tarea;
+            this.parteCorregido.logsValidacion = this.parteObtenido.logsValidacion;
+            let resultado = request('PUT',
+                'http://backend:8080/partes', {
+                json: this.parteCorregido
+            });
+            this.respuestaCorregido = JSON.parse(resultado.body);
+        }
+    });
+
+
 Then('se espera el siguiente resultado de correccion de partes "{string}"',
-function (respuesta) {
+    function (respuesta) {
 
-    respuesta = JSON.parse(respuesta);
+        respuesta = JSON.parse(respuesta);
 
-    if (this.parteValidado){
-        assert.equal(respuesta.StatusText, this.parteValidado.message);
-    } else {
-        assert.equal(respuesta.StatusText, this.respuestaCorregido.message);
-    }
+        if (this.parteValidado) {
+            assert.equal(respuesta.StatusText, this.parteValidado.message);
+            assert.equal(respuesta.StatusCode, this.parteValidado.status);
+        } else {
+            assert.equal(respuesta.StatusText, this.respuestaCorregido.message);
+            assert.equal(respuesta.StatusCode, this.respuestaCorregido.status);
+        }
 
-});
+    });
 
 Given('el siguiente listado de partes de mano de obra en estado a validar para la correccion',
-function(partesString){
-    let partesEsperados = JSON.parse(partesString).partesMO;
-    this.partesObtenidos = httpRequest('GET', encodeURI(`http://backend:8080/partes/partesEstadoCorregido`)).data;
-});
+    function (partesString) {
+        this.partesObtenidos = httpRequest('GET', encodeURI(`http://backend:8080/partes/partesEstadoCorregido`)).data;
+    });
 
 When('se solicita validar los partes a la fecha {string} para la correccion',
-function (fecha) {
-    this.requestValidar = httpRequest('GET', encodeURI(`http://backend:8080/partes/validar/${fecha}`)).data;
-    this.partesObtenidos = httpRequest('GET', encodeURI(`http://backend:8080/partes`)).data;
-});
+    function (fecha) {
+        this.requestValidar = httpRequest('GET', encodeURI(`http://backend:8080/partes/validar/${fecha}`)).data;
+        this.partesObtenidos = httpRequest('GET', encodeURI(`http://backend:8080/partes`)).data;
+    });
 
 Then('se obtiene la siguiente respuesta de correccion de partes',
-function (partesString) {
-    let partesEsperados = JSON.parse(partesString).partesMO;
-    let partesObtenidosFiltrados = [];
+    function (partesString) {
+        let partesEsperados = JSON.parse(partesString).partesMO;
 
-    for (let pmo of this.partesObtenidos) {
-        if (!(pmo.operario.legajo === 1000 || pmo.operario.legajo === 2000 || pmo.operario.legajo === 3000)) {
-            partesObtenidosFiltrados.push(pmo);
-        }
-    }
-    this.partesObtenidos = partesObtenidosFiltrados;
+        for (let pmo of this.partesObtenidos) {
+            delete pmo.id;
+            pmo.fecha = pmo.fecha.substring(0, 10);
+            delete pmo.horas;
+            delete pmo.operario.id;
+            delete pmo.operario.categoria;
+            delete pmo.operario.turno;
+            delete pmo.operario.fechaTurnoDesde;
+            delete pmo.operario.fechaTurnoHasta;
+            delete pmo.operario.horaDesde;
+            delete pmo.operario.horaHasta;
+            delete pmo.operario.historicoTurnos;
+            delete pmo.proyecto.id;
+            delete pmo.proyecto.empresa;
+            delete pmo.proyecto.tareas;
+            delete pmo.tarea.id;
+            delete pmo.estado.id;
+            if (pmo.estado.nombre !== 'inválido') {
+                delete pmo.logsValidacion;
+            }
 
-    for (let pmo of this.partesObtenidos) {
-        if (pmo.operario.legajo === 1000 || pmo.operario.legajo === 2000 || pmo.operario.legajo === 3000) {
-            delete pmo;
-        }
-        delete pmo.id;
-        pmo.fecha = pmo.fecha.substring(0, 10);
-        delete pmo.horas;
-        delete pmo.operario.id;
-        delete pmo.operario.categoria;
-        delete pmo.operario.turno;
-        delete pmo.operario.fechaTurnoDesde;
-        delete pmo.operario.fechaTurnoHasta;
-        delete pmo.operario.horaDesde;
-        delete pmo.operario.horaHasta;
-        delete pmo.operario.historicoTurnos;
-        delete pmo.proyecto.id;
-        delete pmo.proyecto.empresa;
-        delete pmo.proyecto.tareas;
-        delete pmo.tarea.id;
-        delete pmo.estado.id;
-        if (pmo.estado.nombre !== 'inválido'){
-            delete pmo.logsValidacion;
-        }
-
-        // Comprobación de si logsValidacion es un iterable
-        if (Array.isArray(pmo.logsValidacion)) {
-            if (pmo.logsValidacion) {
-                pmo.logsValidacion = pmo.logsValidacion.filter(log => {
-                    if (log.estado.nombre == 'caducado') {
-                        return false;
-                    }
-                    delete log.id;
-                    delete log.estado.id;
-                    delete log.validacionParteMO.id;
-                    delete log.fecha;
-                    delete log.tiempoCreacion;
-                    return true;
-                });
+            // Comprobación de si logsValidacion es un iterable
+            if (Array.isArray(pmo.logsValidacion)) {
+                if (pmo.logsValidacion) {
+                    pmo.logsValidacion = pmo.logsValidacion.filter(log => {
+                        if (log.estado.nombre == 'caducado') {
+                            return false;
+                        }
+                        delete log.id;
+                        delete log.estado.id;
+                        delete log.validacionParteMO.id;
+                        delete log.fecha;
+                        delete log.tiempoCreacion;
+                        return true;
+                    });
+                }
             }
         }
-    }
 
-    this.partesObtenidos = this.partesObtenidos.filter(res => res.operario.legajo <= 6000);
+        this.partesObtenidos = this.partesObtenidos.filter(res => res.operario.legajo <= 6000 && res.operario.legajo >= 4000);
 
-    for (let pmo of partesEsperados) {
-        delete pmo.id;
-        delete pmo.estado.id;
-        delete pmo.operario.id;
-        delete pmo.proyecto.id;
-        delete pmo.tarea.id;
+        for (let pmo of partesEsperados) {
+            delete pmo.id;
+            delete pmo.estado.id;
+            delete pmo.operario.id;
+            delete pmo.proyecto.id;
+            delete pmo.tarea.id;
 
-        // Comprobación de si logValidacion es un iterable
-        if (Array.isArray(pmo.logsValidacion)) {
-            for (let logs of pmo.logsValidacion) {
-                delete logs.id;
-                delete logs.estado.id;
-                delete logs.validacionParteMO.id;
+            // Comprobación de si logValidacion es un iterable
+            if (Array.isArray(pmo.logsValidacion)) {
+                for (let logs of pmo.logsValidacion) {
+                    delete logs.id;
+                    delete logs.estado.id;
+                    delete logs.validacionParteMO.id;
+                }
+            } else {
+                delete pmo.logValidacion;
             }
-        } else {
-            delete pmo.logValidacion;
         }
-    }
 
-    let partesEsperadosOrdenados = ordenar(partesEsperados);
-    let partesObtenidosOrdenados = ordenar(this.partesObtenidos);
+        let partesEsperadosOrdenados = ordenar(partesEsperados);
+        let partesObtenidosOrdenados = ordenar(this.partesObtenidos);
 
-    assert.equal(partesObtenidosOrdenados, partesEsperadosOrdenados);
-});
+        assert.equal(partesObtenidosOrdenados, partesEsperadosOrdenados);
+    });
