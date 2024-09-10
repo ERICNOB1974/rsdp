@@ -20,9 +20,6 @@ public class EventoPresenter {
         return Response.ok(eventoService.findAll());
     }
 
-
-
-    
     @RequestMapping(path = "/crear", method = RequestMethod.POST)
     public ResponseEntity<Object> create(@RequestBody Evento evento){
         return Response.ok(eventoService.save(evento));
