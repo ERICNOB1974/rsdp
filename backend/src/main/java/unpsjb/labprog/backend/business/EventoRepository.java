@@ -12,7 +12,7 @@ import java.util.List;
 public interface EventoRepository extends Neo4jRepository<Evento, Long> {
 
     // // Buscar eventos por nombre
-    // List<Evento> findByNombreReal(String nombreReal);
+    // List<Evento> findAll(String nombreReal);
 
     // List<Evento> findByNombreUsuario(String nombreUsuario);
     
