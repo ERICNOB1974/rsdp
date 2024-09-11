@@ -32,12 +32,6 @@ public class Usuario {
     @Relationship(type = "POSTEO")
     private List<Publicacion> publicaciones;    
 
-    @Relationship(type = "PERTENECE_A")
-    private List<Comunidad> comunidades;
-
-    @Relationship(type = "PARTICIPA_EN")
-    private List<Evento> eventos;
-
     @Relationship(type = "REALIZA")
     private List<Rutina> rutinas;
 

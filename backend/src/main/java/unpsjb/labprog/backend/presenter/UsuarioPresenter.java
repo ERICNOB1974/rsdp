@@ -5,24 +5,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import unpsjb.labprog.backend.Response;
-import unpsjb.labprog.backend.business.EventoService;
-import unpsjb.labprog.backend.model.Evento;
+import unpsjb.labprog.backend.business.UsuarioService;
+import unpsjb.labprog.backend.model.Usuario;
 
 @RestController
-@RequestMapping("eventos")
-public class EventoPresenter {
+@RequestMapping("usuarios")
+public class UsuarioPresenter {
 
     @Autowired
-    EventoService eventoService;
+    UsuarioService usuarioService;
 
     @GetMapping("/findAll")
     public ResponseEntity<Object> findAll(){
-        return Response.ok(eventoService.findAll());
+        return Response.ok(usuarioService.findAll());
     }
 
     @RequestMapping(path = "/create", method = RequestMethod.POST)
-    public ResponseEntity<Object> create(@RequestBody Evento evento){
-        return Response.ok(eventoService.save(evento));
+    public ResponseEntity<Object> create(@RequestBody Usuario usuario){
+        return Response.ok(usuarioService.save(usuario));
     }
 
 }

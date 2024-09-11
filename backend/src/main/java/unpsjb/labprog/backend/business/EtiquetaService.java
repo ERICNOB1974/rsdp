@@ -6,27 +6,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import unpsjb.labprog.backend.model.Usuario;
+import unpsjb.labprog.backend.model.Etiqueta;
 
 @Service
-public class UsuarioService {
-
+public class EtiquetaService {
+    
     @Autowired
-    UsuarioRepository usuarioRepository;
+    EtiquetaRepository etiquetaRepository;
 
-    public List<Usuario> findAll() {
-        return usuarioRepository.findAll();
+    public List<Etiqueta> findAll() {
+        return etiquetaRepository.findAll();
     }
 
     @Transactional
-    public Usuario save(Usuario usuario) {
-        return usuarioRepository.save(usuario);
+    public Etiqueta save(Etiqueta etiqueta) {
+        return etiquetaRepository.save(etiqueta);
     }
 
     @Transactional
     public void deleteById(Long id) {
-        usuarioRepository.deleteById(id);
-    }    
+        etiquetaRepository.deleteById(id);
+    }
 
 }
-
