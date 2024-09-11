@@ -7,10 +7,5 @@ import unpsjb.labprog.backend.model.Evento;
 
 @Repository
 public interface EventoRepository extends Neo4jRepository<Evento, Long> {
-
-    // // Buscar eventos por nombre
-    // List<Evento> findAll(String nombreReal);
-
-    // List<Evento> findByNombreUsuario(String nombreUsuario);
     
 }
