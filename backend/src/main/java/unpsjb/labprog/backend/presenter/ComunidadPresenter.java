@@ -5,24 +5,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import unpsjb.labprog.backend.Response;
-import unpsjb.labprog.backend.business.EventoService;
-import unpsjb.labprog.backend.model.Evento;
+import unpsjb.labprog.backend.business.ComunidadService;
+import unpsjb.labprog.backend.model.Comunidad;
 
 @RestController
-@RequestMapping("eventos")
-public class EventoPresenter {
+@RequestMapping("comunidades")
+public class ComunidadPresenter {
 
     @Autowired
-    EventoService eventoService;
+    ComunidadService comunidadService;
 
     @GetMapping("/findAll")
     public ResponseEntity<Object> findAll(){
-        return Response.ok(eventoService.findAll());
+        return Response.ok(comunidadService.findAll());
     }
 
     @RequestMapping(path = "/create", method = RequestMethod.POST)
-    public ResponseEntity<Object> create(@RequestBody Evento evento){
-        return Response.ok(eventoService.save(evento));
+    public ResponseEntity<Object> create(@RequestBody Comunidad comunidad){
+        return Response.ok(comunidadService.save(comunidad));
     }
 
 }
