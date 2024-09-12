@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  database:
+    image: neo4j:5.23.0
+    environment:
+      - NEO4J_AUTH=neo4j/ericfaculucas
+    ports:
+      - "7474:7474"   # Puerto HTTP de Neo4j
+      - "7687:7687"   # Puerto BOLT de Neo4j
+    networks:
+      - my_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    volumes:
+      - ./backend:/app
+      - ../common/backend/m2:/root/.m2
+    working_dir: /app
+    command: sh run.sh
+    ports:
+      - "28004:8080"   # Exponer el backend en el puerto 28002 del servidor
+    environment:
+      SPRING_NEO4J_URI: bolt://if012rsdp.fi.mdn.unp.edu.ar:28002
+      SPRING_NEO4J_AUTHENTICATION_USERNAME: neo4j
+      SPRING_NEO4J_AUTHENTICATION_PASSWORD: ericfaculucas
+    depends_on:
+      - database
+    networks:
+      - my_network
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    working_dir: /home/node/cli
+    command: ng serve --host=0.0.0.0
+    restart: always
+    ports:
+      - "28003:4200"  # Exponer el frontend en el puerto 28003 del servidor
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./frontend:/home/node
+    depends_on:
+      - backend
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge
