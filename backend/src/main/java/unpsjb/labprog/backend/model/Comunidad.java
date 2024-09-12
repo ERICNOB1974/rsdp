@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -21,20 +22,21 @@ public class Comunidad {
     private Long id;
 
     private String nombre;
+    private LocalDate fechaDeCreacion;
     private String descripcion;
     private int cantidadMaximaMiembros;
 
-    @Relationship(type = "POSTEOS")
+    @Relationship(type = "POSTEA")
     private List<Publicacion> publicaciones;
 
     @Relationship(type = "CREADO_POR")
     private Usuario creador;
 
     @Relationship(type = "ADMINISTRADO_POR")
-    private List<Usuario> administradores;
+    private List<MiembroDeComunidad> administradores;
 
     @Relationship(type = "MIEMBRO")
-    private List<Usuario> miembros;
+    private List<MiembroDeComunidad> miembros;
 
     @Relationship(type = "ORGANIZA")
     private List<Evento> eventos;

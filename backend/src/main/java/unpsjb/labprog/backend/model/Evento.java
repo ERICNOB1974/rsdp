@@ -2,15 +2,12 @@ package unpsjb.labprog.backend.model;
 
 import org.springframework.data.neo4j.core.schema.*;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @Data
@@ -25,6 +22,7 @@ public class Evento {
     private Long id;
 
     private String nombre;
+    private LocalDate fechaDeCreacion;
     private LocalDate fechaHora; 
     private String ubicacion;
     private String descripcion;
@@ -33,8 +31,8 @@ public class Evento {
     @Relationship(type = "CREADO_POR")
     private Usuario creador;
 
-    @Relationship(type = "PARTICIPA_EN")
-    private List<Usuario> participantes;
+    @Relationship(type = "PARTICIPA")
+    private List<InscriptoEnEvento> participantes;
 
     @Relationship(type = "ETIQUETADO_CON")
     private List<Etiqueta> etiquetas;
