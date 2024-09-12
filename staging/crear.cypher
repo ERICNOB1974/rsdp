@@ -1,23 +1,102 @@
-// Crear Usuarios
-CREATE (user1:Usuario {id: 1, nombreUsuario: "user1", nombreReal: "Usuario Uno", fechaNacimiento: null, fechaDeCreacion: null, correoElectronico: "user1@ejemplo.com", contrasena: "password1", descripcion: "Usuario activo"})
-CREATE (user2:Usuario {id: 2, nombreUsuario: "user2", nombreReal: "Usuario Dos", fechaNacimiento: null, fechaDeCreacion: null, correoElectronico: "user2@ejemplo.com", contrasena: "password2", descripcion: "Deportista profesional"})
+CREATE (u1:Usuario {
+    nombreUsuario: "usuario1", 
+    nombreReal: "Juan Pérez", 
+    fechaNacimiento: date("1990-01-01"), 
+    fechaDeCreacion: date("2023-01-01"), 
+    correoElectronico: "juan@example.com", 
+    contrasena: "password123", 
+    descripcion: "Aficionado al running"
+}),
+(u2:Usuario {
+    nombreUsuario: "usuario2", 
+    nombreReal: "María González", 
+    fechaNacimiento: date("1985-05-10"), 
+    fechaDeCreacion: date("2023-03-10"), 
+    correoElectronico: "maria@example.com", 
+    contrasena: "password456", 
+    descripcion: "Apasionada del ciclismo"
+});
 
-// Crear Eventos
-CREATE (event1:Evento {id: 1, nombre: "Futbol 5", fechaHora: null, ubicacion: "Cancha 1", descripcion: "Partido amistoso", cantidadMaximaParticipantes: 10})
-CREATE (event2:Evento {id: 2, nombre: "Carrera 10K", fechaHora: null, ubicacion: "Parque Central", descripcion: "Carrera anual", cantidadMaximaParticipantes: 50})
 
-// Crear relación PARTICIPA_EN con atributo fechaInscripcion
-CREATE (user1)-[:PARTICIPA_EN {fechaInscripcion: null}]->(event1)
-CREATE (user2)-[:PARTICIPA_EN {fechaInscripcion: null}]->(event2)
+CREATE (c1:Comunidad {
+    nombre: "Comunidad Running", 
+    fechaDeCreacion: date("2022-01-01"), 
+    descripcion: "Grupo de corredores aficionados", 
+    cantidadMaximaMiembros: 100
+}),
+(c2:Comunidad {
+    nombre: "Comunidad Ciclismo", 
+    fechaDeCreacion: date("2021-06-15"), 
+    descripcion: "Ciclistas de todas las edades", 
+    cantidadMaximaMiembros: 50
+});
 
-// Crear etiquetas
-CREATE (etiqueta1:Etiqueta {nombre: "Deporte"})
-CREATE (etiqueta2:Etiqueta {nombre: "Carrera"})
 
-// Relacionar eventos con etiquetas
-CREATE (event1)-[:ETIQUETADO_CON]->(etiqueta1)
-CREATE (event2)-[:ETIQUETADO_CON]->(etiqueta2)
+CREATE (p1:Publicacion {
+    descripcion: "Gran entrenamiento de hoy!", 
+    cantidadLikes: 10
+}),
+(p2:Publicacion {
+    descripcion: "Nueva meta alcanzada!", 
+    cantidadLikes: 25
+});
 
-// Relacionar Evento con su creador
-CREATE (event1)-[:CREADO_POR]->(user1)
-CREATE (event2)-[:CREADO_POR]->(user2)
+
+CREATE (e1:Ejercicio {
+    nombre: "Flexiones", 
+    descripcion: "Flexiones de pecho", 
+    cantidadRepeticiones: "20", 
+    cantidadTiempo: 0, 
+    esPorTiempo: false
+}),
+(e2:Ejercicio {
+    nombre: "Planchas", 
+    descripcion: "Planchas abdominales", 
+    cantidadRepeticiones: "", 
+    cantidadTiempo: 60, 
+    esPorTiempo: true
+});
+
+
+CREATE (r1:Rutina {
+    nombre: "Rutina Básica", 
+    descripcion: "Entrenamiento para principiantes", 
+    duracionMinutosPorDia: 30, 
+    dificultad: "PRINCIPIANTE"
+});
+
+
+CREATE (ev1:Evento {
+    nombre: "Carrera 5K", 
+    fechaDeCreacion: date("2023-04-01"), 
+    fechaHora: date("2023-05-01"), 
+    ubicacion: "Parque Central", 
+    descripcion: "Carrera de 5 kilómetros", 
+    cantidadMaximaParticipantes: 100
+});
+
+
+CREATE (com1:Comentario {
+    descripcionComentario: "Gran evento!"
+});
+
+
+CREATE (et1:Etiqueta { nombre: "Running" }),
+(et2:Etiqueta { nombre: "Ciclismo" });
+
+
+MATCH (u1:Usuario {nombreUsuario: "usuario1"}), (r1:Rutina {nombre: "Rutina Básica"})
+CREATE (u1)-[:REALIZA {fechaDeComienzo: date("2023-01-15")}]->(r1);
+
+MATCH (u1:Usuario {nombreUsuario: "usuario1"}), (p1:Publicacion {descripcion: "Gran entrenamiento de hoy!"})
+CREATE (u1)-[:POSTEA]->(p1);
+
+MATCH (c1:Comunidad {nombre: "Comunidad Running"}), (et1:Etiqueta {nombre: "Running"})
+CREATE (c1)-[:ETIQUETADA_CON]->(et1);   
+
+MATCH (u1:Usuario {nombreUsuario: "usuario1"}), (ev1:Evento {nombre: "Carrera 5K"})
+CREATE (u1)-[:PARTICIPA {fechaDeInscripcion: date("2023-04-05")}]->(ev1);
+
+MATCH (u1:Usuario {nombreUsuario: "usuario1"}), (u2:Usuario {nombreUsuario: "usuario2"})
+CREATE (u1)-[:ES_AMIGO_DE]->(u2);
+
