@@ -16,7 +16,6 @@ case "$1" in
     # docker compose -f docker-compose.yml
     ;;
   up ) echo "Iniciando servidores.."
-    sudo systemctl start docker
     docker compose -f docker-compose.yml up -d
     ;;
   down ) echo "Deteniendo servidores.."
@@ -43,7 +42,7 @@ case "$1" in
     docker compose run --rm testing
     ;;
   superTest ) echo "Testing"
-    cat ./staging/$2.sql | docker exec -i rsdp-database-1 psql -q -U APP -d labprog
+    cat ./staging/$2.cypher | docker exec -i rsdp-database-1 cypher-shell -a bolt://if012rsdp.fi.mdn.unp.edu.ar:28002 -u neo4j -p ericfaculucas
     docker compose run --rm testing
     ;;
  staging) 
