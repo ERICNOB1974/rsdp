@@ -2,11 +2,14 @@ package unpsjb.labprog.backend.model;
 
 import org.springframework.data.neo4j.core.schema.*;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -22,8 +25,7 @@ public class Evento {
     private Long id;
 
     private String nombre;
-    private Date fechaHora;
-    private Date fechaCreacion;
+    private LocalDate fechaHora; 
     private String ubicacion;
     private String descripcion;
     private int cantidadMaximaParticipantes;
