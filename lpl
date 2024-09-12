@@ -16,11 +16,19 @@ case "$1" in
     # docker compose -f docker-compose.yml
     ;;
   up ) echo "Iniciando servidores.."
-    sudo systemctl start docker
     docker compose -f docker-compose.yml up -d
     ;;
   down ) echo "Deteniendo servidores.."
     docker compose -f docker-compose.yml down
+    ;;
+  dou ) echo "Bajando y subiendo servidores.."
+    docker compose -f docker-compose.yml down
+    docker compose -f docker-compose.yml up -d
+    ;;
+  cdou ) echo "Compilando, bajando y subiendo servidores.."
+    docker exec -t backend mvn compile
+    docker compose -f docker-compose.yml down
+    docker compose -f docker-compose.yml up -d
     ;;
 	restart ) echo "Reiniciando servicio $2..."
 		docker compose -f docker-compose.yml down
@@ -43,8 +51,12 @@ case "$1" in
     docker compose run --rm testing
     ;;
   superTest ) echo "Testing"
-    cat ./staging/$2.sql | docker exec -i rsdp-database-1 psql -q -U APP -d labprog
+    cat ./staging/$2.cypher | docker exec -i rsdp-database-1 cypher-shell -a bolt://if012rsdp.fi.mdn.unp.edu.ar:28002 -u neo4j -p ericfaculucas
     docker compose run --rm testing
+    ;;
+  init ) echo "Init"
+    code .
+    docker compose -f docker-compose.yml up -d
     ;;
  staging) 
     echo "Cargando staging $2"
