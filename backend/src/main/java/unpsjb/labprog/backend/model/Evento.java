@@ -2,6 +2,8 @@ package unpsjb.labprog.backend.model;
 
 import org.springframework.data.neo4j.core.schema.*;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
