@@ -8,7 +8,7 @@ if [ ! -d "$LABPROG_DIR" ]; then
   echo "Se creó el directorio $LABPROG_DIR"
 fi
 
-# Comandos
+# Comandos de facu
 case "$1" in
 	build ) echo "Instalando..."
   	docker-compose -f docker-compose.yml build
