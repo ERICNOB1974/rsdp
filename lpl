@@ -40,6 +40,7 @@ case "$1" in
     docker compose -f docker-compose.yml down
     docker compose -f docker-compose.yml up -d
     ;;
+<<<<<<< HEAD
   dou ) echo "Bajando y subiendo servidores.."
     docker compose -f docker-compose.yml down
     docker compose -f docker-compose.yml up -d
@@ -49,6 +50,8 @@ case "$1" in
     docker compose -f docker-compose.yml down
     docker compose -f docker-compose.yml up -d
     ;;
+=======
+>>>>>>> 705b279 (testeando git)
 	restart ) echo "Reiniciando servicio $2..."
 		docker-compose -f docker-compose.yml down
 		docker-compose -f docker-compose.yml up -d
