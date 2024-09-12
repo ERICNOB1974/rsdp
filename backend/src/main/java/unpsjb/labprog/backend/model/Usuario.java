@@ -35,7 +35,7 @@ public class Usuario {
     @Relationship(type = "REALIZA")
     private List<Rutina> rutinas;
 
-    @Relationship(type = "AMIGO_DE")
+    @Relationship(type = "AMIGO_DE") 
     private List<Usuario> amigos;
     
 }
