@@ -65,5 +65,3 @@ case "$1" in
   * ) echo "Opción inválida."
       ;;
 esac
-
-
