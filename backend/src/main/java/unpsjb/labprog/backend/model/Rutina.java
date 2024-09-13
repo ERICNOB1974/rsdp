@@ -25,10 +25,10 @@ public class Rutina {
     private int duracionMinutosPorDia;
     private Dificultad dificultad;
 
-    @Relationship(type = "EJERCICIO")
+    @Relationship(type = "TIENE")
     private List<Ejercicio> ejercicios;
 
-    @Relationship(type = "ETIQUETADA_POR")
+    @Relationship(type = "ETIQUETADA_CON")
     private List<Etiqueta> etiquetas;
 
 }
