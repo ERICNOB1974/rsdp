@@ -36,7 +36,7 @@ public class Usuario {
     private List<Comunidad> comunidades;
 
     @Relationship(type = "PARTICIPA_EN")
-    private List<Evento> eventos;
+    private List<InscripcionAEvento> inscripciones;
 
     @Relationship(type = "REALIZA")
     private List<Rutina> rutinas;

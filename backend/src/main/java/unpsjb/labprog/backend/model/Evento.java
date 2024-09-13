@@ -23,6 +23,7 @@ public class Evento {
 
     private String nombre;
     private Date fechaHora;
+    private Date fechaCreacion;
     private String ubicacion;
     private String descripcion;
     private int cantidadMaximaParticipantes;
