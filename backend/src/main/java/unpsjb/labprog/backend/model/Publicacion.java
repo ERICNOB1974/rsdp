@@ -25,7 +25,7 @@ public class Publicacion {
 
     private Long cantidadLikes;
 
-    private String descripcion;
+    private String descripcion; 
     
     @Relationship(type = "COMENTA")
     private List<Comentario> comentarios;
