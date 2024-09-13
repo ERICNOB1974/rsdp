@@ -17,9 +17,14 @@ case "$1" in
     ;;
   up ) echo "Iniciando servidores.."
 <<<<<<< HEAD
+<<<<<<< HEAD
     sudo systemctl start docker
     docker-compose -f docker-compose.yml up -d
 =======
+=======
+    sudo systemctl start docker
+    docker-compose -f docker-compose.yml up -d
+>>>>>>> 26d3cc4 (pull que me ayudo eric en la clase de fundamentos)
     docker compose -f docker-compose.yml up -d
 >>>>>>> af1160f (Cambio)
     ;;
@@ -66,6 +71,7 @@ case "$1" in
     ;;
   superTest ) echo "Testing"
 <<<<<<< HEAD
+<<<<<<< HEAD
     cat ./staging/$2.sql | docker exec -i rsdp-database-1 psql -q -U APP -d labprog
     docker-compose run --rm testing
     ;;
@@ -76,6 +82,10 @@ case "$1" in
     cat ./staging/$2.cypher | docker exec -i rsdp-database-1 cypher-shell -a bolt://if012rsdp.fi.mdn.unp.edu.ar:28002 -u neo4j -p ericfaculucas
     docker compose run --rm testing
 >>>>>>> af1160f (Cambio)
+=======
+    cat ./staging/$2.sql | docker exec -i rsdp-database-1 psql -q -U APP -d labprog
+    docker-compose run --rm testing
+>>>>>>> 26d3cc4 (pull que me ayudo eric en la clase de fundamentos)
     ;;
   init ) echo "Init"
     code .
