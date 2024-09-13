@@ -1,12 +1,10 @@
 version: '3.8'
 
-services:
-  database:
+services:  database:
     image: neo4j:5.23.0
     environment:
       - NEO4J_AUTH=neo4j/ericfaculucas
     ports:
-
   backend:
     build:
       context: ./backend
@@ -18,9 +16,3 @@ services:
     working_dir: /app
     command: sh run.sh
     ports:
-    
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: frontend
