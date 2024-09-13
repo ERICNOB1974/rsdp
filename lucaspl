@@ -11,35 +11,35 @@ fi
 # Comandos
 case "$1" in
 	build ) echo "Instalando..."
-  	docker compose -f docker-compose.yml build
+  	docker-compose -f docker-compose.yml build
     # docker compose -f docker-compose.yml run frontend ./install.sh
     # docker compose -f docker-compose.yml
     ;;
   up ) echo "Iniciando servidores.."
-    docker compose -f docker-compose.yml up -d
+    docker-compose -f docker-compose.yml up -d
     ;;
   down ) echo "Deteniendo servidores.."
-    docker compose -f docker-compose.yml down
+    docker-compose -f docker-compose.yml down
     ;;
   dou ) echo "Bajando y subiendo servidores.."
-    docker compose -f docker-compose.yml down
-    docker compose -f docker-compose.yml up -d
+    docker-compose -f docker-compose.yml down
+    docker-compose -f docker-compose.yml up -d
     ;;
   cdou ) echo "Compilando, bajando y subiendo servidores.."
     docker exec -t backend mvn compile
-    docker compose -f docker-compose.yml down
-    docker compose -f docker-compose.yml up -d
+    docker-compose -f docker-compose.yml down
+    docker-compose -f docker-compose.yml up -d
     ;;
 	restart ) echo "Reiniciando servicio $2..."
-		docker compose -f docker-compose.yml down
-		docker compose -f docker-compose.yml up -d
+		docker-compose -f docker-compose.yml down
+		docker-compose -f docker-compose.yml up -d
 		;;
 	restart-all ) echo "Reiniciando servidores.."
-		docker compose -f docker-compose.yml restart
+		docker-compose -f docker-compose.yml restart
 		;;
-	log ) docker compose -f docker-compose.yml logs -f $2
+	log ) docker-compose -f docker-compose.yml logs -f $2
 		;;
-	logs ) docker compose -f docker-compose.yml logs -f
+	logs ) docker-compose -f docker-compose.yml logs -f
 		;;
   sh ) echo "Conectando con $2"
     docker exec -it $2 sh
@@ -48,20 +48,22 @@ case "$1" in
     docker exec -t backend mvn $2
     ;;
   test ) echo "Testing"
-    docker compose run --rm testing
+    docker-compose run --rm testing
     ;;
   superTest ) echo "Testing"
-    cat ./staging/$2.cypher | docker exec -i rsdp-database-1 cypher-shell -a bolt://if012rsdp.fi.mdn.unp.edu.ar:28002 -u neo4j -p ericfaculucas
-    docker compose run --rm testing
+    cat ./staging/$2.cypher | docker exec -i rsdp_database_1 cypher-shell -a bolt://if012rsdp.fi.mdn.unp.edu.ar:28002 -u neo4j -p ericfaculucas
+    docker-compose run --rm testing
     ;;
   init ) echo "Init"
     code .
-    docker compose -f docker-compose.yml up -d
+    docker-compose -f docker-compose.yml up -d
     ;;
  staging) 
     echo "Cargando staging $2"
-    cat ./staging/$2.cypher | docker exec -i rsdp-database-1 cypher-shell -a bolt://if012rsdp.fi.mdn.unp.edu.ar:28002 -u neo4j -p ericfaculucas
+    cat ./staging/$2.cypher | docker exec -i rsdp_database_1 cypher-shell -a bolt://if012rsdp.fi.mdn.unp.edu.ar:28002 -u neo4j -p ericfaculucas
     ;;
   * ) echo "Opción inválida."
       ;;
 esac
+
+
