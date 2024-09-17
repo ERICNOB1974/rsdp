@@ -18,6 +18,14 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 
+    public List<Usuario> amigos(String nombreUsuario){
+        return usuarioRepository.amigos(nombreUsuario);
+    }
+
+    public List<Usuario> amigosDeAmigos(String nombreUsuario){
+        return usuarioRepository.amigosDeAmigos(nombreUsuario);
+    }
+
     @Transactional
     public Usuario save(Usuario usuario) {
         return usuarioRepository.save(usuario);
