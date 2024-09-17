@@ -26,6 +26,14 @@ public class UsuarioService {
         return usuarioRepository.amigosDeAmigos(nombreUsuario);
     }
 
+    public List<Usuario> sugerenciaDeAmigosBasadasEnAmigos(String nombreUsuario){
+        return usuarioRepository.sugerenciaDeAmigosBasadaEnAmigos(nombreUsuario);
+    }
+
+    public List<Usuario> sugerenciaDeAmigosBasadosEnEventos(String nombreUsuario){
+        return usuarioRepository.sugerenciasDeAmigosBasadosEnEventos(nombreUsuario);
+    }
+
     @Transactional
     public Usuario save(Usuario usuario) {
         return usuarioRepository.save(usuario);
