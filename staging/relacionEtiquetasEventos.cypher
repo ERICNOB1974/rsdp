@@ -20,99 +20,98 @@ MATCH (e1:Evento {nombre: 'Torneo de Fútbol 5'}),
       (e20:Evento {nombre: 'Competencia de Esgrima'})
 
 MATCH (et1:Etiqueta {nombre: 'Fútbol'}),
-      (et2:Etiqueta {nombre: 'Correr'}),
-      (et3:Etiqueta {nombre: 'Resistencia'}),
-      (et4:Etiqueta {nombre: 'Tenis'}),
-      (et5:Etiqueta {nombre: 'Competencia'}),
-      (et6:Etiqueta {nombre: 'Caminata'}),
-      (et7:Etiqueta {nombre: 'Aventura'}),
-      (et8:Etiqueta {nombre: 'Yoga'}),
-      (et9:Etiqueta {nombre: 'Relajación'}),
-      (et10:Etiqueta {nombre: 'Natación'}),
-      (et11:Etiqueta {nombre: 'Acuático'}),
-      (et12:Etiqueta {nombre: 'Crossfit'}),
-      (et13:Etiqueta {nombre: 'Fuerza'}),
-      (et14:Etiqueta {nombre: 'Ciclismo'}),
-      (et15:Etiqueta {nombre: 'Montaña'}),
-      (et16:Etiqueta {nombre: 'Maratón'}),
-      (et17:Etiqueta {nombre: 'Distancia'}),
-      (et18:Etiqueta {nombre: 'Spinning'}),
-      (et19:Etiqueta {nombre: 'Aeróbico'}),
-      (et20:Etiqueta {nombre: 'Básquetbol'}),
-      (et21:Etiqueta {nombre: 'Voleibol'}),
-      (et22:Etiqueta {nombre: 'Boxeo'}),
-      (et23:Etiqueta {nombre: 'Combate'}),
-      (et24:Etiqueta {nombre: 'Rugby'}),
-      (et25:Etiqueta {nombre: 'Esfuerzo'}),
-      (et26:Etiqueta {nombre: 'Urbano'}),
-      (et27:Etiqueta {nombre: 'Bicicleta'}),
-      (et28:Etiqueta {nombre: 'Esgrima'}),
-      (et29:Etiqueta {nombre: 'Precisión'}),
-      (et30:Etiqueta {nombre: 'Triatlón'}),
-      (et31:Etiqueta {nombre: 'Endurance'}),
-      (et32:Etiqueta {nombre: 'Pesas'}),
-      (et33:Etiqueta {nombre: 'Potencia'}),
-      (et34:Etiqueta {nombre: 'Clásico'}),
-      (et35:Etiqueta {nombre: 'Karate'}),
-      (et36:Etiqueta {nombre: 'Disciplina'})
+      (et2:Etiqueta {nombre: 'Running'}),
+      (et3:Etiqueta {nombre: 'Tenis'}),
+      (et4:Etiqueta {nombre: 'Voleibol'}),
+      (et5:Etiqueta {nombre: 'Montaña'}),
+      (et6:Etiqueta {nombre: 'Yoga'}),
+      (et7:Etiqueta {nombre: 'Ciclismo'}),
+      (et8:Etiqueta {nombre: 'Natación'}),
+      (et9:Etiqueta {nombre: 'Zumba'}),
+      (et10:Etiqueta {nombre: 'Ajedrez'}),
+      (et11:Etiqueta {nombre: 'Ciudad'}), 
+      (et12:Etiqueta {nombre: 'Ping Pong'}),
+      (et13:Etiqueta {nombre: 'Básquetbol'}),
+      (et14:Etiqueta {nombre: 'Bádminton'}),
+      (et15:Etiqueta {nombre: 'Escalada'}),
+      (et16:Etiqueta {nombre: 'Hockey'}),
+      (et17:Etiqueta {nombre: 'Esgrima'}),
+      (et18:Etiqueta {nombre: 'Maratón'}),
+      (et19:Etiqueta {nombre: 'Playa'}),
+      (et20:Etiqueta {nombre: 'Pádel'}),
+      (et21:Etiqueta {nombre: 'Carrera'}),
+      (et22:Etiqueta {nombre: 'Caminata'}),
+      (et23:Etiqueta {nombre: 'Stretching'}),
+      (et24:Etiqueta {nombre: 'Baile'}),
+      (et25:Etiqueta {nombre: 'Ciclismo de Montaña'}),
+      (et26:Etiqueta {nombre: 'Estrategia'}),
+      (et27:Etiqueta {nombre: 'Patinaje'}),
+      (et28:Etiqueta {nombre: 'Escalada en Montaña'}),
+      (et29:Etiqueta {nombre: 'Combate'}),
+      (et30:Etiqueta {nombre: 'Squash'})
+
 
 // Asignación de etiquetas a los eventos
-MERGE (e1)-[:ETIQUETADO_CON]->(et1)
-MERGE (e1)-[:ETIQUETADO_CON]->(et5)
+MERGE (e1)-[:ETIQUETADO_CON]->(et1) // Fútbol
 
-MERGE (e2)-[:ETIQUETADO_CON]->(et2)
-MERGE (e2)-[:ETIQUETADO_CON]->(et16)
+MERGE (e2)-[:ETIQUETADO_CON]->(et2) // Running
+MERGE (e2)-[:ETIQUETADO_CON]->(et18) // Maratón
 
-MERGE (e3)-[:ETIQUETADO_CON]->(et4)
-MERGE (e3)-[:ETIQUETADO_CON]->(et5)
+MERGE (e3)-[:ETIQUETADO_CON]->(et3) // Tenis
+MERGE (e3)-[:ETIQUETADO_CON]->(et20) // Pádel
 
-MERGE (e4)-[:ETIQUETADO_CON]->(et6)
-MERGE (e4)-[:ETIQUETADO_CON]->(et7)
+MERGE (e4)-[:ETIQUETADO_CON]->(et5) // Montaña 
+MERGE (e4)-[:ETIQUETADO_CON]->(et22) // Caminata
 
-MERGE (e5)-[:ETIQUETADO_CON]->(et8)
-MERGE (e5)-[:ETIQUETADO_CON]->(et9)
+MERGE (e5)-[:ETIQUETADO_CON]->(et6) // Yoga
+MERGE (e5)-[:ETIQUETADO_CON]->(et23) // Stretching
 
-MERGE (e6)-[:ETIQUETADO_CON]->(et21)
-MERGE (e6)-[:ETIQUETADO_CON]->(et5)
+MERGE (e6)-[:ETIQUETADO_CON]->(et4) // Voleibol
+MERGE (e6)-[:ETIQUETADO_CON]->(et19) // Playa
 
-MERGE (e7)-[:ETIQUETADO_CON]->(et14)
-MERGE (e7)-[:ETIQUETADO_CON]->(et15)
+MERGE (e7)-[:ETIQUETADO_CON]->(et7) // Ciclismo
+MERGE (e7)-[:ETIQUETADO_CON]->(et5) // Montaña
+MERGE (e7)-[:ETIQUETADO_CON]->(et25) // Ciclismo de Montaña
 
-MERGE (e8)-[:ETIQUETADO_CON]->(et4)
-MERGE (e8)-[:ETIQUETADO_CON]->(et5)
 
-MERGE (e9)-[:ETIQUETADO_CON]->(et10)
-MERGE (e9)-[:ETIQUETADO_CON]->(et16)
+MERGE (e8)-[:ETIQUETADO_CON]->(et3) // Tenis
+MERGE (e8)-[:ETIQUETADO_CON]->(et20) // Padel
+MERGE (e8)-[:ETIQUETADO_CON]->(et30) // Squash
 
-MERGE (e10)-[:ETIQUETADO_CON]->(et19)
-MERGE (e10)-[:ETIQUETADO_CON]->(et9)
+MERGE (e9)-[:ETIQUETADO_CON]->(et8) // Natación
+MERGE (e9)-[:ETIQUETADO_CON]->(et18) // Maratón
 
-MERGE (e11)-[:ETIQUETADO_CON]->(et5)
-MERGE (e11)-[:ETIQUETADO_CON]->(et29)
+MERGE (e10)-[:ETIQUETADO_CON]->(et9) // Zumba
+MERGE (e10)-[:ETIQUETADO_CON]->(et24) // Baile
 
-MERGE (e12)-[:ETIQUETADO_CON]->(et6)
-MERGE (e12)-[:ETIQUETADO_CON]->(et7)
+MERGE (e11)-[:ETIQUETADO_CON]->(et10) // Ajedrez
+MERGE (e11)-[:ETIQUETADO_CON]->(et26) // Estrategia
 
-MERGE (e13)-[:ETIQUETADO_CON]->(et5)
-MERGE (e13)-[:ETIQUETADO_CON]->(et29)
+MERGE (e12)-[:ETIQUETADO_CON]->(et11) // Ciudad
+MERGE (e12)-[:ETIQUETADO_CON]->(et22) // Caminata
 
-MERGE (e14)-[:ETIQUETADO_CON]->(et20)
-MERGE (e14)-[:ETIQUETADO_CON]->(et5)
+MERGE (e13)-[:ETIQUETADO_CON]->(et12) // Ping Pong
+MERGE (e13)-[:ETIQUETADO_CON]->(et3) // Tenis
 
-MERGE (e15)-[:ETIQUETADO_CON]->(et5)
-MERGE (e15)-[:ETIQUETADO_CON]->(et25)
+MERGE (e14)-[:ETIQUETADO_CON]->(et13) // Básquetbol
 
-MERGE (e16)-[:ETIQUETADO_CON]->(et14)
-MERGE (e16)-[:ETIQUETADO_CON]->(et27)
+MERGE (e15)-[:ETIQUETADO_CON]->(et14) // Bádminton
+MERGE (e15)-[:ETIQUETADO_CON]->(et4) // Voleibol
 
-MERGE (e17)-[:ETIQUETADO_CON]->(et8)
-MERGE (e17)-[:ETIQUETADO_CON]->(et9)
+MERGE (e16)-[:ETIQUETADO_CON]->(et7) // Ciclismo
+MERGE (e16)-[:ETIQUETADO_CON]->(et21) // Carrera
+MERGE (e16)-[:ETIQUETADO_CON]->(et25) // Ciclismo de montaña
 
-MERGE (e18)-[:ETIQUETADO_CON]->(et13)
-MERGE (e18)-[:ETIQUETADO_CON]->(et15)
 
-MERGE (e19)-[:ETIQUETADO_CON]->(et5)
-MERGE (e19)-[:ETIQUETADO_CON]->(et25)
+MERGE (e17)-[:ETIQUETADO_CON]->(et6) // Yoga
+MERGE (e17)-[:ETIQUETADO_CON]->(et23) // Stretching
 
-MERGE (e20)-[:ETIQUETADO_CON]->(et28)
-MERGE (e20)-[:ETIQUETADO_CON]->(et29)
+MERGE (e18)-[:ETIQUETADO_CON]->(et15) // Escalada
+MERGE (e18)-[:ETIQUETADO_CON]->(et28) // Escalada en montaña
+
+MERGE (e19)-[:ETIQUETADO_CON]->(et16) // Hockey
+MERGE (e19)-[:ETIQUETADO_CON]->(et27) // PATINAJE
+
+MERGE (e20)-[:ETIQUETADO_CON]->(et17) // Esgrima
+MERGE (e20)-[:ETIQUETADO_CON]->(et29) // Combate
+
