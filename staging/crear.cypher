@@ -26,12 +26,6 @@ CREATE (u:Usuario {
 
 
 
-
-
-
-
-
-
 //A los usuarios los pone de amigos con los siguientes 5
 MATCH (u1:Usuario), (u2:Usuario)
 WHERE u1.nombreUsuario STARTS WITH "usuario" AND u2.nombreUsuario STARTS WITH "usuario"
@@ -39,14 +33,6 @@ WHERE u1.nombreUsuario STARTS WITH "usuario" AND u2.nombreUsuario STARTS WITH "u
   AND toInteger(SUBSTRING(u2.nombreUsuario, 7)) <= toInteger(SUBSTRING(u1.nombreUsuario, 7)) + 5
 CREATE (u1)-[:ES_AMIGO_DE]->(u2),
        (u2)-[:ES_AMIGO_DE]->(u1);
-
-
-
-
-
-
-
-
 
 
 
@@ -82,6 +68,8 @@ CREATE (miembro)-[:MIEMBRO]->(c);
 
 
 
+
+
 // Carga de 20 eventos
 UNWIND range(1, 20) AS i
 MATCH (creador:Usuario {nombreUsuario: "usuario" + i})
@@ -114,7 +102,6 @@ CREATE (miembro)-[:PARTICIPA]->(e);
 
 
 
-
 // Crear 50 etiquetas
 UNWIND [
     "Running", "Ciclismo", "Natación", "Crossfit", "Yoga", "Trail Running", "Spinning", "Maratón", 
@@ -131,13 +118,6 @@ CREATE (:Etiqueta {nombre: deporte});
 
 
 
-
-
-
-
-
-
-
 // Vincular 2 etiquetas por cada comunidad (quedan algunas sin comunidad libres)
 MATCH (c:Comunidad)
 WITH c
@@ -149,6 +129,8 @@ WITH c, [x IN etiquetas WHERE rand() < 0.2][0..2] AS etiquetasSeleccionadas
 // Crear relaciones
 UNWIND etiquetasSeleccionadas AS etiqueta
 CREATE (c)-[:ETIQUETADA_CON]->(etiqueta);
+
+
 
 
 
@@ -200,8 +182,6 @@ CREATE (e:Ejercicio {
         ELSE false
     END
 });
-
-
 
 
 
