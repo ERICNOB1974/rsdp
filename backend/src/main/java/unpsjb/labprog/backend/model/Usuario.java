@@ -33,8 +33,9 @@ public class Usuario {
     private List<Publicacion> publicaciones;    
 
 
-    @Relationship(type = "REALIZA")
-    private List<RutinaComenzada> rutinas;
+    @Relationship(type = "REALIZA_RUTINA")
+    private List<RutinaComenzada> rutinasEmpezadas;
+
 
     @Relationship(type = "ES_AMIGO_DE") 
     private List<Usuario> amigos;
