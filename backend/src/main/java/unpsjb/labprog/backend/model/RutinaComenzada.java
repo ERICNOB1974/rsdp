@@ -28,5 +28,4 @@ public class RutinaComenzada {
     @Nullable
     private LocalDate fechaDeFin;
 
-
 }
