@@ -26,9 +26,6 @@ public class UsuarioService {
         return usuarioRepository.amigosDeAmigos(nombreUsuario);
     }
 
-    public List<Usuario> sugerenciasPorAmigosEnComun(String nombreUsuario){
-        return usuarioRepository.sugerenciasPorAmigosEnComun(nombreUsuario);
-    }
     public List<Usuario> sugerenciaDeAmigosBasadasEnAmigos(String nombreUsuario){
         return usuarioRepository.sugerenciaDeAmigosBasadaEnAmigos(nombreUsuario);
     }
