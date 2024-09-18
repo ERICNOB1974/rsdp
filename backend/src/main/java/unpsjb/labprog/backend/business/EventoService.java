@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import unpsjb.labprog.backend.model.Evento;
+import unpsjb.labprog.backend.model.Usuario;
 
 import java.util.List;
 
@@ -18,6 +19,10 @@ public class EventoService {
         return eventoRepository.findAll();
     }
 
+    public List<Evento> sugerenciaDeEventosBasadosEnEventos(String nombreUsuario) {
+        return eventoRepository.sugerenciasDeEventosBasadosEnEventos(nombreUsuario);
+    }
+
     @Transactional
     public Evento save(Evento evento) {
         return eventoRepository.save(evento);
@@ -27,5 +32,5 @@ public class EventoService {
     public void deleteById(Long id) {
         eventoRepository.deleteById(id);
     }
-    
+
 }
