@@ -27,9 +27,9 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
             "LIMIT 3")
     List<Usuario> sugerenciaDeAmigosBasadaEnAmigos(String nombreUsuario);
 
-    @Query("MATCH (lucas:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(evento:Evento) " +
+    @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(evento:Evento) " +
             "MATCH (participante:Usuario)-[:PARTICIPA_EN]->(evento) " +
-            "WHERE participante <> lucas " +
+            "WHERE participante <> u " +
             "WITH participante, COUNT(evento) AS eventosCompartidos " +
             "WHERE eventosCompartidos >= 2 " +
             "RETURN participante, eventosCompartidos " +
