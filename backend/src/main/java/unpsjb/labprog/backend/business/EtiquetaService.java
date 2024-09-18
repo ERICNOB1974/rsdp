@@ -28,4 +28,8 @@ public class EtiquetaService {
         etiquetaRepository.deleteById(id);
     }
 
+    public Etiqueta findById(Long id){
+        return etiquetaRepository.findById(id).orElse(null);
+    }
+
 }

@@ -1,3 +1,5 @@
+MATCH (n) DETACH DELETE n;
+
 CREATE (u:Usuario {
     nombreUsuario: 'lucas123',
     nombreReal: 'Lucas Gómez',
@@ -111,6 +113,42 @@ CREATE (ramiro:Usuario {
     correoElectronico: 'evelyn.martinez@example.com',
     contraseña: 'evelynclave',
     descripcion: 'Yoga y música son sus pasiones.'
+}),
+(pepe:Usuario {
+    nombreUsuario: 'pepe987',
+    nombreReal: 'Pepe Martínez',
+    fechaNacimiento: date('1993-12-30'),
+    fechaDeCreacion: date(),
+    correoElectronico: 'pepe.martinez@example.com',
+    contraseña: 'pepeclave',
+    descripcion: 'Futbol y música son sus pasiones.'
+}),
+(pedrito:Usuario {
+    nombreUsuario: 'pedrito987',
+    nombreReal: 'Pedro Martínez',
+    fechaNacimiento: date('1993-12-30'),
+    fechaDeCreacion: date(),
+    correoElectronico: 'pedro.martinez@example.com',
+    contraseña: 'pedroclave',
+    descripcion: 'Basquet y música son sus pasiones.'
+}),
+(juanchon:Usuario {
+    nombreUsuario: 'juanchon987',
+    nombreReal: 'Juanchon Martínez',
+    fechaNacimiento: date('1993-12-30'),
+    fechaDeCreacion: date(),
+    correoElectronico: 'juanchon.martinez@example.com',
+    contraseña: 'juanchonclave',
+    descripcion: 'Cricket y música son sus pasiones.'
+}),
+(ignacio:Usuario {
+    nombreUsuario: 'ignacio987',
+    nombreReal: 'Ignacio Martínez',
+    fechaNacimiento: date('1993-12-30'),
+    fechaDeCreacion: date(),
+    correoElectronico: 'ignacio.martinez@example.com',
+    contraseña: 'ignacioclave',
+    descripcion: 'Tenis y música son sus pasiones.'
 })
 
 // Crear las relaciones de amistad bidireccionales de Lucas
@@ -156,3 +194,23 @@ MERGE (juarito)<-[:ES_AMIGO_DE]-(melisa)
 // Crear la relación de amistad bidireccional de Evelyn
 MERGE (evelyn)-[:ES_AMIGO_DE]->(alan)
 MERGE (evelyn)<-[:ES_AMIGO_DE]-(alan)
+
+MERGE (pepe)-[:ES_AMIGO_DE]->(evelyn)
+MERGE (pepe)<-[:ES_AMIGO_DE]-(evelyn)
+MERGE (pepe)-[:ES_AMIGO_DE]->(agustin)
+MERGE (pepe)<-[:ES_AMIGO_DE]-(agustin)
+
+MERGE (pedrito)-[:ES_AMIGO_DE]->(evelyn)
+MERGE (pedrito)<-[:ES_AMIGO_DE]-(evelyn)
+MERGE (pedrito)-[:ES_AMIGO_DE]->(agustin)
+MERGE (pedrito)<-[:ES_AMIGO_DE]-(agustin)
+
+MERGE (juanchon)-[:ES_AMIGO_DE]->(evelyn)
+MERGE (juanchon)<-[:ES_AMIGO_DE]-(evelyn)
+MERGE (juanchon)-[:ES_AMIGO_DE]->(agustin)
+MERGE (juanchon)<-[:ES_AMIGO_DE]-(agustin)
+
+MERGE (ignacio)-[:ES_AMIGO_DE]->(pedrito)
+MERGE (ignacio)<-[:ES_AMIGO_DE]-(pedrito)
+MERGE (ignacio)-[:ES_AMIGO_DE]->(juanchon)
+MERGE (ignacio)<-[:ES_AMIGO_DE]-(juanchon)

@@ -27,5 +27,9 @@ public class EventoService {
     public void deleteById(Long id) {
         eventoRepository.deleteById(id);
     }
-    
+
+    public Evento findById(Long id){
+        return eventoRepository.findById(id).orElse(null);
+    }
+
 }
