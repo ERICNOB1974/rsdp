@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.time.ZonedDateTime;
 
 @Data
 @Getter
@@ -23,7 +24,7 @@ public class Evento {
 
     private String nombre;
     private LocalDate fechaDeCreacion;
-    private LocalDate fechaHora; 
+    private ZonedDateTime fechaHora; 
     private String ubicacion;
     private String descripcion;
     private int cantidadMaximaParticipantes;
