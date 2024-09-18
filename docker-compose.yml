@@ -2,19 +2,6 @@ version: '3.8'
 
 services:
 
-#   database:
-#     image: postgres:alpine
-#     container_name: database
-#     restart: always
-#     ports:
-#       - "5432:5432"
-#     volumes:
-#       - postgres:/var/lib/postgresql/data
-#     environment:
-#       POSTGRES_USER: APP
-#       POSTGRES_PASSWORD: APP
-#       POSTGRES_DB: labprog
-
   database:
     image: neo4j:5.23.0
     environment:
@@ -62,9 +49,6 @@ services:
     tty: true
     volumes:
       - ./frontend:/home/node      
-    # Activar lo siguiente luego del taller End-to-end
-    # depends_on: 
-      # - backend
 
   testing:
     image: node:alpine
@@ -76,9 +60,3 @@ services:
       - ./testing:/home/node
       - ../common/testing/node_modules:/home/node/node_modules      
     command: npm test
-    # comentar esto
-    # depends_on:
-    #   - backend
-
-# volumes:
-#   postgres:
