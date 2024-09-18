@@ -28,4 +28,8 @@ public class RutinaService {
         rutinaRepository.deleteById(id);
     }
 
+    public Rutina findById(Long id){
+        return rutinaRepository.findById(id).orElse(null);
+    }
+
 }

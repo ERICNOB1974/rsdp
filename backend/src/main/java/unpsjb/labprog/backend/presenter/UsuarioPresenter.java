@@ -33,11 +33,20 @@ public class UsuarioPresenter {
         return Response.ok(amigosDeAmigos);
     }
 
-
+    @GetMapping("/sugerenciasPorAmigosEnComun/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasPorAmigosEnComun(@PathVariable String nombreUsuario) {
+        List<Usuario> sugerenciasPorAmigosEnComun = usuarioService.sugerenciasPorAmigosEnComun(nombreUsuario);
+        return Response.ok(sugerenciasPorAmigosEnComun);
+    }
 
     @RequestMapping(path = "/create", method = RequestMethod.POST)
     public ResponseEntity<Object> create(@RequestBody Usuario usuario){
         return Response.ok(usuarioService.save(usuario));
+    }
+
+    @GetMapping("/findById/{id}")
+    public ResponseEntity<Object> recomendarComunidadesPorAmigos(@PathVariable Long id) {
+        return Response.ok(usuarioService.findById(id));
     }
 
 }

@@ -18,6 +18,10 @@ public class ComunidadService {
         return comunidadRepository.findAll();
     }
 
+    public List<Comunidad> recomendarComunidadesPorAmigos(String nombreDeUsuario){
+        return comunidadRepository.recomendarComunidadesPorAmigos(nombreDeUsuario);
+    }
+
     @Transactional
     public Comunidad save(Comunidad comunidad) {
         return comunidadRepository.save(comunidad);
@@ -26,6 +30,10 @@ public class ComunidadService {
     @Transactional
     public void deleteById(Long id) {
         comunidadRepository.deleteById(id);
+    }
+
+    public Comunidad findById(Long id){
+        return comunidadRepository.findById(id).orElse(null);
     }
 
 }
