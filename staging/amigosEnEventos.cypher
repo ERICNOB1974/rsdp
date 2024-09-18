@@ -96,3 +96,4 @@ MERGE (juarito)-[:PARTICIPA_EN]->(evento5)
 MERGE (juarito)-[:PARTICIPA_EN]->(evento3)
 MERGE (evelyn)-[:PARTICIPA_EN]->(evento4)
 MERGE (evelyn)-[:PARTICIPA_EN]->(evento5)
+
