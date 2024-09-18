@@ -33,4 +33,9 @@ public class EventoPresenter {
         return Response.ok(eventoService.save(evento));
     }
 
+    @GetMapping("/findById/{id}")
+    public ResponseEntity<Object> recomendarComunidadesPorAmigos(@PathVariable Long id) {
+        return Response.ok(eventoService.findById(id));
+    }
+
 }

@@ -72,7 +72,7 @@ WITH c, i  // Incluímos la variable i aquí
 // Asignar un administrador
 MATCH (admin:Usuario)
 WHERE admin.nombreUsuario = "usuario" + ((i % 50) + 1)
-CREATE (admin)-[:ADMINISTRADO_POR]->(c)
+CREATE (admin)<-[:ADMINISTRADO_POR]-(c)
 WITH c, i  // Incluímos la variable i aquí también
 // Asignar 10 miembros por comunidad
 UNWIND range(1, 10) AS j

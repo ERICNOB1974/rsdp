@@ -17,13 +17,14 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
     @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo)-[:ES_AMIGO_DE]-(amigosDeAmigos) " +
             "WHERE amigosDeAmigos <> u AND NOT (u)-[:ES_AMIGO_DE]-(amigosDeAmigos) " +
             "RETURN DISTINCT amigosDeAmigos")
-    List<Usuario> amigosDeAmigos(String nombreUsuario);
+  List<Usuario> amigosDeAmigos(String nombreUsuario);
 
     @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo)-[:ES_AMIGO_DE]-(amigosDeAmigos) " +
             "WHERE amigosDeAmigos <> u AND NOT (u)-[:ES_AMIGO_DE]-(amigosDeAmigos) " +
             "WITH amigosDeAmigos, COUNT(amigo) AS amigosEnComun " +
             "RETURN amigosDeAmigos " +
-            "ORDER BY amigosEnComun DESC")
+            "ORDER BY amigosEnComun DESC " + 
+            "LIMIT 3")
     List<Usuario> sugerenciaDeAmigosBasadaEnAmigos(String nombreUsuario);
 
     @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(evento:Evento) " +

@@ -33,4 +33,8 @@ public class EventoService {
         eventoRepository.deleteById(id);
     }
 
+    public Evento findById(Long id){
+        return eventoRepository.findById(id).orElse(null);
+    }
+
 }

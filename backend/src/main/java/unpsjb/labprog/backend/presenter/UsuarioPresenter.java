@@ -45,10 +45,14 @@ public class UsuarioPresenter {
         return Response.ok(amigosDeAmigos);
     }
 
-
     @RequestMapping(path = "/create", method = RequestMethod.POST)
     public ResponseEntity<Object> create(@RequestBody Usuario usuario){
         return Response.ok(usuarioService.save(usuario));
+    }
+
+    @GetMapping("/findById/{id}")
+    public ResponseEntity<Object> recomendarComunidadesPorAmigos(@PathVariable Long id) {
+        return Response.ok(usuarioService.findById(id));
     }
 
 }
