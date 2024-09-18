@@ -13,7 +13,7 @@
     "cucumber": "^6.0.7",
     "json-diff": "^1.0.3",
     "sync-request": "^6.1.0"
-  },
+  },    
   "dependencies": {
     "deep-sort-object": "^1.0.2",
     "js-remove-property": "^1.0.5",
