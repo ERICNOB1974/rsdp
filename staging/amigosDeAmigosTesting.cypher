@@ -66,7 +66,6 @@ CREATE (eric:Usuario {
     descripcion: 'Fan del ciclismo y el senderismo.'
 })
 
-// Crear los nuevos usuarios
 CREATE (ramiro:Usuario {
     nombreUsuario: 'ramiro123',
     nombreReal: 'Ramiro González',
@@ -149,7 +148,6 @@ CREATE (ramiro:Usuario {
     descripcion: 'Tenis y música son sus pasiones.'
 })
 
-// Crear las relaciones de amistad bidireccionales de Lucas
 // MERGE (lucas)-[:ES_AMIGO_DE]->(eric)
 // MERGE (lucas)<-[:ES_AMIGO_DE]-(eric)
 // MERGE (lucas)-[:ES_AMIGO_DE]->(facundo)
@@ -161,7 +159,6 @@ CREATE (ramiro:Usuario {
 // MERGE (lucas)-[:ES_AMIGO_DE]->(melisa)
 // MERGE (lucas)<-[:ES_AMIGO_DE]-(melisa)
 
-// Crear las relaciones de amistad bidireccionales de Ramiro
 MERGE (ramiro)-[:ES_AMIGO_DE]->(facundo)
 MERGE (ramiro)<-[:ES_AMIGO_DE]-(facundo)
 MERGE (ramiro)-[:ES_AMIGO_DE]->(eric)
@@ -169,19 +166,16 @@ MERGE (ramiro)<-[:ES_AMIGO_DE]-(eric)
 MERGE (ramiro)-[:ES_AMIGO_DE]->(alan)
 MERGE (ramiro)<-[:ES_AMIGO_DE]-(alan)
 
-// Crear las relaciones de amistad bidireccionales de Matías
 MERGE (matias)-[:ES_AMIGO_DE]->(melisa)
 MERGE (matias)<-[:ES_AMIGO_DE]-(melisa)
 MERGE (matias)-[:ES_AMIGO_DE]->(alan)
 MERGE (matias)<-[:ES_AMIGO_DE]-(alan)
 
-// Crear las relaciones de amistad bidireccionales de Agustín
 MERGE (agustin)-[:ES_AMIGO_DE]->(alan)
 MERGE (agustin)<-[:ES_AMIGO_DE]-(alan)
 MERGE (agustin)-[:ES_AMIGO_DE]->(facundo)
 MERGE (agustin)<-[:ES_AMIGO_DE]-(facundo)
 
-// // Crear las relaciones de amistad bidireccionales de Juarito
 // MERGE (juarito)-[:ES_AMIGO_DE]->(facundo)
 // MERGE (juarito)<-[:ES_AMIGO_DE]-(facundo)
 // MERGE (juarito)-[:ES_AMIGO_DE]->(maia)
@@ -189,7 +183,6 @@ MERGE (agustin)<-[:ES_AMIGO_DE]-(facundo)
 // MERGE (juarito)-[:ES_AMIGO_DE]->(melisa)
 // MERGE (juarito)<-[:ES_AMIGO_DE]-(melisa)
 
-// Crear la relación de amistad bidireccional de Evelyn
 MERGE (evelyn)-[:ES_AMIGO_DE]->(alan)
 MERGE (evelyn)<-[:ES_AMIGO_DE]-(alan)
 

@@ -44,5 +44,9 @@ public class UsuarioService {
         usuarioRepository.deleteById(id);
     }    
 
+    public Usuario findById(Long id){
+        return usuarioRepository.findById(id).orElse(null);
+    }
+
 }
 
