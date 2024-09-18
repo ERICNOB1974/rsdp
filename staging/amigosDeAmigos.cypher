@@ -1,158 +1,99 @@
-CREATE (u:Usuario {
-    nombreUsuario: 'lucas123',
-    nombreReal: 'Lucas Gómez',
-    fechaNacimiento: date('1995-08-15'),
-    fechaDeCreacion: date(),
-    correoElectronico: 'lucas.gomez@example.com',
-    contraseña: 'segura123',
-    descripcion: 'Apasionado del fútbol y la tecnología.'
-})
+MATCH (u1:Usuario {nombreUsuario: 'lucas123'}),
+      (u2:Usuario {nombreUsuario: 'maia_rocks'}),
+      (u3:Usuario {nombreUsuario: 'eric99'}),
+      (u4:Usuario {nombreUsuario: 'ramiro85'}),
+      (u5:Usuario {nombreUsuario: 'alan_prog'}),
+      (u6:Usuario {nombreUsuario: 'melisa_fit'}),
+      (u7:Usuario {nombreUsuario: 'juarito22'}),
+      (u8:Usuario {nombreUsuario: 'agustin_mtb'}),
+      (u9:Usuario {nombreUsuario: 'matias_trek'}),
+      (u10:Usuario {nombreUsuario: 'facu_games'}),
+      (u11:Usuario {nombreUsuario: 'evelyn_yoga'}),
+      (u12:Usuario {nombreUsuario: 'nicolas_swim'}),
+      (u13:Usuario {nombreUsuario: 'sofia_runner'}),
+      (u14:Usuario {nombreUsuario: 'martin_lifter'}),
+      (u15:Usuario {nombreUsuario: 'luis_cyclist'}),
+      (u16:Usuario {nombreUsuario: 'andrea_tennis'}),
+      (u17:Usuario {nombreUsuario: 'carlos_fit'}),
+      (u18:Usuario {nombreUsuario: 'ana_climb'}),
+      (u19:Usuario {nombreUsuario: 'julian_marathon'}),
+      (u20:Usuario {nombreUsuario: 'laura_gym'})
 
-// Crear a Lucas (si aún no existe)
-MERGE (lucas:Usuario {
-    nombreUsuario: 'lucas123',
-    nombreReal: 'Lucas Gómez',
-    fechaNacimiento: date('1995-08-15'),
-    fechaDeCreacion: date(),
-    correoElectronico: 'lucas.gomez@example.com',
-    contraseña: 'segura123',
-    descripcion: 'Apasionado del fútbol y la tecnología.'
-})
-
-// Crear los amigos de Lucas
-CREATE (eric:Usuario {
-    nombreUsuario: 'eric456',
-    nombreReal: 'Eric Martínez',
-    fechaNacimiento: date('1993-04-12'),
-    fechaDeCreacion: date(),
-    correoElectronico: 'eric.martinez@example.com',
-    contraseña: 'password456',
-    descripcion: 'Amante del running y la fotografía.'
-}),
-(facundo:Usuario {
-    nombreUsuario: 'facundo789',
-    nombreReal: 'Facundo Pérez',
-    fechaNacimiento: date('1990-10-22'),
-    fechaDeCreacion: date(),
-    correoElectronico: 'facundo.perez@example.com',
-    contraseña: 'clave789',
-    descripcion: 'Jugador de tenis y fan de la música clásica.'
-}),
-(alan:Usuario {
-    nombreUsuario: 'alan321',
-    nombreReal: 'Alan Rodríguez',
-    fechaNacimiento: date('1998-01-30'),
-    fechaDeCreacion: date(),
-    correoElectronico: 'alan.rodriguez@example.com',
-    contraseña: 'contra321',
-    descripcion: 'Aficionado a los videojuegos y las películas de acción.'
-}),
-(maia:Usuario {
-    nombreUsuario: 'maia654',
-    nombreReal: 'Maia López',
-    fechaNacimiento: date('1997-09-05'),
-    fechaDeCreacion: date(),
-    correoElectronico: 'maia.lopez@example.com',
-    contraseña: 'secreta654',
-    descripcion: 'Apasionada del yoga y la cocina saludable.'
-}),
-(melisa:Usuario {
-    nombreUsuario: 'melisa987',
-    nombreReal: 'Melisa Fernández',
-    fechaNacimiento: date('1994-06-18'),
-    fechaDeCreacion: date(),
-    correoElectronico: 'melisa.fernandez@example.com',
-    contraseña: 'clave987',
-    descripcion: 'Fan del ciclismo y el senderismo.'
-})
-
-// Crear los nuevos usuarios
-CREATE (ramiro:Usuario {
-    nombreUsuario: 'ramiro123',
-    nombreReal: 'Ramiro González',
-    fechaNacimiento: date('1992-02-25'),
-    fechaDeCreacion: date(),
-    correoElectronico: 'ramiro.gonzalez@example.com',
-    contraseña: 'ramiroclave',
-    descripcion: 'Ciclista aficionado y amante del café.'
-}),
-(matias:Usuario {
-    nombreUsuario: 'matias456',
-    nombreReal: 'Matías López',
-    fechaNacimiento: date('1995-07-15'),
-    fechaDeCreacion: date(),
-    correoElectronico: 'matias.lopez@example.com',
-    contraseña: 'matiasclave',
-    descripcion: 'Apasionado del rugby y los autos.'
-}),
-(agustin:Usuario {
-    nombreUsuario: 'agustin789',
-    nombreReal: 'Agustín Ramírez',
-    fechaNacimiento: date('1994-05-22'),
-    fechaDeCreacion: date(),
-    correoElectronico: 'agustin.ramirez@example.com',
-    contraseña: 'agustinclave',
-    descripcion: 'Fan del baloncesto y las aventuras al aire libre.'
-}),
-(juarito:Usuario {
-    nombreUsuario: 'juarito654',
-    nombreReal: 'Juarito Sánchez',
-    fechaNacimiento: date('1996-11-11'),
-    fechaDeCreacion: date(),
-    correoElectronico: 'juarito.sanchez@example.com',
-    contraseña: 'juaritoclave',
-    descripcion: 'Amante del voleibol y la programación.'
-}),
-(evelyn:Usuario {
-    nombreUsuario: 'evelyn987',
-    nombreReal: 'Evelyn Martínez',
-    fechaNacimiento: date('1993-12-30'),
-    fechaDeCreacion: date(),
-    correoElectronico: 'evelyn.martinez@example.com',
-    contraseña: 'evelynclave',
-    descripcion: 'Yoga y música son sus pasiones.'
-})
-
-// Crear las relaciones de amistad bidireccionales de Lucas
-MERGE (lucas)-[:ES_AMIGO_DE]->(eric)
-MERGE (lucas)<-[:ES_AMIGO_DE]-(eric)
-MERGE (lucas)-[:ES_AMIGO_DE]->(facundo)
-MERGE (lucas)<-[:ES_AMIGO_DE]-(facundo)
-MERGE (lucas)-[:ES_AMIGO_DE]->(alan)
-MERGE (lucas)<-[:ES_AMIGO_DE]-(alan)
-MERGE (lucas)-[:ES_AMIGO_DE]->(maia)
-MERGE (lucas)<-[:ES_AMIGO_DE]-(maia)
-MERGE (lucas)-[:ES_AMIGO_DE]->(melisa)
-MERGE (lucas)<-[:ES_AMIGO_DE]-(melisa)
-
-// Crear las relaciones de amistad bidireccionales de Ramiro
-MERGE (ramiro)-[:ES_AMIGO_DE]->(facundo)
-MERGE (ramiro)<-[:ES_AMIGO_DE]-(facundo)
-MERGE (ramiro)-[:ES_AMIGO_DE]->(eric)
-MERGE (ramiro)<-[:ES_AMIGO_DE]-(eric)
-MERGE (ramiro)-[:ES_AMIGO_DE]->(alan)
-MERGE (ramiro)<-[:ES_AMIGO_DE]-(alan)
-
-// Crear las relaciones de amistad bidireccionales de Matías
-MERGE (matias)-[:ES_AMIGO_DE]->(melisa)
-MERGE (matias)<-[:ES_AMIGO_DE]-(melisa)
-MERGE (matias)-[:ES_AMIGO_DE]->(alan)
-MERGE (matias)<-[:ES_AMIGO_DE]-(alan)
-
-// Crear las relaciones de amistad bidireccionales de Agustín
-MERGE (agustin)-[:ES_AMIGO_DE]->(alan)
-MERGE (agustin)<-[:ES_AMIGO_DE]-(alan)
-MERGE (agustin)-[:ES_AMIGO_DE]->(facundo)
-MERGE (agustin)<-[:ES_AMIGO_DE]-(facundo)
-
-// Crear las relaciones de amistad bidireccionales de Juarito
-MERGE (juarito)-[:ES_AMIGO_DE]->(facundo)
-MERGE (juarito)<-[:ES_AMIGO_DE]-(facundo)
-MERGE (juarito)-[:ES_AMIGO_DE]->(maia)
-MERGE (juarito)<-[:ES_AMIGO_DE]-(maia)
-MERGE (juarito)-[:ES_AMIGO_DE]->(melisa)
-MERGE (juarito)<-[:ES_AMIGO_DE]-(melisa)
-
-// Crear la relación de amistad bidireccional de Evelyn
-MERGE (evelyn)-[:ES_AMIGO_DE]->(alan)
-MERGE (evelyn)<-[:ES_AMIGO_DE]-(alan)
+CREATE (u1)-[:ES_AMIGO_DE]->(u2),
+       (u2)-[:ES_AMIGO_DE]->(u1),
+       (u1)-[:ES_AMIGO_DE]->(u3),
+       (u3)-[:ES_AMIGO_DE]->(u1),
+       (u2)-[:ES_AMIGO_DE]->(u4),
+       (u4)-[:ES_AMIGO_DE]->(u2),
+       (u3)-[:ES_AMIGO_DE]->(u5),
+       (u5)-[:ES_AMIGO_DE]->(u3),
+       (u4)-[:ES_AMIGO_DE]->(u6),
+       (u6)-[:ES_AMIGO_DE]->(u4),
+       (u5)-[:ES_AMIGO_DE]->(u7),
+       (u7)-[:ES_AMIGO_DE]->(u5),
+       (u6)-[:ES_AMIGO_DE]->(u8),
+       (u8)-[:ES_AMIGO_DE]->(u6),
+       (u7)-[:ES_AMIGO_DE]->(u9),
+       (u9)-[:ES_AMIGO_DE]->(u7),
+       (u8)-[:ES_AMIGO_DE]->(u10),
+       (u10)-[:ES_AMIGO_DE]->(u8),
+       (u9)-[:ES_AMIGO_DE]->(u11),
+       (u11)-[:ES_AMIGO_DE]->(u9),
+       (u10)-[:ES_AMIGO_DE]->(u12),
+       (u12)-[:ES_AMIGO_DE]->(u10),
+       (u11)-[:ES_AMIGO_DE]->(u13),
+       (u13)-[:ES_AMIGO_DE]->(u11),
+       (u12)-[:ES_AMIGO_DE]->(u14),
+       (u14)-[:ES_AMIGO_DE]->(u12),
+       (u13)-[:ES_AMIGO_DE]->(u15),
+       (u15)-[:ES_AMIGO_DE]->(u13),
+       (u14)-[:ES_AMIGO_DE]->(u16),
+       (u16)-[:ES_AMIGO_DE]->(u14),
+       (u15)-[:ES_AMIGO_DE]->(u17),
+       (u17)-[:ES_AMIGO_DE]->(u15),
+       (u16)-[:ES_AMIGO_DE]->(u18),
+       (u18)-[:ES_AMIGO_DE]->(u16),
+       (u17)-[:ES_AMIGO_DE]->(u19),
+       (u19)-[:ES_AMIGO_DE]->(u17),
+       (u18)-[:ES_AMIGO_DE]->(u20),
+       (u20)-[:ES_AMIGO_DE]->(u18),
+       (u1)-[:ES_AMIGO_DE]->(u6),
+       (u6)-[:ES_AMIGO_DE]->(u1),
+       (u2)-[:ES_AMIGO_DE]->(u7),
+       (u7)-[:ES_AMIGO_DE]->(u2),
+       (u3)-[:ES_AMIGO_DE]->(u8),
+       (u8)-[:ES_AMIGO_DE]->(u3),
+       (u4)-[:ES_AMIGO_DE]->(u9),
+       (u9)-[:ES_AMIGO_DE]->(u4),
+       (u5)-[:ES_AMIGO_DE]->(u10),
+       (u10)-[:ES_AMIGO_DE]->(u5),
+       (u7)-[:ES_AMIGO_DE]->(u11),
+       (u11)-[:ES_AMIGO_DE]->(u7),
+       (u8)-[:ES_AMIGO_DE]->(u12),
+       (u12)-[:ES_AMIGO_DE]->(u8),
+       (u9)-[:ES_AMIGO_DE]->(u13),
+       (u13)-[:ES_AMIGO_DE]->(u9),
+       (u10)-[:ES_AMIGO_DE]->(u14),
+       (u14)-[:ES_AMIGO_DE]->(u10),
+       (u11)-[:ES_AMIGO_DE]->(u15),
+       (u15)-[:ES_AMIGO_DE]->(u11),
+       (u12)-[:ES_AMIGO_DE]->(u16),
+       (u16)-[:ES_AMIGO_DE]->(u12),
+       (u13)-[:ES_AMIGO_DE]->(u17),
+       (u17)-[:ES_AMIGO_DE]->(u13),
+       (u14)-[:ES_AMIGO_DE]->(u18),
+       (u18)-[:ES_AMIGO_DE]->(u14),
+       (u15)-[:ES_AMIGO_DE]->(u19),
+       (u19)-[:ES_AMIGO_DE]->(u15),
+       (u16)-[:ES_AMIGO_DE]->(u20),
+       (u20)-[:ES_AMIGO_DE]->(u16),
+       (u1)-[:ES_AMIGO_DE]->(u4),
+       (u4)-[:ES_AMIGO_DE]->(u1),
+       (u2)-[:ES_AMIGO_DE]->(u9),
+       (u9)-[:ES_AMIGO_DE]->(u2),
+       (u3)-[:ES_AMIGO_DE]->(u15),
+       (u15)-[:ES_AMIGO_DE]->(u3),
+       (u6)-[:ES_AMIGO_DE]->(u13),
+       (u13)-[:ES_AMIGO_DE]->(u6),
+       (u8)-[:ES_AMIGO_DE]->(u14),
+       (u14)-[:ES_AMIGO_DE]->(u8);
