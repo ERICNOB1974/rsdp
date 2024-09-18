@@ -10,7 +10,6 @@ CREATE (u:Usuario {
     descripcion: 'Apasionado del fútbol y la tecnología.'
 })
 
-// Crear a Lucas (si aún no existe)
 MERGE (lucas:Usuario {
     nombreUsuario: 'lucas123',
     nombreReal: 'Lucas Gómez',
@@ -21,7 +20,6 @@ MERGE (lucas:Usuario {
     descripcion: 'Apasionado del fútbol y la tecnología.'
 })
 
-// Crear los amigos de Lucas
 CREATE (eric:Usuario {
     nombreUsuario: 'eric456',
     nombreReal: 'Eric Martínez',
@@ -152,16 +150,16 @@ CREATE (ramiro:Usuario {
 })
 
 // Crear las relaciones de amistad bidireccionales de Lucas
-MERGE (lucas)-[:ES_AMIGO_DE]->(eric)
-MERGE (lucas)<-[:ES_AMIGO_DE]-(eric)
-MERGE (lucas)-[:ES_AMIGO_DE]->(facundo)
-MERGE (lucas)<-[:ES_AMIGO_DE]-(facundo)
-MERGE (lucas)-[:ES_AMIGO_DE]->(alan)
-MERGE (lucas)<-[:ES_AMIGO_DE]-(alan)
-MERGE (lucas)-[:ES_AMIGO_DE]->(maia)
-MERGE (lucas)<-[:ES_AMIGO_DE]-(maia)
-MERGE (lucas)-[:ES_AMIGO_DE]->(melisa)
-MERGE (lucas)<-[:ES_AMIGO_DE]-(melisa)
+// MERGE (lucas)-[:ES_AMIGO_DE]->(eric)
+// MERGE (lucas)<-[:ES_AMIGO_DE]-(eric)
+// MERGE (lucas)-[:ES_AMIGO_DE]->(facundo)
+// MERGE (lucas)<-[:ES_AMIGO_DE]-(facundo)
+// MERGE (lucas)-[:ES_AMIGO_DE]->(alan)
+// MERGE (lucas)<-[:ES_AMIGO_DE]-(alan)
+// MERGE (lucas)-[:ES_AMIGO_DE]->(maia)
+// MERGE (lucas)<-[:ES_AMIGO_DE]-(maia)
+// MERGE (lucas)-[:ES_AMIGO_DE]->(melisa)
+// MERGE (lucas)<-[:ES_AMIGO_DE]-(melisa)
 
 // Crear las relaciones de amistad bidireccionales de Ramiro
 MERGE (ramiro)-[:ES_AMIGO_DE]->(facundo)
@@ -183,13 +181,13 @@ MERGE (agustin)<-[:ES_AMIGO_DE]-(alan)
 MERGE (agustin)-[:ES_AMIGO_DE]->(facundo)
 MERGE (agustin)<-[:ES_AMIGO_DE]-(facundo)
 
-// Crear las relaciones de amistad bidireccionales de Juarito
-MERGE (juarito)-[:ES_AMIGO_DE]->(facundo)
-MERGE (juarito)<-[:ES_AMIGO_DE]-(facundo)
-MERGE (juarito)-[:ES_AMIGO_DE]->(maia)
-MERGE (juarito)<-[:ES_AMIGO_DE]-(maia)
-MERGE (juarito)-[:ES_AMIGO_DE]->(melisa)
-MERGE (juarito)<-[:ES_AMIGO_DE]-(melisa)
+// // Crear las relaciones de amistad bidireccionales de Juarito
+// MERGE (juarito)-[:ES_AMIGO_DE]->(facundo)
+// MERGE (juarito)<-[:ES_AMIGO_DE]-(facundo)
+// MERGE (juarito)-[:ES_AMIGO_DE]->(maia)
+// MERGE (juarito)<-[:ES_AMIGO_DE]-(maia)
+// MERGE (juarito)-[:ES_AMIGO_DE]->(melisa)
+// MERGE (juarito)<-[:ES_AMIGO_DE]-(melisa)
 
 // Crear la relación de amistad bidireccional de Evelyn
 MERGE (evelyn)-[:ES_AMIGO_DE]->(alan)
@@ -214,3 +212,9 @@ MERGE (ignacio)-[:ES_AMIGO_DE]->(pedrito)
 MERGE (ignacio)<-[:ES_AMIGO_DE]-(pedrito)
 MERGE (ignacio)-[:ES_AMIGO_DE]->(juanchon)
 MERGE (ignacio)<-[:ES_AMIGO_DE]-(juanchon)
+
+MERGE (ignacio)-[:ES_AMIGO_DE]->(pepe)
+MERGE (ignacio)<-[:ES_AMIGO_DE]-(pepe)
+
+MERGE (juanchon)-[:ES_AMIGO_DE]->(matias)
+MERGE (juanchon)<-[:ES_AMIGO_DE]-(matias)
