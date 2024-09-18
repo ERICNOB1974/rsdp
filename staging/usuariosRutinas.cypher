@@ -11,6 +11,15 @@ WITH u, rutinasAleatorias, size(rutinasAleatorias) AS totalRutinas, duration.bet
 WITH u, rutinasAleatorias[..toInteger(rand() * 4)] AS rutinasSeleccionadas, totalDias
 // Desenrollar las rutinas seleccionadas y crear las relaciones
 UNWIND rutinasSeleccionadas AS rutina
-CREATE (u)-[:REALIZA {
-  fechaDeComienzo: date('2022-01-01') + duration({ days: toInteger(rand() * totalDias) })
+WITH u, rutina, date('2022-01-01') + duration({ days: toInteger(rand() * totalDias) }) AS fechaDeComienzo, totalDias
+// Generar aleatoriamente si la fecha de fin será null
+WITH u, rutina, fechaDeComienzo,
+
+CASE
+ WHEN rand() < 0.5 THEN fechaDeComienzo + duration({ days: toInteger(rand() * (totalDias - duration.between(fechaDeComienzo, date()).days)) })
+ELSE null
+END AS fechaDeFin
+CREATE (u)-[:REALIZA_RUTINA {
+  fechaDeComienzo: fechaDeComienzo,
+  fechaDeFin: fechaDeFin
   }]->(rutina);
