@@ -107,9 +107,11 @@ MATCH (u:Usuario { nombreUsuario: 'evelyn_yoga' })
 MATCH (r4:Rutina { nombre: 'Rutina de Estiramientos Activos' })
 MATCH (r5:Rutina { nombre: 'Rutina de Recuperación Activa' })
 MATCH (r6:Rutina { nombre: 'Rutina Flexibilidad Básica' })
-WITH u, r4, r5, r6
+MATCH (r7:Rutina { nombre: 'Rutina Resistencia Total' })
+WITH u, r4, r5, r6, r7
 CREATE (u)-[:REALIZA_RUTINA { fechaDeComienzo: date('2024-09-12') }]->(r4)
 CREATE (u)-[:REALIZA_RUTINA { fechaDeComienzo: date('2024-09-14') }]->(r5)
+CREATE (u)-[:REALIZA_RUTINA { fechaDeComienzo: date('2024-09-15') }]->(r7)
 CREATE (u)-[:REALIZA_RUTINA { fechaDeComienzo: date('2024-09-20') }]->(r6);
 
 // nicolas_swim
