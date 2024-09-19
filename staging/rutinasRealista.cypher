@@ -1,0 +1,21 @@
+// Crear rutinas
+CREATE (r1:Rutina {nombre: 'Rutina Fuerza Básica', descripcion: 'Entrenamiento básico de fuerza centrado en movimientos compuestos para principiantes.', duracionMinutosPorDia: 45, dificultad: 'INTERMEDIO'});
+CREATE (r2:Rutina {nombre: 'Rutina Cardio Intensa', descripcion: 'Sesión de cardio de alta intensidad para mejorar la resistencia cardiovascular.', duracionMinutosPorDia: 30, dificultad: 'AVANZADO'});
+CREATE (r3:Rutina {nombre: 'Rutina Resistencia Total', descripcion: 'Mejora de la resistencia muscular a través de ejercicios de larga duración.', duracionMinutosPorDia: 60, dificultad: 'INTERMEDIO'});
+CREATE (r4:Rutina {nombre: 'Rutina Flexibilidad Básica', descripcion: 'Programa básico para mejorar la flexibilidad y la movilidad articular.', duracionMinutosPorDia: 20, dificultad: 'PRINCIPIANTE'});
+CREATE (r5:Rutina {nombre: 'Rutina Piernas de Acero', descripcion: 'Fortalecimiento intensivo de las piernas mediante ejercicios de fuerza.', duracionMinutosPorDia: 50, dificultad: 'AVANZADO'});
+CREATE (r6:Rutina {nombre: 'Rutina Core y Abdomen', descripcion: 'Trabajo específico para fortalecer el core y los músculos abdominales.', duracionMinutosPorDia: 40, dificultad: 'INTERMEDIO'});
+CREATE (r7:Rutina {nombre: 'Rutina de Movilidad Articular', descripcion: 'Enfoque en ejercicios que mejoran la movilidad articular y el rango de movimiento.', duracionMinutosPorDia: 15, dificultad: 'PRINCIPIANTE'});
+CREATE (r8:Rutina {nombre: 'Rutina de Agilidad y Coordinación', descripcion: 'Mejora de la agilidad y la coordinación mediante ejercicios dinámicos.', duracionMinutosPorDia: 35, dificultad: 'INTERMEDIO'});
+CREATE (r9:Rutina {nombre: 'Rutina de Hipertrofia Muscular', descripcion: 'Programa orientado a la ganancia de masa muscular a través de series intensas.', duracionMinutosPorDia: 60, dificultad: 'AVANZADO'});
+CREATE (r10:Rutina {nombre: 'Rutina Funcional Básica', descripcion: 'Ejercicios funcionales orientados a mejorar las habilidades motoras.', duracionMinutosPorDia: 25, dificultad: 'PRINCIPIANTE'});
+CREATE (r11:Rutina {nombre: 'Rutina HIIT Express', descripcion: 'Entrenamiento de alta intensidad por intervalos, diseñado para quemar calorías rápidamente.', duracionMinutosPorDia: 20, dificultad: 'AVANZADO'});
+CREATE (r12:Rutina {nombre: 'Rutina de Acondicionamiento General', descripcion: 'Programa completo que cubre fuerza, cardio y flexibilidad para mejorar el estado físico general.', duracionMinutosPorDia: 45, dificultad: 'INTERMEDIO'});
+CREATE (r13:Rutina {nombre: 'Rutina de Fortalecimiento del Tren Superior', descripcion: 'Enfoque en el fortalecimiento de los músculos del tren superior, ideal para principiantes.', duracionMinutosPorDia: 30, dificultad: 'PRINCIPIANTE'});
+CREATE (r14:Rutina {nombre: 'Rutina de Equilibrio y Estabilidad', descripcion: 'Ejercicios para mejorar el equilibrio corporal y la estabilidad en diferentes posiciones.', duracionMinutosPorDia: 25, dificultad: 'INTERMEDIO'});
+CREATE (r15:Rutina {nombre: 'Rutina de Potencia Explosiva', descripcion: 'Desarrollo de la potencia muscular a través de movimientos explosivos y pliométricos.', duracionMinutosPorDia: 40, dificultad: 'AVANZADO'});
+CREATE (r16:Rutina {nombre: 'Rutina Funcional Intermedia', descripcion: 'Programa de ejercicios funcionales que cubre fuerza, movilidad y coordinación.', duracionMinutosPorDia: 35, dificultad: 'INTERMEDIO'});
+CREATE (r17:Rutina {nombre: 'Rutina de Estiramientos Activos', descripcion: 'Estiramientos dinámicos para mejorar la flexibilidad y prevenir lesiones.', duracionMinutosPorDia: 15, dificultad: 'PRINCIPIANTE'});
+CREATE (r18:Rutina {nombre: 'Rutina de Core Avanzado', descripcion: 'Trabajo intensivo para desarrollar un core fuerte y definido.', duracionMinutosPorDia: 45, dificultad: 'AVANZADO'});
+CREATE (r19:Rutina {nombre: 'Rutina de Resistencia Cardiovascular', descripcion: 'Entrenamiento continuo para mejorar la resistencia cardiovascular a largo plazo.', duracionMinutosPorDia: 60, dificultad: 'INTERMEDIO'});
+CREATE (r20:Rutina {nombre: 'Rutina de Recuperación Activa', descripcion: 'Sesión ligera de movilidad y estiramientos para una mejor recuperación muscular.', duracionMinutosPorDia: 20, dificultad: 'PRINCIPIANTE'});
