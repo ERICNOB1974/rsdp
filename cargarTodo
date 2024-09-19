@@ -1,0 +1,1 @@
+cat ./staging/rutinasRealista.cypher | docker exec -i rsdp-database-1 cypher-shell -a bolt://if012rsdp.fi.mdn.unp.edu.ar:28002 -u neo4j -p ericfaculucas
