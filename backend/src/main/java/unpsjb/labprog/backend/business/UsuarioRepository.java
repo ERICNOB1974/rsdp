@@ -1,11 +1,12 @@
 package unpsjb.labprog.backend.business;
 
+import java.util.List;
+
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.stereotype.Repository;
 
 import unpsjb.labprog.backend.model.Usuario;
-import java.util.List;
 
 @Repository
 public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
@@ -35,5 +36,17 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
             "RETURN participante, eventosCompartidos " +
             "ORDER BY eventosCompartidos DESC")
     List<Usuario> sugerenciasDeAmigosBasadosEnEventos(String nombreUsuario);
+
+
+    @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(comunidad:Comunidad) " +
+            "MATCH (participante:Usuario)-[:MIEMBRO]->(comunidad) " +
+            "WHERE participante <> u " +
+            "WHERE NOT (u)-[:ES_AMIGO_DE]-(participante) " +   //ver si es necesario
+            "WITH participante, COUNT(comunidad) AS comunidadesEnComun " +
+            "WHERE comunidadesEnComun >= 2 " +
+            "RETURN participante, comunidadesEnComun " +
+            "ORDER BY comunidadesEnComun DESC")
+    List<Usuario> sugerenciasDeAmigosBasadosEnComunidades(String nombreUsuario);
+
 
 }
