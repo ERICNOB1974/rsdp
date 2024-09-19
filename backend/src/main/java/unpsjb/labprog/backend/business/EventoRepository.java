@@ -18,4 +18,12 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
         "ORDER BY etiquetasComunes DESC "+
         "LIMIT 3")
     List<Evento> sugerenciasDeEventosBasadosEnEventos(String nombreUsuario);
+
+    @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:REALIZA_RUTINA]->(:Rutina)-[:ETIQUETADA_CON]->(e:Etiqueta)<-[:ETIQUETADO_CON]-(ev:Evento) " +
+        "WHERE NOT (u)-[:PARTICIPA_EN]->(ev) " +
+        "WITH ev, count(e) as etiquetasCompartidas " +
+        "RETURN ev " +
+        "ORDER BY etiquetasCompartidas DESC, ev.fechaHora ASC "+
+        "LIMIT 3")
+    List<Evento> sugerenciasDeEventosBasadosEnRutinas(String nombreUsuario);
 }
