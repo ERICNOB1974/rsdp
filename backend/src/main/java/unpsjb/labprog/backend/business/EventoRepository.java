@@ -39,4 +39,5 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
             "ORDER BY amigosEnComun DESC")
     List<Comunidad> sugerenciasDeEventosBasadosEnAmigos(String nombreUsuario);
 
+
 }
