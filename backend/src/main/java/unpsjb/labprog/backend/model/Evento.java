@@ -32,7 +32,7 @@ public class Evento {
     @Relationship(type = "CREADO_POR")
     private Usuario creador;
 
-    @Relationship(type = "PARTICIPA")
+    @Relationship(type = "PARTICIPA_EN")
     private List<InscriptoEnEvento> participantes;
 
     @Relationship(type = "ETIQUETADO_CON")

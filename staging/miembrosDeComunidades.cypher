@@ -91,6 +91,7 @@ CREATE
   (u10)-[:MIEMBRO]->(c20),
   
   (u11)-[:MIEMBRO]->(c1),
+  (u11)-[:MIEMBRO]->(c10),
   (u11)-[:MIEMBRO]->(c3),
   
   (u12)-[:MIEMBRO]->(c2),
