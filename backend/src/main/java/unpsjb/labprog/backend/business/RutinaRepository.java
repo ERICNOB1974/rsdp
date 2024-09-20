@@ -14,13 +14,14 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
     // Buscar rutinas por nombre
     List<Rutina> findByNombre(String nombre);
 
-        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(evento:Evento)-[:PARTICIPA_EN]->(participantes:Usuario)-[:REALIZA_RUTINA]->(r:Rutina) "
+    @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(evento:Evento)-[:PARTICIPA_EN]->(participantes:Usuario)-[:REALIZA_RUTINA]->(r:Rutina) "
                         +
                         "WHERE NOT (u)-[:REALIZA_RUTINA]->(r) " +
                         "WITH r, count(participantes) as cantidad " +
                         "RETURN r " +
-                        "ORDER BY cantidad DESC")
-        List<Rutina> sugerenciasDeRutinasBasadosEnEventos(String nombreUsuario);
+                        "ORDER BY cantidad DESC "+
+                        "LIMIT 3")
+    List<Rutina> sugerenciasDeRutinasBasadosEnEventos(String nombreUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(amigo:Usuario) "+
         "MATCH (amigo)-[:REALIZA_RUTINA]->(rutina:Rutina) "+ 
