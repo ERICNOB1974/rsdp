@@ -39,14 +39,14 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "ORDER BY etiquetasEnComun DESC")
         List<Evento> sugerenciasDeEventosBasadosEnAmigosVersion1(String nombreUsuario);
 
-        @Query("MATCH (u:Usuario {nombreUsuario: 'lucas123'})-[:ES_AMIGO_DE]-(amigo:Usuario) "+
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario) "+
         "MATCH (amigo)-[:PARTICIPA_EN]->(eventoAmigo:Evento) "+
         "MATCH (eventoAmigo)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta) "+
         "WHERE NOT (u)-[:PARTICIPA_EN]->(eventoAmigo) "+
         "WITH etiqueta, u, COLLECT(DISTINCT amigo) AS amigos "+ // Recopilamos amigos únicos
         "MATCH (evento:Evento)-[:ETIQUETADO_CON]->(etiqueta) "+
         "WHERE NOT (u)-[:PARTICIPA_EN]->(evento) "+
-        "AND NOT (u)<-[:CREADO_POR]-(evento) "+ // Excluimos eventos en los que participa o ha creado lucas123
+        "AND NOT (u)<-[:CREADO_POR]-(evento) "+ // Excluimos eventos en los que participa o ha creado el usuario
         "WITH evento, COUNT(etiqueta) AS coincidencias, amigos "+
         "OPTIONAL MATCH (evento)<-[:PARTICIPA_EN]-(amigo:Usuario) WHERE amigo IN amigos  " + // Verificamos si algún amigo está participando en este evento
         "WITH evento, coincidencias, COUNT(DISTINCT amigo) AS amigosParticipando, evento.fechaHora AS fechaHora "+  // Contamos amigos únicos que participan 
