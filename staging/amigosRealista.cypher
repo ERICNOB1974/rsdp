@@ -1,70 +1,122 @@
 MATCH 
-(u1:Usuario {nombreUsuario: 'lucas123'}),
-(u2:Usuario {nombreUsuario: 'maia_rocks'}),
-(u3:Usuario {
+(lucas:Usuario {nombreUsuario: 'lucas123'}),
+(maia:Usuario {nombreUsuario: 'maia_rocks'}),
+(eric:Usuario {
     nombreUsuario: 'eric99'
 }),
-(u4:Usuario {
+(ramiro:Usuario {
     nombreUsuario: 'ramiro85'
 }),
-(u5:Usuario {
+(alan:Usuario {
     nombreUsuario: 'alan_prog'
 }),
-(u6:Usuario {
+(melisa:Usuario {
     nombreUsuario: 'melisa_fit'
 }),
-(u7:Usuario {
+(juarito:Usuario {
     nombreUsuario: 'juarito22'
 }),
-(u8:Usuario {
+(agustin:Usuario {
     nombreUsuario: 'agustin_mtb'
 }),
-(u9:Usuario {
+(matias:Usuario {
     nombreUsuario: 'matias_trek'
 }),
-(u10:Usuario {
+(facundo:Usuario {
     nombreUsuario: 'facu_games'
 }),
-(u11:Usuario {
+(evelyn:Usuario {
     nombreUsuario: 'evelyn_yoga'
 }),
-(u12:Usuario {
+(nicolas:Usuario {
     nombreUsuario: 'nicolas_swim'
 }),
-(u13:Usuario {
+(sofia:Usuario {
     nombreUsuario: 'sofia_runner'
 }),
-(u14:Usuario {
+(martin:Usuario {
     nombreUsuario: 'martin_lifter'
 }),
-(u15:Usuario {
+(luis:Usuario {
     nombreUsuario: 'luis_cyclist'
 }),
-(u16:Usuario {
+(andrea:Usuario {
     nombreUsuario: 'andrea_tennis'
 }),
-(u17:Usuario {
+(carlos:Usuario {
     nombreUsuario: 'carlos_fit'
 }),
-(u18:Usuario {
+(ana:Usuario {
     nombreUsuario: 'ana_climb'
 }),
-(u19:Usuario {
+(julian:Usuario {
     nombreUsuario: 'julian_marathon'
 }),
-(u20:Usuario {
+(laura:Usuario {
     nombreUsuario: 'laura_gym'
 })
 
-MERGE (u1)-[:ES_AMIGO_DE]-(u2)
-MERGE (u1)-[:ES_AMIGO_DE]-(u3)
-MERGE (u4)-[:ES_AMIGO_DE]-(u5)
-MERGE (u6)-[:ES_AMIGO_DE]-(u7)
-MERGE (u8)-[:ES_AMIGO_DE]-(u9)
-MERGE (u10)-[:ES_AMIGO_DE]-(u11)
-MERGE (u12)-[:ES_AMIGO_DE]-(u13)
-MERGE (u14)-[:ES_AMIGO_DE]-(u15)
-MERGE (u16)-[:ES_AMIGO_DE]-(u17)
-MERGE (u18)-[:ES_AMIGO_DE]-(u19)
-MERGE (u20)-[:ES_AMIGO_DE]-(u1)
+MERGE (lucas)-[:ES_AMIGO_DE]->(eric)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(eric)
+MERGE (lucas)-[:ES_AMIGO_DE]->(facundo)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(facundo)
+MERGE (lucas)-[:ES_AMIGO_DE]->(alan)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(alan)
+MERGE (lucas)-[:ES_AMIGO_DE]->(maia)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(maia)
+MERGE (lucas)-[:ES_AMIGO_DE]->(melisa)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(melisa)
+
+MERGE (ramiro)-[:ES_AMIGO_DE]->(facundo)
+MERGE (ramiro)<-[:ES_AMIGO_DE]-(facundo)
+MERGE (ramiro)-[:ES_AMIGO_DE]->(eric)
+MERGE (ramiro)<-[:ES_AMIGO_DE]-(eric)
+MERGE (ramiro)-[:ES_AMIGO_DE]->(alan)
+MERGE (ramiro)<-[:ES_AMIGO_DE]-(alan)
+
+MERGE (matias)-[:ES_AMIGO_DE]->(melisa)
+MERGE (matias)<-[:ES_AMIGO_DE]-(melisa)
+MERGE (matias)-[:ES_AMIGO_DE]->(alan)
+MERGE (matias)<-[:ES_AMIGO_DE]-(alan)
+
+MERGE (agustin)-[:ES_AMIGO_DE]->(alan)
+MERGE (agustin)<-[:ES_AMIGO_DE]-(alan)
+MERGE (agustin)-[:ES_AMIGO_DE]->(facundo)
+MERGE (agustin)<-[:ES_AMIGO_DE]-(facundo)
+
+MERGE (juarito)-[:ES_AMIGO_DE]->(facundo)
+MERGE (juarito)<-[:ES_AMIGO_DE]-(facundo)
+MERGE (juarito)-[:ES_AMIGO_DE]->(maia)
+MERGE (juarito)<-[:ES_AMIGO_DE]-(maia)
+MERGE (juarito)-[:ES_AMIGO_DE]->(melisa)
+MERGE (juarito)<-[:ES_AMIGO_DE]-(melisa)
+
+MERGE (evelyn)-[:ES_AMIGO_DE]->(alan)
+MERGE (evelyn)<-[:ES_AMIGO_DE]-(alan)
+
+MERGE (nicolas)-[:ES_AMIGO_DE]->(evelyn)
+MERGE (nicolas)<-[:ES_AMIGO_DE]-(evelyn)
+MERGE (nicolas)-[:ES_AMIGO_DE]->(agustin)
+MERGE (nicolas)<-[:ES_AMIGO_DE]-(agustin)
+
+MERGE (carlos)-[:ES_AMIGO_DE]->(evelyn)
+MERGE (carlos)<-[:ES_AMIGO_DE]-(evelyn)
+MERGE (carlos)-[:ES_AMIGO_DE]->(agustin)
+MERGE (carlos)<-[:ES_AMIGO_DE]-(agustin)
+
+MERGE (sofia)-[:ES_AMIGO_DE]->(evelyn)
+MERGE (sofia)<-[:ES_AMIGO_DE]-(evelyn)
+MERGE (sofia)-[:ES_AMIGO_DE]->(agustin)
+MERGE (sofia)<-[:ES_AMIGO_DE]-(agustin)
+
+MERGE (martin)-[:ES_AMIGO_DE]->(nicolas)
+MERGE (martin)<-[:ES_AMIGO_DE]-(nicolas)
+MERGE (martin)-[:ES_AMIGO_DE]->(carlos)
+MERGE (martin)<-[:ES_AMIGO_DE]-(carlos)
+
+MERGE (andrea)-[:ES_AMIGO_DE]->(luis)
+MERGE (andrea)<-[:ES_AMIGO_DE]-(luis)
+
+MERGE (ana)-[:ES_AMIGO_DE]->(matias)
+MERGE (ana)<-[:ES_AMIGO_DE]-(matias)
 
