@@ -1,5 +1,6 @@
 package unpsjb.labprog.backend.model;
 
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.neo4j.core.schema.*;
 
 import lombok.Data;
@@ -10,6 +11,8 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.util.List;
 import java.time.ZonedDateTime;
+
+import jakarta.annotation.Nullable;
 
 @Data
 @Getter
@@ -28,6 +31,7 @@ public class Evento {
     private String ubicacion;
     private String descripcion;
     private int cantidadMaximaParticipantes;
+    private boolean esPrivadoParaLaComunidad;
 
     @Relationship(type = "CREADO_POR")
     private Usuario creador;
@@ -37,5 +41,10 @@ public class Evento {
 
     @Relationship(type = "ETIQUETADO_CON")
     private List<Etiqueta> etiquetas;
+
+    @Nullable
+    @Relationship(type = "ORGANIZADO_POR")
+    private Comunidad organiza;
+
 
 }
