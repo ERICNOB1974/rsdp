@@ -1,11 +1,14 @@
 package unpsjb.labprog.backend.presenter;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.RutinaService;
+import unpsjb.labprog.backend.model.Evento;
 import unpsjb.labprog.backend.model.Rutina;
 
 @RestController
@@ -18,6 +21,12 @@ public class RutinaPresenter {
     @GetMapping("/findAll")
     public ResponseEntity<Object> findAll(){
         return Response.ok(rutinaService.findAll());
+    }
+
+    @GetMapping("/sugerenciasDeRutinasBasadosEnAmigos/{nombreUsuario}")
+    public ResponseEntity<Object> obtenerSugerenciasDeRutinasBasadosEnAmigos(@PathVariable String nombreUsuario) {
+        List<Rutina> rutinasDeAmigos = rutinaService.sugerenciasDeRutinasBasadosEnAmigos(nombreUsuario);
+        return Response.ok(rutinasDeAmigos);
     }
 
     @RequestMapping(path = "/create", method = RequestMethod.POST)

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import unpsjb.labprog.backend.model.Evento;
 import unpsjb.labprog.backend.model.Rutina;
 
 @Service
@@ -17,6 +18,12 @@ public class RutinaService {
     public List<Rutina> findAll() {
         return rutinaRepository.findAll();
     }
+
+
+    public List<Rutina> sugerenciasDeRutinasBasadosEnAmigos(String nombreUsuario) {
+        return rutinaRepository.sugerenciasDeRutinasBasadosEnAmigos(nombreUsuario);
+    }
+
 
     @Transactional
     public Rutina save(Rutina rutina) {

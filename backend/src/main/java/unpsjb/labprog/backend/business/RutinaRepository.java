@@ -22,5 +22,13 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                         "ORDER BY cantidad DESC")
         List<Rutina> sugerenciasDeRutinasBasadosEnEventos(String nombreUsuario);
 
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(amigo:Usuario) "+
+        "MATCH (amigo)-[:REALIZA_RUTINA]->(rutina:Rutina) "+ 
+        "WHERE NOT (u)-[:REALIZA_RUTINA]->(rutina) " +  // Excluimos las rutinas que realiza lucas
+        "WITH rutina, COUNT(amigo) AS popularidad "+  // Contamos cuántos amigos realizan la rutina
+        "RETURN rutina " +
+        "ORDER BY popularidad DESC " +  // Ordenamos por popularidad, de mayor a menor
+        "LIMIT 3")
+        List<Rutina> sugerenciasDeRutinasBasadosEnAmigos(String nombreUsuario);
 
 }
