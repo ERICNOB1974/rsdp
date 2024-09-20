@@ -22,7 +22,7 @@ CREATE (u2)-[:REALIZA_RUTINA { fechaDeComienzo: date('2024-09-21'), fechaDeFin: 
 MATCH (u:Usuario { nombreUsuario: 'eric99' })
 MATCH (r7:Rutina { nombre: 'Rutina Cardio Intensa' })
 MATCH (r8:Rutina { nombre: 'Rutina de Hipertrofia Muscular' })
-MATCH (r9:Rutina { nombre: 'Rutina de Recuperación Activa' })
+MATCH (r9:Rutina { nombre: 'Rutina de Potencia Explosiva' })
 WITH u, r7, r8, r9
 CREATE (u)-[:REALIZA_RUTINA { fechaDeComienzo: date('2024-09-20'), fechaDeFin: date('2024-09-20') }]->(r7)
 CREATE (u)-[:REALIZA_RUTINA { fechaDeComienzo: date('2024-09-21') }]->(r8)
