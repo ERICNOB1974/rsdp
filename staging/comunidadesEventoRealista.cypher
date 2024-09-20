@@ -1,19 +1,9 @@
-MERGE 
-(c1:Comunidad {
-    nombre: 'Amantes del Running'
-}),
-(c2:Comunidad {
-    nombre: 'Ciclistas Urbanos'
-}),
-(c3:Comunidad {
-    nombre: 'Escaladores Expertos'
-}),
-(c4:Comunidad {
-    nombre: 'Futboleros Unidos'
-}),
-(c5:Comunidad {
-    nombre: 'Caminatas y Senderismo'
-}),
+MATCH 
+(c1:Comunidad {nombre: 'Amantes del Running'}),
+(c2:Comunidad {nombre: 'Ciclistas Urbanos'}),
+(c3:Comunidad {nombre: 'Escaladores Expertos'}),
+(c4:Comunidad {nombre: 'Futboleros Unidos'}),
+(c5:Comunidad {nombre: 'Caminatas y Senderismo'}),
 (c6:Comunidad {
     nombre: 'Entrenamiento Funcional'
 }),
@@ -58,7 +48,7 @@ MERGE
 }),
 (c20:Comunidad {
     nombre: 'Surf y Deportes Acuáticos'
-});
+})
 
 
 CREATE
@@ -71,9 +61,7 @@ CREATE
     cantidadMaximaParticipantes: 30,
     fechaCreacion: date('2024-09-15'),
     esPrivadoParaLaComunidad: true
-})
-
-CREATE
+}),
 (evento2:Evento {
     id: 101,
     nombre: 'Senderismo por cerro avanzado ',
@@ -83,9 +71,7 @@ CREATE
     cantidadMaximaParticipantes: 40,
     fechaCreacion: date('2024-09-12'),
     esPrivadoParaLaComunidad: true
-})
-
-CREATE
+}),
 (evento3:Evento {
     id: 102,
     nombre: 'Torneo de Fútbol Interbarrial',
@@ -126,13 +112,11 @@ CREATE
     fechaCreacion: date('2024-09-17'),
     esPrivadoParaLaComunidad: false
 })
-
-
-
-(c20)<-[:ORGANIZADO_POR:]-(evento1)
-(c17)<-[:ORGANIZADO_POR:]-(evento2)
-(c4)<-[:ORGANIZADO_POR:]-(evento3)
-(c10)<-[:ORGANIZADO_POR:]-(evento4)
-(c20)<-[:ORGANIZADO_POR:]-(evento5)
-(c1)<-[:ORGANIZADO_POR:]-(evento6)
+CREATE
+(evento1)-[:ORGANIZADO_POR]->(c20),
+(evento2)-[:ORGANIZADO_POR]->(c17),
+(evento3)-[:ORGANIZADO_POR]->(c4),
+(evento4)-[:ORGANIZADO_POR]->(c10),
+(evento5)-[:ORGANIZADO_POR]->(c20),
+(evento6)-[:ORGANIZADO_POR]->(c1);
 
