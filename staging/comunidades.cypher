@@ -67,37 +67,37 @@ CREATE
 }),
 (c12:Comunidad {
     nombre: 'Atletas del Parque', 
-    fechaDeCreacion: date('2024-04-07'), 
+    fechaDeCreacion: date('2024-09-17'), 
     descripcion: 'Un grupo para entrenamientos de atletismo en espacios al aire libre.', 
     cantidadMaximaMiembros: 180
 }),
 (c13:Comunidad {
     nombre: 'Fútbol Femenino', 
-    fechaDeCreacion: date('2024-05-12'), 
+    fechaDeCreacion: date('2024-09-12'), 
     descripcion: 'Espacio dedicado al fútbol femenino, torneos y entrenamientos.', 
     cantidadMaximaMiembros: 100
 }),
 (c14:Comunidad {
     nombre: 'Natación de Alto Rendimiento', 
-    fechaDeCreacion: date('2024-06-22'), 
+    fechaDeCreacion: date('2024-09-22'), 
     descripcion: 'Comunidad para nadadores y aquellos que entrenan en alto rendimiento.', 
     cantidadMaximaMiembros: 80
 }),
 (c15:Comunidad {
     nombre: 'Amantes del Paddle', 
-    fechaDeCreacion: date('2024-07-05'), 
+    fechaDeCreacion: date('2024-09-15'), 
     descripcion: 'Espacio para los amantes del paddle y para organizar torneos.', 
     cantidadMaximaMiembros: 110
 }),
 (c16:Comunidad {
     nombre: 'Escalada y Aventura', 
-    fechaDeCreacion: date('2024-08-11'), 
+    fechaDeCreacion: date('2024-09-11'), 
     descripcion: 'Para quienes disfrutan de la escalada y la aventura al aire libre.', 
     cantidadMaximaMiembros: 100
 }),
 (c17:Comunidad {
     nombre: 'Senderismo en Familia', 
-    fechaDeCreacion: date('2024-09-01'), 
+    fechaDeCreacion: date('2024-09-10'), 
     descripcion: 'Grupo orientado al senderismo familiar y actividades al aire libre.', 
     cantidadMaximaMiembros: 200
 }),
