@@ -40,6 +40,7 @@ MATCH (e1:Evento {id: 1}),
       (e19:Evento {id: 19}),
       (e20:Evento {id: 20})
 
+// Crear las relaciones de CREACIÓN entre los usuarios y los eventos con la fecha de creación tomada de cada evento
 CREATE (e1)-[:CREADO_POR]->(u1),
        (e2)-[:CREADO_POR]->(u1),
        (e3)-[:CREADO_POR]->(u2),
