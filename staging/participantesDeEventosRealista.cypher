@@ -169,7 +169,7 @@ MERGE (u19)-[:PARTICIPA_EN]->(e4) // julian_marathon
 MERGE (u19)-[:PARTICIPA_EN]->(e5) // julian_marathon
 
 MERGE (u20)-[:PARTICIPA_EN]->(e1) // laura_gym
-//MERGE (u20)-[:PARTICIPA_EN]->(e2) // laura_gym
+MERGE (u20)-[:PARTICIPA_EN]->(e12) // laura_gym
 MERGE (u20)-[:PARTICIPA_EN]->(e3) // laura_gym
 MERGE (u20)-[:PARTICIPA_EN]->(e4) // laura_gym
 MERGE (u20)-[:PARTICIPA_EN]->(e5) // laura_gym
