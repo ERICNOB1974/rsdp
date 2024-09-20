@@ -39,4 +39,8 @@ public class RutinaService {
         return rutinaRepository.findById(id).orElse(null);
     }
 
+    public List<Rutina> sugerenciaDeAmigosBasadosEnRutinas(String nombreUsuario){
+        return rutinaRepository.sugerenciasDeRutinasBasadosEnEventos(nombreUsuario);
+    }
+
 }
