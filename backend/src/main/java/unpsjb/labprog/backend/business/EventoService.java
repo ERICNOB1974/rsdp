@@ -22,6 +22,10 @@ public class EventoService {
         return eventoRepository.sugerenciasDeEventosBasadosEnEventos(nombreUsuario);
     }
 
+    public List<Evento> sugerenciaDeEventosBasadosEnRutinas(String nombreUsuario) {
+        return eventoRepository.sugerenciasDeEventosBasadosEnRutinas(nombreUsuario);
+    }
+
     @Transactional
     public Evento save(Evento evento) {
         return eventoRepository.save(evento);

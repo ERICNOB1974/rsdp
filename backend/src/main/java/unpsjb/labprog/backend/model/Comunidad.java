@@ -38,9 +38,6 @@ public class Comunidad {
     @Relationship(type = "MIEMBRO")
     private List<MiembroDeComunidad> miembros;
 
-    @Relationship(type = "ORGANIZA")
-    private List<Evento> eventos;
-
     @Relationship(type = "ETIQUETADA_CON")
     private List<Etiqueta> etiquetas;
 

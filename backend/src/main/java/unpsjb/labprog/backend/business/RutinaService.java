@@ -18,6 +18,12 @@ public class RutinaService {
         return rutinaRepository.findAll();
     }
 
+
+    public List<Rutina> sugerenciasDeRutinasBasadosEnAmigos(String nombreUsuario) {
+        return rutinaRepository.sugerenciasDeRutinasBasadosEnAmigos(nombreUsuario);
+    }
+
+
     @Transactional
     public Rutina save(Rutina rutina) {
         return rutinaRepository.save(rutina);
@@ -38,6 +44,10 @@ public class RutinaService {
 
     public List<Rutina> sugerenciasDeRutinasBasadasEnComunidades(String nombreUsuario){
         return rutinaRepository.sugerenciasDeRutinasBasadasEnComunidades(nombreUsuario);
+    }
+
+    public List<Rutina> sugerenciaDeRutinasBasadosEnEventos (String nombreUsuario){
+        return rutinaRepository.sugerenciasDeRutinasBasadosEnEventos(nombreUsuario);
     }
 
 }
