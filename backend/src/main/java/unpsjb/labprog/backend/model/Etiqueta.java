@@ -1,7 +1,5 @@
 package unpsjb.labprog.backend.model;
 
-import java.util.List;
-
 import org.springframework.data.neo4j.core.schema.*;
 
 import lombok.Data;
@@ -21,14 +19,5 @@ public class Etiqueta {
     private Long id;
 
     private String nombre;
-
-    @Relationship(type = "ETIQUETADO_CON")
-    private List<Comunidad> comunidades;
-
-    @Relationship(type = "ASOCIADA_CON")
-    private List<Rutina> rutinas;
-
-    @Relationship(type = "RELACIONADO_A")
-    private List<Evento> eventos;
 
 }

@@ -23,12 +23,13 @@ public class Rutina {
     private String nombre;
     private String descripcion;
     private int duracionMinutosPorDia;
+    
     private Dificultad dificultad;
 
-    @Relationship(type = "EJERCICIO")
+    @Relationship(type = "TIENE")
     private List<Ejercicio> ejercicios;
 
-    @Relationship(type = "ETIQUETADA_POR")
+    @Relationship(type = "ETIQUETADA_CON")
     private List<Etiqueta> etiquetas;
 
 }

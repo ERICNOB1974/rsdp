@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import unpsjb.labprog.backend.model.Evento;
+import unpsjb.labprog.backend.model.Usuario;
 
 import java.util.List;
 
@@ -14,31 +15,30 @@ public class EventoService {
     @Autowired
     EventoRepository eventoRepository;
 
-    // Obtener todos los eventos
     public List<Evento> findAll() {
         return eventoRepository.findAll();
     }
 
-    // // Buscar eventos por nombre
-    // public List<Evento> getEventosByNombreReal(String nombre) {
-    //     return eventoRepository.findByNombreReal(nombre);
-    // }
+    public List<Evento> sugerenciaDeEventosBasadosEnEventos(String nombreUsuario) {
+        return eventoRepository.sugerenciasDeEventosBasadosEnEventos(nombreUsuario);
+    }
 
-    // // Buscar eventos por ubicación
-    // public List<Evento> getEventosByNombreUsuario(String ubicacion) {
-    //     return eventoRepository.findByNombreUsuario(ubicacion);
-    // }
+    public List<Evento> sugerenciaDeEventosBasadosEnRutinas(String nombreUsuario) {
+        return eventoRepository.sugerenciasDeEventosBasadosEnRutinas(nombreUsuario);
+    }
 
-    // Crear o actualizar un evento
     @Transactional
     public Evento save(Evento evento) {
         return eventoRepository.save(evento);
     }
 
-    // Eliminar un evento por ID
     @Transactional
-    public void deleteEventoById(Long id) {
+    public void deleteById(Long id) {
         eventoRepository.deleteById(id);
     }
-    
+
+    public Evento findById(Long id){
+        return eventoRepository.findById(id).orElse(null);
+    }
+
 }
