@@ -17,18 +17,18 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "WHERE NOT (u)-[:PARTICIPA_EN]->(e2) " +
                         "WITH e2, count(et) AS etiquetasComunes " +
                         "RETURN DISTINCT e2, etiquetasComunes " +
-                        "ORDER BY etiquetasComunes DESC " +
+                        "ORDER BY etiquetasComunes DESC, e2.fechaHora ASC " +
                         "LIMIT 3")
         List<Evento> sugerenciasDeEventosBasadosEnEventos(String nombreUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:REALIZA_RUTINA]->(:Rutina)-[:ETIQUETADA_CON]->(e:Etiqueta)<-[:ETIQUETADO_CON]-(ev:Evento) "
-                        +
-                        "WHERE NOT (u)-[:PARTICIPA_EN]->(ev) " +
-                        "WITH ev, count(e) as etiquetasCompartidas " +
-                        "RETURN ev " +
-                        "ORDER BY etiquetasCompartidas DESC, ev.fechaHora ASC " +
-                        "LIMIT 3")
-        List<Evento> sugerenciasDeEventosBasadosEnRutinas(String nombreUsuario);
+                + "WHERE NOT (u)-[:PARTICIPA_EN]->(ev) " 
+                + "AND NOT (u)<-[:CREADO_POR]-(ev) "  // Asegurarse de que el usuario no creó el evento
+                + "WITH ev, count(e) as etiquetasCompartidas " 
+                + "RETURN ev " 
+                + "ORDER BY etiquetasCompartidas DESC, ev.fechaHora ASC " 
+                + "LIMIT 3")
+List<Evento> sugerenciasDeEventosBasadosEnRutinas(String nombreUsuario);
 
         // no listo
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario)<-[:PARTICIPA_EN]-(evento:Evento)-[ETIQUETADO_CON]->(etiqueta:Etiqueta) "
