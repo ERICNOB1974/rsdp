@@ -1,6 +1,5 @@
 package unpsjb.labprog.backend.model;
 
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.neo4j.core.schema.*;
 
 import lombok.Data;
