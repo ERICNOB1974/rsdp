@@ -21,7 +21,6 @@ public class EventoPresenter {
         return Response.ok(eventoService.findAll());
     }
 
-
     @GetMapping("/sugerenciasDeEventosBasadosEnEventos/{nombreUsuario}")
     public ResponseEntity<Object> obtenerSugerenciasDeEventosBasadosEnEventos(@PathVariable String nombreUsuario) {
         List<Evento> eventosDeEventos = eventoService.sugerenciaDeEventosBasadosEnEventos(nombreUsuario);
