@@ -40,14 +40,14 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
             "LIMIT 3")
     List<Usuario> sugerenciasDeAmigosBasadosEnEventos(String nombreUsuario);
 
-        @Query("MATCH (u:Usuario {nombreUsuario: 'lucas'})-[:MIEMBRO]->(comunidad:Comunidad)" +
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(comunidad:Comunidad)" +
                         " MATCH (participante:Usuario)-[:MIEMBRO]->(comunidad) " +
                         " WHERE participante <> u" +
                         " WITH u, participante, COUNT(comunidad) AS comunidadesEnComun " +
                         " WHERE  (NOT (u)-[:ES_AMIGO_DE]-(participante) )" +
                         " AND  (comunidadesEnComun >= 2)" +
                         " RETURN participante " +
-                        " ORDER BY comunidadesEnComun DESC" +
+                        " ORDER BY comunidadesEnComun DESC, participante.nombreUsuario ASC" +
                         " LIMIT 3")
         List<Usuario> sugerenciasDeAmigosBasadosEnComunidades(String nombreUsuario);
 

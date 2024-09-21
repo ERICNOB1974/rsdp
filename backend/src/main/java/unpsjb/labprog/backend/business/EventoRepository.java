@@ -56,7 +56,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
         List<Evento> sugerenciasDeEventosBasadosEnAmigos(String nombreUsuario);
 
         
-        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:REALIZA_RUTINA]->(:Rutina)-[:ETIQUETADA_CON]->(e:Etiqueta)<-[:ETIQUETADO_CON]-(ev:Evento) "
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(:Comunidad)-[:ETIQUETADA_CON]->(e:Etiqueta)<-[:ETIQUETADO_CON]-(ev:Evento) "
                         +
                         "WHERE NOT (u)-[:PARTICIPA_EN]->(ev) " +
                         "WITH ev, count(e) as etiquetasCompartidas " +
