@@ -33,7 +33,8 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
             "WITH participante, COUNT(evento) AS eventosCompartidos " +
             "WHERE eventosCompartidos >= 2 " +
             "RETURN participante, eventosCompartidos " +
-            "ORDER BY eventosCompartidos DESC")
+            "ORDER BY eventosCompartidos DESC " + 
+            "LIMIT 3")
     List<Usuario> sugerenciasDeAmigosBasadosEnEventos(String nombreUsuario);
 
 }

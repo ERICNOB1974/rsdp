@@ -32,4 +32,12 @@ public class RutinaService {
         return rutinaRepository.findById(id).orElse(null);
     }
 
+    public List<Rutina> sugerenciasDeRutinasBasadasEnRutinas(String nombreUsuario){
+        return rutinaRepository.sugerenciasDeRutinasBasadasEnRutinas(nombreUsuario);
+    }
+
+    public List<Rutina> sugerenciasDeRutinasBasadasEnComunidades(String nombreUsuario){
+        return rutinaRepository.sugerenciasDeRutinasBasadasEnComunidades(nombreUsuario);
+    }
+
 }
