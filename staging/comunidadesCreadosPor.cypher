@@ -43,7 +43,7 @@ MATCH
   (c19:Comunidad {nombre: 'Básquet 3x3'}),
   (c20:Comunidad {nombre: 'Surf y Deportes Acuáticos'})
 
-// Crear las relaciones de CREACIÓN entre los usuarios y las comunidades
+// Crear las relaciones de CREACIÓN entre los usuarios y las comunidades con la fecha de creación tomada de la comunidad
 CREATE
   (c1)-[:CREADO_POR]->(u3),
   (c2)-[:CREADO_POR]->(u2),
