@@ -22,10 +22,6 @@ public class EventoPresenter {
     }
 
 
-
-    
-    @RequestMapping(path = "/crear", method = RequestMethod.POST)
-    public ResponseEntity<Object> create(@RequestBody Evento evento){
     @GetMapping("/sugerenciasDeEventosBasadosEnEventos/{nombreUsuario}")
     public ResponseEntity<Object> obtenerSugerenciasDeEventosBasadosEnEventos(@PathVariable String nombreUsuario) {
         List<Evento> eventosDeEventos = eventoService.sugerenciaDeEventosBasadosEnEventos(nombreUsuario);

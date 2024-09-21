@@ -66,19 +66,19 @@ services:
     # depends_on: 
       # - backend
 
-#   testing:
-#     image: node:alpine
-#     container_name: testing
-#     profiles:
-#       - test
-#     working_dir: /home/node
-#     volumes:
-#       - ./testing:/home/node
-#       - ../common/testing/node_modules:/home/node/node_modules      
-#     command: npm test
-#     # comentar esto
-#     # depends_on:
-#     #   - backend
+  testing:
+    image: node:alpine
+    container_name: testing
+    profiles:
+      - test
+    working_dir: /home/node
+    volumes:
+      - ./testing:/home/node
+      - ../common/testing/node_modules:/home/node/node_modules      
+    command: npm test
+    # comentar esto
+    # depends_on:
+    #   - backend
 
 # volumes:
 #   postgres:

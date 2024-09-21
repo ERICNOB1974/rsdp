@@ -50,6 +50,10 @@ case "$1" in
   test ) echo "Testing"
     docker compose run --rm testing
     ;;
+  lucasTest ) echo "Testing $2 $3"
+    cat ./staging/$2.cypher | docker exec -i rsdp-database-1 cypher-shell -a bolt://if012rsdp.fi.mdn.unp.edu.ar:28002 -u neo4j -p ericfaculucas
+    docker compose run --rm testing npm test features/$3.feature
+    ;;
   superTest ) echo "Testing"
     cat ./staging/$2.cypher | docker exec -i rsdp-database-1 cypher-shell -a bolt://if012rsdp.fi.mdn.unp.edu.ar:28002 -u neo4j -p ericfaculucas
     docker compose run --rm testing
