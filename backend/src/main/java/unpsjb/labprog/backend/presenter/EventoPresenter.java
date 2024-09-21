@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.EventoService;
 import unpsjb.labprog.backend.model.Evento;
-import unpsjb.labprog.backend.model.Usuario;
 import java.util.List;
 
 @RestController
