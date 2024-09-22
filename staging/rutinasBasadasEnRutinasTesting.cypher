@@ -1,4 +1,4 @@
-// Reiniciar la base de datos
+//RecomendacionesRutinasBasadasEnRutinas
 MATCH (n) DETACH DELETE n;
 
 // Crear etiquetas

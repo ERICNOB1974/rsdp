@@ -1,6 +1,5 @@
-//RecomendacionesEventosBasadosEnComunidades
-MATCH (n)
-DETACH DELETE n;
+// RecomendacionesRutinasBasadosEnEventos
+MATCH (n) DETACH DELETE n;
 
 CREATE
 (evento1:Evento {
@@ -102,21 +101,19 @@ CREATE
                     cantidadMaximaParticipantes: 25,
                     fechaDeCreacion: date('2024-09-25')
                     })
-                    
-CREATE 
-(atletismo:Etiqueta{id:1,nombre: 'Atletismo'}),
-(futbol:Etiqueta{id:2, nombre: 'Futbol'}),
-(natacion:Etiqueta{ id:3, nombre: 'Natacion'}), 
-(pilates:Etiqueta { id: 4, nombre: 'Pilates' }),
-(basquet:Etiqueta { id: 5, nombre: 'Básquet' }),
-(tenis:Etiqueta { id: 6, nombre: 'Tenis' }),
-(yoga:Etiqueta { id: 7, nombre: 'Yoga' }),
-(ciclismo:Etiqueta { id: 8, nombre: 'Ciclismo' }),
-(casual:Etiqueta { id: 9, nombre: 'Casual' }),
-(futbol5:Etiqueta { id: 10, nombre: 'Futbol 5' })
 
 
-CREATE 
+
+// Crear rutinas
+CREATE (rutina1:Rutina { id: 2711, nombre: 'Cardio para principiantes', descripcion: 'Rutina de cardio para principiantes.', duracionMinutosPorDia: 40, dificultad: 'PRINCIPIANTE' }),
+(rutina2:Rutina { id: 2712, nombre: 'Yoga y meditación', descripcion: 'Rutina de yoga y meditación para relajarse.', duracionMinutosPorDia: 30, dificultad: 'PRINCIPIANTE' }),
+(rutina3:Rutina { id: 2713, nombre: 'Fuerza avanzada', descripcion: 'Rutina avanzada de fuerza y resistencia.', duracionMinutosPorDia: 50, dificultad: 'AVANZADO' }),
+(rutina4:Rutina { id: 2714, nombre: 'Cardio avanzado con fuerza', descripcion: 'Rutina combinada de cardio y fuerza.', duracionMinutosPorDia: 45, dificultad: 'INTERMEDIO' }),
+(rutina5:Rutina { id: 2715, nombre: 'Entrenamiento funcional', descripcion: 'Rutina de entrenamiento funcional.', duracionMinutosPorDia: 35, dificultad: 'INTERMEDIO' }),
+(rutina6:Rutina { id: 2716, nombre: 'Fuerza básica', descripcion: 'Rutina de fuerza para principiantes.', duracionMinutosPorDia: 40, dificultad: 'PRINCIPIANTE' })
+
+
+CREATE
 (lucas:Usuario { nombreUsuario: 'lucas', nombreReal: 'Lucas' }),
 (juan:Usuario { nombreUsuario: 'juan', nombreReal: 'Juan' }),
 (marcos:Usuario { nombreUsuario: 'marcos', nombreReal: 'Marcos' }),
@@ -125,58 +122,45 @@ CREATE
 (patricia:Usuario { nombreUsuario: 'patricia', nombreReal: 'Patricia' }),
 (martin:Usuario { nombreUsuario: 'martin', nombreReal: 'Martín' }),
 (diego:Usuario { nombreUsuario: 'diego', nombreReal: 'Diego' }),
-(ana:Usuario { nombreUsuario: 'ana', nombreReal: 'Ana' })
+(ana:Usuario { nombreUsuario: 'ana', nombreReal: 'Ana' }),
+(carlos:Usuario { nombreUsuario: 'carlos', nombreReal: 'Carlos' })
 
-CREATE
-(comu1:Comunidad { nombre: 'Comunidad atletismo', descripcion: 'Comunidad para atletas' }),
-(comu2:Comunidad { nombre: 'Comunidad futbol', descripcion: 'Comunidad para futbolistas' }),
-(comu3:Comunidad { nombre: 'Comunidad natacion', descripcion: 'Comunidad para nadadores' }),
-(comu4:Comunidad { nombre: 'Comunidad yoga', descripcion: 'Comunidad para amantes del yoga' }),
-(comu5:Comunidad { nombre: 'Comunidad pilates', descripcion: 'Comunidad pilates' }),
-(comu6:Comunidad { nombre: 'Comunidad tenis', descripcion: 'Comunidad para jugadores de tenis' })
+CREATE (lucas)-[:PARTICIPA_EN]->(evento1)
+CREATE (lucas)-[:PARTICIPA_EN]->(evento2)
+CREATE (lucas)-[:PARTICIPA_EN]->(evento3)
+CREATE (pedro)-[:PARTICIPA_EN]->(evento2)
+CREATE (ana)-[:PARTICIPA_EN]->(evento1)
+CREATE (ana)-[:PARTICIPA_EN]->(evento2)
+CREATE (lucas)-[:REALIZA_RUTINA]->(rutina1)
+CREATE (lucas)-[:REALIZA_RUTINA]->(rutina3)
+CREATE (ana)-[:REALIZA_RUTINA]->(rutina5)
+CREATE (pedro)-[:REALIZA_RUTINA]->(rutina1)
 
-MERGE (evento1)-[:ETIQUETADO_CON]->(futbol)
-MERGE (evento1)-[:ETIQUETADO_CON]->(futbol5)
-MERGE (evento2)-[:ETIQUETADO_CON]->(atletismo)
-MERGE (evento3)-[:ETIQUETADO_CON]->(natacion)
-MERGE (evento4)-[:ETIQUETADO_CON]->(natacion)
-MERGE (evento5)-[:ETIQUETADO_CON]->(basquet)
-MERGE (evento6)-[:ETIQUETADO_CON]->(atletismo)
-MERGE (evento7)-[:ETIQUETADO_CON]->(yoga)
-MERGE (evento8)-[:ETIQUETADO_CON]->(pilates)
-MERGE (evento9)-[:ETIQUETADO_CON]->(tenis)
-MERGE (evento10)-[:ETIQUETADO_CON]->(atletismo)
-MERGE (evento11)-[:ETIQUETADO_CON]->(futbol)
+//una sola recomendaion
+CREATE (diego)-[:PARTICIPA_EN]->(evento6)
+CREATE (diego)-[:REALIZA_RUTINA]->(rutina4)
+CREATE (juan)-[:PARTICIPA_EN]->(evento6)
+CREATE (juan)-[:REALIZA_RUTINA]->(rutina6)
 
 
-MERGE (comu1)-[:ETIQUETADA_CON]->(atletismo)
-
-MERGE (comu2)-[:ETIQUETADA_CON]->(futbol)
-MERGE (comu2)-[:ETIQUETADA_CON]->(futbol5)
-
-MERGE (comu3)-[:ETIQUETADA_CON]->(natacion)
+CREATE (marcos)-[:PARTICIPA_EN]->(evento5)
+CREATE (marcos)-[:PARTICIPA_EN]->(evento7)
 
 
-MERGE (comu4)-[:ETIQUETADA_CON]->(yoga)
-MERGE (comu5)-[:ETIQUETADA_CON]->(yoga)
-MERGE (comu5)-[:ETIQUETADA_CON]->(pilates)
+
+//usuario que no participe en evento carlos
+
+//usuario que participe solo en un evento
+CREATE (joaquin)-[:PARTICIPA_EN]->(evento8)
 
 
-MERGE (comu6)-[:ETIQUETADA_CON]->(tenis)
 
-MERGE (diego)-[:MIEMBRO]->(comu1)
-MERGE (ana)-[:MIEMBRO]->(comu2)
-MERGE (lucas)-[:MIEMBRO]->(comu3)
+CREATE (patricia)-[:PARTICIPA_EN]->(evento10)
+CREATE (martin)-[:PARTICIPA_EN]->(evento11)
 
 
-MERGE (patricia)-[:MIEMBRO]->(comu4)
-MERGE (patricia)-[:MIEMBRO]->(comu5)
-MERGE (martin)-[:MIEMBRO]->(comu5)
 
-MERGE (marcos)-[:MIEMBRO]->(comu6)
-MERGE (martin)-[:PARTICIPA_EN]->(evento8)
-MERGE (lucas)-[:PARTICIPA_EN]->(evento3)
-MERGE (evento9)-[:CREADO_POR]->(marcos)
-    
-//lucas, ana, joaquin, diego, marcos
-//comu3, comu2, comu1, comu6
+CREATE (marcos)-[:REALIZA_RUTINA]->(rutina2)
+CREATE (joaquin)-[:REALIZA_RUTINA]->(rutina5)
+CREATE (patricia)-[:REALIZA_RUTINA]->(rutina3)
+CREATE (martin)-[:REALIZA_RUTINA]->(rutina4)

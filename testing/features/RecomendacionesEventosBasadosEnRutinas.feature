@@ -1,4 +1,5 @@
 # language: es
+#eventosBasadosEnRutinasTesting
 Característica: Sugerencias de eventos basados en rutinas
 
   Escenario: Sugerir eventos para Lucas
