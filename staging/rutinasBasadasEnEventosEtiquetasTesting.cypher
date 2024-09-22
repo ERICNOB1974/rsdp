@@ -1,3 +1,4 @@
+//RecomendacionesRutinasBasadasEnEventosEtiquetas 
 MATCH (n)
 DETACH DELETE n;
 
@@ -108,7 +109,8 @@ CREATE (rutina1:Rutina { id: 2711, nombre: 'Cardio para principiantes', descripc
 (rutina3:Rutina { id: 2713, nombre: 'Fuerza avanzada', descripcion: 'Rutina avanzada de fuerza y resistencia.', duracionMinutosPorDia: 50, dificultad: 'AVANZADO' }),
 (rutina4:Rutina { id: 2714, nombre: 'Cardio avanzado con fuerza', descripcion: 'Rutina combinada de cardio y fuerza.', duracionMinutosPorDia: 45, dificultad: 'INTERMEDIO' }),
 (rutina5:Rutina { id: 2715, nombre: 'Entrenamiento funcional', descripcion: 'Rutina de entrenamiento funcional.', duracionMinutosPorDia: 35, dificultad: 'INTERMEDIO' }),
-(rutina6:Rutina { id: 2716, nombre: 'Fuerza básica', descripcion: 'Rutina de fuerza para principiantes.', duracionMinutosPorDia: 40, dificultad: 'PRINCIPIANTE' })
+(rutina6:Rutina { id: 2716, nombre: 'Fuerza básica', descripcion: 'Rutina de fuerza para principiantes.', duracionMinutosPorDia: 40, dificultad: 'PRINCIPIANTE' }),
+(rutina7:Rutina { id: 2716, nombre: 'Resistencia ', descripcion: 'Entrena la resistencia. Ideal para nadadores.', duracionMinutosPorDia: 40, dificultad: 'PRINCIPIANTE' })
 
 
 CREATE 
@@ -120,8 +122,8 @@ CREATE
 (tenis:Etiqueta { id: 6, nombre: 'Tenis' }),
 (yoga:Etiqueta { id: 7, nombre: 'Yoga' }),
 (ciclismo:Etiqueta { id: 8, nombre: 'Ciclismo' }),
-(casual:Etiqueta { id: 9, nombre: 'Casual' }),
-(futbol5:Etiqueta { id: 10, nombre: 'Futbol 5' })
+(futbol5:Etiqueta { id: 10, nombre: 'Futbol 5' }),
+(agua:Etiqueta { id: 10, nombre: 'Agua' })
 
 
 CREATE 
@@ -141,6 +143,8 @@ MERGE (evento1)-[:ETIQUETADO_CON]->(futbol5)
 MERGE (evento2)-[:ETIQUETADO_CON]->(atletismo)
 MERGE (evento3)-[:ETIQUETADO_CON]->(natacion)
 MERGE (evento4)-[:ETIQUETADO_CON]->(natacion)
+MERGE (evento3)-[:ETIQUETADO_CON]->(agua)
+MERGE (evento4)-[:ETIQUETADO_CON]->(agua)
 MERGE (evento5)-[:ETIQUETADO_CON]->(basquet)
 MERGE (evento6)-[:ETIQUETADO_CON]->(atletismo)
 MERGE (evento7)-[:ETIQUETADO_CON]->(yoga)
@@ -149,10 +153,19 @@ MERGE (evento9)-[:ETIQUETADO_CON]->(tenis)
 MERGE (evento10)-[:ETIQUETADO_CON]->(atletismo)
 MERGE (evento11)-[:ETIQUETADO_CON]->(futbol)
 
+MERGE (rutina5)-[:ETIQUETADA_CON]->(futbol)
+MERGE (rutina1)-[:ETIQUETADA_CON]->(futbol)
+MERGE (rutina1)-[:ETIQUETADA_CON]->(futbol5)
+
+
+MERGE (rutina1)-[:ETIQUETADA_CON]->(natacion)
+MERGE (rutina7)-[:ETIQUETADA_CON]->(natacion)
+MERGE (rutina7)-[:ETIQUETADA_CON]->(agua)
 
 
 MERGE (martin)-[:PARTICIPA_EN]->(evento8)
 MERGE (lucas)-[:PARTICIPA_EN]->(evento3)
-MERGE (evento9)-[:CREADO_POR]->(marcos)
+MERGE (marcos)-[:PARTICIPA_EN]->(evento11)
+MERGE (marcos)-[:PARTICIPA_EN]->(evento1)
     
 

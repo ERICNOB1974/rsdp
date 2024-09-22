@@ -49,5 +49,8 @@ public class RutinaService {
     public List<Rutina> sugerenciaDeRutinasBasadosEnEventos (String nombreUsuario){
         return rutinaRepository.sugerenciasDeRutinasBasadosEnEventos(nombreUsuario);
     }
+    public List<Rutina> sugerenciasDeRutinasBasadosEnEventosPorEtiqueta (String nombreUsuario){
+        return rutinaRepository.sugerenciasDeRutinasBasadosEnEventosPorEtiqueta(nombreUsuario);
+    }
 
 }
