@@ -1,3 +1,4 @@
+//RecomendacionesAmigosDeAmigos
 MATCH (n) DETACH DELETE n;
 
 CREATE (u:Usuario {

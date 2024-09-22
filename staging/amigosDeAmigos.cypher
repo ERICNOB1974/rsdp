@@ -1,3 +1,4 @@
+
 MATCH (u1:Usuario {nombreUsuario: 'lucas123'}),
       (u2:Usuario {nombreUsuario: 'maia_rocks'}),
       (u3:Usuario {nombreUsuario: 'eric99'}),

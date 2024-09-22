@@ -15,6 +15,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         +
                         "MATCH (e2:Evento)-[:ETIQUETADO_CON]->(et) " +
                         "WHERE NOT (u)-[:PARTICIPA_EN]->(e2) " +
+                        "AND NOT (u)<-[:CREADO_POR]-(evento) "+ 
                         "WITH e2, count(et) AS etiquetasComunes " +
                         "RETURN DISTINCT e2, etiquetasComunes " +
                         "ORDER BY etiquetasComunes DESC, e2.fechaHora ASC " +
@@ -28,7 +29,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                 + "RETURN ev " 
                 + "ORDER BY etiquetasCompartidas DESC, ev.fechaHora ASC " 
                 + "LIMIT 3")
-List<Evento> sugerenciasDeEventosBasadosEnRutinas(String nombreUsuario);
+        List<Evento> sugerenciasDeEventosBasadosEnRutinas(String nombreUsuario);
 
         // no listo
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario)<-[:PARTICIPA_EN]-(evento:Evento)-[ETIQUETADO_CON]->(etiqueta:Etiqueta) "
@@ -59,6 +60,7 @@ List<Evento> sugerenciasDeEventosBasadosEnRutinas(String nombreUsuario);
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(:Comunidad)-[:ETIQUETADA_CON]->(e:Etiqueta)<-[:ETIQUETADO_CON]-(ev:Evento) "
                         +
                         "WHERE NOT (u)-[:PARTICIPA_EN]->(ev) " +
+                        "AND NOT (u)<-[:CREADO_POR]-(ev) "+ 
                         "WITH ev, count(e) as etiquetasCompartidas " +
                         "RETURN ev " +
                         "ORDER BY etiquetasCompartidas DESC, ev.fechaHora ASC " +
