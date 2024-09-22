@@ -2,7 +2,7 @@
 Característica: Sugerencia de rutinas basadas en las rutinas que ya realiza el usuario
 
   Escenario: Obtener sugerencias de rutinas basadas en rutinas 
-    Dado que se ingresan los datos de un usuario existente "lucas123"
+    Dado que se ingresan los datos de un usuario existente "lucas123", en rutinas por rutinas
     Cuando se obtienen las sugerencias de rutinas basadas en rutinas
     Entonces se espera que las sugerencias de rutinas basadas en rutinas sean 
     """
@@ -12,7 +12,7 @@ Característica: Sugerencia de rutinas basadas en las rutinas que ya realiza el 
     """
 
   Escenario: Obtener sugerencias de rutinas basadas en rutinas donde se recomienda tres rutinas con prioridad marcada
-    Dado que se ingresan los datos de un usuario existente "eric99"
+    Dado que se ingresan los datos de un usuario existente "eric99", en rutinas por rutinas
     Cuando se obtienen las sugerencias de rutinas basadas en rutinas
     Entonces se espera que las sugerencias de rutinas basadas en rutinas sean 
     """

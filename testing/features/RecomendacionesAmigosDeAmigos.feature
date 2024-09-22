@@ -2,7 +2,7 @@
 Característica: Sugerencia de amigos en común
 
   Escenario: Obtener sugerencias de amigos en común para un usuario
-    Dado que se ingresan los datos de un usuario existente "evelyn987"
+    Dado que se ingresan los datos de un usuario existente "evelyn987", en amigos por amigos
     Cuando se obtienen las sugerencias de amigos en común
     Entonces se espera que las sugerencias de amigos en común sean 
     """
@@ -38,7 +38,7 @@ Característica: Sugerencia de amigos en común
     """
 
   Escenario: Obtener sugerencias de amigos en común para un usuario sin amigos
-    Dado que se ingresan los datos de un usuario existente "lucas123"
+    Dado que se ingresan los datos de un usuario existente "lucas123", en amigos por amigos
     Cuando se obtienen las sugerencias de amigos en común
     Entonces se espera que las sugerencias de amigos en común sean
     """
@@ -48,7 +48,7 @@ Característica: Sugerencia de amigos en común
     """
 
   Escenario: Obtener sugerencias de amigos en común para un usuario con dos amigos
-    Dado que se ingresan los datos de un usuario existente "melisa987"
+    Dado que se ingresan los datos de un usuario existente "melisa987", en amigos por amigos
     Cuando se obtienen las sugerencias de amigos en común cuando se tienen dos amigos
     Entonces se espera que las sugerencias de amigos en común sean
     """

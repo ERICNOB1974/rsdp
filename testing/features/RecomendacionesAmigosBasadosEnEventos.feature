@@ -2,7 +2,7 @@
 Característica: Sugerencia de amigos basados en eventos 
 
   Escenario: Obtener ninguna sugerencia de amigos basados en eventos 
-    Dado que se ingresan los datos de un usuario existente "evelyn_yoga"
+    Dado que se ingresan los datos de un usuario existente "evelyn_yoga", en amigos por eventos
     Cuando se obtienen las sugerencias de amigos basados en eventos
     Entonces se espera que las sugerencias de amigos basados en eventos sean 
     """
@@ -12,7 +12,7 @@ Característica: Sugerencia de amigos basados en eventos
     """
 
   Escenario: Obtener sugerencias de amigos basados en eventos donde se recomienden tres amigos ordenados por prioridad
-    Dado que se ingresan los datos de un usuario existente "ramiro85"
+    Dado que se ingresan los datos de un usuario existente "ramiro85", en amigos por eventos
     Cuando se obtienen las sugerencias de amigos basados en eventos
     Entonces se espera que las sugerencias de amigos basados en eventos sean
     """
