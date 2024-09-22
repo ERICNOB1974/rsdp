@@ -1,4 +1,4 @@
-// Limpiar la base de datos para comenzar de cero
+//RecomendacionesEventosBasadosEnRutinas
 MATCH (n) DETACH DELETE n;
 
 // Crear usuarios

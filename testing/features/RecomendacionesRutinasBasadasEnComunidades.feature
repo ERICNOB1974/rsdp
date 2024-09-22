@@ -1,4 +1,5 @@
 # language: es
+#rutinasBasadasEnComunidadesTesting
 Característica: Sugerencia de rutinas basadas en las que realizan los miembros de una comunidad a la que pertenece el usuario
 
   Escenario: Obtener sugerencias de rutinas basadas en comunidades para un usuario en una comunidad sin miembros

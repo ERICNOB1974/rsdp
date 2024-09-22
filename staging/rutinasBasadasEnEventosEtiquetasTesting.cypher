@@ -1,4 +1,3 @@
-//RecomendacionesEventosBasadosEnComunidades
 MATCH (n)
 DETACH DELETE n;
 
@@ -103,6 +102,15 @@ CREATE
                     fechaDeCreacion: date('2024-09-25')
                     })
                     
+// Crear rutinas
+CREATE (rutina1:Rutina { id: 2711, nombre: 'Cardio para principiantes', descripcion: 'Rutina de cardio para principiantes.', duracionMinutosPorDia: 40, dificultad: 'PRINCIPIANTE' }),
+(rutina2:Rutina { id: 2712, nombre: 'Yoga y meditación', descripcion: 'Rutina de yoga y meditación para relajarse.', duracionMinutosPorDia: 30, dificultad: 'PRINCIPIANTE' }),
+(rutina3:Rutina { id: 2713, nombre: 'Fuerza avanzada', descripcion: 'Rutina avanzada de fuerza y resistencia.', duracionMinutosPorDia: 50, dificultad: 'AVANZADO' }),
+(rutina4:Rutina { id: 2714, nombre: 'Cardio avanzado con fuerza', descripcion: 'Rutina combinada de cardio y fuerza.', duracionMinutosPorDia: 45, dificultad: 'INTERMEDIO' }),
+(rutina5:Rutina { id: 2715, nombre: 'Entrenamiento funcional', descripcion: 'Rutina de entrenamiento funcional.', duracionMinutosPorDia: 35, dificultad: 'INTERMEDIO' }),
+(rutina6:Rutina { id: 2716, nombre: 'Fuerza básica', descripcion: 'Rutina de fuerza para principiantes.', duracionMinutosPorDia: 40, dificultad: 'PRINCIPIANTE' })
+
+
 CREATE 
 (atletismo:Etiqueta{id:1,nombre: 'Atletismo'}),
 (futbol:Etiqueta{id:2, nombre: 'Futbol'}),
@@ -127,13 +135,6 @@ CREATE
 (diego:Usuario { nombreUsuario: 'diego', nombreReal: 'Diego' }),
 (ana:Usuario { nombreUsuario: 'ana', nombreReal: 'Ana' })
 
-CREATE
-(comu1:Comunidad { nombre: 'Comunidad atletismo', descripcion: 'Comunidad para atletas' }),
-(comu2:Comunidad { nombre: 'Comunidad futbol', descripcion: 'Comunidad para futbolistas' }),
-(comu3:Comunidad { nombre: 'Comunidad natacion', descripcion: 'Comunidad para nadadores' }),
-(comu4:Comunidad { nombre: 'Comunidad yoga', descripcion: 'Comunidad para amantes del yoga' }),
-(comu5:Comunidad { nombre: 'Comunidad pilates', descripcion: 'Comunidad pilates' }),
-(comu6:Comunidad { nombre: 'Comunidad tenis', descripcion: 'Comunidad para jugadores de tenis' })
 
 MERGE (evento1)-[:ETIQUETADO_CON]->(futbol)
 MERGE (evento1)-[:ETIQUETADO_CON]->(futbol5)
@@ -149,34 +150,9 @@ MERGE (evento10)-[:ETIQUETADO_CON]->(atletismo)
 MERGE (evento11)-[:ETIQUETADO_CON]->(futbol)
 
 
-MERGE (comu1)-[:ETIQUETADA_CON]->(atletismo)
 
-MERGE (comu2)-[:ETIQUETADA_CON]->(futbol)
-MERGE (comu2)-[:ETIQUETADA_CON]->(futbol5)
-
-MERGE (comu3)-[:ETIQUETADA_CON]->(natacion)
-
-
-MERGE (comu4)-[:ETIQUETADA_CON]->(yoga)
-MERGE (comu5)-[:ETIQUETADA_CON]->(yoga)
-MERGE (comu5)-[:ETIQUETADA_CON]->(pilates)
-
-
-MERGE (comu6)-[:ETIQUETADA_CON]->(tenis)
-
-MERGE (diego)-[:MIEMBRO]->(comu1)
-MERGE (ana)-[:MIEMBRO]->(comu2)
-MERGE (lucas)-[:MIEMBRO]->(comu3)
-
-
-MERGE (patricia)-[:MIEMBRO]->(comu4)
-MERGE (patricia)-[:MIEMBRO]->(comu5)
-MERGE (martin)-[:MIEMBRO]->(comu5)
-
-MERGE (marcos)-[:MIEMBRO]->(comu6)
 MERGE (martin)-[:PARTICIPA_EN]->(evento8)
 MERGE (lucas)-[:PARTICIPA_EN]->(evento3)
 MERGE (evento9)-[:CREADO_POR]->(marcos)
     
-//lucas, ana, joaquin, diego, marcos
-//comu3, comu2, comu1, comu6
+

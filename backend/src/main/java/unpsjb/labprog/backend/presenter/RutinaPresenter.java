@@ -4,11 +4,15 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.RutinaService;
-import unpsjb.labprog.backend.model.Evento;
 import unpsjb.labprog.backend.model.Rutina;
 
 @RestController
@@ -48,6 +52,11 @@ public class RutinaPresenter {
     @GetMapping("/sugerenciasDeRutinasBasadasEnComunidades/{nombreUsuario}")
     public ResponseEntity<Object> sugerenciasDeRutinasBasadasEnComunidades(@PathVariable String nombreUsuario) {
         List<Rutina> amigosDeAmigos = rutinaService.sugerenciasDeRutinasBasadasEnComunidades(nombreUsuario);
+        return Response.ok(amigosDeAmigos);
+    }
+    @GetMapping("/sugerenciasDeRutinasBasadasEnEventos/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeRutinasBasadasEnEventos(@PathVariable String nombreUsuario) {
+        List<Rutina> amigosDeAmigos = rutinaService.sugerenciaDeRutinasBasadosEnEventos(nombreUsuario);
         return Response.ok(amigosDeAmigos);
     }
 

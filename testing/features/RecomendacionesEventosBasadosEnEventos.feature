@@ -1,4 +1,5 @@
 # language: es
+#eventosBasadosEnEventosTesting
 Característica: Recomendación de rutinas de tus amigos
 
   Escenario: Eventos ordenados por cantidad de etiquetas en comun

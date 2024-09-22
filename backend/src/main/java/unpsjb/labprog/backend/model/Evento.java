@@ -32,7 +32,7 @@ public class Evento {
     private int cantidadMaximaParticipantes;
     private boolean esPrivadoParaLaComunidad;
 
-    @Relationship(type = "CREADO_POR")
+    @Relationship(type = "CREADO_POR" )
     private Usuario creador;
 
     @Relationship(type = "PARTICIPA_EN")
