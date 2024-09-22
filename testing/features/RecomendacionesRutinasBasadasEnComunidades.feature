@@ -2,7 +2,7 @@
 Característica: Sugerencia de rutinas basadas en las que realizan los miembros de una comunidad a la que pertenece el usuario
 
   Escenario: Obtener sugerencias de rutinas basadas en comunidades para un usuario en una comunidad sin miembros
-    Dado que se ingresan los datos de un usuario existente "lucas123"
+    Dado que se ingresan los datos de un usuario existente "lucas123", en rutinas por comunidades
     Cuando se obtienen las sugerencias de rutinas basadas en comunidades
     Entonces se espera que las sugerencias de rutinas basadas en comunidades sean 
     """
@@ -12,7 +12,7 @@ Característica: Sugerencia de rutinas basadas en las que realizan los miembros 
     """
 
   Escenario: Obtener sugerencias de rutinas basadas en comunidades donde se recomienda una sola rutina
-    Dado que se ingresan los datos de un usuario existente "maia_rocks"
+    Dado que se ingresan los datos de un usuario existente "maia_rocks", en rutinas por comunidades
     Cuando se obtienen las sugerencias de rutinas basadas en comunidades
     Entonces se espera que las sugerencias de rutinas basadas en comunidades sean
     """
@@ -29,7 +29,7 @@ Característica: Sugerencia de rutinas basadas en las que realizan los miembros 
     """
 
 Escenario: Obtener sugerencias de rutinas basadas en comunidades donde se recomiendan dos rutinas
-    Dado que se ingresan los datos de un usuario existente "eric99"
+    Dado que se ingresan los datos de un usuario existente "eric99", en rutinas por comunidades
     Cuando se obtienen las sugerencias de rutinas basadas en comunidades
     Entonces se espera que las sugerencias de rutinas basadas en comunidades sean
     """
@@ -51,7 +51,7 @@ Escenario: Obtener sugerencias de rutinas basadas en comunidades donde se recomi
     """
 
 Escenario: Obtener sugerencias de rutinas basadas en comunidades donde se recomiendan tres rutinas
-    Dado que se ingresan los datos de un usuario existente "ramiro85"
+    Dado que se ingresan los datos de un usuario existente "ramiro85", en rutinas por comunidades
     Cuando se obtienen las sugerencias de rutinas basadas en comunidades
     Entonces se espera que las sugerencias de rutinas basadas en comunidades sean
     """
