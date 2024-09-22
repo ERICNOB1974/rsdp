@@ -62,7 +62,7 @@ public class UsuarioPresenter {
     }
 
     @GetMapping("/findById/{id}")
-    public ResponseEntity<Object> recomendarComunidadesPorAmigos(@PathVariable Long id) {
+    public ResponseEntity<Object> findById(@PathVariable Long id) {
         return Response.ok(usuarioService.findById(id));
     }
 
