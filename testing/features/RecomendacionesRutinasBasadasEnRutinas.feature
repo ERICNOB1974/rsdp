@@ -1,4 +1,5 @@
 # language: es
+#rutinasBasadasEnRutinasTesting
 Característica: Sugerencia de rutinas basadas en las rutinas que ya realiza el usuario
 
   Escenario: Obtener sugerencias de rutinas basadas en rutinas 

@@ -1,4 +1,5 @@
 # language: es
+#amigosDeAmigosTesting
 Característica: Sugerencia de amigos en común
 
   Escenario: Obtener sugerencias de amigos en común para un usuario

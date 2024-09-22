@@ -1,12 +1,12 @@
 package unpsjb.labprog.backend.business;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import unpsjb.labprog.backend.model.Evento;
-
-import java.util.List;
 
 @Service
 public class EventoService {
@@ -24,6 +24,9 @@ public class EventoService {
 
     public List<Evento> sugerenciaDeEventosBasadosEnRutinas(String nombreUsuario) {
         return eventoRepository.sugerenciasDeEventosBasadosEnRutinas(nombreUsuario);
+    }
+    public List<Evento> sugerenciaDeEventosBasadosEnComunidades(String nombreUsuario) {
+        return eventoRepository.sugerenciasDeEventosBasadosEnComunidades(nombreUsuario);
     }
 
     @Transactional
