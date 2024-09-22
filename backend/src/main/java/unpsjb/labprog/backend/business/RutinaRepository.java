@@ -34,8 +34,9 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
     " MATCH (eventos)-[:ETIQUETADO_CON]->(etiquetas:Etiqueta)"+
     " MATCH (rutinas:Rutina)-[:ETIQUETADA_CON]->(etiquetas) "+
     " WHERE NOT (u)-[:REALIZA_RUTINA]->(rutinas) " +
-    " COUNT (etiquetas) as etiquetasEnComun "+
-    " ORDER BY etiquetasEnComun "+
+    " WITH rutinas, COUNT(DISTINCT etiquetas) AS etiquetasEnComun "+
+    " RETURN rutinas" +
+    " ORDER BY etiquetasEnComun DESC"+
     " LIMIT 3")
     List<Rutina> sugerenciasDeRutinasBasadosEnEventosPorEtiqueta(String nombreUsuario);
 
