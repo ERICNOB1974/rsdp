@@ -16,8 +16,3 @@ WITH r, etiquetaRandom[..toInteger((rand() * 2)+1)] AS etiquetasSeleccionadas
 UNWIND etiquetasSeleccionadas AS etiqueta
 CREATE (r)-[:ETIQUETADA_CON]->(etiqueta);
 
-MATCH (u:Usuario), (e:Evento)
-WHERE rand() < 0.1
-CREATE (u)-[p:PARTICIPA_EN {
-  fechaDeInscripcion: date()
-  }]->(e);
