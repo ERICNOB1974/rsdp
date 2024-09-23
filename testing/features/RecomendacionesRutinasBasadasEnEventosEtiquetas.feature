@@ -1,5 +1,5 @@
             # language: es
-            #rutinasBasadasEnEventosEtiquetasTesting
+            # rutinasBasadasEnEventosEtiquetasTesting
             Característica: Recomendación de rutinas basadas en eventos etiquetados
 
             Escenario: Dos formas de llegar a la misma rutina. lo muestra una sola vez.
@@ -35,7 +35,7 @@
             }
             """
 
-            Escenario: Ninguna rutina tiene la misma etiqueta que el evento
+            Escenario: Rutinas priorizadas por cantidad de etiquetas.
             Dado que se ingresan los datos de un usuario existente "lucas"
             Cuando se buscan las sugerencias de rutinas basadas en eventos etiquetados
             Entonces se espera que las sugerencias de rutinas basadas en eventos etiquetados sean

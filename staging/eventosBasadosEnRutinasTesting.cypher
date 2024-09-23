@@ -22,10 +22,10 @@ CREATE (etiquetaCardio:Etiqueta {nombre: 'Cardio'}),
        (etiquetaAvanzada:Etiqueta {nombre: 'Avanzada'}); // Nueva etiqueta adicional
 
 // Crear eventos
-CREATE (evento1:Evento {id: 2001, nombre: 'Entrenamiento funcional en el parque', fechaHora: datetime('2024-09-29T10:00:00'), descripcion: 'Entrenamiento funcional intensivo.'}),
-       (evento2:Evento {id: 2002, nombre: 'Yoga al aire libre', fechaHora: datetime('2024-09-22T08:00:00'), descripcion: 'Clase de yoga al aire libre.'}),
-       (evento3:Evento {id: 2003, nombre: 'Maratón de la ciudad', fechaHora: datetime('2024-10-15T09:00:00'), descripcion: 'Maratón para corredores de todos los niveles.'}),
-       (evento4:Evento {id: 2004, nombre: 'Entrenamiento de fuerza avanzada', fechaHora: datetime('2024-09-25T07:00:00'), descripcion: 'Entrenamiento intensivo de fuerza avanzada.'});
+CREATE (evento1:Evento {id: 2001, nombre: 'Entrenamiento funcional en el parque', fechaHora: datetime('2024-09-29T10:00:00'), descripcion: 'Entrenamiento funcional intensivo.', esPrivadoParaLaComunidad: false}),
+       (evento2:Evento {id: 2002, nombre: 'Yoga al aire libre', fechaHora: datetime('2024-09-22T08:00:00'), descripcion: 'Clase de yoga al aire libre.', esPrivadoParaLaComunidad: false}),
+       (evento3:Evento {id: 2003, nombre: 'Maratón de la ciudad', fechaHora: datetime('2024-10-15T09:00:00'), descripcion: 'Maratón para corredores de todos los niveles.', esPrivadoParaLaComunidad: false}),
+       (evento4:Evento {id: 2004, nombre: 'Entrenamiento de fuerza avanzada', fechaHora: datetime('2024-09-25T07:00:00'), descripcion: 'Entrenamiento intensivo de fuerza avanzada.', esPrivadoParaLaComunidad: false});
 
 // MATCH para crear las relaciones entre rutinas y etiquetas
 MATCH (rutina1:Rutina {id: 2711}), (rutina2:Rutina {id: 2712}), (rutina3:Rutina {id: 2713}), (rutina4:Rutina {id: 2714}),

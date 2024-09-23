@@ -1,4 +1,5 @@
 # language: es
+#comunidadesBasadasEnAmigosTesting
 Característica: Sugerencia de comunidades basadas en amigos
 
   Escenario: Obtener sugerencias de comunidades basadas en amigos para un usuario sin recomendaciones
