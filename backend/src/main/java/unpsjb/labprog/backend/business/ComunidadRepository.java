@@ -18,7 +18,8 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         "WHERE NOT (u)-[:MIEMBRO]-(comunidad) " +
        "WITH comunidad, COUNT(DISTINCT amigo) AS amigosEnComun " +
        "RETURN comunidad " +
-       "ORDER BY amigosEnComun DESC")
+       "ORDER BY amigosEnComun DESC " + 
+       "LIMIT 3")
     List<Comunidad> recomendarComunidadesPorAmigos(String nombreUsuario);
 
 }
