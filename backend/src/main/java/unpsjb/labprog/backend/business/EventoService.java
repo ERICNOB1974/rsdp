@@ -28,6 +28,9 @@ public class EventoService {
     public List<Evento> sugerenciaDeEventosBasadosEnComunidades(String nombreUsuario) {
         return eventoRepository.sugerenciasDeEventosBasadosEnComunidades(nombreUsuario);
     }
+    public List<Evento> sugerenciasDeEventosBasadosEnAmigos(String nombreUsuario) {
+        return eventoRepository.sugerenciasDeEventosBasadosEnAmigos(nombreUsuario);
+    }
 
     @Transactional
     public Evento save(Evento evento) {

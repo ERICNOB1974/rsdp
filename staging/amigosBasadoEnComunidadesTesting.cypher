@@ -1,3 +1,4 @@
+//RecomendacionesAmigosBasadosEnComunidades
 MATCH (n) DETACH DELETE n;
 
 CREATE (lucas:Usuario {nombreUsuario: 'lucas', nombreReal: 'Lucas'})

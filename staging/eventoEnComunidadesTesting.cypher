@@ -10,7 +10,8 @@ CREATE
   ubicacion: 'Cancha Los Olivos',
   descripcion: 'Un torneo de fútbol 5 entre amigos.',
   cantidadMaximaParticipantes: 10,
-  fechaDeCreacion: date('2024-09-15')
+  fechaDeCreacion: date('2024-09-15'),
+  esPrivadoParaLaComunidad: false
   }),
   (evento2:Evento {
     id: 2,
@@ -19,7 +20,8 @@ CREATE
     ubicacion: 'Parque de la Ciudad',
     descripcion: 'Carrera de 10 kilómetros en el parque.',
     cantidadMaximaParticipantes: 50,
-    fechaDeCreacion: date('2024-09-15')
+    fechaDeCreacion: date('2024-09-15'),
+  esPrivadoParaLaComunidad: false
     }),
     (evento3:Evento {
       id: 3,
@@ -28,7 +30,8 @@ CREATE
       ubicacion: 'Club ferro',
       descripcion: '100M libre',
       cantidadMaximaParticipantes: 20,
-      fechaDeCreacion: date('2024-09-15')
+      fechaDeCreacion: date('2024-09-15'),
+  esPrivadoParaLaComunidad: false
       }),
       (evento4:Evento {
         id: 4,
@@ -37,7 +40,8 @@ CREATE
         ubicacion: 'Club ferro',
         descripcion: '200M combinados',
         cantidadMaximaParticipantes: 20,
-        fechaDeCreacion: date('2024-09-15')
+        fechaDeCreacion: date('2024-09-15'),
+  esPrivadoParaLaComunidad: false
         }),
         (evento5:Evento {
           id: 5,
@@ -46,7 +50,8 @@ CREATE
           ubicacion: 'Polideportivo Central',
           descripcion: 'Torneo amistoso de básquet.',
           cantidadMaximaParticipantes: 12,
-          fechaDeCreacion: date('2024-09-16')
+          fechaDeCreacion: date('2024-09-16'),
+  esPrivadoParaLaComunidad: false
           }),
           (evento6:Evento {
             id: 6,
@@ -55,7 +60,8 @@ CREATE
             ubicacion: 'Parque Central',
             descripcion: 'Carrera de 5 kilómetros.',
             cantidadMaximaParticipantes: 30,
-            fechaDeCreacion: date('2024-09-16')
+            fechaDeCreacion: date('2024-09-16'),
+  esPrivadoParaLaComunidad: false
             }),
             (evento7:Evento {
               id: 7,
@@ -64,7 +70,8 @@ CREATE
               ubicacion: 'Parque de la Costa',
               descripcion: 'Clase de yoga para principiantes.',
               cantidadMaximaParticipantes: 15,
-              fechaDeCreacion: date('2024-09-17')
+              fechaDeCreacion: date('2024-09-17'),
+  esPrivadoParaLaComunidad: false
               }),
               (evento8:Evento {
                 id: 8,
@@ -73,7 +80,8 @@ CREATE
                 ubicacion: 'Parador 9',
                 descripcion: 'Pilates',
                 cantidadMaximaParticipantes: 10,
-                fechaDeCreacion: date('2024-09-17')
+                fechaDeCreacion: date('2024-09-17'),
+  esPrivadoParaLaComunidad: false
                 }),
                 (evento9:Evento {
                   id: 9,
@@ -82,7 +90,8 @@ CREATE
                   ubicacion: 'Cancha del Club',
                   descripcion: 'Torneo individual de tenis.',
                   cantidadMaximaParticipantes: 16,
-                  fechaDeCreacion: date('2024-09-18')
+                  fechaDeCreacion: date('2024-09-18'),
+  esPrivadoParaLaComunidad: false
                   }),
                   (evento10:Evento {
                     id: 10,
@@ -91,7 +100,8 @@ CREATE
                     ubicacion: 'Montañas de la Ciudad',
                     descripcion: 'Carrera de montaña con un recorrido de 15 kilómetros.',
                     cantidadMaximaParticipantes: 30,
-                    fechaDeCreacion: date('2024-09-18')
+                    fechaDeCreacion: date('2024-09-18'),
+  esPrivadoParaLaComunidad: false
                     }),
                   (evento11:Evento {
                     id: 11,
@@ -100,7 +110,8 @@ CREATE
                     ubicacion: 'El doradillo',
                     descripcion: 'Partido de futbol 11.',
                     cantidadMaximaParticipantes: 25,
-                    fechaDeCreacion: date('2024-09-25')
+                    fechaDeCreacion: date('2024-09-25'),
+  esPrivadoParaLaComunidad: false
                     })
                     
 CREATE 
