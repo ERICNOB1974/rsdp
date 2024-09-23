@@ -21,7 +21,7 @@ CREATE
     descripcion: 'Carrera de 10 kilómetros en el parque.',
     cantidadMaximaParticipantes: 50,
     fechaDeCreacion: date('2024-09-15'),
-  esPrivadoParaLaComunidad: false
+    esPrivadoParaLaComunidad: false
     }),
     (evento3:Evento {
       id: 3,
@@ -31,7 +31,7 @@ CREATE
       descripcion: '100M libre',
       cantidadMaximaParticipantes: 20,
       fechaDeCreacion: date('2024-09-15'),
-  esPrivadoParaLaComunidad: false
+    esPrivadoParaLaComunidad: false
       }),
       (evento4:Evento {
         id: 4,
@@ -41,7 +41,7 @@ CREATE
         descripcion: '200M combinados',
         cantidadMaximaParticipantes: 20,
         fechaDeCreacion: date('2024-09-15'),
-  esPrivadoParaLaComunidad: false
+        esPrivadoParaLaComunidad: false
         }),
         (evento5:Evento {
           id: 5,
@@ -51,7 +51,7 @@ CREATE
           descripcion: 'Torneo amistoso de básquet.',
           cantidadMaximaParticipantes: 12,
           fechaDeCreacion: date('2024-09-16'),
-  esPrivadoParaLaComunidad: false
+            esPrivadoParaLaComunidad: false
           }),
           (evento6:Evento {
             id: 6,
@@ -61,7 +61,7 @@ CREATE
             descripcion: 'Carrera de 5 kilómetros.',
             cantidadMaximaParticipantes: 30,
             fechaDeCreacion: date('2024-09-16'),
-  esPrivadoParaLaComunidad: false
+            esPrivadoParaLaComunidad: false
             }),
             (evento7:Evento {
               id: 7,
@@ -71,7 +71,7 @@ CREATE
               descripcion: 'Clase de yoga para principiantes.',
               cantidadMaximaParticipantes: 15,
               fechaDeCreacion: date('2024-09-17'),
-  esPrivadoParaLaComunidad: false
+            esPrivadoParaLaComunidad: false
               }),
               (evento8:Evento {
                 id: 8,
@@ -81,7 +81,7 @@ CREATE
                 descripcion: 'Pilates',
                 cantidadMaximaParticipantes: 10,
                 fechaDeCreacion: date('2024-09-17'),
-  esPrivadoParaLaComunidad: false
+                esPrivadoParaLaComunidad: false
                 }),
                 (evento9:Evento {
                   id: 9,
@@ -91,7 +91,7 @@ CREATE
                   descripcion: 'Torneo individual de tenis.',
                   cantidadMaximaParticipantes: 16,
                   fechaDeCreacion: date('2024-09-18'),
-  esPrivadoParaLaComunidad: false
+                  esPrivadoParaLaComunidad: false
                   }),
                   (evento10:Evento {
                     id: 10,
@@ -101,7 +101,7 @@ CREATE
                     descripcion: 'Carrera de montaña con un recorrido de 15 kilómetros.',
                     cantidadMaximaParticipantes: 30,
                     fechaDeCreacion: date('2024-09-18'),
-  esPrivadoParaLaComunidad: false
+                    esPrivadoParaLaComunidad: false
                     }),
                   (evento11:Evento {
                     id: 11,
@@ -111,7 +111,37 @@ CREATE
                     descripcion: 'Partido de futbol 11.',
                     cantidadMaximaParticipantes: 25,
                     fechaDeCreacion: date('2024-09-25'),
-  esPrivadoParaLaComunidad: false
+                    esPrivadoParaLaComunidad: false
+                    }),
+                     (evento12:Evento {
+                    id: 12,
+                    nombre: 'Estiramiento Muscular',
+                    fechaHora: datetime('2024-10-11T10:30:00'),
+                    ubicacion: 'Domo en el doradillo',
+                    descripcion: 'Clase abierta de esitramiento, ideal para aprender!',
+                    cantidadMaximaParticipantes: 20,
+                    fechaDeCreacion: date('2024-09-25'),
+                    esPrivadoParaLaComunidad: false
+                    }),
+                     (evento13:Evento {
+                    id: 13,
+                    nombre: 'Vuelta ballena',
+                    fechaHora: datetime('2024-09-22T10:30:00'),
+                    ubicacion: 'Rayentray',
+                    descripcion: 'Carrera de ciclismo',
+                    cantidadMaximaParticipantes: 100,
+                    fechaDeCreacion: date('2024-09-01'),
+                    esPrivadoParaLaComunidad: false
+                    }),
+                     (evento14:Evento {
+                    id: 14,
+                    nombre: 'Ciclismo en la rambla',
+                    fechaHora: datetime('2024-09-30T10:30:00'),
+                    ubicacion: 'Sara',
+                    descripcion: 'Ciclismo amistoso',
+                    cantidadMaximaParticipantes: 30,
+                    fechaDeCreacion: date('2024-09-01'),
+                    esPrivadoParaLaComunidad: false
                     })
                     
 CREATE 
@@ -136,15 +166,11 @@ CREATE
 (patricia:Usuario { nombreUsuario: 'patricia', nombreReal: 'Patricia' }),
 (martin:Usuario { nombreUsuario: 'martin', nombreReal: 'Martín' }),
 (diego:Usuario { nombreUsuario: 'diego', nombreReal: 'Diego' }),
-(ana:Usuario { nombreUsuario: 'ana', nombreReal: 'Ana' })
-
-CREATE
-(comu1:Comunidad { nombre: 'Comunidad atletismo', descripcion: 'Comunidad para atletas' }),
-(comu2:Comunidad { nombre: 'Comunidad futbol', descripcion: 'Comunidad para futbolistas' }),
-(comu3:Comunidad { nombre: 'Comunidad natacion', descripcion: 'Comunidad para nadadores' }),
-(comu4:Comunidad { nombre: 'Comunidad yoga', descripcion: 'Comunidad para amantes del yoga' }),
-(comu5:Comunidad { nombre: 'Comunidad pilates', descripcion: 'Comunidad pilates' }),
-(comu6:Comunidad { nombre: 'Comunidad tenis', descripcion: 'Comunidad para jugadores de tenis' })
+(ana:Usuario { nombreUsuario: 'ana', nombreReal: 'Ana' }),
+(eric:Usuario { nombreUsuario: 'eric', nombreReal: 'Eric' }),
+(lucia:Usuario { nombreUsuario: 'lucia', nombreReal: 'Lucia' }),
+(hector:Usuario { nombreUsuario: 'hector', nombreReal: 'Hector' }),
+(olga:Usuario { nombreUsuario: 'olga', nombreReal: 'Olga' })
 
 MERGE (evento1)-[:ETIQUETADO_CON]->(futbol)
 MERGE (evento1)-[:ETIQUETADO_CON]->(futbol5)
@@ -154,40 +180,53 @@ MERGE (evento4)-[:ETIQUETADO_CON]->(natacion)
 MERGE (evento5)-[:ETIQUETADO_CON]->(basquet)
 MERGE (evento6)-[:ETIQUETADO_CON]->(atletismo)
 MERGE (evento7)-[:ETIQUETADO_CON]->(yoga)
+MERGE (evento8)-[:ETIQUETADO_CON]->(casual)
 MERGE (evento8)-[:ETIQUETADO_CON]->(pilates)
 MERGE (evento9)-[:ETIQUETADO_CON]->(tenis)
 MERGE (evento10)-[:ETIQUETADO_CON]->(atletismo)
 MERGE (evento11)-[:ETIQUETADO_CON]->(futbol)
+MERGE (evento12)-[:ETIQUETADO_CON]->(casual)
+MERGE (evento12)-[:ETIQUETADO_CON]->(pilates)
+MERGE (evento13)-[:ETIQUETADO_CON]->(ciclismo)
+MERGE (evento14)-[:ETIQUETADO_CON]->(ciclismo)
 
 
-MERGE (comu1)-[:ETIQUETADA_CON]->(atletismo)
-
-MERGE (comu2)-[:ETIQUETADA_CON]->(futbol)
-MERGE (comu2)-[:ETIQUETADA_CON]->(futbol5)
-
-MERGE (comu3)-[:ETIQUETADA_CON]->(natacion)
-
-
-MERGE (comu4)-[:ETIQUETADA_CON]->(yoga)
-MERGE (comu5)-[:ETIQUETADA_CON]->(yoga)
-MERGE (comu5)-[:ETIQUETADA_CON]->(pilates)
+MERGE (lucas)-[:PARTICIPA_EN]->(evento1)
+MERGE (lucas)-[:PARTICIPA_EN]->(evento11)
+MERGE (diego)-[:PARTICIPA_EN]->(evento11)
+MERGE (ana)-[:PARTICIPA_EN]->(evento7)
+MERGE (joaquin)-[:PARTICIPA_EN]->(evento6)
+MERGE (martin)-[:PARTICIPA_EN]->(evento5)
+MERGE (patricia)-[:PARTICIPA_EN]->(evento4)
+MERGE (marcos)-[:PARTICIPA_EN]->(evento6)
 
 
-MERGE (comu6)-[:ETIQUETADA_CON]->(tenis)
+MERGE (lucas)-[:ES_AMIGO_DE]->(diego)
+MERGE (diego)-[:ES_AMIGO_DE]->(lucas)
+MERGE (ana)-[:ES_AMIGO_DE]->(juan)
+MERGE (juan)-[:ES_AMIGO_DE]->(ana)
 
-MERGE (diego)-[:MIEMBRO]->(comu1)
-MERGE (ana)-[:MIEMBRO]->(comu2)
-MERGE (lucas)-[:MIEMBRO]->(comu3)
 
+MERGE (patricia)-[:ES_AMIGO_DE]->(martin)
+MERGE (martin)-[:ES_AMIGO_DE]->(patricia)
 
-MERGE (patricia)-[:MIEMBRO]->(comu4)
-MERGE (patricia)-[:MIEMBRO]->(comu5)
-MERGE (martin)-[:MIEMBRO]->(comu5)
+MERGE (joaquin)-[:ES_AMIGO_DE]->(pedro)
+MERGE (pedro)-[:ES_AMIGO_DE]->(joaquin)
+MERGE (joaquin)-[:ES_AMIGO_DE]->(marcos)
+MERGE (marcos)-[:ES_AMIGO_DE]->(joaquin)
+MERGE (marcos)-[:ES_AMIGO_DE]->(pedro)
+MERGE (pedro)-[:ES_AMIGO_DE]->(marcos)
 
-MERGE (marcos)-[:MIEMBRO]->(comu6)
-MERGE (martin)-[:PARTICIPA_EN]->(evento8)
-MERGE (lucas)-[:PARTICIPA_EN]->(evento3)
+MERGE (eric)-[:ES_AMIGO_DE]->(lucia)
+MERGE (lucia)-[:ES_AMIGO_DE]->(eric)
+
+MERGE (olga)-[:ES_AMIGO_DE]->(hector)
+MERGE (hector)-[:ES_AMIGO_DE]->(olga)
+MERGE (olga)-[:PARTICIPA_EN]->(evento14)
+
+MERGE (eric)-[:PARTICIPA_EN]->(evento4)
+MERGE (eric)-[:PARTICIPA_EN]->(evento12)
+
 MERGE (evento9)-[:CREADO_POR]->(marcos)
+MERGE (evento13)-[:CREADO_POR]->(hector)
     
-//lucas, ana, joaquin, diego, marcos
-//comu3, comu2, comu1, comu6

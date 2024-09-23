@@ -1,3 +1,4 @@
+//RecomendacionesAmigosDeAmigos
 MATCH (n) DETACH DELETE n;
 
 MERGE (lucas:Usuario {

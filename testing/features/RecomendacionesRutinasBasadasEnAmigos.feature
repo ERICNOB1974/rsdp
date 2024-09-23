@@ -1,4 +1,5 @@
 # language: es
+#rutinasBasadasEnAmigosTesting
 Característica: Recomendación de rutinas de tus amigos
 
   Escenario: Recomendar rutinas realizadas por amigos

@@ -47,8 +47,7 @@ public class UsuarioPresenter {
 
     @GetMapping("/sugerenciasDeAmigosBasadosEnEventos/{nombreUsuario}")
     public ResponseEntity<Object> obtenerSugerenciasDeAmigosBasadosEnEventos(@PathVariable String nombreUsuario) {
-        List<Usuario> amigosDeAmigos = usuarioService.sugerenciaDeAmigosBasadosEnEventos(nombreUsuario);
-        return Response.ok(amigosDeAmigos);
+        return Response.ok(usuarioService.sugerenciaDeAmigosBasadosEnEventos(nombreUsuario));
     }
 
     @GetMapping("/sugerenciasDeAmigosBasadosEnComunidades/{nombreUsuario}")

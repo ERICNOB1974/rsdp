@@ -1,3 +1,4 @@
+//RecomendacionesRutinasBasadasEnComunidades
 MATCH (n) DETACH DELETE n;
 
 // Caso 1: Usuario sin rutinas
