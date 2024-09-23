@@ -23,16 +23,15 @@ CREATE (r3)-[:ETIQUETADA_CON]->(e3)
 CREATE (r5)-[:ETIQUETADA_CON]->(e4)
 CREATE (r9)-[:ETIQUETADA_CON]->(e6)
 
-// Crear usuarios
-// Caso 1: Usuario sin rutinas realizadas
+//Caso sin sugerencias y caso tres sugerencias
 CREATE (u1:Usuario {nombreUsuario: 'lucas123', nombreReal: 'Usuario Sin Rutinas', correoElectronico: 'sin.rutinas@example.com', contrasena: 'pass123'})
 CREATE (u1)-[:REALIZA_RUTINA {fechaDeComienzo: date('2024-03-01'), fechaDeFin: date('2024-03-10')}]->(r5)  
 
 CREATE (u4:Usuario {nombreUsuario: 'eric99', nombreReal: 'Usuario 3 Rutinas', correoElectronico: '3.rutinas@example.com', contrasena: 'pass123'})
-CREATE (u4)-[:REALIZA_RUTINA {fechaDeComienzo: date('2024-01-01'), fechaDeFin: date('2024-01-10')}]->(r1)  // Realizó 'Rutina Cardio'
-CREATE (u4)-[:REALIZA_RUTINA {fechaDeComienzo: date('2024-02-01'), fechaDeFin: date('2024-02-10')}]->(r2)  // Realizó 'Rutina Fuerza'
-CREATE (u4)-[:REALIZA_RUTINA {fechaDeComienzo: date('2024-03-01'), fechaDeFin: date('2024-03-10')}]->(r3)  // Realizó 'Rutina Resistencia'
-CREATE (u4)-[:REALIZA_RUTINA {fechaDeComienzo: date('2024-03-01'), fechaDeFin: date('2024-03-10')}]->(r9)  // Realizó 'Rutina Resistencia'
+CREATE (u4)-[:REALIZA_RUTINA {fechaDeComienzo: date('2024-01-01'), fechaDeFin: date('2024-01-10')}]->(r1)  
+CREATE (u4)-[:REALIZA_RUTINA {fechaDeComienzo: date('2024-02-01'), fechaDeFin: date('2024-02-10')}]->(r2) 
+CREATE (u4)-[:REALIZA_RUTINA {fechaDeComienzo: date('2024-03-01'), fechaDeFin: date('2024-03-10')}]->(r3)  
+CREATE (u4)-[:REALIZA_RUTINA {fechaDeComienzo: date('2024-03-01'), fechaDeFin: date('2024-03-10')}]->(r9) 
 
 // Crear nuevas rutinas para recomendaciones
 CREATE (r6:Rutina {nombre: 'Rutina de Resistencia Avanzada', descripcion: 'Resistencia avanzada', duracionMinutosPorDia: 50})
@@ -47,3 +46,34 @@ CREATE (r8)-[:ETIQUETADA_CON]->(e1)  // Cardio
 CREATE (r8)-[:ETIQUETADA_CON]->(e2)  // Fuerza
 CREATE (r8)-[:ETIQUETADA_CON]->(e6) 
 CREATE (r6)-[:ETIQUETADA_CON]->(e6) 
+
+
+
+//Caso una sugerencia
+CREATE (u10:Usuario {nombreUsuario: 'facu_games', nombreReal: 'Facundo', correoElectronico: 'facundo@example.com', contrasena: 'pass123'})
+CREATE (r10:Rutina {nombre: 'Rutina para tonificar abdomen', descripcion: 'Tonificar abdomen', duracionMinutosPorDia: 50})
+CREATE (u10)-[:REALIZA_RUTINA {fechaDeComienzo: date('2024-01-01'), fechaDeFin: date('2024-01-10')}]->(r10)  
+
+CREATE (e10:Etiqueta {nombre: 'Abdomen'})
+CREATE (r10)-[:ETIQUETADA_CON]->(e10) 
+
+CREATE (r11:Rutina {nombre: 'Rutina para perder grasa', descripcion: 'Grasa', duracionMinutosPorDia: 50})
+CREATE (r11)-[:ETIQUETADA_CON]->(e10)
+
+//Caso dos sugerencias
+
+CREATE (u12:Usuario {nombreUsuario: 'evelyn_yoga', nombreReal: 'Evelyn', correoElectronico: 'evelyn@example.com', contrasena: 'pass123'})
+CREATE (r12:Rutina {nombre: 'Rutina para tonificar cuadriceps', descripcion: 'Tonificar cuadriceps', duracionMinutosPorDia: 50})
+CREATE (u12)-[:REALIZA_RUTINA {fechaDeComienzo: date('2024-01-01'), fechaDeFin: date('2024-01-10')}]->(r12)  
+
+CREATE (e11:Etiqueta {nombre: 'Pierna'})
+CREATE (r12)-[:ETIQUETADA_CON]->(e11) 
+CREATE (e12:Etiqueta {nombre: 'Tonificacion'})
+CREATE (r12)-[:ETIQUETADA_CON]->(e12)
+
+CREATE (r13:Rutina {nombre: 'Rutina para tonificar gemelos', descripcion: 'Tonificar gemelos', duracionMinutosPorDia: 50})
+CREATE (r13)-[:ETIQUETADA_CON]->(e11)
+CREATE (r13)-[:ETIQUETADA_CON]->(e12)  
+
+CREATE (r14:Rutina {nombre: 'Rutina para prevenir lesiones en los isquiotibiales', descripcion: 'Prevenir lesiones', duracionMinutosPorDia: 50})
+CREATE (r14)-[:ETIQUETADA_CON]->(e11)
