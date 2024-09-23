@@ -1,8 +1,9 @@
 # language: es
-Característica: Sugerencia de amigos basados en eventos 
+#amigosBasadoEnComunidadesTesting
+Característica: Sugerencia de amigos basados en comunidades 
 
-  Escenario: Obtener ninguna sugerencia de amigos basados en comunidades 
-    Dado que se ingresan los datos de un usuario existent "joaquin"
+  Escenario: El usuario participa en una sola comunidad. No debe sugerir nada
+    Dado que se ingresan los datos de un usuario existente "joaquin"
     Cuando se buscan las sugerencias de amigos basados en comunidades
     Entonces se espera que las sugerencias de amigos basados en comunidades sean
     """
@@ -11,8 +12,8 @@ Característica: Sugerencia de amigos basados en eventos
     }
     """
 
-  Escenario: Obtener sugerencias de amigos basados en comunidades donde se recomienden tres amigos ordenados por prioridad
-    Dado que se ingresan los datos de un usuario existent "lucas"
+  Escenario: Obtener 3 sugerencias de amigos basados en comunidades
+    Dado que se ingresan los datos de un usuario existente "lucas"
     Cuando se buscan las sugerencias de amigos basados en comunidades
     Entonces se espera que las sugerencias de amigos basados en comunidades sean
     """
@@ -35,7 +36,7 @@ Característica: Sugerencia de amigos basados en eventos
     }
     """
   Escenario: Obtener sugerencias de amigos basados en comunidades donde se recomienden dos amigos con igual prioridad
-    Dado que se ingresan los datos de un usuario existent "pedro"
+    Dado que se ingresan los datos de un usuario existente "pedro"
     Cuando se buscan las sugerencias de amigos basados en comunidades
     Entonces se espera que las sugerencias de amigos basados en comunidades sean
     """

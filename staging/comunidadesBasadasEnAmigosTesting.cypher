@@ -1,4 +1,4 @@
-// Borrar todo lo existente para un staging limpio
+//RecomendacionesCommunidadesBasadasEnAmigos
 MATCH (n) DETACH DELETE n;
 
 // Caso 1 - Sin recomendaciones para lucas123

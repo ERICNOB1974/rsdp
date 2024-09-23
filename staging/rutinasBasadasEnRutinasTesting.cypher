@@ -1,3 +1,4 @@
+//RecomendacionesRutinasBasadasEnRutinas
 MATCH (n) DETACH DELETE n;
 
 // Crear etiquetas

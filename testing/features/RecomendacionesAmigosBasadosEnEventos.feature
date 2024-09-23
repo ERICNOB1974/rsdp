@@ -1,4 +1,5 @@
 # language: es
+#amigosBasadosEnEventosTesting
 Característica: Sugerencia de amigos basados en eventos 
 
   Escenario: Obtener ninguna sugerencia de amigos basados en eventos 
