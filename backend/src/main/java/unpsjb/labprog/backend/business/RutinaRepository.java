@@ -39,7 +39,7 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                         " LIMIT 3")
         List<Rutina> sugerenciasDeRutinasBasadosEnEventosPorEtiqueta(String nombreUsuario);
 
-            @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:REALIZA_RUTINA]->(rc:Rutina)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) "
+  @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:REALIZA_RUTINA]->(rc:Rutina)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) "
                         +
                                      "WITH u, collect(DISTINCT etiqueta) AS etiquetasUsuario " +
                                      "MATCH (r:Rutina)-[:ETIQUETADA_CON]->(etiqueta) " +
@@ -50,6 +50,7 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                                      "RETURN r " +
                                      "ORDER BY etiquetasEnComun DESC " +
                                      "LIMIT 3")
+
             List<Rutina> sugerenciasDeRutinasBasadasEnRutinas(String nombreUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(comunidad:Comunidad) " +
