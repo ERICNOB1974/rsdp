@@ -25,6 +25,7 @@ public class Comunidad {
     private LocalDate fechaDeCreacion;
     private String descripcion;
     private int cantidadMaximaMiembros;
+    private String ubicacion;
 
     @Relationship(type = "POSTEA")
     private List<Publicacion> publicaciones;
