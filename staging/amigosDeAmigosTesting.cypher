@@ -1,16 +1,6 @@
 //RecomendacionesAmigosDeAmigos
 MATCH (n) DETACH DELETE n;
 
-CREATE (u:Usuario {
-    nombreUsuario: 'lucas123',
-    nombreReal: 'Lucas Gómez',
-    fechaNacimiento: date('1995-08-15'),
-    fechaDeCreacion: date(),
-    correoElectronico: 'lucas.gomez@example.com',
-    contraseña: 'segura123',
-    descripcion: 'Apasionado del fútbol y la tecnología.'
-})
-
 MERGE (lucas:Usuario {
     nombreUsuario: 'lucas123',
     nombreReal: 'Lucas Gómez',
@@ -147,18 +137,52 @@ CREATE (ramiro:Usuario {
     correoElectronico: 'ignacio.martinez@example.com',
     contraseña: 'ignacioclave',
     descripcion: 'Tenis y música son sus pasiones.'
+}),
+(olga:Usuario {
+    nombreUsuario: 'olga123',
+    nombreReal: 'Olga',
+    fechaNacimiento: date('1993-12-30'),
+    fechaDeCreacion: date('2024-09-19'),
+    correoElectronico: 'olga@example.com',
+    contraseña: 'olgaclave',
+    descripcion: 'Yoga y música son sus pasiones.'
+}),
+(ricardo:Usuario {
+    nombreUsuario: 'ricardo245',
+    nombreReal: 'Ricardo',
+    fechaNacimiento: date('1993-12-30'),
+    fechaDeCreacion: date('2024-09-19'),
+    correoElectronico: 'ricardo@example.com',
+    contraseña: 'ricardoclave',
+    descripcion: 'La matematica es su pasion.'
+}),
+(hector:Usuario {
+    nombreUsuario: 'hector998',
+    nombreReal: 'Hector',
+    fechaNacimiento: date('1993-12-30'),
+    fechaDeCreacion: date('2024-09-19'),
+    correoElectronico: 'hector@example.com',
+    contraseña: 'hectorclave',
+    descripcion: 'La literatura es su pasion.'
+}),
+(lara:Usuario {
+    nombreUsuario: 'lara87',
+    nombreReal: 'Lara',
+    fechaNacimiento: date('1993-12-30'),
+    fechaDeCreacion: date('2024-09-19'),
+    correoElectronico: 'lara@example.com',
+    contraseña: 'laraclave',
+    descripcion: 'Amo los perros.'
+}),
+(eduardo:Usuario {
+    nombreUsuario: 'eduardo9',
+    nombreReal: 'Eduardo',
+    fechaNacimiento: date('1993-12-30'),
+    fechaDeCreacion: date('2024-09-19'),
+    correoElectronico: 'eduardo@example.com',
+    contraseña: 'eduardoclave',
+    descripcion: 'Amo bailar.'
 })
-
-// MERGE (lucas)-[:ES_AMIGO_DE]->(eric)
-// MERGE (lucas)<-[:ES_AMIGO_DE]-(eric)
-// MERGE (lucas)-[:ES_AMIGO_DE]->(facundo)
-// MERGE (lucas)<-[:ES_AMIGO_DE]-(facundo)
-// MERGE (lucas)-[:ES_AMIGO_DE]->(alan)
-// MERGE (lucas)<-[:ES_AMIGO_DE]-(alan)
-// MERGE (lucas)-[:ES_AMIGO_DE]->(maia)
-// MERGE (lucas)<-[:ES_AMIGO_DE]-(maia)
-// MERGE (lucas)-[:ES_AMIGO_DE]->(melisa)
-// MERGE (lucas)<-[:ES_AMIGO_DE]-(melisa)
 
 MERGE (ramiro)-[:ES_AMIGO_DE]->(facundo)
 MERGE (ramiro)<-[:ES_AMIGO_DE]-(facundo)
@@ -176,13 +200,6 @@ MERGE (agustin)-[:ES_AMIGO_DE]->(alan)
 MERGE (agustin)<-[:ES_AMIGO_DE]-(alan)
 MERGE (agustin)-[:ES_AMIGO_DE]->(facundo)
 MERGE (agustin)<-[:ES_AMIGO_DE]-(facundo)
-
-// MERGE (juarito)-[:ES_AMIGO_DE]->(facundo)
-// MERGE (juarito)<-[:ES_AMIGO_DE]-(facundo)
-// MERGE (juarito)-[:ES_AMIGO_DE]->(maia)
-// MERGE (juarito)<-[:ES_AMIGO_DE]-(maia)
-// MERGE (juarito)-[:ES_AMIGO_DE]->(melisa)
-// MERGE (juarito)<-[:ES_AMIGO_DE]-(melisa)
 
 MERGE (evelyn)-[:ES_AMIGO_DE]->(alan)
 MERGE (evelyn)<-[:ES_AMIGO_DE]-(alan)
@@ -212,3 +229,27 @@ MERGE (ignacio)<-[:ES_AMIGO_DE]-(pepe)
 
 MERGE (juanchon)-[:ES_AMIGO_DE]->(matias)
 MERGE (juanchon)<-[:ES_AMIGO_DE]-(matias)
+
+MERGE (lucas)-[:ES_AMIGO_DE]->(juarito)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(juarito)
+
+MERGE (lucas)-[:ES_AMIGO_DE]->(maia)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(maia)
+
+MERGE (olga)-[:ES_AMIGO_DE]->(ricardo)
+MERGE (olga)<-[:ES_AMIGO_DE]-(ricardo)
+
+MERGE (olga)-[:ES_AMIGO_DE]->(hector)
+MERGE (olga)<-[:ES_AMIGO_DE]-(hector)
+
+MERGE (ricardo)-[:ES_AMIGO_DE]->(lara)
+MERGE (ricardo)<-[:ES_AMIGO_DE]-(lara)
+
+MERGE (hector)-[:ES_AMIGO_DE]->(eduardo)
+MERGE (hector)<-[:ES_AMIGO_DE]-(eduardo)
+
+MERGE (ricardo)-[:ES_AMIGO_DE]->(eduardo)
+MERGE (ricardo)<-[:ES_AMIGO_DE]-(eduardo)
+
+MERGE (olga)-[:ES_AMIGO_DE]->(lara)
+MERGE (olga)<-[:ES_AMIGO_DE]-(lara)

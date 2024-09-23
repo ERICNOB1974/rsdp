@@ -21,7 +21,7 @@ Característica: Sugerencia de comunidades basadas en amigos
         "data": 
             [
                 {
-                    "nombre": "Voley en la playa",
+                    "nombre": "Voley",
                     "fechaDeCreacion": "2022-04-01",
                     "descripcion": "",
                     "cantidadMaximaMiembros": 50
@@ -39,13 +39,13 @@ Característica: Sugerencia de comunidades basadas en amigos
         "data": 
             [
                 {
-                    "nombre": "Running en la playa",
+                    "nombre": "Running",
                     "fechaDeCreacion": "2022-05-01",
                     "descripcion": "",
                     "cantidadMaximaMiembros": 50
                 },
                 {
-                    "nombre": "Estiramiento en la playa",
+                    "nombre": "Estiramientos",
                     "fechaDeCreacion": "2022-06-01",
                     "descripcion": "",
                     "cantidadMaximaMiembros": 50
@@ -63,19 +63,19 @@ Característica: Sugerencia de comunidades basadas en amigos
         "data": 
             [
                 {
-                    "nombre": "Stretching en la playa",
+                    "nombre": "Stretching",
                     "fechaDeCreacion": "2022-08-01",
                     "descripcion": "",
                     "cantidadMaximaMiembros": 50
                 },
                 {
-                    "nombre": "Pilates en la playa",
+                    "nombre": "Pilates",
                     "fechaDeCreacion": "2022-09-01",
                     "descripcion": "",
                     "cantidadMaximaMiembros": 50
                 },
                 {
-                    "nombre": "Yoga en la playa",
+                    "nombre": "Yoga",
                     "fechaDeCreacion": "2022-07-01",
                     "descripcion": "",
                     "cantidadMaximaMiembros": 50
