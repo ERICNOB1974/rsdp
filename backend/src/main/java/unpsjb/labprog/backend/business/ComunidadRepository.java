@@ -15,8 +15,8 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
     List<Comunidad> findByNombre(String nombre);
 
     @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo)-[:MIEMBRO]-(comunidad:Comunidad) " +
-       "WHERE NOT (u)-[:MIEMBRO]-(comunidad) " +
-       "WITH comunidad, COUNT(amigo) AS amigosEnComun " +
+        "WHERE NOT (u)-[:MIEMBRO]-(comunidad) " +
+       "WITH comunidad, COUNT(DISTINCT amigo) AS amigosEnComun " +
        "RETURN comunidad " +
        "ORDER BY amigosEnComun DESC")
     List<Comunidad> recomendarComunidadesPorAmigos(String nombreUsuario);
