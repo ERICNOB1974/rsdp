@@ -7,7 +7,7 @@ CREATE (amigoDe1:Usuario {nombreUsuario: 'pedro12', nombreReal: 'Pedro', fechaNa
 
 CREATE (usuario1)-[:ES_AMIGO_DE]->(amigoDe1) 
 
-CREATE (comunidad:Comunidad {nombre: 'Futbol en la playa', fechaDeCreacion: date('2022-04-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
+CREATE (comunidad:Comunidad {nombre: 'Futbol', fechaDeCreacion: date('2022-04-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
 
 CREATE (usuario1)-[:MIEMBRO {fechaDeIngreso: date('2023-05-01')}]->(comunidad) 
 
@@ -16,7 +16,7 @@ CREATE (usuario2:Usuario {nombreUsuario: 'maia_rocks', nombreReal: 'Maia', fecha
 
 CREATE (amigo2:Usuario {nombreUsuario: 'juanchon9', nombreReal: 'Juan', fechaNacimiento: date('1990-03-03'), fechaDeCreacion: date('2024-03-03'), correoElectronico: 'amigo2@example.com', contrasena: 'pass3', descripcion: 'Amigo de usuario2'}) 
 
-CREATE (comunidad1:Comunidad {nombre: 'Voley en la playa', fechaDeCreacion: date('2022-04-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
+CREATE (comunidad1:Comunidad {nombre: 'Voley', fechaDeCreacion: date('2022-04-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
 
 // Relaciones para caso 2
 CREATE (usuario2)-[:ES_AMIGO_DE]->(amigo2) 
