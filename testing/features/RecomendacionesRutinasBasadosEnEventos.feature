@@ -25,7 +25,7 @@
             }
             """
 
-            Escenario: Recomendar la unica rutina realizadas por usuarios que participan en el mismo evento
+            Escenario: Recomendar la unica rutina realizada por usuarios que participan en el mismo evento
             Dado que se ingresan los datos de un usuario existente "juan"
             Cuando se buscan las sugerencias de rutinas basadas en eventos
             Entonces se espera que las sugerencias de rutinas basadas en eventos sean

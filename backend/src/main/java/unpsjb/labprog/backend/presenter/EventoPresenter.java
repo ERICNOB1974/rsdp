@@ -53,5 +53,10 @@ public class EventoPresenter {
         List<Evento> eventosDeRutinas = eventoService.sugerenciaDeEventosBasadosEnComunidades(nombreUsuario);
         return Response.ok(eventosDeRutinas);
     }
+    @GetMapping("/sugerenciasDeEventosBasadosEnAmigos/{nombreUsuario}")
+    public ResponseEntity<Object> obtenerSugerenciasDeEventosBasadosEnAmigos(@PathVariable String nombreUsuario) {
+        List<Evento> eventosDeRutinas = eventoService.sugerenciasDeEventosBasadosEnAmigos(nombreUsuario);
+        return Response.ok(eventosDeRutinas);
+    }
 
 }
