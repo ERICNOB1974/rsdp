@@ -33,16 +33,6 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         + "LIMIT 3")
         List<Evento> sugerenciasDeEventosBasadosEnRutinas(String nombreUsuario);
 
-        // no listo
-        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario)<-[:PARTICIPA_EN]-(evento:Evento)-[ETIQUETADO_CON]->(etiqueta:Etiqueta) "
-                        +
-                        "WHERE NOT (u)-[:PARTICIPA_EN]-(evento) " +
-                        "AND NOT ev.esPrivadoParaLaComunidad " +
-                        "WITH evento, COUNT(etiqueta) AS etiquetasEnComun " +
-                        "RETURN ev " +
-                        "ORDER BY etiquetasEnComun DESC, ev.fechaHora ASC")
-        List<Evento> sugerenciasDeEventosBasadosEnAmigosVersion1(String nombreUsuario);
-
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario) " +
                         "MATCH (amigo)-[:PARTICIPA_EN]->(eventoAmigo:Evento) " +
                         "MATCH (eventoAmigo)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta) " +
@@ -61,14 +51,17 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "LIMIT 3")
         List<Evento> sugerenciasDeEventosBasadosEnAmigos(String nombreUsuario);
 
-        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(:Comunidad)-[:ETIQUETADA_CON]->(e:Etiqueta)<-[:ETIQUETADO_CON]-(ev:Evento) "
+
+        //no anda
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(com:Comunidad)-[:ETIQUETADA_CON]->(e:Etiqueta)<-[:ETIQUETADO_CON]-(ev:Evento) "
                         +
                         "WHERE NOT (u)-[:PARTICIPA_EN]->(ev) " +
                         "AND NOT (u)<-[:CREADO_POR]-(ev) " +
                         "AND NOT ev.esPrivadoParaLaComunidad " +
-                        "WITH ev, count(e) as etiquetasCompartidas " +
+                        "WITH ev, count(e) as etiquetasCompartidas, " +
+                        "(toLower(com.ubicacion) = toLower(ev.ubicacion) OR toLower(com.ubicacion) CONTAINS toLower(ev.ubicacion) OR toLower(ev.ubicacion) CONTAINS toLower(com.ubicacion)) AS ubicacionCoincide " +
                         "RETURN ev " +
-                        "ORDER BY etiquetasCompartidas DESC, ev.fechaHora ASC " +
+                        "ORDER BY ubicacionCoincide DESC, etiquetasCompartidas DESC, ev.fechaHora ASC " +
                         "LIMIT 3")
         List<Evento> sugerenciasDeEventosBasadosEnComunidades(String nombreUsuario);
 
