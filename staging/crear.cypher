@@ -3,23 +3,31 @@ UNWIND range(1, 50) AS i
 CREATE (u:Usuario {
   nombreUsuario: "usuario" + i,
   nombreReal:
+  
+  
 CASE
    WHEN i % 2 = 0 THEN ["Juan Pérez", "Carlos Sánchez", "Roberto Fernández", "Pedro Gómez", "Andrés López"][(i % 5)]
   ELSE ["María González", "Lucía Ramírez", "Ana Torres", "Laura García", "Sofía Martínez"][(i % 5)]
   END,
   fechaNacimiento:
+  
+  
 CASE
    WHEN i % 2 = 0 THEN date("1990-01-01") + duration('P' + (i % 365) + 'D')
   ELSE date("1985-05-10") + duration('P' + (i % 365) + 'D')
   END,
   fechaDeCreacion: date("2023-01-01") + duration('P' + i + 'D'),
   correoElectronico:
+  
+  
 CASE
    WHEN i % 2 = 0 THEN "usuario" + i + "@runner.com"
   ELSE "usuario" + i + "@cyclist.com"
   END,
   contrasena: "password" + i,
   descripcion:
+  
+  
 CASE
    WHEN i % 2 = 0 THEN ["Aficionado al running", "Corredor experimentado", "Amante del trail running", "Novato en maratones", "Fanático de los 10K"][(i % 5)]
   ELSE ["Apasionada del ciclismo", "Ciclista de montaña", "Aficionada al spinning", "Amante de las rutas largas", "Competidora de ciclismo"][(i % 5)]
@@ -29,28 +37,36 @@ CASE
 //A los usuarios los pone de amigos con los siguientes 5
   MATCH (u1:Usuario), (u2:Usuario)
   WHERE u1.nombreUsuario STARTS
-WITH "usuario" AND u2.nombreUsuario STARTS
-WITH "usuario"
+  WITH "usuario" AND u2.nombreUsuario STARTS
+  WITH "usuario"
    AND toInteger(SUBSTRING(u2.nombreUsuario, 7)) > toInteger(SUBSTRING(u1.nombreUsuario, 7))
    AND toInteger(SUBSTRING(u2.nombreUsuario, 7)) <= toInteger(SUBSTRING(u1.nombreUsuario, 7)) + 5
   CREATE (u1)-[:ES_AMIGO_DE]->(u2),
   (u2)-[:ES_AMIGO_DE]->(u1);
   
-//Carga de 20 comunidades
-  UNWIND range(1, 20) AS i
+//Carga de 50 comunidades
+  UNWIND range(1, 50) AS i
   MATCH (creador:Usuario { nombreUsuario: "usuario" + i })
   CREATE (c:Comunidad {
     nombre:
+    
+    
 CASE
      WHEN i % 2 = 0 THEN ["Comunidad de Running", "Corredores de Montaña", "Amantes del Trail Running", "Novatos en Maratón", "Fanáticos del 10K"][(i % 5)]
     ELSE ["Comunidad de Ciclismo", "Ciclistas de Montaña", "Aficionados al Spinning", "Amantes de las Rutas Largas", "Competidores de Ciclismo"][(i % 5)]
     END,
     fechaDeCreacion: date("2021-01-01") + duration('P' + (i % 365) + 'D'),
     descripcion:
+    
+    
 CASE
      WHEN i % 2 = 0 THEN ["Grupo de corredores experimentados", "Comunidad para entrenar trail", "Plan de entrenamiento de 10K", "Carreras para novatos", "Corredores intermedios"][(i % 5)]
     ELSE ["Grupo de ciclismo de montaña", "Rutas largas para ciclistas", "Plan de entrenamiento de ciclismo", "Carreras ciclistas para aficionados", "Competencias de ciclismo"][(i % 5)]
     END,
+    ubicacion: ["Puerto Madryn", "Córdoba", "Rosario", "Mendoza", "Tucumán",
+    "Salta", "Santa Fe", "Neuquén", "Mar del Plata", "Bahía Blanca",
+    "Posadas", "La Plata", "San Juan", "San Luis", "Jujuy",
+    "Río Gallegos", "Bariloche", "Paraná", "San Fernando del Valle de Catamarca", "Rafaela"][(i % 20)],
     cantidadMaximaMiembros: 50 + i
     })
     CREATE (creador)<-[:CREADO_POR]-(c)
@@ -66,37 +82,46 @@ CASE
     WHERE miembro.nombreUsuario = "usuario" + ((i + j) % 50 + 1)
     CREATE (miembro)-[:MIEMBRO]->(c);
     
-// Carga de 20 eventos
-    UNWIND range(1, 20) AS i
-    MATCH (creador:Usuario { nombreUsuario: "usuario" + i })
-    CREATE (e:Evento {
-      nombre:
-CASE
-       WHEN i % 2 = 0 THEN ["Carrera 5K", "Torneo de Fútbol", "Clase de Yoga", "Maratón 10K", "Clínica de Natación"][(i % 5)]
-      ELSE ["Torneo de Ciclismo", "Clase de Pilates", "Entrenamiento de CrossFit", "Carrera de Bicicletas", "Campeonato de Basket"][(i % 5)]
-      END,
-      fechaDeCreacion: date("2021-01-01") + duration('P' + (i % 365) + 'D'),
-      fechaHora: date("2021-01-01") + duration('P' + (i % 30) + 'D'),
-      ubicacion:
-CASE
-       WHEN i % 2 = 0 THEN ["Parque Central", "Gimnasio Municipal", "Playa Norte", "Estadio Olímpico", "Piscina Comunitaria"][(i % 5)]
-      ELSE ["Parque de Bicicletas", "Centro Deportivo", "Sala de Fitness", "Pista de Atletismo", "Cancha de Baloncesto"][(i % 5)]
-      END,
-      descripcion:
-CASE
-       WHEN i % 2 = 0 THEN ["Evento recreativo para toda la familia", "Torneo competitivo", "Clase para mejorar la flexibilidad", "Carrera de largo aliento", "Entrenamiento avanzado de natación"][(i % 5)]
-      ELSE ["Torneo para ciclistas", "Clase para mejorar la postura", "Entrenamiento de alta intensidad", "Competencia de ciclismo", "Campeonato de baloncesto para aficionados"][(i % 5)]
-      END,
-      cantidadMaximaParticipantes: 100 + i
-      })
-      CREATE (creador)<-[:CREADO_POR]-(e)
-      WITH e, i // Incluímos la variable i aquí
-// Asignar 10 miembros por comunidad
-      UNWIND range(1, 10) AS j
-      MATCH (miembro:Usuario)
-      WHERE miembro.nombreUsuario = "usuario" + ((i + j) % 50 + 1)
-      CREATE (miembro)-[:PARTICIPA]->(e);
-      
+
+
+
+
+// Carga de 50 eventos
+UNWIND range(1, 50) AS i
+MATCH (creador:Usuario { nombreUsuario: "usuario" + i })
+WITH creador, i
+CALL {
+  WITH i
+  MATCH (comunidad:Comunidad)
+  WITH comunidad ORDER BY rand() LIMIT 1
+  RETURN comunidad
+}
+WITH creador, i, comunidad
+WHERE comunidad IS NOT NULL
+CREATE (e:Evento {
+  nombre: CASE
+    WHEN i % 2 = 0 THEN ["Carrera 5K", "Torneo de Fútbol", "Clase de Yoga", "Maratón 10K", "Clínica de Natación"][(i % 5)]
+    ELSE ["Torneo de Ciclismo", "Clase de Pilates", "Entrenamiento de CrossFit", "Carrera de Bicicletas", "Campeonato de Basket"][(i % 5)]
+  END,
+  fechaDeCreacion: date("2021-01-01") + duration('P' + (i % 365) + 'D'),
+  fechaHora: date("2021-01-01") + duration('P' + (i % 30) + 'D'),
+  ubicacion: CASE
+    WHEN i % 2 = 0 THEN ["Parque Central", "Gimnasio Municipal", "Playa Norte", "Estadio Olímpico", "Piscina Comunitaria"][(i % 5)]
+    ELSE ["Parque de Bicicletas", "Centro Deportivo", "Sala de Fitness", "Pista de Atletismo", "Cancha de Baloncesto"][(i % 5)]
+  END,
+  descripcion: CASE
+    WHEN i % 2 = 0 THEN ["Evento recreativo para toda la familia", "Torneo competitivo", "Clase para mejorar la flexibilidad", "Carrera de largo aliento", "Entrenamiento avanzado de natación"][(i % 5)]
+    ELSE ["Torneo para ciclistas", "Clase para mejorar la postura", "Entrenamiento de alta intensidad", "Competencia de ciclismo", "Campeonato de baloncesto para aficionados"][(i % 5)]
+  END,
+  cantidadMaximaParticipantes: 100 + i,
+  esPrivadoParaLaComunidad: CASE WHEN rand() < 0.15 THEN true ELSE false END
+})
+CREATE (creador)<-[:CREADO_POR]-(e)
+WITH e, comunidad
+WHERE e.esPrivadoParaLaComunidad = true
+CREATE (e)-[:ORGANIZADO_POR]->(comunidad);
+
+
 
       
 // Crear 50 etiquetas
@@ -119,7 +144,7 @@ CASE
       WITH c, COLLECT(e) AS etiquetas
 // Seleccionar 2 etiquetas aleatorias
       WITH c, [x IN etiquetas
-WHERE rand() < 0.2][0..2] AS etiquetasSeleccionadas
+      WHERE rand() < 0.2][0..2] AS etiquetasSeleccionadas
 // Crear relaciones
       UNWIND etiquetasSeleccionadas AS etiqueta
       CREATE (c)-[:ETIQUETADA_CON]->(etiqueta);
@@ -132,7 +157,7 @@ WHERE rand() < 0.2][0..2] AS etiquetasSeleccionadas
       WITH ev, COLLECT(e) AS etiquetas
 // Seleccionar 2 etiquetas aleatorias
       WITH ev, [x IN etiquetas
-WHERE rand() < 0.2][0..2] AS etiquetasSeleccionadas
+      WHERE rand() < 0.2][0..2] AS etiquetasSeleccionadas
 // Crear relaciones
       UNWIND etiquetasSeleccionadas AS etiqueta
       CREATE (ev)-[:ETIQUETADO_CON]->(etiqueta);
@@ -141,6 +166,8 @@ WHERE rand() < 0.2][0..2] AS etiquetasSeleccionadas
       UNWIND range(1, 100) AS i
       CREATE (e:Ejercicio {
         nombre:
+        
+        
 CASE
          WHEN i <= 10 THEN ["Flexiones", "Sentadillas", "Dominadas", "Burpees", "Plancha", "Zancadas", "Abdominales", "Fondos", "Elevación de talones", "Puente de glúteos"][i - 1]
          WHEN i <= 20 THEN ["Press de banca", "Remo con barra", "Peso muerto", "Curl de bíceps", "Extensión de tríceps", "Sentadillas con barra", "Press militar", "Dominadas con peso", "Tijeras", "Plancha lateral"][i - 11]
@@ -154,21 +181,29 @@ CASE
         ELSE ["Sentadillas con banda", "Flexiones de tríceps en banco", "Crunches con elevación de piernas", "Zancadas con barra", "Plancha con giro", "Flexiones con rodillas en fitball", "Sentadillas con kettlebell a una pierna", "Curl de bíceps con cuerda", "Elevación de cadera en fitball", "Flexiones de hombros con mancuernas"][i - 91]
         END,
         descripcion:
+        
+        
 CASE
          WHEN i % 10 = 0 THEN "Ejercicio avanzado para fuerza y resistencia"
         ELSE "Ejercicio básico para entrenamiento funcional"
         END,
         cantidadRepeticiones:
+        
+        
 CASE
          WHEN i % 2 = 0 THEN "10-12"
         ELSE "15-20"
         END,
         cantidadTiempo:
+        
+        
 CASE
          WHEN i % 3 = 0 THEN 60
         ELSE 45
         END,
         esPorTiempo:
+        
+        
 CASE
          WHEN i % 4 = 0 THEN true
         ELSE false
@@ -179,21 +214,29 @@ CASE
         UNWIND range(1, 50) AS i
         CREATE (r:Rutina {
           nombre:
+          
+          
 CASE
            WHEN i % 2 = 0 THEN ["Rutina de Fuerza", "Rutina de Resistencia", "Rutina de Flexibilidad", "Rutina de Alta Intensidad", "Rutina de Cardio"][i % 5]
           ELSE ["Rutina de Musculación", "Rutina de Core", "Rutina de Recuperación", "Rutina de Potencia", "Rutina de Agilidad"][i % 5]
           END,
           descripcion:
+          
+          
 CASE
            WHEN i % 2 = 0 THEN ["Enfocada en fuerza muscular", "Para mejorar la resistencia", "Concentrada en flexibilidad", "Entrenamiento de alta intensidad", "Para potenciar el rendimiento cardiovascular"][i % 5]
           ELSE ["Diseñada para aumentar masa muscular", "Para fortalecer el núcleo", "Rutina suave para recuperación", "Entrenamiento para desarrollar potencia", "Mejorar la agilidad y coordinación"][i % 5]
           END,
           duracionMinutosPorDia:
+          
+          
 CASE
            WHEN i % 3 = 0 THEN 45
           ELSE 30
           END,
           dificultad:
+          
+          
 CASE
            WHEN i % 3 = 0 THEN "PRINCIPIANTE"
            WHEN i % 3 = 1 THEN "INTERMEDIO"
@@ -223,8 +266,71 @@ CASE
 // Seleccionar un número aleatorio entre 3 y 4 ejercicios
           WITH r, ejercicios[0..size(ejercicios) - 1] AS posiblesEjercicios
           WITH r, [x IN posiblesEjercicios
-WHERE rand() < 0.5] AS ejerciciosSeleccionados
+          WHERE rand() < 0.5] AS ejerciciosSeleccionados
           WITH r, ejerciciosSeleccionados[0..4] AS ejerciciosSeleccionados
           UNWIND ejerciciosSeleccionados AS ejercicio
           MATCH (e:Ejercicio { nombre: ejercicio })
           CREATE (r)-[:TIENE]->(e);
+          
+//Usuarios realizan rutinas
+// Obtener todos los usuarios
+          MATCH (u:Usuario)
+          WITH u
+// Obtener todas las rutinas y seleccionarlas aleatoriamente por usuario
+          MATCH (r:Rutina)
+          WITH u, r, rand() AS randomValue
+           ORDER BY randomValue
+          WITH u, COLLECT(r) AS rutinasAleatorias
+// Seleccionar entre 0 y 3 rutinas aleatorias
+          WITH u, rutinasAleatorias, size(rutinasAleatorias) AS totalRutinas, duration.between(date('2022-01-01'), date()).days AS totalDias
+          WITH u, rutinasAleatorias[..toInteger(rand() * 4)] AS rutinasSeleccionadas, totalDias
+// Desenrollar las rutinas seleccionadas y crear las relaciones
+          UNWIND rutinasSeleccionadas AS rutina
+          WITH u, rutina, date('2022-01-01') + duration({ days: toInteger(rand() * totalDias) }) AS fechaDeComienzo, totalDias
+// Generar aleatoriamente si la fecha de fin será null
+          WITH u, rutina, fechaDeComienzo,
+          
+          
+CASE
+           WHEN rand() < 0.5 THEN fechaDeComienzo + duration({ days: toInteger(rand() * (totalDias - duration.between(fechaDeComienzo, date()).days)) })
+          ELSE null
+          END AS fechaDeFin
+          CREATE (u)-[:REALIZA_RUTINA {
+            fechaDeComienzo: fechaDeComienzo,
+            fechaDeFin: fechaDeFin
+            }]->(rutina);
+            
+//rutinas etiquetas random
+//seleccionar todas las rutinas
+            MATCH (r:Rutina)
+            WITH r
+            
+//obtener todas las etiquetas
+            MATCH (e:Etiqueta)
+            WITH r, e, rand() AS randomValue
+             ORDER BY randomValue
+            
+            WITH r, COLLECT(e) AS etiquetaRandom
+            
+            WITH r, etiquetaRandom, size(etiquetaRandom) AS totalEtiquetas
+            WITH r, etiquetaRandom[..toInteger((rand() * 2)+1)] AS etiquetasSeleccionadas
+            
+            UNWIND etiquetasSeleccionadas AS etiqueta
+            CREATE (r)-[:ETIQUETADA_CON]->(etiqueta);
+
+      
+// Supongamos que ya tienes variables para usuarios y eventos
+MATCH (u:Usuario), (e:Evento)
+WITH u, e
+ORDER BY rand() // Aleatoriza el emparejamiento
+LIMIT 80
+// Verifica si el evento es privado
+//CALL {
+ //   WITH e, u
+    WHERE e.esPrivadoParaLaComunidad = false OR (
+        e)-[:ORGANIZADO_POR]->(c:Comunidad) AND
+        (u)-[:MIEMBRO]->(c)
+
+    CREATE (u)-[:PARTICIPA_EN]->(e)
+//}
+

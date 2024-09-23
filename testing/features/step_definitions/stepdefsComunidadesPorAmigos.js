@@ -16,6 +16,7 @@ When('se obtienen las sugerencias de comunidades basadas en amigos', function ()
         delete res.id;
         delete res.publicaciones;
         delete res.creador;
+        delete res.ubicacion;
         delete res.administradores;
         delete res.miembros;
         delete res.etiquetas;
