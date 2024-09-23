@@ -6,16 +6,16 @@ CREATE (lucas:Usuario {nombreUsuario: 'lucas123', nombreReal: 'Lucas Lopez', cor
        (facundo:Usuario {nombreUsuario: 'facundo789', nombreReal: 'Facundo Sanchez', correoElectronico: 'facundo@example.com'});
 
 // Crear eventos
-CREATE (evento1:Evento {id: 2001, nombre: 'Entrenamiento funcional en el parque', fechaHora: datetime('2024-09-29T10:00:00'), descripcion: 'Entrenamiento funcional intensivo.'}),
-       (evento2:Evento {id: 2002, nombre: 'Yoga al aire libre', fechaHora: datetime('2024-09-22T08:00:00'), descripcion: 'Clase de yoga al aire libre.'}),
-       (evento3:Evento {id: 2003, nombre: 'Maratón de la ciudad', fechaHora: datetime('2024-10-15T09:00:00'), descripcion: 'Maratón para corredores de todos los niveles.'}),
-       (evento4:Evento {id: 2004, nombre: 'Entrenamiento de fuerza avanzada', fechaHora: datetime('2024-09-25T07:00:00'), descripcion: 'Entrenamiento intensivo de fuerza avanzada.'}),
-       (evento5:Evento {id: 2005, nombre: 'Cardio en la playa', fechaHora: datetime('2024-09-30T10:00:00'), descripcion: 'Sesión de cardio en la playa.'}),
-       (evento6:Evento {id: 2006, nombre: 'Yoga para principiantes', fechaHora: datetime('2024-09-24T08:00:00'), descripcion: 'Clase de yoga para principiantes.'}),
-       (evento7:Evento {id: 2007, nombre: 'Torneo de fuerza', fechaHora: datetime('2024-10-01T09:00:00'), descripcion: 'Competencia de fuerza en el gimnasio.'}),
-       (evento8:Evento {id: 2008, nombre: 'Carrera de obstáculos', fechaHora: datetime('2024-10-10T09:00:00'), descripcion: 'Carrera de obstáculos para todos los niveles.'}),
-       (evento9:Evento {id: 2009, nombre: 'Zumba en el parque', fechaHora: datetime('2024-09-28T11:00:00'), descripcion: 'Clase de Zumba al aire libre.'}),
-       (evento10:Evento {id: 2010, nombre: 'Entrenamiento de circuito', fechaHora: datetime('2024-10-05T10:00:00'), descripcion: 'Entrenamiento de circuito en el gimnasio.'});
+CREATE (evento1:Evento {id: 2001, nombre: 'Entrenamiento funcional en el parque', fechaHora: datetime('2024-09-29T10:00:00'), descripcion: 'Entrenamiento funcional intensivo.', esPrivadoParaLaComunidad: false}),
+       (evento2:Evento {id: 2002, nombre: 'Yoga al aire libre', fechaHora: datetime('2024-09-22T08:00:00'), descripcion: 'Clase de yoga al aire libre.', esPrivadoParaLaComunidad: false}),
+       (evento3:Evento {id: 2003, nombre: 'Maratón de la ciudad', fechaHora: datetime('2024-10-15T09:00:00'), descripcion: 'Maratón para corredores de todos los niveles.', esPrivadoParaLaComunidad: false}),
+       (evento4:Evento {id: 2004, nombre: 'Entrenamiento de fuerza avanzada', fechaHora: datetime('2024-09-25T07:00:00'), descripcion: 'Entrenamiento intensivo de fuerza avanzada.', esPrivadoParaLaComunidad: false}),
+       (evento5:Evento {id: 2005, nombre: 'Cardio en la playa', fechaHora: datetime('2024-09-30T10:00:00'), descripcion: 'Sesión de cardio en la playa.', esPrivadoParaLaComunidad: false}),
+       (evento6:Evento {id: 2006, nombre: 'Yoga para principiantes', fechaHora: datetime('2024-09-24T08:00:00'), descripcion: 'Clase de yoga para principiantes.', esPrivadoParaLaComunidad: false}),
+       (evento7:Evento {id: 2007, nombre: 'Torneo de fuerza', fechaHora: datetime('2024-10-01T09:00:00'), descripcion: 'Competencia de fuerza en el gimnasio.', esPrivadoParaLaComunidad: false}),
+       (evento8:Evento {id: 2008, nombre: 'Carrera de obstáculos', fechaHora: datetime('2024-10-10T09:00:00'), descripcion: 'Carrera de obstáculos para todos los niveles.', esPrivadoParaLaComunidad: false}),
+       (evento9:Evento {id: 2009, nombre: 'Zumba en el parque', fechaHora: datetime('2024-09-28T11:00:00'), descripcion: 'Clase de Zumba al aire libre.', esPrivadoParaLaComunidad: false}),
+       (evento10:Evento {id: 2010, nombre: 'Entrenamiento de circuito', fechaHora: datetime('2024-10-05T10:00:00'), descripcion: 'Entrenamiento de circuito en el gimnasio.', esPrivadoParaLaComunidad: false});
 
 // Crear etiquetas
 CREATE (etiquetaCardio:Etiqueta {nombre: 'Cardio'}),
