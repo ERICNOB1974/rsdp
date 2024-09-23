@@ -28,8 +28,8 @@ CREATE (usuario3:Usuario {nombreUsuario: 'eric99', nombreReal: 'Eric', fechaNaci
 CREATE (amigo3_1:Usuario {nombreUsuario: 'pedro8', nombreReal: 'Pedro', fechaNacimiento: date('1990-04-04'), fechaDeCreacion: date('2024-04-04'), correoElectronico: 'amigo3_1@example.com', contrasena: 'pass4', descripcion: 'Amigo 1 de usuario3'}) 
 CREATE (amigo3_2:Usuario {nombreUsuario: 'olga19', nombreReal: 'Olga', fechaNacimiento: date('1990-05-05'), fechaDeCreacion: date('2024-05-05'), correoElectronico: 'amigo3_2@example.com', contrasena: 'pass5', descripcion: 'Amigo 2 de usuario3'}) 
 
-CREATE (comunidad2:Comunidad {nombre: 'Running en la playa', fechaDeCreacion: date('2022-05-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
-CREATE (comunidad3:Comunidad {nombre: 'Estiramiento en la playa', fechaDeCreacion: date('2022-06-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
+CREATE (comunidad2:Comunidad {nombre: 'Running', fechaDeCreacion: date('2022-05-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
+CREATE (comunidad3:Comunidad {nombre: 'Estiramientos', fechaDeCreacion: date('2022-06-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
 
 // Relaciones para caso 3
 CREATE (usuario3)-[:ES_AMIGO_DE]->(amigo3_1) 
@@ -45,9 +45,9 @@ CREATE (amigo4_1:Usuario {nombreUsuario: 'mirta10', nombreReal: 'Mirta', fechaNa
 CREATE (amigo4_2:Usuario {nombreUsuario: 'susana9', nombreReal: 'Susana', fechaNacimiento: date('1990-07-07'), fechaDeCreacion: date('2024-07-07'), correoElectronico: 'amigo4_2@example.com', contrasena: 'pass7', descripcion: 'Amigo 2 de usuario4'}) 
 CREATE (amigo4_3:Usuario {nombreUsuario: 'hector11', nombreReal: 'Hector', fechaNacimiento: date('1990-08-08'), fechaDeCreacion: date('2024-08-08'), correoElectronico: 'amigo4_3@example.com', contrasena: 'pass8', descripcion: 'Amigo 3 de usuario4'}) 
 
-CREATE (comunidad4:Comunidad {nombre: 'Yoga en la playa', fechaDeCreacion: date('2022-07-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
-CREATE (comunidad5:Comunidad {nombre: 'Stretching en la playa', fechaDeCreacion: date('2022-08-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
-CREATE (comunidad6:Comunidad {nombre: 'Pilates en la playa', fechaDeCreacion: date('2022-09-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
+CREATE (comunidad4:Comunidad {nombre: 'Yoga', fechaDeCreacion: date('2022-07-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
+CREATE (comunidad5:Comunidad {nombre: 'Stretching', fechaDeCreacion: date('2022-08-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
+CREATE (comunidad6:Comunidad {nombre: 'Pilates', fechaDeCreacion: date('2022-09-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
 
 // Relaciones para caso 4
 CREATE (usuario4)-[:ES_AMIGO_DE]->(amigo4_1) 
