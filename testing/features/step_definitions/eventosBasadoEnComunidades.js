@@ -13,7 +13,6 @@ When('se buscan las sugerencias de eventos basados en comunidades', function () 
 
     for (let res of this.result) {
         delete res.id;
-        delete res.ubicacion;
         delete res.descripcion;
         delete res.cantidadMaximaParticipantes;
         delete res.esPrivadoParaLaComunidad;

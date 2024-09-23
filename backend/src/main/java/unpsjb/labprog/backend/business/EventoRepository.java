@@ -51,17 +51,35 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "LIMIT 3")
         List<Evento> sugerenciasDeEventosBasadosEnAmigos(String nombreUsuario);
 
+        /*
+         * @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(com:Comunidad)-[:ETIQUETADA_CON]->(e:Etiqueta)<-[:ETIQUETADO_CON]-(ev:Evento) "
+         * +
+         * "WHERE NOT (u)-[:PARTICIPA_EN]->(ev) " +
+         * "AND NOT (u)<-[:CREADO_POR]-(ev) " +
+         * "AND NOT ev.esPrivadoParaLaComunidad " +
+         * "WITH ev, count(DISTINCT e) as etiquetasCompartidas, " +
+         * "(toLower(com.ubicacion) = toLower(ev.ubicacion) OR toLower(com.ubicacion) CONTAINS toLower(ev.ubicacion) OR toLower(ev.ubicacion) CONTAINS toLower(com.ubicacion)) AS ubicacionCoincide "
+         * +
+         * "RETURN ev " +
+         * "ORDER BY ubicacionCoincide DESC, etiquetasCompartidas DESC, ev.fechaHora ASC "
+         * +
+         * "LIMIT 3")
+         * List<Evento> sugerenciasDeEventosBasadosEnComunidades(String nombreUsuario);
+         */
 
-        //no anda
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(com:Comunidad)-[:ETIQUETADA_CON]->(e:Etiqueta)<-[:ETIQUETADO_CON]-(ev:Evento) "
                         +
                         "WHERE NOT (u)-[:PARTICIPA_EN]->(ev) " +
                         "AND NOT (u)<-[:CREADO_POR]-(ev) " +
                         "AND NOT ev.esPrivadoParaLaComunidad " +
-                        "WITH ev, count(e) as etiquetasCompartidas, " +
-                        "(toLower(com.ubicacion) = toLower(ev.ubicacion) OR toLower(com.ubicacion) CONTAINS toLower(ev.ubicacion) OR toLower(ev.ubicacion) CONTAINS toLower(com.ubicacion)) AS ubicacionCoincide " +
-                        "RETURN ev " +
-                        "ORDER BY ubicacionCoincide DESC, etiquetasCompartidas DESC, ev.fechaHora ASC " +
+                        "WITH ev, " +
+                        "     COUNT(DISTINCT e) AS etiquetasCompartidas, " +
+                        "     (toLower(com.ubicacion) = toLower(ev.ubicacion) OR " +
+                        "      toLower(com.ubicacion) CONTAINS toLower(ev.ubicacion) OR " +
+                        "      toLower(ev.ubicacion) CONTAINS toLower(com.ubicacion)) AS ubicacionCoincide " +
+                        "RETURN ev AS evento,  etiquetasCompartidas, " + //
+                        "       MAX(ubicacionCoincide) AS ubicacionCoincide  " +
+                        "ORDER BY ubicacionCoincide DESC, etiquetasCompartidas DESC, evento.fechaHora ASC " +
                         "LIMIT 3")
         List<Evento> sugerenciasDeEventosBasadosEnComunidades(String nombreUsuario);
 
