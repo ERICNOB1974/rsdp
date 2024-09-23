@@ -39,16 +39,18 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                         " LIMIT 3")
         List<Rutina> sugerenciasDeRutinasBasadosEnEventosPorEtiqueta(String nombreUsuario);
 
-            @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:REALIZA_RUTINA]->(rc:Rutina)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
-                    "WITH u, collect(DISTINCT etiqueta) AS etiquetasUsuario " +
-                    "MATCH (r:Rutina)-[:ETIQUETADA_CON]->(etiqueta) " +
-                    "WHERE etiqueta IN etiquetasUsuario AND NOT EXISTS { " +
-                    "    MATCH (u)-[:REALIZA_RUTINA]->(r) " +
-                    "} " +
-                    "WITH r, COUNT(DISTINCT etiqueta) AS etiquetasEnComun " +
-                    "RETURN r " +
-                    "ORDER BY etiquetasEnComun DESC " +
-                    "LIMIT 3")
+  @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:REALIZA_RUTINA]->(rc:Rutina)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) "
+                        +
+                                     "WITH u, collect(DISTINCT etiqueta) AS etiquetasUsuario " +
+                                     "MATCH (r:Rutina)-[:ETIQUETADA_CON]->(etiqueta) " +
+                                     "WHERE etiqueta IN etiquetasUsuario AND NOT EXISTS { " +
+                                     " MATCH (u)-[:REALIZA_RUTINA]->(r) " +
+                                     "} " +
+                                     "WITH r, COUNT(DISTINCT etiqueta) AS etiquetasEnComun " +
+                                     "RETURN r " +
+                                     "ORDER BY etiquetasEnComun DESC " +
+                                     "LIMIT 3")
+
             List<Rutina> sugerenciasDeRutinasBasadasEnRutinas(String nombreUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(comunidad:Comunidad) " +
