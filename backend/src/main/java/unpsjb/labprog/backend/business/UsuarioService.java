@@ -50,6 +50,9 @@ public class UsuarioService {
     public Usuario findById(Long id){
         return usuarioRepository.findById(id).orElse(null);
     }
+    public Usuario findByNombreUsuario(String nombre){
+        return usuarioRepository.findByNombreUsuario(nombre).orElse(null);
+    }
 
 }
 
