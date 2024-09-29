@@ -1,6 +1,7 @@
 package unpsjb.labprog.backend.business;
 
 import java.util.List;
+import java.time.LocalDateTime;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
@@ -50,5 +51,45 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
                         " ORDER BY comunidadesEnComun DESC, participante.nombreUsuario ASC" +
                         " LIMIT 3")
         List<Usuario> sugerenciasDeAmigosBasadosEnComunidades(String nombreUsuario);
+
+        @Query("MATCH (a:Usuario)-[:ES_AMIGO_DE]-(b:Usuario) " +
+                "WHERE id(a) = $idEmisor AND id(b) = $idReceptor "+
+                "RETURN COUNT(a) > 0")
+        boolean sonAmigos(Long idEmisor, Long idReceptor);
+
+        @Query("MATCH (a:Usuario)-[r:ENVIA_SOLICITUD]->(b:Usuario) "+
+                "WHERE id(a) = $idEmisor AND id(b) = $idReceptor "+
+                "RETURN COUNT(r) > 0")
+        boolean solicitudAmistadExiste(Long idEmisor, Long idReceptor);
+
+        @Query("MATCH (u:Usuario)-[:MIEMBRO]->(c:Comunidad) "+
+                "WHERE id(u) = $idUsuario AND id(c) = $idComunidad "+
+                "RETURN COUNT(c) > 0")
+        boolean esMiembro(Long idUsuario, Long idComunidad);
+
+        @Query("MATCH (u:Usuario)-[:SOLICITUD_DE_INGRESO]->(c:Comunidad) "+
+                "WHERE id(u) = $idUsuario AND id(c) = $idComunidad "+
+                "RETURN COUNT(c) > 0")
+        boolean solicitudIngresoExiste(Long idUsuario, Long idComunidad);
+
+        @Query("MATCH (u:Usuario)<-[r:CREADA_POR]-(c:Comunidad) "+
+                "WHERE id(u) = $idUsuario AND id(c) = $idComunidad "+
+                "RETURN COUNT(c) > 0")
+        boolean esCreador(Long idUsuario, Long idComunidad);
+
+            @Query("MATCH (u:Usuario)<-[:ADMINISTRADA_POR]-(c:Comunidad) "+
+                "WHERE id(u) = $idMiembro AND id(c) = $idComunidad "+
+                "RETURN COUNT(c) > 0")
+        boolean esAdministrador(Long idMiembro, Long idComunidad);
+
+        @Query("MATCH (u:Usuario), (c:Comunidad) WHERE id(u) = $idUsuario AND id(c) = $idComunidad " +
+                "CREATE (u)-[:SOLICITUD_DE_INGRESO {estado: $estado, fechaEnvio: $fechaEnvio}]->(c)")
+        void enviarSolicitudIngreso(Long idUsuario, Long idComunidad, String estado, LocalDateTime fechaEnvio);
+
+        @Query("MATCH (u:Usuario), (u2:Usuario) WHERE id(u) = $idEmisor AND id(u2) = $idReceptor " +
+        "CREATE (u)-[:SOLICITUD_DE_AMISTADO {estado: $estado, fechaEnvio: $fechaEnvio}]->(u2)")
+        void enviarSolicitudAmistad(Long idEmisor, Long idReceptor, String estado, LocalDateTime now);
+
+
 
 }

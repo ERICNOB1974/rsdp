@@ -1,0 +1,161 @@
+package unpsjb.labprog.backend.business;
+
+import org.neo4j.driver.internal.value.DateTimeValue;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import unpsjb.labprog.backend.model.Comunidad;
+import unpsjb.labprog.backend.model.Usuario;
+
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.Optional;
+
+@Service
+public class UsuarioComunidadService {
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private ComunidadRepository comunidadRepository;
+
+    public String solicitarIngreso(Long idUsuario, Long idComunidad) throws Exception {
+        Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
+        if (comunidadOpt.isEmpty()) {
+            throw new Exception("La comunidad no existe.");
+        }
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUsuario);
+        if (usuarioOpt.isEmpty()) {
+            throw new Exception("El usuario no existe.");
+        }
+        Comunidad comunidad = comunidadOpt.get();
+        Usuario usuario = usuarioOpt.get();
+
+        if (!comunidad.isEsPrivada()) {
+            // Si la comunidad es pública, agregar directamente al usuario como miembro
+            comunidadRepository.nuevoMiembro(comunidad.getId(), usuario.getId(), LocalDateTime.now());
+            return "Usuario ingresado en la comunidad correctamente"; // Finalizar aquí si la comunidad es pública
+        }
+
+        // Verificar si el usuario ya es miembro de la comunidad
+        if (usuarioRepository.esMiembro(idUsuario, idComunidad)) {
+            throw new Exception("El usuario ya es miembro de la comunidad.");
+        }
+
+        // Verificar si ya existe una solicitud de ingreso pendiente o enviada
+        if (usuarioRepository.solicitudIngresoExiste(idUsuario, idComunidad)) {
+            throw new Exception("Ya existe una solicitud de ingreso para esta comunidad.");
+        }
+
+        usuarioRepository.enviarSolicitudIngreso(idUsuario, idComunidad, "pendiente", LocalDateTime.now());
+        return "Solicitud de ingreso enviada correctamente";
+    }
+
+    public String otorgarRolAdministrador(Long idCreador, Long idMiembro, Long idComunidad) throws Exception {
+        Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
+        if (comunidadOpt.isEmpty()) {
+            throw new Exception("La comunidad no existe.");
+        }
+        Optional<Usuario> creadorOpt = usuarioRepository.findById(idCreador);
+        if (creadorOpt.isEmpty()) {
+            throw new Exception("El usuario dueño de la comunidad no existe.");
+        }
+
+        Optional<Usuario> miembroOpt = usuarioRepository.findById(idMiembro);
+        if (miembroOpt.isEmpty()) {
+            throw new Exception("El usuario al que se le quiere asignar el rol administrador no existe.");
+        }
+        Usuario usuario = miembroOpt.get();
+
+        // Verificar si el usuario es miembro de la comunidad
+        if (!usuarioRepository.esMiembro(idMiembro, idComunidad)) {
+            throw new Exception("El usuario al que se le quiere asignar el rol no es miembro de la comunidad.");
+        }
+
+        // Verificar si el usuario no posee ya el rol administrador
+        if (usuarioRepository.esAdministrador(idMiembro, idComunidad)) {
+            throw new Exception("El usuario al que se le quiere asignar el rol ya es administrador.");
+        }
+
+        // Verificar si el usuario que quiere otorgar rol es el dueño de la comunidad
+        if (!usuarioRepository.esCreador(idCreador, idComunidad)) {
+            throw new Exception("No posee los permisos para otorgar el rol");
+        }
+    // Obtener la fecha de ingreso como DateTimeValue
+    //LocalDateTime fechaIngresoValue = comunidadRepository.obtenerFechaIngreso(idMiembro, idComunidad);
+    
+        comunidadRepository.otorgarRolAdministrador(idMiembro, idComunidad, comunidadRepository.obtenerFechaIngreso(idMiembro, idComunidad), LocalDateTime.now());
+        return "Rol administrador otorgado a: " + usuario.getNombreUsuario() + " correctamente";
+    }
+
+    public String quitarRolAdministrador(Long idCreador, Long idAdministrador, Long idComunidad) throws Exception {
+        Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
+        if (comunidadOpt.isEmpty()) {
+            throw new Exception("La comunidad no existe.");
+        }
+        Optional<Usuario> creadorOpt = usuarioRepository.findById(idCreador);
+        if (creadorOpt.isEmpty()) {
+            throw new Exception("El usuario creador no existe.");
+        }
+
+        Optional<Usuario> miembroOpt = usuarioRepository.findById(idAdministrador);
+        if (miembroOpt.isEmpty()) {
+            throw new Exception("El usuario administrador no existe.");
+        }
+        Usuario usuario = miembroOpt.get();
+
+        // Verificar si el usuario que quiere otorgar rol es el dueño de la comunidad
+        if (!usuarioRepository.esCreador(idCreador, idComunidad)) {
+            throw new Exception("No posee los permisos para otorgar el rol");
+        }
+        // Verificar si el usuario no posee ya el rol administrador
+        if (!usuarioRepository.esAdministrador(idAdministrador, idComunidad)) {
+            throw new Exception("El usuario al que se le quiere quitar el rol no es administrador.");
+        }
+  
+        comunidadRepository.quitarRolAdministrador(idAdministrador, idComunidad, comunidadRepository.obtenerFechaIngreso(idAdministrador, idComunidad), LocalDateTime.now());
+        return "Rol administrador quitado a: " + usuario.getNombreUsuario() + " correctamente";
+    }
+
+
+    public Comunidad guardarComunidadYCreador(Comunidad comunidad,Long idUsuario) throws Exception {
+        Optional<Usuario> miembroOpt = usuarioRepository.findById(idUsuario);
+        if (miembroOpt.isEmpty()) {
+            throw new Exception("El usuario no existe.");
+        }
+        comunidad.setFechaDeCreacion(LocalDateTime.now()); // Establece la fecha aquí
+        return comunidadRepository.guardarComunidadYCreador(comunidad.getNombre(), comunidad.getDescripcion(), comunidad.getCantidadMaximaMiembros(), comunidad.getUbicacion(), comunidad.isEsPrivada() , idUsuario, comunidad.getFechaDeCreacion());
+    }
+
+    public String gestionarSolicitudes(Long idSuperUsuario,Long idUsuario,Long idComunidad,boolean aceptar) throws Exception {
+        Optional<Usuario> miembroOpt = usuarioRepository.findById(idUsuario);
+        if (miembroOpt.isEmpty()) {
+            throw new Exception("El usuario no existe.");
+        }
+        Optional<Usuario> superUsuario = usuarioRepository.findById(idSuperUsuario);
+        if (superUsuario.isEmpty()) {
+            throw new Exception("El usuario con permisos no existe.");
+        }
+
+        Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
+        if (comunidadOpt.isEmpty()) {
+            throw new Exception("La comunidad no existe.");
+        }
+
+        if(!usuarioRepository.solicitudIngresoExiste(idUsuario,idComunidad)){
+            throw new Exception("No hay solicitud de ingreso pendiente");
+        }
+        if((!usuarioRepository.esCreador(idSuperUsuario,idComunidad)) && (!usuarioRepository.esAdministrador(idSuperUsuario,idComunidad))){
+            throw new Exception("Este usuario no puede gestionar solicitudes");
+        }
+        if(!aceptar){
+            comunidadRepository.eliminarSolicitudIngreso(idUsuario, idComunidad);
+            return "Solicitud de ingreso rechazada correctamente";
+        }
+        comunidadRepository.eliminarSolicitudIngreso(idUsuario, idComunidad);
+        comunidadRepository.nuevoMiembro(idComunidad,idUsuario,LocalDateTime.now());
+        return "Solicitud de ingreso aceptada correctamente";
+    }
+
+}

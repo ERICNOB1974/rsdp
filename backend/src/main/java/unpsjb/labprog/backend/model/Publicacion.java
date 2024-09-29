@@ -27,7 +27,5 @@ public class Publicacion {
 
     private String descripcion; 
     
-    @Relationship(type = "COMENTA")
-    private List<Comentario> comentarios;
 
 }
