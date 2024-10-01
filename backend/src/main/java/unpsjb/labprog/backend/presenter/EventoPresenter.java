@@ -22,7 +22,9 @@ public class EventoPresenter {
     @Autowired
     EventoService eventoService;
 
-    @GetMapping("/findAll")
+
+
+    @RequestMapping(path = "/findAll", method = RequestMethod.GET)
     public ResponseEntity<Object> findAll() {
         return Response.ok(eventoService.findAll());
     }
@@ -31,6 +33,12 @@ public class EventoPresenter {
     public ResponseEntity<Object> findById(@PathVariable Long id) {
         return Response.ok(eventoService.findById(id));
     }
+
+    @GetMapping("/{id}/participantes")
+    public ResponseEntity<Object> participantesDeEvento(@PathVariable Long id) {
+        return Response.ok(eventoService.participantesDeEvento(id));
+    }
+
 
     @RequestMapping(path = "/create", method = RequestMethod.POST)
     public ResponseEntity<Object> create(@RequestBody Evento evento) {
