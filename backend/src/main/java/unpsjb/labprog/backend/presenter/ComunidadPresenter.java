@@ -75,10 +75,18 @@ public class ComunidadPresenter {
     @RequestMapping(path = "/create/{idUsuario}", method = RequestMethod.POST)
     public ResponseEntity<Object> create(@RequestBody Comunidad comunidad,@PathVariable Long idUsuario){
         try {
-            System.out.println("FACUUUUUUUUUUUUUUUUComunidad recibida: " + comunidad);
             return Response.ok(usuarioComunidadService.guardarComunidadYCreador(comunidad,idUsuario));
         } catch (Exception e) {
             return Response.error("", "Error al crear la comunidad: " + e.getMessage()+e);
+        }
+    }
+
+    @GetMapping("/visualizarSolicitudes/{idSuperUsuario}/{idComunidad}")
+    public ResponseEntity<Object> visualizarSolicitudesPendinetes(@PathVariable Long idSuperUsuario, @PathVariable Long idComunidad) {
+        try {
+            return Response.ok(usuarioComunidadService.visualizarSolicitudes(idSuperUsuario,idComunidad));
+        } catch (Exception e) {
+            return Response.error("", "Error al visualizar las solicitudes de la comunidad: " + e.getMessage()+e);
         }
     }
 }

@@ -46,4 +46,8 @@ public class EventoService {
         return eventoRepository.findById(id).orElse(null);
     }
 
+    public int participantesDeEvento(Long idEvento) {
+     return eventoRepository.panticipantesDeEvento(idEvento);
+    }
+
 }
