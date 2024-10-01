@@ -103,7 +103,7 @@ CASE
        WHEN i % 2 = 0 THEN ["Carrera 5K", "Torneo de Fútbol", "Clase de Yoga", "Maratón 10K", "Clínica de Natación"][(i % 5)]
       ELSE ["Torneo de Ciclismo", "Clase de Pilates", "Entrenamiento de CrossFit", "Carrera de Bicicletas", "Campeonato de Basket"][(i % 5)]
       END,
-      fechaDeCreacion: date("2021-01-01") + duration('P' + (i % 365) + 'D'),
+      fechaDeCreacion: date("2023-01-01") + duration('P' + (i % 365) + 'D'),
       fechaHora: date("2023-01-01") + duration('P' + (i % 365 + 3) + 'D') + duration('PT' + (toInteger(rand() * 24)) + 'H' + toInteger(rand() * 60) + 'M'),
       ubicacion:
       

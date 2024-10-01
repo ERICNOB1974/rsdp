@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import unpsjb.labprog.backend.model.Evento;
 import unpsjb.labprog.backend.model.Usuario;
 
 @Service
@@ -49,6 +50,12 @@ public class UsuarioService {
 
     public Usuario findById(Long id){
         return usuarioRepository.findById(id).orElse(null);
+    }
+    public Usuario findByNombreUsuario(String nombre){
+        return usuarioRepository.findByNombreUsuario(nombre).orElse(null);
+    }
+    public List<Usuario> findByNombreUsuario(Evento e){
+        return usuarioRepository.inscriptosEvento(e);
     }
 
 }
