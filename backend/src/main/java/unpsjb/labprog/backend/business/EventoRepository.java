@@ -18,6 +18,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "AND NOT (u)<-[:CREADO_POR]-(e2) " +
                         "AND NOT e2.esPrivadoParaLaComunidad " +
                         "WITH e2, COUNT(DISTINCT et) AS etiquetasComunes " +
+                        "WHERE e2.fechaHora > datetime() + duration({hours: 1}) " +
                         "RETURN e2 " +
                         "ORDER BY etiquetasComunes DESC, e2.fechaHora ASC " +
                         "LIMIT 3")
@@ -27,7 +28,8 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         + "WHERE NOT (u)-[:PARTICIPA_EN]->(ev) "
                         + "AND NOT (u)<-[:CREADO_POR]-(ev) "
                         + "AND NOT ev.esPrivadoParaLaComunidad "
-                        + "WITH ev, count(e) as etiquetasCompartidas "
+                        + "WITH ev, count(e) as etiquetasCompartidas " +
+                        "WHERE ev.fechaHora > datetime() + duration({hours: 1}) "
                         + "RETURN ev "
                         + "ORDER BY etiquetasCompartidas DESC, ev.fechaHora ASC "
                         + "LIMIT 3")
@@ -46,8 +48,9 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         +
                         "WHERE NOT (u)-[:PARTICIPA_EN]->(evento) " +
                         "AND NOT (u)<-[:CREADO_POR]-(evento) " +
+                        "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
                         "RETURN evento " +
-                        "ORDER BY  amigosParticipando DESC, coincidencias DESC,  fechaHora ASC " + // Orden final
+                        "ORDER BY amigosParticipando DESC, coincidencias DESC,  fechaHora ASC " + // Orden final
                         "LIMIT 3")
         List<Evento> sugerenciasDeEventosBasadosEnAmigos(String nombreUsuario);
 
@@ -77,6 +80,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "     (toLower(com.ubicacion) = toLower(ev.ubicacion) OR " +
                         "      toLower(com.ubicacion) CONTAINS toLower(ev.ubicacion) OR " +
                         "      toLower(ev.ubicacion) CONTAINS toLower(com.ubicacion)) AS ubicacionCoincide " +
+                        " WHERE ev.fechaHora > datetime() + duration({hours: 1}) " +
                         "RETURN ev AS evento,  etiquetasCompartidas, " + //
                         "       MAX(ubicacionCoincide) AS ubicacionCoincide  " +
                         "ORDER BY ubicacionCoincide DESC, etiquetasCompartidas DESC, evento.fechaHora ASC " +
@@ -88,4 +92,11 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                 "RETURN COUNT(DISTINCT u) AS totalParticipaciones")
         int panticipantesDeEvento(Long idEvento);
 
+
+        @Query("MATCH (e:Evento) " +
+        "WHERE date(e.fechaHora) = date(datetime()) + duration({days: 1}) " +
+        " RETURN e ORDER BY e.fechaHora ASC")
+        List<Evento> eventosProximos();
+
+        
 }
