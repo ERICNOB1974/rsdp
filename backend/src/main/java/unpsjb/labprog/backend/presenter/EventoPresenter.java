@@ -58,5 +58,10 @@ public class EventoPresenter {
         List<Evento> eventosDeRutinas = eventoService.sugerenciasDeEventosBasadosEnAmigos(nombreUsuario);
         return Response.ok(eventosDeRutinas);
     }
+    @GetMapping("/proximos")
+    public ResponseEntity<Object> eventosProximos() {
+        List<Evento> eventosDeRutinas = eventoService.eventosProximos();
+        return Response.ok(eventosDeRutinas);
+    }
 
 }
