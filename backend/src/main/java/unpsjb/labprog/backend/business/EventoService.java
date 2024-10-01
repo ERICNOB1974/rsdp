@@ -50,4 +50,8 @@ public class EventoService {
         return eventoRepository.eventosProximos();
     }
 
+    public int participantesDeEvento(Long idEvento) {
+     return eventoRepository.panticipantesDeEvento(idEvento);
+    }
+
 }

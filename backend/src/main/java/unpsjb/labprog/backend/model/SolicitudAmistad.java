@@ -1,11 +1,10 @@
 package unpsjb.labprog.backend.model;
 
-import java.time.LocalDate;
-
+import org.springframework.data.neo4j.core.schema.TargetNode;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.RelationshipProperties;
-import org.springframework.data.neo4j.core.schema.TargetNode;
+import java.time.LocalDateTime;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,15 +12,17 @@ import lombok.Setter;
 @Getter
 @Setter
 @RelationshipProperties
-public class InscriptoEnEvento {
-    
+public class SolicitudAmistad {
+
     @Id
     @GeneratedValue
     private Long id;
 
-    @TargetNode
-    private Usuario usuario;
+    private String estado; // pendiente, aceptada, rechazada
+    private LocalDateTime fechaEnvio;
 
-    private LocalDate fechaDeInscripcion;
+    @TargetNode
+    private Usuario receptor;
+
 
 }
