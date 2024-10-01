@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
@@ -94,6 +95,16 @@ public class UsuarioPresenter {
     @GetMapping("/findById/{id}")
     public ResponseEntity<Object> findById(@PathVariable Long id) {
         return Response.ok(usuarioService.findById(id));
+    }
+    
+     @PostMapping("/gestionarSolicitudAmistad/{idEmisor}/{idReceptor}")
+    public ResponseEntity<Object> gestionarSolicitudAmistad(@PathVariable Long idEmisor, @PathVariable Long idReceptor, @RequestParam boolean aceptada) {
+        try {
+            String respuesta=solicitudAmistadService.gestionarSolicitudAmistad(idEmisor, idReceptor, aceptada);
+            return Response.ok(respuesta);
+        } catch (Exception e) {
+            return Response.error("", "Error al gestionar solicitud de amistad: " + e.getMessage());
+        }
     }
 
 }

@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import unpsjb.labprog.backend.model.Comunidad;
+import unpsjb.labprog.backend.model.Usuario;
 
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
@@ -60,4 +61,10 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
             "Where id(u) = $idUsuario AND id(c) = $idComunidad "+
             "DELETE r" )
     void eliminarSolicitudIngreso(Long idUsuario, Long idComunidad);
+
+    @Query("MATCH (u:Usuario)-[r]-(c:Comunidad {id: $idComunidad}) "+
+            "WHERE type(r) <> 'SOLICITUD_DE_INGRESO '"+
+            "RETURN count(DISTINCT u) AS totalUsuarios")
+    int cantidadUsuarios(Long idComunidad);
+   
 }

@@ -1,0 +1,92 @@
+.carousel {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* Ajusta a toda la altura de la ventana */
+  overflow: hidden;
+}
+
+.carousel-container {
+  display: flex;
+  transition: transform 0.5s ease; /* Para animar el desplazamiento */
+  height: 100%;
+}
+
+.carousel-item {
+  flex: 0 0 100%; /* Cada item ocupa todo el ancho */
+  height: 100%;
+  display: flex;
+  align-items: center; /* Centra el contenido verticalmente */
+  justify-content: center; /* Centra el contenido horizontalmente */
+  position: relative;
+}
+
+.large-event {
+  flex: 0 0 100%; /* El primer evento ocupa toda la pantalla */
+}
+
+.mini-event {
+  flex: 0 0 25%; /* Los mini eventos ocupan 1/4 de la pantalla */
+  height: 150px; /* Altura fija para los mini eventos */
+}
+
+.evento-card {
+  padding: 20px;
+  margin: 10px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.evento-details {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.carousel-control {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(255, 255, 255, 0.5);
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 1000; /* Asegura que los botones estén por encima del contenido */
+}
+
+.prev {
+  left: 10px;
+}
+
+.next {
+  right: 10px;
+}
+
+.indice-actual {
+  margin-top: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.clickable {
+  cursor: pointer; /* Cambia el cursor para indicar que es clickeable */
+}
+
+.carousel-item {
+  position: relative;
+  z-index: 1; /* Asegura que los elementos sean interactivos */
+}
+
+.evento-card {
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  transition: transform 0.2s;
+}
+
+.evento-card:hover {
+  transform: scale(1.05); /* Pequeña animación para indicar que es clickeable */
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}

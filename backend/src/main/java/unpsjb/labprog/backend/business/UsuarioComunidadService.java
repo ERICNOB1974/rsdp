@@ -10,7 +10,7 @@ import unpsjb.labprog.backend.model.Usuario;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.Optional;
-
+import java.util.List;
 @Service
 public class UsuarioComunidadService {
 
@@ -142,7 +142,7 @@ public class UsuarioComunidadService {
         if (comunidadOpt.isEmpty()) {
             throw new Exception("La comunidad no existe.");
         }
-
+        Comunidad comunidad= comunidadOpt.get();
         if(!usuarioRepository.solicitudIngresoExiste(idUsuario,idComunidad)){
             throw new Exception("No hay solicitud de ingreso pendiente");
         }
@@ -153,9 +153,32 @@ public class UsuarioComunidadService {
             comunidadRepository.eliminarSolicitudIngreso(idUsuario, idComunidad);
             return "Solicitud de ingreso rechazada correctamente";
         }
+        if(!(comunidadRepository.cantidadUsuarios(idComunidad)<comunidad.getCantidadMaximaMiembros())){
+            throw new Exception("La comunidad esta llena");
+        }
         comunidadRepository.eliminarSolicitudIngreso(idUsuario, idComunidad);
         comunidadRepository.nuevoMiembro(idComunidad,idUsuario,LocalDateTime.now());
         return "Solicitud de ingreso aceptada correctamente";
+    }
+
+    public List<Usuario> visualizarSolicitudes(Long idSuperUsuario,Long idComunidad) throws Exception {
+    
+        Optional<Usuario> superUsuario = usuarioRepository.findById(idSuperUsuario);
+        if (superUsuario.isEmpty()) {
+            throw new Exception("El usuario con permisos no existe.");
+        }
+
+        Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
+        if (comunidadOpt.isEmpty()) {
+            throw new Exception("La comunidad no existe.");
+        }
+
+     
+        if((!usuarioRepository.esCreador(idSuperUsuario,idComunidad)) && (!usuarioRepository.esAdministrador(idSuperUsuario,idComunidad))){
+            throw new Exception("Este usuario no puede gestionar solicitudes");
+        }
+      
+        return usuarioRepository.solicititudesPendientes(idComunidad);
     }
 
 }
