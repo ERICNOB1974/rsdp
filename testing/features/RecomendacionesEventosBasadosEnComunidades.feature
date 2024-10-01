@@ -31,13 +31,13 @@
                     {
                         "nombre": "Torneo de Fútbol 5",
                         "fechaDeCreacion": "2024-09-15",
-                        "fechaHora": "2024-09-20T18:00:00Z",
+                        "fechaHora": "2025-09-20T18:00:00Z",
                         "ubicacion": "Buenos Aires"
                     },
                     {
                         "nombre": "Futbol 11",
                         "fechaDeCreacion": "2024-09-25",
-                        "fechaHora": "2024-10-01T22:30:00Z",
+                        "fechaHora": "2025-10-01T22:30:00Z",
                         "ubicacion": "Salta"
                     }
                 ]
@@ -53,19 +53,19 @@
                     {
                         "nombre": "Carrera de 10K",
                         "fechaDeCreacion": "2024-09-15",
-                        "fechaHora": "2024-09-25T07:00:00Z",
+                        "fechaHora": "2025-09-25T07:00:00Z",
                         "ubicacion": "Rosario, Santa Fe"
                     },
                     {
                         "nombre": "Carrera de 5K",
                         "fechaDeCreacion": "2024-09-16",
-                        "fechaHora": "2024-09-26T08:00:00Z",
+                        "fechaHora": "2025-09-26T08:00:00Z",
                         "ubicacion": "Mendoza"
                     },
                     {
                         "nombre": "Carrera de Montaña 15K",
                         "fechaDeCreacion": "2024-09-18",
-                        "fechaHora": "2024-10-01T07:30:00Z",
+                        "fechaHora": "2025-10-01T07:30:00Z",
                         "ubicacion": "San Carlos de Bariloche, Río Negro"
                     }
                 ]
@@ -81,7 +81,7 @@
                     {
                         "nombre": "Torneo natacion 200M",
                         "fechaDeCreacion": "2024-09-15",
-                        "fechaHora": "2024-09-28T15:30:00Z",
+                        "fechaHora": "2025-09-28T15:30:00Z",
                         "ubicacion": "Córdoba"
                     }
                 ]
@@ -97,15 +97,24 @@
                     {
                         "nombre": "Clase de Yoga",
                         "fechaDeCreacion": "2024-09-17",
-                        "fechaHora": "2024-09-24T09:00:00Z",
+                        "fechaHora": "2025-09-24T09:00:00Z",
                         "ubicacion": "San Juan"
                     },
                     {
                         "nombre": "Clase abierta de pilates",
                         "fechaDeCreacion": "2024-09-17",
-                        "fechaHora": "2024-09-21T10:00:00Z",
+                        "fechaHora": "2025-09-21T10:00:00Z",
                         "ubicacion": "Bariloche, Río Negro"
                     }
                 ]
+            }
+            """
+            Escenario: El evento ya paso
+            Dado que se ingresan los datos de un usuario existente "maria"
+            Cuando se buscan las sugerencias de eventos basados en comunidades
+            Entonces se espera que las sugerencias de eventos basados en comunidades sean
+            """
+            {
+                "data": []
             }
             """
