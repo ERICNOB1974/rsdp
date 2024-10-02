@@ -116,6 +116,5 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
                         "WHERE id(ev) = $eventId " +
                         "RETURN u")
         List<Usuario> inscriptosEvento(Long eventId);
-        Usuario findByNombreUsuario(String nombreUsuario);
 
 }

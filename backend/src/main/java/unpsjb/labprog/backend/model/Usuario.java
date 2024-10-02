@@ -28,16 +28,5 @@ public class Usuario {
     private String contrasena;
     private String descripcion;
     private Coordenadas ubicacion;
-
-    @Relationship(type = "POSTEA")
-    private List<Publicacion> publicaciones;    
-
-
-    @Relationship(type = "REALIZA_RUTINA")
-    private List<RutinaComenzada> rutinasEmpezadas;
-
-
-    @Relationship(type = "ES_AMIGO_DE") 
-    private List<Usuario> amigos;
     
 }
