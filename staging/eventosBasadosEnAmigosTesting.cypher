@@ -1,4 +1,4 @@
-//RecomendacionesEventosBasadosEnComunidades
+//RecomendacionesEventosBasadosEnAmigos
 MATCH (n)
 DETACH DELETE n;
 
@@ -6,7 +6,7 @@ CREATE
 (evento1:Evento {
   id: 1,
   nombre: 'Torneo de Fútbol 5',
-  fechaHora: datetime('2024-09-20T18:00:00'),
+  fechaHora: datetime('2025-09-20T18:00:00'),
   ubicacion: 'Cancha Los Olivos',
   descripcion: 'Un torneo de fútbol 5 entre amigos.',
   cantidadMaximaParticipantes: 10,
@@ -16,7 +16,7 @@ CREATE
   (evento2:Evento {
     id: 2,
     nombre: 'Carrera de 10K',
-    fechaHora: datetime('2024-09-25T07:00:00'),
+    fechaHora: datetime('2025-09-25T07:00:00'),
     ubicacion: 'Parque de la Ciudad',
     descripcion: 'Carrera de 10 kilómetros en el parque.',
     cantidadMaximaParticipantes: 50,
@@ -26,7 +26,7 @@ CREATE
     (evento3:Evento {
       id: 3,
       nombre: 'Torneo natacion 100M',
-      fechaHora: datetime('2024-09-28T15:00:00'),
+      fechaHora: datetime('2025-09-28T15:00:00'),
       ubicacion: 'Club ferro',
       descripcion: '100M libre',
       cantidadMaximaParticipantes: 20,
@@ -36,7 +36,7 @@ CREATE
       (evento4:Evento {
         id: 4,
         nombre: 'Torneo natacion 200M ',
-        fechaHora: datetime('2024-09-28T15:30:00'),
+        fechaHora: datetime('2025-09-28T15:30:00'),
         ubicacion: 'Club ferro',
         descripcion: '200M combinados',
         cantidadMaximaParticipantes: 20,
@@ -46,7 +46,7 @@ CREATE
         (evento5:Evento {
           id: 5,
           nombre: 'Torneo de Básquet',
-          fechaHora: datetime('2024-09-22T10:00:00'),
+          fechaHora: datetime('2025-09-22T10:00:00'),
           ubicacion: 'Polideportivo Central',
           descripcion: 'Torneo amistoso de básquet.',
           cantidadMaximaParticipantes: 12,
@@ -56,7 +56,7 @@ CREATE
           (evento6:Evento {
             id: 6,
             nombre: 'Carrera de 5K',
-            fechaHora: datetime('2024-09-26T08:00:00'),
+            fechaHora: datetime('2025-09-26T08:00:00'),
             ubicacion: 'Parque Central',
             descripcion: 'Carrera de 5 kilómetros.',
             cantidadMaximaParticipantes: 30,
@@ -66,7 +66,7 @@ CREATE
             (evento7:Evento {
               id: 7,
               nombre: 'Clase de Yoga',
-              fechaHora: datetime('2024-09-24T09:00:00'),
+              fechaHora: datetime('2025-09-24T09:00:00'),
               ubicacion: 'Parque de la Costa',
               descripcion: 'Clase de yoga para principiantes.',
               cantidadMaximaParticipantes: 15,
@@ -76,7 +76,7 @@ CREATE
               (evento8:Evento {
                 id: 8,
                 nombre: 'Clase abierta de pilates',
-                fechaHora: datetime('2024-09-21T10:00:00'),
+                fechaHora: datetime('2025-09-21T10:00:00'),
                 ubicacion: 'Parador 9',
                 descripcion: 'Pilates',
                 cantidadMaximaParticipantes: 10,
@@ -86,7 +86,7 @@ CREATE
                 (evento9:Evento {
                   id: 9,
                   nombre: 'Torneo de Tenis',
-                  fechaHora: datetime('2024-09-29T09:00:00'),
+                  fechaHora: datetime('2025-09-29T09:00:00'),
                   ubicacion: 'Cancha del Club',
                   descripcion: 'Torneo individual de tenis.',
                   cantidadMaximaParticipantes: 16,
@@ -96,7 +96,7 @@ CREATE
                   (evento10:Evento {
                     id: 10,
                     nombre: 'Carrera de Montaña 15K',
-                    fechaHora: datetime('2024-10-01T07:30:00'),
+                    fechaHora: datetime('2025-10-01T07:30:00'),
                     ubicacion: 'Montañas de la Ciudad',
                     descripcion: 'Carrera de montaña con un recorrido de 15 kilómetros.',
                     cantidadMaximaParticipantes: 30,
@@ -106,7 +106,7 @@ CREATE
                   (evento11:Evento {
                     id: 11,
                     nombre: 'Futbol 11',
-                    fechaHora: datetime('2024-10-01T22:30:00'),
+                    fechaHora: datetime('2025-10-01T22:30:00'),
                     ubicacion: 'El doradillo',
                     descripcion: 'Partido de futbol 11.',
                     cantidadMaximaParticipantes: 25,
@@ -116,7 +116,7 @@ CREATE
                      (evento12:Evento {
                     id: 12,
                     nombre: 'Estiramiento Muscular',
-                    fechaHora: datetime('2024-10-11T10:30:00'),
+                    fechaHora: datetime('2025-10-11T10:30:00'),
                     ubicacion: 'Domo en el doradillo',
                     descripcion: 'Clase abierta de esitramiento, ideal para aprender!',
                     cantidadMaximaParticipantes: 20,
@@ -126,7 +126,7 @@ CREATE
                      (evento13:Evento {
                     id: 13,
                     nombre: 'Vuelta ballena',
-                    fechaHora: datetime('2024-09-22T10:30:00'),
+                    fechaHora: datetime('2025-09-22T10:30:00'),
                     ubicacion: 'Rayentray',
                     descripcion: 'Carrera de ciclismo',
                     cantidadMaximaParticipantes: 100,
@@ -136,11 +136,21 @@ CREATE
                      (evento14:Evento {
                     id: 14,
                     nombre: 'Ciclismo en la rambla',
-                    fechaHora: datetime('2024-09-30T10:30:00'),
+                    fechaHora: datetime('2025-09-30T10:30:00'),
                     ubicacion: 'Sara',
                     descripcion: 'Ciclismo amistoso',
                     cantidadMaximaParticipantes: 30,
                     fechaDeCreacion: date('2024-09-01'),
+                    esPrivadoParaLaComunidad: false
+                    }),
+                     (evento15:Evento {
+                    id: 15,
+                    nombre: 'Badmington',
+                    fechaHora: datetime('2024-08-30T10:30:00'),
+                    ubicacion: 'Sara',
+                    descripcion: 'Evento pasado',
+                    cantidadMaximaParticipantes: 30,
+                    fechaDeCreacion: date('2024-08-01'),
                     esPrivadoParaLaComunidad: false
                     })
                     
@@ -154,7 +164,8 @@ CREATE
 (yoga:Etiqueta { id: 7, nombre: 'Yoga' }),
 (ciclismo:Etiqueta { id: 8, nombre: 'Ciclismo' }),
 (casual:Etiqueta { id: 9, nombre: 'Casual' }),
-(futbol5:Etiqueta { id: 10, nombre: 'Futbol 5' })
+(futbol5:Etiqueta { id: 10, nombre: 'Futbol 5' }),
+(badmington:Etiqueta { id: 11, nombre: 'Badmington' })
 
 
 CREATE 
@@ -170,7 +181,9 @@ CREATE
 (eric:Usuario { nombreUsuario: 'eric', nombreReal: 'Eric' }),
 (lucia:Usuario { nombreUsuario: 'lucia', nombreReal: 'Lucia' }),
 (hector:Usuario { nombreUsuario: 'hector', nombreReal: 'Hector' }),
-(olga:Usuario { nombreUsuario: 'olga', nombreReal: 'Olga' })
+(olga:Usuario { nombreUsuario: 'olga', nombreReal: 'Olga' }),
+(maria:Usuario { nombreUsuario: 'maria', nombreReal: 'Maria' }),
+(marta:Usuario { nombreUsuario: 'marta', nombreReal: 'Marta' })
 
 MERGE (evento1)-[:ETIQUETADO_CON]->(futbol)
 MERGE (evento1)-[:ETIQUETADO_CON]->(futbol5)
@@ -188,8 +201,9 @@ MERGE (evento11)-[:ETIQUETADO_CON]->(futbol)
 MERGE (evento12)-[:ETIQUETADO_CON]->(casual)
 MERGE (evento12)-[:ETIQUETADO_CON]->(pilates)
 MERGE (evento13)-[:ETIQUETADO_CON]->(ciclismo)
-MERGE (evento14)-[:ETIQUETADO_CON]->(ciclismo)
 
+MERGE (evento14)-[:ETIQUETADO_CON]->(ciclismo)
+MERGE (evento15)-[:ETIQUETADO_CON]->(badmington)
 
 MERGE (lucas)-[:PARTICIPA_EN]->(evento1)
 MERGE (lucas)-[:PARTICIPA_EN]->(evento11)
@@ -199,12 +213,16 @@ MERGE (joaquin)-[:PARTICIPA_EN]->(evento6)
 MERGE (martin)-[:PARTICIPA_EN]->(evento5)
 MERGE (patricia)-[:PARTICIPA_EN]->(evento4)
 MERGE (marcos)-[:PARTICIPA_EN]->(evento6)
+MERGE (maria)-[:PARTICIPA_EN]->(evento15)
 
 
 MERGE (lucas)-[:ES_AMIGO_DE]->(diego)
 MERGE (diego)-[:ES_AMIGO_DE]->(lucas)
 MERGE (ana)-[:ES_AMIGO_DE]->(juan)
 MERGE (juan)-[:ES_AMIGO_DE]->(ana)
+
+MERGE (maria)-[:ES_AMIGO_DE]->(marta)
+MERGE (marta)-[:ES_AMIGO_DE]->(maria)
 
 
 MERGE (patricia)-[:ES_AMIGO_DE]->(martin)
