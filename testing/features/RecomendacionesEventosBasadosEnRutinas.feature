@@ -14,14 +14,14 @@
           {
             "nombre": "Maratón de la ciudad",
             "fechaDeCreacion": null,
-            "fechaHora": "2024-10-15T09:00:00Z",
+            "fechaHora": "2025-10-15T09:00:00Z",
             "ubicacion": null,
             "descripcion": "Maratón para corredores de todos los niveles."
           },
           {
             "nombre": "Entrenamiento de fuerza avanzada",
             "fechaDeCreacion": null,
-            "fechaHora": "2024-09-25T07:00:00Z",
+            "fechaHora": "2025-09-25T07:00:00Z",
             "ubicacion": null,
             "descripcion": "Entrenamiento intensivo de fuerza avanzada."
           }
@@ -41,14 +41,14 @@
           {
             "nombre": "Entrenamiento funcional en el parque",
             "fechaDeCreacion": null,
-            "fechaHora": "2024-09-29T10:00:00Z",
+            "fechaHora": "2025-09-29T10:00:00Z",
             "ubicacion": null,
             "descripcion": "Entrenamiento funcional intensivo."
           },
           {
             "nombre": "Maratón de la ciudad",
             "fechaDeCreacion": null,
-            "fechaHora": "2024-10-15T09:00:00Z",
+            "fechaHora": "2025-10-15T09:00:00Z",
             "ubicacion": null,
             "descripcion": "Maratón para corredores de todos los niveles."
           }
@@ -67,21 +67,21 @@
           {
             "nombre": "Entrenamiento de fuerza avanzada",
             "fechaDeCreacion": null,
-            "fechaHora": "2024-09-25T07:00:00Z",
+            "fechaHora": "2025-09-25T07:00:00Z",
             "ubicacion": null,
             "descripcion": "Entrenamiento intensivo de fuerza avanzada."
           },
           {
             "nombre": "Entrenamiento funcional en el parque",
             "fechaDeCreacion": null,
-            "fechaHora": "2024-09-29T10:00:00Z",
+            "fechaHora": "2025-09-29T10:00:00Z",
             "ubicacion": null,
             "descripcion": "Entrenamiento funcional intensivo."
           },
           {
             "nombre": "Maratón de la ciudad",
             "fechaDeCreacion": null,
-            "fechaHora": "2024-10-15T09:00:00Z",
+            "fechaHora": "2025-10-15T09:00:00Z",
             "ubicacion": null,
             "descripcion": "Maratón para corredores de todos los niveles."
           }
@@ -99,17 +99,29 @@
           {
             "nombre": "Calistenia inicial",
             "fechaDeCreacion": null,
-            "fechaHora": "2024-09-20T07:00:00Z",
+            "fechaHora": "2025-09-20T07:00:00Z",
             "ubicacion": null,
             "descripcion": "Calistenia principiante."
           },
           {
             "nombre": "Calistenia avanzada",
             "fechaDeCreacion": null,
-            "fechaHora": "2024-09-25T07:00:00Z",
+            "fechaHora": "2025-09-25T07:00:00Z",
             "ubicacion": null,
             "descripcion": "Calistenia avanzado"
           }
         ]
       }
       """
+
+      Escenario: No sugerir eventos para luna
+      Dado que se ingresan los datos de un usuario existente "luna"
+      Y "luna" realiza rutinas etiquetadas con "Pasado"
+      Cuando se obtienen las sugerencias de eventos basadas en rutinas
+      Entonces se espera que los eventos sugeridos para "luna" sean
+      """
+      {
+        "data": []
+      }
+      """
+

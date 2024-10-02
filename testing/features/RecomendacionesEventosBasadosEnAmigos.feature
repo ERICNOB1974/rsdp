@@ -12,12 +12,12 @@
                     {
                         "nombre": "Torneo natacion 200M ",
                         "fechaDeCreacion": "2024-09-15",
-                        "fechaHora": "2024-09-28T15:30:00Z"
+                        "fechaHora": "2025-09-28T15:30:00Z"
                     },
                     {
                         "nombre": "Torneo natacion 100M",
                         "fechaDeCreacion": "2024-09-15",
-                        "fechaHora": "2024-09-28T15:00:00Z"
+                        "fechaHora": "2025-09-28T15:00:00Z"
                     }
                 ]
             }
@@ -33,7 +33,7 @@
                     {
                         "nombre": "Clase de Yoga",
                         "fechaDeCreacion": "2024-09-17",
-                        "fechaHora": "2024-09-24T09:00:00Z"
+                        "fechaHora": "2025-09-24T09:00:00Z"
                     }
                 ]
             }
@@ -49,17 +49,17 @@
                     {
                         "nombre": "Carrera de 5K",
                         "fechaDeCreacion": "2024-09-16",
-                        "fechaHora": "2024-09-26T08:00:00Z"
+                        "fechaHora": "2025-09-26T08:00:00Z"
                     },
                     {
                         "nombre": "Carrera de 10K",
                         "fechaDeCreacion": "2024-09-15",
-                        "fechaHora": "2024-09-25T07:00:00Z"
+                        "fechaHora": "2025-09-25T07:00:00Z"
                     },
                     {
                         "nombre": "Carrera de Montaña 15K",
                         "fechaDeCreacion": "2024-09-18",
-                        "fechaHora": "2024-10-01T07:30:00Z"
+                        "fechaHora": "2025-10-01T07:30:00Z"
                     }
                 ]
             }
@@ -75,12 +75,12 @@
                     {
                         "nombre": "Carrera de 10K",
                         "fechaDeCreacion": "2024-09-15",
-                        "fechaHora": "2024-09-25T07:00:00Z"
+                        "fechaHora": "2025-09-25T07:00:00Z"
                     },
                     {
                         "nombre": "Carrera de Montaña 15K",
                         "fechaDeCreacion": "2024-09-18",
-                        "fechaHora": "2024-10-01T07:30:00Z"
+                        "fechaHora": "2025-10-01T07:30:00Z"
                     }
                 ]
             }
@@ -105,7 +105,7 @@
                     {
                         "nombre": "Torneo de Fútbol 5",
                         "fechaDeCreacion": "2024-09-15",
-                        "fechaHora": "2024-09-20T18:00:00Z"
+                        "fechaHora": "2025-09-20T18:00:00Z"
                     }
                 ]
             }
@@ -121,17 +121,17 @@
                     {
                         "nombre": "Estiramiento Muscular",
                         "fechaDeCreacion": "2024-09-25",
-                        "fechaHora": "2024-10-11T10:30:00Z"
+                        "fechaHora": "2025-10-11T10:30:00Z"
                     },
                     {
                         "nombre": "Torneo natacion 200M ",
                         "fechaDeCreacion": "2024-09-15",
-                        "fechaHora": "2024-09-28T15:30:00Z"
+                        "fechaHora": "2025-09-28T15:30:00Z"
                     },
                     {
                         "nombre": "Clase abierta de pilates",
                         "fechaDeCreacion": "2024-09-17",
-                        "fechaHora": "2024-09-21T10:00:00Z"
+                        "fechaHora": "2025-09-21T10:00:00Z"
                     }
                 ]
             }
@@ -147,8 +147,20 @@
                     {
                         "nombre": "Ciclismo en la rambla",
                         "fechaDeCreacion": "2024-09-01",
-                        "fechaHora": "2024-09-30T10:30:00Z"
+                        "fechaHora": "2025-09-30T10:30:00Z"
                     }
+                ]
+            }
+            """
+
+            Escenario: El unico evento que puede recomendar ya paso, no le recomienda nada
+            Dado que se ingresan los datos de un usuario existente "marta"
+            Cuando se buscan las sugerencias de eventos basadas en amigos
+            Entonces se espera que las sugerencias de eventos basados en amigos sean
+            """
+            {
+                "data": [
+        
                 ]
             }
             """

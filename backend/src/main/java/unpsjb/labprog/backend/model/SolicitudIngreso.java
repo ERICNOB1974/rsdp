@@ -1,31 +1,28 @@
 package unpsjb.labprog.backend.model;
 
-import java.time.LocalDate;
-
+import org.springframework.data.neo4j.core.schema.TargetNode;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.RelationshipProperties;
-import org.springframework.data.neo4j.core.schema.TargetNode;
+import java.time.LocalDateTime;
 
-import io.micrometer.common.lang.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 @RelationshipProperties
-public class RutinaComenzada {
-    
+public class SolicitudIngreso {
+
     @Id
     @GeneratedValue
     private Long id;
 
+    private String estado; // pendiente, aceptada, rechazada
+    private LocalDateTime fechaEnvio;
+
     @TargetNode
-    private Rutina rutina;
-    
-    private LocalDate fechaDeComienzo;
-    
-    @Nullable
-    private LocalDate fechaDeFin;
+    private Comunidad comunidad;
+
 
 }

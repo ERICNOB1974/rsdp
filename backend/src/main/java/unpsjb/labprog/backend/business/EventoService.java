@@ -52,5 +52,13 @@ public class EventoService {
     public Evento findById(Long id){
         return eventoRepository.findById(id).orElse(null);
     }
+    
+    public List<Evento> eventosProximos(){
+        return eventoRepository.eventosProximos();
+    }
+
+    public int participantesDeEvento(Long idEvento) {
+     return eventoRepository.panticipantesDeEvento(idEvento);
+    }
 
 }
