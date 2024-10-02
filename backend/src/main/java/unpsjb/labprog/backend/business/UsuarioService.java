@@ -51,5 +51,9 @@ public class UsuarioService {
         return usuarioRepository.findById(id).orElse(null);
     }
 
+    public Usuario findByNombreUsuario(String nombreUsuario) {
+        return usuarioRepository.findByNombreUsuario(nombreUsuario);
+    }
+
 }
 
