@@ -65,4 +65,9 @@ public class UsuarioPresenter {
         return Response.ok(usuarioService.findById(id));
     }
 
+    @GetMapping("/findByNombreUsuario/{nombreUsuario}")
+    public ResponseEntity<Object> findByNombreUsuario(@PathVariable String nombreUsuario) {
+        return Response.ok(usuarioService.findByNombreUsuario(nombreUsuario));
+    }
+
 }

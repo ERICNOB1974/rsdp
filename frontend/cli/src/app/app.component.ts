@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
+import { UbicacionService } from './ubicacion.service';
 
 @Component({
   selector: 'app-root',
@@ -56,7 +57,9 @@ import { Router, RouterOutlet } from '@angular/router';
   styleUrls: ['../styles.css']
 })
 export class AppComponent {
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private ubicacionService: UbicacionService) {}
 
   onOptionSelected(event: any) {
     const route = event.target.value;
@@ -66,4 +69,20 @@ export class AppComponent {
       });
     }
   }
+
+  ngOnInit(): void {
+    this.actualizarUbicacion();
+  }
+
+  actualizarUbicacion() {
+    this.ubicacionService.obtenerUbicacion().then(() => {
+      const latitud = this.ubicacionService.getLatitud();
+      const longitud = this.ubicacionService.getLongitud();
+      // Puedes enviar la ubicación al backend si lo deseas
+      console.log(`Ubicación actual: ${latitud}, ${longitud}`);
+    }).catch((error) => {
+      console.error('Error obteniendo la ubicación:', error);
+    });
+  }
+
 }
