@@ -107,4 +107,9 @@ public class UsuarioPresenter {
         }
     }
 
+    @GetMapping("/findByNombreUsuario/{nombreUsuario}")
+    public ResponseEntity<Object> findByNombreUsuario(@PathVariable String nombreUsuario) {
+        return Response.ok(usuarioService.findByNombreUsuario(nombreUsuario));
+    }
+
 }

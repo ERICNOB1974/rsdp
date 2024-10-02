@@ -15,11 +15,11 @@ import unpsjb.labprog.backend.model.Usuario;
 @Repository
 public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
 
-        @Query("MATCH (u:Usuario {nombreUsuario: })-[:ES_AMIGO_DE]-(amigos)" +
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(amigos)" +
                         "RETURN amigos")
         List<Usuario> amigos(String nombreUsuario);
 
-        @Query("MATCH (u:Usuario {nombreUsuario: })-[:ES_AMIGO_DE]-(amigo)-[:ES_AMIGO_DE]-(amigosDeAmigos) "
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(amigo)-[:ES_AMIGO_DE]->(amigosDeAmigos) "
                         +
                         "WHERE amigosDeAmigos <> u AND NOT (u)-[:ES_AMIGO_DE]-(amigosDeAmigos) " +
                         "RETURN DISTINCT amigosDeAmigos")
@@ -116,4 +116,5 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
                         "WHERE id(ev) = $eventId " +
                         "RETURN u")
         List<Usuario> inscriptosEvento(Long eventId);
+
 }
