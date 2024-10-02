@@ -24,7 +24,7 @@ public class Evento {
     private String nombre;
     private LocalDate fechaDeCreacion;
     private ZonedDateTime fechaHora; 
-    private String ubicacion;
+    private Coordenadas ubicacion;
     private String descripcion;
     private int cantidadMaximaParticipantes;
     private boolean esPrivadoParaLaComunidad;

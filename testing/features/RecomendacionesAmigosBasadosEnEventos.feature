@@ -79,7 +79,7 @@ Característica: Sugerencia de amigos basados en eventos
                     "nombreReal": "Eric",
                     "correoElectronico": "eric@example.com",
                     "contrasena": "pass123"
-                }
+                } 
             ]
     }
     """
