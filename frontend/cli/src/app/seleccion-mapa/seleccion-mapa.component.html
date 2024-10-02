@@ -1,0 +1,25 @@
+<div class="mapa-container">
+    <div class="input-container">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Ingresa una dirección"
+        (input)="buscarDireccion($event)"
+      />
+    
+      <ul *ngIf="sugerencias.length > 0" class="list-group">
+        <li
+          *ngFor="let sugerencia of sugerencias"
+          (click)="seleccionarDireccion(sugerencia)"
+          class="list-group-item list-group-item-action"
+          style="cursor: pointer;"
+        >
+          {{ sugerencia.direccion }} - {{ sugerencia.altura }}, {{ sugerencia.ciudad }}, {{ sugerencia.pais }}
+        </li>
+      </ul>
+    </div>
+  
+    <!-- Aquí se mostrará el mapa -->
+    <div id="map"></div>
+  </div>
+  
