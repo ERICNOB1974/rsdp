@@ -1,12 +1,14 @@
 package unpsjb.labprog.backend.business;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import unpsjb.labprog.backend.model.Evento;
+import unpsjb.labprog.backend.model.Usuario;
 
 @Service
 public class EventoService {
@@ -25,15 +27,26 @@ public class EventoService {
     public List<Evento> sugerenciaDeEventosBasadosEnRutinas(String nombreUsuario) {
         return eventoRepository.sugerenciasDeEventosBasadosEnRutinas(nombreUsuario);
     }
+
     public List<Evento> sugerenciaDeEventosBasadosEnComunidades(String nombreUsuario) {
         return eventoRepository.sugerenciasDeEventosBasadosEnComunidades(nombreUsuario);
     }
+
     public List<Evento> sugerenciasDeEventosBasadosEnAmigos(String nombreUsuario) {
         return eventoRepository.sugerenciasDeEventosBasadosEnAmigos(nombreUsuario);
     }
 
     @Transactional
     public Evento save(Evento evento) {
+       Optional<Evento> eventoViejo= eventoRepository.findById(evento.getId());
+        if (!eventoViejo.isEmpty()){
+            boolean cambioFecha=evento.getFechaHora()!=eventoViejo.get().getFechaHora();
+            //boolean cambioLatitud=evento.getFechaHora()!=eventoViejo.get().getFechaHora();
+            //boolean cambioLongitud=evento.getFechaHora()!=eventoViejo.get().get;
+
+            //ver si cambio la ubicacion
+            //ver si cambio la fecha
+        }
         return eventoRepository.save(evento);
     }
 
@@ -42,12 +55,16 @@ public class EventoService {
         eventoRepository.deleteById(id);
     }
 
-    public Evento findById(Long id){
+    public Evento findById(Long id) {
         return eventoRepository.findById(id).orElse(null);
     }
-    
-    public List<Evento> eventosProximos(){
+
+    public List<Evento> eventosProximos() {
         return eventoRepository.eventosProximos();
+    }
+
+    public List<Evento> eventosNuevosComunidad(Usuario u) {
+        return eventoRepository.eventosNuevosComunidad(u);
     }
 
 }

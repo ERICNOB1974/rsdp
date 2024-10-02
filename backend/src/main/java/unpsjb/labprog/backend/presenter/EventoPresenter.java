@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.EventoService;
+import unpsjb.labprog.backend.business.UsuarioService;
 import unpsjb.labprog.backend.model.Evento;
+import unpsjb.labprog.backend.model.Usuario;
 
 @RestController
 @RequestMapping("eventos")
@@ -21,6 +23,8 @@ public class EventoPresenter {
 
     @Autowired
     EventoService eventoService;
+    @Autowired
+    UsuarioService usuarioService;
 
     @GetMapping("/findAll")
     public ResponseEntity<Object> findAll() {
@@ -37,6 +41,12 @@ public class EventoPresenter {
         return Response.ok(eventoService.save(evento));
     }
 
+    @RequestMapping(path = "/actualizar", method = RequestMethod.POST)
+    public ResponseEntity<Object> actualizar(@RequestBody Evento evento) {
+        // mandar mail
+        return Response.ok(eventoService.save(evento));
+    }
+
     @GetMapping("/sugerenciasDeEventosBasadosEnEventos/{nombreUsuario}")
     public ResponseEntity<Object> obtenerSugerenciasDeEventosBasadosEnEventos(@PathVariable String nombreUsuario) {
         List<Evento> eventosDeEventos = eventoService.sugerenciaDeEventosBasadosEnEventos(nombreUsuario);
@@ -48,20 +58,28 @@ public class EventoPresenter {
         List<Evento> eventosDeRutinas = eventoService.sugerenciaDeEventosBasadosEnRutinas(nombreUsuario);
         return Response.ok(eventosDeRutinas);
     }
+
     @GetMapping("/sugerenciasDeEventosBasadosEnComunidades/{nombreUsuario}")
     public ResponseEntity<Object> obtenerSugerenciasDeEventosBasadosEnComunidades(@PathVariable String nombreUsuario) {
         List<Evento> eventosDeRutinas = eventoService.sugerenciaDeEventosBasadosEnComunidades(nombreUsuario);
         return Response.ok(eventosDeRutinas);
     }
+
     @GetMapping("/sugerenciasDeEventosBasadosEnAmigos/{nombreUsuario}")
     public ResponseEntity<Object> obtenerSugerenciasDeEventosBasadosEnAmigos(@PathVariable String nombreUsuario) {
         List<Evento> eventosDeRutinas = eventoService.sugerenciasDeEventosBasadosEnAmigos(nombreUsuario);
         return Response.ok(eventosDeRutinas);
     }
+
     @GetMapping("/proximos")
     public ResponseEntity<Object> eventosProximos() {
         List<Evento> eventosDeRutinas = eventoService.eventosProximos();
         return Response.ok(eventosDeRutinas);
+    }
+
+    @GetMapping("/proximos/{id}")
+    public List<Evento> eventosNuevosComunidad(@PathVariable Long id) {
+        return eventoService.eventosNuevosComunidad(usuarioService.findById(id));
     }
 
 }
