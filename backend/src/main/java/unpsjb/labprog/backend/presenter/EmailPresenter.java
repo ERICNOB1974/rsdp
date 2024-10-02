@@ -28,6 +28,11 @@ public class EmailPresenter {
         emailService.enviarMail(email);
         return Response.ok("Correo enviado exitosamente");
     }
+    @PostMapping("/enviar/cambio")
+    public ResponseEntity<Object> sendEmailCambio(@RequestBody Email email) throws MessagingException {
+        emailService.enviarMailCambio(email);
+        return Response.ok("Correo enviado exitosamente");
+    }
 
     @PostMapping("/enviarUsuario/{nombreUsuario}")
     public ResponseEntity<Object> enviarAUsuario(@PathVariable String nombreUsuario) throws MessagingException {
