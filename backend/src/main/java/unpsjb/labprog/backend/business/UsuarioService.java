@@ -55,7 +55,7 @@ public class UsuarioService {
         return usuarioRepository.findByNombreUsuario(nombre).orElse(null);
     }
     public List<Usuario> findByNombreUsuario(Evento e){
-        return usuarioRepository.inscriptosEvento(e);
+        return usuarioRepository.inscriptosEvento(e.getId());
     }
 
 }

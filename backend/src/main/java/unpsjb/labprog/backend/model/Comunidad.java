@@ -7,8 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
 @Getter
@@ -22,24 +21,10 @@ public class Comunidad {
     private Long id;
 
     private String nombre;
-    private LocalDate fechaDeCreacion;
+    private LocalDateTime fechaDeCreacion;
     private String descripcion;
     private int cantidadMaximaMiembros;
     private String ubicacion;
-
-    @Relationship(type = "POSTEA")
-    private List<Publicacion> publicaciones;
-
-    @Relationship(type = "CREADO_POR")
-    private Usuario creador;
-
-    @Relationship(type = "ADMINISTRADO_POR")
-    private List<MiembroDeComunidad> administradores;
-
-    @Relationship(type = "MIEMBRO")
-    private List<MiembroDeComunidad> miembros;
-
-    @Relationship(type = "ETIQUETADA_CON")
-    private List<Etiqueta> etiquetas;
+    private boolean esPrivada;
 
 }

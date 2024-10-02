@@ -19,11 +19,12 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "AND NOT (u)<-[:CREADO_POR]-(e2) " +
                         "AND NOT e2.esPrivadoParaLaComunidad " +
                         "WITH e2, COUNT(DISTINCT et) AS etiquetasComunes " +
-                        "WHERE e2.fechaHora > datetime() + duration({hours: 1}) " +
                         "RETURN e2 " +
                         "ORDER BY etiquetasComunes DESC, e2.fechaHora ASC " +
                         "LIMIT 3")
         List<Evento> sugerenciasDeEventosBasadosEnEventos(String nombreUsuario);
+
+
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:REALIZA_RUTINA]->(:Rutina)-[:ETIQUETADA_CON]->(e:Etiqueta)<-[:ETIQUETADO_CON]-(ev:Evento) "
                         + "WHERE NOT (u)-[:PARTICIPA_EN]->(ev) "
@@ -87,6 +88,12 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "ORDER BY ubicacionCoincide DESC, etiquetasCompartidas DESC, evento.fechaHora ASC " +
                         "LIMIT 3")
         List<Evento> sugerenciasDeEventosBasadosEnComunidades(String nombreUsuario);
+
+        @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento)" +
+                "WHERE id(e) = $idEvento "+
+                "RETURN COUNT(DISTINCT u) AS totalParticipaciones")
+        int panticipantesDeEvento(Long idEvento);
+
 
         @Query("MATCH (e:Evento) " +
         "WHERE date(e.fechaHora) = date(datetime()) + duration({days: 1}) " +

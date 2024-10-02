@@ -1,12 +1,14 @@
 package unpsjb.labprog.backend.business;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import java.util.Comparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import unpsjb.labprog.backend.model.Coordenadas;
 import unpsjb.labprog.backend.model.Evento;
 import unpsjb.labprog.backend.model.Usuario;
 
@@ -15,6 +17,9 @@ public class EventoService {
 
     @Autowired
     EventoRepository eventoRepository;
+
+    @Autowired
+    UsuarioService usuarioService; // Suponiendo que tengas este servicio para acceder al usuario
 
     public List<Evento> findAll() {
         return eventoRepository.findAll();
@@ -65,6 +70,9 @@ public class EventoService {
 
     public List<Evento> eventosNuevosComunidad(Usuario u) {
         return eventoRepository.eventosNuevosComunidad(u);
+      
+    public int participantesDeEvento(Long idEvento) {
+     return eventoRepository.panticipantesDeEvento(idEvento);
     }
 
 }

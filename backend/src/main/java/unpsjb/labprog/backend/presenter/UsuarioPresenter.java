@@ -6,12 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
+import unpsjb.labprog.backend.business.SolicitudAmistadService;
+import unpsjb.labprog.backend.business.UsuarioComunidadService;
 import unpsjb.labprog.backend.business.UsuarioService;
 import unpsjb.labprog.backend.model.Usuario;
 
@@ -21,6 +25,12 @@ public class UsuarioPresenter {
 
     @Autowired
     UsuarioService usuarioService;
+
+    @Autowired
+    private SolicitudAmistadService solicitudAmistadService;
+
+    @Autowired
+    private UsuarioComunidadService usuarioComunidadService;
 
     @GetMapping("/findAll")
     public ResponseEntity<Object> findAll() {
@@ -55,6 +65,28 @@ public class UsuarioPresenter {
         return Response.ok(usuarioService.sugerenciasDeAmigosBasadosEnComunidades(nombreUsuario));
     }
 
+    // Nuevo endpoint para enviar solicitud de amistad
+    @PostMapping("/enviarSolicitudAmistad/{idUsuario}/{idComunidad}")
+    public ResponseEntity<Object> enviarSolicitudAmistad(@PathVariable Long idEmisor, @PathVariable Long idReceptor) {
+        try {
+            String respuesta=solicitudAmistadService.enviarSolicitud(idEmisor, idReceptor);
+            return Response.ok(respuesta);
+        } catch (Exception e) {
+            return Response.error("", "Error al enviar la solicitud: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/solicitarIngresoAComunidad/{idUsuario}/{idComunidad}")
+    public ResponseEntity<Object> solicitarIngresoAComunidad(@PathVariable Long idUsuario,
+            @PathVariable Long idComunidad) {
+        try {
+            String respuesta=usuarioComunidadService.solicitarIngreso(idUsuario, idComunidad);
+            return Response.ok(respuesta);
+        } catch (Exception e) {
+            return Response.error("", "Error al enviar solicitud de ingreso: " + e.getMessage());
+        }
+    }
+
     @RequestMapping(path = "/create", method = RequestMethod.POST)
     public ResponseEntity<Object> create(@RequestBody Usuario usuario) {
         return Response.ok(usuarioService.save(usuario));
@@ -63,6 +95,21 @@ public class UsuarioPresenter {
     @GetMapping("/findById/{id}")
     public ResponseEntity<Object> findById(@PathVariable Long id) {
         return Response.ok(usuarioService.findById(id));
+    }
+    
+     @PostMapping("/gestionarSolicitudAmistad/{idEmisor}/{idReceptor}")
+    public ResponseEntity<Object> gestionarSolicitudAmistad(@PathVariable Long idEmisor, @PathVariable Long idReceptor, @RequestParam boolean aceptada) {
+        try {
+            String respuesta=solicitudAmistadService.gestionarSolicitudAmistad(idEmisor, idReceptor, aceptada);
+            return Response.ok(respuesta);
+        } catch (Exception e) {
+            return Response.error("", "Error al gestionar solicitud de amistad: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/findByNombreUsuario/{nombreUsuario}")
+    public ResponseEntity<Object> findByNombreUsuario(@PathVariable String nombreUsuario) {
+        return Response.ok(usuarioService.findByNombreUsuario(nombreUsuario));
     }
 
 }

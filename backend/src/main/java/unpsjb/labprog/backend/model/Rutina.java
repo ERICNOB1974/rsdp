@@ -26,10 +26,6 @@ public class Rutina {
     
     private Dificultad dificultad;
 
-    @Relationship(type = "TIENE")
-    private List<Ejercicio> ejercicios;
-
-    @Relationship(type = "ETIQUETADA_CON")
-    private List<Etiqueta> etiquetas;
+  
 
 }
