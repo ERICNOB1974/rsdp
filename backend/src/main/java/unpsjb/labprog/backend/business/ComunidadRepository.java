@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Evento;
-import unpsjb.labprog.backend.model.Usuario;
 
 
 import java.time.LocalDate;
