@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
-import org.neo4j.cypherdsl.core.Case;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -74,13 +72,13 @@ public class EmailService {
         if (cambioFecha && cambioUbicacion) {
             mensajeParte2.append("la fecha y la ubicación.");
             mensajeParte2.append("\nNueva fecha: ").append(evento.getFechaHora());
-            mensajeParte2.append("\nNueva ubicación: ").append(evento.getUbicacion());
+            mensajeParte2.append("\nNueva ubicación: ").append("Nueva ubicacion");
         } else if (cambioFecha) {
             mensajeParte2.append("la fecha.");
             mensajeParte2.append("\nNueva fecha: ").append(evento.getFechaHora());
         } else if (cambioUbicacion) {
             mensajeParte2.append("la ubicación.");
-            mensajeParte2.append("\nNueva ubicación: ").append(evento.getUbicacion());
+            mensajeParte2.append("\nNueva ubicación: ").append("nueva ubicacion");
         }
         try {
             for (Usuario usuario : listaUsuarios) {
