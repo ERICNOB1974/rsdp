@@ -7,6 +7,7 @@ import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.stereotype.Repository;
 
 import unpsjb.labprog.backend.model.Evento;
+import unpsjb.labprog.backend.model.Usuario;
 
 @Repository
 public interface EventoRepository extends Neo4jRepository<Evento, Long> {
@@ -104,6 +105,12 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
         "WHERE date(e.fechaHora) = date(datetime()) + duration({days: 1}) " +
         " RETURN e ORDER BY e.fechaHora ASC")
         List<Evento> eventosProximos();
+
+        @Query("MATCH (e:Evento) " +
+        " WHERE (u)-[:MIEMBRO]->(c:Comunidad)<-[ORGANIZADO_POR]-(e)" +
+        " WHERE date(e.fechaHora) = date(datetime()) - duration({days: 1}) " +
+        " RETURN e ORDER BY e.fechaHora ASC")
+        List<Evento> eventosNuevosComunidad(Usuario u);
 
         
 }
