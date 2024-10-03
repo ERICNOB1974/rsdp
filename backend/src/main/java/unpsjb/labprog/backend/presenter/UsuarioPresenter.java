@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
+import unpsjb.labprog.backend.business.InscripcionEventoService;
 import unpsjb.labprog.backend.business.SolicitudAmistadService;
 import unpsjb.labprog.backend.business.UsuarioComunidadService;
 import unpsjb.labprog.backend.business.UsuarioService;
@@ -28,6 +29,8 @@ public class UsuarioPresenter {
 
     @Autowired
     private SolicitudAmistadService solicitudAmistadService;
+    @Autowired
+    private InscripcionEventoService inscripcionEventoService;
 
     @Autowired
     private UsuarioComunidadService usuarioComunidadService;
@@ -65,7 +68,6 @@ public class UsuarioPresenter {
         return Response.ok(usuarioService.sugerenciasDeAmigosBasadosEnComunidades(nombreUsuario));
     }
 
-    // Nuevo endpoint para enviar solicitud de amistad
     @PostMapping("/enviarSolicitudAmistad/{idUsuario}/{idComunidad}")
     public ResponseEntity<Object> enviarSolicitudAmistad(@PathVariable Long idEmisor, @PathVariable Long idReceptor) {
         try {
@@ -110,6 +112,16 @@ public class UsuarioPresenter {
     @GetMapping("/findByNombreUsuario/{nombreUsuario}")
     public ResponseEntity<Object> findByNombreUsuario(@PathVariable String nombreUsuario) {
         return Response.ok(usuarioService.findByNombreUsuario(nombreUsuario));
+    }
+
+    @PostMapping("/inscribirseEvento/{idUsuario}/{idEvento}")
+    public ResponseEntity<Object> inscribirseEvento(@PathVariable Long idUsuario, @PathVariable Long idEvento) {
+        try {
+            String respuesta=inscripcionEventoService.inscribirse(idUsuario, idEvento);
+            return Response.ok(respuesta);
+        } catch (Exception e) {
+            return Response.error("", "Error al inscribirse: " + e.getMessage());
+        }
     }
 
 }
