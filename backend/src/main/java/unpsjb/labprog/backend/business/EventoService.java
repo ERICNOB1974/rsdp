@@ -2,19 +2,14 @@ package unpsjb.labprog.backend.business;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-
 import java.util.List;
 import java.util.Optional;
 
-import java.util.Comparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.mail.MessagingException;
-import unpsjb.labprog.backend.model.Coordenadas;
-
 import unpsjb.labprog.backend.model.Evento;
 
 @Service
@@ -53,7 +48,7 @@ public class EventoService {
         Optional<Evento> eventoViejo = eventoRepository.findById(evento.getId());
         if (!eventoViejo.isEmpty()) {
             boolean cambioFecha = evento.getFechaHora() != eventoViejo.get().getFechaHora();
-            boolean cambioUbicacion = evento.getUbicacion() != eventoViejo.get().getUbicacion();
+            boolean cambioUbicacion = (evento.getLatitud() != eventoViejo.get().getLatitud()) || (evento.getLongitud() != eventoViejo.get().getLongitud());
             emailService.enviarMailCambio(cambioFecha, cambioUbicacion, evento);
         }
         if (eventoViejo.isEmpty() && evento.isEsPrivadoParaLaComunidad()) {

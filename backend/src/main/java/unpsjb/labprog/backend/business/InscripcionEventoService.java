@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import unpsjb.labprog.backend.model.Email;
 import unpsjb.labprog.backend.model.Evento;
 
 @Service
