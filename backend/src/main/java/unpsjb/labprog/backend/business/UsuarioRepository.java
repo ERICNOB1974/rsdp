@@ -9,7 +9,6 @@ import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.stereotype.Repository;
 
-import unpsjb.labprog.backend.model.Evento;
 import unpsjb.labprog.backend.model.Usuario;
 
 @Repository

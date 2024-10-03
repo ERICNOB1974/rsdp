@@ -11,20 +11,26 @@ import unpsjb.labprog.backend.model.Evento;
 @Repository
 public interface EventoRepository extends Neo4jRepository<Evento, Long> {
 
-        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(e:Evento)-[:ETIQUETADO_CON]->(et:Etiqueta) "
-                        +
-                        "MATCH (e2:Evento)-[:ETIQUETADO_CON]->(et) " +
-                        "WHERE NOT (u)-[:PARTICIPA_EN]->(e2) " +
-                        "AND NOT (u)<-[:CREADO_POR]-(e2) " +
-                        "AND NOT e2.esPrivadoParaLaComunidad " +
-                        "WITH e2, COUNT(DISTINCT et) AS etiquetasComunes " +
-                        "RETURN e2 " +
-                        "ORDER BY etiquetasComunes DESC, e2.fechaHora ASC " +
-                        "LIMIT 3")
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(e:Evento)-[:ETIQUETADO_CON]->(et:Etiqueta) " +
+        "MATCH (e2:Evento)-[:ETIQUETADO_CON]->(et) " +
+        "WHERE NOT (u)-[:PARTICIPA_EN]->(e2) " +
+        "AND NOT (u)<-[:CREADO_POR]-(e2) " +
+        "AND NOT e2.esPrivadoParaLaComunidad " +
+        "WITH e2, COUNT(DISTINCT et) AS etiquetasComunes, " +
+        "point({latitude: e2.latitud, longitude: e2.longitud}) AS eventoUbicacion, " +
+        "point({latitude: u.latitud, longitude: u.longitud}) AS usuarioUbicacion " +
+        "WITH e2, etiquetasComunes, point.distance(eventoUbicacion, usuarioUbicacion) AS distancia " +
+ 
+        // Aplicar la fórmula ajustada con las variables correctamente pasadas
+        "WITH e2, etiquetasComunes, distancia, " +
+        "(0.85 * etiquetasComunes + 0.15 * (250 / sqrt(distancia + 1000))) AS score " +
+ 
+        // Ordenar por el score calculado
+        "RETURN e2 " +
+        "ORDER BY score DESC, e2.fechaHora ASC " +
+        "LIMIT 3")
         List<Evento> sugerenciasDeEventosBasadosEnEventos(String nombreUsuario);
-
-
-
+ 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:REALIZA_RUTINA]->(:Rutina)-[:ETIQUETADA_CON]->(e:Etiqueta)<-[:ETIQUETADO_CON]-(ev:Evento) "
                         + "WHERE NOT (u)-[:PARTICIPA_EN]->(ev) "
                         + "AND NOT (u)<-[:CREADO_POR]-(ev) "

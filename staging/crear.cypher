@@ -2,6 +2,20 @@
 UNWIND range(1, 50) AS i
 CREATE (u:Usuario {
   nombreUsuario: "usuario" + i,
+  latitud:
+  
+  
+CASE
+   WHEN i % 2 = 0 THEN [40.7128, 34.0522, -33.8688, 51.5074, 37.7749][i % 5]
+  ELSE [41.9028, 48.8566, 35.6895, 52.5200, 40.4168][i % 5]
+  END,
+  longitud:
+  
+  
+CASE
+   WHEN i % 2 = 0 THEN [-74.0060, -118.2437, 151.2093, -0.1276, -122.4194][i % 5]
+  ELSE [12.4964, 2.3522, 139.6917, 13.4050, -3.7038][i % 5]
+  END,
   nombreReal:
   
   
@@ -48,6 +62,13 @@ CASE
   UNWIND range(1, 50) AS i
   MATCH (creador:Usuario { nombreUsuario: "usuario" + i })
   CREATE (c:Comunidad {
+    esPrivada:
+    
+    
+CASE
+     WHEN i % 4 = 0 THEN true
+    ELSE false
+    END,
     nombre:
     
     
@@ -63,10 +84,6 @@ CASE
      WHEN i % 2 = 0 THEN ["Grupo de corredores experimentados", "Comunidad para entrenar trail", "Plan de entrenamiento de 10K", "Carreras para novatos", "Corredores intermedios"][(i % 5)]
     ELSE ["Grupo de ciclismo de montaña", "Rutas largas para ciclistas", "Plan de entrenamiento de ciclismo", "Carreras ciclistas para aficionados", "Competencias de ciclismo"][(i % 5)]
     END,
-    ubicacion: ["Puerto Madryn", "Córdoba", "Rosario", "Mendoza", "Tucumán",
-    "Salta", "Santa Fe", "Neuquén", "Mar del Plata", "Bahía Blanca",
-    "Posadas", "La Plata", "San Juan", "San Luis", "Jujuy",
-    "Río Gallegos", "Bariloche", "Paraná", "San Fernando del Valle de Catamarca", "Rafaela"][(i % 20)],
     cantidadMaximaMiembros: 50 + i
     })
     CREATE (creador)<-[:CREADO_POR]-(c)
@@ -104,13 +121,20 @@ CASE
       ELSE ["Torneo de Ciclismo", "Clase de Pilates", "Entrenamiento de CrossFit", "Carrera de Bicicletas", "Campeonato de Basket"][(i % 5)]
       END,
       fechaDeCreacion: date("2023-01-01") + duration('P' + (i % 365) + 'D'),
-      fechaHora: date("2023-01-01") + duration('P' + (i % 365 + 3) + 'D') + duration('PT' + (toInteger(rand() * 24)) + 'H' + toInteger(rand() * 60) + 'M'),
-      ubicacion:
+      fechaHora: datetime("2023-01-01") + duration('P' + (i % 365 + 3) + 'D') + duration('PT' + (toInteger(rand() * 24)) + 'H' + toInteger(rand() * 60) + 'M'),
+      latitud:
       
       
 CASE
-       WHEN i % 2 = 0 THEN ["Parque Central", "Gimnasio Municipal", "Playa Norte", "Estadio Olímpico", "Piscina Comunitaria"][(i % 5)]
-      ELSE ["Parque de Bicicletas", "Centro Deportivo", "Sala de Fitness", "Pista de Atletismo", "Cancha de Baloncesto"][(i % 5)]
+       WHEN i % 2 = 0 THEN [40.7128, 34.0522, -33.8688, 51.5074, 37.7749][i % 5]
+      ELSE [41.9028, 48.8566, 35.6895, 52.5200, 40.4168][i % 5]
+      END,
+      longitud:
+      
+      
+CASE
+       WHEN i % 2 = 0 THEN [-74.0060, -118.2437, 151.2093, -0.1276, -122.4194][i % 5]
+      ELSE [12.4964, 2.3522, 139.6917, 13.4050, -3.7038][i % 5]
       END,
       descripcion:
       
@@ -323,7 +347,7 @@ CASE
             
             UNWIND etiquetasSeleccionadas AS etiqueta
             CREATE (r)-[:ETIQUETADA_CON]->(etiqueta);
-
+            
 //Los usuarios participan en eventos
             
             MATCH (u:Usuario), (e:Evento)

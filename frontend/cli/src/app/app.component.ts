@@ -7,31 +7,46 @@ import { UbicacionService } from './ubicacion.service';
   standalone: true,
   imports: [RouterOutlet],
   template: `
-    <div style="position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;">
-      <div class="d-flex flex-column flex-md-row align-item-center p-1" style="background-color: #222; z-index: 1000;">
-        <h5 class="my-2 mr-md-auto font-weight-normal text-light">Brifal S.A.</h5>
-        <nav class="my-2 my-md-0 mr-md-3">
-          <div class="d-flex align-items-center">
-            <a class="p-2 text-light" href="" style="margin-top: -1px; margin-left: 40px;">Inicio</a>
-            <div class="custom-select-container">
-              <select class="custom-select btn-black" style="margin-left: 40px;" (change)="onOptionSelected($event)">
-                <option value="" selected disabled>Eventos</option>
-                <option value="eventos">Eventos</option>
-                <option value="eventos/new">Nuevo Evento</option>
-              </select>
-            </div>
-            <div class="custom-select-container">
-              <select class="custom-select btn-black" style="margin-left: 40px;" (change)="onOptionSelected($event)">
-                <option value="" selected disabled>Operarios</option>
-                <option value="operarios">Operarios</option>
-                <option value="operarios/new">Nuevo Operario</option>
-              </select>
-            </div>
-          </div>
-        </nav>
-      </div>
+    <div class="sidebar">
+      <ul>
+          <h5 style="text-align: center; margin: 10px;">RSDP</h5>
+          <!-- <li class="logo">
+              <a href="">
+                  <span class="icon"><i class="fa fa-home"></i></span>
+                  <span class="text">Inicio</span>
+              </a>
+          </li> -->
+          <li class="dropdown">
+              <a class="dropdown-toggle">
+                  <span class="icon"><i class="fa fa-calendar"></i></span>
+                  <span class="text">Eventos</span>
+              </a>
+              <ul class="dropdown-menu">
+                  <li>
+                      <a href="/eventos">Listar eventos</a>
+                  </li>
+                  <li>
+                      <a href="/eventos/new">Crear evento</a>
+                  </li>
+              </ul>
+          </li>
+          <li class="dropdown">
+              <a class="dropdown-toggle">
+                <span class="icon"><i class="fa fa-users"></i></span>
+                <span class="text">Comunidades</span>
+              </a>
+              <ul class="dropdown-menu">
+                  <li>
+                      <a href="/comunidades">Listar comunidades</a>
+                  </li>
+                  <li>
+                      <a href="/comunidades/new">Crear comunidad</a>
+                  </li>
+              </ul>
+          </li>
+      </ul>
     </div>
-    <div style="margin-top: 70px; height: calc(100vh - 70px);">
+    <div class="main-content">
       <router-outlet></router-outlet>
     </div>
   `,
@@ -42,13 +57,8 @@ export class AppComponent {
     private router: Router,
     private ubicacionService: UbicacionService) {}
 
-  onOptionSelected(event: any) {
-    const route = event.target.value;
-    if (route) {
-      this.router.navigateByUrl(route).then(() => {
-        event.target.value = '';
-      });
-    }
+  navigateTo(route: string) {
+    this.router.navigateByUrl(route);
   }
 
   ngOnInit(): void {
@@ -59,11 +69,9 @@ export class AppComponent {
     this.ubicacionService.obtenerUbicacion().then(() => {
       const latitud = this.ubicacionService.getLatitud();
       const longitud = this.ubicacionService.getLongitud();
-      // Puedes enviar la ubicación al backend si lo deseas
       console.log(`Ubicación actual: ${latitud}, ${longitud}`);
     }).catch((error) => {
       console.error('Error obteniendo la ubicación:', error);
     });
   }
-
 }
