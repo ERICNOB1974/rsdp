@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.mail.MessagingException;
 import unpsjb.labprog.backend.model.Evento;
+import unpsjb.labprog.backend.model.Usuario;
 
 @Service
 public class EventoService {
@@ -92,6 +93,10 @@ public class EventoService {
 
     public List<Evento> eventosProximos() {
         return eventoRepository.eventosProximos();
+    }
+
+    public List<Evento> eventosNuevosComunidad(Usuario u) {
+        return eventoRepository.eventosNuevosComunidad(u);
     }
 
     public int participantesDeEvento(Long idEvento) {
