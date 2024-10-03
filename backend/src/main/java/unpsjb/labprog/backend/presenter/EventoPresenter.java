@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.mail.MessagingException;
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.EventoService;
 import unpsjb.labprog.backend.business.UsuarioService;
 import unpsjb.labprog.backend.model.Evento;
-import unpsjb.labprog.backend.model.Usuario;
 
 @RestController
 @RequestMapping("eventos")
@@ -25,8 +25,6 @@ public class EventoPresenter {
     EventoService eventoService;
     @Autowired
     UsuarioService usuarioService;
-
-
 
     @RequestMapping(path = "/findAll", method = RequestMethod.GET)
     public ResponseEntity<Object> findAll() {
@@ -45,13 +43,12 @@ public class EventoPresenter {
 
 
     @RequestMapping(path = "/create", method = RequestMethod.POST)
-    public ResponseEntity<Object> create(@RequestBody Evento evento) {
+    public ResponseEntity<Object> create(@RequestBody Evento evento) throws MessagingException {
         return Response.ok(eventoService.save(evento));
     }
 
     @RequestMapping(path = "/actualizar", method = RequestMethod.POST)
-    public ResponseEntity<Object> actualizar(@RequestBody Evento evento) {
-        // mandar mail
+    public ResponseEntity<Object> actualizar(@RequestBody Evento evento) throws MessagingException {
         return Response.ok(eventoService.save(evento));
     }
 
@@ -85,9 +82,6 @@ public class EventoPresenter {
         return Response.ok(eventosDeRutinas);
     }
 
-    @GetMapping("/proximos/{id}")
-    public List<Evento> eventosNuevosComunidad(@PathVariable Long id) {
-        return eventoService.eventosNuevosComunidad(usuarioService.findById(id));
-    }
+  
 
 }

@@ -1,5 +1,9 @@
 package unpsjb.labprog.backend.business;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -7,6 +11,10 @@ import java.util.Comparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.mail.MessagingException;
+import unpsjb.labprog.backend.model.Coordenadas;
+
 import unpsjb.labprog.backend.model.Evento;
 
 @Service
@@ -16,7 +24,9 @@ public class EventoService {
     EventoRepository eventoRepository;
 
     @Autowired
-    UsuarioService usuarioService; // Suponiendo que tengas este servicio para acceder al usuario
+    UsuarioService usuarioService;
+    @Autowired
+    EmailService emailService;
 
     public List<Evento> findAll() {
         return eventoRepository.findAll();
@@ -39,16 +49,40 @@ public class EventoService {
     }
 
     @Transactional
-    public Evento save(Evento evento) {
-       Optional<Evento> eventoViejo= eventoRepository.findById(evento.getId());
-        if (!eventoViejo.isEmpty()){
-            boolean cambioFecha=evento.getFechaHora()!=eventoViejo.get().getFechaHora();
-            //boolean cambioLatitud=evento.getFechaHora()!=eventoViejo.get().getFechaHora();
-            //boolean cambioLongitud=evento.getFechaHora()!=eventoViejo.get().get;
-
-            //ver si cambio la ubicacion
-            //ver si cambio la fecha
+    public Evento save(Evento evento) throws MessagingException {
+        Optional<Evento> eventoViejo = eventoRepository.findById(evento.getId());
+        if (!eventoViejo.isEmpty()) {
+            boolean cambioFecha = evento.getFechaHora() != eventoViejo.get().getFechaHora();
+            boolean cambioUbicacion = evento.getUbicacion() != eventoViejo.get().getUbicacion();
+            emailService.enviarMailCambio(cambioFecha, cambioUbicacion, evento);
         }
+        if (eventoViejo.isEmpty() && evento.isEsPrivadoParaLaComunidad()) {
+            emailService.enviarMail();
+        }
+
+        //suponiendo que se crea ahora mismo
+        if (evento.getFechaHora().isAfter(ZonedDateTime.now()) || 
+        evento.getFechaHora().isEqual(ZonedDateTime.now())) {
+
+        }
+        //falta considerar cuando recien lo crea
+        if (eventoRepository.esOrganizadoPorComunidad(evento) && !evento.isEsPrivadoParaLaComunidad()){
+
+        }
+        if (evento.getFechaDeCreacion().isAfter(LocalDate.now())){
+
+        }
+        //que el creador no sea nulo
+        /* if (evento){
+
+        } */
+
+        //opciones para cuando hay una relacion
+        /*
+         * 1. establecer la relacion aca obligatoriamente si es nuevo el evento.
+         *  si es viejo la busco. si quiero actualizar esa relacion no permitir que la actualice mal
+         * 
+         */
         return eventoRepository.save(evento);
     }
 
@@ -65,11 +99,8 @@ public class EventoService {
         return eventoRepository.eventosProximos();
     }
 
-    public List<Evento> eventosNuevosComunidad(Usuario u) {
-        return eventoRepository.eventosNuevosComunidad(u);
-      
     public int participantesDeEvento(Long idEvento) {
-     return eventoRepository.panticipantesDeEvento(idEvento);
+        return eventoRepository.participantesDeEvento(idEvento);
     }
 
 }

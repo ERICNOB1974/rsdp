@@ -7,6 +7,9 @@ import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.stereotype.Repository;
 
 import unpsjb.labprog.backend.model.Comunidad;
+import unpsjb.labprog.backend.model.Evento;
+import unpsjb.labprog.backend.model.Usuario;
+
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,28 +22,28 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
     List<Comunidad> findByNombre(String nombre);
 
     @Query("MATCH (u:Usuario {nombreUsuario: })-[:ES_AMIGO_DE]-(amigo)-[:MIEMBRO]-(comunidad:Comunidad) " +
-        "WHERE NOT (u)-[:MIEMBRO]-(comunidad) " +
-       "WITH comunidad, COUNT(DISTINCT amigo) AS amigosEnComun " +
-       "RETURN comunidad " +
-       "ORDER BY amigosEnComun DESC " + 
-       "LIMIT 3")
+            "WHERE NOT (u)-[:MIEMBRO]-(comunidad) " +
+            "WITH comunidad, COUNT(DISTINCT amigo) AS amigosEnComun " +
+            "RETURN comunidad " +
+            "ORDER BY amigosEnComun DESC " +
+            "LIMIT 3")
     List<Comunidad> recomendarComunidadesPorAmigos(String nombreUsuario);
 
     @Query("MATCH (c:Comunidad), (u:Usuario) WHERE id(c) = $idComunidad AND id(u) = $idUsuario " +
-    "CREATE (c)<-[:MIEMBRO {fechaIngreso: $fechaIngreso}]-(u)")
+            "CREATE (c)<-[:MIEMBRO {fechaIngreso: $fechaIngreso}]-(u)")
     void nuevoMiembro(Long idComunidad, Long idUsuario, LocalDateTime fechaIngreso);
 
-
     @Query("MATCH (u:Usuario)-[r]-(c:Comunidad) " +
-       "WHERE id(u) = $idMiembro AND id(c) = $idComunidad " +
-       "RETURN r.fechaIngreso")
-       ZonedDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
-    
+            "WHERE id(u) = $idMiembro AND id(c) = $idComunidad " +
+            "RETURN r.fechaIngreso")
+    ZonedDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
+
     @Query("MATCH (c:Comunidad)<-[r:MIEMBRO]-(u:Usuario) " +
-    "WHERE id(c) = $idComunidad AND id(u) = $idMiembro " +
-    "DELETE r " +
-    "CREATE (u)<-[:ADMINISTRADA_POR {fechaIngreso: $fechaIngreso, fechaOtorgacion: $fechaOtorgacion}]-(c)")
-    void otorgarRolAdministrador(Long idMiembro, Long idComunidad, ZonedDateTime fechaIngreso,LocalDateTime fechaOtorgacion);
+            "WHERE id(c) = $idComunidad AND id(u) = $idMiembro " +
+            "DELETE r " +
+            "CREATE (u)<-[:ADMINISTRADA_POR {fechaIngreso: $fechaIngreso, fechaOtorgacion: $fechaOtorgacion}]-(c)")
+    void otorgarRolAdministrador(Long idMiembro, Long idComunidad, ZonedDateTime fechaIngreso,
+            LocalDateTime fechaOtorgacion);
 
     @Query("MATCH (c:Comunidad)-[r:ADMINISTRADA_POR]->(u:Usuario) " +
     "WHERE id(c) = $idComunidad AND id(u) = $idMiembro " +
@@ -59,9 +62,14 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
             "DELETE r" )
     void eliminarSolicitudIngreso(Long idUsuario, Long idComunidad);
 
-    @Query("MATCH (u:Usuario)-[r]-(c:Comunidad {id: $idComunidad}) "+
-            "WHERE type(r) <> 'SOLICITUD_DE_INGRESO '"+
+    @Query("MATCH (u:Usuario)-[r]-(c:Comunidad {id: $idComunidad}) " +
+            "WHERE type(r) <> 'SOLICITUD_DE_INGRESO '" +
             "RETURN count(DISTINCT u) AS totalUsuarios")
     int cantidadUsuarios(Long idComunidad);
-   
+
+    @Query("MATCH (e:Evento) " +
+            " WHERE (u)-[:MIEMBRO]->(c:Comunidad)<-[ORGANIZADO_POR]-(e)" +
+            " RETURN c")
+    Comunidad comunidadOrganizadora(Evento e);
+
 }

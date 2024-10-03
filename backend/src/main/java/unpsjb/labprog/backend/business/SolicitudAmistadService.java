@@ -63,4 +63,26 @@ public class SolicitudAmistadService {
         usuarioRepository.rechazarSolicitudAmistad(idEmisor, idReceptor);
         return "Solicitud de amistad rechazada correctamente";
     }
+
+    public String cancelarSolicitud(Long idEmisor, Long idReceptor) throws Exception {
+        Optional<Usuario> emisorOpt = usuarioRepository.findById(idEmisor);
+        Optional<Usuario> receptorOpt = usuarioRepository.findById(idReceptor);
+
+        if (emisorOpt.isEmpty() || receptorOpt.isEmpty()) {
+            throw new Exception("Usuario no encontrado.");
+        }
+        if (idEmisor.equals(idReceptor)) {
+            throw new Exception("No puedes cancelar una solicitud a ti mismo.");
+        }
+
+        if (usuarioRepository.sonAmigos(idEmisor, idReceptor)) {
+            throw new Exception("Ya existe una relación de amistad entre los usuarios.");
+        }
+
+        if (!usuarioRepository.haySolicitud(idEmisor, idReceptor)) {
+            throw new Exception("No existe una solicitud de amistad entre los usuarios.");
+        }
+        usuarioRepository.rechazarSolicitudAmistad(idEmisor, idReceptor);
+        return "Solicitud enviada correctamente";
+    }
 }
