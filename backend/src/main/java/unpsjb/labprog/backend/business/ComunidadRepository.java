@@ -20,6 +20,24 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
     // Buscar comunidades por nombre
     List<Comunidad> findByNombre(String nombre);
 
+    @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta), " +
+    "(comunidadRecomendada:Comunidad)-[:ETIQUETADA_CON]->(etiqueta) " +
+    "WHERE NOT (u)-[:MIEMBRO|:CREADO_POR|:ADMINISTRADO_POR]->(comunidadRecomendada) " +
+    "WITH comunidadRecomendada, COUNT(DISTINCT etiqueta) AS etiquetasEnComun " +
+    "RETURN comunidadRecomendada " +
+    "ORDER BY etiquetasEnComun DESC " +
+    "LIMIT 3")
+    List<Comunidad> sugerenciasDeComunidadesBasadasEnComunidades(String nombreUsuario);
+
+    @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(evento:Evento)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta), " +
+    "(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta) " +
+    "WHERE NOT (u)-[:MIEMBRO|:CREADO_POR|:ADMINISTRADO_POR]->(comunidad) " +
+    "WITH comunidad, COUNT(DISTINCT etiqueta) AS etiquetasEnComun " +
+    "RETURN comunidad " +
+    "ORDER BY etiquetasEnComun DESC " +
+    "LIMIT 3")
+    List<Comunidad> sugerenciasDeComunidadesBasadasEnEventos(String nombreUsuario);
+
     @Query("MATCH (u:Usuario {nombreUsuario: })-[:ES_AMIGO_DE]-(amigo)-[:MIEMBRO]-(comunidad:Comunidad) " +
             "WHERE NOT (u)-[:MIEMBRO]-(comunidad) " +
             "WITH comunidad, COUNT(DISTINCT amigo) AS amigosEnComun " +

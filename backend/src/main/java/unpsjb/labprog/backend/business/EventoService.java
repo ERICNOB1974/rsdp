@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.mail.MessagingException;
 import unpsjb.labprog.backend.model.Evento;
+import unpsjb.labprog.backend.model.Usuario;
 
 @Service
 public class EventoService {
