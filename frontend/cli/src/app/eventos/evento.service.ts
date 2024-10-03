@@ -15,8 +15,6 @@ export class EventoService {
     private http: HttpClient
   ) { }
 
-
-
   all(): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.eventosUrl}/findAll`);
   }
@@ -29,8 +27,7 @@ export class EventoService {
     return evento.id ? this.http.put<DataPackage>(this.eventosUrl, evento) :
       this.http.post<DataPackage>(this.eventosUrl, evento);
   }
-
-
+  
   participantesEnEvento(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.eventosUrl}/${id}/participantes`);
   }
