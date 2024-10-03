@@ -19,13 +19,7 @@ CASE
   ELSE ["Torneo de Ciclismo", "Clase de Pilates", "Entrenamiento de CrossFit", "Carrera de Bicicletas", "Campeonato de Basket"][(i % 5)]
   END,
   fechaDeCreacion: date("2023-01-01") + duration('P' + (i % 365) + 'D'),
-  fechaHora: date("2023-01-01") + duration('P' + (i % 365 + 3) + 'D') + duration('PT' + (toInteger(rand() * 24)) + 'H' + toInteger(rand() * 60) + 'M'),
-  ubicacion:
-  
-CASE
-   WHEN i % 2 = 0 THEN ["Parque Central", "Gimnasio Municipal", "Playa Norte", "Estadio Olímpico", "Piscina Comunitaria"][(i % 5)]
-  ELSE ["Parque de Bicicletas", "Centro Deportivo", "Sala de Fitness", "Pista de Atletismo", "Cancha de Baloncesto"][(i % 5)]
-  END,
+  fechaHora: datetime("2023-01-01") + duration('P' + (i % 365 + 3) + 'D') + duration('PT' + (toInteger(rand() * 24)) + 'H' + toInteger(rand() * 60) + 'M'),
   descripcion:
   
   
