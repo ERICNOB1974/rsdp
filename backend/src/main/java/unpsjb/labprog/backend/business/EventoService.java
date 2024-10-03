@@ -3,6 +3,7 @@ package unpsjb.labprog.backend.business;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -13,8 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.mail.MessagingException;
 import unpsjb.labprog.backend.model.Coordenadas;
+
 import unpsjb.labprog.backend.model.Evento;
-import unpsjb.labprog.backend.model.Usuario;
 
 @Service
 public class EventoService {

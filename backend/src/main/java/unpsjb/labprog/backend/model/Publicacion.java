@@ -1,11 +1,8 @@
 package unpsjb.labprog.backend.model;
 
-import java.util.List;
-
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
-import org.springframework.data.neo4j.core.schema.Relationship;
 
 import lombok.Data;
 import lombok.Getter;

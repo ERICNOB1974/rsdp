@@ -27,6 +27,8 @@ public class Usuario {
     private String correoElectronico;
     private String contrasena;
     private String descripcion;
-    private Coordenadas ubicacion;
+    private double latitud;
+    private double longitud;
+
     
 }

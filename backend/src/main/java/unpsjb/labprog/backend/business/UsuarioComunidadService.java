@@ -1,14 +1,13 @@
 package unpsjb.labprog.backend.business;
 
-import org.neo4j.driver.internal.value.DateTimeValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Usuario;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.util.Optional;
 import java.util.List;
 @Service
@@ -124,8 +123,8 @@ public class UsuarioComunidadService {
         if (miembroOpt.isEmpty()) {
             throw new Exception("El usuario no existe.");
         }
-        comunidad.setFechaDeCreacion(LocalDateTime.now()); // Establece la fecha aquí
-        return comunidadRepository.guardarComunidadYCreador(comunidad.getNombre(), comunidad.getDescripcion(), comunidad.getCantidadMaximaMiembros(), comunidad.getUbicacion(), comunidad.isEsPrivada() , idUsuario, comunidad.getFechaDeCreacion());
+        comunidad.setFechaDeCreacion(LocalDate.now()); // Establece la fecha aquí
+        return comunidadRepository.guardarComunidadYCreador(comunidad.getNombre(), comunidad.getDescripcion(), comunidad.getCantidadMaximaMiembros(), comunidad.isEsPrivada() , idUsuario, comunidad.getFechaDeCreacion());
     }
 
     public String gestionarSolicitudes(Long idSuperUsuario,Long idUsuario,Long idComunidad,boolean aceptar) throws Exception {
