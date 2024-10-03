@@ -59,7 +59,7 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
                         "RETURN COUNT(a) > 0")
         boolean sonAmigos(Long idEmisor, Long idReceptor);
 
-        @Query("MATCH (a:Usuario)-[r:ENVIA_SOLICITUD]->(b:Usuario) " +
+        @Query("MATCH (a:Usuario)-[r:SOLICITUD_DE_AMISTADO]->(b:Usuario) " +
                         "WHERE id(a) = $idEmisor AND id(b) = $idReceptor " +
                         "RETURN COUNT(r) > 0")
         boolean solicitudAmistadExiste(Long idEmisor, Long idReceptor);
