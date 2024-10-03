@@ -95,20 +95,27 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
         List<Evento> sugerenciasDeEventosBasadosEnComunidades(String nombreUsuario);
     
         @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento)" +
-                "WHERE id(e) = $idEvento "+
-                "RETURN COUNT(DISTINCT u) AS totalParticipaciones")
-        int panticipantesDeEvento(Long idEvento);
+                        "WHERE id(e) = $idEvento " +
+                        "RETURN COUNT(DISTINCT u) AS totalParticipaciones")
+        int participantesDeEvento(Long idEvento);
+        @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento)" +
+                        "WHERE id(e) = $idEvento " +
+                        "RETURN u")
+        List<Usuario> inscriptosEvento(Long idEvento);
 
         @Query("MATCH (e:Evento) " +
-        "WHERE date(e.fechaHora) = date(datetime()) + duration({days: 1}) " +
-        " RETURN e ORDER BY e.fechaHora ASC")
+                        "WHERE date(e.fechaHora) = date(datetime()) + duration({days: 1}) " +
+                        " RETURN e ORDER BY e.fechaHora ASC")
         List<Evento> eventosProximos();
 
-        @Query("MATCH (e:Evento) " +
-        " WHERE (u)-[:MIEMBRO]->(c:Comunidad)<-[ORGANIZADO_POR]-(e)" +
-        " WHERE date(e.fechaHora) = date(datetime()) - duration({days: 1}) " +
-        " RETURN e ORDER BY e.fechaHora ASC")
-        List<Evento> eventosNuevosComunidad(Usuario u);
+        @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento) " +
+                        "WHERE id(u) = $idUsuario AND id(e) = $idEvento " +
+                        "RETURN COUNT(e) > 0")
+        boolean participa(Long idUsuario, Long idEvento);
 
-        
+        @Query("MATCH (e:Evento) " +
+                        " WHERE (u)-[:MIEMBRO]->(c:Comunidad)<-[ORGANIZADO_POR]-(e)" +
+                        " RETURN COUNT(c)>0")
+        boolean esOrganizadoPorComunidad(Evento e);
+
 }

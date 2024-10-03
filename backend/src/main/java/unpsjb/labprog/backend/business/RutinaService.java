@@ -26,6 +26,12 @@ public class RutinaService {
 
     @Transactional
     public Rutina save(Rutina rutina) {
+        if(rutina.getNombre()==null){
+
+        }
+
+        //if rutina no tiene ejercicios
+
         return rutinaRepository.save(rutina);
     }
 
