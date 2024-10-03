@@ -1,6 +1,9 @@
 package unpsjb.labprog.backend.business;
 
 import java.util.List;
+import java.util.Optional;
+
+import java.util.Comparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +40,15 @@ public class EventoService {
 
     @Transactional
     public Evento save(Evento evento) {
+       Optional<Evento> eventoViejo= eventoRepository.findById(evento.getId());
+        if (!eventoViejo.isEmpty()){
+            boolean cambioFecha=evento.getFechaHora()!=eventoViejo.get().getFechaHora();
+            //boolean cambioLatitud=evento.getFechaHora()!=eventoViejo.get().getFechaHora();
+            //boolean cambioLongitud=evento.getFechaHora()!=eventoViejo.get().get;
+
+            //ver si cambio la ubicacion
+            //ver si cambio la fecha
+        }
         return eventoRepository.save(evento);
     }
 
@@ -45,14 +57,17 @@ public class EventoService {
         eventoRepository.deleteById(id);
     }
 
-    public Evento findById(Long id){
+    public Evento findById(Long id) {
         return eventoRepository.findById(id).orElse(null);
     }
-    
-    public List<Evento> eventosProximos(){
+
+    public List<Evento> eventosProximos() {
         return eventoRepository.eventosProximos();
     }
 
+    public List<Evento> eventosNuevosComunidad(Usuario u) {
+        return eventoRepository.eventosNuevosComunidad(u);
+      
     public int participantesDeEvento(Long idEvento) {
      return eventoRepository.panticipantesDeEvento(idEvento);
     }
