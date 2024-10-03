@@ -1,3 +1,143 @@
-/* You can add global styles to this file, and also import other style files */
+/* Importaciones y estilos globales */
 @import 'bootstrap/dist/css/bootstrap.min.css';
 @import "font-awesome/css/font-awesome.css";
+@import url('https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    background: #ffffff;
+    display: flex; /* Usar flexbox para el cuerpo */
+}
+
+/* Barra lateral */
+.sidebar {
+    position: fixed; 
+    width: 200px; /* Ancho fijo de la barra */
+    height: 100vh;
+    background: #fff;
+    z-index: 999; /* Asegúrate de que esté por encima de otros elementos */
+    overflow-y: auto; /* Permitir desplazamiento si el contenido excede la altura */
+}
+
+.sidebar ul {
+    position: relative;
+    height: auto; /* Permite que la lista se ajuste al contenido */
+    padding: 0; /* Elimina padding para que no haya espacio extra */
+}
+
+.sidebar ul li {
+    list-style: none;
+    position: relative; /* Necesario para el submenú */
+}
+
+.sidebar ul li:hover {
+    background: #f3f3f3;
+}
+
+.sidebar ul li a {
+    position: relative;
+    display: flex;
+    align-items: center; /* Alinea verticalmente */
+    white-space: nowrap;
+    text-decoration: none;
+    height: 60px; /* Altura uniforme para cada enlace */
+}
+
+.sidebar ul li a .icon {
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    min-width: 60px;
+    height: 60px; /* Altura uniforme para los iconos */
+    font-size: 1.5em;
+    color: #333;
+}
+
+.sidebar ul li a .text {
+    display: flex;
+    align-items: center; /* Alinea verticalmente el texto */
+    font-size: 1em;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Estilos del submenú */
+.dropdown-menu {
+    display: none; /* Ocultar el submenú por defecto */
+    position: absolute; /* Para que aparezca encima */
+    top: 0px; /* Ajustar al tamaño del botón */
+    left: 0; /* Alinear con el botón */
+    background: #fff; /* Fondo del submenú */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra para el submenú */
+    z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
+    padding: 0; /* Eliminar padding para reducir la distancia */
+}
+
+.dropdown-menu li {
+    margin: 0; /* Eliminar márgenes para pegar más las opciones */
+}
+
+.dropdown-menu li a {
+    display: flex; /* Usar flexbox para centrar */
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+    height: 40px; /* Altura del rectángulo */
+    text-decoration: none; /* Sin subrayado */
+    color: #333; /* Color del texto */
+}
+
+.dropdown:hover .dropdown-menu,
+.dropdown:focus-within .dropdown-menu {
+    display: block; /* Mostrar el submenú al pasar el mouse o al tener el foco */
+}
+
+.sidebar ul li.logo {
+    margin-bottom: 5px;
+}
+
+.sidebar ul li.logo:hover {
+    background: #fff;
+}
+
+.sidebar ul li.logo .icon {
+    font-size: 2em;
+}
+
+.sidebar ul li.logo .text {
+    font-size: 1.2em;
+    font-weight: 500;
+}
+
+/* Contenido principal */
+.main-content {
+    margin-left: 200px; /* Espacio para la barra lateral */
+    padding: 20px; /* Espaciado alrededor del contenido */
+    width: calc(100% - 200px); /* Ajustar el ancho para evitar superposición */
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .sidebar {
+        position: relative; /* Cambiar a relativo en pantallas pequeñas */
+        width: 100%; /* Ancho completo en pantallas pequeñas */
+        height: auto; /* Permitir altura automática */
+    }
+
+    .main-content {
+        margin-left: 0; /* Sin margen en pantallas pequeñas */
+        width: 100%; /* Ancho completo para el contenido */
+    }
+
+    .dropdown-menu {
+        position: static; /* Cambiar a estático en pantallas pequeñas */
+        width: 100%; /* Ancho completo del submenú */
+    }
+}

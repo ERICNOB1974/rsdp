@@ -18,7 +18,7 @@ public class SolicitudAmistad {
     @GeneratedValue
     private Long id;
 
-    private String estado; // pendiente, aceptada, rechazada
+    private EstadoSolicitud estado; // pendiente, aceptada, rechazada
     private LocalDateTime fechaEnvio;
 
     @TargetNode
