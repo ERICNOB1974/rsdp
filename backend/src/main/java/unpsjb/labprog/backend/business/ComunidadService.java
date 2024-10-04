@@ -18,8 +18,16 @@ public class ComunidadService {
         return comunidadRepository.findAll();
     }
 
-    public List<Comunidad> recomendarComunidadesPorAmigos(String nombreDeUsuario){
-        return comunidadRepository.recomendarComunidadesPorAmigos(nombreDeUsuario);
+    public List<Comunidad> sugerenciasDeComunidadesBasadasEnAmigos(String nombreDeUsuario){
+        return comunidadRepository.sugerenciasDeComunidadesBasadasEnAmigos(nombreDeUsuario);
+    }
+
+    public List<Comunidad> sugerenciasDeComunidadesBasadasEnComunidades(String nombreDeUsuario){
+        return comunidadRepository.sugerenciasDeComunidadesBasadasEnComunidades(nombreDeUsuario);
+    }
+
+    public List<Comunidad> sugerenciasDeComunidadesBasadasEnEventos(String nombreDeUsuario){
+        return comunidadRepository.sugerenciasDeComunidadesBasadasEnEventos(nombreDeUsuario);
     }
 
     @Transactional
