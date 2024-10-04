@@ -1,19 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router'; // Importamos para obtener el parámetro de la URL
-import { EventoService } from './evento.service'; // Servicio para obtener los eventos
-import { Evento } from './evento'; // Modelo del evento
 import { Location } from '@angular/common'; // Para permitir navegar de vuelta
+import { ComunidadService } from './comunidad.service';
+import { Comunidad } from './comunidad';
 
 @Component({
-  selector: 'app-evento-detail',
-  templateUrl: './eventos-detail.component.html',
+  selector: 'app-comunidad-detail',
+  templateUrl: './comunidad-detail.component.html',
 })
-export class EventoDetailComponent implements OnInit {
-  evento: Evento | undefined ; // Evento específico que se va a mostrar
+export class ComunidadDetailComponent implements OnInit {
+  comunidad: Comunidad | undefined ; // Evento específico que se va a mostrar
 
   constructor(
     private route: ActivatedRoute, // Para obtener el parámetro de la URL
-    private eventoService: EventoService, // Servicio para obtener el evento por ID
+    private comunidadService: ComunidadService, // Servicio para obtener el evento por ID
     private location: Location // Para manejar la navegación
   ) {}
 
@@ -24,14 +24,12 @@ export class EventoDetailComponent implements OnInit {
   getEvento(): void {
     const id = this.route.snapshot.paramMap.get('id')!;
     if (id === 'new') {  
-        this.evento = <Evento>{};
+        this.comunidad = <Comunidad>{};
     }
     else {
-        this.eventoService.get(parseInt(id)).subscribe(dataPackage => this.evento = <Evento>dataPackage.data);
+        this.comunidadService.get(parseInt(id)).subscribe(dataPackage => this.comunidad = <Comunidad>dataPackage.data);
     }
 }
-
-
 
   // Método para regresar a la página anterior
   goBack(): void {
