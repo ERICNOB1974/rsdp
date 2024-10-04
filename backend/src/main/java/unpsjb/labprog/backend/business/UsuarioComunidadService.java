@@ -124,7 +124,7 @@ public class UsuarioComunidadService {
             throw new Exception("El usuario no existe.");
         }
         comunidad.setFechaDeCreacion(LocalDate.now()); // Establece la fecha aquí
-        return comunidadRepository.guardarComunidadYCreador(comunidad.getNombre(), comunidad.getDescripcion(), comunidad.getCantidadMaximaMiembros(), comunidad.isEsPrivada() , idUsuario, comunidad.getFechaDeCreacion());
+        return comunidadRepository.guardarComunidadYCreador(comunidad.getNombre(), comunidad.getDescripcion(), comunidad.getCantidadMaximaMiembros(), comunidad.isEsPrivada() , idUsuario, comunidad.getFechaDeCreacion(), comunidad.getLatitud(), comunidad.getLatitud());
     }
 
     public String gestionarSolicitudes(Long idSuperUsuario,Long idUsuario,Long idComunidad,boolean aceptar) throws Exception {

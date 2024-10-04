@@ -31,10 +31,22 @@ public class ComunidadPresenter {
         return Response.ok(comunidadService.save(comunidad));
     }
 
-    @GetMapping("/recomendarComunidadesPorAmigos/{nombreUsuario}")
-    public ResponseEntity<Object> recomendarComunidadesPorAmigos(@PathVariable String nombreUsuario) {
-        List<Comunidad> recomendarComunidadesPorAmigos = comunidadService.recomendarComunidadesPorAmigos(nombreUsuario);
-        return Response.ok(recomendarComunidadesPorAmigos);
+    @GetMapping("/sugerenciasDeComunidadesBasadasEnAmigos/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeComunidadesBasadasEnAmigos(@PathVariable String nombreUsuario) {
+        List<Comunidad> sugerenciasDeComunidadesBasadasEnAmigos = comunidadService.sugerenciasDeComunidadesBasadasEnAmigos(nombreUsuario);
+        return Response.ok(sugerenciasDeComunidadesBasadasEnAmigos);
+    }
+
+    @GetMapping("/sugerenciasDeComunidadesBasadasEnComunidades/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeComunidadesBasadasEnComunidades(@PathVariable String nombreUsuario) {
+        List<Comunidad> sugerenciasDeComunidadesBasadasEnComunidades = comunidadService.sugerenciasDeComunidadesBasadasEnComunidades(nombreUsuario);
+        return Response.ok(sugerenciasDeComunidadesBasadasEnComunidades);
+    }
+
+    @GetMapping("/sugerenciasDeComunidadesBasadasEnEventos/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeComunidadesBasadasEnEventos(@PathVariable String nombreUsuario) {
+        List<Comunidad> sugerenciasDeComunidadesBasadasEnEventos = comunidadService.sugerenciasDeComunidadesBasadasEnEventos(nombreUsuario);
+        return Response.ok(sugerenciasDeComunidadesBasadasEnEventos);
     }
 
     @GetMapping("/findById/{id}")

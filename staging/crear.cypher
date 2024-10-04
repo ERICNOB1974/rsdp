@@ -62,6 +62,20 @@ CASE
   UNWIND range(1, 50) AS i
   MATCH (creador:Usuario { nombreUsuario: "usuario" + i })
   CREATE (c:Comunidad {
+      latitud:
+      
+      
+CASE
+       WHEN i % 2 = 0 THEN [40.7128, 34.0522, -33.8688, 51.5074, 37.7749][i % 5]
+      ELSE [41.9028, 48.8566, 35.6895, 52.5200, 40.4168][i % 5]
+      END,
+      longitud:
+      
+      
+CASE
+       WHEN i % 2 = 0 THEN [-74.0060, -118.2437, 151.2093, -0.1276, -122.4194][i % 5]
+      ELSE [12.4964, 2.3522, 139.6917, 13.4050, -3.7038][i % 5]
+      END,
     esPrivada:
     
     
