@@ -1,3 +1,10 @@
-<div>
-    hola mundo!
+<div *ngIf="comunidad">
+    <form #form="ngForm">
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input name="nombre" placeholder="Nombre" class="form-control" [(ngModel)]="comunidad.nombre"
+                required #name="ngModel">
+        </div>
+    </form>
+
 </div>

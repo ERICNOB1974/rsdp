@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { DataPackage } from '../data-package';
 import { HttpClient } from '@angular/common/http';
 import { Comunidad } from './comunidad';
