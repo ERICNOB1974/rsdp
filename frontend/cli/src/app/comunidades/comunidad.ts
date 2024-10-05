@@ -1,10 +1,12 @@
 export interface Comunidad {
     id: number;
     nombre: string;
-    fechaDeCreacion: Date; // Usamos el tipo Date en lugar de LocalDate
+    fechaDeCreacion: Date; 
     descripcion: string;
-    cantidadMaximaMiembros: number;
+    cantidadMaximaMeimbros: number;
     esPrivada: boolean;
+    miembros: number;
     latitud: number;
     longitud: number;
 }
+
