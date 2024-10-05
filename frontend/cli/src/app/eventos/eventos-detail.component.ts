@@ -33,7 +33,6 @@ export class EventoDetailComponent implements OnInit {
 
 
 
-
   // Método para regresar a la página anterior
   goBack(): void {
     this.location.back();
