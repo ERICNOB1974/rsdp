@@ -28,6 +28,7 @@ export class ComunidadService {
       this.http.post<DataPackage>(this.comunidadesUrl, comunidad);
   }
   
+
   participantesEncomunidad(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/${id}/participantes`);
   }
@@ -39,5 +40,6 @@ export class ComunidadService {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/search/${searchTerm}`)
   }
  */
+
 
 }
