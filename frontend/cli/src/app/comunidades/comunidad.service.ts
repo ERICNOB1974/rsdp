@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { DataPackage } from '../data-package';
 import { HttpClient } from '@angular/common/http';
 import { Comunidad } from './comunidad';
@@ -28,5 +28,18 @@ export class ComunidadService {
       this.http.post<DataPackage>(this.comunidadesUrl, comunidad);
   }
   
+
+  participantesEncomunidad(id: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.comunidadesUrl}/${id}/participantes`);
+  }
+/*   remove(id: number): Observable<DataPackage> {
+    return this.http.delete<DataPackage>(`${this.comunidadesUrl}/${id}`)
+  }
+
+  search(searchTerm: string): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.comunidadesUrl}/search/${searchTerm}`)
+  }
+ */
+
 
 }
