@@ -1,0 +1,32 @@
+<div class="form-container">
+    <h2>Crear Nueva Comunidad</h2>
+
+    <form (ngSubmit)="saveComunidad(comunidad)" #comunidadForm="ngForm">
+        <div class="form-group">
+            <label for="nombre">Nombre de la Comunidad</label>
+            <input type="text" id="nombre" [(ngModel)]="comunidad.nombre" name="nombre" required>
+        </div>
+
+        <div class="form-group">
+            <label for="descripcion">Descripción</label>
+            <textarea id="descripcion" [(ngModel)]="comunidad.descripcion" name="descripcion"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="cantidadMaximaMeimbros">Cantidad Máxima de miembros</label>
+            <input type="number" id="cantidadMaximaMeimbros" [(ngModel)]="comunidad.cantidadMaximaMeimbros" name="cantidadMaximaMeimbros" required>
+        </div>
+
+        <div class="form-group">
+            <label>
+                <input type="checkbox" [(ngModel)]="comunidad.esPrivada" name="esPrivada">
+                ¿La Comunidad es privada?
+            </label>
+        </div>
+
+        <div class="form-buttons">
+            <button type="submit" (click)="saveComunidad(comunidad)"[disabled]="!comunidadForm.form.valid" class="btn btn-primary">Guardar comunidad</button>
+            <button type="button" (click)="cancel()" class="btn btn-secondary">Cancelar</button>
+        </div>
+    </form>
+</div>
