@@ -1,0 +1,31 @@
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { DataPackage } from '../data-package';
+import { HttpClient } from '@angular/common/http';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class EtiquetaService {
+
+  private etiquetasUrl = 'rest/etiquetas';
+
+  constructor(
+    private http: HttpClient
+  ) { }
+
+  all(): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.etiquetasUrl}/findAll`);
+  }
+
+  get(id: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.etiquetasUrl}/findById/${id}`);
+  }
+
+ 
+  search(searchTerm: string): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.etiquetasUrl}/search/${searchTerm}`);
+  }
+
+
+}

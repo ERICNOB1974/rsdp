@@ -35,4 +35,9 @@ public class EtiquetaPresenter {
         return Response.ok(etiquetaService.findById(id));
     }
 
+    @RequestMapping(value = "/search/{term}", method = RequestMethod.GET)
+    public ResponseEntity<Object> search(@PathVariable("term") String term) {
+        return Response.ok(etiquetaService.search(term));
+    }
+
 }
