@@ -10,7 +10,7 @@ import { EventoService } from './evento.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: 'eventos.component.html',
-  styleUrls: ['eventos.component.css'] // Ruta relativa correcta si está en la misma carpeta
+  styleUrls: ['eventos.component.css'] 
 })
 export class EventosComponent implements OnInit {
   eventos: Evento[] = []; // Arreglo para almacenar los eventos que provienen del backend
