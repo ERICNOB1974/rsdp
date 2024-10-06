@@ -25,7 +25,7 @@ export class ComunidadService {
 
   save(comunidad: Comunidad): Observable<DataPackage> {
     return comunidad.id ? this.http.put<DataPackage>(this.comunidadesUrl, comunidad) :
-      this.http.post<DataPackage>(`${this.comunidadesUrl}/create/138464`, comunidad);
+      this.http.post<DataPackage>(`${this.comunidadesUrl}/create/138901`, comunidad);
   }
   
   participantesEncomunidad(id: number): Observable<DataPackage> {

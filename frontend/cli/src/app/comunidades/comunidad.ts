@@ -3,7 +3,7 @@ export interface Comunidad {
     nombre: string;
     fechaDeCreacion: Date; 
     descripcion: string;
-    cantidadMaximaMeimbros: number;
+    cantidadMaximaMiembros: number;
     esPrivada: boolean;
     miembros: number;
     latitud: number;

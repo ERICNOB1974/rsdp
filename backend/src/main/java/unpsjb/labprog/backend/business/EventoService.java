@@ -53,25 +53,15 @@ public class EventoService {
                 evento.getFechaHora().isEqual(ZonedDateTime.now())) {
             throw new EventoException("El evento no puede tener una fecha anterior a ahora");
         }
+        if (evento.getFechaDeCreacion().isAfter(LocalDate.now())) {
+            throw new EventoException("El evento no puede crearse en el futuro");
+        }
         /*
          * if (evento.isEsPrivadoParaLaComunidad()) {
          * // enviar mail a todos los usuarios de la comunidad
          * }
-         * 
-         * 
-         * // falta considerar cuando recien lo crea
-         * /* if (eventoRepository.esOrganizadoPorComunidad(evento) &&
-         * !evento.isEsPrivadoParaLaComunidad()) {
-         * throw new
-         * EventoException("El evento no puede ser publico si se crea dentro de una comunidad"
-         * );
-         * }
          */
-        /*
-         * if (evento.getFechaDeCreacion().isAfter(LocalDate.now())) {
-         * throw new EventoException("El evento no puede crearse en el futuro");
-         * }
-         */
+
         return eventoRepository.save(evento);
     }
 
@@ -81,7 +71,6 @@ public class EventoService {
             boolean cambioFecha = evento.getFechaHora() != eventoViejo.get().getFechaHora();
             boolean cambioUbicacion = (evento.getLatitud() != eventoViejo.get().getLatitud())
                     || (evento.getLongitud() != eventoViejo.get().getLongitud());
-            System.out.println(evento.getNombre() + "BBBBBBBBBBBBBBBBBBBBBBBBBBBB\n");
             emailService.enviarMailCambio(cambioFecha, cambioUbicacion, evento);
         }
         if (eventoViejo.isEmpty() && evento.isEsPrivadoParaLaComunidad()) {
@@ -92,8 +81,8 @@ public class EventoService {
     @Transactional
     public Evento actualizar(Evento evento) throws MessagingException, EventoException {
         mail(evento);
-        return eventoRepository.save(evento);
 
+        return eventoRepository.save(evento);
         // suponiendo que se crea ahora mismo
         /*
          * if (evento.getFechaHora().isBefore(ZonedDateTime.now()) ||
