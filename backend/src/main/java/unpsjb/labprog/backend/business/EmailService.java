@@ -36,6 +36,9 @@ public class EmailService {
     @Autowired
     private ComunidadRepository comunidadRepository;
 
+    @Autowired
+    private LocationService locationService;
+
     public void enviarMail() throws MessagingException {
         try {
             Map<Evento, List<Usuario>> usuarios = usuariosNotificables();
@@ -69,16 +72,17 @@ public class EmailService {
 
         StringBuilder mensajeParte2 = new StringBuilder();
 
+       String ubicacion= locationService.getDisplayName(evento.getLatitud(), evento.getLongitud());
         if (cambioFecha && cambioUbicacion) {
             mensajeParte2.append("la fecha y la ubicación.");
             mensajeParte2.append("\nNueva fecha: ").append(evento.getFechaHora());
-            mensajeParte2.append("\nNueva ubicación: ").append("Nueva ubicacion");
+            mensajeParte2.append("\nNueva ubicación: ").append(ubicacion);
         } else if (cambioFecha) {
             mensajeParte2.append("la fecha.");
             mensajeParte2.append("\nNueva fecha: ").append(evento.getFechaHora());
         } else if (cambioUbicacion) {
             mensajeParte2.append("la ubicación.");
-            mensajeParte2.append("\nNueva ubicación: ").append("nueva ubicacion");
+            mensajeParte2.append("\nNueva ubicación: ").append(ubicacion);
         }
         try {
             for (Usuario usuario : listaUsuarios) {
