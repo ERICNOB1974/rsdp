@@ -26,7 +26,7 @@ import { UbicacionService } from './ubicacion.service';
                       <a href="/eventos">Listar eventos</a>
                   </li>
                   <li>
-                      <a href="/eventos/new">Crear evento</a>
+                      <a href="/eventos/crearEvento">Crear evento</a>
                   </li>
               </ul>
           </li>

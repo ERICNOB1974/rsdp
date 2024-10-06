@@ -24,8 +24,9 @@ export class EventoService {
   }
 
   save(evento: Evento): Observable<DataPackage> {
+    
     return evento.id ? this.http.put<DataPackage>(this.eventosUrl, evento) :
-      this.http.post<DataPackage>(this.eventosUrl, evento);
+      this.http.post<DataPackage>(` ${this.eventosUrl}/create`, evento);
   }
   
   participantesEnEvento(id: number): Observable<DataPackage> {

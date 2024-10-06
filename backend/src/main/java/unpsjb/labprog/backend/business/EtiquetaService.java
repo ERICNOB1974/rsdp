@@ -10,7 +10,7 @@ import unpsjb.labprog.backend.model.Etiqueta;
 
 @Service
 public class EtiquetaService {
-    
+
     @Autowired
     EtiquetaRepository etiquetaRepository;
 
@@ -28,8 +28,13 @@ public class EtiquetaService {
         etiquetaRepository.deleteById(id);
     }
 
-    public Etiqueta findById(Long id){
+    public Etiqueta findById(Long id) {
         return etiquetaRepository.findById(id).orElse(null);
+    }
+
+    public List<Etiqueta> search(String term) {
+        return etiquetaRepository.search(term.toUpperCase());
+
     }
 
 }
