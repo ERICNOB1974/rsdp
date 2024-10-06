@@ -46,8 +46,33 @@ public class EventoService {
     }
 
     @Transactional
-    public Evento save(Evento evento) throws MessagingException, EventoException {
-        Optional<Evento> eventoViejo = eventoRepository.findById(evento.getId());
+    public Evento crear(Evento evento) throws MessagingException, EventoException {
+        if (evento.isEsPrivadoParaLaComunidad()) {
+            emailService.enviarMail();
+        }
+
+        // suponiendo que se crea ahora mismo
+        if (evento.getFechaHora().isBefore(ZonedDateTime.now()) ||
+                evento.getFechaHora().isEqual(ZonedDateTime.now())) {
+            throw new EventoException("El evento no puede tener una fecha anterior a ahora");
+
+        }
+        // falta considerar cuando recien lo crea
+        if (eventoRepository.esOrganizadoPorComunidad(evento) && !evento.isEsPrivadoParaLaComunidad()) {
+            throw new EventoException("El evento no puede ser publico si se crea dentro de una comunidad");
+        }
+        if (evento.getFechaDeCreacion().isAfter(LocalDate.now())) {
+            throw new EventoException("El evento no puede crearse en el futuro");
+        }
+        return eventoRepository.crearEvento(evento.getNombre(), evento.getFechaDeCreacion(), evento.getFechaHora(),
+                evento.getLatitud(), evento.getLongitud(), evento.getDescripcion(),
+                evento.getCantidadMaximaParticipantes(), evento.isEsPrivadoParaLaComunidad());
+    }
+
+    @Transactional
+    public Evento actualizar(Evento evento) throws MessagingException, EventoException {
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAA" + evento.getDescripcion());
+        /* Optional<Evento> eventoViejo = eventoRepository.findById(evento.getId());
         if (!eventoViejo.isEmpty()) {
             boolean cambioFecha = evento.getFechaHora() != eventoViejo.get().getFechaHora();
             boolean cambioUbicacion = (evento.getLatitud() != eventoViejo.get().getLatitud())
@@ -56,7 +81,8 @@ public class EventoService {
         }
         if (eventoViejo.isEmpty() && evento.isEsPrivadoParaLaComunidad()) {
             emailService.enviarMail();
-        }
+        } */
+       
 
         // suponiendo que se crea ahora mismo
         if (evento.getFechaHora().isBefore(ZonedDateTime.now()) ||
@@ -86,7 +112,9 @@ public class EventoService {
          * actualice mal
          * 
          */
-        return eventoRepository.save(evento);
+        return eventoRepository.actualizarEvento(evento.getId(), evento.getNombre(), evento.getFechaDeCreacion(),
+                evento.getFechaHora(), evento.getLatitud(), evento.getLongitud(), evento.getDescripcion(),
+                evento.getCantidadMaximaParticipantes(), evento.isEsPrivadoParaLaComunidad());
     }
 
     @Transactional
