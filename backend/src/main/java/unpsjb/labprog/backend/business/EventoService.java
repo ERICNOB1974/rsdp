@@ -48,23 +48,30 @@ public class EventoService {
 
     @Transactional
     public Evento crear(Evento evento) throws MessagingException, EventoException {
-      /*   if (evento.isEsPrivadoParaLaComunidad()) {
-            // enviar mail a todos los usuarios de la comunidad
-        }
-
         // suponiendo que se crea ahora mismo
         if (evento.getFechaHora().isBefore(ZonedDateTime.now()) ||
                 evento.getFechaHora().isEqual(ZonedDateTime.now())) {
             throw new EventoException("El evento no puede tener una fecha anterior a ahora");
-
-        } */
-        // falta considerar cuando recien lo crea
-       /*  if (eventoRepository.esOrganizadoPorComunidad(evento) && !evento.isEsPrivadoParaLaComunidad()) {
-            throw new EventoException("El evento no puede ser publico si se crea dentro de una comunidad");
-        } */
-       /*  if (evento.getFechaDeCreacion().isAfter(LocalDate.now())) {
-            throw new EventoException("El evento no puede crearse en el futuro");
-        } */
+        }
+        /*
+         * if (evento.isEsPrivadoParaLaComunidad()) {
+         * // enviar mail a todos los usuarios de la comunidad
+         * }
+         * 
+         * 
+         * // falta considerar cuando recien lo crea
+         * /* if (eventoRepository.esOrganizadoPorComunidad(evento) &&
+         * !evento.isEsPrivadoParaLaComunidad()) {
+         * throw new
+         * EventoException("El evento no puede ser publico si se crea dentro de una comunidad"
+         * );
+         * }
+         */
+        /*
+         * if (evento.getFechaDeCreacion().isAfter(LocalDate.now())) {
+         * throw new EventoException("El evento no puede crearse en el futuro");
+         * }
+         */
         return eventoRepository.save(evento);
     }
 
@@ -84,7 +91,7 @@ public class EventoService {
 
     @Transactional
     public Evento actualizar(Evento evento) throws MessagingException, EventoException {
-         mail(evento);
+        mail(evento);
         return eventoRepository.save(evento);
 
         // suponiendo que se crea ahora mismo
