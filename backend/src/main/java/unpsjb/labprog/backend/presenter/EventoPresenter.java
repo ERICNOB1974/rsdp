@@ -15,6 +15,7 @@ import jakarta.mail.MessagingException;
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.EventoService;
 import unpsjb.labprog.backend.business.UsuarioService;
+import unpsjb.labprog.backend.exceptions.EventoException;
 import unpsjb.labprog.backend.model.Evento;
 
 @RestController
@@ -43,12 +44,12 @@ public class EventoPresenter {
 
 
     @RequestMapping(path = "/create", method = RequestMethod.POST)
-    public ResponseEntity<Object> create(@RequestBody Evento evento) throws MessagingException {
+    public ResponseEntity<Object> create(@RequestBody Evento evento) throws MessagingException, EventoException {
         return Response.ok(eventoService.save(evento));
     }
 
     @RequestMapping(path = "/actualizar", method = RequestMethod.POST)
-    public ResponseEntity<Object> actualizar(@RequestBody Evento evento) throws MessagingException {
+    public ResponseEntity<Object> actualizar(@RequestBody Evento evento) throws MessagingException, EventoException {
         return Response.ok(eventoService.save(evento));
     }
 

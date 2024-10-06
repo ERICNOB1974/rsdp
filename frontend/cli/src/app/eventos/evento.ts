@@ -1,8 +1,8 @@
 export interface Evento {
     id: number;
     nombre: string;
-    fechaDeCreacion: Date; // Usamos el tipo Date en lugar de LocalDate
-    fechaHora: Date; // Usamos el tipo Date en lugar de ZonedDateTime
+    fechaDeCreacion: Date; 
+    fechaHora: string; 
     ubicacion: string;
     descripcion: string;
     cantidadMaximaParticipantes: number;

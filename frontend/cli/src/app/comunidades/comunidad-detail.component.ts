@@ -33,14 +33,11 @@ export class ComunidadDetailComponent implements OnInit {
     }
     else {
       this.comunidadService.get(parseInt(id)).subscribe(dataPackage => {
-
-        console.log(dataPackage);  // Verificar los datos recibidos
         this.comunidad = <Comunidad>dataPackage.data;
     })
   }
 }
 
-// Método para regresar a la página anterior
 goBack(): void {
   this.location.back();
 }

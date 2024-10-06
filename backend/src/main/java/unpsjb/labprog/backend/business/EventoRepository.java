@@ -118,10 +118,11 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "RETURN COUNT(e) > 0")
         boolean participa(Long idUsuario, Long idEvento);
 
-        @Query("MATCH (e:Evento) " +
-                        " WHERE (u)-[:MIEMBRO]->(c:Comunidad)<-[ORGANIZADO_POR]-(e)" +
+        @Query("MATCH (e:Evento), (c:Comunidad) " +
+                        " WHERE (c)<-[:ORGANIZADO_POR]-(e)" +
+                        " AND id($ev)=e.id"+
                         " RETURN COUNT(c)>0")
-        boolean esOrganizadoPorComunidad(Evento e);
+        boolean esOrganizadoPorComunidad(Evento ev);
 
         @Query("MATCH (e:Evento) " +
         " WHERE (u)-[:MIEMBRO]->(c:Comunidad)<-[ORGANIZADO_POR]-(e)" +
