@@ -8,6 +8,7 @@ import { Etiqueta } from '../etiqueta/etiqueta';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common'; // Importar CommonModule
+import { Location } from '@angular/common'; // Asegúrate de que está importado desde aquí
 
 
 @Component({
@@ -24,11 +25,17 @@ export class CrearEventoComponent {
   searchFailed: boolean = false;
   etiquetasSeleccionadas: Etiqueta[] = [];
   etiquetaSeleccionada: Etiqueta | null = null;
+  showMessage: boolean = false;
+  messageToShow: string = '';
+  cursorBlocked: boolean = false;
+  otorgada: boolean = false;
+
 
   constructor(
     private eventoService: EventoService,
     private etiquetaService: EtiquetaService,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) {}
 
     ngOnInit(): void {
@@ -93,13 +100,31 @@ export class CrearEventoComponent {
     this.router.navigate(['/eventos']);
   }
 
+
   saveEvento(): void {
-   // this.evento.fechaHora = new Date(this.evento.fechaHora).toISOString(); // Convierte a formato ISO
-   //console.info (this.evento);
-   this.eventoService.save(this.evento).subscribe(dataPackage => {
-        this.evento = <Evento>dataPackage.data;
-       // this.goBack();
-    });
+    let that = this;
+    this.eventoService.save(this.evento).subscribe(dataPackage => {
+      this.cursorBlocked = true; 
+        this.messageToShow =dataPackage.message;
+        if (dataPackage.status!=200) {
+          this.otorgada = false;
+        } else {
+            this.otorgada = true;
+        }
+  
+        this.showMessage = true;
+        setTimeout(() => {
+            this.cursorBlocked = false; 
+            this.showMessage = false;
+            if (this.otorgada) {
+                this.goBack();
+            } 
+      }, 3500);
+    });  
+  }
+
+  goBack(): void {
+    this.location.back();
   }
 
 

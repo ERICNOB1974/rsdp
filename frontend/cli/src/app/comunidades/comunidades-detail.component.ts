@@ -7,7 +7,7 @@ import { Comunidad } from './comunidad';
 import { Location } from '@angular/common'; // Asegúrate de que está importado desde aquí
 
 @Component({
-  selector: 'app-crear-evento',
+  selector: 'app-comunidades-detail',
   templateUrl: './comunidades-detail.component.html',
   styleUrls: ['./comunidades-detail.component.css'],
   standalone: true,
@@ -15,6 +15,10 @@ import { Location } from '@angular/common'; // Asegúrate de que está importado
 })
 export class ComunidadDetailComponent {
   comunidad!: Comunidad;
+  showMessage: boolean = false;
+  messageToShow: string = '';
+  cursorBlocked: boolean = false;
+  creada: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -36,16 +40,43 @@ export class ComunidadDetailComponent {
     }
   }
 
+
   ngOnInit() {
     this.get();
   }
+/*   saveComunidad(): void {
+    let that = this;
+    console.info(this.comunidad);
+    console.log("arriba");
+    this.comunidadService.save(this.comunidad).subscribe(dataPackage => {
+      this.cursorBlocked = true; 
+        this.messageToShow =dataPackage.message;
+        if (dataPackage.status!=200) {
+          this.creada = false;
+        } else {
+            this.creada = true;
+        }
+  
+        this.showMessage = true;
+        setTimeout(() => {
+            this.cursorBlocked = false; 
+            this.showMessage = false;
+            if (this.creada) {
+                this.goBack();
+            }  
+      }, 3500);
+    });  
+  } */
 
-  saveComunidad(comunidad: Comunidad): void {
-    console.log('Comunidad guardada:', comunidad);
-    this.goBack();
-  }
 
-  cancel(): void {
+  saveComunidad(): void {
+    console.log("PASEE");
+    this.comunidadService.save(this.comunidad).subscribe(dataPackage => {
+         this.comunidad = <Comunidad>dataPackage.data;
+     });
+     console.log(this.comunidad);
+   }
+/*   cancel(): void {
     this.router.navigate(['/comunidades']);
-  }
+  } */
 }
