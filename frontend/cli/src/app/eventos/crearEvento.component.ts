@@ -19,7 +19,7 @@ import { Location } from '@angular/common'; // Asegúrate de que está importado
   imports: [FormsModule, NgbTypeaheadModule, CommonModule]
 })
 export class CrearEventoComponent {
-  evento! : Evento;
+  evento!: Evento;
   minFechaHora: string = '';
   searching: boolean = false;
   searchFailed: boolean = false;
@@ -38,12 +38,19 @@ export class CrearEventoComponent {
     private location: Location
   ) {}
 
-    ngOnInit(): void {
-        this.evento = <Evento>{
-            fechaHora:'2025-02-19T12:41:00Z'
-        }; // Aseguramos que el objeto evento esté inicializado
-        this.setMinFechaHora();
-    }
+
+  ngOnInit(): void {
+    this.evento = <Evento>{
+      //fechaHora: '2025-02-19T12:41:00Z',
+      fechaDeCreacion: new Date(),
+      nombre: "",
+      descripcion: "",
+      cantidadMaximaParticipantes: 1,
+      esPrivadoParaLaComunidad: false,
+      participantes: 0
+    }; // Aseguramos que el objeto evento esté inicializado
+    this.setMinFechaHora();
+  }
 
   setMinFechaHora(): void {
     const today = new Date();
@@ -52,6 +59,9 @@ export class CrearEventoComponent {
     const day = today.getDate().toString().padStart(2, '0');
     const hours = today.getHours().toString().padStart(2, '0');
     const minutes = today.getMinutes().toString().padStart(2, '0');
+    //const seconds = today.getSeconds().toString().padStart(2, '0');
+    //  const milliseconds = today.getMilliseconds().toString().padStart(3, '0');
+    //    this.minFechaHora=`${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}`;
     this.minFechaHora = `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
@@ -76,12 +86,12 @@ export class CrearEventoComponent {
     );
 
   agregarEtiqueta(event: any): void {
-    const etiqueta: Etiqueta = event.item;  
+    const etiqueta: Etiqueta = event.item;
     if (!this.etiquetasSeleccionadas.some(e => e.id === etiqueta.id)) {
       this.etiquetasSeleccionadas.push(etiqueta);
       console.info(etiqueta.nombre);
     }
-    this.etiquetaSeleccionada = null;  
+    this.etiquetaSeleccionada = null;
   }
 
   eliminarEtiqueta(etiqueta: Etiqueta): void {
@@ -102,30 +112,27 @@ export class CrearEventoComponent {
 
 
   saveEvento(): void {
-    let that = this;
+
+    //this.evento.fechaHora = this.formatFechaHora(this.evento.fechaHora); // Formatear la fecha
+    this.evento.fechaHora = new Date(this.evento.fechaHora).toISOString();
+
     this.eventoService.save(this.evento).subscribe(dataPackage => {
-      this.cursorBlocked = true; 
-        this.messageToShow =dataPackage.message;
-        if (dataPackage.status!=200) {
-          this.otorgada = false;
-        } else {
-            this.otorgada = true;
-        }
-  
-        this.showMessage = true;
-        setTimeout(() => {
-            this.cursorBlocked = false; 
-            this.showMessage = false;
-            if (this.otorgada) {
-                this.goBack();
-            } 
-      }, 3500);
-    });  
+      this.evento = <Evento>dataPackage.data;
+    });
   }
 
-  goBack(): void {
-    this.location.back();
-  }
+  formatFechaHora(fechaHora: string): string {
+    const fecha = new Date(fechaHora);
+    const year = fecha.getFullYear();
+    const month = (fecha.getMonth() + 1).toString().padStart(2, '0');
+    const day = fecha.getDate().toString().padStart(2, '0');
+    const hours = fecha.getHours().toString().padStart(2, '0');
+    const minutes = fecha.getMinutes().toString().padStart(2, '0');
+    const seconds = fecha.getSeconds().toString().padStart(2, '0');
+    const milliseconds = fecha.getMilliseconds().toString().padStart(3, '0');
 
+    // Formatear la fecha como "yyyy-MM-ddThh:mm:ss.SSS"
+    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}`;
+  }
 
 }
