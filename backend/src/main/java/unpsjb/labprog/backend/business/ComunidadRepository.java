@@ -81,26 +81,26 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
     @Query("MATCH (u:Usuario)-[r]-(c:Comunidad) " +
             "WHERE id(u) = $idMiembro AND id(c) = $idComunidad " +
             "RETURN r.fechaIngreso")
-    ZonedDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
+        LocalDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
 
     @Query("MATCH (c:Comunidad)<-[r:MIEMBRO]-(u:Usuario) " +
             "WHERE id(c) = $idComunidad AND id(u) = $idMiembro " +
             "DELETE r " +
             "CREATE (u)<-[:ADMINISTRADA_POR {fechaIngreso: $fechaIngreso, fechaOtorgacion: $fechaOtorgacion}]-(c)")
-    void otorgarRolAdministrador(Long idMiembro, Long idComunidad, ZonedDateTime fechaIngreso,
+    void otorgarRolAdministrador(Long idMiembro, Long idComunidad, LocalDateTime fechaIngreso,
             LocalDateTime fechaOtorgacion);
 
     @Query("MATCH (c:Comunidad)-[r:ADMINISTRADA_POR]->(u:Usuario) " +
     "WHERE id(c) = $idComunidad AND id(u) = $idMiembro " +
     "DELETE r " +
     "CREATE (u)-[:MIEMBRO {fechaIngreso: $fechaIngreso}]->(c)")
-    void quitarRolAdministrador(Long idMiembro, Long idComunidad, ZonedDateTime fechaIngreso,LocalDateTime fechaOtorgacion);
+    void quitarRolAdministrador(Long idMiembro, Long idComunidad, LocalDateTime fechaIngreso,LocalDateTime fechaOtorgacion);
 
     @Query("MATCH (u:Usuario) WHERE id(u) = $idUsuario "+
         "CREATE (c:Comunidad {nombre: $nombre, fechaDeCreacion: $fechaCreacion, latitud: $latitud, longitud: $longitud, descripcion: $descripcion, cantidadMaximaMiembros: $participantes, esPrivada: $privada})"+
         " CREATE (u)<-[:CREADA_POR {fechaCreacion: $fechaCreacion}]-(c) "+
         "RETURN c")
-    Comunidad guardarComunidadYCreador(String nombre, String descripcion, int participantes, boolean privada, Long idUsuario, LocalDate fechaCreacion,double latitud, double longitud);
+    Comunidad guardarComunidadYCreador(String nombre, String descripcion, int participantes, boolean privada, Long idUsuario, LocalDateTime fechaCreacion,double latitud, double longitud);
  
     @Query("MATCH (u:Usuario)-[r:SOLICITUD_DE_INGRESO]->(c:Comunidad) "+
             "Where id(u) = $idUsuario AND id(c) = $idComunidad "+

@@ -123,7 +123,7 @@ public class UsuarioComunidadService {
         if (miembroOpt.isEmpty()) {
             throw new Exception("El usuario no existe.");
         }
-        comunidad.setFechaDeCreacion(LocalDate.now()); // Establece la fecha aquí
+        comunidad.setFechaDeCreacion(LocalDateTime.now()); // Establece la fecha aquí
         return comunidadRepository.guardarComunidadYCreador(comunidad.getNombre(), comunidad.getDescripcion(), comunidad.getCantidadMaximaMiembros(), comunidad.isEsPrivada() , idUsuario, comunidad.getFechaDeCreacion(), comunidad.getLatitud(), comunidad.getLatitud());
     }
 
