@@ -68,7 +68,7 @@ public class UsuarioPresenter {
         return Response.ok(usuarioService.sugerenciasDeAmigosBasadosEnComunidades(nombreUsuario));
     }
 
-    @PostMapping("/enviarSolicitudAmistad/{idUsuario}/{idComunidad}")
+    @PostMapping("/enviarSolicitudAmistad/{idEmisor}/{idReceptor}")
     public ResponseEntity<Object> enviarSolicitudAmistad(@PathVariable Long idEmisor, @PathVariable Long idReceptor) {
         try {
             String respuesta=solicitudAmistadService.enviarSolicitud(idEmisor, idReceptor);

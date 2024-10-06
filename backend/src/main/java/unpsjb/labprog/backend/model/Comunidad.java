@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Getter
@@ -21,7 +22,7 @@ public class Comunidad {
     private Long id;
 
     private String nombre;
-    private LocalDate fechaDeCreacion;
+    private LocalDateTime fechaDeCreacion;
     private String descripcion;
     private int cantidadMaximaMiembros;
     private boolean esPrivada;

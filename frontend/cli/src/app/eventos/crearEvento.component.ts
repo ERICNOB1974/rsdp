@@ -8,6 +8,7 @@ import { Etiqueta } from '../etiqueta/etiqueta';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { CommonModule } from '@angular/common'; // Importar CommonModule
+import { Location } from '@angular/common'; // Asegúrate de que está importado desde aquí
 
 
 @Component({
@@ -24,12 +25,19 @@ export class CrearEventoComponent {
   searchFailed: boolean = false;
   etiquetasSeleccionadas: Etiqueta[] = [];
   etiquetaSeleccionada: Etiqueta | null = null;
+  showMessage: boolean = false;
+  messageToShow: string = '';
+  cursorBlocked: boolean = false;
+  otorgada: boolean = false;
+
 
   constructor(
     private eventoService: EventoService,
     private etiquetaService: EtiquetaService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private location: Location
+  ) {}
+
 
   ngOnInit(): void {
     this.evento = <Evento>{
@@ -102,7 +110,9 @@ export class CrearEventoComponent {
     this.router.navigate(['/eventos']);
   }
 
+
   saveEvento(): void {
+
     //this.evento.fechaHora = this.formatFechaHora(this.evento.fechaHora); // Formatear la fecha
     this.evento.fechaHora = new Date(this.evento.fechaHora).toISOString();
 

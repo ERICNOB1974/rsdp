@@ -57,6 +57,7 @@ public class SolicitudAmistadService {
         }
 
         if(aceptada){
+            usuarioRepository.rechazarSolicitudAmistad(idEmisor, idReceptor);
             usuarioRepository.aceptarSolicitudAmistad(idEmisor, idReceptor, LocalDateTime.now());
             return "Solicitud de amistad aceptada correctamente";
         }
