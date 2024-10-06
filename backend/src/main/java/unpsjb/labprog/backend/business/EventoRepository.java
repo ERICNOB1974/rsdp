@@ -113,15 +113,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "RETURN COUNT(DISTINCT u) AS totalParticipaciones")
         int participantesDeEvento(Long idEvento);
 
-        @Query("MATCH (u:Usuario), (e:Evento)" +
-                        " WHERE (u)-[:PARTICIPA_EN]->(e) " +
-                        "AND id(e) = $idEvento " +
-                        "RETURN u")
-        List<Usuario> inscriptosEvento(Long idEvento);
-
-        @Query("MATCH (e:Evento) " +
-                        "WHERE date(e.fechaHora) = date(datetime()) + duration({days: 1}) " +
-                        " RETURN e ORDER BY e.fechaHora ASC")
+        @Query("MATCH (e:Evento) "+"WHERE date(e.fechaHora) = date(datetime()) + duration({days: 1}) "+" RETURN e ORDER BY e.fechaHora ASC")
         List<Evento> eventosProximos();
 
         @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento) " +
