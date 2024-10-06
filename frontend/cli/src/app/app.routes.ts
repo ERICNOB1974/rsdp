@@ -4,8 +4,8 @@ import { SeleccionMapaComponent } from './seleccion-mapa/seleccion-mapa.componen
 import { EventosComponent } from './eventos/eventos.component';
 import { EventoDetailComponent } from './eventos/eventos-detail.component';
 import { ComunidadesComponent } from './comunidades/comunidades.component';
-import { ComunidadDetailComponent } from './comunidades/comunidades-detail.component';
 import { CrearEventoComponent } from './eventos/crearEvento.component';
+import { ComunidadDetailComponent } from './comunidades/comunidades-detail.component';
 export const routes: Routes = [
     {path: '', component: HomeComponent},
     {path: 'seleccionMapa', component: SeleccionMapaComponent},

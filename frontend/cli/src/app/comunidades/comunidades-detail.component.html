@@ -1,7 +1,7 @@
 <div class="form-container">
     <h2>Crear Nueva Comunidad</h2>
 
-    <form (ngSubmit)="saveComunidad(comunidad)" #comunidadForm="ngForm">
+    <form #form="ngForm">
         <div class="form-group">
             <label for="nombre">Nombre de la Comunidad</label>
             <input type="text" id="nombre" [(ngModel)]="comunidad.nombre" name="nombre" required>
@@ -26,7 +26,7 @@
 
 
         <div class="form-buttons">
-            <button type="submit" (click)="saveComunidad(comunidad)"[disabled]="!comunidadForm.form.valid" class="btn btn-primary">Guardar comunidad</button>
+            <button type="submit" (click)="saveComunidad()"[disabled]="!form.valid" class="btn btn-primary">Guardar comunidad</button>
             <button type="button" (click)="cancel()" class="btn btn-secondary">Cancelar</button>
         </div>
     </form>

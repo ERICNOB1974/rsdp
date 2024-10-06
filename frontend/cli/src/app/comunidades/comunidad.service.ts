@@ -25,21 +25,11 @@ export class ComunidadService {
 
   save(comunidad: Comunidad): Observable<DataPackage> {
     return comunidad.id ? this.http.put<DataPackage>(this.comunidadesUrl, comunidad) :
-      this.http.post<DataPackage>(this.comunidadesUrl, comunidad);
+      this.http.post<DataPackage>(`${this.comunidadesUrl}/create/138464`, comunidad);
   }
   
-
   participantesEncomunidad(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/${id}/participantes`);
   }
-/*   remove(id: number): Observable<DataPackage> {
-    return this.http.delete<DataPackage>(`${this.comunidadesUrl}/${id}`)
-  }
-
-  search(searchTerm: string): Observable<DataPackage> {
-    return this.http.get<DataPackage>(`${this.comunidadesUrl}/search/${searchTerm}`)
-  }
- */
-
 
 }
