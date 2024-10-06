@@ -42,15 +42,14 @@ public class EventoPresenter {
         return Response.ok(eventoService.participantesDeEvento(id));
     }
 
-
     @RequestMapping(path = "/create", method = RequestMethod.POST)
     public ResponseEntity<Object> create(@RequestBody Evento evento) throws MessagingException, EventoException {
-        return Response.ok(eventoService.save(evento));
+        return Response.ok(eventoService.crear(evento));
     }
 
-    @RequestMapping(path = "/actualizar", method = RequestMethod.POST)
+    @RequestMapping(path = "/actualizar", method = RequestMethod.PUT)
     public ResponseEntity<Object> actualizar(@RequestBody Evento evento) throws MessagingException, EventoException {
-        return Response.ok(eventoService.save(evento));
+        return Response.ok(eventoService.actualizar(evento));
     }
 
     @GetMapping("/sugerenciasDeEventosBasadosEnEventos/{nombreUsuario}")
