@@ -39,7 +39,7 @@ public class EmailService {
     @Autowired
     private LocationService locationService;
 
-    public void enviarMail() throws MessagingException {
+    public void recordatorioEvento() throws MessagingException {
         try {
             Map<Evento, List<Usuario>> usuarios = usuariosNotificables();
             for (Map.Entry<Evento, List<Usuario>> entry : usuarios.entrySet()) {
@@ -68,6 +68,7 @@ public class EmailService {
         Email email = new Email();
         email.setAsunto("Cambio en un evento");
         List<Usuario> listaUsuarios = eventoRepository.inscriptosEvento(evento.getId());
+        System.out.println("JJJJJJJJJJJJ\n"+listaUsuarios.get(0).getNombreReal());
         String mensajeParte1 = "El evento " + evento.getNombre() + ", al que estás inscripto, sufrió un cambio en ";
 
         StringBuilder mensajeParte2 = new StringBuilder();

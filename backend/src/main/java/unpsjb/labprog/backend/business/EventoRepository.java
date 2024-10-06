@@ -3,6 +3,7 @@ package unpsjb.labprog.backend.business;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
@@ -112,8 +113,9 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "RETURN COUNT(DISTINCT u) AS totalParticipaciones")
         int participantesDeEvento(Long idEvento);
 
-        @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento)" +
-                        "WHERE id(e) = $idEvento " +
+        @Query("MATCH (u:Usuario), (e:Evento)" +
+                        " WHERE (u)-[:PARTICIPA_EN]->(e) " +
+                        "AND id(e) = $idEvento " +
                         "RETURN u")
         List<Usuario> inscriptosEvento(Long idEvento);
 
@@ -144,13 +146,21 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         double longitud, String descripcion, int cantidadMaximaParticipantes,
                         boolean esPrivadoParaLaComunidad);
 
-        @Query("MATCH (e:Evento) WHERE ID(e) = $id "
-                        + "SET e.nombre = $nombre, e.fechaDeCreacion = $fechaDeCreacion, e.fechaHora = $fechaHora, "
-                        + "e.latitud = $latitud, e.longitud = $longitud, e.descripcion = $descripcion, "
-                        + "e.cantidadMaximaParticipantes = $cantidadMaximaParticipantes, e.esPrivadoParaLaComunidad = $esPrivadoParaLaComunidad "
+        @Query("MATCH (e:Evento) WHERE id(e)=$ide  "
+                        + "SET e.nombre = $nombre, "
+                        + "e.fechaDeCreacion = $fechaDeCreacion, "
+                        + "e.fechaHora = $fechaHora, "
+                        + "e.latitud = $latitud, "
+                        + "e.longitud = $longitud, "
+                        + "e.descripcion = $descripcion, "
+                        + "e.cantidadMaximaParticipantes = $cantidadMaximaParticipantes, "
+                        + "e.esPrivadoParaLaComunidad = $esPrivadoParaLaComunidad "
                         + "RETURN e")
-        Evento actualizarEvento(Long id, String nombre, LocalDate fechaDeCreacion, ZonedDateTime fechaHora,
+        Evento actualizarEvento(Long ide, String nombre, LocalDate fechaDeCreacion, ZonedDateTime fechaHora,
                         double latitud, double longitud, String descripcion, int cantidadMaximaParticipantes,
                         boolean esPrivadoParaLaComunidad);
+
+        @Query("MATCH (e:Evento) WHERE id(e) = $ide RETURN e")
+        Optional<Evento> encontrarEventoPorId(Long ide);
 
 }
