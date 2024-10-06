@@ -68,7 +68,6 @@ public class EmailService {
         Email email = new Email();
         email.setAsunto("Cambio en un evento");
         List<Usuario> listaUsuarios = usuarioRepository.inscriptosEvento(evento.getId());
-        System.out.println("JJJJJJJJJJJJ\n"+listaUsuarios.size());
         String mensajeParte1 = "El evento " + evento.getNombre() + ", al que estás inscripto, sufrió un cambio en ";
 
         StringBuilder mensajeParte2 = new StringBuilder();
