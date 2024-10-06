@@ -33,7 +33,13 @@ export class CrearEventoComponent {
 
     ngOnInit(): void {
         this.evento = <Evento>{
-            fechaHora:'2025-02-19T12:41:00Z'
+            fechaHora:'2025-02-19T12:41:00Z',
+            fechaDeCreacion: new Date(),
+            nombre: "",
+            descripcion: "",
+            cantidadMaximaParticipantes: 1,
+            esPrivadoParaLaComunidad: false,
+            participantes: 0
         }; // Aseguramos que el objeto evento esté inicializado
         this.setMinFechaHora();
     }
@@ -94,8 +100,7 @@ export class CrearEventoComponent {
   }
 
   saveEvento(): void {
-   // this.evento.fechaHora = new Date(this.evento.fechaHora).toISOString(); // Convierte a formato ISO
-   //console.info (this.evento);
+   this.evento.fechaHora = new Date(this.evento.fechaHora).toISOString(); // Convierte a formato ISO
    this.eventoService.save(this.evento).subscribe(dataPackage => {
         this.evento = <Evento>dataPackage.data;
        // this.goBack();

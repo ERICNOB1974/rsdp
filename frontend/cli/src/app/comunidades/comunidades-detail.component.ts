@@ -7,7 +7,7 @@ import { Comunidad } from './comunidad';
 import { Location } from '@angular/common'; // Asegúrate de que está importado desde aquí
 
 @Component({
-  selector: 'app-crear-evento',
+  selector: 'app-comunidades',
   templateUrl: './comunidades-detail.component.html',
   styleUrls: ['./comunidades-detail.component.css'],
   standalone: true,
@@ -21,7 +21,7 @@ export class ComunidadDetailComponent {
     private location: Location,
     private comunidadService: ComunidadService,
     private router: Router
-  ) {}
+  ) { }
 
   goBack(): void {
     this.location.back(); // Esto debería funcionar correctamente
@@ -40,9 +40,11 @@ export class ComunidadDetailComponent {
     this.get();
   }
 
-  saveComunidad(comunidad: Comunidad): void {
-    console.log('Comunidad guardada:', comunidad);
-    this.goBack();
+  saveComunidad(): void {
+    this.comunidadService.save(this.comunidad).subscribe(dataPackage => {
+      this.comunidad = <Comunidad>dataPackage.data;
+    });
+    console.log(this.comunidad);
   }
 
   cancel(): void {

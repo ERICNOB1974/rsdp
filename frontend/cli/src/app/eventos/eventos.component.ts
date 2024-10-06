@@ -27,12 +27,9 @@ export class EventosComponent implements OnInit {
   getEventos(): void {
     this.eventoService.all().subscribe((dataPackage) => {
       const responseData = dataPackage.data;
-      console.log(responseData);
       if (Array.isArray(responseData)) {
         this.results = responseData;
         this.traerParticipantes(); // Llamar a traerParticipantes después de cargar los eventos
-      } else {
-        console.log("no traenada");
       }
     });
   }
@@ -76,8 +73,6 @@ export class EventosComponent implements OnInit {
       const index = (this.currentIndex + i) % this.results.length;
       eventosParaMostrar.push(this.results[index]);
     }
-
-    console.log(eventosParaMostrar); // Verificar qué eventos se están mostrando
     return eventosParaMostrar;
   }
 
