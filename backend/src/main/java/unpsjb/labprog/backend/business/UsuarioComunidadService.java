@@ -83,7 +83,6 @@ public class UsuarioComunidadService {
         }
     // Obtener la fecha de ingreso como DateTimeValue
     //LocalDateTime fechaIngresoValue = comunidadRepository.obtenerFechaIngreso(idMiembro, idComunidad);
-    
         comunidadRepository.otorgarRolAdministrador(idMiembro, idComunidad, comunidadRepository.obtenerFechaIngreso(idMiembro, idComunidad), LocalDateTime.now());
         return "Rol administrador otorgado a: " + usuario.getNombreUsuario() + " correctamente";
     }

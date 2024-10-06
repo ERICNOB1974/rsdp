@@ -1,4 +1,4 @@
-package unpsjb.labprog.backend.business;
+package unpsjb.labprog.backend.model;
 
 public class NominatimResponse {
     private String display_name;
