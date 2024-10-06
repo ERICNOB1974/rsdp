@@ -1,0 +1,136 @@
+/* Estilo general para el body */
+body {
+    display: flex; /* Usar flexbox para centrar el contenido */
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+    height: 100vh; /* Altura completa de la ventana */
+    background-color: #f0f0f0; /* Color de fondo general */
+    margin: 0; /* Eliminar márgenes del body */
+}
+
+/* Estilo general para el contenedor del formulario */
+.form-container {
+    max-width: 600px; /* Ancho máximo del contenedor */
+    margin: 20px; /* Margen para evitar que toque los bordes */
+    padding: 30px; /* Espaciado interno */
+    background-color: #ffffff; /* Color de fondo blanco */
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Sombra más profunda */
+    transition: transform 0.3s, box-shadow 0.3s; /* Transiciones suaves */
+}
+
+/* Efecto hover para el contenedor */
+.form-container:hover {
+    transform: translateY(-2px); /* Eleva ligeramente el contenedor al pasar el ratón */
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Sombra más intensa al hacer hover */
+}
+
+/* Estilo del encabezado */
+h2 {
+    text-align: center; /* Centrar el texto */
+    margin-bottom: 30px; /* Margen inferior */
+    color: #333; /* Color del texto */
+    font-size: 1.8em; /* Tamaño de fuente más grande */
+}
+
+/* Estilo para los grupos de formularios */
+.form-group {
+    margin-bottom: 20px; /* Espaciado entre los grupos */
+}
+
+/* Estilo de etiquetas */
+label {
+    font-weight: bold; /* Negrita para las etiquetas */
+    display: block; /* Hacer que la etiqueta ocupe toda la línea */
+    margin-bottom: 8px; /* Margen inferior */
+    color: #555; /* Color del texto */
+}
+
+/* Estilo para inputs y textarea */
+input,
+textarea {
+    width: 100%; /* Ancho completo */
+    padding: 12px; /* Espaciado interno */
+    border: 1px solid #ccc; /* Borde */
+    border-radius: 6px; /* Bordes redondeados */
+    font-size: 16px; /* Tamaño de fuente */
+    transition: border-color 0.3s; /* Transición suave al cambiar el borde */
+}
+
+/* Cambios de estilo al enfocar inputs y textarea */
+input:focus,
+textarea:focus {
+    border-color: #007bff; /* Color del borde al enfocar */
+    outline: none; /* Sin contorno adicional */
+}
+
+/* Estilo para el textarea */
+textarea {
+    resize: vertical; /* Permitir redimensionar verticalmente */
+}
+
+/* Estilo para checkbox */
+input[type="checkbox"] {
+    width: auto; /* Ajuste automático del ancho */
+    margin-right: 10px; /* Espacio a la derecha */
+}
+
+/* Estilo para los botones */
+.form-buttons {
+    display: flex; /* Flexbox para la alineación */
+    justify-content: space-between; /* Espaciado entre los botones */
+}
+
+/* Estilo general para botones */
+button {
+    padding: 12px 20px; /* Espaciado interno */
+    font-size: 16px; /* Tamaño de fuente */
+    border: none; /* Sin borde */
+    border-radius: 6px; /* Bordes redondeados */
+    cursor: pointer; /* Cambiar el cursor al pasar */
+    transition: background-color 0.3s, transform 0.3s; /* Transiciones suaves */
+    flex: 1; /* Ocupa el mismo espacio */
+    margin: 0 5px; /* Espacio entre botones */
+}
+
+/* Estilo del botón primario */
+button.btn-primary {
+    background-color: #28a745; /* Color de fondo del botón primario */
+    color: white; /* Color del texto del botón primario */
+}
+
+/* Efecto hover para el botón primario */
+button.btn-primary:hover {
+    background-color: #218838; /* Color de fondo al pasar el ratón */
+    transform: translateY(-2px); /* Efecto elevación al pasar el ratón */
+}
+
+/* Deshabilitar botón primario */
+button.btn-primary:disabled {
+    background-color: #ccc; /* Color de fondo al deshabilitar */
+    cursor: not-allowed; /* Cambiar el cursor al deshabilitar */
+}
+
+/* Estilo del botón secundario */
+button.btn-secondary {
+    background-color: #dc3545; /* Color de fondo del botón secundario */
+    color: white; /* Color del texto del botón secundario */
+}
+
+/* Efecto hover para el botón secundario */
+button.btn-secondary:hover {
+    background-color: #c82333; /* Color de fondo al pasar el ratón */
+    transform: translateY(-2px); /* Efecto elevación al pasar el ratón */
+}
+
+/* Estilos para dispositivos móviles */
+@media (max-width: 600px) {
+    .form-buttons {
+        flex-direction: column; /* Cambiar a columna en móviles */
+        gap: 10px; /* Espaciado entre botones */
+    }
+
+    button {
+        width: 100%; /* Botones ocupan el ancho completo */
+    }
+}
