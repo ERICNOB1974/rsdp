@@ -212,12 +212,9 @@ export class CrearEventoComponent {
     this.router.navigate(['/eventos']);
   }
 
-
   saveEvento(): void {
-
     //this.evento.fechaHora = this.formatFechaHora(this.evento.fechaHora); // Formatear la fecha
     this.evento.fechaHora = new Date(this.evento.fechaHora).toISOString();
-
     this.eventoService.save(this.evento).subscribe(dataPackage => {
       this.evento = <Evento>dataPackage.data;
       location.reload();

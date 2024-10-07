@@ -3,46 +3,36 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { EventoService } from '../eventos/evento.service';
-import { ComunidadService } from '../comunidades/comunidad.service';
-import { UsuarioService } from '../usuarios/usuario.service';
-import { Usuario } from '../usuarios/usuario';
+import { Evento } from '../eventos/evento';
 
 @Component({
     selector: 'app-sugerencias',
     standalone: true,
     imports: [CommonModule, FormsModule, RouterModule],
-    templateUrl: 'sugerencias.component.html',
+    templateUrl: 'sugerenciasEventos.component.html',
     styleUrls: ['eventos.component.css'] 
 })
-export class SugerenciasComponent implements OnInit {
+export class SugerenciasEventosComponent implements OnInit {
     currentIndex: number = 0; // Índice actual del carrusel
-    eventos: Usuario[] = []; // Arreglo para almacenar los eventos que provienen del backend
-    results: Usuario[] = [];
+    eventos: Evento[] = []; // Arreglo para almacenar los eventos que provienen del backend
+    results: Evento[] = [];
   
     constructor(private eventoService: EventoService,
-        private comunidadService: ComunidadService,
-        private usuarioService: UsuarioService,
         private router: Router) { }
 
     ngOnInit(): void {
-        // this.getEventos()
+        this.getEventos()
     }
 
-    // sugerenciasAmigos(){
-    //     this.usuarioService.sugerencias("usuario12");
-    // }
+    getEventos(): void {
+        this.eventoService.sugerencias("usuario10").subscribe((dataPackage) => {
+          const responseData = dataPackage.data;
+          if (Array.isArray(responseData)) {
+            this.results = responseData;
+          }
+        });
+      }
 
-    // getEventos(): void {
-    //     this.usuarioService.sugerencias("usuario8").subscribe((dataPackage) => {
-    //       const responseData = dataPackage.data;
-    //       if (Array.isArray(responseData)) {
-    //         this.results = responseData;
-    //       }
-    //     });
-    //   }
-
-   
-    
       // Método para mover al siguiente grupo de eventos en el carrusel
       siguienteEvento(): void {
         this.currentIndex = (this.currentIndex + 1) % this.results.length; // Incrementa el índice
@@ -54,8 +44,8 @@ export class SugerenciasComponent implements OnInit {
       }
     
       // Método para obtener los eventos a mostrar en el carrusel
-      obtenerEventosParaMostrar(): Usuario[] {
-        const eventosParaMostrar: Usuario[] = [];
+      obtenerEventosParaMostrar(): Evento[] {
+        const eventosParaMostrar: Evento[] = [];
     
         if (this.results.length === 0) {
           return eventosParaMostrar; // Devuelve un arreglo vacío si no hay eventos

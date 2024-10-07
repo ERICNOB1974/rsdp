@@ -2,8 +2,10 @@ package unpsjb.labprog.backend.business;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,6 +65,17 @@ public class EventoService {
          */
 
         return eventoRepository.save(evento);
+    }
+
+    public List<Evento> todasLasSugerencias(String nombreUsuario) {
+        List<Evento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnAmigos(nombreUsuario);
+        sugerencias.addAll(eventoRepository.sugerenciasDeEventosBasadosEnComunidades(nombreUsuario));
+        sugerencias.addAll(eventoRepository.sugerenciasDeEventosBasadosEnEventos(nombreUsuario));
+        Set<Evento> setUsuarios = new HashSet<Evento>();
+        setUsuarios.addAll(sugerencias);
+        sugerencias.removeAll(sugerencias);
+        sugerencias.addAll(setUsuarios);
+        return sugerencias;
     }
 
     public void mail(Evento evento) throws MessagingException {
