@@ -5,6 +5,8 @@ import org.springframework.stereotype.Repository;
 
 import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Evento;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

@@ -5,8 +5,10 @@ import { EventosComponent } from './eventos/eventos.component';
 import { EventoDetailComponent } from './eventos/eventos-detail.component';
 import { ComunidadesComponent } from './comunidades/comunidades.component';
 import { CrearEventoComponent } from './eventos/crearEvento.component';
-import { ComunidadDetailComponent } from './comunidades/crearComunidad.component';
+import { CrearComunidadComponent } from './comunidades/crearComunidad.component';
 import { SugerenciasComponent } from './sugerencias/sugerencias.component';
+import { ComunidadDetailComponent } from './comunidades/comunidades-detail.component';
+
 export const routes: Routes = [
     {path: '', component: HomeComponent},
     {path: 'seleccionMapa', component: SeleccionMapaComponent},
@@ -14,6 +16,7 @@ export const routes: Routes = [
     {path: 'eventos/crearEvento', component: CrearEventoComponent }, //si o si tiene que estar antes del de /:id, sino no anda
     {path: 'eventos/:id', component: EventoDetailComponent },
     {path: 'comunidades', component: ComunidadesComponent },
-    {path: 'comunidades/:id', component: ComunidadDetailComponent },
+    {path: 'comunidades/crearComunidad', component: CrearComunidadComponent },
+    {path: 'comunidades/:id', component: ComunidadDetailComponent},
     {path: 'sugerencias', component: SugerenciasComponent }
 ];
