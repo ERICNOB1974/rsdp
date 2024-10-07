@@ -21,14 +21,13 @@ export class UsuarioService {
   get(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.usuariosUrl}/findById/${id}`);
   }
+
   sugerencias(nombreUsuario: string): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.usuariosUrl}/sugerencias/${nombreUsuario}`);
   }
-
  
   search(searchTerm: string): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/search/${searchTerm}`);
   }
-
 
 }

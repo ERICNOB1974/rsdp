@@ -22,30 +22,33 @@ public class ComunidadPresenter {
     private UsuarioComunidadService usuarioComunidadService;
 
     @GetMapping("/findAll")
-    public ResponseEntity<Object> findAll(){
+    public ResponseEntity<Object> findAll() {
         return Response.ok(comunidadService.findAll());
     }
 
     @RequestMapping(path = "/create", method = RequestMethod.POST)
-    public ResponseEntity<Object> create(@RequestBody Comunidad comunidad){
+    public ResponseEntity<Object> create(@RequestBody Comunidad comunidad) {
         return Response.ok(comunidadService.save(comunidad));
     }
 
     @GetMapping("/sugerenciasDeComunidadesBasadasEnAmigos/{nombreUsuario}")
     public ResponseEntity<Object> sugerenciasDeComunidadesBasadasEnAmigos(@PathVariable String nombreUsuario) {
-        List<Comunidad> sugerenciasDeComunidadesBasadasEnAmigos = comunidadService.sugerenciasDeComunidadesBasadasEnAmigos(nombreUsuario);
+        List<Comunidad> sugerenciasDeComunidadesBasadasEnAmigos = comunidadService
+                .sugerenciasDeComunidadesBasadasEnAmigos(nombreUsuario);
         return Response.ok(sugerenciasDeComunidadesBasadasEnAmigos);
     }
 
     @GetMapping("/sugerenciasDeComunidadesBasadasEnComunidades/{nombreUsuario}")
     public ResponseEntity<Object> sugerenciasDeComunidadesBasadasEnComunidades(@PathVariable String nombreUsuario) {
-        List<Comunidad> sugerenciasDeComunidadesBasadasEnComunidades = comunidadService.sugerenciasDeComunidadesBasadasEnComunidades(nombreUsuario);
+        List<Comunidad> sugerenciasDeComunidadesBasadasEnComunidades = comunidadService
+                .sugerenciasDeComunidadesBasadasEnComunidades(nombreUsuario);
         return Response.ok(sugerenciasDeComunidadesBasadasEnComunidades);
     }
 
     @GetMapping("/sugerenciasDeComunidadesBasadasEnEventos/{nombreUsuario}")
     public ResponseEntity<Object> sugerenciasDeComunidadesBasadasEnEventos(@PathVariable String nombreUsuario) {
-        List<Comunidad> sugerenciasDeComunidadesBasadasEnEventos = comunidadService.sugerenciasDeComunidadesBasadasEnEventos(nombreUsuario);
+        List<Comunidad> sugerenciasDeComunidadesBasadasEnEventos = comunidadService
+                .sugerenciasDeComunidadesBasadasEnEventos(nombreUsuario);
         return Response.ok(sugerenciasDeComunidadesBasadasEnEventos);
     }
 
@@ -55,9 +58,10 @@ public class ComunidadPresenter {
     }
 
     @PostMapping("/otorgarRolAdministrador/{idCreador}/{idMiembro}/{idComunidad}")
-    public ResponseEntity<Object> otorgarRolAdministrador(@PathVariable Long idCreador, @PathVariable Long idMiembro, @PathVariable Long idComunidad) {
+    public ResponseEntity<Object> otorgarRolAdministrador(@PathVariable Long idCreador, @PathVariable Long idMiembro,
+            @PathVariable Long idComunidad) {
         try {
-            String respuesta=usuarioComunidadService.otorgarRolAdministrador(idCreador, idMiembro, idComunidad);
+            String respuesta = usuarioComunidadService.otorgarRolAdministrador(idCreador, idMiembro, idComunidad);
             return Response.ok(respuesta);
         } catch (Exception e) {
             return Response.error("", "Error al otorgar rol: " + e.getMessage());
@@ -65,9 +69,10 @@ public class ComunidadPresenter {
     }
 
     @PostMapping("/quitarRolAdministrador/{idCreador}/{idMiembro}/{idComunidad}")
-    public ResponseEntity<Object> quitarRolAdministrador(@PathVariable Long idCreador, @PathVariable Long idMiembro, @PathVariable Long idComunidad) {
+    public ResponseEntity<Object> quitarRolAdministrador(@PathVariable Long idCreador, @PathVariable Long idMiembro,
+            @PathVariable Long idComunidad) {
         try {
-            String respuesta=usuarioComunidadService.quitarRolAdministrador(idCreador, idMiembro, idComunidad);
+            String respuesta = usuarioComunidadService.quitarRolAdministrador(idCreador, idMiembro, idComunidad);
             return Response.ok(respuesta);
         } catch (Exception e) {
             return Response.error("", "Error al quitar rol: " + e.getMessage());
@@ -75,9 +80,11 @@ public class ComunidadPresenter {
     }
 
     @PostMapping("/gestionarSolicitudIngreso/{idSuperUsuario}/{idMiembro}/{idComunidad}")
-    public ResponseEntity<Object> gestionarSolicitudIngreso(@PathVariable Long idSuperUsuario, @PathVariable Long idMiembro, @PathVariable Long idComunidad, @RequestParam boolean aceptada) {
+    public ResponseEntity<Object> gestionarSolicitudIngreso(@PathVariable Long idSuperUsuario,
+            @PathVariable Long idMiembro, @PathVariable Long idComunidad, @RequestParam boolean aceptada) {
         try {
-            String respuesta=usuarioComunidadService.gestionarSolicitudes(idSuperUsuario, idMiembro, idComunidad, aceptada);
+            String respuesta = usuarioComunidadService.gestionarSolicitudes(idSuperUsuario, idMiembro, idComunidad,
+                    aceptada);
             return Response.ok(respuesta);
         } catch (Exception e) {
             return Response.error("", "Error al gestionar solicitud de ingreso: " + e.getMessage());
@@ -85,20 +92,26 @@ public class ComunidadPresenter {
     }
 
     @RequestMapping(path = "/create/{idUsuario}", method = RequestMethod.POST)
-    public ResponseEntity<Object> create(@RequestBody Comunidad comunidad,@PathVariable Long idUsuario){
+    public ResponseEntity<Object> create(@RequestBody Comunidad comunidad, @PathVariable Long idUsuario) {
         try {
-            return Response.ok(usuarioComunidadService.guardarComunidadYCreador(comunidad,idUsuario));
+            return Response.ok(usuarioComunidadService.guardarComunidadYCreador(comunidad, idUsuario));
         } catch (Exception e) {
-            return Response.error("", "Error al crear la comunidad: " + e.getMessage()+e);
+            return Response.error("", "Error al crear la comunidad: " + e.getMessage() + e);
         }
     }
 
+    @GetMapping("/sugerencias/{nombreUsuario}")
+    public ResponseEntity<Object> sugerencias(@PathVariable String nombreUsuario) {
+        return Response.ok(comunidadService.todasLasSugerencias(nombreUsuario));
+    }
+
     @GetMapping("/visualizarSolicitudes/{idSuperUsuario}/{idComunidad}")
-    public ResponseEntity<Object> visualizarSolicitudesPendinetes(@PathVariable Long idSuperUsuario, @PathVariable Long idComunidad) {
+    public ResponseEntity<Object> visualizarSolicitudesPendinetes(@PathVariable Long idSuperUsuario,
+            @PathVariable Long idComunidad) {
         try {
-            return Response.ok(usuarioComunidadService.visualizarSolicitudes(idSuperUsuario,idComunidad));
+            return Response.ok(usuarioComunidadService.visualizarSolicitudes(idSuperUsuario, idComunidad));
         } catch (Exception e) {
-            return Response.error("", "Error al visualizar las solicitudes de la comunidad: " + e.getMessage()+e);
+            return Response.error("", "Error al visualizar las solicitudes de la comunidad: " + e.getMessage() + e);
         }
     }
 }
