@@ -29,6 +29,11 @@ export class EventoService {
     return evento.id ? this.http.put<DataPackage>(` ${this.eventosUrl}/actualizar`, evento) :
       this.http.post<DataPackage>(` ${this.eventosUrl}/create`, evento);
   }
+    
+  sugerencias(nombreUsuario: string): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.eventosUrl}/sugerencias/${nombreUsuario}`);
+  }
+
   
   participantesEnEvento(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.eventosUrl}/${id}/participantes`);

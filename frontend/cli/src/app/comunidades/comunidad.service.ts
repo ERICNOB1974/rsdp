@@ -47,8 +47,19 @@ export class ComunidadService {
       : this.http.post<DataPackage>(this.comunidadesUrl, comunidad);
   }
 
+
+    
+  sugerencias(nombreUsuario: string): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.comunidadesUrl}/sugerencias/${nombreUsuario}`);
+  }
+
+  
+  participantesEncomunidad(id: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.comunidadesUrl}/${id}/participantes`);
+
   miembrosEnComunidad(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/${id}/miembros`);
+
   }
 
   ingresarAComunidad(idComunidad: number, idUsuario: number): Observable<DataPackage> {

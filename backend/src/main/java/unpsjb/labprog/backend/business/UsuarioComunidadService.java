@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Usuario;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.List;
