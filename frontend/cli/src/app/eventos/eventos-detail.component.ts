@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router'; 
-import { EventoService } from './evento.service'; 
-import { Evento } from './evento'; 
-import { Location } from '@angular/common'; 
+import { ActivatedRoute, Router } from '@angular/router';
+import { EventoService } from './evento.service';
+import { Evento } from './evento';
+import { Location } from '@angular/common';
 import { CommonModule } from '@angular/common'; // Para permitir navegar de vuelta
 
 
@@ -26,13 +26,14 @@ export class EventoDetailComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getEvento(); 
+    this.getEvento();
+    this.traerParticipantes();
   }
 
 
- getEvento(): void {
+  getEvento(): void {
     const id = this.route.snapshot.paramMap.get('id')!;
-    if (!id  || isNaN(parseInt(id, 10)) || id === 'new') {
+    if (!id || isNaN(parseInt(id, 10)) || id === 'new') {
       this.evento = <Evento>{};
       this.router.navigate(['eventos/crearEvento']);
     }
@@ -55,12 +56,27 @@ export class EventoDetailComponent implements OnInit {
     }
   }
 
+  traerParticipantes(): void {
+    console.log(this.evento.id);  
+    this.eventoService.participantesEnEvento(this.evento.id).subscribe(
+      (dataPackage) => {
+        if (dataPackage && typeof dataPackage.data === 'number') {
+          this.evento.participantes = dataPackage.data; // Asignar el número de participantes
+        }
+      }
+    );
+  }
 
   goBack(): void {
     this.location.back();
   }
 
   inscribirse(): void {
+    this.eventoService.inscribirse(this.evento.id).subscribe();
     console.log("Inscribirse al evento:", this.evento?.nombre);
+  }
+
+  inscribirseValid():boolean{
+    return this.evento.participantes < this.evento.cantidadMaximaParticipantes;
   }
 }

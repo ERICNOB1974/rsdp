@@ -18,7 +18,7 @@ public class InscripcionEventoService {
     @Autowired
     private EmailService emailService;
 
-    public String inscribirse(Long idUsuario, Long idEvento) {
+    public String inscribirse(Long idEvento, Long idUsuario) {
         Optional<Evento> evento = eventoRepository.findById(idEvento);
         if (evento.get().getCantidadMaximaParticipantes() == eventoRepository.participantesDeEvento(idEvento)) {
             return "No se registro la inscripcion debido a que no hay mas cupos.";
@@ -26,7 +26,7 @@ public class InscripcionEventoService {
         if (eventoRepository.participa(idUsuario, idEvento)) {
             return "El usuario ya participa en este evento.";
         }
-        if (evento.get().getFechaHora().isAfter(ZonedDateTime.now()) || evento.get().getFechaHora().isEqual(ZonedDateTime.now())) {
+        if (evento.get().getFechaHora().isBefore(ZonedDateTime.now()) || evento.get().getFechaHora().isEqual(ZonedDateTime.now())) {
             return "El evento ya ocurrio.";
         }
 
