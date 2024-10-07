@@ -135,6 +135,8 @@ export class CrearEventoComponent {
     // Agregar evento de clic en el mapa para mover el marcador
     this.mapa.on('click', (event: L.LeafletMouseEvent) => {
       this.moverMarcador(event.latlng);
+      this.evento.latitud = event.latlng.lat;
+      this.evento.longitud = event.latlng.lng;
     });
   }
 
