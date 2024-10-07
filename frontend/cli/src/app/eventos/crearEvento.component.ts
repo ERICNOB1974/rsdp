@@ -36,6 +36,8 @@ export class CrearEventoComponent {
   sugerencias: any[] = [];
   marcador!: L.Marker; // Agregar una propiedad para el marcador
   private buscarDireccionSubject = new Subject<string>();
+  ubicacionAceptada: boolean = false; // Nueva propiedad
+
 
   constructor(
     private eventoService: EventoService,
@@ -43,14 +45,13 @@ export class CrearEventoComponent {
     private router: Router,
     private location: Location,
     private ubicacionService: UbicacionService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.evento = <Evento>{
       fechaDeCreacion: new Date(),
       nombre: "",
       descripcion: "",
-      cantidadMaximaParticipantes: 1,
       esPrivadoParaLaComunidad: false,
       participantes: 0
     }; // Aseguramos que el objeto evento esté inicializado
@@ -69,14 +70,58 @@ export class CrearEventoComponent {
 
       if (latitud !== null && longitud !== null) {
         this.iniciarMapa(latitud, longitud); // Inicia el mapa con las coordenadas del usuario
+        this.ubicacionAceptada = true; // Habilitar la interacción
       } else {
+        this.ubicacionAceptada = false;
         console.error('No se pudo obtener la ubicación del usuario.');
         this.iniciarMapa(-42.7692, -65.0385); // Coordenadas por defecto
       }
     }).catch((error) => {
+      this.ubicacionAceptada = false; // Deshabilitar la interacción
+      this.mostrarAlertaDeUbicacionRechazada(); // Mostrar un mensaje al usuario
       console.error('Error al obtener la ubicación:', error);
-      this.iniciarMapa(-42.7692, -65.0385); // Coordenadas por defecto en caso de error
     });
+  }
+
+  private mostrarAlertaDeUbicacionRechazada(): void {
+    // Crear un contenedor de alerta a pantalla completa
+    const alertOverlay = document.createElement('div');
+    alertOverlay.classList.add('alert-overlay', 'd-flex', 'justify-content-center', 'align-items-center');
+
+    // Crear un contenedor para el contenido del modal
+    const alertContainer = document.createElement('div');
+    alertContainer.classList.add('alert-container', 'alert', 'alert-danger', 'fade', 'show', 'p-5');
+    alertContainer.setAttribute('role', 'alert');
+
+    // Contenido del mensaje de alerta
+    alertContainer.innerHTML = `
+    <div class="modal fade show" id="ubicacionModal" tabindex="-1" aria-labelledby="ubicacionModalLabel" aria-modal="true" style="display: block; background: rgba(0, 0, 0, 0.75);">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="ubicacionModalLabel">Ubicación Necesaria</h5>
+          </div>
+          <div class="modal-body text-center">
+            <p class="lead">Para continuar, necesitamos que habilites la ubicación.</p>
+            <p>Por favor, activa la ubicación en tu dispositivo para poder disfrutar de todas las funcionalidades de la plataforma.</p>
+            <div class="alert alert-warning mt-3">
+              <strong>Advertencia:</strong> No podrás salir de esta pantalla hasta habilitar la ubicación.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>  
+    `;
+
+    // Añadir el contenedor de la alerta al contenedor de overlay
+    alertOverlay.appendChild(alertContainer);
+
+    // Añadir el contenedor al cuerpo del documento
+    document.body.appendChild(alertOverlay);
+
+    // Bloquear la interacción
+    this.cursorBlocked = true;
+
   }
 
   private iniciarMapa(lat: number, lng: number): void {
@@ -116,7 +161,7 @@ export class CrearEventoComponent {
               pais: feature.properties.country || null,
               coordenadas: feature.geometry.coordinates
             }))
-            .filter((sugerencia: any) => 
+            .filter((sugerencia: any) =>
               sugerencia.ciudad !== null &&
               sugerencia.pais !== null
             );
@@ -150,7 +195,7 @@ export class CrearEventoComponent {
     this.marcador = L.marker(latlng).addTo(this.mapa)
       .bindPopup(`Ubicación: ${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`)
       .openPopup();
-    
+
     this.mapa.setView(latlng, 16);
   }
 
@@ -239,11 +284,11 @@ export class CrearEventoComponent {
     return !!this.evento &&
       !!this.evento.fechaHora &&
       !!this.evento.nombre &&
-      !!(this.etiquetasSeleccionadas.length>0) &&
-      !!(this.etiquetasSeleccionadas.length<=15) &&
+      !!(this.etiquetasSeleccionadas.length > 0) &&
+      !!(this.etiquetasSeleccionadas.length <= 15) &&
       !!this.evento.cantidadMaximaParticipantes &&
       !!this.evento.latitud &&
       !!this.evento.longitud
-  }  
+  }
 
 }

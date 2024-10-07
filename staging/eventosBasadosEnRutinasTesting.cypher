@@ -73,4 +73,4 @@ CREATE (evento1)-[:ETIQUETADO_CON]->(etiquetaFuncional),
 
 // MATCH para establecer que Lucas participa en el evento de yoga
 CREATE (lucas)-[:PARTICIPA_EN]->(evento2)
-CREATE (facundo)<-[:CREADO_POR]-(evento4); // Facundo creo este evento
+CREATE (facundo)<-[:CREADO_POR]-(evento4) // Facundo creo este evento

@@ -162,3 +162,36 @@ body {
         width: 100%; /* Ancho completo del submenú */
     }
 }
+
+.modal-backdrop.show {
+    opacity: 0.75;
+    background-color: rgba(0, 0, 0, 0.75); /* Fondo negro con un poco de transparencia */
+  }
+  
+  .modal-content {
+    border-radius: 10px;
+    background: #f8f9fa;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+  }
+  
+  .modal-header {
+    background-color: #343a40;
+    color: white;
+  }
+  
+  .modal-body {
+    padding: 2rem;
+  }
+  
+  .modal-footer {
+    padding: 1rem;
+  }
+  
+  .lead {
+    font-size: 1.25rem;
+  }
+  
+  .alert {
+    font-size: 1rem;
+  }
+  
