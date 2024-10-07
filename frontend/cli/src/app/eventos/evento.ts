@@ -2,7 +2,7 @@ export interface Evento {
     id: number;
     nombre: string;
     fechaDeCreacion: Date; 
-    fechaHora: string; 
+    fechaHora: string | Date; 
     descripcion: string;
     cantidadMaximaParticipantes: number;
     esPrivadoParaLaComunidad: boolean;
