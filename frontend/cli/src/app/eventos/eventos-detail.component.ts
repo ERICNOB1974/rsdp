@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router'; // Importamos para obtener el parámetro de la URL
-import { EventoService } from './evento.service'; // Servicio para obtener los eventos
-import { Evento } from './evento'; // Modelo del evento
+import { ActivatedRoute, Router } from '@angular/router'; 
+import { EventoService } from './evento.service'; 
+import { Evento } from './evento'; 
+import { Location } from '@angular/common'; 
 import { CommonModule, Location } from '@angular/common'; // Para permitir navegar de vuelta
+
 
 @Component({
   selector: 'app-evento-detail',
@@ -12,27 +14,31 @@ import { CommonModule, Location } from '@angular/common'; // Para permitir naveg
   standalone: true
 })
 export class EventoDetailComponent implements OnInit {
+
   evento!: Evento; // Evento específico que se va a mostrar
 
   constructor(
     private route: ActivatedRoute, // Para obtener el parámetro de la URL
     private eventoService: EventoService, // Servicio para obtener el evento por ID
     private location: Location // Para manejar la navegación
+    private router: Router
+
   ) { }
 
   ngOnInit(): void {
-    this.getEvento(); // Al inicializar el componente, obtener los detalles del evento
+    this.getEvento(); 
   }
 
-  getEvento(): void {
+
+ getEvento(): void {
     const id = this.route.snapshot.paramMap.get('id')!;
-    if (id === 'new') {
+    if (!id  || isNaN(parseInt(id, 10)) || id === 'new') {
       this.evento = <Evento>{};
     }
     else {
       this.eventoService.get(parseInt(id)).subscribe(async dataPackage => {
         this.evento = <Evento>dataPackage.data;
-        
+
         if (this.evento.latitud && this.evento.longitud) {
           this.evento.ubicacion = await this.eventoService.obtenerUbicacion(this.evento.latitud, this.evento.longitud);
         } else {
@@ -48,7 +54,7 @@ export class EventoDetailComponent implements OnInit {
     }
   }
 
-  // Método para regresar a la página anterior
+
   goBack(): void {
     this.location.back();
   }

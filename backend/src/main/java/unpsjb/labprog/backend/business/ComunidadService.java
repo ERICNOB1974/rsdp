@@ -1,6 +1,8 @@
 package unpsjb.labprog.backend.business;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,5 +49,17 @@ public class ComunidadService {
     public Comunidad findById(Long id){
         return comunidadRepository.findById(id).orElse(null);
     }
+
+    public List<Comunidad> todasLasSugerencias(String nombreUsuario) {
+        List<Comunidad> sugerencias = comunidadRepository.sugerenciasDeComunidadesBasadasEnAmigos(nombreUsuario);
+        sugerencias.addAll(comunidadRepository.sugerenciasDeComunidadesBasadasEnEventos(nombreUsuario));
+        sugerencias.addAll(comunidadRepository.sugerenciasDeComunidadesBasadasEnComunidades(nombreUsuario));
+        Set<Comunidad> setUsuarios = new HashSet<Comunidad>();
+        setUsuarios.addAll(sugerencias);
+        sugerencias.removeAll(sugerencias);
+        sugerencias.addAll(setUsuarios);
+        return sugerencias;
+    }
+
 
 }
