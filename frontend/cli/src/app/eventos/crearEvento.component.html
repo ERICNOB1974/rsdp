@@ -45,19 +45,20 @@
     <!-- Sección de búsqueda de direcciones y mapa -->
     <div class="mapa-container">
       <div class="input-container">
-        <label for="direccion">Ubicación del Evento</label>
-        <input type="text" class="form-control" placeholder="Ingresa una dirección" (input)="buscarDireccion($event)" />
-        <ul *ngIf="sugerencias.length > 0" class="list-group">
-          <li *ngFor="let sugerencia of sugerencias" (click)="seleccionarDireccion(sugerencia)"
-            class="list-group-item list-group-item-action" style="cursor: pointer;">
-            {{ sugerencia.direccion }} - {{ sugerencia.altura }}, {{ sugerencia.ciudad }}, {{ sugerencia.pais }}
-          </li>
-        </ul>
+          <label for="direccion" class="padding-top-20">Ubicación del Evento</label>
+          <input type="text" class="form-control padding-top-20" placeholder="Ingresa una dirección" (input)="buscarDireccion($event)" />
+          <ul *ngIf="sugerencias.length > 0" class="list-group">
+              <li *ngFor="let sugerencia of sugerencias" (click)="seleccionarDireccion(sugerencia)"
+                  class="list-group-item list-group-item-action" style="cursor: pointer;">
+                  {{ sugerencia.direccion }} - {{ sugerencia.altura }}, {{ sugerencia.ciudad }}, {{ sugerencia.pais }}
+              </li>
+          </ul>
       </div>
-
+      
       <div class="form-group">
         <div id="map"></div>
       </div>
+      
     </div>
 
     <div class="form-buttons">

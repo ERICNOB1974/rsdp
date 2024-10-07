@@ -31,7 +31,7 @@ public class ComunidadPresenter {
         return Response.ok(comunidadService.miembrosDeComunidad(id));
     }
 
-    @RequestMapping(path = "/create", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Object> create(@RequestBody Comunidad comunidad) {
         return Response.ok(comunidadService.save(comunidad));
     }
