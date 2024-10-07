@@ -7,7 +7,7 @@ import { Comunidad } from './comunidad';
 import { Location } from '@angular/common'; // Asegúrate de que está importado desde aquí
 
 @Component({
-  selector: 'app-comunidades-detail',
+  selector: 'app-crear-comunidad',
 
   templateUrl: './crearComunidad.component.html',
   styleUrls: ['./comunidades-detail.component.css'],
@@ -42,7 +42,7 @@ export class CrearComunidadComponent {
   }
 
   ngOnInit() {
-    this.get();
+    //this.get();
   }
 
 
