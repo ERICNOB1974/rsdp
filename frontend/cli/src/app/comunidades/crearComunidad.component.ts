@@ -38,8 +38,8 @@ export class CrearComunidadComponent {
   sugerencias: any[] = [];
   marcador!: L.Marker; // Agregar una propiedad para el marcador
   private buscarDireccionSubject = new Subject<string>(); // Subject para manejar el debounce
-  ubicacionAceptada: boolean = false; 
-  
+  ubicacionAceptada: boolean = false;
+
   constructor(
     private route: ActivatedRoute,
     private location: Location,
@@ -92,6 +92,9 @@ export class CrearComunidadComponent {
           this.showMessage = false;
         }, 10000);
       });
+
+    location.reload();
+
   }
 
   cancel(): void {
@@ -214,6 +217,8 @@ export class CrearComunidadComponent {
     // Agregar evento de clic en el mapa para mover el marcador
     this.mapa.on('click', (event: L.LeafletMouseEvent) => {
       this.moverMarcador(event.latlng);
+      this.comunidad.latitud=event.latlng.lat;
+      this.comunidad.longitud=event.latlng.lng;
     });
   }
 
@@ -284,7 +289,7 @@ export class CrearComunidadComponent {
       !!this.comunidad.latitud &&
       !!this.comunidad.longitud &&
       !!(this.etiquetasSeleccionadas.length > 0) &&
-      !!(this.etiquetasSeleccionadas.length <= 15) 
+      !!(this.etiquetasSeleccionadas.length <= 15)
   }
 
 }

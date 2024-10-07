@@ -10,7 +10,7 @@
           <p><strong>Cantidad máxima de participantes:</strong> {{ evento.cantidadMaximaParticipantes }}</p>
 
           <!-- Botón de Inscribirse -->
-          <button (click)="inscribirse()" class="btn btn-primary btn-block inscribirse-button"  [disabled]="!inscribirseValid()">Inscribirse</button>
+          <button (click)="inscribirse()" class="btn btn-primary btn-block inscribirse-button"  [disabled]="(inscribirseValid() | async)">Inscribirse</button>
           
           <!-- Botón de regresar -->
           <button (click)="goBack()" class="btn btn-secondary btn-block mt-2">Volver</button>

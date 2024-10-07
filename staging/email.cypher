@@ -12,7 +12,7 @@ CREATE
 
 CREATE 
 (u1:Usuario {
-    nombreUsuario: 'lucas123', 
+    nombreUsuario: 'lucas', 
     nombreReal: 'Lucas San Martin', 
     fechaNacimiento: date('1990-05-15'), 
     fechaDeCreacion: date('2024-09-10'), 
@@ -32,6 +32,6 @@ CREATE
     descripcion: 'Amante del fútbol y la música'
 })
 
-MERGE (u1)-[:PARTICIPA_EN]->(evento)
+//MERGE (u1)-[:PARTICIPA_EN]->(evento)
 MERGE (u2)-[:PARTICIPA_EN]->(evento)
  

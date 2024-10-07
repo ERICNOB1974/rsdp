@@ -4,6 +4,7 @@ import { EventoService } from './evento.service';
 import { Evento } from './evento';
 import { Location } from '@angular/common';
 import { CommonModule } from '@angular/common'; // Para permitir navegar de vuelta
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
@@ -21,9 +22,12 @@ export class EventoDetailComponent implements OnInit {
     private route: ActivatedRoute, // Para obtener el parámetro de la URL
     private eventoService: EventoService, // Servicio para obtener el evento por ID
     private location: Location, // Para manejar la navegación
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar // Agrega MatSnackBar en el constructor
+
 
   ) { }
+  
 
   ngOnInit(): void {
     this.getEvento();
@@ -73,9 +77,22 @@ export class EventoDetailComponent implements OnInit {
   inscribirse(): void {
     this.eventoService.inscribirse(this.evento.id).subscribe();
     console.log("Inscribirse al evento:", this.evento?.nombre);
+    this.snackBar.open('Inscripción guardada con éxito', 'Cerrar', {
+      duration: 3000, // Duración del snackbar en milisegundos
+    });
   }
-
+/* 
   inscribirseValid(): boolean {
-    return !!(this.evento.participantes < this.evento.cantidadMaximaParticipantes);
-  }
+    return (!!(this.evento.participantes < this.evento.cantidadMaximaParticipantes)&&
+    this.eventoService.participa(this.evento.id).subscribe());
+  } */
+    inscribirseValid(): Promise<boolean> {
+      return new Promise((resolve) => {
+        this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
+          const estaInscripto = dataPackage.data as unknown as boolean;
+          resolve(!!(this.evento.participantes < this.evento.cantidadMaximaParticipantes && !estaInscripto));
+        });
+      });
+    }
+    
 }
