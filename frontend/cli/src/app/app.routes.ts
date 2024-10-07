@@ -6,7 +6,9 @@ import { EventoDetailComponent } from './eventos/eventos-detail.component';
 import { ComunidadesComponent } from './comunidades/comunidades.component';
 import { CrearEventoComponent } from './eventos/crearEvento.component';
 import { CrearComunidadComponent } from './comunidades/crearComunidad.component';
-import { SugerenciasComponent } from './sugerencias/sugerencias.component';
+import { SugerenciasAmigosComponent } from './sugerencias/sugerenciasAmigos.component';
+import { SugerenciasEventosComponent } from './sugerencias/sugerenciasEventos.component';
+import { SugerenciasComunidadesComponent } from './sugerencias/sugerenciasComunidades.component';
 import { ComunidadDetailComponent } from './comunidades/comunidades-detail.component';
 
 export const routes: Routes = [
@@ -18,5 +20,7 @@ export const routes: Routes = [
     {path: 'comunidades', component: ComunidadesComponent },
     {path: 'comunidades/crearComunidad', component: CrearComunidadComponent },
     {path: 'comunidades/:id', component: ComunidadDetailComponent},
-    {path: 'sugerencias', component: SugerenciasComponent }
+    {path: 'sugerencias/amigos', component: SugerenciasAmigosComponent },
+    {path: 'sugerencias/eventos', component: SugerenciasEventosComponent },
+    {path: 'sugerencias/comunidades', component: SugerenciasComunidadesComponent }
 ];
