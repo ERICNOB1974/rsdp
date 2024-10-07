@@ -83,7 +83,6 @@ public class UsuarioComunidadService {
         }
     // Obtener la fecha de ingreso como DateTimeValue
     //LocalDateTime fechaIngresoValue = comunidadRepository.obtenerFechaIngreso(idMiembro, idComunidad);
-    
         comunidadRepository.otorgarRolAdministrador(idMiembro, idComunidad, comunidadRepository.obtenerFechaIngreso(idMiembro, idComunidad), LocalDateTime.now());
         return "Rol administrador otorgado a: " + usuario.getNombreUsuario() + " correctamente";
     }
@@ -123,7 +122,7 @@ public class UsuarioComunidadService {
         if (miembroOpt.isEmpty()) {
             throw new Exception("El usuario no existe.");
         }
-        comunidad.setFechaDeCreacion(LocalDate.now()); // Establece la fecha aquí
+        comunidad.setFechaDeCreacion(LocalDateTime.now()); // Establece la fecha aquí
         return comunidadRepository.guardarComunidadYCreador(comunidad.getNombre(), comunidad.getDescripcion(), comunidad.getCantidadMaximaMiembros(), comunidad.isEsPrivada() , idUsuario, comunidad.getFechaDeCreacion(), comunidad.getLatitud(), comunidad.getLatitud());
     }
 

@@ -21,7 +21,7 @@ public class EmailPresenter {
 
     @PostMapping("/enviar")
     public ResponseEntity<Object> sendEmail() throws MessagingException {
-        emailService.enviarMail();
+        emailService.recordatorioEvento();
         return Response.ok("Correo enviado exitosamente");
     }
 
