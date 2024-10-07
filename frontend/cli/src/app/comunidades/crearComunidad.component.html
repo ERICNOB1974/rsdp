@@ -14,9 +14,28 @@
 
         <div class="form-group">
             <label for="cantidadMaximaMeimbros">Cantidad Máxima de miembros</label>
-            <input type="number" id="cantidadMaximaMeimbros" [(ngModel)]="comunidad.cantidadMaximaMiembros"
-                name="cantidadMaximaMeimbros" required>
+            <input type="number" min="1" id="cantidadMaximaMeimbros" [(ngModel)]="comunidad.cantidadMaximaMiembros"
+                name="cantidadMaximaMiembros" required>
         </div>
+
+        <div class="form-group">
+            <label for="etiquetas">Buscar Etiquetas:</label>
+            <input id="etiquetas" class="form-control" [(ngModel)]="etiquetaSeleccionada"
+              [ngbTypeahead]="searchEtiqueta" [resultFormatter]="resultFormatEtiqueta" [inputFormatter]="inputFormatEtiqueta"
+              (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada" placeholder="Buscar etiqueta" />
+          </div>
+      
+          <div *ngIf="etiquetasSeleccionadas.length > 0" class="etiquetas-lista">
+            <h4>Etiquetas seleccionadas:</h4>
+            <ul class="list-group">
+              <li *ngFor="let etiqueta of etiquetasSeleccionadas"
+                class="list-group-item d-flex justify-content-between align-items-center">
+                {{ etiqueta.nombre }}
+                <button type="button" class="btn btn-danger btn-sm" (click)="eliminarEtiqueta(etiqueta)">Eliminar</button>
+              </li>
+            </ul>
+          </div>
+          
 
         <div class="mapa-container">
             <div class="input-container">

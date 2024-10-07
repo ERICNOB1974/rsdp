@@ -135,6 +135,8 @@ export class CrearEventoComponent {
     // Agregar evento de clic en el mapa para mover el marcador
     this.mapa.on('click', (event: L.LeafletMouseEvent) => {
       this.moverMarcador(event.latlng);
+      this.evento.latitud=event.latlng.lat;
+      this.evento.longitud=event.latlng.lng;
     });
   }
 
@@ -262,8 +264,13 @@ export class CrearEventoComponent {
     this.evento.fechaHora = new Date(this.evento.fechaHora).toISOString();
     this.eventoService.save(this.evento).subscribe(dataPackage => {
       this.evento = <Evento>dataPackage.data;
-      location.reload();
-    });
+      this.etiquetasSeleccionadas.forEach(etiqueta => {
+        this.eventoService.etiquetar(this.evento, etiqueta.id).subscribe();
+      });
+    }); 
+    
+    location.reload();
+    
   }
 
   formatFechaHora(fechaHora: string): string {
