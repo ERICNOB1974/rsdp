@@ -1,60 +1,139 @@
 //RecomendacionesEventosBasadosEnEventos
 MATCH (n) DETACH DELETE n;
+// Crear usuarios con ubicaciones (latitud y longitud como propiedades separadas)
+CREATE (u1:Usuario {
+    nombreUsuario: "lucasMadryn",
+    nombreReal: "Lucas San Martin",
+    fechaNacimiento: date("1990-01-01"),
+    fechaDeCreacion: date("2023-01-01"),
+    correoElectronico: "lucassanmartin76@gmail.com",
+    contrasena: "password123",
+    descripcion: "Usuario 1 activo",
+    latitud: -42.762555975850084,
+    longitud: -65.04467329781565
+})
 
-// Crear usuarios
-CREATE (lucas:Usuario {nombreUsuario: 'lucas123', nombreReal: 'Lucas Lopez', correoElectronico: 'lucas@example.com'}),
-       (facundo:Usuario {nombreUsuario: 'facundo789', nombreReal: 'Facundo Sanchez', correoElectronico: 'facundo@example.com'}),
-       (diana:Usuario {nombreUsuario: 'Diana', nombreReal: 'Diana Sanchez', correoElectronico: 'diana@example.com'})
+CREATE (u2:Usuario {
+    nombreUsuario: "facuMadryn",
+    nombreReal: "Facundo Español",
+    fechaNacimiento: date("1992-02-15"),
+    fechaDeCreacion: date("2023-02-01"),
+    correoElectronico: "facuespaniol@gmail.com",
+    contrasena: "password456",
+    descripcion: "Usuario 2 activo",
+    latitud: -42.762555975850084,
+    longitud: -65.04467329781565
+})
 
-// Crear eventos
-CREATE (evento1:Evento {id: 2001, nombre: 'Entrenamiento funcional en el parque', fechaHora: datetime('2025-09-29T10:00:00'), descripcion: 'Entrenamiento funcional intensivo.', esPrivadoParaLaComunidad: false}),
-       (evento2:Evento {id: 2002, nombre: 'Yoga al aire libre', fechaHora: datetime('2025-09-22T08:00:00'), descripcion: 'Clase de yoga al aire libre.', esPrivadoParaLaComunidad: false}),
-       (evento3:Evento {id: 2003, nombre: 'Maratón de la ciudad', fechaHora: datetime('2025-10-15T09:00:00'), descripcion: 'Maratón para corredores de todos los niveles.', esPrivadoParaLaComunidad: false}),
-       (evento4:Evento {id: 2004, nombre: 'Entrenamiento de fuerza avanzada', fechaHora: datetime('2025-09-25T07:00:00'), descripcion: 'Entrenamiento intensivo de fuerza avanzada.', esPrivadoParaLaComunidad: false}),
-       (evento5:Evento {id: 2005, nombre: 'Cardio en la playa', fechaHora: datetime('2025-09-30T10:00:00'), descripcion: 'Sesión de cardio en la playa.', esPrivadoParaLaComunidad: false}),
-       (evento6:Evento {id: 2006, nombre: 'Yoga para principiantes', fechaHora: datetime('2025-09-24T08:00:00'), descripcion: 'Clase de yoga para principiantes.', esPrivadoParaLaComunidad: false}),
-       (evento7:Evento {id: 2007, nombre: 'Torneo de fuerza', fechaHora: datetime('2025-10-01T09:00:00'), descripcion: 'Competencia de fuerza en el gimnasio.', esPrivadoParaLaComunidad: false}),
-       (evento8:Evento {id: 2008, nombre: 'Carrera de obstáculos', fechaHora: datetime('2025-10-10T09:00:00'), descripcion: 'Carrera de obstáculos para todos los niveles.', esPrivadoParaLaComunidad: false}),
-       (evento9:Evento {id: 2009, nombre: 'Zumba en el parque', fechaHora: datetime('2025-09-28T11:00:00'), descripcion: 'Clase de Zumba al aire libre.', esPrivadoParaLaComunidad: false}),
-       (evento10:Evento {id: 2010, nombre: 'Entrenamiento de circuito', fechaHora: datetime('2025-10-05T10:00:00'), descripcion: 'Entrenamiento de circuito en el gimnasio.', esPrivadoParaLaComunidad: false}),
-       (evento11:Evento {id: 2011, nombre: 'Evento pasado', fechaHora: datetime('2023-10-05T10:00:00'), descripcion: 'Evento que ya paso.', esPrivadoParaLaComunidad: false}),
-       (evento12:Evento {id: 2012, nombre: 'Evento pasado 2', fechaHora: datetime('2023-10-08T10:00:00'), descripcion: 'Evento que ya paso.', esPrivadoParaLaComunidad: false})
+CREATE (u3:Usuario {
+    nombreUsuario: "ericMadryn",
+    nombreReal: "Eric Anderson",
+    fechaNacimiento: date("1995-05-10"),
+    fechaDeCreacion: date("2023-03-01"),
+    correoElectronico: "ericnob1974@gmail.com",
+    contrasena: "password789",
+    descripcion: "Usuario 3 activo",
+    latitud: -42.762555975850084,
+    longitud: -65.04467329781565
+})
 
-// Crear etiquetas
-CREATE (etiquetaCardio:Etiqueta {nombre: 'Cardio'}),
-       (etiquetaYoga:Etiqueta {nombre: 'Yoga'}),
-       (etiquetaFuerza:Etiqueta {nombre: 'Fuerza'}),
-       (etiquetaFuncional:Etiqueta {nombre: 'Funcional'}),
-       (etiquetaAvanzada:Etiqueta {nombre: 'Avanzada'}),
-       (etiquetaZumba:Etiqueta {nombre: 'Zumba'}),
-       (etiquetaPasado:Etiqueta {nombre: 'Pasado'})
-       
+// Crear eventos con ubicaciones (latitud y longitud como propiedades separadas)
+CREATE (e1:Evento {
+    nombre: "Carrera en la plaza de Puerto Madryn",
+    fechaDeCreacion: date("2023-07-01"),
+    fechaHora: datetime("2024-10-03T10:00:00"),
+    descripcion: "Carrera en la costa",
+    cantidadMaximaParticipantes: 50,
+    esPrivadoParaLaComunidad: false,
+    latitud: -42.762555975850084,
+    longitud: -65.04467329781565
+})
 
-CREATE (evento1)-[:ETIQUETADO_CON]->(etiquetaFuncional),
-       (evento2)-[:ETIQUETADO_CON]->(etiquetaYoga),
-       (evento2)-[:ETIQUETADO_CON]->(etiquetaZumba),
-       (evento3)-[:ETIQUETADO_CON]->(etiquetaCardio),
-       (evento4)-[:ETIQUETADO_CON]->(etiquetaFuerza),
-       (evento4)-[:ETIQUETADO_CON]->(etiquetaAvanzada),
-       (evento5)-[:ETIQUETADO_CON]->(etiquetaCardio),
-       (evento5)-[:ETIQUETADO_CON]->(etiquetaFuncional),
-       (evento6)-[:ETIQUETADO_CON]->(etiquetaYoga),
-       (evento6)-[:ETIQUETADO_CON]->(etiquetaZumba),
-       (evento7)-[:ETIQUETADO_CON]->(etiquetaFuerza),
-       (evento7)-[:ETIQUETADO_CON]->(etiquetaAvanzada),
-       (evento8)-[:ETIQUETADO_CON]->(etiquetaCardio),
-       (evento9)-[:ETIQUETADO_CON]->(etiquetaZumba),
-       (evento10)-[:ETIQUETADO_CON]->(etiquetaFuerza),
-       (evento11)-[:ETIQUETADO_CON]->(etiquetaPasado),
-       (evento12)-[:ETIQUETADO_CON]->(etiquetaPasado)
+CREATE (e2:Evento {
+    nombre: "Entrenamiento de natación en Posadas",
+    fechaDeCreacion: date("2023-08-10"),
+    fechaHora: datetime("2024-10-03T12:00:00"),
+    descripcion: "Entrenamiento en la piscina municipal",
+    cantidadMaximaParticipantes: 30,
+    esPrivadoParaLaComunidad: false,
+    latitud: -27.38714029003687, 
+    longitud: -55.92143101061461
+})
 
-// Establecer relaciones entre usuarios y eventos
+CREATE (e3:Evento {
+    nombre: "Caminata en el parque de Bahia Blanca",
+    fechaDeCreacion: date("2023-08-10"),
+    fechaHora: datetime("2024-10-03T14:00:00"),
+    descripcion: "Caminata tranquila en el parque",
+    cantidadMaximaParticipantes: 20,
+    esPrivadoParaLaComunidad: false,
+    latitud: -38.7139680437262,
+    longitud: -62.2872759788477
+})
 
-CREATE (lucas)-[:PARTICIPA_EN]->(evento2),  // Lucas participa en Yoga
-       (lucas)-[:PARTICIPA_EN]->(evento1),  // Lucas participa en Entrenamiento funcional
-       (lucas)-[:PARTICIPA_EN]->(evento5),  // Lucas participa en Cardio en la playa
-       (facundo)-[:PARTICIPA_EN]->(evento1), // Facundo participa en Entrenamiento funcional
-       (facundo)-[:PARTICIPA_EN]->(evento4), // Facundo participa en Entrenamiento de fuerza avanzada
-       (facundo)-[:PARTICIPA_EN]->(evento6), // Facundo participa en Yoga para principiantes
-       (diana)-[:PARTICIPA_EN]->(evento11); 
-   
+CREATE (e4:Evento {
+    nombre: "Aerobico en la plaza de Comodoro",
+    fechaDeCreacion: date("2023-08-10"),
+    fechaHora: datetime("2024-10-02T16:00:00"),
+    descripcion: "Aerobico en Comodoro",
+    cantidadMaximaParticipantes: 20,
+    esPrivadoParaLaComunidad: false,
+    latitud: -45.8666676301876,
+    longitud: -67.52256636176106
+})
+
+
+
+CREATE (et1:Etiqueta {nombre: "Deportes"})
+CREATE (et2:Etiqueta {nombre: "Aire libre"})
+CREATE (et3:Etiqueta {nombre: "Resistencia"})
+CREATE (et4:Etiqueta {nombre: "Recreativo"})
+CREATE (et5:Etiqueta {nombre: "Fisico"})
+CREATE (et6:Etiqueta {nombre: "Cuerpo completo"})
+CREATE (et7:Etiqueta {nombre: "Motricidad"})
+CREATE (et8:Etiqueta {nombre: "Torso superior"})
+CREATE (et9:Etiqueta {nombre: "Torso inferior"})
+CREATE (et10:Etiqueta {nombre: "Para toda la familia"})
+
+
+// Etiquetar eventos
+CREATE (e1)-[:ETIQUETADO_CON]->(et1)
+CREATE (e1)-[:ETIQUETADO_CON]->(et2)
+CREATE (e1)-[:ETIQUETADO_CON]->(et3)
+CREATE (e1)-[:ETIQUETADO_CON]->(et4)
+CREATE (e1)-[:ETIQUETADO_CON]->(et5)
+CREATE (e1)-[:ETIQUETADO_CON]->(et6)
+CREATE (e1)-[:ETIQUETADO_CON]->(et7)
+CREATE (e1)-[:ETIQUETADO_CON]->(et8)
+CREATE (e1)-[:ETIQUETADO_CON]->(et9)
+CREATE (e1)-[:ETIQUETADO_CON]->(et10)
+
+CREATE (e2)-[:ETIQUETADO_CON]->(et1)
+CREATE (e2)-[:ETIQUETADO_CON]->(et2)
+CREATE (e2)-[:ETIQUETADO_CON]->(et3)
+CREATE (e2)-[:ETIQUETADO_CON]->(et4)
+CREATE (e2)-[:ETIQUETADO_CON]->(et5)
+CREATE (e2)-[:ETIQUETADO_CON]->(et6)
+CREATE (e2)-[:ETIQUETADO_CON]->(et7)
+CREATE (e2)-[:ETIQUETADO_CON]->(et8)
+CREATE (e2)-[:ETIQUETADO_CON]->(et9)
+CREATE (e2)-[:ETIQUETADO_CON]->(et10)
+
+CREATE (e3)-[:ETIQUETADO_CON]->(et4)
+CREATE (e3)-[:ETIQUETADO_CON]->(et5)
+CREATE (e3)-[:ETIQUETADO_CON]->(et6)
+CREATE (e3)-[:ETIQUETADO_CON]->(et7)
+CREATE (e3)-[:ETIQUETADO_CON]->(et8)
+CREATE (e3)-[:ETIQUETADO_CON]->(et9)
+
+CREATE (e4)-[:ETIQUETADO_CON]->(et1)
+CREATE (e4)-[:ETIQUETADO_CON]->(et2)
+CREATE (e4)-[:ETIQUETADO_CON]->(et3)
+CREATE (e4)-[:ETIQUETADO_CON]->(et4)
+CREATE (e4)-[:ETIQUETADO_CON]->(et5)
+CREATE (e4)-[:ETIQUETADO_CON]->(et6)
+
+
+
+// Relacionar usuarios con eventos
+CREATE (u1)-[:PARTICIPA_EN]->(e1)

@@ -44,6 +44,23 @@ import { UbicacionService } from './ubicacion.service';
                   </li>
               </ul>
           </li>
+          <li class="dropdown">
+              <a class="dropdown-toggle">
+                <span class="icon"><i class="fa fa-question-circle"></i></span>
+                <span class="text">Sugerencias</span>
+              </a>
+              <ul class="dropdown-menu">
+                  <li>
+                      <a href="/sugerencias/amigos">En base a amigos</a>
+                  </li>
+                  <li>
+                      <a href="/sugerencias/eventos">En base a eventos</a>
+                  </li>
+                  <li>
+                      <a href="/sugerencias/comunidades">En base a comunidades</a>
+                  </li>
+              </ul>
+          </li>
       </ul>
     </div>
     <div class="main-content">
