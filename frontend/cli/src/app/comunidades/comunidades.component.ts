@@ -16,7 +16,7 @@ export class ComunidadesComponent implements OnInit {
   currentIndex: number = 0; // Índice actual del carrusel
   results: Comunidad[] = [];
 
-  constructor(private eventoService: ComunidadService,
+  constructor(private comunidadService: ComunidadService,
               private router: Router) {}
 
   ngOnInit(): void {
@@ -24,7 +24,7 @@ export class ComunidadesComponent implements OnInit {
   }
 
   getEventos(): void {
-    this.eventoService.all().subscribe((dataPackage) => {
+    this.comunidadService.all().subscribe((dataPackage) => {
       const responseData = dataPackage.data;
       console.log(responseData);
       if (Array.isArray(responseData)) {
