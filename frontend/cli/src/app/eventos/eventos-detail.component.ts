@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { EventoService } from './evento.service'; 
 import { Evento } from './evento'; 
 import { Location } from '@angular/common'; 
-import { CommonModule, Location } from '@angular/common'; // Para permitir navegar de vuelta
+import { CommonModule } from '@angular/common'; // Para permitir navegar de vuelta
 
 
 @Component({
@@ -20,7 +20,7 @@ export class EventoDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute, // Para obtener el parámetro de la URL
     private eventoService: EventoService, // Servicio para obtener el evento por ID
-    private location: Location // Para manejar la navegación
+    private location: Location, // Para manejar la navegación
     private router: Router
 
   ) { }

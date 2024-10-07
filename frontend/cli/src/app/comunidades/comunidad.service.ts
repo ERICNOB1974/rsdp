@@ -56,7 +56,7 @@ export class ComunidadService {
   
   participantesEncomunidad(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/${id}/participantes`);
-
+  }
   miembrosEnComunidad(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/${id}/miembros`);
 
