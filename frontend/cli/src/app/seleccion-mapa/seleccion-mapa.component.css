@@ -8,8 +8,11 @@
 }
 
 #map {
-  height: 500px; /* Ajusta la altura del mapa según sea necesario */
-  width: 100%; /* Asegúrate de que el mapa ocupe todo el ancho */
+  height: 500px; /* Altura fija o ajustable del mapa */
+  width: 300%;    /* El mapa ocupará el 90% del ancho de su contenedor */
+  margin: 0 auto; /* Para centrar el mapa horizontalmente */
+  border: 1px solid #ccc; /* Borde opcional */
+  box-sizing: border-box;  /* Asegura que el tamaño incluya el borde */
 }
 
 .list-group {

@@ -18,6 +18,10 @@ public class ComunidadService {
         return comunidadRepository.findAll();
     }
 
+    public int miembrosDeComunidad(Long idComunidad) {
+        return comunidadRepository.miembrosDeComunidad(idComunidad);
+    }
+
     public List<Comunidad> sugerenciasDeComunidadesBasadasEnAmigos(String nombreDeUsuario){
         return comunidadRepository.sugerenciasDeComunidadesBasadasEnAmigos(nombreDeUsuario);
     }
