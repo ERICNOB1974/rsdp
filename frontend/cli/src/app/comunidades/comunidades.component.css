@@ -47,11 +47,11 @@
   
   .carousel-control {
     position: absolute;
-    top: 15%;
+    top: 40%;
     transform: translateY(-50%);
     background-color: rgba(255, 255, 255, 0.5);
     border: none;
-    padding: 10px;
+    padding: 20px;
     cursor: pointer;
     z-index: 1000; /* Asegura que los botones estén por encima del contenido */
   }
