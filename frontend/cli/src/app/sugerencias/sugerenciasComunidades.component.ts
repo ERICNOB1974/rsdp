@@ -46,7 +46,7 @@ export class SugerenciasComunidadesComponent implements OnInit {
       }
     
       // Método para obtener los eventos a mostrar en el carrusel
-      obtenerEventosParaMostrar(): Comunidad[] {
+      obtenerComunidadesParaMostrar(): Comunidad[] {
         const eventosParaMostrar: Comunidad[] = [];
     
         if (this.results.length === 0) {

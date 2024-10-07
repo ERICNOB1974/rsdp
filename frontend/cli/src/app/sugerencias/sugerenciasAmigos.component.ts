@@ -53,7 +53,7 @@ export class SugerenciasAmigosComponent implements OnInit {
       }
     
       // Método para obtener los eventos a mostrar en el carrusel
-      obtenerEventosParaMostrar(): Usuario[] {
+      obtenerUsuariosParaMostrar(): Usuario[] {
         const eventosParaMostrar: Usuario[] = [];
     
         if (this.results.length === 0) {
