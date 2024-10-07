@@ -50,22 +50,31 @@ public class EventoService {
 
     @Transactional
     public Evento crear(Evento evento) throws MessagingException, EventoException {
-        // suponiendo que se crea ahora mismo
-        if (evento.getFechaHora().isBefore(ZonedDateTime.now()) ||
-                evento.getFechaHora().isEqual(ZonedDateTime.now())) {
+        // Validar fecha y hora del evento
+        if (evento.getFechaHora().isBefore(ZonedDateTime.now()) || evento.getFechaHora().isEqual(ZonedDateTime.now())) {
             throw new EventoException("El evento no puede tener una fecha anterior a ahora");
         }
         if (evento.getFechaDeCreacion().isAfter(LocalDate.now())) {
             throw new EventoException("El evento no puede crearse en el futuro");
         }
+    
+        // Validar latitud y longitud
+        if (evento.getLatitud() < -90 || evento.getLatitud() > 90) {
+            throw new EventoException("La latitud debe estar entre -90 y 90 grados");
+        }
+        if (evento.getLongitud() < -180 || evento.getLongitud() > 180) {
+            throw new EventoException("La longitud debe estar entre -180 y 180 grados");
+        }
+    
         /*
          * if (evento.isEsPrivadoParaLaComunidad()) {
          * // enviar mail a todos los usuarios de la comunidad
          * }
          */
-
+    
         return eventoRepository.save(evento);
     }
+    
 
     public List<Evento> todasLasSugerencias(String nombreUsuario) {
         List<Evento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnAmigos(nombreUsuario);
