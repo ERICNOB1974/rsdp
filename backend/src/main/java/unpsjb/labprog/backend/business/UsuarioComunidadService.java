@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Usuario;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.List;
@@ -46,7 +45,6 @@ public class UsuarioComunidadService {
         if (usuarioRepository.solicitudIngresoExiste(idUsuario, idComunidad)) {
             throw new Exception("Ya existe una solicitud de ingreso para esta comunidad.");
         }
-
         usuarioRepository.enviarSolicitudIngreso(idUsuario, idComunidad, "pendiente", LocalDateTime.now());
         return "Solicitud de ingreso enviada correctamente";
     }
