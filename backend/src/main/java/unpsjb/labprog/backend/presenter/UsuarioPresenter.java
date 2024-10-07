@@ -67,6 +67,10 @@ public class UsuarioPresenter {
     public ResponseEntity<Object> obtenerSugerenciasDeAmigosBasadosEnComunidades(@PathVariable String nombreUsuario) {
         return Response.ok(usuarioService.sugerenciasDeAmigosBasadosEnComunidades(nombreUsuario));
     }
+    @GetMapping("/sugerencias/{nombreUsuario}")
+    public ResponseEntity<Object> sugerencias(@PathVariable String nombreUsuario) {
+        return Response.ok(usuarioService.todasLasSugerencias(nombreUsuario));
+    }
 
     @PostMapping("/enviarSolicitudAmistad/{idEmisor}/{idReceptor}")
     public ResponseEntity<Object> enviarSolicitudAmistad(@PathVariable Long idEmisor, @PathVariable Long idReceptor) {
@@ -85,7 +89,7 @@ public class UsuarioPresenter {
             String respuesta=usuarioComunidadService.solicitarIngreso(idUsuario, idComunidad);
             return Response.ok(respuesta);
         } catch (Exception e) {
-            return Response.error("", "Error al enviar solicitud de ingreso: " + e.getMessage());
+            return Response.error("", "Error al enviar solicitud de ingreso: " + e);
         }
     }
 
