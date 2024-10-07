@@ -59,7 +59,7 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
                         "RETURN COUNT(a) > 0")
         boolean sonAmigos(Long idEmisor, Long idReceptor);
 
-        @Query("MATCH (a:Usuario)-[r:SOLICITUD_DE_AMISTADO]->(b:Usuario) " +
+        @Query("MATCH (a:Usuario)-[r:SOLICITUD_DE_AMISTAD]->(b:Usuario) " +
                         "WHERE id(a) = $idEmisor AND id(b) = $idReceptor " +
                         "RETURN COUNT(r) > 0")
         boolean solicitudAmistadExiste(Long idEmisor, Long idReceptor);
@@ -89,8 +89,8 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
         void enviarSolicitudIngreso(Long idUsuario, Long idComunidad, String estado, LocalDateTime fechaEnvio);
 
         @Query("MATCH (u:Usuario), (u2:Usuario) WHERE id(u) = $idEmisor AND id(u2) = $idReceptor " +
-                        "CREATE (u)-[:SOLICITUD_DE_AMISTADO {estado: $estado, fechaEnvio: $fechaEnvio}]->(u2)")
-        void enviarSolicitudAmistad(Long idEmisor, Long idReceptor, String estado, LocalDateTime now);
+                        "CREATE (u)-[:SOLICITUD_DE_AMISTAD {estado: $estado, fechaEnvio: $fechaEnvio}]->(u2)")
+        void enviarSolicitudAmistad(Long idEmisor, Long idReceptor, String estado, LocalDateTime fechaEnvio);
 
         @Query("MATCH (u:Usuario)-[r:SOLICITUD_DE_INGRESO]->(c:Comunidad) " +
                         "WHERE id(c) = $idComunidad " +
@@ -103,7 +103,7 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
                         "CREATE (u)<-[:ES_AMIGO_DE {fechaAmigos: $now}]-(u2)")
         void aceptarSolicitudAmistad(Long idEmisor, Long idReceptor, LocalDateTime now);
 
-        @Query("MATCH (u:Usuario)-[r:SOLICITUD_DE_AMISTADO]-(u2:Usuario) " +
+        @Query("MATCH (u:Usuario)-[r:SOLICITUD_DE_AMISTAD]-(u2:Usuario) " +
                         "Where id(u) = $idEmisor AND id(u2) = $idReceptor " +
                         "DELETE r")
         void rechazarSolicitudAmistad(Long idEmisor, Long idReceptor);
@@ -126,7 +126,7 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
                         " CREATE (u)-[:PARTICIPA_EN]->(e)")
         void inscribirse(Long idEvento, Long idUsuario);
 
-        @Query("MATCH (u:Usuario)-[r:SOLICITUD_DE_AMISTADO]-(u2:Usuario) " +
+        @Query("MATCH (u:Usuario)-[r:SOLICITUD_DE_AMISTAD]-(u2:Usuario) " +
                         "Where id(u) = $idEmisor AND id(u2) = $idReceptor " +
                         "AND r.estado='pendiente' "+
                         "return COUNT (r)>0")

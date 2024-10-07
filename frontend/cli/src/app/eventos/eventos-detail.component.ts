@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router'; // Importamos para obtener el parámetro de la URL
+import { ActivatedRoute, Router } from '@angular/router'; // Importamos para obtener el parámetro de la URL
 import { EventoService } from './evento.service'; // Servicio para obtener los eventos
 import { Evento } from './evento'; // Modelo del evento
 import { CommonModule, Location } from '@angular/common'; // Para permitir navegar de vuelta
