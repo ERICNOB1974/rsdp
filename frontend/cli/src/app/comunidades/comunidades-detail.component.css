@@ -1,0 +1,58 @@
+/* Asegura que el contenedor ocupe toda la pantalla */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.comunidad-detail-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centra verticalmente */
+  align-items: center; /* Centra horizontalmente */
+  padding: 50px; /* Reduce el padding para que no se vea tan grande */
+  background-color: #ffffff;
+  border-radius: 8px;
+  width: 190%; /* Ajusta al ancho total */
+  height: 100%; /* Ajusta al alto total */
+  margin: 0; /* Elimina el margen */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box; /* Para que el padding no afecte el tamaño total */
+}
+
+.comunidad-detail {
+  width: 100%; /* Ocupa el ancho completo */
+  max-width: 600px; /* Limita el contenido internamente */
+}
+
+.comunidad-detail h2 {
+  text-align: center;
+  color: #000000;
+}
+
+.comunidad-detail p {
+  font-size: 1.1em;
+  margin-bottom: 8px;
+  text-align: center; /* Centra el texto */
+}
+
+.ingresar-button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-size: 1.2em;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.ingresar-button:hover {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  display: block;
+  margin: 10px auto;
+}
+

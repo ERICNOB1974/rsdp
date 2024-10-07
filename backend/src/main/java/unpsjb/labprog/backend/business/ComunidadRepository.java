@@ -117,4 +117,9 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
             " RETURN c")
     Comunidad comunidadOrganizadora(Evento e);
 
+    @Query("MATCH (u:Usuario)-[:MIEMBRO]->(c:Comunidad)" +
+    "WHERE id(c) = $idComunidad " +
+    "RETURN COUNT(DISTINCT u) AS totalParticipaciones")
+    int miembrosDeComunidad(Long idComunidad);
+
 }

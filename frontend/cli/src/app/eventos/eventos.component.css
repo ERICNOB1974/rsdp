@@ -8,7 +8,7 @@
 .carousel-container {
   display: flex;
   transition: transform 0.5s ease; /* Para animar el desplazamiento */
-  height: 100%;
+  height: auto;
 }
 
 .carousel-item {
@@ -47,7 +47,7 @@
 
 .carousel-control {
   position: absolute;
-  top: 50%;
+  top: 20%;
   transform: translateY(-50%);
   background-color: rgba(255, 255, 255, 0.5);
   border: none;

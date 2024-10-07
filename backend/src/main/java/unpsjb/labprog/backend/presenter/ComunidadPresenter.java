@@ -26,6 +26,11 @@ public class ComunidadPresenter {
         return Response.ok(comunidadService.findAll());
     }
 
+    @GetMapping("/{id}/miembros")
+    public ResponseEntity<Object> miembrosDeComunidad(@PathVariable Long id) {
+        return Response.ok(comunidadService.miembrosDeComunidad(id));
+    }
+
     @RequestMapping(path = "/create", method = RequestMethod.POST)
     public ResponseEntity<Object> create(@RequestBody Comunidad comunidad){
         return Response.ok(comunidadService.save(comunidad));
@@ -101,4 +106,5 @@ public class ComunidadPresenter {
             return Response.error("", "Error al visualizar las solicitudes de la comunidad: " + e.getMessage()+e);
         }
     }
+
 }

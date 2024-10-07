@@ -41,7 +41,6 @@ public class EventoPresenter {
         return Response.ok(eventoService.participantesDeEvento(id));
     }
 
-
     @RequestMapping(path = "/create", method = RequestMethod.POST)
     public ResponseEntity<Object> create(@RequestBody Evento evento) throws MessagingException {
         return Response.ok(eventoService.save(evento));

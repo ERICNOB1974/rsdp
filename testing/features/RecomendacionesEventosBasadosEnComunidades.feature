@@ -1,120 +1,66 @@
             # language: es
             #eventoEnComunidadesTesting
-            Característica: Sugerencia de eventos basados en comunidades
+            Característica: Sugerencias de eventos basados en amigos
 
-            Escenario: No se recomienda nada porque el usuario no participa en ninguna comunidad
-            Dado que se ingresan los datos de un usuario existente "joaquin"
-            Cuando se buscan las sugerencias de eventos basados en comunidades
-            Entonces se espera que las sugerencias de eventos basados en comunidades sean
-            """
-            {
-                "data": []
-            }
-            """
-            Escenario: No se recomienda nada porque el usuario es el creador del unico evento que le puede recomendar
-            Dado que se ingresan los datos de un usuario existente "marcos"
-            Cuando se buscan las sugerencias de eventos basados en comunidades
-            Entonces se espera que las sugerencias de eventos basados en comunidades sean
-            """
-            {
-                "data": []
-            }
-            """
-
-            Escenario: Obtener sugerencias de eventos basados en comunidades donde se recomienden dos eventos ordenados por prioridad segun cantidad de etiquetas
-            Dado que se ingresan los datos de un usuario existente "ana"
+            Escenario: Obtener sugerencias de eventos basados en comunidades donde se recomienden tres eventos ordenados por prioridad segun cantidad de etiquetas 
+            Dado que se ingresan los datos de un usuario existente "lucasMadryn"
             Cuando se buscan las sugerencias de eventos basados en comunidades
             Entonces se espera que las sugerencias de eventos basados en comunidades sean
             """
             {
                 "data": [
                     {
-                        "nombre": "Torneo de Fútbol 5",
-                        "fechaDeCreacion": "2024-09-15",
-                        "fechaHora": "2025-09-20T18:00:00Z",
-                        "ubicacion": "Buenos Aires"
-                    },
-                    {
-                        "nombre": "Futbol 11",
-                        "fechaDeCreacion": "2024-09-25",
-                        "fechaHora": "2025-10-01T22:30:00Z",
-                        "ubicacion": "Salta"
-                    }
-                ]
-            }
-            """
-            Escenario: Obtener sugerencias de eventos basados en comunidades donde se recomienden dos eventos ordenados por prioridad segun cantidad de etiquetas
-            Dado que se ingresan los datos de un usuario existente "diego"
-            Cuando se buscan las sugerencias de eventos basados en comunidades
-            Entonces se espera que las sugerencias de eventos basados en comunidades sean
-            """
-            {
-                "data": [
-                    {
-                        "nombre": "Carrera de 10K",
+                        "nombre": "Carrera de 10K en Comodoro",
                         "fechaDeCreacion": "2024-09-15",
                         "fechaHora": "2025-09-25T07:00:00Z",
-                        "ubicacion": "Rosario, Santa Fe"
+                        "latitud": -45.838061022086976,
+                        "longitud": -67.49405805975792
                     },
                     {
-                        "nombre": "Carrera de 5K",
-                        "fechaDeCreacion": "2024-09-16",
-                        "fechaHora": "2025-09-26T08:00:00Z",
-                        "ubicacion": "Mendoza"
+                        "nombre": "Torneo natacion 100M en CABA",
+                        "fechaDeCreacion": "2024-09-15",
+                        "fechaHora": "2025-09-28T15:00:00Z",
+                        "latitud": -34.605906167370584,
+                        "longitud": -58.421286244002474
                     },
                     {
-                        "nombre": "Carrera de Montaña 15K",
-                        "fechaDeCreacion": "2024-09-18",
-                        "fechaHora": "2025-10-01T07:30:00Z",
-                        "ubicacion": "San Carlos de Bariloche, Río Negro"
+                        "nombre": "Torneo de Fútbol 5 en Trelew",
+                        "fechaDeCreacion": "2024-09-15",
+                        "fechaHora": "2025-09-20T18:00:00Z",
+                        "latitud": -43.25456793905463,
+                        "longitud": -65.30652780881938
                     }
                 ]
             }
             """
-            Escenario: Obtener sugerencias de eventos basados en comunidades donde se recomienda un evento porque lucas participa en el otro recomendable
-            Dado que se ingresan los datos de un usuario existente "lucas"
-            Cuando se buscan las sugerencias de eventos basados en comunidades
+            Escenario: Obtener sugerencias de eventos basados en comunidades donde se recomienden tres eventos ordenados por prioridad segun cantidad de etiquetas 2
+            Dado que se ingresan los datos de un usuario existente "facuMadryn" en eventos basados en comunidades
+            Cuando se buscan las sugerencias de eventos basados en comunidades sean
             Entonces se espera que las sugerencias de eventos basados en comunidades sean
             """
             {
                 "data": [
                     {
-                        "nombre": "Torneo natacion 200M",
+                        "nombre": "Torneo natacion 200M en Bahia Blanca",
                         "fechaDeCreacion": "2024-09-15",
                         "fechaHora": "2025-09-28T15:30:00Z",
-                        "ubicacion": "Córdoba"
-                    }
-                ]
-            }
-            """
-            Escenario: El usuario participa en dos comunidades
-            Dado que se ingresan los datos de un usuario existente "patricia"
-            Cuando se buscan las sugerencias de eventos basados en comunidades
-            Entonces se espera que las sugerencias de eventos basados en comunidades sean
-            """
-            {
-                "data": [
-                    {
-                        "nombre": "Clase de Yoga",
-                        "fechaDeCreacion": "2024-09-17",
-                        "fechaHora": "2025-09-24T09:00:00Z",
-                        "ubicacion": "San Juan"
+                        "latitud": -38.70688604597644,
+                        "longitud": -62.261285196916916
                     },
                     {
-                        "nombre": "Clase abierta de pilates",
-                        "fechaDeCreacion": "2024-09-17",
-                        "fechaHora": "2025-09-21T10:00:00Z",
-                        "ubicacion": "Bariloche, Río Negro"
+                        "nombre": "Torneo de Básquet en Posadas",
+                        "fechaDeCreacion": "2024-09-16",
+                        "fechaHora": "2025-09-22T10:00:00Z",
+                        "latitud": -27.389749552546853,
+                        "longitud": -55.92589020428568
+                    },
+                    {
+                        "nombre": "Carrera de 5K en Madryn",
+                        "fechaDeCreacion": "2024-09-16",
+                        "fechaHora": "2025-09-26T08:00:00Z",
+                        "latitud": -42.761328851689385,
+                        "longitud": -65.04370337286537
                     }
                 ]
-            }
-            """
-            Escenario: El evento ya paso
-            Dado que se ingresan los datos de un usuario existente "maria"
-            Cuando se buscan las sugerencias de eventos basados en comunidades
-            Entonces se espera que las sugerencias de eventos basados en comunidades sean
-            """
-            {
-                "data": []
             }
             """
