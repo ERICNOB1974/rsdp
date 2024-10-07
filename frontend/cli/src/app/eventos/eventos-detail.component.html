@@ -3,7 +3,6 @@
       <div class="card shadow-sm mt-4">
         <div class="card-body">
           <h2 class="card-title text-center mb-4">{{ evento.nombre }}</h2>
-          
           <p><strong>Fecha de creación:</strong> {{ evento.fechaDeCreacion | date:'dd-MM-yyyy' : '+00:00'}}</p>
           <p><strong>Fecha y hora:</strong> {{ evento.fechaHora | date:'short' }}</p>
           <p><strong>Ubicación:</strong> {{ evento.ubicacion }}</p>

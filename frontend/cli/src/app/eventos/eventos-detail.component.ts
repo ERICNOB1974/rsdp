@@ -40,28 +40,27 @@ export class EventoDetailComponent implements OnInit {
     else {
       this.eventoService.get(parseInt(id)).subscribe(async dataPackage => {
         this.evento = <Evento>dataPackage.data;
-
         if (this.evento.latitud && this.evento.longitud) {
           this.evento.ubicacion = await this.eventoService.obtenerUbicacion(this.evento.latitud, this.evento.longitud);
         } else {
           this.evento.ubicacion = 'Ubicación desconocida';
         }
 
-        // Aseguramos que las fechas estén convertidas a tipo Date
         if (this.evento) {
           this.evento.fechaDeCreacion = new Date(this.evento.fechaDeCreacion);
           this.evento.fechaHora = new Date(this.evento.fechaHora);
         }
+        this.traerParticipantes();
       });
     }
   }
 
   traerParticipantes(): void {
-    console.log(this.evento.id);  
+    console.log(this.evento.id);
     this.eventoService.participantesEnEvento(this.evento.id).subscribe(
       (dataPackage) => {
         if (dataPackage && typeof dataPackage.data === 'number') {
-          this.evento.participantes = dataPackage.data; // Asignar el número de participantes
+          this.evento.participantes = dataPackage.data;
         }
       }
     );
@@ -76,7 +75,7 @@ export class EventoDetailComponent implements OnInit {
     console.log("Inscribirse al evento:", this.evento?.nombre);
   }
 
-  inscribirseValid():boolean{
-    return this.evento.participantes < this.evento.cantidadMaximaParticipantes;
+  inscribirseValid(): boolean {
+    return !!(this.evento.participantes < this.evento.cantidadMaximaParticipantes);
   }
 }
