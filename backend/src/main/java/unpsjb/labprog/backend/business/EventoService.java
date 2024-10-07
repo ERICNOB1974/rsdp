@@ -67,6 +67,26 @@ public class EventoService {
         return eventoRepository.save(evento);
     }
 
+    @Transactional
+    public Evento crearConCreador(Evento evento, Long idUsuario) throws MessagingException, EventoException {
+        // suponiendo que se crea ahora mismo
+        if (evento.getFechaHora().isBefore(ZonedDateTime.now()) ||
+                evento.getFechaHora().isEqual(ZonedDateTime.now())) {
+            throw new EventoException("El evento no puede tener una fecha anterior a ahora");
+        }
+        if (evento.getFechaDeCreacion().isAfter(LocalDate.now())) {
+            throw new EventoException("El evento no puede crearse en el futuro");
+        }
+        /*
+         * if (evento.isEsPrivadoParaLaComunidad()) {
+         * // enviar mail a todos los usuarios de la comunidad
+         * }
+         */
+        Evento c = eventoRepository.save(evento);
+        eventoRepository.establecerCreador(c.getId(), idUsuario);
+        return c;
+    }
+
     public List<Evento> todasLasSugerencias(String nombreUsuario) {
         List<Evento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnAmigos(nombreUsuario);
         sugerencias.addAll(eventoRepository.sugerenciasDeEventosBasadosEnComunidades(nombreUsuario));
@@ -95,15 +115,13 @@ public class EventoService {
     public Evento actualizar(Evento evento) throws MessagingException, EventoException {
         mail(evento);
 
+        if (evento.getFechaHora().isBefore(ZonedDateTime.now()) ||
+                evento.getFechaHora().isEqual(ZonedDateTime.now())) {
+            throw new EventoException("El evento no puede tener una fecha anterior a ahora");
+        }
         return eventoRepository.save(evento);
         // suponiendo que se crea ahora mismo
         /*
-         * if (evento.getFechaHora().isBefore(ZonedDateTime.now()) ||
-         * evento.getFechaHora().isEqual(ZonedDateTime.now())) {
-         * throw new
-         * EventoException("El evento no puede tener una fecha anterior a ahora");
-         * 
-         * }
          * // falta considerar cuando recien lo crea
          * if (eventoRepository.esOrganizadoPorComunidad(evento) &&
          * !evento.isEsPrivadoParaLaComunidad()) {
@@ -154,8 +172,13 @@ public class EventoService {
         return eventoRepository.participantesDeEvento(idEvento);
     }
 
-    public void etiquetarEvento(Evento evento, Long etiqueta){
+    public void etiquetarEvento(Evento evento, Long etiqueta) {
         eventoRepository.etiquetarEvento(evento.getId(), etiqueta);
+    }
+
+    public boolean participa(String nombreUsuario, Long idEvento) {
+        Usuario u = usuarioService.findByNombreUsuario(nombreUsuario);
+        return eventoRepository.participa(u.getId(), idEvento);
     }
 
 }
