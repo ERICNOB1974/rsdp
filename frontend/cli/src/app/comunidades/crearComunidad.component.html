@@ -30,4 +30,8 @@
             <button type="button" (click)="cancel()" class="btn btn-secondary">Cancelar</button>
         </div>
     </form>
+     <!-- Mensaje de confirmación o error -->
+     <div *ngIf="showMessage" class="alert alert-info">
+        {{ messageToShow }}
+    </div>
 </div>

@@ -1,16 +1,10 @@
 package unpsjb.labprog.backend.business;
-
-import java.time.ZonedDateTime;
-
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.stereotype.Repository;
 
 import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Evento;
-
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

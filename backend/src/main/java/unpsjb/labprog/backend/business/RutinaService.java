@@ -31,7 +31,7 @@ public class RutinaService {
         }
 
         //if rutina no tiene ejercicios
-
+        
         return rutinaRepository.save(rutina);
     }
 

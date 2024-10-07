@@ -9,7 +9,7 @@ import { Location } from '@angular/common'; // Asegúrate de que está importado
 @Component({
   selector: 'app-comunidades-detail',
 
-  templateUrl: './comunidades-detail.component.html',
+  templateUrl: './crearComunidad.component.html',
   styleUrls: ['./comunidades-detail.component.css'],
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule]
@@ -41,42 +41,30 @@ export class ComunidadDetailComponent {
     }
   }
 
-
   ngOnInit() {
     this.get();
   }
-/*   saveComunidad(): void {
-    let that = this;
-    console.info(this.comunidad);
-    console.log("arriba");
-    this.comunidadService.save(this.comunidad).subscribe(dataPackage => {
-      this.cursorBlocked = true; 
-        this.messageToShow =dataPackage.message;
-        if (dataPackage.status!=200) {
-          this.creada = false;
-        } else {
-            this.creada = true;
-        }
-  
-        this.showMessage = true;
-        setTimeout(() => {
-            this.cursorBlocked = false; 
-            this.showMessage = false;
-            if (this.creada) {
-                this.goBack();
-            }  
-      }, 3500);
-    });  
-  } */
 
 
   saveComunidad(): void {
     this.comunidadService.save(this.comunidad).subscribe(dataPackage => {
       this.comunidad = <Comunidad>dataPackage.data;
+      this.messageToShow = '¡La comunidad se ha guardado exitosamente!';
+      this.showMessage = true; // Mostrar el mensaje
+      setTimeout(() => {
+        this.showMessage = false;
+      }, 10000);
+    },
+    error => {
+      this.messageToShow = 'Ocurrió un error al guardar la comunidad.';
+      this.showMessage = true; // Mostrar el mensaje de error
+      setTimeout(() => {
+        this.showMessage = false;
+      }, 10000);
     });
     console.log(this.comunidad);
   }
-/*   cancel(): void {
+   cancel(): void {
     this.router.navigate(['/comunidades']);
-  } */
+  } 
 }
