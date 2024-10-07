@@ -1,22 +1,23 @@
 import { Component, AfterViewInit } from '@angular/core';
-import { Map, View } from 'ol';
-import TileLayer from 'ol/layer/Tile';
-import { fromLonLat } from 'ol/proj';
-import OSM from 'ol/source/OSM';
+import * as L from 'leaflet';
+import axios from 'axios'; // Asegúrate de tener axios instalado
+import { CommonModule } from '@angular/common';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
-import axios from 'axios';
-import { UbicacionService } from '../ubicacion.service'; // Asegúrate de que este import esté correcto
-import XYZ from 'ol/source/XYZ';
+import { UbicacionService } from '../ubicacion.service'; // Importa tu servicio de ubicación
 
 @Component({
   selector: 'app-seleccion-mapa',
   templateUrl: './seleccion-mapa.component.html',
   styleUrls: ['./seleccion-mapa.component.css'],
+  standalone: true,
+  imports: [CommonModule]
 })
 export class SeleccionMapaComponent implements AfterViewInit {
-  private mapa!: Map;
+
+  mapa!: L.Map;
   sugerencias: any[] = [];
+  marcador!: L.Marker; // Agregar una propiedad para el marcador
   private buscarDireccionSubject = new Subject<string>(); // Subject para manejar el debounce
 
   constructor(private ubicacionService: UbicacionService) {} // Inyectar el servicio de ubicación
@@ -37,7 +38,7 @@ export class SeleccionMapaComponent implements AfterViewInit {
       const longitud = this.ubicacionService.getLongitud();
 
       if (latitud !== null && longitud !== null) {
-        this.iniciarMapa(latitud, longitud); // Inicia el mapa con las coordenadas obtenidas
+        this.iniciarMapa(latitud, longitud); // Inicia el mapa con las coordenadas del usuario
       } else {
         console.error('No se pudo obtener la ubicación del usuario.');
         this.iniciarMapa(-42.7692, -65.0385); // Coordenadas por defecto
@@ -50,20 +51,16 @@ export class SeleccionMapaComponent implements AfterViewInit {
 
   // Iniciar el mapa con las coordenadas especificadas
   private iniciarMapa(lat: number, lng: number): void {
-    this.mapa = new Map({
-      target: 'map', // Asegúrate de que el div con este ID exista en tu HTML
-      layers: [
-        new TileLayer({
-          source: new XYZ({
-            url: 'https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',
-          }),
-        }),             
-      ],
-      view: new View({
-        center: fromLonLat([lng, lat]),
-        zoom: 13,
-      }),
-      
+    this.mapa = L.map('map').setView([lat, lng], 13);
+
+    // Cambiamos a un mapa satelital usando Esri World Imagery
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+    }).addTo(this.mapa);
+
+    // Agregar evento de clic en el mapa para mover el marcador
+    this.mapa.on('click', (event: L.LeafletMouseEvent) => {
+      this.moverMarcador(event.latlng);
     });
   }
 
@@ -88,7 +85,7 @@ export class SeleccionMapaComponent implements AfterViewInit {
               altura: feature.properties.housenumber || null,
               ciudad: feature.properties.city || null,
               pais: feature.properties.country || null,
-              coordenadas: feature.geometry.coordinates,
+              coordenadas: feature.geometry.coordinates
             }))
             .filter((sugerencia: any) => 
               sugerencia.ciudad !== null &&
@@ -105,15 +102,26 @@ export class SeleccionMapaComponent implements AfterViewInit {
 
   seleccionarDireccion(sugerencia: any): void {
     const [lng, lat] = sugerencia.coordenadas;
-
-    // Actualizar la vista del mapa
-    this.mapa.setView(new View({
-      center: fromLonLat([lng, lat]),
-      zoom: 16,
-    }));
+    const latLng = L.latLng(lat, lng);
+    this.moverMarcador(latLng);
 
     // Limpiar las sugerencias y el campo de texto
     this.sugerencias = [];
     (document.querySelector('input[type="text"]') as HTMLInputElement).value = '';
   }
+
+  private moverMarcador(latlng: L.LatLng): void {
+    // Si ya hay un marcador, lo eliminamos
+    if (this.marcador) {
+      this.mapa.removeLayer(this.marcador);
+    }
+
+    // Colocar el nuevo marcador
+    this.marcador = L.marker(latlng).addTo(this.mapa)
+      .bindPopup(`Ubicación: ${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`)
+      .openPopup();
+    
+    this.mapa.setView(latlng, 16);
+  }
 }
+
