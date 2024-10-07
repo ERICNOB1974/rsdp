@@ -25,22 +25,21 @@ export class SugerenciasAmigosComponent implements OnInit {
         private router: Router) { }
 
     ngOnInit(): void {
-        this.getEventos()
+        // this.getEventos()
     }
 
-    sugerenciasAmigos(){
-        this.usuarioService.sugerencias("usuario12");
-    }
+    // sugerenciasAmigos(){
+    //     this.usuarioService.sugerencias("usuario12");
+    // }
 
-
-    getEventos(): void {
-        this.usuarioService.sugerencias("usuario8").subscribe((dataPackage) => {
-          const responseData = dataPackage.data;
-          if (Array.isArray(responseData)) {
-            this.results = responseData;
-          }
-        });
-      }
+    // getEventos(): void {
+    //     this.usuarioService.sugerencias("usuario8").subscribe((dataPackage) => {
+    //       const responseData = dataPackage.data;
+    //       if (Array.isArray(responseData)) {
+    //         this.results = responseData;
+    //       }
+    //     });
+    //   }
 
       // Método para mover al siguiente grupo de eventos en el carrusel
       siguienteEvento(): void {
