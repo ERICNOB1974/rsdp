@@ -34,6 +34,7 @@ export class EventoDetailComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id')!;
     if (!id  || isNaN(parseInt(id, 10)) || id === 'new') {
       this.evento = <Evento>{};
+      this.router.navigate(['eventos/crearEvento']);
     }
     else {
       this.eventoService.get(parseInt(id)).subscribe(async dataPackage => {
