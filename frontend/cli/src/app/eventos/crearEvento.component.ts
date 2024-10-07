@@ -235,4 +235,15 @@ export class CrearEventoComponent {
     return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}`;
   }
 
+  isFormValid(): boolean {
+    return !!this.evento &&
+      !!this.evento.fechaHora &&
+      !!this.evento.nombre &&
+      !!(this.etiquetasSeleccionadas.length>0) &&
+      !!(this.etiquetasSeleccionadas.length<=15) &&
+      !!this.evento.cantidadMaximaParticipantes &&
+      !!this.evento.latitud &&
+      !!this.evento.longitud
+  }  
+
 }

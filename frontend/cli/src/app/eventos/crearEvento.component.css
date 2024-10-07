@@ -80,7 +80,7 @@ button.btn-secondary {
 
 .mapa-container {
     position: relative;
-    padding: 20px; /* Agrega espacio alrededor del contenedor */
+    padding: 0px; /* Agrega espacio alrededor del contenedor */
   }
   
   .input-container {
@@ -96,7 +96,7 @@ button.btn-secondary {
   }
   
   .list-group {
-    position: absolute;
+    position: relative;
     z-index: 1000;
     background-color: white;
     width: 100%;
@@ -105,3 +105,4 @@ button.btn-secondary {
     border: 1px solid #ccc;
   }
   
+

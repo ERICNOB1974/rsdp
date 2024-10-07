@@ -19,11 +19,22 @@ body {
 /* Barra lateral */
 .sidebar {
     position: fixed; 
+    top: 0;
+    left: 0;
     width: 200px; /* Ancho fijo de la barra */
-    height: 100vh;
+    height: 100vh; /* Ocupar toda la altura de la pantalla */
     background: #fff;
-    z-index: 999; /* Asegúrate de que esté por encima de otros elementos */
+    z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
     overflow-y: auto; /* Permitir desplazamiento si el contenido excede la altura */
+}
+
+/* Contenido principal */
+.main-content {
+    position: relative;
+    margin-left: 200px; /* Espacio para la barra lateral */
+    padding: 20px;
+    width: calc(100% - 200px); /* Ajustar el ancho para evitar superposición */
+    z-index: 1; /* Asegúrate de que tenga un z-index menor al de la barra lateral */
 }
 
 .sidebar ul {
@@ -125,16 +136,26 @@ body {
 
 /* Responsividad */
 @media (max-width: 768px) {
-    .sidebar {
-        position: relative; /* Cambiar a relativo en pantallas pequeñas */
-        width: 100%; /* Ancho completo en pantallas pequeñas */
-        height: auto; /* Permitir altura automática */
-    }
+/* Barra lateral */
+.sidebar {
+    position: fixed; 
+    top: 0;
+    left: 0;
+    width: 200px; /* Ancho fijo de la barra */
+    height: 100vh; /* Ocupar toda la altura de la pantalla */
+    background: #fff;
+    z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
+    overflow-y: auto; /* Permitir desplazamiento si el contenido excede la altura */
+}
 
-    .main-content {
-        margin-left: 0; /* Sin margen en pantallas pequeñas */
-        width: 100%; /* Ancho completo para el contenido */
-    }
+/* Contenido principal */
+.main-content {
+    position: relative;
+    margin-left: 200px; /* Espacio para la barra lateral */
+    padding: 20px;
+    width: calc(100% - 200px); /* Ajustar el ancho para evitar superposición */
+    z-index: 1; /* Asegúrate de que tenga un z-index menor al de la barra lateral */
+}
 
     .dropdown-menu {
         position: static; /* Cambiar a estático en pantallas pequeñas */
