@@ -26,7 +26,7 @@ export class EventoDetailComponent implements OnInit {
 
   getEvento(): void {
     const id = this.route.snapshot.paramMap.get('id')!;
-    if (id === 'new') {
+    if (!id  || isNaN(parseInt(id, 10)) || id === 'new') {
       this.evento = <Evento>{};
     }
     else {

@@ -14,7 +14,7 @@ import { Location } from '@angular/common'; // Asegúrate de que está importado
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule]
 })
-export class ComunidadDetailComponent {
+export class CrearComunidadComponent {
   comunidad!: Comunidad;
   showMessage: boolean = false;
   messageToShow: string = '';
