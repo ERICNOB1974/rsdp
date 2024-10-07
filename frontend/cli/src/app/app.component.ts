@@ -40,7 +40,7 @@ import { UbicacionService } from './ubicacion.service';
                       <a href="/comunidades">Listar comunidades</a>
                   </li>
                   <li>
-                      <a href="/comunidades/new">Crear comunidad</a>
+                      <a href="/comunidades/crearComunidad">Crear comunidad</a>
                   </li>
               </ul>
           </li>
