@@ -144,7 +144,7 @@ CREATE
 (comu5:Comunidad { nombre: 'Comunidad pilates', descripcion: 'Comunidad para pilates'}),
 (comu6:Comunidad { nombre: 'Comunidad tenis', descripcion: 'Comunidad para jugadores de tenis'}),
 (comu7:Comunidad { nombre: 'Comunidad badmington', descripcion: 'Comunidad para badmington'})
-           
+      
 CREATE 
 (piernas:Etiqueta{id:1,nombre: 'Piernas'}),
 (explosion:Etiqueta{id:2, nombre: 'Explosión'}),
