@@ -11,7 +11,7 @@ export interface Comunidad {
     miembros: number;
     ubicacion: any;
 }
-export interface Comunidad {
+/* export interface Comunidad {
     id: number;
     nombre: string;
     fechaDeCreacion: Date; 
@@ -23,3 +23,4 @@ export interface Comunidad {
     longitud: number;
 }
 
+ */
