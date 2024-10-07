@@ -135,7 +135,7 @@ CASE
       ELSE ["Torneo de Ciclismo", "Clase de Pilates", "Entrenamiento de CrossFit", "Carrera de Bicicletas", "Campeonato de Basket"][(i % 5)]
       END,
       fechaDeCreacion: date("2023-01-01") + duration('P' + (i % 365) + 'D'),
-      fechaHora: datetime("2023-01-01") + duration('P' + (i % 365 + 3) + 'D') + duration('PT' + (toInteger(rand() * 24)) + 'H' + toInteger(rand() * 60) + 'M'),
+      fechaHora: datetime("2025-01-01") + duration('P' + (i % 365 + 3) + 'D') + duration('PT' + (toInteger(rand() * 24)) + 'H' + toInteger(rand() * 60) + 'M'),
       latitud:
       
       

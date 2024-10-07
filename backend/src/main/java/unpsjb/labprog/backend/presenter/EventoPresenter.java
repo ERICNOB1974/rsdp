@@ -46,6 +46,11 @@ public class EventoPresenter {
     public ResponseEntity<Object> create(@RequestBody Evento evento) throws MessagingException, EventoException {
         return Response.ok(eventoService.crear(evento));
     }
+    
+    @GetMapping("/sugerencias/{nombreUsuario}")
+    public ResponseEntity<Object> sugerencias(@PathVariable String nombreUsuario) {
+        return Response.ok(eventoService.todasLasSugerencias(nombreUsuario));
+    }
 
     @RequestMapping(path = "/actualizar", method = RequestMethod.PUT)
     public ResponseEntity<Object> actualizar(@RequestBody Evento evento) throws MessagingException, EventoException {
