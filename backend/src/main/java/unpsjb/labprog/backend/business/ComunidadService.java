@@ -61,5 +61,8 @@ public class ComunidadService {
         return sugerencias;
     }
 
+      public void etiquetarComunidad(Comunidad comunidad, Long etiqueta){
+        comunidadRepository.etiquetarComunidad(comunidad.getId(), etiqueta);
+    }
 
 }

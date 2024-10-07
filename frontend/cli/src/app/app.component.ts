@@ -51,13 +51,13 @@ import { UbicacionService } from './ubicacion.service';
               </a>
               <ul class="dropdown-menu">
                   <li>
-                      <a href="/sugerencias/amigos">En base a amigos</a>
+                      <a href="/sugerencias/amigos">De amigos</a>
                   </li>
                   <li>
-                      <a href="/sugerencias/eventos">En base a eventos</a>
+                      <a href="/sugerencias/eventos">De eventos</a>
                   </li>
                   <li>
-                      <a href="/sugerencias/comunidades">En base a comunidades</a>
+                      <a href="/sugerencias/comunidades">De comunidades</a>
                   </li>
               </ul>
           </li>
