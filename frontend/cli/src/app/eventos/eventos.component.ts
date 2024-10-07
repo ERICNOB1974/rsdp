@@ -24,12 +24,21 @@ export class EventosComponent implements OnInit {
     this.getEventos(); // Cargar los eventos al inicializar el componente
   }
 
-  getEventos(): void {
-    this.eventoService.all().subscribe((dataPackage) => {
+  async getEventos(): Promise<void> {
+    this.eventoService.all().subscribe(async (dataPackage) => {
       const responseData = dataPackage.data;
       if (Array.isArray(responseData)) {
         this.results = responseData;
         this.traerParticipantes(); // Llamar a traerParticipantes después de cargar los eventos
+        for (const evento of this.results) {
+          if (evento.latitud && evento.longitud) {
+            evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
+          } else {
+            evento.ubicacion = 'Ubicación desconocida';
+          }
+        }
+      } else {
+        console.log("no traenada");
       }
     });
   }

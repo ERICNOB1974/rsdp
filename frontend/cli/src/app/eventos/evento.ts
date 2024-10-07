@@ -7,4 +7,7 @@ export interface Evento {
     cantidadMaximaParticipantes: number;
     esPrivadoParaLaComunidad: boolean;
     participantes: number;
+    latitud: number;
+    longitud: number;
+    ubicacion: string;
 }

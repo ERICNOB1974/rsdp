@@ -1,3 +1,39 @@
-<div>
-    hola
+<section class="carousel">
+  <div class="carousel-container">
+    <div
+      class="carousel-item"
+      *ngFor="let comunidad of obtenerComunidadesParaMostrar()"
+      class="comunidad-item"
+      (click)="irADetallesDeLaComunidad(comunidad.id)"
+    >
+      <div class="comunidad-card clickable">
+        <div class="comunidad-details">
+          <h3>{{ comunidad.nombre }}
+            <!-- Mostrar el candado si la comunidad es privada -->
+            <i *ngIf="comunidad.esPrivada" class="fa fa-lock" aria-hidden="true"></i>
+          </h3>
+          <p>{{ comunidad.descripcion }}</p>
+          <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
+          <p>Ubicacion: {{comunidad.ubicacion}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controles del carrusel -->
+  <button
+    class="carousel-control prev"
+    (click)="comunidadAnterior()"
+    [disabled]="results.length === 0"
+  >‹</button>
+  <button
+    class="carousel-control next"
+    (click)="siguienteComunidad()"
+    [disabled]="results.length === 0"
+  >›</button>
+</section>
+  
+<!-- Mostrar el índice actual -->
+<div class="indice-actual">
+  <p>Índice actual: {{ currentIndex }}</p>
 </div>
