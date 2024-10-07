@@ -9,4 +9,5 @@ export interface Evento {
     participantes: number;
     latitud: number;
     longitud: number;
+    ubicacion: string;
 }
