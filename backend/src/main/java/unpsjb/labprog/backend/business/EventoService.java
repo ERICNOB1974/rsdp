@@ -163,4 +163,8 @@ public class EventoService {
         return eventoRepository.participantesDeEvento(idEvento);
     }
 
+    public void etiquetarEvento(Evento evento, Long etiqueta){
+        eventoRepository.etiquetarEvento(evento.getId(), etiqueta);
+    }
+
 }

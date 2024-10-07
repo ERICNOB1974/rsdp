@@ -31,7 +31,7 @@ export class UsuarioService {
   }
 
   solicitarIngresoAComunidad(idComunidad: number, idUsuario: number) : Observable<DataPackage> {
-    return this.http.get<DataPackage>(`${this.usuariosUrl}/solicitarIngresoAComunidad/${idComunidad}/${idUsuario}`);
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/solicitarIngresoAComunidad/${idUsuario}/${idComunidad}`);
   }
 
 }

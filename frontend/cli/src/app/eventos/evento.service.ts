@@ -33,8 +33,16 @@ export class EventoService {
   sugerencias(nombreUsuario: string): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.eventosUrl}/sugerencias/${nombreUsuario}`);
   }
-
   
+  etiquetar(evento: Evento, idEtiqueta:number): Observable<DataPackage> {
+    return this.http.post<DataPackage>(` ${this.eventosUrl}/etiquetar/${idEtiqueta}`, evento);
+  }
+  
+  inscribirse(idEvento: number): Observable<DataPackage>{
+    return this.http.post<DataPackage>(` ${this.eventosUrl}/inscribirse/${idEvento}/144010`, null);
+    //return this.http.post<DataPackage>(` ${this.eventosUrl}/inscribirse/${idEvento}/${idUsuario}`);
+  }
+
   participantesEnEvento(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.eventosUrl}/${id}/participantes`);
   }
