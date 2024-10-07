@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.mail.MessagingException;
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.EventoService;
+import unpsjb.labprog.backend.business.InscripcionEventoService;
 import unpsjb.labprog.backend.business.UsuarioService;
 import unpsjb.labprog.backend.exceptions.EventoException;
 import unpsjb.labprog.backend.model.Evento;
@@ -26,6 +28,8 @@ public class EventoPresenter {
     EventoService eventoService;
     @Autowired
     UsuarioService usuarioService;
+    @Autowired
+    InscripcionEventoService inscripcionEventoService;
 
     @RequestMapping(path = "/findAll", method = RequestMethod.GET)
     public ResponseEntity<Object> findAll() {
@@ -46,7 +50,7 @@ public class EventoPresenter {
     public ResponseEntity<Object> create(@RequestBody Evento evento) throws MessagingException, EventoException {
         return Response.ok(eventoService.crear(evento));
     }
-    
+
     @GetMapping("/sugerencias/{nombreUsuario}")
     public ResponseEntity<Object> sugerencias(@PathVariable String nombreUsuario) {
         return Response.ok(eventoService.todasLasSugerencias(nombreUsuario));
@@ -87,6 +91,15 @@ public class EventoPresenter {
         return Response.ok(eventosDeRutinas);
     }
 
-  
+    @PostMapping("/etiquetar/{idEtiqueta}")
+    public ResponseEntity<Object> etiquetarEvento(@RequestBody Evento evento, @PathVariable Long idEtiqueta) {
+        eventoService.etiquetarEvento(evento, idEtiqueta);
+        return Response.ok("ok");
+    }
+    @PostMapping("/inscribirse/{idEvento}/{idUsuario}")
+    public ResponseEntity<Object> etiquetarEvento(@PathVariable Long idEvento, @PathVariable Long idUsuario) {
+        inscripcionEventoService.inscribirse(idEvento, idUsuario);
+        return Response.ok("ok");
+    }
 
 }

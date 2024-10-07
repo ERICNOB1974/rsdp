@@ -58,7 +58,8 @@ export class ComunidadDetailComponent implements OnInit {
   }
 
   ingresar(): void {
-    const idComunidad = this.route.snapshot.paramMap.get('id')!;
-    this.usuarioService.solicitarIngresoAComunidad(<number><unknown>idComunidad, 139331);
+    //const idComunidad = this.route.snapshot.paramMap.get('id')!;
+
+    this.usuarioService.solicitarIngresoAComunidad(this.comunidad.id, 144082).subscribe();
   }
 }

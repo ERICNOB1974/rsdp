@@ -81,7 +81,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "AND NOT (u)<-[:CREADO_POR]-(evento) " +
                         "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
                         "RETURN evento " +
-                        "ORDER BY score DESC, evento.fechaHora ASC " +
+                        "ORDER BY score DESC, amigosParticipando DESC, evento.fechaHora ASC " +
                         "LIMIT 3")
         List<Evento> sugerenciasDeEventosBasadosEnAmigos(String nombreUsuario);
 
@@ -113,7 +113,8 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "RETURN COUNT(DISTINCT u) AS totalParticipaciones")
         int participantesDeEvento(Long idEvento);
 
-        @Query("MATCH (e:Evento) "+"WHERE date(e.fechaHora) = date(datetime()) + duration({days: 1}) "+" RETURN e ORDER BY e.fechaHora ASC")
+        @Query("MATCH (e:Evento) " + "WHERE date(e.fechaHora) = date(datetime()) + duration({days: 1}) "
+                        + " RETURN e ORDER BY e.fechaHora ASC")
         List<Evento> eventosProximos();
 
         @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento) " +
@@ -154,5 +155,10 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
 
         @Query("MATCH (e:Evento) WHERE id(e) = $ide RETURN e")
         Optional<Evento> encontrarEventoPorId(Long ide);
+
+        @Query("MATCH (e:Evento), (t:Etiqueta) " +
+                        "WHERE id(e) = $eventoId AND id(t) = $etiquetaId " +
+                        "MERGE (e)-[:ETIQUETADO_CON]->(t)")
+        void etiquetarEvento(Long eventoId, Long etiquetaId);
 
 }
