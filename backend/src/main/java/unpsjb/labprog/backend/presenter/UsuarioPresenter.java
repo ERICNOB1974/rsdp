@@ -82,7 +82,7 @@ public class UsuarioPresenter {
         }
     }
 
-    @PostMapping("/solicitarIngresoAComunidad/{idUsuario}/{idComunidad}")
+    @GetMapping("/solicitarIngresoAComunidad/{idUsuario}/{idComunidad}")
     public ResponseEntity<Object> solicitarIngresoAComunidad(@PathVariable Long idUsuario,
             @PathVariable Long idComunidad) {
         try {

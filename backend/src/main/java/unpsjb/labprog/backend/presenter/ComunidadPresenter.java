@@ -120,4 +120,9 @@ public class ComunidadPresenter {
         }
     }
 
+    @PostMapping("/etiquetar/{idEtiqueta}")
+    public ResponseEntity<Object> etiquetarComunidad(@RequestBody Comunidad comunidad, @PathVariable Long idEtiqueta) {
+        comunidadService.etiquetarComunidad(comunidad, idEtiqueta);
+        return Response.ok("ok");
+    }
 }

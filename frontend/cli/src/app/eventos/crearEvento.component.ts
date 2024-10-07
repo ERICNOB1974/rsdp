@@ -264,8 +264,13 @@ export class CrearEventoComponent {
     this.evento.fechaHora = new Date(this.evento.fechaHora).toISOString();
     this.eventoService.save(this.evento).subscribe(dataPackage => {
       this.evento = <Evento>dataPackage.data;
-      location.reload();
-    });
+      this.etiquetasSeleccionadas.forEach(etiqueta => {
+        this.eventoService.etiquetar(this.evento, etiqueta.id).subscribe();
+      });
+    }); 
+    
+    location.reload();
+    
   }
 
   formatFechaHora(fechaHora: string): string {

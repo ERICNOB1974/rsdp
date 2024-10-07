@@ -158,6 +158,7 @@ public class EmailService {
         Email email = new Email();
         email.setAsunto("Inscripcion a evento");
 
+        System.out.println("ERIC\n "+evento.getNombre());
         String mensaje = "Hola " + usuario.getNombreReal() + ". Se registro tu inscripcion al evento "
                 + evento.getNombre();
 
