@@ -20,7 +20,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta), "
                         +
                         "(comunidadRecomendada:Comunidad)-[:ETIQUETADA_CON]->(etiqueta) " +
-                        "WHERE NOT exists((u)-[:MIEMBRO|:CREADO_POR|:ADMINISTRADO_POR]->(comunidadRecomendada)) " +
+                        "WHERE NOT (u)-[:MIEMBRO|:CREADO_POR|:ADMINISTRADO_POR]->(comunidadRecomendada) " +
                         "OPTIONAL MATCH (comunidadRecomendada)<-[:MIEMBRO]-(miembro) " +
                         "WITH u, comunidadRecomendada, COUNT(DISTINCT etiqueta) AS etiquetasEnComun, COUNT(miembro) AS cantidadMiembros "
                         +
