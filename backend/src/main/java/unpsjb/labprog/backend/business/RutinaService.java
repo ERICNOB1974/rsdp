@@ -25,9 +25,9 @@ public class RutinaService {
 
 
     @Transactional
-    public Rutina save(Rutina rutina) {
+    public Rutina save(Rutina rutina) throws Exception {
         if(rutina.getNombre()==null){
-
+            throw new Exception("La rutina debe tener nombre");
         }
 
         //if rutina no tiene ejercicios

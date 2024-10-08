@@ -17,7 +17,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class EventoDetailComponent implements OnInit {
 
   evento!: Evento; // Evento específico que se va a mostrar
-  participa:boolean=false;
+  participa: boolean = false;
 
   constructor(
     private route: ActivatedRoute, // Para obtener el parámetro de la URL
@@ -25,14 +25,15 @@ export class EventoDetailComponent implements OnInit {
     private location: Location, // Para manejar la navegación
     private router: Router,
     private snackBar: MatSnackBar // Agrega MatSnackBar en el constructor
-
-
   ) { }
 
 
   ngOnInit(): void {
     this.getEvento();
     this.traerParticipantes();
+    this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
+      this.participa = <boolean><unknown>dataPackage.data;
+    });
   }
 
 
@@ -80,16 +81,16 @@ export class EventoDetailComponent implements OnInit {
     this.snackBar.open('Inscripción guardada con éxito', 'Cerrar', {
       duration: 3000, // Duración del snackbar en milisegundos
     });
+    //location.reload();
+    this.traerParticipantes();
+    this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
+      this.participa = <boolean><unknown>dataPackage.data;
+    });
+
   }
 
 
   inscribirseValid(): boolean {
-    /*
-    //OJO QUE SE ROMPE LA PAGINA
-    this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
-      this.participa=<boolean> <unknown>dataPackage.data;
-    });
-    */
     return (!!(this.evento.participantes < this.evento.cantidadMaximaParticipantes) && !this.participa);
   }
 
