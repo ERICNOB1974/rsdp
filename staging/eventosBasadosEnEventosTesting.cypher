@@ -29,7 +29,7 @@ CREATE (u2:Usuario {
 CREATE (e1:Evento {
     nombre: "Carrera en la plaza de Puerto Madryn",
     fechaDeCreacion: date("2023-07-01"),
-    fechaHora: datetime("2024-10-03T10:00:00"),
+    fechaHora: datetime("2025-10-03T10:00:00"),
     descripcion: "Carrera en la costa",
     cantidadMaximaParticipantes: 50,
     esPrivadoParaLaComunidad: false,
@@ -40,7 +40,7 @@ CREATE (e1:Evento {
 CREATE (e2:Evento {
     nombre: "Entrenamiento de natación en Posadas",
     fechaDeCreacion: date("2023-08-10"),
-    fechaHora: datetime("2024-10-03T12:00:00"),
+    fechaHora: datetime("2025-10-03T12:00:00"),
     descripcion: "Entrenamiento en la piscina municipal",
     cantidadMaximaParticipantes: 30,
     esPrivadoParaLaComunidad: false,
@@ -51,7 +51,7 @@ CREATE (e2:Evento {
 CREATE (e3:Evento {
     nombre: "Caminata en el parque de Bahia Blanca",
     fechaDeCreacion: date("2023-08-10"),
-    fechaHora: datetime("2024-10-03T14:00:00"),
+    fechaHora: datetime("2025-10-03T14:00:00"),
     descripcion: "Caminata tranquila en el parque",
     cantidadMaximaParticipantes: 20,
     esPrivadoParaLaComunidad: false,
@@ -62,7 +62,7 @@ CREATE (e3:Evento {
 CREATE (e4:Evento {
     nombre: "Aerobico en la plaza de Comodoro",
     fechaDeCreacion: date("2023-08-10"),
-    fechaHora: datetime("2024-10-02T16:00:00"),
+    fechaHora: datetime("2025-10-02T16:00:00"),
     descripcion: "Aerobico en Comodoro",
     cantidadMaximaParticipantes: 20,
     esPrivadoParaLaComunidad: false,
@@ -73,7 +73,7 @@ CREATE (e4:Evento {
 CREATE (e5:Evento {
     nombre: "Estiramiento en la plaza de Comodoro",
     fechaDeCreacion: date("2023-08-10"),
-    fechaHora: datetime("2024-10-02T16:00:00"),
+    fechaHora: datetime("2025-10-02T16:00:00"),
     descripcion: "Estiramiento en Comodoro",
     cantidadMaximaParticipantes: 1,
     esPrivadoParaLaComunidad: false,
