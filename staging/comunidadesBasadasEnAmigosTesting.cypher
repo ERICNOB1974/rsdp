@@ -1,62 +1,105 @@
 //RecomendacionesCommunidadesBasadasEnAmigos
-MATCH (n) DETACH DELETE n;
+MATCH (n)
+DETACH DELETE n;
 
-// Caso 1 - Sin recomendaciones para lucas123
-CREATE (usuario1:Usuario {nombreUsuario: 'lucas123', nombreReal: 'Lucas', fechaNacimiento: date('1990-01-01'), fechaDeCreacion: date('2024-01-01'), correoElectronico: 'usuario1@example.com', contrasena: 'pass1', descripcion: 'Sin amigos en comunidades'}) 
-CREATE (amigoDe1:Usuario {nombreUsuario: 'pedro12', nombreReal: 'Pedro', fechaNacimiento: date('1990-01-01'), fechaDeCreacion: date('2024-01-01'), correoElectronico: 'usuario1@example.com', contrasena: 'pass1', descripcion: 'Sin amigos en comunidades'}) 
+CREATE (c1:Comunidad { nombre: "Ciclistas de Montaña de Madryn", fechaDeCreacion: date("2021-01-02"), descripcion: "Rutas largas para ciclistas", cantidadMaximaMiembros: 51, esPrivada: false , latitud: -42.76442823854689, longitud: -65.03365087594793 }),
+(c2:Comunidad { nombre: "Corredores de Ruta de Comodoro", fechaDeCreacion: date("2020-05-15"), descripcion: "Grupo para aficionados al running", cantidadMaximaMiembros: 100, esPrivada: false , latitud: -45.8397063939941, longitud: -67.47694735091086 }),
+(c3:Comunidad { nombre: "Nadadores Urbanos de Bahia Blanca", fechaDeCreacion: date("2019-08-20"), descripcion: "Entrenamientos en piscinas y ríos", cantidadMaximaMiembros: 30, esPrivada: true , latitud: -38.71450381606208, longitud: -62.265303322668416 }),
+(c4:Comunidad { nombre: "Escaladores de Montaña de Jujuy", fechaDeCreacion: date("2021-03-10"), descripcion: "Aventuras en escalada", cantidadMaximaMiembros: 25, esPrivada: false , latitud: -22.108040819161882, longitud: -65.59842140253284 })
 
-CREATE (usuario1)-[:ES_AMIGO_DE]->(amigoDe1) 
+CREATE
+(lucas:Usuario { nombreUsuario: 'lucas', nombreReal: 'Lucas', latitud: -42.762555975850084,
+longitud: -65.04467329781565 }),
+(juan:Usuario { nombreUsuario: 'juan', nombreReal: 'Juan', latitud: -42.762555975850084,
+longitud: -65.04467329781565 }),
+(marcos:Usuario { nombreUsuario: 'marcos', nombreReal: 'Marcos', latitud: -42.762555975850084,
+longitud: -65.04467329781565 }),
+(joaquin:Usuario { nombreUsuario: 'joaquin', nombreReal: 'Joaquin', latitud: -42.762555975850084,
+longitud: -65.04467329781565 }),
+(pedro:Usuario { nombreUsuario: 'pedro', nombreReal: 'Pedro', latitud: -42.762555975850084,
+longitud: -65.04467329781565 }),
+(patricia:Usuario { nombreUsuario: 'patricia', nombreReal: 'Patricia', latitud: -42.762555975850084,
+longitud: -65.04467329781565 }),
+(martin:Usuario { nombreUsuario: 'martin', nombreReal: 'Martín', latitud: -42.762555975850084,
+longitud: -65.04467329781565 }),
+(diego:Usuario { nombreUsuario: 'diego', nombreReal: 'Diego', latitud: -42.762555975850084,
+longitud: -65.04467329781565 }),
+(ana:Usuario { nombreUsuario: 'ana', nombreReal: 'Ana', latitud: -42.762555975850084,
+longitud: -65.04467329781565 }),
+(eric:Usuario { nombreUsuario: 'eric', nombreReal: 'Eric', latitud: -42.762555975850084,
+longitud: -65.04467329781565 }),
+(lucia:Usuario { nombreUsuario: 'lucia', nombreReal: 'Lucia', latitud: -42.762555975850084,
+longitud: -65.04467329781565 }),
+(hector:Usuario { nombreUsuario: 'hector', nombreReal: 'Hector', latitud: -42.762555975850084,
+longitud: -65.04467329781565 }),
+(olga:Usuario { nombreUsuario: 'olga', nombreReal: 'Olga', latitud: -42.762555975850084,
+longitud: -65.04467329781565 }),
+(maria:Usuario { nombreUsuario: 'maria', nombreReal: 'Maria', latitud: -42.762555975850084,
+longitud: -65.04467329781565 }),
+(marta:Usuario { nombreUsuario: 'marta', nombreReal: 'Marta' , latitud: -42.762555975850084,
+longitud: -65.04467329781565})
 
-CREATE (comunidad:Comunidad {nombre: 'Futbol', fechaDeCreacion: date('2022-04-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
+MERGE (lucas)-[:ES_AMIGO_DE]->(juan)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(juan)
+MERGE (lucas)-[:ES_AMIGO_DE]->(marcos)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(marcos)
+MERGE (lucas)-[:ES_AMIGO_DE]->(joaquin)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(joaquin)
+MERGE (lucas)-[:ES_AMIGO_DE]->(pedro)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(pedro)
+MERGE (lucas)-[:ES_AMIGO_DE]->(patricia)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(patricia)
+MERGE (lucas)-[:ES_AMIGO_DE]->(martin)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(martin)
+MERGE (lucas)-[:ES_AMIGO_DE]->(diego)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(diego)
+MERGE (lucas)-[:ES_AMIGO_DE]->(ana)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(ana)
+MERGE (lucas)-[:ES_AMIGO_DE]->(eric)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(eric)
+MERGE (lucas)-[:ES_AMIGO_DE]->(lucia)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(lucia)
+MERGE (lucas)-[:ES_AMIGO_DE]->(hector)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(hector)
+MERGE (lucas)-[:ES_AMIGO_DE]->(olga)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(olga)
+MERGE (lucas)-[:ES_AMIGO_DE]->(maria)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(maria)
+MERGE (lucas)-[:ES_AMIGO_DE]->(marta)
+MERGE (lucas)<-[:ES_AMIGO_DE]-(marta)
 
-CREATE (usuario1)-[:MIEMBRO {fechaDeIngreso: date('2023-05-01')}]->(comunidad) 
+MERGE (juan)-[:MIEMBRO]->(c1)
+MERGE (marcos)-[:MIEMBRO]->(c1)
+MERGE (joaquin)-[:MIEMBRO]->(c1)
+MERGE (pedro)-[:MIEMBRO]->(c1)
+MERGE (patricia)-[:MIEMBRO]->(c1)
+MERGE (martin)-[:MIEMBRO]->(c1)
 
-// Caso 2 - Una recomendación para maia_rocks
-CREATE (usuario2:Usuario {nombreUsuario: 'maia_rocks', nombreReal: 'Maia', fechaNacimiento: date('1990-02-02'), fechaDeCreacion: date('2024-02-02'), correoElectronico: 'usuario2@example.com', contrasena: 'pass2', descripcion: 'Un amigo en una comunidad'}) 
+MERGE (juan)-[:MIEMBRO]->(c2)
+MERGE (marcos)-[:MIEMBRO]->(c2)
+MERGE (joaquin)-[:MIEMBRO]->(c2)
+MERGE (pedro)-[:MIEMBRO]->(c2)
+MERGE (patricia)-[:MIEMBRO]->(c2)
+MERGE (martin)-[:MIEMBRO]->(c2)
+MERGE (diego)-[:MIEMBRO]->(c2)
+MERGE (ana)-[:MIEMBRO]->(c2)
+MERGE (eric)-[:MIEMBRO]->(c2)
+MERGE (lucia)-[:MIEMBRO]->(c2)
 
-CREATE (amigo2:Usuario {nombreUsuario: 'juanchon9', nombreReal: 'Juan', fechaNacimiento: date('1990-03-03'), fechaDeCreacion: date('2024-03-03'), correoElectronico: 'amigo2@example.com', contrasena: 'pass3', descripcion: 'Amigo de usuario2'}) 
+MERGE (juan)-[:MIEMBRO]->(c3)
+MERGE (marcos)-[:MIEMBRO]->(c3)
+MERGE (joaquin)-[:MIEMBRO]->(c3)
+MERGE (pedro)-[:MIEMBRO]->(c3)
 
-CREATE (comunidad1:Comunidad {nombre: 'Voley', fechaDeCreacion: date('2022-04-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
-
-// Relaciones para caso 2
-CREATE (usuario2)-[:ES_AMIGO_DE]->(amigo2) 
-CREATE (amigo2)-[:MIEMBRO {fechaDeIngreso: date('2023-05-01')}]->(comunidad1) 
-
-// Caso 3 - Dos recomendaciones para eric99
-CREATE (usuario3:Usuario {nombreUsuario: 'eric99', nombreReal: 'Eric', fechaNacimiento: date('1990-03-03'), fechaDeCreacion: date('2024-03-03'), correoElectronico: 'usuario3@example.com', contrasena: 'pass3', descripcion: 'Dos amigos en dos comunidades'}) 
-
-CREATE (amigo3_1:Usuario {nombreUsuario: 'pedro8', nombreReal: 'Pedro', fechaNacimiento: date('1990-04-04'), fechaDeCreacion: date('2024-04-04'), correoElectronico: 'amigo3_1@example.com', contrasena: 'pass4', descripcion: 'Amigo 1 de usuario3'}) 
-CREATE (amigo3_2:Usuario {nombreUsuario: 'olga19', nombreReal: 'Olga', fechaNacimiento: date('1990-05-05'), fechaDeCreacion: date('2024-05-05'), correoElectronico: 'amigo3_2@example.com', contrasena: 'pass5', descripcion: 'Amigo 2 de usuario3'}) 
-
-CREATE (comunidad2:Comunidad {nombre: 'Running', fechaDeCreacion: date('2022-05-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
-CREATE (comunidad3:Comunidad {nombre: 'Estiramientos', fechaDeCreacion: date('2022-06-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
-
-// Relaciones para caso 3
-CREATE (usuario3)-[:ES_AMIGO_DE]->(amigo3_1) 
-CREATE (usuario3)-[:ES_AMIGO_DE]->(amigo3_2) 
-CREATE (amigo3_1)-[:MIEMBRO {fechaDeIngreso: date('2023-06-01')}]->(comunidad2) 
-CREATE (amigo3_2)-[:MIEMBRO {fechaDeIngreso: date('2023-07-01')}]->(comunidad3) 
-CREATE (amigo3_2)-[:MIEMBRO {fechaDeIngreso: date('2023-07-01')}]->(comunidad2) 
-
-// Caso 4 - Tres recomendaciones ordenadas por cantidad de amigos en común
-CREATE (usuario4:Usuario {nombreUsuario: 'ramiro85', nombreReal: 'Ramiro', fechaNacimiento: date('1990-04-04'), fechaDeCreacion: date('2024-04-04'), correoElectronico: 'usuario4@example.com', contrasena: 'pass4', descripcion: 'Tres recomendaciones ordenadas'}) 
-
-CREATE (amigo4_1:Usuario {nombreUsuario: 'mirta10', nombreReal: 'Mirta', fechaNacimiento: date('1990-06-06'), fechaDeCreacion: date('2024-06-06'), correoElectronico: 'amigo4_1@example.com', contrasena: 'pass6', descripcion: 'Amigo 1 de usuario4'}) 
-CREATE (amigo4_2:Usuario {nombreUsuario: 'susana9', nombreReal: 'Susana', fechaNacimiento: date('1990-07-07'), fechaDeCreacion: date('2024-07-07'), correoElectronico: 'amigo4_2@example.com', contrasena: 'pass7', descripcion: 'Amigo 2 de usuario4'}) 
-CREATE (amigo4_3:Usuario {nombreUsuario: 'hector11', nombreReal: 'Hector', fechaNacimiento: date('1990-08-08'), fechaDeCreacion: date('2024-08-08'), correoElectronico: 'amigo4_3@example.com', contrasena: 'pass8', descripcion: 'Amigo 3 de usuario4'}) 
-
-CREATE (comunidad4:Comunidad {nombre: 'Yoga', fechaDeCreacion: date('2022-07-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
-CREATE (comunidad5:Comunidad {nombre: 'Stretching', fechaDeCreacion: date('2022-08-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
-CREATE (comunidad6:Comunidad {nombre: 'Pilates', fechaDeCreacion: date('2022-09-01'), descripcion: '', cantidadMaximaMiembros: 50}) 
-
-// Relaciones para caso 4
-CREATE (usuario4)-[:ES_AMIGO_DE]->(amigo4_1) 
-CREATE (usuario4)-[:ES_AMIGO_DE]->(amigo4_2) 
-CREATE (usuario4)-[:ES_AMIGO_DE]->(amigo4_3) 
-
-CREATE (amigo4_1)-[:MIEMBRO {fechaDeIngreso: date('2023-08-01')}]->(comunidad4) 
-CREATE (amigo4_1)-[:MIEMBRO {fechaDeIngreso: date('2023-09-01')}]->(comunidad5)
-CREATE (amigo4_1)-[:MIEMBRO {fechaDeIngreso: date('2023-09-01')}]->(comunidad6) 
-CREATE (amigo4_2)-[:MIEMBRO {fechaDeIngreso: date('2023-10-01')}]->(comunidad5) 
-CREATE (amigo4_3)-[:MIEMBRO {fechaDeIngreso: date('2023-11-01')}]->(comunidad6) 
-CREATE (amigo4_3)-[:MIEMBRO {fechaDeIngreso: date('2023-11-01')}]->(comunidad5) 
+MERGE (juan)-[:MIEMBRO]->(c4)
+MERGE (marcos)-[:MIEMBRO]->(c4)
+MERGE (joaquin)-[:MIEMBRO]->(c4)
+MERGE (pedro)-[:MIEMBRO]->(c4)
+MERGE (patricia)-[:MIEMBRO]->(c4)
+MERGE (martin)-[:MIEMBRO]->(c4)
+MERGE (diego)-[:MIEMBRO]->(c4)
+MERGE (ana)-[:MIEMBRO]->(c4)
+MERGE (eric)-[:MIEMBRO]->(c4)
+MERGE (lucia)-[:MIEMBRO]->(c4)
+MERGE (hector)-[:MIEMBRO]->(c4)
+MERGE (olga)-[:MIEMBRO]->(c4)

@@ -217,8 +217,8 @@ export class CrearComunidadComponent {
     // Agregar evento de clic en el mapa para mover el marcador
     this.mapa.on('click', (event: L.LeafletMouseEvent) => {
       this.moverMarcador(event.latlng);
-      this.comunidad.latitud=event.latlng.lat;
-      this.comunidad.longitud=event.latlng.lng;
+      this.comunidad.latitud = event.latlng.lat;
+      this.comunidad.longitud = event.latlng.lng;
     });
   }
 
