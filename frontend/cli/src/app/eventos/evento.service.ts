@@ -25,26 +25,34 @@ export class EventoService {
   }
 
   save(evento: Evento): Observable<DataPackage> {
-    
     return evento.id ? this.http.put<DataPackage>(` ${this.eventosUrl}/actualizar`, evento) :
       this.http.post<DataPackage>(` ${this.eventosUrl}/create`, evento);
   }
-    
+
+  saveConCreador(evento: Evento): Observable<DataPackage> {
+    return evento.id ? this.http.put<DataPackage>(` ${this.eventosUrl}/actualizar`, evento) :
+      this.http.post<DataPackage>(` ${this.eventosUrl}/crear/144769`, evento);
+  }
+
   sugerencias(nombreUsuario: string): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.eventosUrl}/sugerencias/${nombreUsuario}`);
   }
-  
-  etiquetar(evento: Evento, idEtiqueta:number): Observable<DataPackage> {
+
+  etiquetar(evento: Evento, idEtiqueta: number): Observable<DataPackage> {
     return this.http.post<DataPackage>(` ${this.eventosUrl}/etiquetar/${idEtiqueta}`, evento);
   }
-  
-  inscribirse(idEvento: number): Observable<DataPackage>{
-    return this.http.post<DataPackage>(` ${this.eventosUrl}/inscribirse/${idEvento}/144010`, null);
+
+  inscribirse(idEvento: number): Observable<DataPackage> {
+    return this.http.post<DataPackage>(` ${this.eventosUrl}/inscribirse/${idEvento}/145195`, null);
     //return this.http.post<DataPackage>(` ${this.eventosUrl}/inscribirse/${idEvento}/${idUsuario}`);
   }
 
   participantesEnEvento(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.eventosUrl}/${id}/participantes`);
+  }
+
+  participa(idEvento: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.eventosUrl}/estaInscripto/lucasMadryn/${idEvento}`);
   }
 
   async obtenerUbicacion(latitud: number, longitud: number): Promise<string> {

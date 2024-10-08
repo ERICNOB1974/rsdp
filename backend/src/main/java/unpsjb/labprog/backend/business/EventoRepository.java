@@ -1,7 +1,5 @@
 package unpsjb.labprog.backend.business;
 
-import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -134,24 +132,10 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         " RETURN e ORDER BY e.fechaHora ASC")
         List<Evento> eventosNuevosComunidad(Usuario u);
 
-        @Query("CREATE (e:Evento {nombre: $nombre, fechaDeCreacion: $fechaDeCreacion, fechaHora: $fechaHora, latitud: $latitud, longitud: $longitud, descripcion: $descripcion, cantidadMaximaParticipantes: $cantidadMaximaParticipantes, esPrivadoParaLaComunidad: $esPrivadoParaLaComunidad}) RETURN e")
-        Evento crearEvento(String nombre, LocalDate fechaDeCreacion, ZonedDateTime fechaHora, double latitud,
-                        double longitud, String descripcion, int cantidadMaximaParticipantes,
-                        boolean esPrivadoParaLaComunidad);
-
-        @Query("MATCH (e:Evento) WHERE id(e)=$ide  "
-                        + "SET e.nombre = $nombre, "
-                        + "e.fechaDeCreacion = $fechaDeCreacion, "
-                        + "e.fechaHora = $fechaHora, "
-                        + "e.latitud = $latitud, "
-                        + "e.longitud = $longitud, "
-                        + "e.descripcion = $descripcion, "
-                        + "e.cantidadMaximaParticipantes = $cantidadMaximaParticipantes, "
-                        + "e.esPrivadoParaLaComunidad = $esPrivadoParaLaComunidad "
-                        + "RETURN e")
-        Evento actualizarEvento(Long ide, String nombre, LocalDate fechaDeCreacion, ZonedDateTime fechaHora,
-                        double latitud, double longitud, String descripcion, int cantidadMaximaParticipantes,
-                        boolean esPrivadoParaLaComunidad);
+        @Query("MATCH (e:Evento), (u:Usuario) " +
+                        "WHERE id(u) = $idUsuario AND id(e) = $idEvento " +
+                        "MERGE (e)-[:CREADO_POR]->(u)")
+        void establecerCreador(Long idEvento, Long idUsuario);
 
         @Query("MATCH (e:Evento) WHERE id(e) = $ide RETURN e")
         Optional<Evento> encontrarEventoPorId(Long ide);
