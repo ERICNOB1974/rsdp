@@ -34,7 +34,7 @@ public class RutinaPresenter {
     }
 
     @RequestMapping(path = "/create", method = RequestMethod.POST)
-    public ResponseEntity<Object> create(@RequestBody Rutina rutina){
+    public ResponseEntity<Object> create(@RequestBody Rutina rutina) throws Exception{
         return Response.ok(rutinaService.save(rutina));
     }
 
