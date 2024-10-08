@@ -50,9 +50,10 @@ public class EventoPresenter {
     public ResponseEntity<Object> create(@RequestBody Evento evento) throws MessagingException, EventoException {
         return Response.ok(eventoService.crear(evento));
     }
-    @RequestMapping(path = "/crear/{idUsuario}", method = RequestMethod.POST)
-    public ResponseEntity<Object> createConCreador(@RequestBody Evento evento, @PathVariable Long idUsuario) throws MessagingException, EventoException {
-        return Response.ok(eventoService.crearConCreador(evento, idUsuario));
+    @RequestMapping(path = "/crear/{nombreUsuario}", method = RequestMethod.POST)
+    public ResponseEntity<Object> createConCreador(@RequestBody Evento evento, @PathVariable String nombreUsuario) throws MessagingException, EventoException {
+       System.out.println("AAAAAAAAAAAAAAA\n"+nombreUsuario);
+        return Response.ok(eventoService.crearConCreador(evento, nombreUsuario));
     }
 
     @GetMapping("/sugerencias/{nombreUsuario}")
