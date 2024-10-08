@@ -3,12 +3,18 @@ MATCH (n)
 DETACH DELETE n;
 
 // Crear usuarios
-CREATE (lucas:Usuario { nombreUsuario: 'lucas123', nombreReal: 'lucas Lopez', correoElectronico: 'lucas@example.com' }),
-(eric:Usuario { nombreUsuario: 'eric456', nombreReal: 'eric Perez', correoElectronico: 'eric@example.com' }),
-(facundo:Usuario { nombreUsuario: 'facundo789', nombreReal: 'facundo Sanchez', correoElectronico: 'facundo@example.com' }),
-(pepe:Usuario { nombreUsuario: 'pepe', nombreReal: 'Pedro Sanchez', correoElectronico: 'pepe@example.com' }),
-(juan:Usuario { nombreUsuario: 'juan', nombreReal: 'Juan Gomez', correoElectronico: 'juan@example.com' }),
-(luna:Usuario { nombreUsuario: 'luna', nombreReal: 'Luna Gomez', correoElectronico: 'luna@example.com' })
+CREATE (lucas:Usuario { nombreUsuario: 'lucas123', nombreReal: 'lucas Lopez', correoElectronico: 'lucas@example.com', latitud: -42.762555975850084,
+longitud: -65.04467329781565 }),
+(eric:Usuario { nombreUsuario: 'eric456', nombreReal: 'eric Perez', correoElectronico: 'eric@example.com', latitud: -42.762555975850084,
+longitud: -65.04467329781565}),
+(facundo:Usuario { nombreUsuario: 'facundo789', nombreReal: 'facundo Sanchez', correoElectronico: 'facundo@example.com' , latitud: -42.762555975850084,
+longitud: -65.04467329781565}),
+(pepe:Usuario { nombreUsuario: 'pepe', nombreReal: 'Pedro Sanchez', correoElectronico: 'pepe@example.com', latitud: -42.762555975850084,
+longitud: -65.04467329781565 }),
+(juan:Usuario { nombreUsuario: 'juan', nombreReal: 'Juan Gomez', correoElectronico: 'juan@example.com', latitud: -42.762555975850084,
+longitud: -65.04467329781565 }),
+(luna:Usuario { nombreUsuario: 'luna', nombreReal: 'Luna Gomez', correoElectronico: 'luna@example.com' , latitud: -42.762555975850084,
+longitud: -65.04467329781565})
 
 // Crear rutinas
 CREATE (rutina1:Rutina { id: 2711, nombre: 'Cardio para principiantes', descripcion: 'Rutina de cardio para principiantes.', duracionMinutosPorDia: 40, dificultad: 'PRINCIPIANTE' }),
@@ -25,18 +31,88 @@ CREATE (etiquetaCardio:Etiqueta { nombre: 'Cardio' }),
 (etiquetaYoga:Etiqueta { nombre: 'Yoga' }),
 (etiquetaFuerza:Etiqueta { nombre: 'Fuerza' }),
 (etiquetaFuncional:Etiqueta { nombre: 'Funcional' }),
-(etiquetaAvanzada:Etiqueta { nombre: 'Avanzada' }), 
+(etiquetaAvanzada:Etiqueta { nombre: 'Avanzada' }),
 (etiquetaFlexiones:Etiqueta { nombre: 'Flexiones' }),
 (pasado:Etiqueta { nombre: 'Pasado' })
 
-// Crear eventos
-CREATE (evento1:Evento { id: 2001, nombre: 'Entrenamiento funcional en el parque', fechaHora: datetime('2025-09-29T10:00:00'), descripcion: 'Entrenamiento funcional intensivo.', esPrivadoParaLaComunidad: false }),
-(evento2:Evento { id: 2002, nombre: 'Yoga al aire libre', fechaHora: datetime('2025-09-22T08:00:00'), descripcion: 'Clase de yoga al aire libre.', esPrivadoParaLaComunidad: false }),
-(evento3:Evento { id: 2003, nombre: 'Maratón de la ciudad', fechaHora: datetime('2025-10-15T09:00:00'), descripcion: 'Maratón para corredores de todos los niveles.', esPrivadoParaLaComunidad: false }),
-(evento4:Evento { id: 2004, nombre: 'Entrenamiento de fuerza avanzada', fechaHora: datetime('2025-09-25T07:00:00'), descripcion: 'Entrenamiento intensivo de fuerza avanzada.', esPrivadoParaLaComunidad: false }),
-(evento5:Evento { id: 2005, nombre: 'Calistenia inicial', fechaHora: datetime('2025-09-20T07:00:00'), descripcion: 'Calistenia principiante.', esPrivadoParaLaComunidad: false }),
-(evento6:Evento { id: 2006, nombre: 'Calistenia avanzada', fechaHora: datetime('2025-09-25T07:00:00'), descripcion: 'Calistenia avanzado', esPrivadoParaLaComunidad: false }),
-(evento7:Evento { id: 2007, nombre: 'Evento pasado', fechaHora: datetime('2025-09-25T07:00:00'), descripcion: 'Evento que ya paso', esPrivadoParaLaComunidad: false })
+CREATE
+(evento1:Evento {
+  id: 1,
+  nombre: 'Torneo de Fútbol 5 en Puerto Madryn',
+  fechaHora: datetime('2025-09-20T18:00:00'),
+  descripcion: 'Un torneo de fútbol 5 entre amigos.',
+  cantidadMaximaParticipantes: 10,
+  fechaDeCreacion: date('2024-09-15'),
+  esPrivadoParaLaComunidad: false ,
+  latitud: -42.762555975850084,
+  longitud: -65.04467329781565
+  }),
+  (evento2:Evento {
+    id: 2,
+    nombre: 'Carrera de 10K en Comodoro',
+    fechaHora: datetime('2025-09-25T07:00:00'),
+    descripcion: 'Carrera de 10 kilómetros en el parque.',
+    cantidadMaximaParticipantes: 50,
+    fechaDeCreacion: date('2024-09-15'),
+    esPrivadoParaLaComunidad: false ,
+    latitud: -45.8666676301876,
+    longitud: -67.52256636176106
+    }),
+    (evento3:Evento {
+      id: 3,
+      nombre: 'Torneo natacion 100M en Bahia Blanca',
+      fechaHora: datetime('2025-09-28T15:00:00'),
+      descripcion: '100M libre',
+      cantidadMaximaParticipantes: 20,
+      fechaDeCreacion: date('2024-09-15'),
+      esPrivadoParaLaComunidad: false ,
+      latitud: -38.7139680437262,
+      longitud: -62.2872759788477
+      }),
+      (evento4:Evento {
+        id: 4,
+        nombre: 'Torneo natacion 200M en Posadas',
+        fechaHora: datetime('2025-09-28T15:30:00'),
+        descripcion: '200M combinados',
+        cantidadMaximaParticipantes: 20,
+        fechaDeCreacion: date('2024-09-15'),
+        esPrivadoParaLaComunidad: false ,
+        latitud: -27.38714029003687,
+        longitud: -55.92143101061461
+        }),
+        (evento5:Evento {
+          id: 5,
+          nombre: 'Torneo de Básquet en Cordoba',
+          fechaHora: datetime('2025-09-22T10:00:00'),
+          descripcion: 'Torneo amistoso de básquet.',
+          cantidadMaximaParticipantes: 12,
+          fechaDeCreacion: date('2024-09-16'),
+          esPrivadoParaLaComunidad: false ,
+          latitud:-31.401692117465025,
+          longitud: -64.19560531645799
+          }),
+          (evento6:Evento {
+            id: 6,
+            nombre: 'Carrera de 5K en Rosario',
+            fechaHora: datetime('2025-09-26T08:00:00'),
+            descripcion: 'Carrera de 5 kilómetros.',
+            cantidadMaximaParticipantes: 30,
+            fechaDeCreacion: date('2024-09-16'),
+            esPrivadoParaLaComunidad: false ,
+            latitud:-32.93942419471226,
+            longitud: -60.69803211778888
+            }),
+            (evento7:Evento {
+              id: 7,
+              nombre: 'Clase de Yoga en La Quiaca',
+              fechaHora: datetime('2025-09-24T09:00:00'),
+              descripcion: 'Clase de yoga para principiantes.',
+              cantidadMaximaParticipantes: 1,
+              fechaDeCreacion: date('2024-09-17'),
+              esPrivadoParaLaComunidad: false ,
+              latitud: -22.104939502876547,
+              longitud: -65.59893638666203
+              })
 
 
 CREATE (rutina1)-[:ETIQUETADA_CON]->(etiquetaCardio),
