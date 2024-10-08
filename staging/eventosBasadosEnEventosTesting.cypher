@@ -25,18 +25,6 @@ CREATE (u2:Usuario {
     longitud: -65.04467329781565
 })
 
-CREATE (u3:Usuario {
-    nombreUsuario: "ericMadryn",
-    nombreReal: "Eric Anderson",
-    fechaNacimiento: date("1995-05-10"),
-    fechaDeCreacion: date("2023-03-01"),
-    correoElectronico: "ericnob1974@gmail.com",
-    contrasena: "password789",
-    descripcion: "Usuario 3 activo",
-    latitud: -42.762555975850084,
-    longitud: -65.04467329781565
-})
-
 // Crear eventos con ubicaciones (latitud y longitud como propiedades separadas)
 CREATE (e1:Evento {
     nombre: "Carrera en la plaza de Puerto Madryn",
@@ -82,7 +70,16 @@ CREATE (e4:Evento {
     longitud: -67.52256636176106
 })
 
-
+CREATE (e5:Evento {
+    nombre: "Estiramiento en la plaza de Comodoro",
+    fechaDeCreacion: date("2023-08-10"),
+    fechaHora: datetime("2024-10-02T16:00:00"),
+    descripcion: "Estiramiento en Comodoro",
+    cantidadMaximaParticipantes: 1,
+    esPrivadoParaLaComunidad: false,
+    latitud: -45.8666676301876,
+    longitud: -67.52256636176106
+})
 
 CREATE (et1:Etiqueta {nombre: "Deportes"})
 CREATE (et2:Etiqueta {nombre: "Aire libre"})
@@ -133,7 +130,17 @@ CREATE (e4)-[:ETIQUETADO_CON]->(et4)
 CREATE (e4)-[:ETIQUETADO_CON]->(et5)
 CREATE (e4)-[:ETIQUETADO_CON]->(et6)
 
-
+CREATE (e5)-[:ETIQUETADO_CON]->(et1)
+CREATE (e5)-[:ETIQUETADO_CON]->(et2)
+CREATE (e5)-[:ETIQUETADO_CON]->(et3)
+CREATE (e5)-[:ETIQUETADO_CON]->(et4)
+CREATE (e5)-[:ETIQUETADO_CON]->(et5)
+CREATE (e5)-[:ETIQUETADO_CON]->(et6)
+CREATE (e5)-[:ETIQUETADO_CON]->(et7)
+CREATE (e5)-[:ETIQUETADO_CON]->(et8)
+CREATE (e5)-[:ETIQUETADO_CON]->(et9)
+CREATE (e5)-[:ETIQUETADO_CON]->(et10)
 
 // Relacionar usuarios con eventos
 CREATE (u1)-[:PARTICIPA_EN]->(e1)
+CREATE (u2)-[:PARTICIPA_EN]->(e5)
