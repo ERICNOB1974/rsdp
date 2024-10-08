@@ -17,6 +17,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class EventoDetailComponent implements OnInit {
 
   evento!: Evento; // Evento específico que se va a mostrar
+  participa:boolean=false;
 
   constructor(
     private route: ActivatedRoute, // Para obtener el parámetro de la URL
@@ -27,7 +28,7 @@ export class EventoDetailComponent implements OnInit {
 
 
   ) { }
-  
+
 
   ngOnInit(): void {
     this.getEvento();
@@ -76,23 +77,20 @@ export class EventoDetailComponent implements OnInit {
 
   inscribirse(): void {
     this.eventoService.inscribirse(this.evento.id).subscribe();
-    console.log("Inscribirse al evento:", this.evento?.nombre);
     this.snackBar.open('Inscripción guardada con éxito', 'Cerrar', {
       duration: 3000, // Duración del snackbar en milisegundos
     });
   }
-/* 
+
+
   inscribirseValid(): boolean {
-    return (!!(this.evento.participantes < this.evento.cantidadMaximaParticipantes)&&
-    this.eventoService.participa(this.evento.id).subscribe());
-  } */
-    inscribirseValid(): Promise<boolean> {
-      return new Promise((resolve) => {
-        this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
-          const estaInscripto = dataPackage.data as unknown as boolean;
-          resolve(!!(this.evento.participantes < this.evento.cantidadMaximaParticipantes && !estaInscripto));
-        });
-      });
-    }
-    
+    /*
+    //OJO QUE SE ROMPE LA PAGINA
+    this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
+      this.participa=<boolean> <unknown>dataPackage.data;
+    });
+    */
+    return (!!(this.evento.participantes < this.evento.cantidadMaximaParticipantes) && !this.participa);
+  }
+
 }

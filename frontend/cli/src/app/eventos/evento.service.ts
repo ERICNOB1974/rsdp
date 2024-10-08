@@ -43,7 +43,7 @@ export class EventoService {
   }
 
   inscribirse(idEvento: number): Observable<DataPackage> {
-    return this.http.post<DataPackage>(` ${this.eventosUrl}/inscribirse/${idEvento}/144010`, null);
+    return this.http.post<DataPackage>(` ${this.eventosUrl}/inscribirse/${idEvento}/145195`, null);
     //return this.http.post<DataPackage>(` ${this.eventosUrl}/inscribirse/${idEvento}/${idUsuario}`);
   }
 
@@ -52,7 +52,7 @@ export class EventoService {
   }
 
   participa(idEvento: number): Observable<DataPackage> {
-    return this.http.get<DataPackage>(`${this.eventosUrl}/estaInscripto/lucas/${idEvento}`);
+    return this.http.get<DataPackage>(`${this.eventosUrl}/estaInscripto/lucasMadryn/${idEvento}`);
   }
 
   async obtenerUbicacion(latitud: number, longitud: number): Promise<string> {
