@@ -15,6 +15,8 @@ public class ComunidadService {
 
     @Autowired
     ComunidadRepository comunidadRepository;
+    @Autowired
+    UsuarioRepository usuarioRepository;
 
     public List<Comunidad> findAll() {
         return comunidadRepository.findAll();
@@ -24,15 +26,15 @@ public class ComunidadService {
         return comunidadRepository.miembrosDeComunidad(idComunidad);
     }
 
-    public List<Comunidad> sugerenciasDeComunidadesBasadasEnAmigos(String nombreDeUsuario){
+    public List<Comunidad> sugerenciasDeComunidadesBasadasEnAmigos(String nombreDeUsuario) {
         return comunidadRepository.sugerenciasDeComunidadesBasadasEnAmigos(nombreDeUsuario);
     }
 
-    public List<Comunidad> sugerenciasDeComunidadesBasadasEnComunidades(String nombreDeUsuario){
+    public List<Comunidad> sugerenciasDeComunidadesBasadasEnComunidades(String nombreDeUsuario) {
         return comunidadRepository.sugerenciasDeComunidadesBasadasEnComunidades(nombreDeUsuario);
     }
 
-    public List<Comunidad> sugerenciasDeComunidadesBasadasEnEventos(String nombreDeUsuario){
+    public List<Comunidad> sugerenciasDeComunidadesBasadasEnEventos(String nombreDeUsuario) {
         return comunidadRepository.sugerenciasDeComunidadesBasadasEnEventos(nombreDeUsuario);
     }
 
@@ -46,7 +48,7 @@ public class ComunidadService {
         comunidadRepository.deleteById(id);
     }
 
-    public Comunidad findById(Long id){
+    public Comunidad findById(Long id) {
         return comunidadRepository.findById(id).orElse(null);
     }
 
@@ -61,8 +63,22 @@ public class ComunidadService {
         return sugerencias;
     }
 
-      public void etiquetarComunidad(Comunidad comunidad, Long etiqueta){
+    public void etiquetarComunidad(Comunidad comunidad, Long etiqueta) {
         comunidadRepository.etiquetarComunidad(comunidad.getId(), etiqueta);
+    }
+
+
+    /*
+     * esto tambien esta en UsuarioComunidadServce ver donde lo dejamos
+     */
+    public String verEstado(Long idComunidad, Long idUsuario) {
+        if (usuarioRepository.esMiembro(idUsuario, idComunidad)) {
+            return "Miembro";
+        }
+        if (usuarioRepository.solicitudIngresoExiste(idUsuario, idComunidad)) {
+            return "Pendiente";
+        }
+        return "Vacio";
     }
 
 }
