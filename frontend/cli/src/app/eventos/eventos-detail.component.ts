@@ -30,10 +30,8 @@ export class EventoDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.getEvento();
-    this.traerParticipantes();
-    this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
-      this.participa = <boolean><unknown>dataPackage.data;
-    });
+    console.info(this.evento.id);
+    //this.traerParticipantes();
   }
 
 
@@ -57,12 +55,14 @@ export class EventoDetailComponent implements OnInit {
           this.evento.fechaHora = new Date(this.evento.fechaHora);
         }
         this.traerParticipantes();
+        this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
+          this.participa = <boolean><unknown>dataPackage.data;
+        });
       });
     }
   }
 
   traerParticipantes(): void {
-    console.log(this.evento.id);
     this.eventoService.participantesEnEvento(this.evento.id).subscribe(
       (dataPackage) => {
         if (dataPackage && typeof dataPackage.data === 'number') {
@@ -77,16 +77,16 @@ export class EventoDetailComponent implements OnInit {
   }
 
   inscribirse(): void {
+    this.participa=true;
     this.eventoService.inscribirse(this.evento.id).subscribe();
     this.snackBar.open('Inscripción guardada con éxito', 'Cerrar', {
       duration: 3000, // Duración del snackbar en milisegundos
     });
-    //location.reload();
     this.traerParticipantes();
-    this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
+   /*  this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
       this.participa = <boolean><unknown>dataPackage.data;
-    });
-
+    }); */
+    //location.reload();
   }
 
 
