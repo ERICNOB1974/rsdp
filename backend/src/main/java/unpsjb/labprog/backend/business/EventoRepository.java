@@ -29,6 +29,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "OPTIONAL MATCH (e2)<-[:PARTICIPA_EN]-(participante:Usuario) " +
                         "WITH e2, score, COUNT(DISTINCT participante) AS cantidadParticipantes " +
                         "WHERE cantidadParticipantes < e2.cantidadMaximaParticipantes " +
+                        "AND e2.fechaHora > datetime() + duration({hours: 1}) " +
                         "RETURN e2 " +
                         "ORDER BY score DESC, e2.fechaHora ASC " +
                         "LIMIT 3")
