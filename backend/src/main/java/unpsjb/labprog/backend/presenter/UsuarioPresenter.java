@@ -87,7 +87,7 @@ public class UsuarioPresenter {
             @PathVariable Long idComunidad) {
         try {
             String respuesta=usuarioComunidadService.solicitarIngreso(idUsuario, idComunidad);
-            return Response.ok(respuesta);
+            return Response.ok(null, respuesta);
         } catch (Exception e) {
             return Response.error("", "Error al enviar solicitud de ingreso: " + e);
         }
