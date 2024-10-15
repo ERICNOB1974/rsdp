@@ -10,6 +10,7 @@ import { SugerenciasAmigosComponent } from './sugerencias/sugerenciasAmigos.comp
 import { SugerenciasEventosComponent } from './sugerencias/sugerenciasEventos.component';
 import { SugerenciasComunidadesComponent } from './sugerencias/sugerenciasComunidades.component';
 import { ComunidadDetailComponent } from './comunidades/comunidades-detail.component';
+import { AmigosComponent } from './amigos/amigos.component';
 
 export const routes: Routes = [
     {path: '', component: HomeComponent},
@@ -20,6 +21,7 @@ export const routes: Routes = [
     {path: 'comunidades', component: ComunidadesComponent },
     {path: 'comunidades/crearComunidad', component: CrearComunidadComponent },
     {path: 'comunidades/:id', component: ComunidadDetailComponent},
+    {path: 'amigos', component: AmigosComponent },
     {path: 'sugerencias/amigos', component: SugerenciasAmigosComponent },
     {path: 'sugerencias/eventos', component: SugerenciasEventosComponent },
     {path: 'sugerencias/comunidades', component: SugerenciasComunidadesComponent }

@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class UsuarioService {
+ 
 
   private usuariosUrl = 'rest/usuarios';
 
@@ -33,5 +34,10 @@ export class UsuarioService {
   solicitarIngresoAComunidad(idComunidad: number, idUsuario: number) : Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/solicitarIngresoAComunidad/${idUsuario}/${idComunidad}`);
   }
+
+  obtenerAmigos(nombreUsuario: string) :Observable<DataPackage>{
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/amigos/${nombreUsuario}`);
+}
+
 
 }
