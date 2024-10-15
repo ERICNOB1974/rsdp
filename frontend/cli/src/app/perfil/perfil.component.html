@@ -1,0 +1,25 @@
+<div class="perfil-container">
+    <div class="perfil-header">
+        <h2>Mi Perfil</h2>
+    </div>
+  
+    <div class="perfil-info">
+        <div class="perfil-avatar">
+          <img src="path_to_avatar" alt="Foto de perfil" class="avatar" />
+        </div>
+        <div class="perfil-details">
+            <h2>{{ usuario.nombreUsuario }}</h2>
+            <p class="descripcion">{{ usuario.descripcion }}</p>
+          <button class="btn-editar" (click)="editarPerfil()">Editar perfil</button>
+        </div>
+      </div>
+
+    <div class="perfil-publicaciones">
+        <h3>Publicaciones</h3>
+        <div class="publicaciones-grid">
+            <!-- <div class="publicacion-item" *ngFor="let publicacion of publicaciones">
+                <img [src]="publicacion.imagenUrl" alt="Publicación" class="publicacion-imagen" />
+            </div> -->
+        </div>
+    </div>
+</div>

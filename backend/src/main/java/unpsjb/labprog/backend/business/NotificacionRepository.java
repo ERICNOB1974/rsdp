@@ -27,14 +27,24 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
                 MATCH (entidad) WHERE id(entidad)=$idEntidad
                 WITH u, entidad,
                 CASE
-                    WHEN entidad:Evento THEN 'Inscripción al evento: ' + entidad.nombre
+                    WHEN entidad:Evento THEN 
+                        CASE
+                            WHEN $tipo = 'RECORDATORIO_EVENTO_PROXIMO' THEN 'Evento proximo: '+ entidad.nombre + entidad.fechaHora
+                            WHEN $tipo = 'INSCRIPCION_A_EVENTO' THEN 'Inscripción al evento: ' + entidad.nombre
+                            ELSE 'Notificacion de evento'
+                        END
                     WHEN entidad:Usuario THEN
                         CASE
                             WHEN $tipo = 'SOLICITUD_ENTRANTE' THEN entidad.nombreUsuario + ' te ha enviado una solicitud de amistad'
                             WHEN $tipo = 'SOLICITUD_ACEPTADA' THEN entidad.nombreUsuario + ' ha aceptado tu solicitud de amistad'
                             ELSE 'Notificación de usuario'
                         END
-                    WHEN entidad:Comunidad THEN 'Te has unido a la comunidad: ' + entidad.nombre
+                    WHEN entidad:Comunidad THEN 
+                        CASE
+                            WHEN $tipo = 'ACEPTACION_PRIVADA' THEN 'Has sido aceptado en la comunidad: '+ entidad.nombre
+                            WHEN $tipo = 'UNION_PUBLICA' THEN 'Te has unido a la comunidad: ' + entidad.nombre
+                            ELSE 'Notificacion de comunidad'
+                        END
                     ELSE 'Notificación'
                 END AS mensaje
                 CREATE (u)<-[:NOTIFICACION {tipo: $tipo, mensaje: mensaje, fecha: $fecha, entidadId: id(entidad)}]-(entidad)
