@@ -17,8 +17,10 @@ public class InscripcionEventoService {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private NotificacionService notificacionService;
 
-    public String inscribirse(Long idEvento, Long idUsuario) {
+    public String inscribirse(Long idUsuario, Long idEvento) {
         Optional<Evento> evento = eventoRepository.findById(idEvento);
         if (evento.get().getCantidadMaximaParticipantes() == eventoRepository.participantesDeEvento(idEvento)) {
             return "No se registro la inscripcion debido a que no hay mas cupos.";
@@ -32,6 +34,8 @@ public class InscripcionEventoService {
 
         usuarioRepository.inscribirse(idEvento, idUsuario);
         emailService.enviarMailInscripcion(evento.get(), usuarioRepository.findById(idUsuario).get());
+        notificacionService.notificarInscripcionEvento(idUsuario, idEvento); // Llama al servicio de notificaciones
+
         return "Inscripcion registrada con exito";
     }
 }

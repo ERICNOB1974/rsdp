@@ -90,6 +90,9 @@ body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Sombra para el submenú */
     z-index: 1000; /* Asegúrate de que esté por encima de otros elementos */
     padding: 0; /* Eliminar padding para reducir la distancia */
+    max-width: 300px; /* Aumentar el ancho máximo según tus necesidades */
+    word-wrap: break-word; /* Permite que las palabras largas se dividan si es necesario */
+    overflow: auto; /* Asegura que el contenido largo pueda desplazarse si es necesario */
 }
 
 .dropdown-menu li {
@@ -97,17 +100,24 @@ body {
 }
 
 .dropdown-menu li a {
-    display: flex; /* Usar flexbox para centrar */
-    justify-content: center; /* Centrar horizontalmente */
+    display: flex; /* Cambiar a flex para alinear elementos */
+    justify-content: flex-start; /* Alinear el texto al inicio */
     align-items: center; /* Centrar verticalmente */
-    height: 40px; /* Altura del rectángulo */
+    padding: 10px 12px; /* Espaciado dentro del enlace */
     text-decoration: none; /* Sin subrayado */
     color: #333; /* Color del texto */
+    white-space: normal; /* Permitir que el texto se divida en varias líneas */
+    overflow-wrap: break-word; /* Permitir que las palabras largas se dividan */
 }
 
 .dropdown:hover .dropdown-menu,
 .dropdown:focus-within .dropdown-menu {
     display: block; /* Mostrar el submenú al pasar el mouse o al tener el foco */
+}
+
+/* Estilos adicionales opcionales */
+.dropdown-menu li a:hover {
+    background-color: #f0f0f0; /* Color de fondo al pasar el mouse */
 }
 
 .sidebar ul li.logo {

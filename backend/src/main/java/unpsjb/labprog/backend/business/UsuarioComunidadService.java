@@ -19,6 +19,10 @@ public class UsuarioComunidadService {
     @Autowired
     private ComunidadRepository comunidadRepository;
 
+    @Autowired
+    private NotificacionService notificacionService;
+
+
     public String solicitarIngreso(Long idUsuario, Long idComunidad) throws Exception {
         Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
         if (comunidadOpt.isEmpty()) {
@@ -31,15 +35,16 @@ public class UsuarioComunidadService {
         Comunidad comunidad = comunidadOpt.get();
         Usuario usuario = usuarioOpt.get();
 
-        if (!comunidad.isEsPrivada()) {
-            // Si la comunidad es pública, agregar directamente al usuario como miembro
-            comunidadRepository.nuevoMiembro(comunidad.getId(), usuario.getId(), LocalDateTime.now());
-            return "Usuario ingresado en la comunidad correctamente"; // Finalizar aquí si la comunidad es pública
-        }
-
+        
         // Verificar si el usuario ya es miembro de la comunidad
         if (usuarioRepository.esMiembro(idUsuario, idComunidad)) {
             throw new Exception("El usuario ya es miembro de la comunidad.");
+        }
+        if (!comunidad.isEsPrivada()) {
+            // Si la comunidad es pública, agregar directamente al usuario como miembro
+            comunidadRepository.nuevoMiembro(comunidad.getId(), usuario.getId(), LocalDateTime.now());
+            notificacionService.crearNotificacion(idUsuario, idComunidad, "UNION_PUBLICA", LocalDateTime.now());
+            return "Usuario ingresado en la comunidad correctamente"; // Finalizar aquí si la comunidad es pública
         }
 
         // Verificar si ya existe una solicitud de ingreso pendiente o enviada
@@ -155,6 +160,7 @@ public class UsuarioComunidadService {
         }
         comunidadRepository.eliminarSolicitudIngreso(idUsuario, idComunidad);
         comunidadRepository.nuevoMiembro(idComunidad,idUsuario,LocalDateTime.now());
+        notificacionService.crearNotificacion(idUsuario, idComunidad, "ACEPTACION_PRIVADA", LocalDateTime.now());
         return "Solicitud de ingreso aceptada correctamente";
     }
 
