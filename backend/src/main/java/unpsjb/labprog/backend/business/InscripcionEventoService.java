@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import unpsjb.labprog.backend.model.Evento;
+import java.time.LocalDateTime;
 
 @Service
 public class InscripcionEventoService {
@@ -34,7 +35,7 @@ public class InscripcionEventoService {
 
         usuarioRepository.inscribirse(idEvento, idUsuario);
         emailService.enviarMailInscripcion(evento.get(), usuarioRepository.findById(idUsuario).get());
-        notificacionService.notificarInscripcionEvento(idUsuario, idEvento); // Llama al servicio de notificaciones
+        notificacionService.crearNotificacion(idUsuario, idEvento, "INSCRIPCION_A_EVENTO" , LocalDateTime.now()); // Llama al servicio de notificaciones
 
         return "Inscripcion registrada con exito";
     }

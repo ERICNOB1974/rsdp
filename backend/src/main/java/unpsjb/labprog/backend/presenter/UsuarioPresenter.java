@@ -104,6 +104,11 @@ public class UsuarioPresenter {
         return Response.ok(usuarioService.save(usuario));
     }
 
+    @RequestMapping(path = "/actualizar", method = RequestMethod.PUT)
+    public ResponseEntity<Object> actualizar(@RequestBody Usuario usuario) {
+        return Response.ok(usuarioService.save(usuario));
+    }
+    
     @GetMapping("/findById/{id}")
     public ResponseEntity<Object> findById(@PathVariable Long id) {
         return Response.ok(usuarioService.findById(id));
