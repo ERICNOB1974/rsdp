@@ -24,8 +24,8 @@ export const routes: Routes = [
     {path: 'comunidades/crearComunidad', component: CrearComunidadComponent },
     {path: 'comunidades/:id', component: ComunidadDetailComponent},
     {path: 'amigos', component: AmigosComponent },
-    {path: 'perfil', component: PerfilComponent },
-    {path: 'perfil/:id', component: PerfilDetailComponent },
+    {path: 'perfil/:id', component: PerfilComponent },
+    {path: 'perfilEditable/:id', component: PerfilDetailComponent },
     {path: 'sugerencias/amigos', component: SugerenciasAmigosComponent },
     {path: 'sugerencias/eventos', component: SugerenciasEventosComponent },
     {path: 'sugerencias/comunidades', component: SugerenciasComunidadesComponent }

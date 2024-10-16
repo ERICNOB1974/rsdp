@@ -10,8 +10,11 @@
         <div class="perfil-details">
             <h2>{{ usuario.nombreUsuario }}</h2>
             <p class="descripcion">{{ usuario.descripcion }}</p>
-          <button class="btn-editar" (click)="editarPerfil()">Editar perfil</button>
-        </div>
+            <button *ngIf="esMiPerfil" class="btn-editar" (click)="editarPerfil()">Editar perfil</button>
+
+            <!-- Si es el perfil de otra persona, muestra "Enviar solicitud de amistad" -->
+            <button *ngIf="!esMiPerfil" class="btn-solicitud" (click)="enviarSolicitudDeAmistad()">Enviar solicitud de amistad</button>
+          </div>
       </div>
 
     <div class="perfil-publicaciones">
@@ -23,3 +26,4 @@
         </div>
     </div>
 </div>
+

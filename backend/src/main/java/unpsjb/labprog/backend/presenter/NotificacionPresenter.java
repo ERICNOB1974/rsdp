@@ -27,8 +27,14 @@ public class NotificacionPresenter {
         notificacionService.notificarAceptacionAmistad(idUsuario, idAmigo);
     }
 
-    @GetMapping("/{idUsuario}")
-    public List<Notificacion> obtenerNotificaciones(@PathVariable Long idUsuario) {
-        return notificacionService.obtenerNotificaciones(idUsuario);
+    @GetMapping("/notificaciones/{usuarioId}")
+    public List<Notificacion> obtenerNotificaciones(@PathVariable Long usuarioId) {
+        try {
+            return notificacionService.obtenerNotificacionesPorUsuario(usuarioId);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
     }
 }

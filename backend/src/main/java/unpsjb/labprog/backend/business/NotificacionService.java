@@ -7,6 +7,8 @@ import unpsjb.labprog.backend.model.Evento;
 import unpsjb.labprog.backend.model.Usuario;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -39,10 +41,45 @@ public class NotificacionService {
         );
     }
 
-    public List<Notificacion> obtenerNotificaciones(Long idUsuario) {
-        return notificacionRepository.findNotificacionesByUsuario(idUsuario);
+   public List<Notificacion> obtenerNotificacionesPorUsuario(Long usuarioId) throws Exception {
+        // Paso 1: Obtener los IDs de las notificaciones
+        List<Long> notificacionIds = notificacionRepository.findNotificacionIdsByUsuario(usuarioId);
+        
+        // Paso 2: Construir la lista de objetos Notificacion
+        List<Notificacion> notificaciones = new ArrayList<>();
+        for (Long id : notificacionIds) {
+            Notificacion notificacion = obtenerNotificacionPorId(id);
+            if (notificacion != null) {
+                notificaciones.add(notificacion);
+            }
+        }
+        Collections.sort(notificaciones, Collections.reverseOrder());
+
+        return notificaciones;
     }
 
+ 
+
+    public Notificacion obtenerNotificacionPorId(Long id) throws Exception {
+        String tipo = notificacionRepository.findTipoById(id);
+        String mensaje = notificacionRepository.findMensajeById(id);
+        LocalDateTime fecha = notificacionRepository.findFechaById(id);
+        Long entidadId = notificacionRepository.findEntidadIdById(id);
+
+
+        if (tipo == null || mensaje == null || fecha == null || entidadId == null) {
+            throw new Exception("Notificación no encontrada con ID: " + id);
+        }
+
+        // Construir el objeto Notificacion
+        Notificacion notificacion = new Notificacion();
+        notificacion.setTipo(tipo);
+        notificacion.setMensaje(mensaje);
+        notificacion.setFecha(fecha);
+        notificacion.setEntidadId(entidadId);
+
+        return notificacion;
+    }
 
     public void crearNotificacion(Long idUsuario, Long idEntidad, String tipo, LocalDateTime fecha) {
         // Crea la notificación en la base de datos

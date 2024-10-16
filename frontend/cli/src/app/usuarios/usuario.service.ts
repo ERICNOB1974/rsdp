@@ -45,5 +45,9 @@ export class UsuarioService {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/amigos/${nombreUsuario}`);
 }
 
+enviarSolicitudAmistad(idEmisor: number, idReceptor: number): Observable<DataPackage> {
+  const body = { /* aquí puedes agregar datos si es necesario */ };
+  return this.http.post<DataPackage>(`${this.usuariosUrl}/enviarSolicitudAmistad/${idEmisor}/${idReceptor}`, body);
+}
 
 }
