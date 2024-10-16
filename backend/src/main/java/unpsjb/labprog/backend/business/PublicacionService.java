@@ -18,9 +18,7 @@ public class PublicacionService {
         Publicacion p = publicacionRepository.save(publicacion);
         if (p.getId() != null) {
             publicacionRepository.establecerCreador(idUsuario, p.getId());
-        } else {
-            System.out.println("MEMATO");
-        }
+        } 
         return p;
     }
 

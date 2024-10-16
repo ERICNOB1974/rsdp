@@ -23,14 +23,9 @@ export class PublicacionService {
     return this.http.get<DataPackage>(` ${this.publicacionsUrl}/findById/${id}`);
   }
 
-  save(publicacion: Publicacion): Observable<DataPackage> {
-    return publicacion.id ? this.http.put<DataPackage>(` ${this.publicacionsUrl}/actualizar`, publicacion) :
-      this.http.post<DataPackage>(` ${this.publicacionsUrl}/create`, publicacion);
-  }
-
   saveConCreador(publicacion: Publicacion): Observable<DataPackage> {
     return publicacion.id ? this.http.put<DataPackage>(` ${this.publicacionsUrl}/actualizar`, publicacion) :
-      this.http.post<DataPackage>(` ${this.publicacionsUrl}/crear/1185`, publicacion);
+      this.http.post<DataPackage>(` ${this.publicacionsUrl}/crear/1200`, publicacion);
   }
 
 }
