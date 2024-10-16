@@ -50,4 +50,19 @@ enviarSolicitudAmistad(idEmisor: number, idReceptor: number): Observable<DataPac
   return this.http.post<DataPackage>(`${this.usuariosUrl}/enviarSolicitudAmistad/${idEmisor}/${idReceptor}`, body);
 }
 
+
+  sonAmigos(idEmisor: number, idReceptor: number) :Observable<DataPackage>{
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/sonAmigos/${idEmisor}/${idReceptor}`);
+  }
+
+  verificarSolicitudAmistad(idEmisor: number, idReceptor: number) :Observable<DataPackage>{
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/solicitudAmistadExiste/${idEmisor}/${idReceptor}`);
+  }
+
+  gestionarSolicitudAmistad(idEmisor: number, idReceptor: number, aceptada: boolean) :Observable<DataPackage>{
+    const body ={}
+    return this.http.post<DataPackage>(`${this.usuariosUrl}/gestionarSolicitudAmistad/${idEmisor}/${idReceptor}?aceptada=${aceptada}`,body);
+  }
+
+  
 }

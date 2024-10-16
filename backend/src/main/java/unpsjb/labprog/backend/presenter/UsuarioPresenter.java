@@ -139,4 +139,21 @@ public class UsuarioPresenter {
         }
     }
 
+    @GetMapping("/sonAmigos/{idEmisor}/{idReceptor}")
+    public ResponseEntity<Object> verificarAmistad(@PathVariable Long idEmisor, @PathVariable Long idReceptor) {
+        try {
+            return Response.ok(usuarioService.sonAmigos(idEmisor, idReceptor));  // Enviamos el resultado (true o false)
+        } catch (Exception e) {
+            return Response.error("", "Error al verificar la amistad: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/solicitudAmistadExiste/{idEmisor}/{idReceptor}")
+    public ResponseEntity<Object> verificarSolicitudAmistad(@PathVariable Long idEmisor, @PathVariable Long idReceptor) {
+        try {
+            return Response.ok(usuarioService.solicitudAmistadExiste(idEmisor, idReceptor));  // Enviamos el resultado (true o false)
+        } catch (Exception e) {
+            return Response.error("", "Error al verificar la solicitud de amistad: " + e.getMessage());
+        }
+    }
 }

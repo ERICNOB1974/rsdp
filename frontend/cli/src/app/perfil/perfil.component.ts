@@ -19,6 +19,7 @@ export class PerfilComponent implements OnInit {
   idUsuario!: number;  // ID del perfil que se está viendo (viene de la URL o lógica del componente)
   idUsuarioAutenticado!: number;  // ID del usuario autenticado
   esMiPerfil: boolean = false;  // Para determinar si es el perfil del usuario autenticado
+  relacion: string ='';
 
   constructor(
     private route: ActivatedRoute,
@@ -39,7 +40,6 @@ export class PerfilComponent implements OnInit {
     if (usuarioAutenticado) {
       this.idUsuarioAutenticado = usuarioAutenticado.id;
     }
-    console.log('soyyy '+this.idUsuarioAutenticado);
   }
 
   // Cargar el perfil que se está viendo
@@ -52,7 +52,9 @@ export class PerfilComponent implements OnInit {
 
         // Verifica si el usuario autenticado está viendo su propio perfil
         this.esMiPerfil = this.usuario.id == this.idUsuarioAutenticado;
-        console.log(this.esMiPerfil);
+        if(!this.esMiPerfil){
+          this.verificarRelacion();
+        }
       } else {
         console.error(dataPackage.message);
       }
@@ -63,6 +65,50 @@ export class PerfilComponent implements OnInit {
   editarPerfil(): void {
     this.router.navigate(['/perfilEditable', this.usuario?.id]);
   }
+
+  verificarRelacion(): void {
+    if (this.idUsuarioAutenticado && this.idUsuario) {
+      // Verificar si son amigos
+      this.usuarioService.sonAmigos(this.idUsuarioAutenticado, this.idUsuario).subscribe((dataPackage: DataPackage) => {
+        if (dataPackage.status === 200) {
+          let amigos = dataPackage.data;
+          if(amigos){
+            this.relacion='amigos'
+            return;
+          }
+        }else{
+        console.error('Error al verificar si son amigos:', dataPackage.message);
+      }
+    });
+    
+    // Verificar si hay una solicitud de amistad pendiente
+    this.usuarioService.verificarSolicitudAmistad(this.idUsuarioAutenticado, this.idUsuario).subscribe((dataPackage: DataPackage) => {
+        if (dataPackage.status === 200) {
+          let solicitudAmistadPendiente = dataPackage.data;
+          if(solicitudAmistadPendiente){
+            this.relacion='solicitudEnviada'
+            return;
+          }
+        }else{
+        console.error('Error al verificar si son amigos:', dataPackage.message);
+      }
+    });
+    this.usuarioService.verificarSolicitudAmistad(this.idUsuario,this.idUsuarioAutenticado).subscribe((dataPackage: DataPackage) => {
+      if (dataPackage.status === 200) {
+        let solicitudAmistadPendiente = dataPackage.data;
+        if(solicitudAmistadPendiente){
+          this.relacion='solicitudPendiente'
+          return;
+        }
+      }else{
+      console.error('Error al verificar si son amigos:', dataPackage.message);
+    }
+  });
+  this.relacion='noSonAmigos';
+  }
+}
+
+
 
   // Lógica para enviar una solicitud de amistad
   enviarSolicitudDeAmistad(): void {
@@ -75,8 +121,25 @@ export class PerfilComponent implements OnInit {
         }
       },
       error: (error) => {
-        console.error('Error enviando solicitud de amistad:', error);
         alert('Error al enviar la solicitud de amistad.');
+      }
+    });
+  }
+
+
+  gestionarSolicitud(aceptar: boolean): void {
+    this.usuarioService.gestionarSolicitudAmistad(this.usuario.id,this.idUsuarioAutenticado, aceptar).subscribe({
+      next: (dataPackage: DataPackage) => {
+        if (dataPackage.status === 200) {
+          const mensaje = aceptar ? 'Solicitud de amistad aceptada exitosamente.' : 'Solicitud de amistad rechazada exitosamente.';
+          alert(mensaje);
+        } else {
+          alert('Error: ' + dataPackage.message);
+        }
+      },
+      error: (error) => {
+        const mensaje = aceptar ? 'Error al aceptar la solicitud de amistad.' : 'Error al rechazar la solicitud de amistad.';
+        alert(mensaje);
       }
     });
   }
