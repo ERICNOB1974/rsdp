@@ -215,6 +215,7 @@ public class UsuarioPresenter {
         }
     }
 
+
     @GetMapping("/existeMail/{correoElectronico}")
     public ResponseEntity<Object> existeMail(@PathVariable String correoElectronico) {
         return Response.ok(usuarioService.existeMail(correoElectronico));
