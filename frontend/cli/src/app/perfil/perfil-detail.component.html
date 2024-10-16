@@ -1,0 +1,36 @@
+<div class="detail-container">
+    <h2>Editar Perfil</h2>
+  
+    <div class="form-group">
+      <label for="nombreUsuario">Nombre de Usuario:</label>
+      <input
+        type="text"
+        id="nombreUsuario"
+        [(ngModel)]="usuario.nombreUsuario" 
+        placeholder="Ingresa tu nombre de usuario"
+      />
+    </div>
+  
+    <div class="form-group">
+      <label for="nombreReal">Nombre Real:</label>
+      <input
+        type="text"
+        id="nombreReal"
+        [(ngModel)]="usuario.nombreReal" 
+        placeholder="Ingresa tu nombre real"
+      />
+    </div>
+  
+    <div class="form-group">
+      <label for="descripcion">Descripción:</label>
+      <textarea
+        id="descripcion"
+        [(ngModel)]="usuario.descripcion" 
+        placeholder="Ingresa una descripción"
+      ></textarea>
+    </div>
+  
+    <button (click)="guardarCambios()">Guardar cambios</button>
+    <button (click)="cancelar()">Cancelar</button>
+  </div>
+  

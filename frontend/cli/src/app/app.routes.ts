@@ -10,6 +10,9 @@ import { SugerenciasAmigosComponent } from './sugerencias/sugerenciasAmigos.comp
 import { SugerenciasEventosComponent } from './sugerencias/sugerenciasEventos.component';
 import { SugerenciasComunidadesComponent } from './sugerencias/sugerenciasComunidades.component';
 import { ComunidadDetailComponent } from './comunidades/comunidades-detail.component';
+import { AmigosComponent } from './amigos/amigos.component';
+import { PerfilComponent } from './perfil/perfil.component';
+import { PerfilDetailComponent } from './perfil/perfil-detail.component';
 import { CrearPublicacionComponent } from './publicaciones/crearPublicacion.component';
 import { PublicacionDetailComponent } from './publicaciones/publicacion-detail.component';
 
@@ -22,6 +25,9 @@ export const routes: Routes = [
     { path: 'comunidades', component: ComunidadesComponent },
     { path: 'comunidades/crearComunidad', component: CrearComunidadComponent },
     { path: 'comunidades/:id', component: ComunidadDetailComponent },
+    { path: 'amigos', component: AmigosComponent },
+    { path: 'perfil/:id', component: PerfilComponent },
+    { path: 'perfilEditable/:id', component: PerfilDetailComponent },
     { path: 'sugerencias/amigos', component: SugerenciasAmigosComponent },
     { path: 'sugerencias/eventos', component: SugerenciasEventosComponent },
     { path: 'sugerencias/comunidades', component: SugerenciasComunidadesComponent },

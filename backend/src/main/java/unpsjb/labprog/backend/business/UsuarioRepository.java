@@ -18,6 +18,20 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
                         "RETURN amigos")
         List<Usuario> amigos(String nombreUsuario);
 
+        @Query("""
+                MATCH (u:Usuario {nombreUsuario: $nombreUsuario}) 
+                OPTIONAL MATCH (solicitante:Usuario)-[r:SOLICITUD_DE_AMISTAD]->(u)
+                WHERE solicitante IS NOT NULL
+                RETURN solicitante AS usuario
+                UNION
+                MATCH (u:Usuario {nombreUsuario: $nombreUsuario}) 
+                OPTIONAL MATCH (u)-[r2:SOLICITUD_DE_AMISTAD]->(destinatario:Usuario)
+                WHERE destinatario IS NOT NULL
+                RETURN destinatario AS usuario
+                ORDER BY usuario.nombreUsuario ASC
+            """)
+            List<Usuario> solicitudesDeAmistad(String nombreUsuario);
+
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(amigo)-[:ES_AMIGO_DE]->(amigosDeAmigos) "
                         +
                         "WHERE amigosDeAmigos <> u AND NOT (u)-[:ES_AMIGO_DE]-(amigosDeAmigos) " +
@@ -128,8 +142,13 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
 
         @Query("MATCH (u:Usuario)-[r:SOLICITUD_DE_AMISTAD]-(u2:Usuario) " +
                         "Where id(u) = $idEmisor AND id(u2) = $idReceptor " +
-                        "AND r.estado='pendiente' "+
+                        "AND r.estado='pendiente' " +
                         "return COUNT (r)>0")
         boolean haySolicitud(Long idEmisor, Long idReceptor);
+
+        @Query("MATCH (u:Usuario) WHERE id(u)=$idUsuario " +
+                        "MATCH (e:Evento) WHERE id(e)=$idEvento " +
+                        "CREATE (u)-[:NOTIFICACION {fechaInscripcion: $fechaInscripcion}]-(e)")
+        void notificacionInscripcion(Long idUsuario, Long idEvento, LocalDateTime fechaIngreso);
 
 }
