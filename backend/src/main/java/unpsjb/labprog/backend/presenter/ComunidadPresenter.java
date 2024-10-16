@@ -111,7 +111,7 @@ public class ComunidadPresenter {
     }
 
     @GetMapping("/visualizarSolicitudes/{idSuperUsuario}/{idComunidad}")
-    public ResponseEntity<Object> visualizarSolicitudesPendinetes(@PathVariable Long idSuperUsuario,
+    public ResponseEntity<Object> visualizarSolicitudesPendientes(@PathVariable Long idSuperUsuario,
             @PathVariable Long idComunidad) {
         try {
             return Response.ok(usuarioComunidadService.visualizarSolicitudes(idSuperUsuario, idComunidad));
@@ -124,5 +124,11 @@ public class ComunidadPresenter {
     public ResponseEntity<Object> etiquetarComunidad(@RequestBody Comunidad comunidad, @PathVariable Long idEtiqueta) {
         comunidadService.etiquetarComunidad(comunidad, idEtiqueta);
         return Response.ok("ok");
+    }
+
+    @GetMapping("/participa/{idComunidad}/{idUsuario}")
+    public ResponseEntity<Object> estadoParticipacion(@PathVariable Long idComunidad, @PathVariable Long idUsuario) {
+        return Response.ok(usuarioComunidadService.verEstado(idComunidad, idUsuario));
+        // return Response.ok("ok");
     }
 }

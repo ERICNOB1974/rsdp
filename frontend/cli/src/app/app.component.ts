@@ -12,96 +12,108 @@ import { DataPackage } from './data-package';
   imports: [RouterOutlet, CommonModule],
   template: `
     <div class="sidebar">
-    <ul>
-        <h5 style="text-align: center; margin: 10px;">RSDP</h5>
-        <li class="logo">
-          <a href="">
-            <span class="icon"><i class="fa fa-home"></i></span>
-            <span class="text">Inicio</span>
-          </a>
-        </li>
-        <li class="dropdown">
-          <a class="dropdown-toggle">
-            <span class="icon"><i class="fa fa-calendar"></i></span>
-            <span class="text">Eventos</span>
-          </a>
-          <ul class="dropdown-menu">
-            <li>
-              <a href="/eventos">Listar eventos</a>
-            </li>
-            <li>
-              <a href="/eventos/crearEvento">Crear evento</a>
-            </li>
-          </ul>
-        </li>
-        <li class="dropdown">
-          <a class="dropdown-toggle">
-            <span class="icon"><i class="fa fa-users"></i></span>
-            <span class="text">Comunidades</span>
-          </a>
-          <ul class="dropdown-menu">
-            <li>
-              <a href="/comunidades">Listar comunidades</a>
-            </li>
-            <li>
-              <a href="/comunidades/crearComunidad">Crear comunidad</a>
-            </li>
-          </ul>
-        </li>
-        <li class="dropdown">
-          <a class="dropdown-toggle">
-            <span class="icon"><i class="fa fa-users"></i></span>
-            <span class="text">Amigos</span>
-          </a>
-          <ul class="dropdown-menu">
-            <li>
-              <a href="/amigos">Amigos</a>
-            </li>
-            <li>
-              <a href="/amigos/solicitudes">Solicitudes</a>
-            </li>
-          </ul>
-        </li>
-        <li class="dropdown">
-        <a class="dropdown-toggle">
-          <span class="icon"><i class="fa fa-user"></i></span>
-          <span class="text">Perfil</span>
-        </a>
-        <ul class="dropdown-menu">
-          <li>
-            <a (click)="navigateToMiPerfil()">Mi perfil</a> <!-- Llamada a la función de navegación -->
-          </li>
-        </ul>
+<ul>
+  <h5 style="text-align: center; margin: 10px;">RSDP</h5>
+  <li class="logo">
+    <a href="">
+      <span class="icon"><i class="fa fa-home"></i></span>
+      <span class="text">Inicio</span>
+    </a>
+  </li>
+  <li class="dropdown">
+    <a class="dropdown-toggle">
+      <span class="icon"><i class="fa fa-calendar"></i></span>
+      <span class="text">Eventos</span>
+    </a>
+    <ul class="dropdown-menu">
+      <li>
+        <a href="/eventos">Listar eventos</a>
       </li>
-      <li class="dropdown">
-          <a class="dropdown-toggle">
-            <span class="icon"><i class="fa fa-question-circle"></i></span>
-            <span class="text">Sugerencias</span>
-          </a>
-          <ul class="dropdown-menu">
-            <li>
-              <a href="/sugerencias/amigos">De amigos</a>
-            </li>
-            <li>
-              <a href="/sugerencias/eventos">De eventos</a>
-            </li>
-            <li>
-              <a href="/sugerencias/comunidades">De comunidades</a>
-            </li>
-          </ul>
-        </li>
-        <li class="dropdown">
-          <a class="dropdown-toggle">
-            <span class="icon"><i class="fa fa-bell"></i></span>
-            <span class="text">Notificaciones</span>
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <li *ngFor="let notificacion of notificaciones">
-              <a class="dropdown-item" href="#">{{ notificacion.mensaje }}</a>
-            </li>
-          </ul>
-        </li>
-      </ul>
+      <li>
+        <a href="/eventos/crearEvento">Crear evento</a>
+      </li>
+    </ul>
+  </li>
+  <li class="dropdown">
+    <a class="dropdown-toggle">
+      <span class="icon"><i class="fa fa-users"></i></span>
+      <span class="text">Comunidades</span>
+    </a>
+    <ul class="dropdown-menu">
+      <li>
+        <a href="/comunidades">Listar comunidades</a>
+      </li>
+      <li>
+        <a href="/comunidades/crearComunidad">Crear comunidad</a>
+      </li>
+    </ul>
+  </li>
+  <li class="dropdown">
+    <a class="dropdown-toggle">
+      <span class="icon"><i class="fa fa-users"></i></span>
+      <span class="text">Amigos</span>
+    </a>
+    <ul class="dropdown-menu">
+      <li>
+        <a href="/amigos">Amigos</a>
+      </li>
+      <li>
+        <a href="/amigos/solicitudes">Solicitudes</a>
+      </li>
+    </ul>
+  </li>
+  <li class="dropdown">
+    <a class="dropdown-toggle">
+      <span class="icon"><i class="fa fa-user"></i></span>
+      <span class="text">Perfil</span>
+    </a>
+    <ul class="dropdown-menu">
+      <li>
+        <a (click)="navigateToMiPerfil()">Mi perfil</a>
+      </li>
+    </ul>
+  </li>
+  <li class="dropdown">
+    <a class="dropdown-toggle">
+      <span class="icon"><i class="fa fa-question-circle"></i></span>
+      <span class="text">Sugerencias</span>
+    </a>
+    <ul class="dropdown-menu">
+      <li>
+        <a href="/sugerencias/amigos">De amigos</a>
+      </li>
+      <li>
+        <a href="/sugerencias/eventos">De eventos</a>
+      </li>
+      <li>
+        <a href="/sugerencias/comunidades">De comunidades</a>
+      </li>
+    </ul>
+  </li>
+  <li class="dropdown">
+    <a class="dropdown-toggle">
+      <span class="icon"><i class="fa fa-question-circle"></i></span>
+      <span class="text">Publicación</span>
+    </a>
+    <ul class="dropdown-menu">
+      <li>
+        <a href="/publicacion">Nueva</a>
+      </li>
+    </ul>
+  </li>
+  <li class="dropdown">
+    <a class="dropdown-toggle">
+      <span class="icon"><i class="fa fa-bell"></i></span>
+      <span class="text">Notificaciones</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      <li *ngFor="let notificacion of notificaciones">
+        <a class="dropdown-item" href="#">{{ notificacion.mensaje }}</a>
+      </li>
+    </ul>
+  </li>
+</ul>
+
     </div>
     <div class="main-content">
       <router-outlet></router-outlet>
@@ -119,6 +131,11 @@ export class AppComponent {
     private notificacionService: NotificacionService, // Inyecta NotificacionService
     private authService: AuthService // Inyecta AuthService
   ) {}
+
+  navigateTo(route: string) {
+    this.router.navigateByUrl(route);
+  }
+
 
   ngOnInit(): void {
     this.actualizarUbicacion();
