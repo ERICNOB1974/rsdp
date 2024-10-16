@@ -1,18 +1,21 @@
 package unpsjb.labprog.backend.business;
 
+import java.time.LocalDateTime;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import unpsjb.labprog.backend.model.Usuario;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Service
 public class SolicitudAmistadService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private NotificacionService notificacionService;
 
     public String enviarSolicitud(Long idEmisor, Long idReceptor) throws Exception {
         if (idEmisor.equals(idReceptor)) {
@@ -34,6 +37,7 @@ public class SolicitudAmistadService {
             throw new Exception("Usuario no encontrado.");
         }
         usuarioRepository.enviarSolicitudAmistad(idEmisor, idReceptor, "pendiente", LocalDateTime.now());
+        notificacionService.crearNotificacion(idReceptor, idEmisor, "SOLICITUD_ENTRANTE", LocalDateTime.now());
         return "Solicitud enviada correctamente";
     }
 
@@ -59,9 +63,12 @@ public class SolicitudAmistadService {
         if(aceptada){
             usuarioRepository.rechazarSolicitudAmistad(idEmisor, idReceptor);
             usuarioRepository.aceptarSolicitudAmistad(idEmisor, idReceptor, LocalDateTime.now());
+            notificacionService.crearNotificacion(idEmisor, idReceptor, "SOLICITUD_ACEPTADA", LocalDateTime.now());
+            notificacionService.eliminarNotificacionSolicitudEntrante(idReceptor, idEmisor);
             return "Solicitud de amistad aceptada correctamente";
         }
         usuarioRepository.rechazarSolicitudAmistad(idEmisor, idReceptor);
+        notificacionService.eliminarNotificacionSolicitudEntrante(idReceptor, idEmisor);
         return "Solicitud de amistad rechazada correctamente";
     }
 
