@@ -10,17 +10,21 @@ import { SugerenciasAmigosComponent } from './sugerencias/sugerenciasAmigos.comp
 import { SugerenciasEventosComponent } from './sugerencias/sugerenciasEventos.component';
 import { SugerenciasComunidadesComponent } from './sugerencias/sugerenciasComunidades.component';
 import { ComunidadDetailComponent } from './comunidades/comunidades-detail.component';
+import { CrearPublicacionComponent } from './publicaciones/crearPublicacion.component';
+import { PublicacionDetailComponent } from './publicaciones/publicacion-detail.component';
 
 export const routes: Routes = [
-    {path: '', component: HomeComponent},
-    {path: 'seleccionMapa', component: SeleccionMapaComponent},
-    {path: 'eventos', component: EventosComponent},
-    {path: 'eventos/crearEvento', component: CrearEventoComponent }, //si o si tiene que estar antes del de /:id, sino no anda
-    {path: 'eventos/:id', component: EventoDetailComponent },
-    {path: 'comunidades', component: ComunidadesComponent },
-    {path: 'comunidades/crearComunidad', component: CrearComunidadComponent },
-    {path: 'comunidades/:id', component: ComunidadDetailComponent},
-    {path: 'sugerencias/amigos', component: SugerenciasAmigosComponent },
-    {path: 'sugerencias/eventos', component: SugerenciasEventosComponent },
-    {path: 'sugerencias/comunidades', component: SugerenciasComunidadesComponent }
+    { path: '', component: HomeComponent },
+    { path: 'seleccionMapa', component: SeleccionMapaComponent },
+    { path: 'eventos', component: EventosComponent },
+    { path: 'eventos/crearEvento', component: CrearEventoComponent }, //si o si tiene que estar antes del de /:id, sino no anda
+    { path: 'eventos/:id', component: EventoDetailComponent },
+    { path: 'comunidades', component: ComunidadesComponent },
+    { path: 'comunidades/crearComunidad', component: CrearComunidadComponent },
+    { path: 'comunidades/:id', component: ComunidadDetailComponent },
+    { path: 'sugerencias/amigos', component: SugerenciasAmigosComponent },
+    { path: 'sugerencias/eventos', component: SugerenciasEventosComponent },
+    { path: 'sugerencias/comunidades', component: SugerenciasComunidadesComponent },
+    { path: 'publicacion', component: CrearPublicacionComponent },  
+    { path: 'publicacion/:id', component: PublicacionDetailComponent }
 ];
