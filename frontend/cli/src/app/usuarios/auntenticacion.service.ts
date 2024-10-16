@@ -4,7 +4,7 @@ import { Injectable } from "@angular/core";
     providedIn: 'root'
   })
   export class AuthService {
-    usuarioAutenticado: any = { id: '1186', nombreUsuario: 'lucas123' }; // Simula el usuario autenticado
+    usuarioAutenticado: any = { id: '1185', nombreUsuario: 'lucas123' }; // Simula el usuario autenticado
   
     constructor() {}
   

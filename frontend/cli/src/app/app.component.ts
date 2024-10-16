@@ -3,6 +3,8 @@ import { Router, RouterOutlet } from '@angular/router';
 import { UbicacionService } from './ubicacion.service';
 import { CommonModule } from '@angular/common';
 import { AuthService } from './usuarios/auntenticacion.service';
+import { NotificacionService } from './notificaciones/notificacion.service';
+import { DataPackage } from './data-package';
 
 @Component({
   selector: 'app-root',
@@ -94,8 +96,8 @@ import { AuthService } from './usuarios/auntenticacion.service';
             <span class="text">Notificaciones</span>
           </a>
           <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <li *ngFor="let notificacion of getUltimasNotificaciones()">
-              <a class="dropdown-item" href="#">{{ notificacion }}</a>
+            <li *ngFor="let notificacion of notificaciones">
+              <a class="dropdown-item" href="#">{{ notificacion.mensaje }}</a>
             </li>
           </ul>
         </li>
@@ -108,26 +110,28 @@ import { AuthService } from './usuarios/auntenticacion.service';
   styleUrls: ['../styles.css']
 })
 export class AppComponent {
-  notificaciones: string[] = [];
+  notificaciones: any[] = []; // Cambiamos el tipo a `any[]` para recibir cualquier tipo de datos de notificación
   idUsuarioAutenticado!: number; // Variable para almacenar el ID del usuario autenticado
 
   constructor(
     private router: Router,
     private ubicacionService: UbicacionService,
+    private notificacionService: NotificacionService, // Inyecta NotificacionService
     private authService: AuthService // Inyecta AuthService
   ) {}
 
   ngOnInit(): void {
     this.actualizarUbicacion();
-    this.cargarNotificaciones();
     this.obtenerUsuarioAutenticado(); // Llama al método para obtener el usuario autenticado
+    
   }
-
+  
   obtenerUsuarioAutenticado() {
     const usuarioAutenticado = this.authService.obtenerUsuarioAutenticado(); // Obtén el usuario autenticado
     if (usuarioAutenticado) {
       this.idUsuarioAutenticado = usuarioAutenticado.id; // Asigna el ID del usuario autenticado
     }
+    this.cargarNotificaciones();
   }
 
   navigateToMiPerfil() {
@@ -136,15 +140,25 @@ export class AppComponent {
     }
   }
 
-  cargarNotificaciones() {
-    this.notificaciones = [
-      'Notificación 1: Evento creado.',
-      'Notificación 2: Nueva comunidad disponible.',
-      'Notificación 3: Amigo se unió.',
-      'Notificación 4: Recordatorio de evento.',
-      'Notificación 5: Mensaje nuevo.',
-    ];
+  cargarNotificaciones(): void {
+    // Llama al servicio para obtener las notificaciones del usuario autenticado
+    this.notificacionService.obtenerNotificaciones(this.idUsuarioAutenticado)
+      .subscribe((dataPackage: DataPackage) => {
+        // Verifica si el status de la respuesta es exitoso (por ejemplo, 200 OK)
+        if (dataPackage.status === 200) {
+          // Asigna las notificaciones del usuario autenticado
+          this.notificaciones = dataPackage.data as any[];
+          console.log('Notificaciones cargadas:', this.notificaciones);
+        } else {
+          // Maneja el error si el status no es exitoso
+          console.error('Error al cargar las notificaciones:', dataPackage.message);
+        }
+      }, error => {
+        // Maneja posibles errores de la llamada HTTP
+        console.error('Error al comunicarse con el servicio de notificaciones:', error);
+      });
   }
+  
 
   getUltimasNotificaciones() {
     return this.notificaciones.slice(0, 5);
