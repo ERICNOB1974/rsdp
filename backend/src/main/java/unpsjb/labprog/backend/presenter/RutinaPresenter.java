@@ -39,7 +39,7 @@ public class RutinaPresenter {
     }
 
     @GetMapping("/findById/{id}")
-    public ResponseEntity<Object> recomendarComunidadesPorAmigos(@PathVariable Long id) {
+    public ResponseEntity<Object> findById(@PathVariable Long id) {
         return Response.ok(rutinaService.findById(id));
     }
 
