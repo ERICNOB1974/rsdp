@@ -268,11 +268,7 @@ export class CrearEventoComponent {
         this.eventoService.etiquetar(this.evento, etiqueta.id).subscribe();
       });
     }); 
-
-    
-    
-    //location.reload();
-    
+    location.reload(); 
   }
 
   formatFechaHora(fechaHora: string): string {

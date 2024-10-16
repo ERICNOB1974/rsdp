@@ -10,12 +10,12 @@ import { UbicacionService } from './ubicacion.service';
     <div class="sidebar">
       <ul>
           <h5 style="text-align: center; margin: 10px;">RSDP</h5>
-          <!-- <li class="logo">
+           <li class="logo">
               <a href="">
                   <span class="icon"><i class="fa fa-home"></i></span>
                   <span class="text">Inicio</span>
               </a>
-          </li> -->
+          </li> 
           <li class="dropdown">
               <a class="dropdown-toggle">
                   <span class="icon"><i class="fa fa-calendar"></i></span>
@@ -61,6 +61,17 @@ import { UbicacionService } from './ubicacion.service';
                   </li>
               </ul>
           </li>
+          <li class="dropdown">
+              <a class="dropdown-toggle">
+                <span class="icon"><i class="fa fa-question-circle"></i></span>
+                <span class="text">Publicacion</span>
+              </a>
+              <ul class="dropdown-menu">
+                  <li>
+                      <a href="/publicacion">nueva</a>
+                  </li>
+              </ul>
+          </li>
       </ul>
     </div>
     <div class="main-content">
@@ -72,7 +83,7 @@ import { UbicacionService } from './ubicacion.service';
 export class AppComponent {
   constructor(
     private router: Router,
-    private ubicacionService: UbicacionService) {}
+    private ubicacionService: UbicacionService) { }
 
   navigateTo(route: string) {
     this.router.navigateByUrl(route);
