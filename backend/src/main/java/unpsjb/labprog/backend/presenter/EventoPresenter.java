@@ -52,7 +52,6 @@ public class EventoPresenter {
     }
     @RequestMapping(path = "/crear/{nombreUsuario}", method = RequestMethod.POST)
     public ResponseEntity<Object> createConCreador(@RequestBody Evento evento, @PathVariable String nombreUsuario) throws MessagingException, EventoException {
-       System.out.println("AAAAAAAAAAAAAAA\n"+nombreUsuario);
         return Response.ok(eventoService.crearConCreador(evento, nombreUsuario));
     }
 
