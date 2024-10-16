@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
 import { UbicacionService } from './ubicacion.service';
 import { CommonModule } from '@angular/common';
+import { AuthService } from './usuarios/auntenticacion.service';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,7 @@ import { CommonModule } from '@angular/common';
   imports: [RouterOutlet, CommonModule],
   template: `
     <div class="sidebar">
-      <ul>
+    <ul>
         <h5 style="text-align: center; margin: 10px;">RSDP</h5>
         <li class="logo">
           <a href="">
@@ -60,17 +61,17 @@ import { CommonModule } from '@angular/common';
           </ul>
         </li>
         <li class="dropdown">
-          <a class="dropdown-toggle">
-            <span class="icon"><i class="fa fa-user"></i></span>
-            <span class="text">Perfil</span>
-          </a>
-          <ul class="dropdown-menu">
-            <li>
-              <a href="/perfil">Mi perfil</a>
-            </li>
-          </ul>
-        </li>
-        <li class="dropdown">
+        <a class="dropdown-toggle">
+          <span class="icon"><i class="fa fa-user"></i></span>
+          <span class="text">Perfil</span>
+        </a>
+        <ul class="dropdown-menu">
+          <li>
+            <a (click)="navigateToMiPerfil()">Mi perfil</a> <!-- Llamada a la función de navegación -->
+          </li>
+        </ul>
+      </li>
+      <li class="dropdown">
           <a class="dropdown-toggle">
             <span class="icon"><i class="fa fa-question-circle"></i></span>
             <span class="text">Sugerencias</span>
@@ -108,35 +109,45 @@ import { CommonModule } from '@angular/common';
 })
 export class AppComponent {
   notificaciones: string[] = [];
+  idUsuarioAutenticado!: number; // Variable para almacenar el ID del usuario autenticado
 
   constructor(
     private router: Router,
-    private ubicacionService: UbicacionService) {}
-
-    
-    navigateTo(route: string) {
-      this.router.navigateByUrl(route);
-    }
+    private ubicacionService: UbicacionService,
+    private authService: AuthService // Inyecta AuthService
+  ) {}
 
   ngOnInit(): void {
     this.actualizarUbicacion();
     this.cargarNotificaciones();
-    console.log(this.notificaciones);
+    this.obtenerUsuarioAutenticado(); // Llama al método para obtener el usuario autenticado
   }
+
+  obtenerUsuarioAutenticado() {
+    const usuarioAutenticado = this.authService.obtenerUsuarioAutenticado(); // Obtén el usuario autenticado
+    if (usuarioAutenticado) {
+      this.idUsuarioAutenticado = usuarioAutenticado.id; // Asigna el ID del usuario autenticado
+    }
+  }
+
+  navigateToMiPerfil() {
+    if (this.idUsuarioAutenticado) {
+      this.router.navigate(['/perfil', this.idUsuarioAutenticado]); // Navega al perfil del usuario autenticado
+    }
+  }
+
   cargarNotificaciones() {
-    // Simulación de notificaciones, puedes reemplazar esto con datos reales.
     this.notificaciones = [
       'Notificación 1: Evento creado.',
       'Notificación 2: Nueva comunidad disponible.',
       'Notificación 3: Amigo se unió.',
       'Notificación 4: Recordatorio de evento.',
       'Notificación 5: Mensaje nuevo.',
-      'Notificación 6: yo nooo.'
     ];
   }
 
   getUltimasNotificaciones() {
-    return this.notificaciones.slice(0, 5); // Devuelve solo las 5 primeras
+    return this.notificaciones.slice(0, 5);
   }
 
   actualizarUbicacion() {
