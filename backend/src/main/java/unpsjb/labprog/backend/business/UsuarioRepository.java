@@ -125,6 +125,11 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
                         "MATCH (e:Evento) WHERE id(e)=$idEvento " +
                         " CREATE (u)-[:PARTICIPA_EN]->(e)")
         void inscribirse(Long idEvento, Long idUsuario);
+        
+        @Query("MATCH (u:Usuario) WHERE id(u)=$idUsuario " +
+                        "MATCH (e:Evento) WHERE id(e)=$idEvento " +
+                        " DETACH (u)-[:PARTICIPA_EN]->(e)")
+        void desinscribirse(Long idEvento, Long idUsuario);
 
         @Query("MATCH (u:Usuario)-[r:SOLICITUD_DE_AMISTAD]-(u2:Usuario) " +
                         "Where id(u) = $idEmisor AND id(u2) = $idReceptor " +

@@ -80,6 +80,10 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         @Query("MATCH (c:Comunidad), (u:Usuario) WHERE id(c) = $idComunidad AND id(u) = $idUsuario " +
                         "CREATE (c)<-[:MIEMBRO {fechaIngreso: $fechaIngreso}]-(u)")
         void nuevoMiembro(Long idComunidad, Long idUsuario, LocalDateTime fechaIngreso);
+        
+        @Query("MATCH (c:Comunidad), (u:Usuario) WHERE id(c) = $idComunidad AND id(u) = $idUsuario " +
+                        "DETACH (c)<-[:MIEMBRO]-(u)")
+        void miembroSaliente(Long idComunidad, Long idUsuario);
 
         @Query("MATCH (u:Usuario)-[r]-(c:Comunidad) " +
                         "WHERE id(u) = $idMiembro AND id(c) = $idComunidad " +
