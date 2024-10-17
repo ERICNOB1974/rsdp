@@ -196,4 +196,12 @@ public class EventoService {
         return eventoRepository.participa(u.getId(), idEvento);
     }
 
+    public List<Evento> disponibles() {
+        return eventoRepository.disponibles();
+    }
+
+    public List<Evento> participaUsuario(Long idUsuario){
+        return eventoRepository.participaUsuario(idUsuario);
+    }
+
 }

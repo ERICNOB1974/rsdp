@@ -20,8 +20,16 @@ export class EventoService {
     return this.http.get<DataPackage>(` ${this.eventosUrl}/findAll`);
   }
 
+  disponibles(): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.eventosUrl}/disponibles`);
+  }
+
   get(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.eventosUrl}/findById/${id}`);
+  }
+
+  participaUsuario(idUsuario: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.eventosUrl}/participa/${idUsuario}`);
   }
 
   save(evento: Evento): Observable<DataPackage> {

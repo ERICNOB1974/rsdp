@@ -36,6 +36,16 @@ public class EventoPresenter {
         return Response.ok(eventoService.findAll());
     }
 
+    @RequestMapping(path = "/disponibles", method = RequestMethod.GET)
+    public ResponseEntity<Object> disponibles() {
+        return Response.ok(eventoService.disponibles());
+    }
+
+    @RequestMapping(path = "/participa/{idUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> participaUsuario(@PathVariable Long idUsuario) {
+        return Response.ok(eventoService.participaUsuario(idUsuario));
+    }
+
     @GetMapping("/findById/{id}")
     public ResponseEntity<Object> findById(@PathVariable Long id) {
         return Response.ok(eventoService.findById(id));
