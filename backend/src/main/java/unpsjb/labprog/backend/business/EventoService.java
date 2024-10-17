@@ -275,4 +275,12 @@ public class EventoService {
         // Retornar la lista ordenada
         return listaSugerenciasSinDuplicados;
     }
+    public List<Evento> disponibles() {
+        return eventoRepository.disponibles();
+    }
+
+    public List<Evento> participaUsuario(Long idUsuario){
+        return eventoRepository.participaUsuario(idUsuario);
+    }
+
 }

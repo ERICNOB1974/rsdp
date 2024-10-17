@@ -254,4 +254,16 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "ORDER BY score DESC, evento.fechaHora ASC " +
                         "LIMIT 3")
         List<ScoreEvento> sugerenciasDeEventosBasadosEnRutinas2(String nombreUsuario);
+        @Query("MATCH (e:Evento) " +
+        "WHERE date(e.fechaHora) > date(datetime()) " + 
+        "AND NOT e.esPrivadoParaLaComunidad " +
+        "WITH e, COUNT { (e)<-[:PARTICIPA_EN]-() } AS numParticipantes " +
+        "WHERE numParticipantes < e.cantidadMaximaParticipantes " +
+        "RETURN e ORDER BY e.fechaHora ASC")
+ List<Evento> disponibles();
+
+        @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento) "+
+                "WHERE id(u) = $idUsuario "+
+                "RETURN e ORDER BY e.fechaHora ASC")
+        List<Evento> participaUsuario(Long idUsuario);
 }
