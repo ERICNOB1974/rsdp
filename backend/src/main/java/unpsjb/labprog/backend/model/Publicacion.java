@@ -1,5 +1,7 @@
 package unpsjb.labprog.backend.model;
 
+import java.time.ZonedDateTime;
+
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
@@ -20,9 +22,10 @@ public class Publicacion {
     @GeneratedValue
     private Long id;
 
-    private String texto; 
+    private String texto;
 
-    private String file; 
+    private ZonedDateTime fechaDeCreacion;
     
+    private String file;
 
 }

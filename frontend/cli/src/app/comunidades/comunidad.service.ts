@@ -66,4 +66,8 @@ export class ComunidadService {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/participa/${idComunidad}/${idUsuario}`);
   }
 
+  salir(idComunidad: number, idUsuario: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.comunidadesUrl}/salir/${idComunidad}/${idUsuario}`);
+  }
+
 }

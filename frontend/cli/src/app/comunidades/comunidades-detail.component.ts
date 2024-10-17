@@ -17,6 +17,7 @@ export class ComunidadDetailComponent implements OnInit {
   comunidad!: Comunidad; // Comunidad especifica que se va a mostrar
   esParte: boolean = false;
   pendiente: boolean = false;
+  esCreador: boolean = false;
 
   constructor(
     private route: ActivatedRoute, // Para obtener el parámetro de la URL
@@ -35,7 +36,7 @@ export class ComunidadDetailComponent implements OnInit {
   }
 
   procesarEstado(): void {
-    this.comunidadService.estadoSolicitud(this.comunidad.id, 47).subscribe(dataPackage => {
+    this.comunidadService.estadoSolicitud(this.comunidad.id, 8483).subscribe(dataPackage => {
       let estado = <String>dataPackage.data;
       console.log(estado);
       if (estado == "Vacio") {
@@ -50,8 +51,9 @@ export class ComunidadDetailComponent implements OnInit {
         this.pendiente = true;
         this.esParte = false;
       }
-      console.log("pendiente", this.pendiente);
-      console.log(this.esParte);
+      if (estado == "Creador") {
+        this.esCreador = true;
+      }
     });
   }
 
@@ -96,19 +98,31 @@ export class ComunidadDetailComponent implements OnInit {
   ingresar(): void {
     //const idComunidad = this.route.snapshot.paramMap.get('id')!;
     //let mensaje = 'Solicitud enviada con exito';
-    this.usuarioService.solicitarIngresoAComunidad(this.comunidad.id, 47).subscribe(dataPackage => {
+    this.usuarioService.solicitarIngresoAComunidad(this.comunidad.id, 8483).subscribe(dataPackage => {
+      let mensaje = dataPackage.message;
+      this.procesarEstado();
+      this.snackBar.open(mensaje, 'Cerrar', {
+        duration: 3000,
+      });
+    });
+
+  }
+
+  salir(): void {
+    this.comunidadService.salir(this.comunidad.id, 8483).subscribe(dataPackage => {
       let mensaje = dataPackage.message;
       this.procesarEstado();
       this.snackBar.open(mensaje, 'Cerrar', {
         duration: 3000, // Duración del snackbar en milisegundos
       });
     });
-    /*  if (!this.comunidad.esPrivada){
-       mensaje= 'Ingreso a la comunidad exitoso'
-     } */
+  }
+
+  salirValid(): boolean {
+    return this.esParte || this.pendiente || !this.esCreador;
   }
 
   inscribirseValid(): boolean {
-    return ((this.comunidad.miembros < this.comunidad.cantidadMaximaMiembros) && !this.esParte && !this.pendiente);
+    return ((this.comunidad.miembros < this.comunidad.cantidadMaximaMiembros) && !this.esParte && !this.pendiente && !this.esCreador);
   }
 }

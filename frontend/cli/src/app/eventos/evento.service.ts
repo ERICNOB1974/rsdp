@@ -71,5 +71,9 @@ export class EventoService {
       return 'Ubicación no disponible';
     }
   }
+  salir(idEvento: number, idUsuario: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.eventosUrl}/desinscribirse/${idEvento}/1883`);
+    //return this.http.get<DataPackage>(`${this.eventosUrl}/desinscribirse/${idEvento}/${idUsuario}`);
+  }
 
 }

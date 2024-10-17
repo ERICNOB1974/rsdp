@@ -97,7 +97,7 @@ import { DataPackage } from './data-package';
     </a>
     <ul class="dropdown-menu">
       <li>
-        <a href="/publicacion">Nueva</a>
+        <a href="/publicacion/crear">Nueva</a>
       </li>
     </ul>
   </li>

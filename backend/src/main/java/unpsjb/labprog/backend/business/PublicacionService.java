@@ -1,5 +1,7 @@
 package unpsjb.labprog.backend.business;
 
+import java.time.ZonedDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,11 +20,19 @@ public class PublicacionService {
         Publicacion p = publicacionRepository.save(publicacion);
         if (p.getId() != null) {
             publicacionRepository.establecerCreador(idUsuario, p.getId());
-        } 
+        }
         return p;
     }
 
     public Publicacion findById(Long id) {
         return publicacionRepository.findById(id).orElse(null);
+    }
+
+    public void likear(Long usuarioId, Long publicacionId) {
+        publicacionRepository.likear(usuarioId, publicacionId);
+    }
+
+    public void comentar(Long usuarioId, Long publicacionId, String comentario) {
+        publicacionRepository.comentar(usuarioId, publicacionId, comentario, ZonedDateTime.now());
     }
 }

@@ -31,13 +31,12 @@ export class CrearPublicacionComponent implements OnInit {
   }
 
   cancel(): void {
-    this.router.navigate(['/eventos']);
+    this.router.navigate(['/']);
   }
 
   savePublicacion(): void {
-    console.log(this.publicacion.file);
+    this.publicacion.fechaDeCreacion= new Date().toISOString();
     this.publicacionService.saveConCreador(this.publicacion).subscribe();
-    //this.evento.fechaHora = this.formatFechaHora(this.evento.fechaHora); // Formatear la fecha
     //location.reload(); 
   }
 
