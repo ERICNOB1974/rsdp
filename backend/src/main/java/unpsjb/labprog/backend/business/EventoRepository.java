@@ -146,4 +146,9 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "MERGE (e)-[:ETIQUETADO_CON]->(t)")
         void etiquetarEvento(Long eventoId, Long etiquetaId);
 
+        @Query("MATCH (u:Usuario) WHERE id(u)=$idUsuario " +
+                        "MATCH (e:Evento) WHERE id(e)=$idEvento " +
+                        " MATCH (u)-[r:PARTICIPA_EN]->(e) DELETE r")
+        void desinscribirse(Long idEvento, Long idUsuario);
+
 }

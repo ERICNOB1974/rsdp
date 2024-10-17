@@ -8,7 +8,7 @@ import { Usuario } from './usuario';
   providedIn: 'root'
 })
 export class UsuarioService {
- 
+
 
   private usuariosUrl = 'rest/usuarios';
 
@@ -27,13 +27,13 @@ export class UsuarioService {
   sugerencias(nombreUsuario: string): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.usuariosUrl}/sugerencias/${nombreUsuario}`);
   }
- 
+
   search(searchTerm: string): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/search/${searchTerm}`);
   }
 
-  solicitarIngresoAComunidad(idComunidad: number, idUsuario: number) : Observable<DataPackage> {
-    return this.http.get<DataPackage>(`${this.usuariosUrl}/solicitarIngresoAComunidad/${idUsuario}/${idComunidad}`);
+  solicitarIngresoAComunidad(idComunidad: number, idUsuario: number): Observable<DataPackage> {
+    return this.http.post<DataPackage>(`${this.usuariosUrl}/solicitarIngresoAComunidad/${idUsuario}/${idComunidad}`, null);
   }
 
   save(usuario: Usuario): Observable<DataPackage> {
@@ -41,13 +41,13 @@ export class UsuarioService {
       this.http.post<DataPackage>(` ${this.usuariosUrl}/create`, usuario);
   }
 
-  obtenerAmigos(nombreUsuario: string) :Observable<DataPackage>{
+  obtenerAmigos(nombreUsuario: string): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/amigos/${nombreUsuario}`);
-}
+  }
 
-enviarSolicitudAmistad(idEmisor: number, idReceptor: number): Observable<DataPackage> {
-  const body = { /* aquí puedes agregar datos si es necesario */ };
-  return this.http.post<DataPackage>(`${this.usuariosUrl}/enviarSolicitudAmistad/${idEmisor}/${idReceptor}`, body);
-}
+  enviarSolicitudAmistad(idEmisor: number, idReceptor: number): Observable<DataPackage> {
+    const body = { /* aquí puedes agregar datos si es necesario */ };
+    return this.http.post<DataPackage>(`${this.usuariosUrl}/enviarSolicitudAmistad/${idEmisor}/${idReceptor}`, body);
+  }
 
 }

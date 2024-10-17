@@ -31,6 +31,6 @@ export const routes: Routes = [
     { path: 'sugerencias/amigos', component: SugerenciasAmigosComponent },
     { path: 'sugerencias/eventos', component: SugerenciasEventosComponent },
     { path: 'sugerencias/comunidades', component: SugerenciasComunidadesComponent },
-    { path: 'publicacion', component: CrearPublicacionComponent },  
+    { path: 'publicacion/crear', component: CrearPublicacionComponent },  
     { path: 'publicacion/:id', component: PublicacionDetailComponent }
 ];
