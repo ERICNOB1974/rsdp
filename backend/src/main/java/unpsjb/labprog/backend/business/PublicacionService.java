@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import unpsjb.labprog.backend.model.Publicacion;
-import unpsjb.labprog.backend.model.Usuario;
 
 @Service
 public class PublicacionService {
@@ -16,9 +15,10 @@ public class PublicacionService {
 
     @Transactional
     public Publicacion save(Publicacion publicacion, Long idUsuario) {
-        Usuario u=usuarioRepository.findById(idUsuario).get();
-        Publicacion p=publicacionRepository.save(publicacion);
-        publicacionRepository.establecerCreador(publicacion, u);
+        Publicacion p = publicacionRepository.save(publicacion);
+        if (p.getId() != null) {
+            publicacionRepository.establecerCreador(idUsuario, p.getId());
+        } 
         return p;
     }
 
