@@ -120,7 +120,7 @@ public class EmailService {
         }
     }
 
-    private void enviarMailGenerico(Email email) {
+    public void enviarMailGenerico(Email email) {
         try {
             MimeMessage mensaje = javaMailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mensaje, true, "UTF-8");

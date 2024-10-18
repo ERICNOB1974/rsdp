@@ -24,6 +24,8 @@ CREATE (et5:Etiqueta {nombre: "Fisico"})
 CREATE (et6:Etiqueta {nombre: "Cuerpo completo"})
 CREATE (et7:Etiqueta {nombre: "Motricidad"})
 
+//Madryn
+//7 etiquetas
 CREATE (c1)-[:ETIQUETADA_CON]->(et1)
 CREATE (c1)-[:ETIQUETADA_CON]->(et2)
 CREATE (c1)-[:ETIQUETADA_CON]->(et3)
@@ -32,6 +34,8 @@ CREATE (c1)-[:ETIQUETADA_CON]->(et5)
 CREATE (c1)-[:ETIQUETADA_CON]->(et6)
 CREATE (c1)-[:ETIQUETADA_CON]->(et7)
 
+//Comodoro
+//6 en comun
 CREATE (c2)-[:ETIQUETADA_CON]->(et1)
 CREATE (c2)-[:ETIQUETADA_CON]->(et2)
 CREATE (c2)-[:ETIQUETADA_CON]->(et3)
@@ -39,6 +43,8 @@ CREATE (c2)-[:ETIQUETADA_CON]->(et4)
 CREATE (c2)-[:ETIQUETADA_CON]->(et5)
 CREATE (c2)-[:ETIQUETADA_CON]->(et6)
 
+//Bahia blanca
+//6
 CREATE (c3)-[:ETIQUETADA_CON]->(et1)
 CREATE (c3)-[:ETIQUETADA_CON]->(et2)
 CREATE (c3)-[:ETIQUETADA_CON]->(et3)
@@ -46,6 +52,8 @@ CREATE (c3)-[:ETIQUETADA_CON]->(et4)
 CREATE (c3)-[:ETIQUETADA_CON]->(et5)
 CREATE (c3)-[:ETIQUETADA_CON]->(et6)
 
+//Jujuy
+//7
 CREATE (c4)-[:ETIQUETADA_CON]->(et1)
 CREATE (c4)-[:ETIQUETADA_CON]->(et2)
 CREATE (c4)-[:ETIQUETADA_CON]->(et3)
@@ -54,6 +62,8 @@ CREATE (c4)-[:ETIQUETADA_CON]->(et5)
 CREATE (c4)-[:ETIQUETADA_CON]->(et6)
 CREATE (c4)-[:ETIQUETADA_CON]->(et7)
 
+//Comodoro
+//No lo recomienda
 CREATE (c5)-[:ETIQUETADA_CON]->(et1)
 CREATE (c5)-[:ETIQUETADA_CON]->(et2)
 CREATE (c5)-[:ETIQUETADA_CON]->(et3)

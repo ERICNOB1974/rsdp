@@ -78,4 +78,12 @@ public class UsuarioService {
         return usuarioRepository.inscriptosEvento(e.getId());
     }
 
+    public boolean existeMail(String correoElectronico){
+        return usuarioRepository.existeMail(correoElectronico);
+    }
+
+    public boolean existeNombreUsuario(String nombreUsuario){
+        return usuarioRepository.existeNombreUsuario(nombreUsuario);
+    }
+
 }
