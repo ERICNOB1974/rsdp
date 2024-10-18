@@ -113,5 +113,14 @@ enviarSolicitudAmistad(idEmisor: number, idReceptor: number): Observable<DataPac
       this.http.post<DataPackage>(` ${this.usuariosUrl}/create`, usuario);
   }
 
+
+  miembrosComunidad(idComunidad: number) :Observable<DataPackage>{
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/miembrosComunidad/${idComunidad}`);
+  }
+
+  administradoresComunidad(idComunidad: number) :Observable<DataPackage>{
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/administradoresComunidad/${idComunidad}`);
+  }
+  
   
 }

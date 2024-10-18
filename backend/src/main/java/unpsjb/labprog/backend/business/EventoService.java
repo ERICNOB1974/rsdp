@@ -4,8 +4,11 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -283,4 +286,72 @@ public class EventoService {
         return eventoRepository.participaUsuario(idUsuario);
     }
 
+    public List<ScoreEvento> sugerenciasDeEventosBasadosEnEventos2(String nombreUsuario) {
+        List<ScoreEvento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnEventos2(nombreUsuario);
+        sugerencias.forEach(s -> System.out.println("Comunidad: " + s.getEvento().getId() + ", Score: " + s.getScore()));
+        return sugerencias;
+    }
+
+    public List<ScoreEvento> sugerenciasDeEventosBasadosEnAmigos2(String nombreUsuario) {
+        List<ScoreEvento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnAmigos2(nombreUsuario);
+        sugerencias.forEach(s -> System.out.println("Comunidad: " + s.getEvento().getId() + ", Score: " + s.getScore()));
+        return sugerencias;
+    }
+
+    public List<ScoreEvento> sugerenciasDeEventosBasadosEnComunidades2(String nombreUsuario) {
+        List<ScoreEvento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnComunidades2(nombreUsuario);
+        sugerencias.forEach(s -> System.out.println("Comunidad: " + s.getEvento().getId() + ", Score: " + s.getScore()));
+        return sugerencias;
+    }
+
+    public List<ScoreEvento> sugerenciasDeEventosBasadosEnRutinas2(String nombreUsuario) {
+        List<ScoreEvento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnRutinas2(nombreUsuario);
+        sugerencias.forEach(s -> System.out.println("Comunidad: " + s.getEvento().getId() + ", Score: " + s.getScore()));
+        return sugerencias;
+    }
+
+
+    public List<ScoreEvento> obtenerTodasLasSugerenciasDeEventos(String nombreUsuario) {
+        // Obtener todas las sugerencias de comunidades desde las tres consultas
+        List<ScoreEvento> sugerenciasEventos = eventoRepository.sugerenciasDeEventosBasadosEnEventos2(nombreUsuario);
+        List<ScoreEvento> sugerenciasAmigos = eventoRepository.sugerenciasDeEventosBasadosEnAmigos2(nombreUsuario);
+        List<ScoreEvento> sugerenciasComunidades = eventoRepository.sugerenciasDeEventosBasadosEnComunidades2(nombreUsuario);
+        List<ScoreEvento> sugerenciasRutinas = eventoRepository.sugerenciasDeEventosBasadosEnRutinas2(nombreUsuario);
+
+    
+        // Imprimir la cantidad de sugerencias para depuración
+        System.out.println("Sugerencias amigos: " + sugerenciasAmigos.size());
+        System.out.println("Sugerencias eventos: " + sugerenciasEventos.size());
+        System.out.println("Sugerencias comunidades: " + sugerenciasComunidades.size());
+    
+        // Combinar todas las sugerencias en una sola lista
+        List<ScoreEvento> todasLasSugerencias = new ArrayList<>();
+        todasLasSugerencias.addAll(sugerenciasAmigos);
+        todasLasSugerencias.addAll(sugerenciasEventos);
+        todasLasSugerencias.addAll(sugerenciasComunidades);
+        todasLasSugerencias.addAll(sugerenciasRutinas);
+
+        // Usar un Map para eliminar duplicados y sumar los scores de las comunidades
+        Map<Long, ScoreEvento> mapaSugerencias = new HashMap<>();
+    
+        for (ScoreEvento scoreEvento : todasLasSugerencias) {
+            // Si la comunidad ya existe en el mapa, sumar los scores
+            mapaSugerencias.merge(scoreEvento.getEvento().getId(),
+                    new ScoreEvento(scoreEvento.getEvento(), scoreEvento.getScore()),
+                    (existente, nuevo) -> {
+                        double nuevoScore = existente.getScore() + nuevo.getScore(); // Sumar scores
+                        existente.setScore(nuevoScore); // Actualizar el score sumado
+                        return existente; // Retornar el objeto existente actualizado
+                    });
+        }
+    
+        // Obtener la lista de ScoreComunidad sin duplicados con los scores sumados
+        List<ScoreEvento> listaSugerenciasSinDuplicados = new ArrayList<>(mapaSugerencias.values());
+    
+        // Ordenar la lista por score en orden descendente
+        listaSugerenciasSinDuplicados.sort((a, b) -> Double.compare(b.getScore(), a.getScore())); // Orden descendente
+    
+        // Retornar la lista ordenada
+        return listaSugerenciasSinDuplicados;
+    }
 }

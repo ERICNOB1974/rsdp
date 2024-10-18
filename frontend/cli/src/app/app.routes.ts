@@ -24,6 +24,8 @@ import { RegistroComponent } from './registro/registro.component';
 import { VerificarCodigoComponent } from './verificar-codigo/verificar-codigo.component';
 import { VerificarMailComponent } from './recuperar-contrasena/verificar-mail.component';
 import { CambiarContrasenaComponent } from './recuperar-contrasena/cambiar-contrasena.component';
+import { ComunidadCreadorComponent } from './comunidades/comunidadCreador.component';
+import { EditarComunidadComponent } from './comunidades/editarComunidad.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -34,6 +36,8 @@ export const routes: Routes = [
   { path: 'comunidades', component: ComunidadesComponent, canActivate: [AuthGuard] },
   { path: 'comunidades/crearComunidad', component: CrearComunidadComponent, canActivate: [AuthGuard] },
   { path: 'comunidades/:id', component: ComunidadDetailComponent, canActivate: [AuthGuard] },
+    { path: 'editarComunidad/:id', component: EditarComunidadComponent },
+    { path: 'creadorComunidad/:id', component: ComunidadCreadorComponent },
   { path: 'sugerencias/amigos', component: SugerenciasAmigosComponent, canActivate: [AuthGuard] },
   { path: 'sugerencias/eventos', component: SugerenciasEventosComponent, canActivate: [AuthGuard] },
   { path: 'sugerencias/comunidades', component: SugerenciasComunidadesComponent, canActivate: [AuthGuard] },

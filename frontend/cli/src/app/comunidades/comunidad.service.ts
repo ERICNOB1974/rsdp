@@ -46,12 +46,12 @@ export class ComunidadService {
     const idUsuario = this.authService.getUsuarioId(); 
 
     if (comunidad.id) {
-      return this.http.put<DataPackage>(this.comunidadesUrl, comunidad);
+      return this.http.put<DataPackage>(`${this.comunidadesUrl}/actualizar`, comunidad);
     } else {
-      const url = `${this.comunidadesUrl}/create/${idUsuario}`;
+      const url = `${this.comunidadesUrl}/create/${idUsuario}`; // Enviar el ID en la URL
       return this.http.post<DataPackage>(url, comunidad);
     }
-  }
+}
     
   sugerencias(nombreUsuario: string): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.comunidadesUrl}/sugerencias/${nombreUsuario}`);
@@ -97,6 +97,37 @@ export class ComunidadService {
     return this.http.get<DataPackage>(` ${this.comunidadesUrl}/visualizarSolicitudes/${idSuperUsuario}/${idComunidad}`);
   }
 
+
+  remove(id: number): Observable<DataPackage> {
+    return this.http.delete<DataPackage>(`${this.comunidadesUrl}/${id}`)
+  }
+  miembroUsuario(idUsuario: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.comunidadesUrl}/miembro/${idUsuario}`);
+  }
+
+  disponibles(): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.comunidadesUrl}/disponibles`);
+  }
+
+  otorgarRolAdministrador(idCreador: number, idMiembro: number,idComunidad: number): Observable<DataPackage> {
+    const body ={}
+    return this.http.post<DataPackage>(` ${this.comunidadesUrl}/otorgarRolAdministrador/${idCreador}/${idMiembro}/${idComunidad}`, body);
+  }
+
+  quitarRolAdministrador(idCreador: number, idMiembro: number,idComunidad: number): Observable<DataPackage> {
+    const body ={}
+    return this.http.post<DataPackage>(` ${this.comunidadesUrl}/quitarRolAdministrador/${idCreador}/${idMiembro}/${idComunidad}`, body);
+  }
+
+  
+  gestionarSolicitudIngreso(idSuperUsuario: number, idMiembro: number,idComunidad: number, aceptada: boolean): Observable<DataPackage> {
+    const body ={}
+    return this.http.post<DataPackage>(` ${this.comunidadesUrl}/gestionarSolicitudIngreso/${idSuperUsuario}/${idMiembro}/${idComunidad}?aceptada=${aceptada}`, body);
+  }
+
+  visualizarSolicitudes(idSuperUsuario:number, idComunidad:number): Observable<DataPackage>{
+    return this.http.get<DataPackage>(` ${this.comunidadesUrl}/visualizarSolicitudes/${idSuperUsuario}/${idComunidad}`);
+  }
 
   remove(id: number): Observable<DataPackage> {
     return this.http.delete<DataPackage>(`${this.comunidadesUrl}/${id}`)

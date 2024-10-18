@@ -17,6 +17,8 @@ import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.InscripcionEventoService;
 import unpsjb.labprog.backend.business.ScoreAmigo;
 import unpsjb.labprog.backend.business.ScoreComunidad;
+import unpsjb.labprog.backend.business.ScoreAmigo;
+import unpsjb.labprog.backend.business.ScoreComunidad;
 import unpsjb.labprog.backend.business.SolicitudAmistadService;
 import unpsjb.labprog.backend.business.UsuarioComunidadService;
 import unpsjb.labprog.backend.business.UsuarioService;
@@ -163,6 +165,58 @@ public class UsuarioPresenter {
             return Response.error("", "Error al verificar la solicitud de amistad: " + e.getMessage());
         }
     }
+
+    @GetMapping("/miembrosComunidad/{idComunidad}")
+    public ResponseEntity<Object> miembrosComunidad(@PathVariable Long idComunidad) {
+        try {
+            return Response.ok(usuarioService.miembrosComunidad(idComunidad));  // Enviamos el resultado (true o false)
+        } catch (Exception e) {
+            return Response.error("", "Error al visualizar los miembros de la comunidad: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/administradoresComunidad/{idComunidad}")
+    public ResponseEntity<Object> administradoresComunidad(@PathVariable Long idComunidad) {
+        try {
+            return Response.ok(usuarioService.administradoresComunidad(idComunidad));  // Enviamos el resultado (true o false)
+        } catch (Exception e) {
+            return Response.error("", "Error al visualizar los miembros de la comunidad: " + e.getMessage());
+        }
+    }
+
+    
+
+ @GetMapping("/sugerenciaDeAmigosBasadaEnAmigos2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciaDeAmigosBasadaEnAmigos2(@PathVariable String nombreUsuario) {
+        List<ScoreAmigo> sugerenciaDeAmigosBasadaEnAmigos = usuarioService
+                .sugerenciaDeAmigosBasadaEnAmigos2(nombreUsuario);
+        return Response.ok(sugerenciaDeAmigosBasadaEnAmigos);
+    }
+
+    @GetMapping("/sugerenciasDeAmigosBasadosEnEventos2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeAmigosBasadosEnEventos2(@PathVariable String nombreUsuario) {
+        List<ScoreAmigo> sugerenciasDeAmigosBasadosEnEventos = usuarioService
+                .sugerenciasDeAmigosBasadosEnEventos2(nombreUsuario);
+        return Response.ok(sugerenciasDeAmigosBasadosEnEventos);
+    }
+
+    @GetMapping("/sugerenciasDeAmigosBasadosEnComunidades2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeAmigosBasadosEnComunidades2(@PathVariable String nombreUsuario) {
+        List<ScoreAmigo> sugerenciasDeAmigosBasadosEnComunidades = usuarioService
+                .sugerenciasDeAmigosBasadosEnComunidades2(nombreUsuario);
+        return Response.ok(sugerenciasDeAmigosBasadosEnComunidades);
+    }
+
+    @GetMapping("/sugerencias-combinadas/{nombreUsuario}")
+    public ResponseEntity<Object> obtenerSugerenciasCombinadas(@PathVariable String nombreUsuario) {
+        try {
+            return Response.ok(usuarioService.obtenerTodasLasSugerenciasDeAmigos(nombreUsuario));
+        } catch (Exception e) {
+            // Manejo del error
+            return Response.error("", "Error al obtener las sugerencias: " + e.getMessage());
+        }
+    }
+
 
     @GetMapping("/miembrosComunidad/{idComunidad}")
     public ResponseEntity<Object> miembrosComunidad(@PathVariable Long idComunidad) {

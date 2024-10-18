@@ -24,7 +24,25 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
                         "RETURN DISTINCT amigosDeAmigos")
         List<Usuario> amigosDeAmigos(String nombreUsuario);
 
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(amigo)-[:ES_AMIGO_DE]->(amigosDeAmigos) "
+                        +
+                        "WHERE amigosDeAmigos <> u AND NOT (u)-[:ES_AMIGO_DE]-(amigosDeAmigos) " +
+                        "RETURN DISTINCT amigosDeAmigos")
+        List<Usuario> amigosDeAmigos(String nombreUsuario);
+
         @Query("""
+                            MATCH (u:Usuario {nombreUsuario: $nombreUsuario})
+                            OPTIONAL MATCH (solicitante:Usuario)-[r:SOLICITUD_DE_AMISTAD]->(u)
+                            WHERE solicitante IS NOT NULL
+                            RETURN solicitante AS usuario
+                            UNION
+                            MATCH (u:Usuario {nombreUsuario: $nombreUsuario})
+                            OPTIONAL MATCH (u)-[r2:SOLICITUD_DE_AMISTAD]->(destinatario:Usuario)
+                            WHERE destinatario IS NOT NULL
+                            RETURN destinatario AS usuario
+                            ORDER BY usuario.nombreUsuario ASC
+                        """)
+        List<Usuario> solicitudesDeAmistad(String nombreUsuario);
                             MATCH (u:Usuario {nombreUsuario: $nombreUsuario})
                             OPTIONAL MATCH (solicitante:Usuario)-[r:SOLICITUD_DE_AMISTAD]->(u)
                             WHERE solicitante IS NOT NULL
@@ -201,4 +219,29 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
         @Query("MATCH (u:Usuario) WHERE u.nombreUsuario = $nombreUsuario RETURN COUNT(u) > 0")
         boolean existeNombreUsuario(String nombreUsuario);
 
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(amigo)-[:ES_AMIGO_DE]->(usuario) " +
+                        "WHERE usuario <> u AND NOT (u)-[:ES_AMIGO_DE]-(usuario) " +
+                        "WITH usuario, COUNT(amigo) AS amigosEnComun " +
+                        "RETURN usuario, (amigosEnComun * 5) AS score " +
+                        "ORDER BY score DESC")
+        List<ScoreAmigo> sugerenciaDeAmigosBasadaEnAmigos2(String nombreUsuario);
+
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(evento:Evento) " +
+                        "MATCH (usuario:Usuario)-[:PARTICIPA_EN]->(evento) " +
+                        "WHERE usuario <> u " +
+                        "AND NOT (u)-[:ES_AMIGO_DE]-(usuario) " + // Asegura que no sean amigos
+                        "WITH usuario, COUNT(evento) AS eventosCompartidos " +
+                        "WHERE eventosCompartidos >= 2 " +
+                        "RETURN usuario, (eventosCompartidos * 4) AS score " +
+                        "ORDER BY score DESC, usuario.nombreUsuario ASC")
+        List<ScoreAmigo> sugerenciasDeAmigosBasadosEnEventos2(String nombreUsuario);
+
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(comunidad:Comunidad) " +
+                        "MATCH (usuario:Usuario)-[:MIEMBRO]->(comunidad) " +
+                        "WHERE usuario <> u " +
+                        "WITH u, usuario, COUNT(comunidad) AS comunidadesEnComun " +
+                        "WHERE NOT (u)-[:ES_AMIGO_DE]-(usuario) AND comunidadesEnComun >= 2 " +
+                        "RETURN usuario, (comunidadesEnComun * 3) AS score " +
+                        "ORDER BY score DESC, usuario.nombreUsuario ASC")
+        List<ScoreAmigo> sugerenciasDeAmigosBasadosEnComunidades2(String nombreUsuario);
 }
