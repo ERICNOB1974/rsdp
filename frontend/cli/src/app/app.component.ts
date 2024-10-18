@@ -1,21 +1,23 @@
 import { Component } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { UbicacionService } from './ubicacion.service';
+import { NgIf } from '@angular/common';
+import { AuthService } from './autenticacion/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, NgIf],
   template: `
-    <div class="sidebar">
+    <div *ngIf="!esPantallaLogin" class="sidebar">
       <ul>
           <h5 style="text-align: center; margin: 10px;">RSDP</h5>
-          <!-- <li class="logo">
+          <li class="logo">
               <a href="">
                   <span class="icon"><i class="fa fa-home"></i></span>
                   <span class="text">Inicio</span>
               </a>
-          </li> -->
+          </li> 
           <li class="dropdown">
               <a class="dropdown-toggle">
                   <span class="icon"><i class="fa fa-calendar"></i></span>
@@ -61,6 +63,13 @@ import { UbicacionService } from './ubicacion.service';
                   </li>
               </ul>
           </li>
+          <li>
+              <a (click)="logout()" class="logout-button" href="javascript:void(0);">
+                  <span class="icon"><i class="fa fa-sign-out"></i></span>
+                  <span class="text">Cerrar sesión</span>
+              </a>
+          </li>
+
       </ul>
     </div>
     <div class="main-content">
@@ -70,15 +79,18 @@ import { UbicacionService } from './ubicacion.service';
   styleUrls: ['../styles.css']
 })
 export class AppComponent {
-  constructor(
-    private router: Router,
-    private ubicacionService: UbicacionService) {}
+  esPantallaLogin = false;
+  rutasSinSidebar: string[] = ['/login','/registro', '/verificar-codigo', '/recuperar-contrasena', '/verificar-codigo?tipo=registro', '/verificar-codigo?tipo=recuperacion', '/verificar-mail', '/cambiar-contrasena'];
 
-  navigateTo(route: string) {
-    this.router.navigateByUrl(route);
-  }
+  constructor(private router: Router, private ubicacionService: UbicacionService, private authService: AuthService) {}
 
   ngOnInit(): void {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.esPantallaLogin = this.rutasSinSidebar.includes(event.urlAfterRedirects);
+      }
+    });
+
     this.actualizarUbicacion();
   }
 
@@ -90,5 +102,9 @@ export class AppComponent {
     }).catch((error) => {
       console.error('Error obteniendo la ubicación:', error);
     });
+  }
+
+  logout(): void {
+    this.authService.logout();
   }
 }

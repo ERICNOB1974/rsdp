@@ -1,0 +1,37 @@
+.codigo-container {
+    text-align: center;
+    margin-top: 50px;
+  }
+  
+  .codigo-inputs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 15px 0;
+  }
+  
+  .codigo-inputs input {
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    font-size: 18px;
+  }
+  .mat-mdc-raised-button:not(:disabled){
+    background-color: #217d94;
+    box-shadow: 0px 3px 6px #00000029;
+    border-radius: 4px;
+    width: 98px;
+    text-align: left;
+    font-family: Roboto, Medium;
+    letter-spacing: 1.25px;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: 400;
+  }
+  
+  mat-card-actions {
+    display: flex;
+    justify-content: space-between;
+}
+

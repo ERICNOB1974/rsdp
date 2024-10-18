@@ -1,0 +1,39 @@
+.wrap-login {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #ffffff;
+    margin: 0 auto;
+}
+
+.container {
+    background: #FFFFFF;
+    box-shadow: 0px 3px 6px #ffffff29;
+    border-radius: 4px;
+    max-width: 400px;
+    width: 100%;
+    padding: 20px;
+}
+
+.login-box {
+    width: 100%;
+    text-align: center;
+}
+
+mat-card-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+mat-icon {
+    font-size: 48px;
+    color: #376692;
+}
+
+mat-card-actions {
+    display: flex;
+    justify-content: space-between;
+}

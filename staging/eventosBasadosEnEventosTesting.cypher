@@ -93,7 +93,8 @@ CREATE (et9:Etiqueta {nombre: "Torso inferior"})
 CREATE (et10:Etiqueta {nombre: "Para toda la familia"})
 
 
-// Etiquetar eventos
+// Madryn
+//10
 CREATE (e1)-[:ETIQUETADO_CON]->(et1)
 CREATE (e1)-[:ETIQUETADO_CON]->(et2)
 CREATE (e1)-[:ETIQUETADO_CON]->(et3)
@@ -105,6 +106,8 @@ CREATE (e1)-[:ETIQUETADO_CON]->(et8)
 CREATE (e1)-[:ETIQUETADO_CON]->(et9)
 CREATE (e1)-[:ETIQUETADO_CON]->(et10)
 
+//Posadas
+//10
 CREATE (e2)-[:ETIQUETADO_CON]->(et1)
 CREATE (e2)-[:ETIQUETADO_CON]->(et2)
 CREATE (e2)-[:ETIQUETADO_CON]->(et3)
@@ -116,6 +119,8 @@ CREATE (e2)-[:ETIQUETADO_CON]->(et8)
 CREATE (e2)-[:ETIQUETADO_CON]->(et9)
 CREATE (e2)-[:ETIQUETADO_CON]->(et10)
 
+//Bahia Blanca
+//6
 CREATE (e3)-[:ETIQUETADO_CON]->(et4)
 CREATE (e3)-[:ETIQUETADO_CON]->(et5)
 CREATE (e3)-[:ETIQUETADO_CON]->(et6)
@@ -123,6 +128,8 @@ CREATE (e3)-[:ETIQUETADO_CON]->(et7)
 CREATE (e3)-[:ETIQUETADO_CON]->(et8)
 CREATE (e3)-[:ETIQUETADO_CON]->(et9)
 
+//Comodoro
+//6
 CREATE (e4)-[:ETIQUETADO_CON]->(et1)
 CREATE (e4)-[:ETIQUETADO_CON]->(et2)
 CREATE (e4)-[:ETIQUETADO_CON]->(et3)
@@ -130,6 +137,9 @@ CREATE (e4)-[:ETIQUETADO_CON]->(et4)
 CREATE (e4)-[:ETIQUETADO_CON]->(et5)
 CREATE (e4)-[:ETIQUETADO_CON]->(et6)
 
+//Comodoro
+//Todas
+//No lo recomienda ya q esta lleno
 CREATE (e5)-[:ETIQUETADO_CON]->(et1)
 CREATE (e5)-[:ETIQUETADO_CON]->(et2)
 CREATE (e5)-[:ETIQUETADO_CON]->(et3)
