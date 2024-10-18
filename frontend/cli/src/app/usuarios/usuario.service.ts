@@ -2,11 +2,13 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { DataPackage } from '../data-package';
 import { HttpClient } from '@angular/common/http';
+import { Usuario } from './usuario';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsuarioService {
+ 
 
   private usuariosUrl = 'rest/usuarios';
 

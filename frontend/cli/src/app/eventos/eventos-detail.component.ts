@@ -17,7 +17,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class EventoDetailComponent implements OnInit {
 
   evento!: Evento; // Evento específico que se va a mostrar
-  participa:boolean=false;
+  participa: boolean = false;
 
   constructor(
     private route: ActivatedRoute, // Para obtener el parámetro de la URL
@@ -25,14 +25,13 @@ export class EventoDetailComponent implements OnInit {
     private location: Location, // Para manejar la navegación
     private router: Router,
     private snackBar: MatSnackBar // Agrega MatSnackBar en el constructor
-
-
   ) { }
 
 
   ngOnInit(): void {
     this.getEvento();
-    this.traerParticipantes();
+    console.info(this.evento.id);
+    //this.traerParticipantes();
   }
 
 
@@ -56,12 +55,14 @@ export class EventoDetailComponent implements OnInit {
           this.evento.fechaHora = new Date(this.evento.fechaHora);
         }
         this.traerParticipantes();
+        this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
+          this.participa = <boolean><unknown>dataPackage.data;
+        });
       });
     }
   }
 
   traerParticipantes(): void {
-    console.log(this.evento.id);
     this.eventoService.participantesEnEvento(this.evento.id).subscribe(
       (dataPackage) => {
         if (dataPackage && typeof dataPackage.data === 'number') {
@@ -76,20 +77,20 @@ export class EventoDetailComponent implements OnInit {
   }
 
   inscribirse(): void {
+    this.participa=true;
     this.eventoService.inscribirse(this.evento.id).subscribe();
     this.snackBar.open('Inscripción guardada con éxito', 'Cerrar', {
       duration: 3000, // Duración del snackbar en milisegundos
     });
+    this.traerParticipantes();
+   /*  this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
+      this.participa = <boolean><unknown>dataPackage.data;
+    }); */
+    //location.reload();
   }
 
 
   inscribirseValid(): boolean {
-    /*
-    //OJO QUE SE ROMPE LA PAGINA
-    this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
-      this.participa=<boolean> <unknown>dataPackage.data;
-    });
-    */
     return (!!(this.evento.participantes < this.evento.cantidadMaximaParticipantes) && !this.participa);
   }
 

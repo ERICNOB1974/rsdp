@@ -57,6 +57,11 @@ public class EventoService {
         if (evento.getFechaDeCreacion().isAfter(LocalDate.now())) {
             throw new EventoException("El evento no puede crearse en el futuro");
         }
+        if (evento.getFechaHora().toLocalDate().isBefore(evento.getFechaDeCreacion()) ||
+                evento.getFechaHora().toLocalDate().isEqual(evento.getFechaDeCreacion())) {
+            throw new EventoException("El evento no puede tener una fecha anterior a la fecha de creacion");
+        }
+
     
         // Validar latitud y longitud
         if (evento.getLatitud() < -90 || evento.getLatitud() > 90) {
@@ -66,9 +71,10 @@ public class EventoService {
             throw new EventoException("La longitud debe estar entre -180 y 180 grados");
         }
     
+
         /*
-         * if (evento.isEsPrivadoParaLaComunidad()) {
-         * // enviar mail a todos los usuarios de la comunidad
+         * if (eventoRepository.enComunidad() && !evento.isEsPrivadoParaLaComunidad()) {
+         * exception
          * }
          */
     
@@ -77,7 +83,7 @@ public class EventoService {
     
 
     @Transactional
-    public Evento crearConCreador(Evento evento, Long idUsuario) throws MessagingException, EventoException {
+    public Evento crearConCreador(Evento evento, String nombreUsuario) throws MessagingException, EventoException {
         // suponiendo que se crea ahora mismo
         if (evento.getFechaHora().isBefore(ZonedDateTime.now()) ||
                 evento.getFechaHora().isEqual(ZonedDateTime.now())) {
@@ -92,7 +98,7 @@ public class EventoService {
          * }
          */
         Evento c = eventoRepository.save(evento);
-        eventoRepository.establecerCreador(c.getId(), idUsuario);
+        eventoRepository.establecerCreador(c.getId(), usuarioService.findByNombreUsuario(nombreUsuario).getId());
         return c;
     }
 

@@ -34,12 +34,12 @@ public class RutinaPresenter {
     }
 
     @RequestMapping(path = "/create", method = RequestMethod.POST)
-    public ResponseEntity<Object> create(@RequestBody Rutina rutina){
+    public ResponseEntity<Object> create(@RequestBody Rutina rutina) throws Exception{
         return Response.ok(rutinaService.save(rutina));
     }
 
     @GetMapping("/findById/{id}")
-    public ResponseEntity<Object> recomendarComunidadesPorAmigos(@PathVariable Long id) {
+    public ResponseEntity<Object> findById(@PathVariable Long id) {
         return Response.ok(rutinaService.findById(id));
     }
 

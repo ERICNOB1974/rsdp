@@ -3,11 +3,15 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { UbicacionService } from './ubicacion.service';
 import { NgIf } from '@angular/common';
 import { AuthService } from './autenticacion/auth.service';
+import { CommonModule } from '@angular/common';
+import { AuthService } from './usuarios/auntenticacion.service';
+import { NotificacionService } from './notificaciones/notificacion.service';
+import { DataPackage } from './data-package';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NgIf],
+  imports: [RouterOutlet, NgIf, CommonModule],
   template: `
     <div *ngIf="!esPantallaLogin" class="sidebar">
       <ul>
@@ -84,6 +88,7 @@ export class AppComponent {
 
   constructor(private router: Router, private ubicacionService: UbicacionService, private authService: AuthService) {}
 
+
   ngOnInit(): void {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -92,6 +97,46 @@ export class AppComponent {
     });
 
     this.actualizarUbicacion();
+    this.obtenerUsuarioAutenticado(); // Llama al método para obtener el usuario autenticado
+    
+  }
+  
+  obtenerUsuarioAutenticado() {
+    const usuarioAutenticado = this.authService.obtenerUsuarioAutenticado(); // Obtén el usuario autenticado
+    if (usuarioAutenticado) {
+      this.idUsuarioAutenticado = usuarioAutenticado.id; // Asigna el ID del usuario autenticado
+    }
+    this.cargarNotificaciones();
+  }
+
+  navigateToMiPerfil() {
+    if (this.idUsuarioAutenticado) {
+      this.router.navigate(['/perfil', this.idUsuarioAutenticado]); // Navega al perfil del usuario autenticado
+    }
+  }
+
+  cargarNotificaciones(): void {
+    // Llama al servicio para obtener las notificaciones del usuario autenticado
+    this.notificacionService.obtenerNotificaciones(this.idUsuarioAutenticado)
+      .subscribe((dataPackage: DataPackage) => {
+        // Verifica si el status de la respuesta es exitoso (por ejemplo, 200 OK)
+        if (dataPackage.status === 200) {
+          // Asigna las notificaciones del usuario autenticado
+          this.notificaciones = dataPackage.data as any[];
+          console.log('Notificaciones cargadas:', this.notificaciones);
+        } else {
+          // Maneja el error si el status no es exitoso
+          console.error('Error al cargar las notificaciones:', dataPackage.message);
+        }
+      }, error => {
+        // Maneja posibles errores de la llamada HTTP
+        console.error('Error al comunicarse con el servicio de notificaciones:', error);
+      });
+  }
+  
+
+  getUltimasNotificaciones() {
+    return this.notificaciones.slice(0, 5);
   }
 
   actualizarUbicacion() {
