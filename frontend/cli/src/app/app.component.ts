@@ -4,7 +4,6 @@ import { UbicacionService } from './ubicacion.service';
 import { NgIf } from '@angular/common';
 import { AuthService } from './autenticacion/auth.service';
 import { CommonModule } from '@angular/common';
-import { AuthService } from './usuarios/auntenticacion.service';
 import { NotificacionService } from './notificaciones/notificacion.service';
 import { DataPackage } from './data-package';
 
@@ -51,6 +50,31 @@ import { DataPackage } from './data-package';
               </ul>
           </li>
           <li class="dropdown">
+            <a class="dropdown-toggle">
+              <span class="icon"><i class="fa fa-users"></i></span>
+              <span class="text">Amigos</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="/amigos">Amigos</a>
+              </li>
+              <li>
+                <a href="/amigos/solicitudes">Solicitudes</a>
+              </li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a class="dropdown-toggle">
+              <span class="icon"><i class="fa fa-user"></i></span>
+              <span class="text">Perfil</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <a (click)="navigateToMiPerfil()">Mi perfil</a>
+              </li>
+            </ul>
+          </li>
+          <li class="dropdown">
               <a class="dropdown-toggle">
                 <span class="icon"><i class="fa fa-question-circle"></i></span>
                 <span class="text">Sugerencias</span>
@@ -66,6 +90,28 @@ import { DataPackage } from './data-package';
                       <a href="/sugerencias/comunidades">De comunidades</a>
                   </li>
               </ul>
+          </li>
+          <li class="dropdown">
+            <a class="dropdown-toggle">
+              <span class="icon"><i class="fa fa-question-circle"></i></span>
+              <span class="text">Publicación</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="/publicacion">Nueva</a>
+              </li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a class="dropdown-toggle">
+              <span class="icon"><i class="fa fa-bell"></i></span>
+              <span class="text">Notificaciones</span>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <li *ngFor="let notificacion of notificaciones">
+                <a class="dropdown-item" href="#">{{ notificacion.mensaje }}</a>
+              </li>
+            </ul>
           </li>
           <li>
               <a (click)="logout()" class="logout-button" href="javascript:void(0);">
@@ -84,9 +130,12 @@ import { DataPackage } from './data-package';
 })
 export class AppComponent {
   esPantallaLogin = false;
-  rutasSinSidebar: string[] = ['/login','/registro', '/verificar-codigo', '/recuperar-contrasena', '/verificar-codigo?tipo=registro', '/verificar-codigo?tipo=recuperacion', '/verificar-mail', '/cambiar-contrasena'];
+  rutasSinSidebar: string[] = ['/login', '/registro', '/verificar-codigo', '/recuperar-contrasena', '/verificar-codigo?tipo=registro', '/verificar-codigo?tipo=recuperacion', '/verificar-mail', '/cambiar-contrasena'];
 
-  constructor(private router: Router, private ubicacionService: UbicacionService, private authService: AuthService) {}
+  notificaciones: any[] = []; // Cambiamos el tipo a `any[]` para recibir cualquier tipo de datos de notificación
+  idUsuarioAutenticado!: number; // Variable para almacenar el ID del usuario autenticado
+
+  constructor(private router: Router, private ubicacionService: UbicacionService, private authService: AuthService, private notificacionService: NotificacionService,) { }
 
 
   ngOnInit(): void {
@@ -97,16 +146,7 @@ export class AppComponent {
     });
 
     this.actualizarUbicacion();
-    this.obtenerUsuarioAutenticado(); // Llama al método para obtener el usuario autenticado
-    
-  }
-  
-  obtenerUsuarioAutenticado() {
-    const usuarioAutenticado = this.authService.obtenerUsuarioAutenticado(); // Obtén el usuario autenticado
-    if (usuarioAutenticado) {
-      this.idUsuarioAutenticado = usuarioAutenticado.id; // Asigna el ID del usuario autenticado
-    }
-    this.cargarNotificaciones();
+
   }
 
   navigateToMiPerfil() {
@@ -133,7 +173,6 @@ export class AppComponent {
         console.error('Error al comunicarse con el servicio de notificaciones:', error);
       });
   }
-  
 
   getUltimasNotificaciones() {
     return this.notificaciones.slice(0, 5);
@@ -152,4 +191,9 @@ export class AppComponent {
   logout(): void {
     this.authService.logout();
   }
+
+  navigateTo(route: string) {
+    this.router.navigateByUrl(route);
+  }
+
 }

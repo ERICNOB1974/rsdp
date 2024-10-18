@@ -4,6 +4,7 @@ import { DataPackage } from '../data-package';
 import { HttpClient } from '@angular/common/http';
 import { Evento } from './evento';
 import axios from 'axios';
+import { AuthService } from '../autenticacion/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,8 @@ export class EventoService {
   private eventosUrl = 'rest/eventos';
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private authService: AuthService
   ) { }
 
   all(): Observable<DataPackage> {
@@ -30,8 +32,13 @@ export class EventoService {
   }
 
   saveConCreador(evento: Evento): Observable<DataPackage> {
-    return evento.id ? this.http.put<DataPackage>(` ${this.eventosUrl}/actualizar`, evento) :
-      this.http.post<DataPackage>(` ${this.eventosUrl}/crear/usuario12`, evento);
+    const nombreUsuario = this.authService.getNombreUsuario(); 
+      if (evento.id) {
+        return this.http.put<DataPackage>(` ${this.eventosUrl}/actualizar`, evento);
+      } else {
+        const url = `${this.eventosUrl}/crear/${nombreUsuario}`;
+        return this.http.post<DataPackage>(url, evento);
+      }
   }
 
   sugerencias(nombreUsuario: string): Observable<DataPackage> {
