@@ -16,7 +16,7 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Nombre de Usuario</mat-label>
+            <mat-label>Nombre de usuario</mat-label>
             <input matInput formControlName="nombreUsuario" required />
             <mat-error *ngIf="registroForm.get('nombreUsuario')?.hasError('required')">
               El nombre de usuario es requerido
@@ -30,7 +30,7 @@
           </mat-form-field>
 
           <mat-form-field appearance="outline">
-            <mat-label>Correo Electrónico</mat-label>
+            <mat-label>Correo electrónico</mat-label>
             <input matInput type="email" formControlName="correoElectronico" required />
             <mat-error *ngIf="registroForm.get('correoElectronico')?.hasError('required')">
               El correo electrónico es requerido
@@ -58,7 +58,7 @@
           </mat-form-field>
           
           <mat-form-field appearance="outline">
-            <mat-label>Confirmar Contraseña</mat-label>
+            <mat-label>Confirmar contraseña</mat-label>
             <input matInput type="password" formControlName="confirmarContrasena" required>
             <mat-error *ngIf="registroForm.get('confirmarContrasena')?.hasError('required')">
               Confirmar contraseña es requerido
@@ -69,7 +69,7 @@
           </mat-form-field>          
 
           <mat-form-field appearance="outline">
-            <mat-label>Fecha de Nacimiento</mat-label>
+            <mat-label>Fecha de nacimiento</mat-label>
             <input matInput type="date" formControlName="fechaNacimiento" required>
             <mat-error *ngIf="registroForm.get('fechaNacimiento')?.hasError('required')">
               La fecha de nacimiento es requerida
