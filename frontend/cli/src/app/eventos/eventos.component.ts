@@ -4,13 +4,15 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Evento } from './evento';
 import { EventoService } from './evento.service';
-import { AuthService } from '../usuarios/auntenticacion.service';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { AuthInterceptor } from '../autenticacion/auth.interceptor';
 
 @Component({
   selector: 'app-eventos',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, HttpClientModule],
   templateUrl: 'eventos.component.html',
+  styleUrls: ['eventos.component.css']
   styleUrls: ['eventos.component.css']
 })
 export class EventosComponent implements OnInit {

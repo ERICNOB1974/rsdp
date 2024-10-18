@@ -47,11 +47,15 @@ MERGE (evento1)-[:ETIQUETADO_CON]->(et5)
 MERGE (evento1)-[:ETIQUETADO_CON]->(et6)
 MERGE (evento1)-[:ETIQUETADO_CON]->(et7)
 
+//Madryn
+//4
 CREATE (c1)-[:ETIQUETADA_CON]->(et1)
 CREATE (c1)-[:ETIQUETADA_CON]->(et2)
 CREATE (c1)-[:ETIQUETADA_CON]->(et3)
 CREATE (c1)-[:ETIQUETADA_CON]->(et4)
 
+//Comodoro
+//6
 CREATE (c2)-[:ETIQUETADA_CON]->(et1)
 CREATE (c2)-[:ETIQUETADA_CON]->(et2)
 CREATE (c2)-[:ETIQUETADA_CON]->(et3)
@@ -59,6 +63,8 @@ CREATE (c2)-[:ETIQUETADA_CON]->(et4)
 CREATE (c2)-[:ETIQUETADA_CON]->(et5)
 CREATE (c2)-[:ETIQUETADA_CON]->(et6)
 
+//Bahia Blanca
+//6
 CREATE (c3)-[:ETIQUETADA_CON]->(et1)
 CREATE (c3)-[:ETIQUETADA_CON]->(et2)
 CREATE (c3)-[:ETIQUETADA_CON]->(et3)
@@ -66,6 +72,8 @@ CREATE (c3)-[:ETIQUETADA_CON]->(et4)
 CREATE (c3)-[:ETIQUETADA_CON]->(et5)
 CREATE (c3)-[:ETIQUETADA_CON]->(et6)
 
+//Jujuy
+//7
 CREATE (c4)-[:ETIQUETADA_CON]->(et1)
 CREATE (c4)-[:ETIQUETADA_CON]->(et2)
 CREATE (c4)-[:ETIQUETADA_CON]->(et3)
@@ -74,6 +82,9 @@ CREATE (c4)-[:ETIQUETADA_CON]->(et5)
 CREATE (c4)-[:ETIQUETADA_CON]->(et6)
 CREATE (c4)-[:ETIQUETADA_CON]->(et7)
 
+//Comodoro
+//7
+//No la muestra
 CREATE (c5)-[:ETIQUETADA_CON]->(et1)
 CREATE (c5)-[:ETIQUETADA_CON]->(et2)
 CREATE (c5)-[:ETIQUETADA_CON]->(et3)

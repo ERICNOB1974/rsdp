@@ -164,4 +164,12 @@ public class UsuarioService {
         return listaSugerenciasSinDuplicados;
     }
 
+    public boolean existeMail(String correoElectronico){
+        return usuarioRepository.existeMail(correoElectronico);
+    }
+
+    public boolean existeNombreUsuario(String nombreUsuario){
+        return usuarioRepository.existeNombreUsuario(nombreUsuario);
+    }
+
 }

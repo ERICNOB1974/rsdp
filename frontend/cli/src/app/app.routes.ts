@@ -18,27 +18,29 @@ import { PublicacionDetailComponent } from './publicaciones/publicacion-detail.c
 import { ComunidadCreadorComponent } from './comunidades/comunidadCreador.component';
 import { EditarComunidadComponent } from './comunidades/editarComunidad.component';
 import { RutinasComponent } from './rutinas/rutinas.component';
+import { LoginComponent } from './login/login.component';
+import { AuthGuard } from './autenticacion/auth.guard';
+import { RegistroComponent } from './registro/registro.component';
+import { VerificarCodigoComponent } from './verificar-codigo/verificar-codigo.component';
+import { VerificarMailComponent } from './recuperar-contrasena/verificar-mail.component';
+import { CambiarContrasenaComponent } from './recuperar-contrasena/cambiar-contrasena.component';
 
 export const routes: Routes = [
-    { path: '', component: HomeComponent },
-    { path: 'seleccionMapa', component: SeleccionMapaComponent },
-    { path: 'eventos', component: EventosComponent },
-    { path: 'eventos/crearEvento', component: CrearEventoComponent }, //si o si tiene que estar antes del de /:id, sino no anda
-    { path: 'eventos/:id', component: EventoDetailComponent },
-    { path: 'comunidades', component: ComunidadesComponent },
-    { path: 'comunidades/crearComunidad', component: CrearComunidadComponent },
-    { path: 'comunidades/:id', component: ComunidadDetailComponent },
-    { path: 'editarComunidad/:id', component: EditarComunidadComponent },
-    { path: 'creadorComunidad/:id', component: ComunidadCreadorComponent },
-    { path: 'amigos', component: AmigosComponent },
-    { path: 'perfil/:id', component: PerfilComponent },
-    { path: 'perfilEditable/:id', component: PerfilDetailComponent },
-    { path: 'sugerencias/amigos', component: SugerenciasAmigosComponent },
-    { path: 'sugerencias/eventos', component: SugerenciasEventosComponent },
-    { path: 'sugerencias/comunidades', component: SugerenciasComunidadesComponent },
-    { path: 'publicacion', component: CrearPublicacionComponent },  
-    { path: 'publicacion/:id', component: PublicacionDetailComponent },
-    { path: 'rutinasHacer/:id', component: RutinasComponent }
-
-    
+  { path: '', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: 'seleccionMapa', component: SeleccionMapaComponent, canActivate: [AuthGuard] },
+  { path: 'eventos', component: EventosComponent, canActivate: [AuthGuard] },
+  { path: 'eventos/crearEvento', component: CrearEventoComponent, canActivate: [AuthGuard] },
+  { path: 'eventos/:id', component: EventoDetailComponent, canActivate: [AuthGuard] },
+  { path: 'comunidades', component: ComunidadesComponent, canActivate: [AuthGuard] },
+  { path: 'comunidades/crearComunidad', component: CrearComunidadComponent, canActivate: [AuthGuard] },
+  { path: 'comunidades/:id', component: ComunidadDetailComponent, canActivate: [AuthGuard] },
+  { path: 'sugerencias/amigos', component: SugerenciasAmigosComponent, canActivate: [AuthGuard] },
+  { path: 'sugerencias/eventos', component: SugerenciasEventosComponent, canActivate: [AuthGuard] },
+  { path: 'sugerencias/comunidades', component: SugerenciasComunidadesComponent, canActivate: [AuthGuard] },
+  { path: 'login', component: LoginComponent }, 
+  { path: 'registro', component: RegistroComponent },
+  { path: 'verificar-codigo', component: VerificarCodigoComponent },
+  { path: 'verificar-mail', component: VerificarMailComponent },
+  { path: 'cambiar-contrasena', component: CambiarContrasenaComponent },
+  { path: '**', redirectTo: 'login' }
 ];

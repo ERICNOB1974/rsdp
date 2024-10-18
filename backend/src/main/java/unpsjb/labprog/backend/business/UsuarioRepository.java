@@ -187,4 +187,13 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
                         "RETURN usuario, (comunidadesEnComun * 3) AS score " +
                         "ORDER BY score DESC, usuario.nombreUsuario ASC")
         List<ScoreAmigo> sugerenciasDeAmigosBasadosEnComunidades2(String nombreUsuario);
+        @Query("MATCH (u:Usuario) WHERE u.correoElectronico = $correoElectronico RETURN u")
+        Optional<Usuario> findByCorreoElectronico(String correoElectronico);
+
+        @Query("MATCH (u:Usuario) WHERE u.correoElectronico = $correoElectronico RETURN COUNT(u) > 0")
+        boolean existeMail(String correoElectronico);
+    
+        @Query("MATCH (u:Usuario) WHERE u.nombreUsuario = $nombreUsuario RETURN COUNT(u) > 0")
+        boolean existeNombreUsuario(String nombreUsuario);
+
 }

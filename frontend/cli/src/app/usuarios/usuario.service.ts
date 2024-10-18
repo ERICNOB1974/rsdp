@@ -77,4 +77,12 @@ enviarSolicitudAmistad(idEmisor: number, idReceptor: number): Observable<DataPac
     return this.http.get<DataPackage>(` ${this.usuariosUrl}/esCreador/${idUsuario}/${idComunidad}`);
   }
   
+  existeMail(correoElectronico: string): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/existeMail/${correoElectronico}`);
+  }
+
+  existeNombreUsuario(nombreUsuario: string): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/existeNombreUsuario/${nombreUsuario}`);
+  }
+  
 }
