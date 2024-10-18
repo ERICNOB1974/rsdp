@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.*;
 
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.ComunidadService;
+import unpsjb.labprog.backend.business.ScoreComunidad;
 import unpsjb.labprog.backend.business.UsuarioComunidadService;
 import unpsjb.labprog.backend.model.Comunidad;
+import unpsjb.labprog.backend.model.Usuario;
 
 @RestController
 @RequestMapping("comunidades")
@@ -129,6 +131,67 @@ public class ComunidadPresenter {
     @GetMapping("/participa/{idComunidad}/{idUsuario}")
     public ResponseEntity<Object> estadoParticipacion(@PathVariable Long idComunidad, @PathVariable Long idUsuario) {
         return Response.ok(usuarioComunidadService.verEstado(idComunidad, idUsuario));
-        // return Response.ok("ok");
+    }
+
+    @RequestMapping(path = "/disponibles", method = RequestMethod.GET)
+    public ResponseEntity<Object> disponibles() {
+        return Response.ok(comunidadService.disponibles());
+    }
+
+    @RequestMapping(path = "/miembro/{idUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> miembroUsuario(@PathVariable Long idUsuario) {
+        return Response.ok(comunidadService.miembroUsuario(idUsuario));
+    }
+
+    @GetMapping("/sugerenciasDeComunidadesBasadasEnAmigos2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeComunidadesBasadasEnAmigos2(@PathVariable String nombreUsuario) {
+        List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos = comunidadService
+                .obtenerSugerenciasDeComunidadesBasadasEnAmigos2(nombreUsuario);
+        return Response.ok(sugerenciasDeComunidadesBasadasEnAmigos);
+    }
+
+    @GetMapping("/sugerenciasDeComunidadesBasadasEnEventos2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeComunidadesBasadasEnEventos2(@PathVariable String nombreUsuario) {
+        List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos = comunidadService
+                .obtenerSugerenciasDeComunidadesBasadasEnEventos2(nombreUsuario);
+        return Response.ok(sugerenciasDeComunidadesBasadasEnAmigos);
+    }
+
+    @GetMapping("/sugerenciasDeComunidadesBasadasEnComunidades2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeComunidadesBasadasEnComunidades2(@PathVariable String nombreUsuario) {
+        List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos = comunidadService
+                .sugerenciasDeComunidadesBasadasEnComunidades2(nombreUsuario);
+        return Response.ok(sugerenciasDeComunidadesBasadasEnAmigos);
+    }
+
+    @GetMapping("/sugerencias-combinadas/{nombreUsuario}")
+    public ResponseEntity<Object> obtenerSugerenciasCombinadas(@PathVariable String nombreUsuario) {
+        try {
+            return Response.ok(comunidadService.obtenerTodasLasSugerenciasDeComunidades(nombreUsuario));
+        } catch (Exception e) {
+            // Manejo del error
+            return Response.error("", "Error al obtener las sugerencias: " + e.getMessage());
+        }
+    }
+
+
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Object> delete(@PathVariable("id") Long id) {
+        Comunidad aComunidad = comunidadService.findById(id);
+        if (aComunidad == null) {
+            return Response.notFound("comunidad id " + id + " no encontrada");
+        }
+        try {
+            comunidadService.deleteById(id);
+        } catch (RuntimeException e) {
+            return Response.error(aComunidad, e.getMessage());
+        }
+        return Response.ok("Persona ", +id + " borrada con exito");
+    }
+
+      @RequestMapping(path = "/actualizar", method = RequestMethod.PUT)
+    public ResponseEntity<Object> actualizar(@RequestBody Comunidad comunidad) {
+        return ResponseEntity.ok(comunidadService.save(comunidad));
     }
 }

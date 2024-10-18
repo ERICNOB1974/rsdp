@@ -16,6 +16,8 @@ import jakarta.mail.MessagingException;
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.EventoService;
 import unpsjb.labprog.backend.business.InscripcionEventoService;
+import unpsjb.labprog.backend.business.ScoreAmigo;
+import unpsjb.labprog.backend.business.ScoreEvento;
 import unpsjb.labprog.backend.business.UsuarioService;
 import unpsjb.labprog.backend.exceptions.EventoException;
 import unpsjb.labprog.backend.model.Evento;
@@ -120,5 +122,43 @@ public class EventoPresenter {
     @GetMapping("/estaInscripto/{nombreUsuario}/{idEvento}")
     public ResponseEntity<Object> estaInscripto(@PathVariable String nombreUsuario, @PathVariable Long idEvento) {
         return Response.ok(eventoService.participa(nombreUsuario, idEvento));
+    }
+
+     @GetMapping("/sugerenciasDeEventosBasadosEnEventos2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeEventosBasadosEnEventos2(@PathVariable String nombreUsuario) {
+        List<ScoreEvento> sugerenciasDeEventosBasadosEnEventos = eventoService
+                .sugerenciasDeEventosBasadosEnEventos2(nombreUsuario);
+        return Response.ok(sugerenciasDeEventosBasadosEnEventos);
+    }
+
+    @GetMapping("/sugerenciasDeEventosBasadosEnAmigos2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeEventosBasadosEnAmigos2(@PathVariable String nombreUsuario) {
+        List<ScoreEvento> sugerenciasDeEventosBasadosEnAmigos = eventoService
+                .sugerenciasDeEventosBasadosEnAmigos2(nombreUsuario);
+        return Response.ok(sugerenciasDeEventosBasadosEnAmigos);
+    }
+
+    @GetMapping("/sugerenciasDeEventosBasadosEnComunidades2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeEventosBasadosEnComunidades2(@PathVariable String nombreUsuario) {
+        List<ScoreEvento> sugerenciasDeEventosBasadosEnComunidades = eventoService
+                .sugerenciasDeEventosBasadosEnComunidades2(nombreUsuario);
+        return Response.ok(sugerenciasDeEventosBasadosEnComunidades);
+    }
+
+    @GetMapping("/sugerenciasDeEventosBasadosEnRutinas2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeEventosBasadosEnRutinas2(@PathVariable String nombreUsuario) {
+        List<ScoreEvento> sugerenciasDeEventosBasadosEnRutinas = eventoService
+                .sugerenciasDeEventosBasadosEnRutinas2(nombreUsuario);
+        return Response.ok(sugerenciasDeEventosBasadosEnRutinas);
+    }
+
+    @GetMapping("/sugerencias-combinadas/{nombreUsuario}")
+    public ResponseEntity<Object> obtenerSugerenciasCombinadas(@PathVariable String nombreUsuario) {
+        try {
+            return Response.ok(eventoService.obtenerTodasLasSugerenciasDeEventos(nombreUsuario));
+        } catch (Exception e) {
+            // Manejo del error
+            return Response.error("", "Error al obtener las sugerencias: " + e.getMessage());
+        }
     }
 }

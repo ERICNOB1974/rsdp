@@ -27,9 +27,8 @@ export class EventosComponent implements OnInit {
 
   ngOnInit(): void {
     this.getEventos(); // Cargar los eventos al inicializar el componente
-
     this.obtenerUsuarioAutenticado();
-this.ParticipaUsuario();
+    this.ParticipaUsuario();
   }
 
   obtenerUsuarioAutenticado(): void {
@@ -101,30 +100,30 @@ this.ParticipaUsuario();
   }
 
   // Método para obtener los eventos a mostrar en el carrusel
-// Método para obtener los eventos a mostrar en el carrusel
-obtenerEventosParaMostrar(): Evento[] {
-  const eventosParaMostrar: Evento[] = [];
+  // Método para obtener los eventos a mostrar en el carrusel
+  obtenerEventosParaMostrar(): Evento[] {
+    const eventosParaMostrar: Evento[] = [];
 
-  if (this.results.length === 0) {
-    return eventosParaMostrar; // Devuelve un arreglo vacío si no hay eventos
-  }
-
-  for (let i = 0; i < 4; i++) {
-    const index = (this.currentIndex + i) % this.results.length;
-    const evento = this.results[index];
-
-    // Excluir eventos en los que el usuario ya está participando
-    const yaParticipa = this.eventosParticipaUsuario.some(
-      (eventoParticipado) => eventoParticipado.id === evento.id
-    );
-
-    if (!yaParticipa) {
-      eventosParaMostrar.push(evento); // Agregar solo si no está participando
+    if (this.results.length === 0) {
+      return eventosParaMostrar; // Devuelve un arreglo vacío si no hay eventos
     }
-  }
 
-  return eventosParaMostrar;
-}
+    for (let i = 0; i < 4; i++) {
+      const index = (this.currentIndex + i) % this.results.length;
+      const evento = this.results[index];
+
+      // Excluir eventos en los que el usuario ya está participando
+      const yaParticipa = this.eventosParticipaUsuario.some(
+        (eventoParticipado) => eventoParticipado.id === evento.id
+      );
+
+      if (!yaParticipa) {
+        eventosParaMostrar.push(evento); // Agregar solo si no está participando
+      }
+    }
+
+    return eventosParaMostrar;
+  }
 
 
   irADetallesDelEvento(id: number): void {

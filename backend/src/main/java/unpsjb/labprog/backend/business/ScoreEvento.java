@@ -3,17 +3,18 @@ package unpsjb.labprog.backend.business;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import unpsjb.labprog.backend.model.Evento;
 import unpsjb.labprog.backend.model.Usuario;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class ScoreAmigo {
-    private Usuario usuario;
+public class ScoreEvento {
+    private Evento evento;
     private Double score;
 
-    public ScoreAmigo(Usuario usuario, Double score) {
-        this.usuario = usuario;
+    public ScoreEvento(Evento evento, Double score) {
+        this.evento = evento;
         this.score = score;
     }
 }

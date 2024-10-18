@@ -15,6 +15,8 @@ import { PerfilComponent } from './perfil/perfil.component';
 import { PerfilDetailComponent } from './perfil/perfil-detail.component';
 import { CrearPublicacionComponent } from './publicaciones/crearPublicacion.component';
 import { PublicacionDetailComponent } from './publicaciones/publicacion-detail.component';
+import { ComunidadCreadorComponent } from './comunidades/comunidadCreador.component';
+import { EditarComunidadComponent } from './comunidades/editarComunidad.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -25,6 +27,8 @@ export const routes: Routes = [
     { path: 'comunidades', component: ComunidadesComponent },
     { path: 'comunidades/crearComunidad', component: CrearComunidadComponent },
     { path: 'comunidades/:id', component: ComunidadDetailComponent },
+    { path: 'editarComunidad/:id', component: EditarComunidadComponent },
+    { path: 'creadorComunidad/:id', component: ComunidadCreadorComponent },
     { path: 'amigos', component: AmigosComponent },
     { path: 'perfil/:id', component: PerfilComponent },
     { path: 'perfilEditable/:id', component: PerfilDetailComponent },

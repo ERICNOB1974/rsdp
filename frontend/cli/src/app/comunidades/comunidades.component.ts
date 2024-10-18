@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Comunidad } from './comunidad';
 import { ComunidadService } from './comunidad.service';
+import { AuthService } from '../usuarios/auntenticacion.service';
 
 @Component({
   selector: 'app-comunidades',
@@ -16,20 +17,32 @@ export class ComunidadesComponent implements OnInit {
   comunidades: Comunidad[] = []; // Arreglo para almacenar las comunidades que provienen del backend
   currentIndex: number = 0; // Índice actual del carrusel
   results: Comunidad[] = [];
+  idUsuarioAutenticado!: number;  // ID del usuario autenticado
+  comunidadesMiembroUsuario: Comunidad[] = [];
 
   constructor(private comunidadService: ComunidadService,
+    private authService: AuthService,  // Inyecta el AuthService
     private router: Router) { }
 
   ngOnInit(): void {
     this.getComunidades(); // Cargar las comunidades al inicializar el componente
+    this.obtenerUsuarioAutenticado();
+    this.miembroUsuario();
+  }
+
+  obtenerUsuarioAutenticado(): void {
+    const usuarioAutenticado = this.authService.obtenerUsuarioAutenticado();
+    if (usuarioAutenticado) {
+      this.idUsuarioAutenticado = usuarioAutenticado.id;
+    }
   }
 
   async getComunidades(): Promise<void> {
-    this.comunidadService.all().subscribe(async (dataPackage) => {
+    this.comunidadService.disponibles().subscribe(async (dataPackage) => {
       const responseData = dataPackage.data;
       if (Array.isArray(responseData)) {
         this.results = responseData;
-        this.traerMiembros(); // Llamar a traerMiembros después de cargar las comunidades
+        this.traerMiembros(this.results); // Llamar a traerMiembros después de cargar las comunidades
         // Recorrer todas las comunidades y asignar la ubicación
         for (const comunidad of this.results) {
           if (comunidad.latitud && comunidad.longitud) {
@@ -44,25 +57,43 @@ export class ComunidadesComponent implements OnInit {
     });
   }  
   
-  traerMiembros(): void {
-    const memberPromises = this.results.map(comunidad => {
-      return this.comunidadService.miembrosEnComunidad(comunidad.id).toPromise()
-        .then(dataPackage => {
+
+  async miembroUsuario(): Promise<void> {
+    this.comunidadService.miembroUsuario(this.idUsuarioAutenticado).subscribe(async (dataPackage) => {
+      const responseData = dataPackage.data;
+      if (Array.isArray(responseData)) {
+        this.comunidadesMiembroUsuario = responseData;
+        this.traerMiembros(this.comunidadesMiembroUsuario); // Llamar a traerParticipantes después de cargar los eventos
+        for (const comunidad of this.comunidadesMiembroUsuario) {
+          if (comunidad.latitud && comunidad.longitud) {
+            comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
+          } else {
+            comunidad.ubicacion = 'Ubicación desconocida';
+          }
+        }
+      }
+    });
+  }
+
+
+
+  traerMiembros(comunidades: Comunidad[]): void {
+    for (let comunidad of comunidades) {
+      this.comunidadService.miembrosEnComunidad(comunidad.id).subscribe(
+        (dataPackage) => {
           if (dataPackage && typeof dataPackage.data === 'number') {
             comunidad.miembros = dataPackage.data; // Asignar el número de miembros
           }
-        })
-        .catch(error => {
+        },
+        (error) => {
           console.error(`Error al traer los miembros de la comunidad ${comunidad.id}:`, error);
-        });
-    });
-  
-    // Esperar a que todas las promesas se completen
-    Promise.all(memberPromises).then(() => {
-      console.log('Todos los miembros han sido cargados');
-    });
+        }
+      );
+    }
   }
   
+  
+
 
   // Método para mover al siguiente grupo de comunidades en el carrusel
   siguienteComunidad(): void {
@@ -84,11 +115,22 @@ export class ComunidadesComponent implements OnInit {
 
     for (let i = 0; i < 4; i++) {
       const index = (this.currentIndex + i) % this.results.length;
-      comunidadesParaMostrar.push(this.results[index]);
-    }
+      const comunidad = this.results[index];
+
+      // Excluir eventos en los que el usuario ya está participando
+      const yaMiembro = this.comunidadesMiembroUsuario.some(
+        (comunidadMiembro) => comunidadMiembro.id === comunidad.id
+      );
+
+      if (!yaMiembro) {
+        comunidadesParaMostrar.push(comunidad); // Agregar solo si no está participando
+      }    }
 
     return comunidadesParaMostrar;
   }
+
+
+
 
   irADetallesDeLaComunidad(id: number): void {
     this.router.navigate(['/comunidades', id]); // Navega a la ruta /comunidades/:id
