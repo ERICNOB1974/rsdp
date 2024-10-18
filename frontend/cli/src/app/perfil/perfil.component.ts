@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { UsuarioService } from '../usuarios/usuario.service';
 import { Usuario } from '../usuarios/usuario';
 import { DataPackage } from '../data-package';
-import { AuthService } from '../usuarios/auntenticacion.service';
+import { AuthService } from '../autenticacion/auth.service';
 
 @Component({
   selector: 'app-perfil',
@@ -28,19 +28,19 @@ export class PerfilComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.obtenerUsuarioAutenticado();
+    // this.obtenerUsuarioAutenticado();
     this.idUsuario = Number(this.route.snapshot.paramMap.get('id'));
     this.cargarPerfil();  // Cargar la información del perfil
   }
 
   // Obtén el usuario autenticado desde el AuthService
-  obtenerUsuarioAutenticado(): void {
-    const usuarioAutenticado = this.authService.obtenerUsuarioAutenticado();
-    if (usuarioAutenticado) {
-      this.idUsuarioAutenticado = usuarioAutenticado.id;
-    }
-    console.log('soyyy '+this.idUsuarioAutenticado);
-  }
+  // obtenerUsuarioAutenticado(): void {
+  //   const usuarioAutenticado = this.authService.obtenerUsuarioAutenticado();
+  //   if (usuarioAutenticado) {
+  //     this.idUsuarioAutenticado = usuarioAutenticado.id;
+  //   }
+  //   console.log('soyyy '+this.idUsuarioAutenticado);
+  // }
 
   // Cargar el perfil que se está viendo
   cargarPerfil(): void {

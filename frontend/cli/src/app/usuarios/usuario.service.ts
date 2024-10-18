@@ -36,18 +36,26 @@ export class UsuarioService {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/solicitarIngresoAComunidad/${idUsuario}/${idComunidad}`);
   }
 
-  save(usuario: Usuario): Observable<DataPackage> {
-    return usuario.id ? this.http.put<DataPackage>(` ${this.usuariosUrl}/actualizar`, usuario) :
-      this.http.post<DataPackage>(` ${this.usuariosUrl}/create`, usuario);
+  existeMail(correoElectronico: string): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/existeMail/${correoElectronico}`);
+  }
+
+  existeNombreUsuario(nombreUsuario: string): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/existeNombreUsuario/${nombreUsuario}`);
   }
 
   obtenerAmigos(nombreUsuario: string) :Observable<DataPackage>{
     return this.http.get<DataPackage>(`${this.usuariosUrl}/amigos/${nombreUsuario}`);
-}
+  }
 
-enviarSolicitudAmistad(idEmisor: number, idReceptor: number): Observable<DataPackage> {
-  const body = { /* aquí puedes agregar datos si es necesario */ };
-  return this.http.post<DataPackage>(`${this.usuariosUrl}/enviarSolicitudAmistad/${idEmisor}/${idReceptor}`, body);
-}
+  enviarSolicitudAmistad(idEmisor: number, idReceptor: number): Observable<DataPackage> {
+    const body = { /* aquí puedes agregar datos si es necesario */ };
+    return this.http.post<DataPackage>(`${this.usuariosUrl}/enviarSolicitudAmistad/${idEmisor}/${idReceptor}`, body);
+  }
+  
+  save(usuario: Usuario): Observable<DataPackage> {
+    return usuario.id ? this.http.put<DataPackage>(` ${this.usuariosUrl}/actualizar`, usuario) :
+      this.http.post<DataPackage>(` ${this.usuariosUrl}/create`, usuario);
+  }
 
 }
