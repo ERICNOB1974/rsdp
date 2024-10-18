@@ -1,0 +1,98 @@
+<div class="wrap-register">
+  <div class="container">
+    <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+      <mat-card class="register-box">
+        <mat-card-header>
+          <h2>Registro</h2>
+        </mat-card-header>
+
+        <mat-card-content>
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre completo</mat-label>
+            <input matInput formControlName="nombreReal" required />
+            <mat-error *ngIf="registroForm.get('nombreReal')?.hasError('required')">
+              El nombre completo es requerido
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre de Usuario</mat-label>
+            <input matInput formControlName="nombreUsuario" required />
+            <mat-error *ngIf="registroForm.get('nombreUsuario')?.hasError('required')">
+              El nombre de usuario es requerido
+            </mat-error>
+            <mat-error *ngIf="registroForm.get('nombreUsuario')?.hasError('minlength')">
+              El nombre de usuario debe tener al menos 3 caracteres
+            </mat-error>
+            <mat-error *ngIf="registroForm.get('nombreUsuario')?.hasError('nombreUsuarioExistente')">
+              El nombre de usuario ya está en uso
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Correo Electrónico</mat-label>
+            <input matInput type="email" formControlName="correoElectronico" required />
+            <mat-error *ngIf="registroForm.get('correoElectronico')?.hasError('required')">
+              El correo electrónico es requerido
+            </mat-error>
+            <mat-error *ngIf="registroForm.get('correoElectronico')?.hasError('email')">
+              Formato de correo electrónico inválido
+            </mat-error>
+            <mat-error *ngIf="registroForm.get('correoElectronico')?.hasError('correoExistente')">
+              El correo electrónico ya está registrado
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Contraseña</mat-label>
+            <input matInput type="password" formControlName="contrasena" required>
+            <mat-error *ngIf="registroForm.get('contrasena')?.hasError('required')">
+              La contraseña es requerida
+            </mat-error>
+            <mat-error *ngIf="registroForm.get('contrasena')?.hasError('minlength')">
+              La contraseña debe tener al menos 8 caracteres
+            </mat-error>
+            <mat-error *ngIf="registroForm.get('contrasena')?.hasError('pattern')">
+              La contraseña debe tener al menos una letra mayúscula y un número
+            </mat-error>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline">
+            <mat-label>Confirmar Contraseña</mat-label>
+            <input matInput type="password" formControlName="confirmarContrasena" required>
+            <mat-error *ngIf="registroForm.get('confirmarContrasena')?.hasError('required')">
+              Confirmar contraseña es requerido
+            </mat-error>
+            <mat-error *ngIf="registroForm.get('confirmarContrasena')?.hasError('mismatch')">
+              Las contraseñas no coinciden
+            </mat-error>
+          </mat-form-field>          
+
+          <mat-form-field appearance="outline">
+            <mat-label>Fecha de Nacimiento</mat-label>
+            <input matInput type="date" formControlName="fechaNacimiento" required>
+            <mat-error *ngIf="registroForm.get('fechaNacimiento')?.hasError('required')">
+              La fecha de nacimiento es requerida
+            </mat-error>
+            <mat-error *ngIf="registroForm.get('fechaNacimiento')?.hasError('invalidDate')">
+              La fecha de nacimiento debe ser entre 1920 y 2020
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Descripción</mat-label>
+            <textarea matInput formControlName="descripcion"></textarea>
+          </mat-form-field>
+        </mat-card-content>
+
+        <mat-card-actions>
+          <button mat-raised-button color="primary" type="submit" class="btn-left" [disabled]="!registroForm.valid">
+            Registrar
+          </button>
+          <button mat-flat-button color="accent" class="btn-right" (click)="goBack()">Atrás</button>
+
+        </mat-card-actions>
+      </mat-card>
+    </form>
+  </div>
+</div>

@@ -132,4 +132,13 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
                         "return COUNT (r)>0")
         boolean haySolicitud(Long idEmisor, Long idReceptor);
 
+        @Query("MATCH (u:Usuario) WHERE u.correoElectronico = $correoElectronico RETURN u")
+        Optional<Usuario> findByCorreoElectronico(String correoElectronico);
+
+        @Query("MATCH (u:Usuario) WHERE u.correoElectronico = $correoElectronico RETURN COUNT(u) > 0")
+        boolean existeMail(String correoElectronico);
+    
+        @Query("MATCH (u:Usuario) WHERE u.nombreUsuario = $nombreUsuario RETURN COUNT(u) > 0")
+        boolean existeNombreUsuario(String nombreUsuario);
+
 }
