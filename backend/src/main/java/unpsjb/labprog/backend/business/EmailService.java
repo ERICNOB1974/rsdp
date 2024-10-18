@@ -56,6 +56,7 @@ public class EmailService {
 
                     email.setMensaje(msj);
                     email.setDestinatario(usuario.getCorreoElectronico());
+                    enviarMailGenerico(email);
                 }
             }
         } catch (Exception e) {
@@ -68,7 +69,7 @@ public class EmailService {
         Email email = new Email();
         email.setAsunto("Cambio en un evento");
         List<Usuario> listaUsuarios = usuarioRepository.inscriptosEvento(evento.getId());
-        String mensajeParte1 = "El evento " + evento.getNombre() + ", al que estás inscripto, sufrió un cambio en ";
+        String mensajeParte1 = " el evento " + evento.getNombre() + ", al que estás inscripto, sufrió un cambio en ";
 
         StringBuilder mensajeParte2 = new StringBuilder();
 
@@ -158,7 +159,6 @@ public class EmailService {
         Email email = new Email();
         email.setAsunto("Inscripcion a evento");
 
-        System.out.println("ERIC\n "+evento.getNombre());
         String mensaje = "Hola " + usuario.getNombreReal() + ". Se registro tu inscripcion al evento "
                 + evento.getNombre();
 

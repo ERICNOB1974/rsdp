@@ -25,6 +25,10 @@ public class UsuarioService {
         return usuarioRepository.amigos(nombreUsuario);
     }
 
+    public List<Usuario> solicitudes(String nombreUsuario) {
+        return usuarioRepository.solicitudesDeAmistad(nombreUsuario);
+    }
+
     public List<Usuario> amigosDeAmigos(String nombreUsuario) {
         return usuarioRepository.amigosDeAmigos(nombreUsuario);
     }

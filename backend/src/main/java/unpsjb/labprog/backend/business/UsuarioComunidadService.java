@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.List;
+
 @Service
 public class UsuarioComunidadService {
 
@@ -18,6 +19,10 @@ public class UsuarioComunidadService {
 
     @Autowired
     private ComunidadRepository comunidadRepository;
+
+    @Autowired
+    private NotificacionService notificacionService;
+
 
     public String solicitarIngreso(Long idUsuario, Long idComunidad) throws Exception {
         Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
@@ -31,15 +36,16 @@ public class UsuarioComunidadService {
         Comunidad comunidad = comunidadOpt.get();
         Usuario usuario = usuarioOpt.get();
 
-        if (!comunidad.isEsPrivada()) {
-            // Si la comunidad es pública, agregar directamente al usuario como miembro
-            comunidadRepository.nuevoMiembro(comunidad.getId(), usuario.getId(), LocalDateTime.now());
-            return "Usuario ingresado en la comunidad correctamente"; // Finalizar aquí si la comunidad es pública
-        }
-
+        
         // Verificar si el usuario ya es miembro de la comunidad
         if (usuarioRepository.esMiembro(idUsuario, idComunidad)) {
             throw new Exception("El usuario ya es miembro de la comunidad.");
+        }
+        if (!comunidad.isEsPrivada()) {
+            // Si la comunidad es pública, agregar directamente al usuario como miembro
+            comunidadRepository.nuevoMiembro(comunidad.getId(), usuario.getId(), LocalDateTime.now());
+            notificacionService.crearNotificacion(idUsuario, idComunidad, "UNION_PUBLICA", LocalDateTime.now());
+            return "Usuario ingresado en la comunidad correctamente"; // Finalizar aquí si la comunidad es pública
         }
 
         // Verificar si ya existe una solicitud de ingreso pendiente o enviada
@@ -80,9 +86,11 @@ public class UsuarioComunidadService {
         if (!usuarioRepository.esCreador(idCreador, idComunidad)) {
             throw new Exception("No posee los permisos para otorgar el rol");
         }
-    // Obtener la fecha de ingreso como DateTimeValue
-    //LocalDateTime fechaIngresoValue = comunidadRepository.obtenerFechaIngreso(idMiembro, idComunidad);
-        comunidadRepository.otorgarRolAdministrador(idMiembro, idComunidad, comunidadRepository.obtenerFechaIngreso(idMiembro, idComunidad), LocalDateTime.now());
+        // Obtener la fecha de ingreso como DateTimeValue
+        // LocalDateTime fechaIngresoValue =
+        // comunidadRepository.obtenerFechaIngreso(idMiembro, idComunidad);
+        comunidadRepository.otorgarRolAdministrador(idMiembro, idComunidad,
+                comunidadRepository.obtenerFechaIngreso(idMiembro, idComunidad), LocalDateTime.now());
         return "Rol administrador otorgado a: " + usuario.getNombreUsuario() + " correctamente";
     }
 
@@ -110,22 +118,25 @@ public class UsuarioComunidadService {
         if (!usuarioRepository.esAdministrador(idAdministrador, idComunidad)) {
             throw new Exception("El usuario al que se le quiere quitar el rol no es administrador.");
         }
-  
-        comunidadRepository.quitarRolAdministrador(idAdministrador, idComunidad, comunidadRepository.obtenerFechaIngreso(idAdministrador, idComunidad), LocalDateTime.now());
+
+        comunidadRepository.quitarRolAdministrador(idAdministrador, idComunidad,
+                comunidadRepository.obtenerFechaIngreso(idAdministrador, idComunidad), LocalDateTime.now());
         return "Rol administrador quitado a: " + usuario.getNombreUsuario() + " correctamente";
     }
 
-
-    public Comunidad guardarComunidadYCreador(Comunidad comunidad,Long idUsuario) throws Exception {
+    public Comunidad guardarComunidadYCreador(Comunidad comunidad, Long idUsuario) throws Exception {
         Optional<Usuario> miembroOpt = usuarioRepository.findById(idUsuario);
         if (miembroOpt.isEmpty()) {
             throw new Exception("El usuario no existe.");
         }
         comunidad.setFechaDeCreacion(LocalDate.now()); // Establece la fecha aquí
-        return comunidadRepository.guardarComunidadYCreador(comunidad.getNombre(), comunidad.getDescripcion(), comunidad.getCantidadMaximaMiembros(), comunidad.isEsPrivada() , idUsuario, comunidad.getFechaDeCreacion(), comunidad.getLatitud(), comunidad.getLatitud());
+        return comunidadRepository.guardarComunidadYCreador(comunidad.getNombre(), comunidad.getDescripcion(),
+                comunidad.getCantidadMaximaMiembros(), comunidad.isEsPrivada(), idUsuario,
+                comunidad.getFechaDeCreacion(), comunidad.getLatitud(), comunidad.getLatitud());
     }
 
-    public String gestionarSolicitudes(Long idSuperUsuario,Long idUsuario,Long idComunidad,boolean aceptar) throws Exception {
+    public String gestionarSolicitudes(Long idSuperUsuario, Long idUsuario, Long idComunidad, boolean aceptar)
+            throws Exception {
         Optional<Usuario> miembroOpt = usuarioRepository.findById(idUsuario);
         if (miembroOpt.isEmpty()) {
             throw new Exception("El usuario no existe.");
@@ -139,27 +150,30 @@ public class UsuarioComunidadService {
         if (comunidadOpt.isEmpty()) {
             throw new Exception("La comunidad no existe.");
         }
-        Comunidad comunidad= comunidadOpt.get();
-        if(!usuarioRepository.solicitudIngresoExiste(idUsuario,idComunidad)){
+        Comunidad comunidad = comunidadOpt.get();
+        if (!usuarioRepository.solicitudIngresoExiste(idUsuario, idComunidad)) {
             throw new Exception("No hay solicitud de ingreso pendiente");
         }
-        if((!usuarioRepository.esCreador(idSuperUsuario,idComunidad)) && (!usuarioRepository.esAdministrador(idSuperUsuario,idComunidad))){
+        if ((!usuarioRepository.esCreador(idSuperUsuario, idComunidad))
+                && (!usuarioRepository.esAdministrador(idSuperUsuario, idComunidad))) {
             throw new Exception("Este usuario no puede gestionar solicitudes");
         }
-        if(!aceptar){
+        if (!aceptar) {
             comunidadRepository.eliminarSolicitudIngreso(idUsuario, idComunidad);
             return "Solicitud de ingreso rechazada correctamente";
         }
-        if(!(comunidadRepository.cantidadUsuarios(idComunidad)<comunidad.getCantidadMaximaMiembros())){
+        if (!(comunidadRepository.cantidadUsuarios(idComunidad) < comunidad.getCantidadMaximaMiembros())) {
             throw new Exception("La comunidad esta llena");
         }
         comunidadRepository.eliminarSolicitudIngreso(idUsuario, idComunidad);
         comunidadRepository.nuevoMiembro(idComunidad,idUsuario,LocalDateTime.now());
+        notificacionService.crearNotificacion(idUsuario, idComunidad, "ACEPTACION_PRIVADA", LocalDateTime.now());
+
         return "Solicitud de ingreso aceptada correctamente";
     }
 
-    public List<Usuario> visualizarSolicitudes(Long idSuperUsuario,Long idComunidad) throws Exception {
-    
+    public List<Usuario> visualizarSolicitudes(Long idSuperUsuario, Long idComunidad) throws Exception {
+
         Optional<Usuario> superUsuario = usuarioRepository.findById(idSuperUsuario);
         if (superUsuario.isEmpty()) {
             throw new Exception("El usuario con permisos no existe.");
@@ -170,12 +184,22 @@ public class UsuarioComunidadService {
             throw new Exception("La comunidad no existe.");
         }
 
-     
-        if((!usuarioRepository.esCreador(idSuperUsuario,idComunidad)) && (!usuarioRepository.esAdministrador(idSuperUsuario,idComunidad))){
+        if ((!usuarioRepository.esCreador(idSuperUsuario, idComunidad))
+                && (!usuarioRepository.esAdministrador(idSuperUsuario, idComunidad))) {
             throw new Exception("Este usuario no puede gestionar solicitudes");
         }
-      
+
         return usuarioRepository.solicititudesPendientes(idComunidad);
+    }
+
+    public String verEstado(Long idComunidad, Long idUsuario) {
+        if (usuarioRepository.esMiembro(idUsuario, idComunidad)) {
+            return "Miembro";
+        }
+        if (usuarioRepository.solicitudIngresoExiste(idUsuario, idComunidad)) {
+            return "Pendiente";
+        }
+        return "Vacio";
     }
 
 }

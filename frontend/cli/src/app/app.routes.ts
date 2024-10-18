@@ -16,6 +16,11 @@ import { RegistroComponent } from './registro/registro.component';
 import { VerificarCodigoComponent } from './verificar-codigo/verificar-codigo.component';
 import { VerificarMailComponent } from './recuperar-contrasena/verificar-mail.component';
 import { CambiarContrasenaComponent } from './recuperar-contrasena/cambiar-contrasena.component';
+import { AmigosComponent } from './amigos/amigos.component';
+import { PerfilComponent } from './perfil/perfil.component';
+import { PerfilDetailComponent } from './perfil/perfil-detail.component';
+import { CrearPublicacionComponent } from './publicaciones/crearPublicacion.component';
+import { PublicacionDetailComponent } from './publicaciones/publicacion-detail.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },

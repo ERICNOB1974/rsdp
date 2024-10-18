@@ -46,6 +46,12 @@ public class UsuarioPresenter {
         return Response.ok(amigosDeAmigos);
     }
 
+    @GetMapping("/solicitudes/{nombreUsuario}")
+    public ResponseEntity<Object> obtenerSolicitudes(@PathVariable String nombreUsuario) {
+        List<Usuario> amigosDeAmigos = usuarioService.solicitudes(nombreUsuario);
+        return Response.ok(amigosDeAmigos);
+    }
+
     @GetMapping("/amigosDeAmigos/{nombreUsuario}")
     public ResponseEntity<Object> obtenerAmigosDeAmigos(@PathVariable String nombreUsuario) {
         List<Usuario> amigosDeAmigos = usuarioService.amigosDeAmigos(nombreUsuario);
@@ -82,12 +88,12 @@ public class UsuarioPresenter {
         }
     }
 
-    @GetMapping("/solicitarIngresoAComunidad/{idUsuario}/{idComunidad}")
+    @PostMapping("/solicitarIngresoAComunidad/{idUsuario}/{idComunidad}")
     public ResponseEntity<Object> solicitarIngresoAComunidad(@PathVariable Long idUsuario,
             @PathVariable Long idComunidad) {
         try {
             String respuesta=usuarioComunidadService.solicitarIngreso(idUsuario, idComunidad);
-            return Response.ok(respuesta);
+            return Response.ok(null, respuesta);
         } catch (Exception e) {
             return Response.error("", "Error al enviar solicitud de ingreso: " + e);
         }
@@ -98,6 +104,11 @@ public class UsuarioPresenter {
         return Response.ok(usuarioService.save(usuario));
     }
 
+    @RequestMapping(path = "/actualizar", method = RequestMethod.PUT)
+    public ResponseEntity<Object> actualizar(@RequestBody Usuario usuario) {
+        return Response.ok(usuarioService.save(usuario));
+    }
+    
     @GetMapping("/findById/{id}")
     public ResponseEntity<Object> findById(@PathVariable Long id) {
         return Response.ok(usuarioService.findById(id));

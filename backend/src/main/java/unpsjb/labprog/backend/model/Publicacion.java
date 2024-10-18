@@ -20,9 +20,9 @@ public class Publicacion {
     @GeneratedValue
     private Long id;
 
-    private Long cantidadLikes;
+    private String texto; 
 
-    private String descripcion; 
+    private String file; 
     
 
 }
