@@ -99,7 +99,7 @@ export class CrearEventoComponent {
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="ubicacionModalLabel">Ubicación Necesaria</h5>
+            <h5 class="modal-title" id="ubicacionModalLabel">Ubicación necesaria</h5>
           </div>
           <div class="modal-body text-center">
             <p class="lead">Para continuar, necesitamos que habilites la ubicación.</p>

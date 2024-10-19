@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Comunidad } from './comunidad';
 import axios from 'axios';
 import { DataPackage } from '../data-package';
+import { AuthService } from '../autenticacion/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,7 @@ import { DataPackage } from '../data-package';
 export class ComunidadService {
   private comunidadesUrl = 'rest/comunidades';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
 
   async obtenerUbicacion(latitud: number, longitud: number): Promise<string> {
     try {
@@ -42,9 +43,14 @@ export class ComunidadService {
   }
 
   save(comunidad: Comunidad): Observable<DataPackage> {
-    return comunidad.id
-      ? this.http.put<DataPackage>(this.comunidadesUrl, comunidad)
-      : this.http.post<DataPackage>(this.comunidadesUrl, comunidad);
+    const idUsuario = this.authService.getUsuarioId(); 
+
+    if (comunidad.id) {
+      return this.http.put<DataPackage>(this.comunidadesUrl, comunidad);
+    } else {
+      const url = `${this.comunidadesUrl}/create/${idUsuario}`;
+      return this.http.post<DataPackage>(url, comunidad);
+    }
   }
     
   sugerencias(nombreUsuario: string): Observable<DataPackage> {
