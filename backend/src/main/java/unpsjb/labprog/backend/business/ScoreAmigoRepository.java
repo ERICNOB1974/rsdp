@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
-import org.springframework.stereotype.Repository;
 
 public interface ScoreAmigoRepository extends Neo4jRepository<ScoreAmigo, Long> {
 

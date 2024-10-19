@@ -7,6 +7,5 @@ import lombok.Setter;
 @Setter
 public class CambioContrasenaRequest {
     private String correoElectronico;
-    private String contrasenaVieja;
     private String contrasenaNueva;
 }
