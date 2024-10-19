@@ -32,6 +32,14 @@ public class PublicacionService {
         publicacionRepository.likear(usuarioId, publicacionId);
     }
 
+    public void sacarLike(Long usuarioId, Long publicacionId) {
+        publicacionRepository.sacarLike(usuarioId, publicacionId);
+    }
+
+    public boolean estaLikeada(Long usuarioId, Long publicacionId) {
+        return publicacionRepository.estaLikeada(usuarioId, publicacionId);
+    }
+
     public void comentar(Long usuarioId, Long publicacionId, String comentario) {
         publicacionRepository.comentar(usuarioId, publicacionId, comentario, ZonedDateTime.now());
     }
