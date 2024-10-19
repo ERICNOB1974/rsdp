@@ -8,7 +8,7 @@ import { Usuario } from './usuario';
   providedIn: 'root'
 })
 export class UsuarioService {
- 
+
 
   private usuariosUrl = 'rest/usuarios';
 
@@ -27,13 +27,13 @@ export class UsuarioService {
   sugerencias(nombreUsuario: string): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.usuariosUrl}/sugerencias/${nombreUsuario}`);
   }
- 
+
   search(searchTerm: string): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/search/${searchTerm}`);
   }
 
-  solicitarIngresoAComunidad(idComunidad: number, idUsuario: number) : Observable<DataPackage> {
-    return this.http.get<DataPackage>(`${this.usuariosUrl}/solicitarIngresoAComunidad/${idUsuario}/${idComunidad}`);
+  solicitarIngresoAComunidad(idComunidad: number, idUsuario: number): Observable<DataPackage> {
+    return this.http.post<DataPackage>(`${this.usuariosUrl}/solicitarIngresoAComunidad/${idUsuario}/${idComunidad}`, null);
   }
 
   existeMail(correoElectronico: string): Observable<DataPackage> {
@@ -44,7 +44,7 @@ export class UsuarioService {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/existeNombreUsuario/${nombreUsuario}`);
   }
 
-  obtenerAmigos(nombreUsuario: string) :Observable<DataPackage>{
+  obtenerAmigos(nombreUsuario: string): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/amigos/${nombreUsuario}`);
   }
 
@@ -52,6 +52,7 @@ export class UsuarioService {
     const body = { /* aquí puedes agregar datos si es necesario */ };
     return this.http.post<DataPackage>(`${this.usuariosUrl}/enviarSolicitudAmistad/${idEmisor}/${idReceptor}`, body);
   }
+
   
   save(usuario: Usuario): Observable<DataPackage> {
     return usuario.id ? this.http.put<DataPackage>(` ${this.usuariosUrl}/actualizar`, usuario) :

@@ -50,8 +50,9 @@ public class EmailService {
                 for (Usuario usuario : listaUsuarios) {
                     String msj = "Hola " + usuario.getNombreReal() + ". \n Te recordamos que mañana a las "
                             + evento.getFechaHora().getHour() + ":" + evento.getFechaHora().getMinute() +
-                            " será el evento "
-                            + ".\n Descripción: "
+                            " será el evento " +
+                            evento.getNombre() +
+                            ".\n Descripción: "
                             + evento.getDescripcion();
 
                     email.setMensaje(msj);
@@ -73,7 +74,7 @@ public class EmailService {
 
         StringBuilder mensajeParte2 = new StringBuilder();
 
-       String ubicacion= locationService.getDisplayName(evento.getLatitud(), evento.getLongitud());
+        String ubicacion = locationService.getDisplayName(evento.getLatitud(), evento.getLongitud());
         if (cambioFecha && cambioUbicacion) {
             mensajeParte2.append("la fecha y la ubicación.");
             mensajeParte2.append("\nNueva fecha: ").append(evento.getFechaHora());
@@ -133,7 +134,7 @@ public class EmailService {
             context.setVariable("mensaje", email.getMensaje());
             String contentHtml = templateEngine.process("email", context); // 'email' es el nombre del archivo .html
             // HTML
-            helper.setText(contentHtml, true); 
+            helper.setText(contentHtml, true);
 
             // Enviar el correo
             javaMailSender.send(mensaje);
@@ -166,8 +167,7 @@ public class EmailService {
             email.setMensaje(mensaje);
             email.setDestinatario(usuario.getCorreoElectronico());
             enviarMailGenerico(email);
-        } catch (
-        Exception e) {
+        } catch (Exception e) {
             throw new RuntimeException("Error al enviar el correo: " + e.getMessage());
         }
     }
