@@ -22,6 +22,24 @@ public interface PublicacionRepository extends Neo4jRepository<Publicacion, Long
                         "CREATE (u)-[:DIO_LIKE]->(p)")
         void likear(@Param("usuarioId") Long usuarioId, @Param("publicacionId") Long publicacionId);
 
+        @Query("MATCH (u:Usuario)-[rel:DIO_LIKE]->(p:Publicacion) "+
+
+                        "WHERE id(u) = $usuarioId AND id(p) = $publicacionId " +
+                        "DELETE rel")
+        void sacarLike(@Param("usuarioId") Long usuarioId, @Param("publicacionId") Long publicacionId);
+
+        @Query("MATCH (u:Usuario), (p:Publicacion) " +
+                        "WHERE id(u) = $usuarioId AND id(p) = $publicacionId " +
+                        "MATCH (u)-[l:DIO_LIKE]->(p) " +
+                        "RETURN COUNT (l)>0")
+        boolean estaLikeada(@Param("usuarioId") Long usuarioId, @Param("publicacionId") Long publicacionId);
+
+        @Query("MATCH (u:Usuario), (p:Publicacion) " +
+                        "WHERE id(p) = $publicacionId " +
+                        "MATCH (u)-[l:DIO_LIKE]->(p) " +
+                        "RETURN COUNT (l)")
+        Long cantidadLikes(@Param("publicacionId") Long publicacionId);
+
         @Query("MATCH (u:Usuario), (p:Publicacion) " +
                         "WHERE id(u) = $usuarioId AND id(p) = $publicacionId " +
                         "CREATE (u)-[:COMENTA {fechaComentario:$fechaComentario, comentario: $comentario }]->(p)")

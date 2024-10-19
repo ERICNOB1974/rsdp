@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { EventoService } from './evento.service';
 import { Evento } from './evento';
 import { FormsModule } from '@angular/forms';
-import { catchError, debounceTime, distinctUntilChanged, filter, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, forkJoin, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { Etiqueta } from '../etiqueta/etiqueta';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
@@ -264,11 +264,13 @@ export class CrearEventoComponent {
     this.evento.fechaHora = new Date(this.evento.fechaHora).toISOString();
     this.eventoService.saveConCreador(this.evento).subscribe(dataPackage => {
       this.evento = <Evento>dataPackage.data;
-      this.etiquetasSeleccionadas.forEach(etiqueta => {
-        this.eventoService.etiquetar(this.evento, etiqueta.id).subscribe();
+      const etiquetarRequests = this.etiquetasSeleccionadas.map(etiqueta => {
+        return this.eventoService.etiquetar(this.evento, etiqueta.id);
       });
-    }); 
-    location.reload(); 
+      forkJoin(etiquetarRequests).subscribe(() => {
+        location.reload(); // Ahora se recarga solo después de guardar las etiquetas
+      });
+    });
   }
 
   formatFechaHora(fechaHora: string): string {

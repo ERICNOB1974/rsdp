@@ -37,6 +37,21 @@ public class PublicacionPresenter {
                 publicacionService.likear(idUsuario, idPublicacion);
         return Response.ok(null, "OK");
     }
+
+    @GetMapping("/deslikear/{idUsuario}/{idPublicacion}")
+    public ResponseEntity<Object> sacarLike(@PathVariable Long idUsuario, @PathVariable Long idPublicacion)
+            throws Exception {
+                publicacionService.sacarLike(idUsuario, idPublicacion);
+        return Response.ok(null, "OK");
+    }
+
+    @GetMapping("/isLikeada/{idUsuario}/{idPublicacion}")
+    public ResponseEntity<Object> estaLikeada(@PathVariable Long idUsuario, @PathVariable Long idPublicacion)
+            throws Exception {
+               boolean like= publicacionService.estaLikeada(idUsuario, idPublicacion);
+        return Response.ok(like, "OK");
+    }
+    
     @PostMapping("/comentar/{idUsuario}/{idPublicacion}")
     public ResponseEntity<Object> comentar(@PathVariable Long idUsuario, @PathVariable Long idPublicacion, @RequestBody String comentario)
             throws Exception {

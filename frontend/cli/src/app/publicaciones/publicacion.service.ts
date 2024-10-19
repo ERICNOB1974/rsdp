@@ -9,7 +9,7 @@ import { AuthService } from '../autenticacion/auth.service';
   providedIn: 'root'
 })
 export class PublicacionService {
-
+  
   private publicacionsUrl = 'rest/publicacion';
 
   constructor(
@@ -24,11 +24,23 @@ export class PublicacionService {
   get(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.publicacionsUrl}/findById/${id}`);
   }
-
+  
   saveConCreador(publicacion: Publicacion): Observable<DataPackage> {
     const idUsuario = this.authService.getUsuarioId();
     return publicacion.id ? this.http.put<DataPackage>(` ${this.publicacionsUrl}/actualizar`, publicacion) :
-      this.http.post<DataPackage>(` ${this.publicacionsUrl}/crear/${idUsuario}`, publicacion);
+    this.http.post<DataPackage>(` ${this.publicacionsUrl}/crear/${idUsuario}`, publicacion);
   }
+  estaLikeada(idPublicacion:number) {
+    return this.http.get<DataPackage>(` ${this.publicacionsUrl}/isLikeada/${this.authService.getUsuarioId()}/${idPublicacion}`);
+  }
+
+  sacarLike(idPublicacion:number) {
+    return this.http.get<DataPackage>(` ${this.publicacionsUrl}/deslikear/${this.authService.getUsuarioId()}/${idPublicacion}`);
+  }
+  
+  darLike(idPublicacion:number) {
+    return this.http.get<DataPackage>(` ${this.publicacionsUrl}/likear/${this.authService.getUsuarioId()}/${idPublicacion}`);
+  }
+
 
 }
