@@ -12,6 +12,7 @@ import { DataPackage } from './data-package';
   standalone: true,
   imports: [RouterOutlet, NgIf, CommonModule],
   template: `
+
     <div *ngIf="!esPantallaLogin" class="sidebar">
       <ul>
           <h5 style="text-align: center; margin: 10px;">RSDP</h5>

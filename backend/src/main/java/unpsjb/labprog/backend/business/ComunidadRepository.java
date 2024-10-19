@@ -82,7 +82,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         void nuevoMiembro(Long idComunidad, Long idUsuario, LocalDateTime fechaIngreso);
         
         @Query("MATCH (c:Comunidad), (u:Usuario) WHERE id(c) = $idComunidad AND id(u) = $idUsuario " +
-                        "DETACH (c)<-[:MIEMBRO]-(u)")
+                        "MATCH (c)<-[r:MIEMBRO]-(u) DELETE r")
         void miembroSaliente(Long idComunidad, Long idUsuario);
 
         @Query("MATCH (u:Usuario)-[r]-(c:Comunidad) " +
@@ -107,7 +107,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         @Query("MATCH (u:Usuario) WHERE id(u) = $idUsuario " +
                         "CREATE (c:Comunidad {nombre: $nombre, fechaDeCreacion: $fechaCreacion, latitud: $latitud, longitud: $longitud, descripcion: $descripcion, cantidadMaximaMiembros: $participantes, esPrivada: $privada})"
                         +
-                        " CREATE (u)<-[:CREADA_POR {fechaCreacion: $fechaCreacion}]-(c) " +
+                        " CREATE (u)<-[:CREADO_POR {fechaCreacion: $fechaCreacion}]-(c) " +
                         "RETURN c")
         Comunidad guardarComunidadYCreador(String nombre, String descripcion, int participantes, boolean privada,
                         Long idUsuario, LocalDate fechaCreacion, double latitud, double longitud);

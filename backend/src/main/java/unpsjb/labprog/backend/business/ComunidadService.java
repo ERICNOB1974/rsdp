@@ -67,7 +67,6 @@ public class ComunidadService {
         comunidadRepository.etiquetarComunidad(comunidad.getId(), etiqueta);
     }
 
-
     /*
      * esto tambien esta en UsuarioComunidadServce ver donde lo dejamos
      */
@@ -79,6 +78,14 @@ public class ComunidadService {
             return "Pendiente";
         }
         return "Vacio";
+    }
+
+    public String miembroSale(Long idComunidad, Long idUsuario) {
+        if (!usuarioRepository.esMiembro(idUsuario, idComunidad)) {
+            return "El usuario no pertenece a la comunidad.";
+        }
+        comunidadRepository.miembroSaliente(idComunidad, idUsuario);
+        return "Exito al salir de la comunidad";
     }
 
 }

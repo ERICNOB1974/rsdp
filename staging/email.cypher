@@ -45,7 +45,7 @@ CREATE (e4:Evento {
 CREATE (e5:Evento {
     nombre: "Estiramiento en la plaza de Comodoro",
     fechaDeCreacion: date("2023-08-10"),
-    fechaHora: datetime("2024-10-09T20:00:00"),
+    fechaHora: datetime("2024-10-19T20:00:00"),
     descripcion: "Estiramiento en Comodoro",
     cantidadMaximaParticipantes: 3,
     esPrivadoParaLaComunidad: false,

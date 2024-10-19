@@ -50,8 +50,10 @@ public class EventoPresenter {
     public ResponseEntity<Object> create(@RequestBody Evento evento) throws MessagingException, EventoException {
         return Response.ok(eventoService.crear(evento));
     }
+
     @RequestMapping(path = "/crear/{nombreUsuario}", method = RequestMethod.POST)
-    public ResponseEntity<Object> createConCreador(@RequestBody Evento evento, @PathVariable String nombreUsuario) throws MessagingException, EventoException {
+    public ResponseEntity<Object> createConCreador(@RequestBody Evento evento, @PathVariable String nombreUsuario)
+            throws MessagingException, EventoException {
         return Response.ok(eventoService.crearConCreador(evento, nombreUsuario));
     }
 
@@ -100,15 +102,20 @@ public class EventoPresenter {
         eventoService.etiquetarEvento(evento, idEtiqueta);
         return Response.ok("ok");
     }
+
     @PostMapping("/inscribirse/{idEvento}/{idUsuario}")
     public ResponseEntity<Object> etiquetarEvento(@PathVariable Long idEvento, @PathVariable Long idUsuario) {
         inscripcionEventoService.inscribirse(idEvento, idUsuario);
         return Response.ok("ok");
     }
 
-
     @GetMapping("/estaInscripto/{nombreUsuario}/{idEvento}")
     public ResponseEntity<Object> estaInscripto(@PathVariable String nombreUsuario, @PathVariable Long idEvento) {
         return Response.ok(eventoService.participa(nombreUsuario, idEvento));
+    }
+
+    @GetMapping("/desinscribirse/{idEvento}/{idUsuario}")
+    public ResponseEntity<Object> salir(@PathVariable Long idEvento, @PathVariable Long idUsuario) {
+        return Response.ok(null, eventoService.desinscribirse(idEvento, idUsuario));
     }
 }

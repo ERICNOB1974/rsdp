@@ -131,4 +131,10 @@ public class ComunidadPresenter {
         return Response.ok(usuarioComunidadService.verEstado(idComunidad, idUsuario));
         // return Response.ok("ok");
     }
+
+    @GetMapping("/salir/{idComunidad}/{idUsuario}")
+    public ResponseEntity<Object> salir(@PathVariable Long idComunidad, @PathVariable Long idUsuario) {
+        return Response.ok(null, comunidadService.miembroSale(idComunidad, idUsuario));
+        // return Response.ok("ok");
+    }
 }
