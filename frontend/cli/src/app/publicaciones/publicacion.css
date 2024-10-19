@@ -1,33 +1,46 @@
-.container input {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-    height: 0;
-    width: 0;
-  }
-  
-  .container {
-    display: block;
-    position: relative;
-    cursor: pointer;
-    user-select: none;
-  }
-  
-  .container svg {
-    position: relative;
-    top: 0;
-    left: 0;
-    height: 50px;
-    width: 50px;
-    transition: all 0.3s;
-    fill: #666;
-  }
-  
-  .container svg:hover {
-    transform: scale(1.1);
-  }
-  
-  .container input:checked ~ svg {
-    fill: #E3474F;
-  }
-  
+.heart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.heart {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  transform: rotate(-45deg);
+  background-color: #ccc;
+  transition: background-color 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.heart::before,
+.heart::after {
+  content: '';
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-color: #ccc;
+  border-radius: 50%;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.heart::before {
+  top: -50px;
+  left: 0;
+}
+
+.heart::after {
+  top: 0;
+  left: 50px;
+}
+
+.heart.active {
+  background-color: red;
+}
+
+.heart.active::before,
+.heart.active::after {
+  background-color: red;
+}

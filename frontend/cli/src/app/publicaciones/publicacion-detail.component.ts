@@ -16,8 +16,8 @@ import { Publicacion } from './publicacion';
 })
 export class PublicacionDetailComponent implements OnInit {
 
-  publicacion!:Publicacion;
-  isLiked: boolean = false;
+  publicacion!: Publicacion;
+  isActive: boolean = false;
 
   constructor(
     private route: ActivatedRoute, // Para obtener el parámetro de la URL
@@ -30,33 +30,29 @@ export class PublicacionDetailComponent implements OnInit {
   ) { }
 
 
-  
-  toggleLike() {
-    const heartElement = this.el.nativeElement.querySelector('.heart');
-    this.isLiked = !this.isLiked;
-
-    if (this.isLiked) {
-      // Añadir la clase de animación
-      this.renderer.addClass(heartElement, 'heart_animate');
+  toggleHeart() {
+    this.isActive = !this.isActive;
+    const heartElement = document.querySelector('.heart');
+    if (this.isActive) {
+      heartElement?.classList.add('active');
     } else {
-      // Quitar la clase de animación
-      this.renderer.removeClass(heartElement, 'heart_animate');
+      heartElement?.classList.remove('active');
     }
   }
   ngOnInit(): void {
-    this.getEvento();
+    this.getPublicacion();
     //this.traerParticipantes();
   }
 
 
-  getEvento(): void {
+  getPublicacion(): void {
     const id = this.route.snapshot.paramMap.get('id')!;
     if (!id || isNaN(parseInt(id, 10)) || id === 'new') {
       this.router.navigate(['publicacion/crear']);
     }
     else {
       this.publicacionService.get(parseInt(id)).subscribe(async dataPackage => {
-        this.publicacion= <Publicacion> dataPackage.data;
+        this.publicacion = <Publicacion>dataPackage.data;
       });
     }
   }
