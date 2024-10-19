@@ -17,6 +17,7 @@ import { CrearPublicacionComponent } from './publicaciones/crearPublicacion.comp
 import { PublicacionDetailComponent } from './publicaciones/publicacion-detail.component';
 import { ComunidadCreadorComponent } from './comunidades/comunidadCreador.component';
 import { EditarComunidadComponent } from './comunidades/editarComunidad.component';
+import { RutinasComponent } from './rutinas/rutinas.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -36,5 +37,8 @@ export const routes: Routes = [
     { path: 'sugerencias/eventos', component: SugerenciasEventosComponent },
     { path: 'sugerencias/comunidades', component: SugerenciasComunidadesComponent },
     { path: 'publicacion', component: CrearPublicacionComponent },  
-    { path: 'publicacion/:id', component: PublicacionDetailComponent }
+    { path: 'publicacion/:id', component: PublicacionDetailComponent },
+    { path: 'rutinasHacer/:id', component: RutinasComponent }
+
+    
 ];

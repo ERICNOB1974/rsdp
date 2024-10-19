@@ -45,6 +45,11 @@ public class RutinaPresenter {
         return Response.ok(rutinaService.findById(id));
     }
 
+    @GetMapping("/{id}/ejercicios")
+    public ResponseEntity<Object> ejercicios(@PathVariable Long id) {
+        return Response.ok(rutinaService.ejercicios(id));
+    }
+
     @GetMapping("/sugerenciasDeRutinasBasadasEnRutinas/{nombreUsuario}")
     public ResponseEntity<Object> sugerenciasDeRutinasBasadasEnRutinas(@PathVariable String nombreUsuario) {
         List<Rutina> amigosDeAmigos = rutinaService.sugerenciasDeRutinasBasadasEnRutinas(nombreUsuario);

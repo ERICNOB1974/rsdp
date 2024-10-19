@@ -16,11 +16,14 @@ import { forkJoin } from 'rxjs';
     standalone: true
 })
 export class ComunidadCreadorComponent implements OnInit {
+
     comunidad!: Comunidad; // Comunidad específica que se va a mostrar
     solicitudesPendientes: any[] = []; // Lista de solicitudes pendientes para comunidades privadas
     miembros: any[] = []; // Lista de miembros de la comunidad
     administradores: any[] = []; // Lista de miembros de la comunidad
     idUsuarioAutenticado!: number;  // ID del usuario autenticado
+    esCreador: boolean = false;  
+    esAdmin: boolean = false;    
 
     constructor(
         private route: ActivatedRoute, // Para obtener el parámetro de la URL
@@ -51,6 +54,10 @@ export class ComunidadCreadorComponent implements OnInit {
         } else {
             this.comunidadService.get(parseInt(id)).subscribe(dataPackage => {
                 this.comunidad = <Comunidad>dataPackage.data;
+
+                // Ahora, hacer una llamada adicional para obtener el creador
+                this.getCreadorComunidad();
+                
                 if (this.comunidad.esPrivada) {
                     this.getSolicitudesPendientes();
                 }
@@ -58,7 +65,6 @@ export class ComunidadCreadorComponent implements OnInit {
             });
         }
     }
-    
     // Método para obtener las solicitudes pendientes si la comunidad es privada
     getSolicitudesPendientes(): void {
         this.comunidadService.visualizarSolicitudes(this.idUsuarioAutenticado, this.comunidad.id).subscribe(dataPackage => {
@@ -67,26 +73,24 @@ export class ComunidadCreadorComponent implements OnInit {
             }
         });
     }
-    
-    // Método para obtener los miembros de la comunidad
-/*     traerMiembros(): void {
-        this.usuarioService.miembrosComunidad(this.comunidad.id).subscribe(dataPackage => {
-            if (Array.isArray(dataPackage.data)) {
-                this.miembros = dataPackage.data;
+
+    getCreadorComunidad(): void {
+        this.usuarioService.getCreadorComunidad(this.idUsuarioAutenticado,this.comunidad.id).subscribe(dataPackage => {
+            const creador = dataPackage.data;
+            console.log('Creador de la comunidad:', creador); // Añadir log para verificar el valor
+            if (creador) {
+                this.esCreador = true;  // El usuario es el creador
             }
         });
-        this.traerAdministradores();
+    }
+    
+    verificarRoles(): void {
+        // Si el usuario autenticado está en la lista de administradores, también es un admin
+        if (this.administradores.some(admin => admin.id == this.idUsuarioAutenticado)) {
+            this.esAdmin = true;
+        }
     }
 
-    traerAdministradores(): void {
-        this.usuarioService.administradoresComunidad(this.comunidad.id).subscribe(dataPackage => {
-            if (Array.isArray(dataPackage.data)) {
-                this.administradores = dataPackage.data;
-                this.miembros = this.miembros.concat(this.administradores); // Combina los dos arrays¿
-            }
-        });
-    }
-     */
     
     traerMiembrosYAdministradores(): void {
         const miembros$ = this.usuarioService.miembrosComunidad(this.comunidad.id);
@@ -100,9 +104,10 @@ export class ComunidadCreadorComponent implements OnInit {
             if (Array.isArray(administradoresData.data)) {
                 this.administradores = administradoresData.data;
             }
-
+            
             // Combina ambos arrays después de que se hayan completado las solicitudes
             this.miembros = this.miembros.concat(this.administradores);
+            this.verificarRoles(); // Verificar roles después de obtener los miembros y admins
         });
     }
 
@@ -122,16 +127,6 @@ export class ComunidadCreadorComponent implements OnInit {
         });
     }
 
-    // Método para aceptar una solicitud de ingreso
-    /*   aceptarSolicitud(idUsuario: number): void {
-        this.usuarioService.aceptarSolicitud(this.comunidad.id, idUsuario).subscribe(dataPackage => {
-          let mensaje = dataPackage.message;
-          this.getSolicitudesPendientes(); // Actualiza la lista de solicitudes pendientes
-          this.snackBar.open(mensaje, 'Cerrar', {
-            duration: 3000,
-          });
-        });
-      } */
 
     // Método para rechazar una solicitud de ingreso
     gestionarSolicitud(idUsuario: number, aceptada: boolean): void {
@@ -162,7 +157,7 @@ export class ComunidadCreadorComponent implements OnInit {
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000,
             });
-            this.traerMiembros(); // Actualiza la lista de miembros
+            this.traerMiembrosYAdministradores(); // Actualiza la lista de miembros
         });
     }
 
@@ -173,7 +168,7 @@ export class ComunidadCreadorComponent implements OnInit {
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000,
             });
-            this.traerMiembros(); // Actualiza la lista de miembros
+            this.traerMiembrosYAdministradores(); // Actualiza la lista de miembros
         });
     }
 
@@ -190,5 +185,8 @@ export class ComunidadCreadorComponent implements OnInit {
     esAdministrador(idMiembro: number): boolean {
         return this.administradores.some(admin => admin.id === idMiembro);
     }
+
+    eliminarMiembro(): void {
+        }
     
 }

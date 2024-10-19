@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import unpsjb.labprog.backend.model.Ejercicio;
 import unpsjb.labprog.backend.model.Rutina;
 
 @Service
@@ -16,6 +17,9 @@ public class RutinaService {
 
     @Autowired
     RutinaRepository rutinaRepository;
+
+    @Autowired
+    EjercicioRepository ejercicioRepository;
 
     public List<Rutina> findAll() {
         return rutinaRepository.findAll();
@@ -45,6 +49,10 @@ public class RutinaService {
 
     public Rutina findById(Long id){
         return rutinaRepository.findById(id).orElse(null);
+    }
+
+    public List<Ejercicio> ejercicios(Long idRutina){
+        return ejercicioRepository.findEjerciciosByRutinaId(idRutina);
     }
 
     public List<Rutina> sugerenciasDeRutinasBasadasEnRutinas(String nombreUsuario){

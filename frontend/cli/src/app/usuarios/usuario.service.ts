@@ -73,5 +73,8 @@ enviarSolicitudAmistad(idEmisor: number, idReceptor: number): Observable<DataPac
     return this.http.get<DataPackage>(`${this.usuariosUrl}/administradoresComunidad/${idComunidad}`);
   }
   
+  getCreadorComunidad(idUsuario:number, idComunidad:number): Observable<DataPackage>{
+    return this.http.get<DataPackage>(` ${this.usuariosUrl}/esCreador/${idUsuario}/${idComunidad}`);
+  }
   
 }

@@ -91,6 +91,7 @@ export class ComunidadService {
     return this.http.get<DataPackage>(` ${this.comunidadesUrl}/visualizarSolicitudes/${idSuperUsuario}/${idComunidad}`);
   }
 
+
   remove(id: number): Observable<DataPackage> {
     return this.http.delete<DataPackage>(`${this.comunidadesUrl}/${id}`)
   }

@@ -116,6 +116,11 @@ public class UsuarioPresenter {
         return Response.ok(usuarioService.findById(id));
     }
     
+    @GetMapping("/esCreador/{idUsuario}/{idComunidad}")
+    public ResponseEntity<Object> esCreador(@PathVariable Long idUsuario,@PathVariable Long idComunidad) {
+        return Response.ok(usuarioService.esCreador(idUsuario, idComunidad));
+    }
+
      @PostMapping("/gestionarSolicitudAmistad/{idEmisor}/{idReceptor}")
     public ResponseEntity<Object> gestionarSolicitudAmistad(@PathVariable Long idEmisor, @PathVariable Long idReceptor, @RequestParam boolean aceptada) {
         try {
