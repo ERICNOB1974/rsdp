@@ -21,6 +21,7 @@ import { PerfilComponent } from './perfil/perfil.component';
 import { PerfilDetailComponent } from './perfil/perfil-detail.component';
 import { CrearPublicacionComponent } from './publicaciones/crearPublicacion.component';
 import { PublicacionDetailComponent } from './publicaciones/publicacion-detail.component';
+import { CrearRutinaComponent } from './rutinas/crearRutina.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -31,6 +32,7 @@ export const routes: Routes = [
   { path: 'comunidades', component: ComunidadesComponent, canActivate: [AuthGuard] },
   { path: 'comunidades/crearComunidad', component: CrearComunidadComponent, canActivate: [AuthGuard] },
   { path: 'comunidades/:id', component: ComunidadDetailComponent, canActivate: [AuthGuard] },
+  { path: 'rutinas/crearRutina', component: CrearRutinaComponent},
   { path: 'sugerencias/amigos', component: SugerenciasAmigosComponent, canActivate: [AuthGuard] },
   { path: 'sugerencias/eventos', component: SugerenciasEventosComponent, canActivate: [AuthGuard] },
   { path: 'sugerencias/comunidades', component: SugerenciasComunidadesComponent, canActivate: [AuthGuard] },

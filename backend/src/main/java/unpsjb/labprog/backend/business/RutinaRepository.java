@@ -62,5 +62,5 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                         "ORDER BY popularidad DESC " +
                         "LIMIT 3")
         List<Rutina> sugerenciasDeRutinasBasadasEnComunidades(String nombreUsuario);
-
+        
 }

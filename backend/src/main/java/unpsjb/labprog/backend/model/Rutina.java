@@ -20,10 +20,5 @@ public class Rutina {
 
     private String nombre;
     private String descripcion;
-    private int duracionMinutosPorDia;
-    
-    private Dificultad dificultad;
-
-  
 
 }
