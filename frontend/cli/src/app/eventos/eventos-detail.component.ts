@@ -91,7 +91,7 @@ export class EventoDetailComponent implements OnInit {
 
 
   salir(): void {
-    this.eventoService.salir(this.evento.id, 9).subscribe(dataPackage => {
+    this.eventoService.salir(this.evento.id).subscribe(dataPackage => {
       let mensaje = dataPackage.message;
       this.snackBar.open(mensaje, 'Cerrar', {
         duration: 3000, // Duración del snackbar en milisegundos

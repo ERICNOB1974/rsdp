@@ -3,6 +3,7 @@ import { Observable, of } from 'rxjs';
 import { DataPackage } from '../data-package';
 import { HttpClient } from '@angular/common/http';
 import { Publicacion } from './publicacion';
+import { AuthService } from '../autenticacion/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,8 @@ export class PublicacionService {
   private publicacionsUrl = 'rest/publicacion';
 
   constructor(
-    private http: HttpClient
+    private http: HttpClient,
+    private authService: AuthService
   ) { }
 
   all(): Observable<DataPackage> {
@@ -24,8 +26,9 @@ export class PublicacionService {
   }
 
   saveConCreador(publicacion: Publicacion): Observable<DataPackage> {
+    const idUsuario = this.authService.getUsuarioId();
     return publicacion.id ? this.http.put<DataPackage>(` ${this.publicacionsUrl}/actualizar`, publicacion) :
-      this.http.post<DataPackage>(` ${this.publicacionsUrl}/crear/9888`, publicacion);
+      this.http.post<DataPackage>(` ${this.publicacionsUrl}/crear/${idUsuario}`, publicacion);
   }
 
 }
