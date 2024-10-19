@@ -10,14 +10,36 @@
     <img [src]="publicacion.file" alt="Imagen de la publicación" style="max-width: 400px; max-height: 400px;">
   </div>
 
-  <!-- Si el archivo es un video, lo mostramos -->
+  <!-- Si el archivo es un video, lo mostramos 
   <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
     <p><strong>Video:</strong></p>
     <video [src]="publicacion.file" controls style="max-width: 400px; max-height: 400px;"></video>
   </div>
+  -->
 
   <div class="heart-container">
     <div class="heart" (click)="toggleHeart()"></div>
+  </div>
+  
+  
+  <div class="comment-container">
+    <!-- Icono de comentario -->
+    <div class="comment-icon" *ngIf="!showInput" (click)="toggleComment()">
+      <img src="./comentario.png" alt="Agregar comentario" class="comment-image">
+      <!--
+      -->
+    </div>
+
+    <!-- Campo para agregar comentario -->
+    <div *ngIf="showInput">
+      <textarea [(ngModel)]="newComment" placeholder="Escribe tu comentario..."></textarea>
+      <button (click)="submitComment()">Agregar comentario</button>
+    </div>
+
+    <!-- Mostrar el comentario agregado -->
+    <div *ngIf="comment">
+      <p>Comentario: {{ comment }}</p>
+    </div>
   </div>
 
 </div>
