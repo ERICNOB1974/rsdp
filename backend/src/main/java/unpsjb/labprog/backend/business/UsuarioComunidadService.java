@@ -23,7 +23,6 @@ public class UsuarioComunidadService {
     @Autowired
     private NotificacionService notificacionService;
 
-
     public String solicitarIngreso(Long idUsuario, Long idComunidad) throws Exception {
         Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
         if (comunidadOpt.isEmpty()) {
@@ -36,7 +35,6 @@ public class UsuarioComunidadService {
         Comunidad comunidad = comunidadOpt.get();
         Usuario usuario = usuarioOpt.get();
 
-        
         // Verificar si el usuario ya es miembro de la comunidad
         if (usuarioRepository.esMiembro(idUsuario, idComunidad)) {
             throw new Exception("El usuario ya es miembro de la comunidad.");
@@ -166,7 +164,7 @@ public class UsuarioComunidadService {
             throw new Exception("La comunidad esta llena");
         }
         comunidadRepository.eliminarSolicitudIngreso(idUsuario, idComunidad);
-        comunidadRepository.nuevoMiembro(idComunidad,idUsuario,LocalDateTime.now());
+        comunidadRepository.nuevoMiembro(idComunidad, idUsuario, LocalDateTime.now());
         notificacionService.crearNotificacion(idUsuario, idComunidad, "ACEPTACION_PRIVADA", LocalDateTime.now());
 
         return "Solicitud de ingreso aceptada correctamente";
@@ -193,11 +191,15 @@ public class UsuarioComunidadService {
     }
 
     public String verEstado(Long idComunidad, Long idUsuario) {
-        if (usuarioRepository.esMiembro(idUsuario, idComunidad)) {
+        if (usuarioRepository.esMiembro(idUsuario, idComunidad)
+                || usuarioRepository.esAdministrador(idUsuario, idComunidad)) {
             return "Miembro";
         }
         if (usuarioRepository.solicitudIngresoExiste(idUsuario, idComunidad)) {
             return "Pendiente";
+        }
+        if (usuarioRepository.esCreador(idUsuario, idComunidad)) {
+            return "Creador";
         }
         return "Vacio";
     }

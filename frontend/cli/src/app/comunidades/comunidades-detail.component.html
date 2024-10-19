@@ -9,9 +9,15 @@
         <p><strong>Descripción:</strong> {{ comunidad.descripcion }}</p>
         <p><strong>Cantidad máxima de miembros:</strong> {{ comunidad.cantidadMaximaMiembros }}</p>
 
+        <div *ngIf="esCreador" class="alert alert-info text-center">
+          Eres el creador de esta comunidad.
+        </div>
+
         <!-- Botón de Inscribirse -->
-        <button (click)="ingresar()" class="btn btn-primary btn-block ingresar-button" [disabled]="!(inscribirseValid())">
-          {{ comunidad.esPrivada ? 'Solicitar ingreso' : 'Ingresar' }}
+        <button *ngIf="!esCreador" class="btn btn-primary btn-block ingresar-button"
+          [disabled]="!(inscribirseValid() || salirValid())" (click)="salirValid() ? salir() : ingresar()">
+          <!-- Mostrar texto según la funcionalidad -->
+          {{ salirValid() ? 'Abandonar comunidad' : (comunidad.esPrivada ? 'Solicitar ingreso' : 'Ingresar') }}
         </button>
 
         <!-- Botón de regresar -->
