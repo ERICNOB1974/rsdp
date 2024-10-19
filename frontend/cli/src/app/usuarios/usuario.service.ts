@@ -12,6 +12,7 @@ export class UsuarioService {
 
 
   private usuariosUrl = 'rest/usuarios';
+  private idUsuarioAutenticado = this.authService.getUsuarioId();
 
   constructor(
     private http: HttpClient,
@@ -63,5 +64,37 @@ export class UsuarioService {
     return usuario.id ? this.http.put<DataPackage>(` ${this.usuariosUrl}/actualizar`, usuario) :
       this.http.post<DataPackage>(` ${this.usuariosUrl}/create`, usuario);
   }
+
+
+  sonAmigos(idEmisor: number, idReceptor: number) :Observable<DataPackage>{
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/sonAmigos/${idEmisor}/${idReceptor}`);
+  }
+
+  verificarSolicitudAmistad(idEmisor: number, idReceptor: number) :Observable<DataPackage>{
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/solicitudAmistadExiste/${idEmisor}/${idReceptor}`);
+  }
+
+  gestionarSolicitudAmistad(idEmisor: number, idReceptor: number, aceptada: boolean) :Observable<DataPackage>{
+    const body ={}
+    return this.http.post<DataPackage>(`${this.usuariosUrl}/gestionarSolicitudAmistad/${idEmisor}/${idReceptor}?aceptada=${aceptada}`,body);
+  }
+
+
+  miembrosComunidad(idComunidad: number) :Observable<DataPackage>{
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/miembrosComunidad/${idComunidad}`);
+  }
+
+  administradoresComunidad(idComunidad: number) :Observable<DataPackage>{
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/administradoresComunidad/${idComunidad}`);
+  }
+  
+  getCreadorComunidad(idUsuario:number, idComunidad:number): Observable<DataPackage>{
+    return this.http.get<DataPackage>(` ${this.usuariosUrl}/esCreador/${idUsuario}/${idComunidad}`);
+  }
+
+
+
+
+
 
 }

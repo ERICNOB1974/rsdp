@@ -3,17 +3,18 @@ package unpsjb.labprog.backend.business;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import unpsjb.labprog.backend.model.Rutina;
 import unpsjb.labprog.backend.model.Usuario;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class ScoreAmigo {
-    private Usuario usuario;
+public class ScoreRutina {
+    private Rutina rutina;
     private Double score;
 
-    public ScoreAmigo(Usuario usuario, Double score) {
-        this.usuario = usuario;
+    public ScoreRutina(Rutina rutina, Double score) {
+        this.rutina = rutina;
         this.score = score;
     }
 }

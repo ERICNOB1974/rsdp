@@ -43,14 +43,6 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        boolean skipFilter = path.startsWith("/email/") || path.startsWith("/autenticacion/") || 
-                             path.startsWith("/usuarios/");
-        System.out.println("shouldNotFilter: " + path + " -> " + skipFilter);
-        return skipFilter;
-    }
     
 
 }
