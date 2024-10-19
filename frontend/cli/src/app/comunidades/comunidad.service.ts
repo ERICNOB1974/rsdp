@@ -98,6 +98,7 @@ export class ComunidadService {
   }
 
 
+
   remove(id: number): Observable<DataPackage> {
     return this.http.delete<DataPackage>(`${this.comunidadesUrl}/${id}`)
   }

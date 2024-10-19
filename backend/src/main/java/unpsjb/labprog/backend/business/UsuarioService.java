@@ -93,6 +93,10 @@ public class UsuarioService {
         return usuarioRepository.solicitudAmistadExiste(idEmisor, idReceptor);
     }
 
+    public boolean esCreador(Long idUsuario, Long idComunidad){
+        return usuarioRepository.esCreador(idUsuario, idComunidad);
+    }
+
     public Usuario findByNombreUsuario(String nombre) {
         return usuarioRepository.findByNombreUsuario(nombre).orElse(null);
     }

@@ -26,6 +26,7 @@ import { VerificarMailComponent } from './recuperar-contrasena/verificar-mail.co
 import { CambiarContrasenaComponent } from './recuperar-contrasena/cambiar-contrasena.component';
 import { ComunidadCreadorComponent } from './comunidades/comunidadCreador.component';
 import { EditarComunidadComponent } from './comunidades/editarComunidad.component';
+import { RutinasComponent } from './rutinas/rutinas.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
