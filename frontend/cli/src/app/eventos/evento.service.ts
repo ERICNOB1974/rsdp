@@ -32,16 +32,17 @@ export class EventoService {
   }
 
   saveConCreador(evento: Evento): Observable<DataPackage> {
-    const nombreUsuario = this.authService.getNombreUsuario(); 
-      if (evento.id) {
-        return this.http.put<DataPackage>(` ${this.eventosUrl}/actualizar`, evento);
-      } else {
-        const url = `${this.eventosUrl}/crear/${nombreUsuario}`;
-        return this.http.post<DataPackage>(url, evento);
-      }
+    const nombreUsuario = this.authService.getNombreUsuario();
+    if (evento.id) {
+      return this.http.put<DataPackage>(` ${this.eventosUrl}/actualizar`, evento);
+    } else {
+      const url = `${this.eventosUrl}/crear/${nombreUsuario}`;
+      return this.http.post<DataPackage>(url, evento);
+    }
   }
-
-  sugerencias(nombreUsuario: string): Observable<DataPackage> {
+  
+  sugerencias(): Observable<DataPackage> {
+    const nombreUsuario = this.authService.getNombreUsuario();
     return this.http.get<DataPackage>(` ${this.eventosUrl}/sugerencias/${nombreUsuario}`);
   }
 
@@ -50,8 +51,8 @@ export class EventoService {
   }
 
   inscribirse(idEvento: number): Observable<DataPackage> {
-    return this.http.post<DataPackage>(` ${this.eventosUrl}/inscribirse/${idEvento}/145764`, null);
-    //return this.http.post<DataPackage>(` ${this.eventosUrl}/inscribirse/${idEvento}/${idUsuario}`);
+    const idUsuario = this.authService.getUsuarioId();
+    return this.http.post<DataPackage>(` ${this.eventosUrl}/inscribirse/${idEvento}/${idUsuario}`, null);
   }
 
   participantesEnEvento(id: number): Observable<DataPackage> {
@@ -59,7 +60,8 @@ export class EventoService {
   }
 
   participa(idEvento: number): Observable<DataPackage> {
-    return this.http.get<DataPackage>(`${this.eventosUrl}/estaInscripto/facundo/${idEvento}`);
+    const nombreUsuario = this.authService.getNombreUsuario();
+    return this.http.get<DataPackage>(`${this.eventosUrl}/estaInscripto/${nombreUsuario}/${idEvento}`);
   }
 
   async obtenerUbicacion(latitud: number, longitud: number): Promise<string> {
@@ -78,9 +80,9 @@ export class EventoService {
       return 'Ubicación no disponible';
     }
   }
-  salir(idEvento: number, idUsuario: number): Observable<DataPackage> {
-    return this.http.get<DataPackage>(`${this.eventosUrl}/desinscribirse/${idEvento}/1883`);
-    //return this.http.get<DataPackage>(`${this.eventosUrl}/desinscribirse/${idEvento}/${idUsuario}`);
+  salir(idEvento: number): Observable<DataPackage> {
+    const idUsuario = this.authService.getUsuarioId();
+    return this.http.get<DataPackage>(`${this.eventosUrl}/desinscribirse/${idEvento}/${idUsuario}`);
   }
 
 }

@@ -36,7 +36,7 @@ export class ComunidadDetailComponent implements OnInit {
   }
 
   procesarEstado(): void {
-    this.comunidadService.estadoSolicitud(this.comunidad.id, 8483).subscribe(dataPackage => {
+    this.comunidadService.estadoSolicitud(this.comunidad.id).subscribe(dataPackage => {
       let estado = <String>dataPackage.data;
       console.log(estado);
       if (estado == "Vacio") {
@@ -98,7 +98,7 @@ export class ComunidadDetailComponent implements OnInit {
   ingresar(): void {
     //const idComunidad = this.route.snapshot.paramMap.get('id')!;
     //let mensaje = 'Solicitud enviada con exito';
-    this.usuarioService.solicitarIngresoAComunidad(this.comunidad.id, 8483).subscribe(dataPackage => {
+    this.usuarioService.solicitarIngresoAComunidad(this.comunidad.id).subscribe(dataPackage => {
       let mensaje = dataPackage.message;
       this.procesarEstado();
       this.snackBar.open(mensaje, 'Cerrar', {
@@ -109,7 +109,7 @@ export class ComunidadDetailComponent implements OnInit {
   }
 
   salir(): void {
-    this.comunidadService.salir(this.comunidad.id, 8483).subscribe(dataPackage => {
+    this.comunidadService.salir(this.comunidad.id).subscribe(dataPackage => {
       let mensaje = dataPackage.message;
       this.procesarEstado();
       this.snackBar.open(mensaje, 'Cerrar', {

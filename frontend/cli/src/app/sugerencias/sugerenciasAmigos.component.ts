@@ -29,7 +29,7 @@ export class SugerenciasAmigosComponent implements OnInit {
   }
 
   getUsuarios(): void {
-    this.usuarioService.sugerencias("usuario8").subscribe((dataPackage) => {
+    this.usuarioService.sugerencias().subscribe((dataPackage) => {
       const responseData = dataPackage.data;
       if (Array.isArray(responseData)) {
         this.results = responseData;
