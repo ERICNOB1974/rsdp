@@ -30,7 +30,7 @@ public class SpringSecurity {
                 .and()
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
-                                "/email/**",
+                                "/email/**", "/usuarios/**",
                                 "/usuarios/existeNombreUsuario/**", "/usuarios/existeMail/**","/autenticacion/**")
                         .permitAll() // Permitir todos los métodos
                         .anyRequest().authenticated()) // Autenticar cualquier otra solicitud
