@@ -149,6 +149,7 @@ export class AppComponent {
     this.idUsuarioAutenticado = Number(usuarioId);
     this.actualizarUbicacion();
     this.cargarNotificaciones();
+
   }
 
   navigateToMiPerfil() {
