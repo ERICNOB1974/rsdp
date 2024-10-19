@@ -23,8 +23,8 @@ export class AuthService {
     return this.http.post<DataPackage>(`${this.autenticacionUrl}/login`, usuario);
   }
 
-  cambiarContrasena(correo: string, contrasenaVieja: string, contrasenaNueva: string): Observable<DataPackage> {
-    const cambioContrasenaRequest = { correoElectronico: correo, contrasenaVieja: contrasenaVieja, contrasenaNueva: contrasenaNueva };
+  cambiarContrasena(correo: string, contrasenaNueva: string): Observable<DataPackage> {
+    const cambioContrasenaRequest = { correoElectronico: correo, contrasenaNueva: contrasenaNueva };
     return this.http.post<DataPackage>(`${this.autenticacionUrl}/cambiar-contrasena`, cambioContrasenaRequest);
   }
 

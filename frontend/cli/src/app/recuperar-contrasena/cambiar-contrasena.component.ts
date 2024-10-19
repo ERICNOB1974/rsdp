@@ -40,7 +40,6 @@ export class CambiarContrasenaComponent {
     ) {
         this.contrasenaForm = this.formBuilder.group(
             {
-                contrasenaActual: ['', Validators.required],
                 nuevaContrasena: [
                     '',
                     [
@@ -74,13 +73,13 @@ export class CambiarContrasenaComponent {
 
     onSubmit(): void {
         if (this.contrasenaForm.valid) {
-            const { contrasenaActual, nuevaContrasena } = this.contrasenaForm.value;
+            const { nuevaContrasena } = this.contrasenaForm.value;
 
             // Recuperar el correo desde localStorage
             const correo = localStorage.getItem('correoElectronico');
 
             if (correo) {
-                this.authService.cambiarContrasena(correo, contrasenaActual, nuevaContrasena).subscribe(
+                this.authService.cambiarContrasena(correo, nuevaContrasena).subscribe(
                     (dataPackage) => {
                         if (dataPackage.status == 200) {
                             alert('Contraseña cambiada exitosamente.');
