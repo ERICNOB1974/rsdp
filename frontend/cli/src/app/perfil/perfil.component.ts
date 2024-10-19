@@ -23,14 +23,17 @@ export class PerfilComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private usuarioService: UsuarioService,
-    private authService: AuthService,  // Inyecta el AuthService
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     // this.obtenerUsuarioAutenticado();
     this.idUsuario = Number(this.route.snapshot.paramMap.get('id'));
     this.cargarPerfil();  // Cargar la información del perfil
+    const usuarioId = this.authService.getUsuarioId();
+    this.idUsuarioAutenticado = Number(usuarioId);
+
   }
 
   // Obtén el usuario autenticado desde el AuthService
