@@ -49,6 +49,6 @@ export const routes: Routes = [
   { path: 'registro', component: RegistroComponent },
   { path: 'verificar-codigo', component: VerificarCodigoComponent },
   { path: 'verificar-mail', component: VerificarMailComponent },
-  { path: 'cambiar-contrasena', component: CambiarContrasenaComponent },
-  { path: '**', redirectTo: 'login' }
+  { path: 'cambiar-contrasena', component: CambiarContrasenaComponent }
+  //,{ path: '**', redirectTo: 'login' }
 ];

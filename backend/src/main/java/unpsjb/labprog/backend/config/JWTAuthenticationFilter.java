@@ -38,11 +38,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         } else {
             System.out.println("Token inválido o ausente");
         }
-        
-
         filterChain.doFilter(request, response);
     }
 
-    
 
 }

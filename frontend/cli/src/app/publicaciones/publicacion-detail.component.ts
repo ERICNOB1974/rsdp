@@ -5,12 +5,15 @@ import { CommonModule } from '@angular/common'; // Para permitir navegar de vuel
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PublicacionService } from './publicacion.service';
 import { Publicacion } from './publicacion';
+import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+
 
 
 @Component({
-  selector: 'app-evento-detail',
+  selector: 'app-publicaciones',
   templateUrl: './publicacion-detail.component.html',
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   styleUrls: ['./publicacion.css'],
   standalone: true
 })
@@ -28,7 +31,21 @@ export class PublicacionDetailComponent implements OnInit {
     private el: ElementRef,
     private renderer: Renderer2 // Renderer2 para modificar el DOM
   ) { }
+  showInput = false;  // Para mostrar el campo de texto
+  newComment = '';    // Almacena el comentario ingresado
+  comment = '';       // Comentario final mostrado
 
+  toggleComment() {
+    this.showInput = true;  // Muestra el campo de texto cuando se hace clic en el icono
+  }
+
+  submitComment() {
+    if (this.newComment.trim()) {
+      this.comment = this.newComment;
+      this.newComment = '';
+      this.showInput = false;  // Oculta el campo de texto después de agregar el comentario
+    }
+  }
 
   toggleHeart() {
     this.isActive = !this.isActive;
