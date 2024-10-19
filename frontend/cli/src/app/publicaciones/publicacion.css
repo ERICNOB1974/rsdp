@@ -1,0 +1,46 @@
+.heart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.heart {
+  width: 100px;
+  height: 100px;
+  position: relative;
+  transform: rotate(-45deg);
+  background-color: #ccc;
+  transition: background-color 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.heart::before,
+.heart::after {
+  content: '';
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background-color: #ccc;
+  border-radius: 50%;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.heart::before {
+  top: -50px;
+  left: 0;
+}
+
+.heart::after {
+  top: 0;
+  left: 50px;
+}
+
+.heart.active {
+  background-color: red;
+}
+
+.heart.active::before,
+.heart.active::after {
+  background-color: red;
+}
