@@ -27,7 +27,7 @@ export class SugerenciasComunidadesComponent implements OnInit {
 
 
     getEventos(): void {
-        this.comunidadService.sugerencias("usuario8").subscribe((dataPackage) => {
+        this.comunidadService.sugerencias().subscribe((dataPackage) => {
           const responseData = dataPackage.data;
           if (Array.isArray(responseData)) {
             this.results = responseData;
