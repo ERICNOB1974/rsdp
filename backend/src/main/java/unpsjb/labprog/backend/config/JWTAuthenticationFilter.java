@@ -38,19 +38,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         } else {
             System.out.println("Token inválido o ausente");
         }
-        
-
         filterChain.doFilter(request, response);
     }
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        boolean skipFilter = path.startsWith("/email/") || path.startsWith("/autenticacion/") || 
-                             path.startsWith("/usuarios/");
-        System.out.println("shouldNotFilter: " + path + " -> " + skipFilter);
-        return skipFilter;
-    }
-    
 
 }
