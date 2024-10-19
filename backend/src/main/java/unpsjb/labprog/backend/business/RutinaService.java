@@ -59,4 +59,6 @@ public class RutinaService {
         return rutinaRepository.sugerenciasDeRutinasBasadosEnEventosPorEtiqueta(nombreUsuario);
     }
 
+
+    
 }

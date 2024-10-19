@@ -7,13 +7,6 @@
         </mat-card-header>
 
         <mat-card-content>
-          <mat-form-field appearance="outline">
-            <mat-label>Contraseña actual</mat-label>
-            <input matInput type="password" formControlName="contrasenaActual" required>
-            <mat-error *ngIf="contrasenaForm.get('contrasenaActual')?.hasError('required')">
-              La contraseña actual es requerida
-            </mat-error>
-          </mat-form-field>
 
           <mat-form-field appearance="outline">
             <mat-label>Nueva contraseña</mat-label>

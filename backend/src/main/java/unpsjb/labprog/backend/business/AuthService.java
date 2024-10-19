@@ -55,10 +55,6 @@ public class AuthService {
         Usuario usuario = userRepository.findByCorreoElectronico(request.getCorreoElectronico())
                 .orElseThrow(() -> new Exception("Usuario no encontrado"));
 
-        if (!passwordEncoder.matches(request.getContrasenaVieja(), usuario.getContrasena())) {
-            throw new Exception("La contraseña actual no es correcta.");
-        }
-
         usuario.setContrasena(passwordEncoder.encode(request.getContrasenaNueva()));
         userRepository.save(usuario);
     }

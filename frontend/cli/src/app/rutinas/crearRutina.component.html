@@ -1,0 +1,151 @@
+<div class="container mt-5">
+  <div class="text-center mb-4">
+    <h2 class="display-6">Crear nueva rutina</h2>
+    <p class="lead">Añade días de trabajo o descanso</p>
+  </div>
+
+  <div class="card p-4 shadow mb-4">
+    <div class="form-group mb-3">
+      <label for="nombreRutina" class="form-label">Nombre de la rutina:</label>
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="nombreRutina"
+        placeholder="Ingrese el nombre de la rutina"
+        required
+      />
+    </div>
+
+    <div class="form-group mb-3">
+      <label for="descripcionRutina" class="form-label">Descripción:</label>
+      <textarea
+        class="form-control"
+        [(ngModel)]="descripcionRutina"
+        rows="3"
+        placeholder="Ingrese una descripción"
+      ></textarea>
+    </div>
+
+    <div class="d-flex gap-2">
+      <button class="btn btn-primary" (click)="agregarDiaTrabajo()">Añadir día de trabajo</button>
+      <button
+        class="btn btn-secondary"
+        (click)="agregarDiaDescanso()"
+        [disabled]="!esDiaDescansoHabilitado()"
+      >
+        Añadir día de descanso
+      </button>
+    </div>
+  </div>
+
+  <div *ngFor="let dia of dias; let i = index" class="card shadow-sm p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <h4 class="card-title mb-0">
+        {{ dia.tipo === 'descanso' ? 'Día de descanso' : 'Día ' + (i + 1) + ': ' + (dia.nombre || 'Sin nombre') }}
+      </h4>
+      <button class="btn btn-danger btn-sm" (click)="borrarDia(i)">✖</button>
+    </div>
+
+    <ng-container *ngIf="dia.tipo === 'trabajo'">
+      <div class="form-group mt-3">
+        <label class="form-label">Nombre del día:</label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="dia.nombre"
+          placeholder="Nombre del día"
+          required
+        />
+      </div>
+
+      <div class="form-group mt-2">
+        <label class="form-label">Descripción del día:</label>
+        <textarea
+          class="form-control"
+          [(ngModel)]="dia.descripcion"
+          rows="2"
+          placeholder="Descripción del día"
+        ></textarea>
+      </div>
+
+      <div class="d-flex gap-2 mt-3">
+        <button class="btn btn-info" (click)="agregarEjercicio(dia, 'resistencia')">
+          Añadir ejercicio de resistencia
+        </button>
+        <button class="btn btn-info" (click)="agregarEjercicio(dia, 'series')">
+          Añadir ejercicio de series
+        </button>
+      </div>
+
+      <div *ngFor="let ejercicio of dia.ejercicios; let j = index" class="card mt-3">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="card-subtitle mb-0">Ejercicio {{ j + 1 }}</h6>
+            <button class="btn btn-danger btn-sm" (click)="borrarEjercicio(dia, j)">✖</button>
+          </div>
+
+          <div class="row">
+            <div class="col-md-3 mb-2">
+              <label class="form-label">Nombre:</label>
+              <input
+                type="text"
+                class="form-control"
+                [(ngModel)]="ejercicio.nombre"
+                placeholder="Nombre del ejercicio"
+                required
+              />
+            </div>
+
+            <ng-container *ngIf="ejercicio.tipo === 'series'">
+              <div class="col-md-2 mb-2">
+                <label class="form-label">Series:</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="ejercicio.series"
+                  placeholder="Series"
+                  required
+                />
+              </div>
+              <div class="col-md-2 mb-2">
+                <label class="form-label">Repeticiones:</label>
+                <input
+                  type="number"
+                  class="form-control"
+                  [(ngModel)]="ejercicio.repeticiones"
+                  placeholder="Repeticiones"
+                  required
+                />
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="ejercicio.tipo === 'resistencia'">
+              <div class="col-md-2 mb-2">
+                <label class="form-label">Tiempo:</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [(ngModel)]="ejercicio.tiempo"
+                  placeholder="00:30, 1:00, etc."
+                  required
+                />
+              </div>
+            </ng-container>
+
+            <div class="col-md-5 mb-2">
+              <label class="form-label">Descripción:</label>
+              <textarea
+                class="form-control"
+                [(ngModel)]="ejercicio.descripcion"
+                rows="2"
+                placeholder="Descripción del ejercicio"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- <button class="btn btn-success w-100 mt-4" (click)="guardarRutina()">Guardar rutina</button> -->
+</div>
