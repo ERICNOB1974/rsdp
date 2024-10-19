@@ -1,0 +1,168 @@
+/* Estilos generales */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7fa;
+  }
+  
+  /* Contenedor principal */
+  .container {
+    width: 80%;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Título principal */
+  h1 {
+    font-size: 2.5rem;
+    text-align: center;
+    color: #4a90e2;
+    margin-bottom: 30px;
+  }
+  
+  /* Subtítulos */
+  h2 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #4a90e2;
+    padding-bottom: 10px;
+  }
+  
+  /* Botones */
+  button {
+    padding: 10px 20px;
+    background-color: #4a90e2;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #357ABD;
+  }
+  
+  /* Lista de miembros */
+  .members-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .members-list li {
+    padding: 10px;
+    background-color: #e9eff5;
+    border: 1px solid #d3dce5;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .members-list li .name {
+    font-size: 1.2rem;
+    color: #333;
+  }
+  
+  .members-list li .role {
+    font-size: 0.9rem;
+    color: #777;
+  }
+  
+  .members-list li .actions {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .members-list li button {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+  }
+  
+  /* Solicitudes pendientes */
+  .solicitudes-pendientes {
+    margin-top: 30px;
+  }
+  
+  .solicitudes-pendientes h2 {
+    font-size: 1.8rem;
+    color: #e57373;
+  }
+  
+  .solicitudes-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .solicitudes-list li {
+    padding: 10px;
+    background-color: #fce4ec;
+    border: 1px solid #f8bbd0;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .solicitudes-list li .name {
+    font-size: 1.2rem;
+    color: #333;
+  }
+  
+  .solicitudes-list li button {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    background-color: #e57373;
+  }
+  
+  .solicitudes-list li button:hover {
+    background-color: #d32f2f;
+  }
+  
+  /* Botón de eliminar comunidad */
+  .delete-button {
+    background-color: #ff5252;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 20px;
+    display: block;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .delete-button:hover {
+    background-color: #d32f2f;
+  }
+  
+  /* Responsivo */
+  @media (max-width: 768px) {
+    .container {
+      width: 100%;
+      padding: 15px;
+    }
+  
+    h1 {
+      font-size: 2rem;
+    }
+  
+    h2 {
+      font-size: 1.5rem;
+    }
+  
+    button {
+      font-size: 0.9rem;
+    }
+  }
+  

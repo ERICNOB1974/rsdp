@@ -145,9 +145,8 @@ export class AppComponent {
         this.esPantallaLogin = this.rutasSinSidebar.includes(event.urlAfterRedirects);
       }
     });
-    const usuarioId=this.authService.getUsuarioId();
-    this.idUsuarioAutenticado=Number(usuarioId);
-
+    const usuarioId = this.authService.getUsuarioId();
+    this.idUsuarioAutenticado = Number(usuarioId);
     this.actualizarUbicacion();
     this.cargarNotificaciones();
 
