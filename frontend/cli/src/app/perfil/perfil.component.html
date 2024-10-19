@@ -8,13 +8,34 @@
           <img src="path_to_avatar" alt="Foto de perfil" class="avatar" />
         </div>
         <div class="perfil-details">
-            <h2>{{ usuario.nombreUsuario }}</h2>
-            <p class="descripcion">{{ usuario.descripcion }}</p>
-            <button *ngIf="esMiPerfil" class="btn-editar" (click)="editarPerfil()">Editar perfil</button>
-
-            <!-- Si es el perfil de otra persona, muestra "Enviar solicitud de amistad" -->
-            <button *ngIf="!esMiPerfil" class="btn-solicitud" (click)="enviarSolicitudDeAmistad()">Enviar solicitud de amistad</button>
+          <h2>{{ usuario.nombreUsuario }}</h2>
+          <p class="descripcion">{{ usuario.descripcion }}</p>
+    
+          <!-- Si es mi perfil, muestra el botón de editar -->
+          <button *ngIf="esMiPerfil" class="btn-editar" (click)="editarPerfil()">Editar perfil</button>
+    
+          <!-- Si no es mi perfil -->
+          <div *ngIf="!esMiPerfil">
+            <!-- Caso 1: No son amigos, muestra botón para enviar solicitud -->
+            <button *ngIf="relacion === 'noSonAmigos'" class="btn-solicitud" (click)="enviarSolicitudDeAmistad()">
+              Enviar solicitud de amistad
+            </button>
+    
+            <!-- Caso 2: Ya son amigos, muestra texto de 'Amigos' (no clickeable) -->
+            <p *ngIf="relacion === 'amigos'" class="estado-amigos">Amigos</p>
+    
+            <!-- Caso 3: Solicitud ya enviada, muestra botón no clickeable -->
+            <button *ngIf="relacion === 'solicitudEnviada'" class="btn-solicitud" disabled>
+              Solicitud enviada
+            </button>
+    
+            <!-- Caso 4: Solicitud pendiente, muestra botones para aceptar/rechazar -->
+            <div *ngIf="relacion === 'solicitudPendiente'">
+                <button class="btn-aceptar" (click)="gestionarSolicitud(true)">Aceptar</button>
+                <button class="btn-rechazar" (click)="gestionarSolicitud(false)">Rechazar</button>
+              </div>
           </div>
+        </div>
       </div>
 
     <div class="perfil-publicaciones">
@@ -26,4 +47,3 @@
         </div>
     </div>
 </div>
-

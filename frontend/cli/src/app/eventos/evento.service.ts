@@ -85,4 +85,18 @@ export class EventoService {
     return this.http.get<DataPackage>(`${this.eventosUrl}/desinscribirse/${idEvento}/${idUsuario}`);
   }
 
+
+
+  disponibles(): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.eventosUrl}/disponibles`);
+  }
+
+
+  participaUsuario(idUsuario: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.eventosUrl}/participa/${idUsuario}`);
+  }
+
+  
+
+
 }
