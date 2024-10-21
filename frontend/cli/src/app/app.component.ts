@@ -146,7 +146,10 @@ export class AppComponent {
       }
     });
 
+    const usuarioId = this.authService.getUsuarioId();
+    this.idUsuarioAutenticado = Number(usuarioId);
     this.actualizarUbicacion();
+    this.cargarNotificaciones();
 
   }
 

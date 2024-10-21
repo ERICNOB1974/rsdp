@@ -3,24 +3,71 @@ import { HttpClient } from '@angular/common/http';
 import { Rutina } from './rutina';
 import { Dia } from './dia';
 import { Ejercicio } from './ejercicio';
+import { Observable, firstValueFrom } from 'rxjs';
+import { DataPackage } from '../data-package';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RutinaService {
-  private rutinasUrl = 'rest/rutinas'; 
 
-  constructor(private http: HttpClient) {}
+  private rutinasUrl = 'rest/rutinas';
 
-  guardarRutina(rutina: Rutina): Promise<string | undefined> {
-    return this.http.post<string>(`${this.rutinasUrl}`, rutina).toPromise();
+  constructor(private http: HttpClient) { }
+
+  async guardarRutina(rutina: Rutina): Promise<string> {
+    const response = await firstValueFrom(
+      this.http.post<string>(this.rutinasUrl, rutina)
+    );
+    if (!response) throw new Error('No se pudo guardar la rutina');
+    return response;
   }
 
-  guardarDia(rutinaId: string, dia: Dia, orden: number): Promise<string | undefined> {
-    return this.http.post<string>(`${this.rutinasUrl}/${rutinaId}/dias`, { ...dia, orden }).toPromise();
+  async guardarDia(dia: Dia, idRutina: string, orden: number): Promise<string> {
+    const response = await firstValueFrom(
+      this.http.post<string>(`${this.rutinasUrl}/dias/${idRutina}`, { dia, orden })
+    );
+    if (!response) throw new Error('No se pudo guardar el día');
+    return response;
   }
 
-  guardarEjercicio(diaId: string, ejercicio: Ejercicio, orden: number): Promise<void> {
-    return this.http.post<void>(`${this.rutinasUrl}/dias/${diaId}/ejercicios`, { ...ejercicio, orden }).toPromise();
+  async guardarEjercicioResistencia(
+    ejercicio: Ejercicio, idDia: string, orden: number, tiempo: string
+  ): Promise<void> {
+    if (ejercicio.nombre.nombre) {
+      ejercicio.nombre = ejercicio.nombre.nombre;
+    }
+    await firstValueFrom(
+      this.http.post(`${this.rutinasUrl}/dias/ejerciciosResistencia/${idDia}`, {
+        ejercicio,
+        orden,
+        tiempo
+      })
+    );
   }
+
+  async guardarEjercicioSeries(
+    ejercicio: Ejercicio, idDia: string, orden: number, series: number, repeticiones: number
+  ): Promise<void> {
+    if (ejercicio.nombre.nombre) {
+      ejercicio.nombre = ejercicio.nombre.nombre;
+    }
+    await firstValueFrom(
+      this.http.post(`${this.rutinasUrl}/dias/ejerciciosSeries/${idDia}`, {
+        ejercicio,
+        orden,
+        series,
+        repeticiones
+      })
+    );
+  }
+
+  search(searchTerm: string): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.rutinasUrl}/search/${searchTerm}`);
+  }
+
+  etiquetar(rutina: Rutina, idEtiqueta: number): Observable<DataPackage> {
+    return this.http.post<DataPackage>(` ${this.rutinasUrl}/etiquetar/${idEtiqueta}`, rutina );
+  }
+
 }
