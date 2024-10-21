@@ -1,45 +1,40 @@
 <div class="form-container">
   <h2>Detalles de la publicación</h2>
 
-  <!-- Muestra el texto de la publicación -->
   <p><strong>Texto:</strong> {{ publicacion.texto }}</p>
 
-  <!-- Si el archivo es una imagen, lo mostramos -->
   <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
     <p><strong>Imagen:</strong></p>
     <img [src]="publicacion.file" alt="Imagen de la publicación" style="max-width: 400px; max-height: 400px;">
   </div>
 
-  <!-- Si el archivo es un video, lo mostramos 
   <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
     <p><strong>Video:</strong></p>
     <video [src]="publicacion.file" controls style="max-width: 400px; max-height: 400px;"></video>
   </div>
-  -->
 
-  <div class="heart-container">
-    <div class="heart" (click)="toggleHeart()"></div>
+  <div class="interaction-container">
+    <div class="icons-container">
+      <div class="heart" (click)="toggleLike()" [ngClass]="{'liked': isLiked}">
+        <i class="fa" [ngClass]="isLiked ? 'fa-heart' : 'fa-heart-o'"></i>
+      </div>
+      <div class="comment-icon" (click)="showCommentInput = !showCommentInput">
+        <i class="fa fa-comment"></i>
+      </div>
+    </div>
+
+    <div *ngIf="showCommentInput" class="comment-input-container">
+      <textarea [(ngModel)]="comment" class="form-control" placeholder="Escribe tu comentario aquí"></textarea>
+      <button class="btn btn-success" (click)="submitComment()">Enviar</button>
+    </div>
+
+    <div class="comments-container">
+      <div *ngFor="let comment of displayedComments" class="comment">
+        <p>{{ comment }}</p>
+      </div>
+    </div>
+
+    <button *ngIf="displayedComments.length < comments.length" class="btn btn-primary mt-2"
+      (click)="loadMoreComments()">Ver más</button>
   </div>
-  
-  
-  <div class="comment-container">
-    <!-- Icono de comentario -->
-    <div class="comment-icon" *ngIf="!showInput" (click)="toggleComment()">
-      <img src="./comentario.png" alt="Agregar comentario" class="comment-image">
-      <!--
-      -->
-    </div>
-
-    <!-- Campo para agregar comentario -->
-    <div *ngIf="showInput">
-      <textarea [(ngModel)]="newComment" placeholder="Escribe tu comentario..."></textarea>
-      <button (click)="submitComment()">Agregar comentario</button>
-    </div>
-
-    <!-- Mostrar el comentario agregado -->
-    <div *ngIf="comment">
-      <p>Comentario: {{ comment }}</p>
-    </div>
-  </div>
-
 </div>
