@@ -53,9 +53,7 @@ export class EventoDetailComponent implements OnInit {
           this.evento.fechaHora = new Date(this.evento.fechaHora);
         }
         this.traerParticipantes();
-        this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
-          this.participa = <boolean><unknown>dataPackage.data;
-        });
+        this.checkParticipacion()
       });
     }
   }
@@ -74,8 +72,8 @@ export class EventoDetailComponent implements OnInit {
     this.location.back();
   }
   inscribirse(): void {
-    this.participa = true;
     if (this.inscribirseValid()) {
+      this.participa = true;
       this.eventoService.inscribirse(this.evento.id).subscribe(
         () => {
           this.snackBar.open('Inscripción guardada con éxito', 'Cerrar', {
@@ -99,7 +97,7 @@ export class EventoDetailComponent implements OnInit {
         this.snackBar.open(mensaje, 'Cerrar', {
           duration: 3000,
         });
-        this.participa = false; 
+        this.participa = false;
         this.evento.participantes--;
       },
       error => {

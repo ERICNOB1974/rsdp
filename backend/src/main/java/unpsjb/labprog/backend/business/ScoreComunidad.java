@@ -1,10 +1,5 @@
 package unpsjb.labprog.backend.business;
 
-import java.time.LocalDate;
-
-import org.springframework.data.neo4j.core.schema.Id;
-
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

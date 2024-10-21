@@ -30,7 +30,7 @@ export class UsuarioService {
 
   sugerencias(): Observable<DataPackage> {
     const nombreUsuario = this.authService.getNombreUsuario();
-    return this.http.get<DataPackage>(` ${this.usuariosUrl}/sugerencias/${nombreUsuario}`);
+    return this.http.get<DataPackage>(` ${this.usuariosUrl}/sugerencias-combinadas/${nombreUsuario}`);
   }
 
   search(searchTerm: string): Observable<DataPackage> {
@@ -50,8 +50,8 @@ export class UsuarioService {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/existeNombreUsuario/${nombreUsuario}`);
   }
 
-  obtenerAmigos(nombreUsuario: string): Observable<DataPackage> {
-    return this.http.get<DataPackage>(`${this.usuariosUrl}/amigos/${nombreUsuario}`);
+  obtenerAmigos(): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/amigos/${this.authService.getNombreUsuario()}`);
   }
 
   enviarSolicitudAmistad(idEmisor: number, idReceptor: number): Observable<DataPackage> {

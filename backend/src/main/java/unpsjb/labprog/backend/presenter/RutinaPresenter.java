@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.RutinaService;
-import unpsjb.labprog.backend.business.ScoreEvento;
 import unpsjb.labprog.backend.business.ScoreRutina;
 import unpsjb.labprog.backend.model.Rutina;
 

@@ -17,7 +17,6 @@ export class UbicacionService {
           (position) => {
             this.latitud = position.coords.latitude;
             this.longitud = position.coords.longitude;
-            console.log(`Latitud: ${this.latitud}, Longitud: ${this.longitud}`);
             resolve();
           },
           (error) => {

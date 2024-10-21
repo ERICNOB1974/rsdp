@@ -53,6 +53,8 @@ export class ComunidadDetailComponent implements OnInit {
       }
       if (estado == "Creador") {
         this.esCreador = true;
+        this.esParte = true; // El creador es parte de la comunidad por defecto
+
       }
     });
   }

@@ -7,6 +7,9 @@ import { PublicacionService } from './publicacion.service';
 import { Publicacion } from './publicacion';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { DataPackage } from '../data-package';
+import { Comentario } from './Comentario';
+import { AuthService } from '../autenticacion/auth.service';
 
 
 
@@ -29,39 +32,16 @@ export class PublicacionDetailComponent implements OnInit {
     private router: Router,
     private snackBar: MatSnackBar,
     private el: ElementRef,
-    private renderer: Renderer2 // Renderer2 para modificar el DOM
+    private authService: AuthService
+
   ) { }
-  /*   showInput = false;  // Para mostrar el campo de texto
-    newComment = '';    // Almacena el comentario ingresado
-    comment = '';       // Comentario final mostrado
-  
-    toggleComment() {
-      this.showInput = true;  // Muestra el campo de texto cuando se hace clic en el icono
-    }
-  
-    submitComment() {
-      if (this.newComment.trim()) {
-        this.comment = this.newComment;
-        this.newComment = '';
-        this.showInput = false;  // Oculta el campo de texto después de agregar el comentario
-      }
-    }
-  
-    toggleHeart() {
-      this.isActive = !this.isActive;
-      const heartElement = document.querySelector('.heart');
-      if (this.isActive) {
-        heartElement?.classList.add('active');
-      } else {
-        heartElement?.classList.remove('active');
-      }
-    } */
 
   isLiked: boolean = false;
   showCommentInput: boolean = false;
   comment: string = '';
   comments: string[] = [];
-  displayedComments: string[] = [];
+  comentarios: Comentario[] = [];
+  displayedComments: Comentario[] = [];
   commentsToShow: number = 4; // Número de comentarios a mostrar inicialmente
 
   toggleLike() {
@@ -75,32 +55,78 @@ export class PublicacionDetailComponent implements OnInit {
 
   submitComment() {
     if (this.comment.trim()) {
-      this.publicacionService.comentar(this.publicacion.id, this.comment).subscribe();
-      this.comment = ''; // Limpiar el campo de texto
-      this.showCommentInput = false; // Ocultar el campo de texto después de enviar
-      this.updateDisplayedComments(); // Actualizar los comentarios mostrados
+      this.publicacionService.comentar(this.publicacion.id, this.comment).subscribe(
+        (response: any) => {
+          // Asumiendo que el servidor devuelve el comentario creado
+          const usuarioId = this.authService.getUsuarioId();
+          const idUsuarioAutenticado = Number(usuarioId);
+          const newComment: Comentario = {
+            id: response.id, // Asegúrate de que el servidor devuelve el ID del nuevo comentario
+            texto: this.comment,
+            fecha: new Date(),
+            usuario: {
+              id: idUsuarioAutenticado /* ID del usuario actual */,
+              nombreUsuario: this.authService.getNombreUsuario() || '',
+              nombreReal: '',
+              fechaNacimiento: new Date(),
+              fechaDeCreacion: new Date(),
+              correoElectronico: '',
+              contrasena: '',
+              descripcion: '',
+              latitud: 0,
+              longitud: 0
+            }
+          };
+
+          // Añadir el nuevo comentario al principio de la lista
+          this.comentarios.unshift(newComment);
+
+          // Limpiar el campo de texto y ocultar el input
+          this.comment = '';
+          this.showCommentInput = false;
+
+          // Actualizar los comentarios mostrados
+          this.updateDisplayedComments();
+        },
+        error => {
+          console.error('Error al enviar el comentario:', error);
+          // Aquí puedes añadir lógica para manejar el error, como mostrar un mensaje al usuario
+        }
+      );
     }
   }
   ngOnInit(): void {
     this.getPublicacion();
-
+    // this.cargarComentarios();
     //this.traerParticipantes();
   }
+
+  cargarComentarios(): void {
+    this.publicacionService.comentarios(this.publicacion.id)
+      .subscribe((dataPackage: DataPackage) => {
+        console.log('Comentarios cargados:', this.comentarios);
+        if (dataPackage.status === 200) {
+          this.comentarios = dataPackage.data as Comentario[];
+        } else {
+          console.error('Error al cargar los comentarios:', dataPackage.message);
+        }
+      }, error => {
+        console.error('Error al comunicarse con el servicio de comentarios:', error);
+      });
+  }
+
+  getComentarios() {
+    return this.comentarios.slice(0, 5);
+  }
+
+  updateDisplayedComments() {
+    this.displayedComments = this.comentarios.slice(0, this.commentsToShow);
+  }
+
   loadMoreComments() {
-    this.commentsToShow += 4; // Aumentar el número de comentarios a mostrar
-    this.updateDisplayedComments(); // Actualizar los comentarios mostrados
+    this.commentsToShow += 4;
+    this.updateDisplayedComments();
   }
-
-  private updateDisplayedComments() {
-    //this.displayedComments = 
-    this.publicacionService.comentarios(this.publicacion.id).subscribe(dataPackage => {
-      const hola = dataPackage.data;
-    }); // Mostrar solo los comentarios que se deben mostrar
-
-    this.displayedComments = this.comments.slice(0, this.commentsToShow); // Mostrar solo los comentarios que se deben mostrar
-  }
-
-
   getPublicacion(): void {
     const id = this.route.snapshot.paramMap.get('id')!;
     if (!id || isNaN(parseInt(id, 10)) || id === 'new') {
@@ -113,6 +139,7 @@ export class PublicacionDetailComponent implements OnInit {
           this.isLiked = <boolean><unknown>dataPackage.data;
           console.log(this.isLiked);
         })
+        this.cargarComentarios();
       });
     }
   }
