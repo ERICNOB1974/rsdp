@@ -1,10 +1,12 @@
 package unpsjb.labprog.backend.business;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import unpsjb.labprog.backend.model.Evento;
@@ -150,5 +152,24 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "MATCH (e:Evento) WHERE id(e)=$idEvento " +
                         " MATCH (u)-[r:PARTICIPA_EN]->(e) DELETE r")
         void desinscribirse(Long idEvento, Long idUsuario);
+
+        @Query("MATCH (e:Evento)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta) " +
+                        "WITH e, collect(etiqueta.nombre) AS etiquetasEvento " +
+                        "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasEvento) " +
+                        "RETURN e")
+        List<Evento> eventosEtiquetas(@Param("etiquetas") List<String> etiquetas);
+
+        @Query("MATCH (e:Evento) WHERE toUpper(e.nombre) CONTAINS toUpper($nombre) RETURN e")
+        List<Evento> eventosNombre(String nombre);
+
+        @Query("MATCH (e:Evento) " +
+                        "WHERE e.fechaHora >= $fechaInicio " +
+                        "AND e.fechaHora <= $fechaFin " +
+                        "RETURN e")
+        List<Evento> eventosFecha(@Param("fechaInicio") ZonedDateTime fechaInicio,
+                        @Param("fechaFin") ZonedDateTime fechaFin);
+
+        @Query("MATCH (e:Evento) WHERE e.cantidadMaximaParticipantes <= $max AND e.cantidadMaximaParticipantes >= $min RETURN e")
+        List<Evento> eventosCantidadParticipantes(int min, int max);
 
 }

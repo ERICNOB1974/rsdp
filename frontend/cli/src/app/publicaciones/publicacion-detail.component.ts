@@ -75,18 +75,15 @@ export class PublicacionDetailComponent implements OnInit {
 
   submitComment() {
     if (this.comment.trim()) {
-      this.comments.push(this.comment);
+      this.publicacionService.comentar(this.publicacion.id, this.comment).subscribe();
       this.comment = ''; // Limpiar el campo de texto
       this.showCommentInput = false; // Ocultar el campo de texto después de enviar
       this.updateDisplayedComments(); // Actualizar los comentarios mostrados
-
     }
   }
   ngOnInit(): void {
     this.getPublicacion();
-    this.publicacionService.estaLikeada(this.publicacion.id).subscribe(dataPackage => {
-      this.isLiked = <boolean><unknown>dataPackage.data;
-    })
+
     //this.traerParticipantes();
   }
   loadMoreComments() {
@@ -95,6 +92,11 @@ export class PublicacionDetailComponent implements OnInit {
   }
 
   private updateDisplayedComments() {
+    //this.displayedComments = 
+    this.publicacionService.comentarios(this.publicacion.id).subscribe(dataPackage => {
+      const hola = dataPackage.data;
+    }); // Mostrar solo los comentarios que se deben mostrar
+
     this.displayedComments = this.comments.slice(0, this.commentsToShow); // Mostrar solo los comentarios que se deben mostrar
   }
 
@@ -107,8 +109,11 @@ export class PublicacionDetailComponent implements OnInit {
     else {
       this.publicacionService.get(parseInt(id)).subscribe(async dataPackage => {
         this.publicacion = <Publicacion>dataPackage.data;
+        this.publicacionService.estaLikeada(this.publicacion.id).subscribe(dataPackage => {
+          this.isLiked = <boolean><unknown>dataPackage.data;
+          console.log(this.isLiked);
+        })
       });
-      this.publicacionService.estaLikeada(this.publicacion.id).subscribe;
     }
   }
 
