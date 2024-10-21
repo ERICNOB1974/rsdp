@@ -68,7 +68,7 @@ export class ComunidadService {
 
   sugerencias(): Observable<DataPackage> {
     const nombreUsuario = this.authService.getNombreUsuario();
-    return this.http.get<DataPackage>(` ${this.comunidadesUrl}/sugerencias/${nombreUsuario}`);
+    return this.http.get<DataPackage>(` ${this.comunidadesUrl}/sugerencias-combinadas/${nombreUsuario}`);
   }
 
   participantesEncomunidad(id: number): Observable<DataPackage> {

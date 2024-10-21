@@ -53,12 +53,8 @@ export class EventoDetailComponent implements OnInit {
           this.evento.fechaHora = new Date(this.evento.fechaHora);
         }
         this.traerParticipantes();
-        this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
-          const participa = dataPackage.data;
-          if(participa){
-            this.participa=true;
-          }          
-        });
+        this.checkParticipacion()
+
       });
     }
   }
@@ -95,15 +91,16 @@ export class EventoDetailComponent implements OnInit {
         );
       }
     }
-    
-    salir(): void {
-      this.eventoService.salir(this.evento.id).subscribe(
-        dataPackage => {
-          let mensaje = dataPackage.message;
-          this.snackBar.open(mensaje, 'Cerrar', {
-            duration: 3000,
-          });
-          this.participa = false; 
+  }
+  salir(): void {
+    this.eventoService.salir(this.evento.id).subscribe(
+      dataPackage => {
+        let mensaje = dataPackage.message;
+        this.snackBar.open(mensaje, 'Cerrar', {
+          duration: 3000,
+        });
+        this.participa = false;
+
         this.evento.participantes--;
       },
       error => {
