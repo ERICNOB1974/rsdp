@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.RutinaService;
+import unpsjb.labprog.backend.business.ScoreEvento;
+import unpsjb.labprog.backend.business.ScoreRutina;
 import unpsjb.labprog.backend.model.Rutina;
 import unpsjb.labprog.backend.model.DTO.DiaDTO;
 import unpsjb.labprog.backend.model.DTO.EjercicioResistenciaDTO;
@@ -51,6 +52,11 @@ public class RutinaPresenter {
     @GetMapping("/findById/{id}")
     public ResponseEntity<Object> findById(@PathVariable Long id) {
         return Response.ok(rutinaService.findById(id));
+    }
+
+    @GetMapping("/{id}/ejercicios")
+    public ResponseEntity<Object> ejercicios(@PathVariable Long id) {
+        return Response.ok(rutinaService.ejercicios(id));
     }
 
     @GetMapping("/sugerenciasDeRutinasBasadasEnRutinas/{nombreUsuario}")
@@ -113,5 +119,52 @@ public class RutinaPresenter {
         }
     }
     
+    
+
+    @GetMapping("/sugerenciasDeRutinasBasadosEnEventos2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeRutinasBasadosEnEventos2(@PathVariable String nombreUsuario) {
+        List<ScoreRutina> sugerenciasDeRutinasBasadosEnEventos = rutinaService
+                .sugerenciasDeRutinasBasadosEnEventos2(nombreUsuario);
+        return Response.ok(sugerenciasDeRutinasBasadosEnEventos);
+    }
+
+        @GetMapping("/sugerenciasDeRutinasBasadosEnAmigos2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeRutinasBasadosEnAmigos2(@PathVariable String nombreUsuario) {
+        List<ScoreRutina> sugerenciasDeRutinasBasadosEnAmigos = rutinaService
+                .sugerenciasDeRutinasBasadosEnAmigos2(nombreUsuario);
+        return Response.ok(sugerenciasDeRutinasBasadosEnAmigos);
+    }
+
+    @GetMapping("/sugerenciasDeRutinasBasadosEnEventosPorEtiqueta2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeRutinasBasadosEnEventosPorEtiqueta2(@PathVariable String nombreUsuario) {
+        List<ScoreRutina> sugerenciasDeRutinasBasadosEnEventosPorEtiqueta = rutinaService
+                .sugerenciasDeRutinasBasadosEnEventosPorEtiqueta2(nombreUsuario);
+        return Response.ok(sugerenciasDeRutinasBasadosEnEventosPorEtiqueta);
+    }
+
+    @GetMapping("/sugerenciasDeRutinasBasadasEnRutinas2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeRutinasBasadasEnRutinas2(@PathVariable String nombreUsuario) {
+        List<ScoreRutina> sugerenciasDeRutinasBasadasEnRutinas = rutinaService
+                .sugerenciasDeRutinasBasadasEnRutinas2(nombreUsuario);
+        return Response.ok(sugerenciasDeRutinasBasadasEnRutinas);
+    }
+
+    @GetMapping("/sugerenciasDeRutinasBasadasEnComunidades2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeRutinasBasadasEnComunidades2(@PathVariable String nombreUsuario) {
+        List<ScoreRutina> sugerenciasDeRutinasBasadasEnComunidades = rutinaService
+                .sugerenciasDeRutinasBasadasEnComunidades2(nombreUsuario);
+        return Response.ok(sugerenciasDeRutinasBasadasEnComunidades);
+    }
+
+    @GetMapping("/sugerencias-combinadas/{nombreUsuario}")
+    public ResponseEntity<Object> obtenerSugerenciasCombinadas(@PathVariable String nombreUsuario) {
+        try {
+            return Response.ok(rutinaService.obtenerTodasLasSugerenciasDeRutinas(nombreUsuario));
+        } catch (Exception e) {
+            // Manejo del error
+            return Response.error("", "Error al obtener las sugerencias: " + e.getMessage());
+        }
+    }
+
     
 }

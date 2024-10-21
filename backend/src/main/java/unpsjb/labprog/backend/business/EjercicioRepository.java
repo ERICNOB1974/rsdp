@@ -23,4 +23,7 @@ public interface EjercicioRepository extends Neo4jRepository<Ejercicio, Long> {
     @Query("MATCH (e:Ejercicio) WHERE toUpper(e.nombre) = toUpper($nombre) RETURN e")
     Ejercicio findByNombre(String nombre);    
 
+    @Query("MATCH (r:Rutina)-[:TIENE]->(e:Ejercicio) WHERE id(r) = $idRutina RETURN e")
+    List<Ejercicio> findEjerciciosByRutinaId(Long idRutina);
+
 }

@@ -44,3 +44,46 @@
 .heart.active::after {
   background-color: red;
 }
+.comment-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.comment-icon {
+  cursor: pointer;
+}
+
+.comment-image {
+  width: 30px; /* Ajusta el tamaño de la imagen según sea necesario */
+  height: 30px;
+}
+
+textarea {
+  width: 300px;
+  height: 100px;
+  margin: 10px 0;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #218838;
+}
+
+p {
+  font-size: 18px;
+  margin-top: 10px;
+}

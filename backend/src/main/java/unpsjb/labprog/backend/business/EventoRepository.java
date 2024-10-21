@@ -1,10 +1,12 @@
 package unpsjb.labprog.backend.business;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import unpsjb.labprog.backend.model.Evento;
@@ -150,5 +152,134 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "MATCH (e:Evento) WHERE id(e)=$idEvento " +
                         " MATCH (u)-[r:PARTICIPA_EN]->(e) DELETE r")
         void desinscribirse(Long idEvento, Long idUsuario);
+
+        @Query("MATCH (e:Evento)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta) " +
+                        "WITH e, collect(etiqueta.nombre) AS etiquetasEvento " +
+                        "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasEvento) " +
+                        "RETURN e")
+        List<Evento> eventosEtiquetas(@Param("etiquetas") List<String> etiquetas);
+
+        @Query("MATCH (e:Evento) WHERE toUpper(e.nombre) CONTAINS toUpper($nombre) RETURN e")
+        List<Evento> eventosNombre(String nombre);
+
+        @Query("MATCH (e:Evento) " +
+                        "WHERE e.fechaHora >= $fechaInicio " +
+                        "AND e.fechaHora <= $fechaFin " +
+                        "RETURN e")
+        List<Evento> eventosFecha(@Param("fechaInicio") ZonedDateTime fechaInicio,
+                        @Param("fechaFin") ZonedDateTime fechaFin);
+
+        @Query("MATCH (e:Evento) WHERE e.cantidadMaximaParticipantes <= $max AND e.cantidadMaximaParticipantes >= $min RETURN e")
+        List<Evento> eventosCantidadParticipantes(int min, int max);
+
+
+        @Query("MATCH (e:Evento) " +
+                        "WHERE date(e.fechaHora) > date(datetime()) " +
+                        "AND NOT e.esPrivadoParaLaComunidad " +
+                        "WITH e, COUNT { (e)<-[:PARTICIPA_EN]-() } AS numParticipantes " +
+                        "WHERE numParticipantes < e.cantidadMaximaParticipantes " +
+                        "RETURN e ORDER BY e.fechaHora ASC")
+        List<Evento> disponibles();
+
+        @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento) " +
+                        "WHERE id(u) = $idUsuario " +
+                        "RETURN e ORDER BY e.fechaHora ASC")
+        List<Evento> participaUsuario(Long idUsuario);
+
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(e:Evento)-[:ETIQUETADO_CON]->(et:Etiqueta) "
+                        +
+                        "MATCH (evento:Evento)-[:ETIQUETADO_CON]->(et) " +
+                        "WHERE NOT (u)-[:PARTICIPA_EN]->(evento) " +
+                        "AND NOT (u)<-[:CREADO_POR]-(evento) " +
+                        "AND NOT evento.esPrivadoParaLaComunidad " +
+                        "WITH evento, COUNT(DISTINCT et) AS etiquetasComunes, " +
+                        "point({latitude: evento.latitud, longitude: evento.longitud}) AS eventoUbicacion, " +
+                        "point({latitude: u.latitud, longitude: u.longitud}) AS usuarioUbicacion " +
+                        "WITH evento, etiquetasComunes, eventoUbicacion, usuarioUbicacion, " +
+                        "point.distance(eventoUbicacion, usuarioUbicacion) AS distancia " + // Definir distancia
+                        "WITH evento, etiquetasComunes, distancia, " +
+                        "(etiquetasComunes/(distancia+1500000)) AS score " +
+                        "OPTIONAL MATCH (evento)<-[:PARTICIPA_EN]-(participante:Usuario) " +
+                        "WITH evento, score, COUNT(DISTINCT participante) AS cantidadParticipantes " +
+                        "WHERE cantidadParticipantes < evento.cantidadMaximaParticipantes " +
+                        "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
+                        "RETURN evento, score " +
+                        "ORDER BY score DESC, evento.fechaHora ASC " +
+                        "LIMIT 5")
+        List<ScoreEvento> sugerenciasDeEventosBasadosEnEventos2(String nombreUsuario);
+
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario) " +
+                        "MATCH (amigo)-[:PARTICIPA_EN]->(eventoAmigo:Evento) " +
+                        "MATCH (eventoAmigo)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta) " +
+                        "WHERE NOT eventoAmigo.esPrivadoParaLaComunidad " +
+                        "WITH etiqueta, u, COLLECT(DISTINCT amigo) AS amigos " +
+                        "MATCH (evento:Evento)-[:ETIQUETADO_CON]->(etiqueta) " +
+                        "WHERE NOT evento.esPrivadoParaLaComunidad " +
+                        "WITH evento, COUNT(etiqueta) AS coincidencias, amigos, " +
+                        "point({latitude: evento.latitud, longitude: evento.longitud}) AS eventoUbicacion, " +
+                        "point({latitude: u.latitud, longitude: u.longitud}) AS usuarioUbicacion, u " + // Pasamos 'u'
+                                                                                                        // aquí
+                        "WITH evento, coincidencias, amigos, eventoUbicacion, usuarioUbicacion, " +
+                        "point.distance(eventoUbicacion, usuarioUbicacion) AS distancia, u " + // No reintroducimos 'u'
+                        "OPTIONAL MATCH (evento)<-[:PARTICIPA_EN]-(amigo:Usuario) WHERE amigo IN amigos " +
+                        "WITH evento, coincidencias, COUNT(DISTINCT amigo) AS amigosParticipando, distancia, u, " +
+                        "(coincidencias/(distancia+1500000)) AS score " +
+                        "OPTIONAL MATCH (evento)<-[:PARTICIPA_EN]-(participante:Usuario) " +
+                        "WITH evento, score, amigosParticipando, coincidencias, COUNT(DISTINCT participante) AS cantidadParticipantes, u "
+                        +
+                        "WHERE cantidadParticipantes < evento.cantidadMaximaParticipantes " +
+                        "AND NOT (u)-[:PARTICIPA_EN]->(evento) " +
+                        "AND NOT (u)<-[:CREADO_POR]-(evento) " +
+                        "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
+                        "RETURN evento, score " +
+                        "ORDER BY score DESC, amigosParticipando DESC, evento.fechaHora ASC " +
+                        "LIMIT 3")
+        List<ScoreEvento> sugerenciasDeEventosBasadosEnAmigos2(String nombreUsuario);
+
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(com:Comunidad)-[:ETIQUETADA_CON]->(e:Etiqueta)<-[:ETIQUETADO_CON]-(evento:Evento) "
+                        +
+                        "WHERE NOT (u)-[:PARTICIPA_EN]->(evento) " +
+                        "AND NOT (u)<-[:CREADO_POR]-(evento) " +
+                        "AND NOT evento.esPrivadoParaLaComunidad " +
+                        "WITH evento, COUNT(DISTINCT e) AS etiquetasCompartidas, " +
+                        "point({latitude: evento.latitud, longitude: evento.longitud}) AS eventoUbicacion, " +
+                        "point({latitude: u.latitud, longitude: u.longitud}) AS usuarioUbicacion " +
+                        "WITH evento, etiquetasCompartidas, eventoUbicacion, usuarioUbicacion, " +
+                        "point.distance(eventoUbicacion, usuarioUbicacion) AS distancia " +
+                        "WITH evento, etiquetasCompartidas, distancia, " +
+                        "(etiquetasCompartidas/(distancia+1500000)) AS score " +
+                        "OPTIONAL MATCH (evento)<-[:PARTICIPA_EN]-(participante:Usuario) " + // Contamos la cantidad de
+                                                                                             // participantes
+                        "WITH evento, score, etiquetasCompartidas, COUNT(DISTINCT participante) AS cantidadParticipantes "
+                        +
+                        "WHERE cantidadParticipantes < evento.cantidadMaximaParticipantes " + // Verificamos que haya
+                                                                                              // cupos
+                                                                                              // disponibles
+                        "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
+                        "RETURN evento, score " +
+                        "ORDER BY score DESC, evento.fechaHora ASC " +
+                        "LIMIT 3")
+        List<ScoreEvento> sugerenciasDeEventosBasadosEnComunidades2(String nombreUsuario);
+
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:REALIZA_RUTINA]->(:Rutina)-[:ETIQUETADA_CON]->(e:Etiqueta)<-[:ETIQUETADO_CON]-(evento:Evento) "
+                        +
+                        "WHERE NOT (u)-[:PARTICIPA_EN]->(evento) " +
+                        "AND NOT (u)<-[:CREADO_POR]-(evento) " +
+                        "AND NOT evento.esPrivadoParaLaComunidad " +
+                        "WITH evento, COUNT(DISTINCT e) AS etiquetasCompartidas, " +
+                        "point({latitude: evento.latitud, longitude: evento.longitud}) AS eventoUbicacion, " +
+                        "point({latitude: u.latitud, longitude: u.longitud}) AS usuarioUbicacion " +
+                        "WITH evento, etiquetasCompartidas, eventoUbicacion, usuarioUbicacion, " +
+                        "point.distance(eventoUbicacion, usuarioUbicacion) AS distancia " + // Definir distancia
+                        "WITH evento, etiquetasCompartidas, distancia, " +
+                        "(etiquetasCompartidas/(distancia+1500000)) AS score " +
+                        "OPTIONAL MATCH (evento)<-[:PARTICIPA_EN]-(participante:Usuario) " +
+                        "WITH evento, score, COUNT(DISTINCT participante) AS cantidadParticipantes " +
+                        "WHERE cantidadParticipantes < evento.cantidadMaximaParticipantes " +
+                        "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
+                        "RETURN evento, score " +
+                        "ORDER BY score DESC, evento.fechaHora ASC " +
+                        "LIMIT 3")
+        List<ScoreEvento> sugerenciasDeEventosBasadosEnRutinas2(String nombreUsuario);
 
 }

@@ -1,8 +1,12 @@
 package unpsjb.labprog.backend.business;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,6 +74,7 @@ public class UsuarioService {
         return usuarioRepository.findById(id).orElse(null);
     }
 
+
     public Usuario findByNombreUsuario(String nombre) {
         return usuarioRepository.findByNombreUsuario(nombre).orElse(null);
     }
@@ -84,6 +89,94 @@ public class UsuarioService {
 
     public boolean existeNombreUsuario(String nombreUsuario){
         return usuarioRepository.existeNombreUsuario(nombreUsuario);
+    }
+
+
+
+
+
+    public boolean sonAmigos(Long idEmisor, Long idReceptor){
+        return usuarioRepository.sonAmigos(idEmisor, idReceptor);
+    }
+
+    public boolean solicitudAmistadExiste(Long idEmisor, Long idReceptor){
+        return usuarioRepository.solicitudAmistadExiste(idEmisor, idReceptor);
+    }
+
+    public boolean esCreador(Long idUsuario, Long idComunidad){
+        return usuarioRepository.esCreador(idUsuario, idComunidad);
+    }
+
+
+    public List<Usuario> miembrosComunidad(Long idComunidad) {
+        return usuarioRepository.miembros(idComunidad);
+    }
+
+    public List<Usuario> administradoresComunidad(Long idComunidad) {
+        return usuarioRepository.administradores(idComunidad);
+    }
+
+
+
+    public List<ScoreAmigo> sugerenciaDeAmigosBasadaEnAmigos2(String nombreUsuario) {
+        List<ScoreAmigo> sugerencias = usuarioRepository.sugerenciaDeAmigosBasadaEnAmigos2(nombreUsuario);
+        sugerencias.forEach(s -> System.out.println("Comunidad: " + s.getUsuario().getId() + ", Score: " + s.getScore()));
+        return sugerencias;
+    }
+
+
+    public List<ScoreAmigo> sugerenciasDeAmigosBasadosEnEventos2(String nombreUsuario) {
+        List<ScoreAmigo> sugerencias = usuarioRepository.sugerenciasDeAmigosBasadosEnEventos2(nombreUsuario);
+        sugerencias.forEach(s -> System.out.println("Comunidad: " + s.getUsuario().getId() + ", Score: " + s.getScore()));
+        return sugerencias;
+    }
+
+
+    public List<ScoreAmigo> sugerenciasDeAmigosBasadosEnComunidades2(String nombreUsuario) {
+        List<ScoreAmigo> sugerencias = usuarioRepository.sugerenciasDeAmigosBasadosEnComunidades2(nombreUsuario);
+        sugerencias.forEach(s -> System.out.println("Comunidad: " + s.getUsuario().getId() + ", Score: " + s.getScore()));
+        return sugerencias;
+    }
+
+    public List<ScoreAmigo> obtenerTodasLasSugerenciasDeAmigos(String nombreUsuario) {
+        // Obtener todas las sugerencias de comunidades desde las tres consultas
+        List<ScoreAmigo> sugerenciasAmigos = usuarioRepository.sugerenciaDeAmigosBasadaEnAmigos2(nombreUsuario);
+        List<ScoreAmigo> sugerenciasEventos = usuarioRepository.sugerenciasDeAmigosBasadosEnEventos2(nombreUsuario);
+        List<ScoreAmigo> sugerenciasComunidades = usuarioRepository.sugerenciasDeAmigosBasadosEnComunidades2(nombreUsuario);
+    
+        // Imprimir la cantidad de sugerencias para depuración
+        System.out.println("Sugerencias amigos: " + sugerenciasAmigos.size());
+        System.out.println("Sugerencias eventos: " + sugerenciasEventos.size());
+        System.out.println("Sugerencias comunidades: " + sugerenciasComunidades.size());
+    
+        // Combinar todas las sugerencias en una sola lista
+        List<ScoreAmigo> todasLasSugerencias = new ArrayList<>();
+        todasLasSugerencias.addAll(sugerenciasAmigos);
+        todasLasSugerencias.addAll(sugerenciasEventos);
+        todasLasSugerencias.addAll(sugerenciasComunidades);
+    
+        // Usar un Map para eliminar duplicados y sumar los scores de las comunidades
+        Map<Long, ScoreAmigo> mapaSugerencias = new HashMap<>();
+    
+        for (ScoreAmigo scoreAmigo : todasLasSugerencias) {
+            // Si la comunidad ya existe en el mapa, sumar los scores
+            mapaSugerencias.merge(scoreAmigo.getUsuario().getId(),
+                    new ScoreAmigo(scoreAmigo.getUsuario(), scoreAmigo.getScore()),
+                    (existente, nuevo) -> {
+                        double nuevoScore = existente.getScore() + nuevo.getScore(); // Sumar scores
+                        existente.setScore(nuevoScore); // Actualizar el score sumado
+                        return existente; // Retornar el objeto existente actualizado
+                    });
+        }
+    
+        // Obtener la lista de ScoreComunidad sin duplicados con los scores sumados
+        List<ScoreAmigo> listaSugerenciasSinDuplicados = new ArrayList<>(mapaSugerencias.values());
+    
+        // Ordenar la lista por score en orden descendente
+        listaSugerenciasSinDuplicados.sort((a, b) -> Double.compare(b.getScore(), a.getScore())); // Orden descendente
+    
+        // Retornar la lista ordenada
+        return listaSugerenciasSinDuplicados;
     }
 
 }

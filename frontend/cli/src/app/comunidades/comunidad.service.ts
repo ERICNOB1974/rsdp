@@ -11,8 +11,9 @@ import { AuthService } from '../autenticacion/auth.service';
 })
 export class ComunidadService {
   private comunidadesUrl = 'rest/comunidades';
+  idUsuario = this.authService.getUsuarioId();
 
-  constructor(private http: HttpClient, private authService: AuthService) {}
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
   async obtenerUbicacion(latitud: number, longitud: number): Promise<string> {
     try {
@@ -57,37 +58,70 @@ export class ComunidadService {
   }
 
   save(comunidad: Comunidad): Observable<DataPackage> {
-    const idUsuario = this.authService.getUsuarioId(); 
-
     if (comunidad.id) {
-      return this.http.put<DataPackage>(this.comunidadesUrl, comunidad);
+      return this.http.put<DataPackage>(`${this.comunidadesUrl}/actualizar`, comunidad);
     } else {
-      const url = `${this.comunidadesUrl}/create/${idUsuario}`;
+      const url = `${this.comunidadesUrl}/create/${this.idUsuario}`;
       return this.http.post<DataPackage>(url, comunidad);
     }
   }
-    
-  sugerencias(nombreUsuario: string): Observable<DataPackage> {
+
+  sugerencias(): Observable<DataPackage> {
+    const nombreUsuario = this.authService.getNombreUsuario();
     return this.http.get<DataPackage>(` ${this.comunidadesUrl}/sugerencias/${nombreUsuario}`);
   }
-  
+
   participantesEncomunidad(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/${id}/participantes`);
   }
   miembrosEnComunidad(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/${id}/miembros`);
   }
-    
-  etiquetar(comunidad: Comunidad, idEtiqueta:number): Observable<DataPackage> {
+
+  etiquetar(comunidad: Comunidad, idEtiqueta: number): Observable<DataPackage> {
     return this.http.post<DataPackage>(` ${this.comunidadesUrl}/etiquetar/${idEtiqueta}`, comunidad);
   }
 
-  estadoSolicitud(idComunidad: number, idUsuario: number): Observable<DataPackage> {
-    return this.http.get<DataPackage>(`${this.comunidadesUrl}/participa/${idComunidad}/${idUsuario}`);
+  estadoSolicitud(idComunidad: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.comunidadesUrl}/participa/${idComunidad}/${this.idUsuario}`);
   }
 
-  salir(idComunidad: number, idUsuario: number): Observable<DataPackage> {
-    return this.http.get<DataPackage>(`${this.comunidadesUrl}/salir/${idComunidad}/${idUsuario}`);
+  salir(idComunidad: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.comunidadesUrl}/salir/${idComunidad}/${this.idUsuario}`);
+  }
+
+
+  miembroUsuario(idUsuario: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.comunidadesUrl}/miembro/${idUsuario}`);
+  }
+
+  disponibles(): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.comunidadesUrl}/disponibles`);
+  }
+
+  otorgarRolAdministrador(idCreador: number, idMiembro: number,idComunidad: number): Observable<DataPackage> {
+    const body ={}
+    return this.http.post<DataPackage>(` ${this.comunidadesUrl}/otorgarRolAdministrador/${idCreador}/${idMiembro}/${idComunidad}`, body);
+  }
+
+  quitarRolAdministrador(idCreador: number, idMiembro: number,idComunidad: number): Observable<DataPackage> {
+    const body ={}
+    return this.http.post<DataPackage>(` ${this.comunidadesUrl}/quitarRolAdministrador/${idCreador}/${idMiembro}/${idComunidad}`, body);
+  }
+
+  
+  gestionarSolicitudIngreso(idSuperUsuario: number, idMiembro: number,idComunidad: number, aceptada: boolean): Observable<DataPackage> {
+    const body ={}
+    return this.http.post<DataPackage>(` ${this.comunidadesUrl}/gestionarSolicitudIngreso/${idSuperUsuario}/${idMiembro}/${idComunidad}?aceptada=${aceptada}`, body);
+  }
+
+  visualizarSolicitudes(idSuperUsuario:number, idComunidad:number): Observable<DataPackage>{
+    return this.http.get<DataPackage>(` ${this.comunidadesUrl}/visualizarSolicitudes/${idSuperUsuario}/${idComunidad}`);
+  }
+
+
+  remove(id: number): Observable<DataPackage> {
+    return this.http.delete<DataPackage>(`${this.comunidadesUrl}/${id}`)
   }
 
 }

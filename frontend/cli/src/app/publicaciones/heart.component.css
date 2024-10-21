@@ -1,0 +1,62 @@
+.form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.interaction-container {
+    margin-top: 20px;
+}
+
+.icons-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.heart, .comment-icon {
+    font-size: 24px;
+    cursor: pointer;
+    margin-right: 15px;
+}
+
+.heart {
+    color: gray;
+}
+
+.heart.liked {
+    color: red;
+}
+
+.comment-icon {
+    color: rgb(0, 0, 0);
+}
+
+.comment-input-container {
+    margin-bottom: 15px;
+}
+
+.comment-input-container textarea {
+    width: 100%;
+    height: 60px;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+.comment-input-container button {
+    display: block;
+    margin-left: auto;
+}
+
+.comments-container {
+    margin-top: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+}
