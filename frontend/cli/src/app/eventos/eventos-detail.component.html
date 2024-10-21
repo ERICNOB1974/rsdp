@@ -9,13 +9,11 @@
         <p><strong>Descripción:</strong> {{ evento.descripcion }}</p>
         <p><strong>Cantidad máxima de participantes:</strong> {{ evento.cantidadMaximaParticipantes }}</p>
 
-        <!-- Botón de Inscribirse -->
-        <button (click)="inscribirse()" class="btn btn-primary btn-block inscribirse-button"
-          [disabled]="(!inscribirseValid())">Inscribirse</button>
+
         <button class="btn btn-primary btn-block ingresar-button" [disabled]="!(inscribirseValid() || salirValid())"
           (click)="salirValid() ? salir() : inscribirse()">
           <!-- Mostrar texto según la funcionalidad -->
-          {{ salirValid() ? 'Abandonar comunidad' : ('Inscribirse') }}
+          {{ salirValid() ? 'Desinscribirse' : 'Inscribirse' }}
         </button>
         <!-- Botón de regresar -->
         <button (click)="goBack()" class="btn btn-secondary btn-block mt-2">Volver</button>
