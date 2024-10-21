@@ -198,7 +198,6 @@ export class AppComponent {
     this.ubicacionService.obtenerUbicacion().then(() => {
       const latitud = this.ubicacionService.getLatitud();
       const longitud = this.ubicacionService.getLongitud();
-      console.log(`Ubicación actual: ${latitud}, ${longitud}`);
     }).catch((error) => {
       console.error('Error obteniendo la ubicación:', error);
     });

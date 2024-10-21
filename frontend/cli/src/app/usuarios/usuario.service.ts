@@ -30,7 +30,7 @@ export class UsuarioService {
 
   sugerencias(): Observable<DataPackage> {
     const nombreUsuario = this.authService.getNombreUsuario();
-    return this.http.get<DataPackage>(` ${this.usuariosUrl}/sugerencias/${nombreUsuario}`);
+    return this.http.get<DataPackage>(` ${this.usuariosUrl}/sugerencias-combinadas/${nombreUsuario}`);
   }
 
   search(searchTerm: string): Observable<DataPackage> {
