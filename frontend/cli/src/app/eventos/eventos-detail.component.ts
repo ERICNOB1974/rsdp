@@ -17,7 +17,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class EventoDetailComponent implements OnInit {
 
   evento!: Evento; // Evento específico que se va a mostrar
-  participa: boolean= false;
+  participa: boolean = false;
   constructor(
     private route: ActivatedRoute, // Para obtener el parámetro de la URL
     private eventoService: EventoService, // Servicio para obtener el evento por ID
@@ -88,10 +88,10 @@ export class EventoDetailComponent implements OnInit {
             duration: 3000,
           });
         }
-        );
-      }
+      );
     }
   }
+  
   salir(): void {
     this.eventoService.salir(this.evento.id).subscribe(
       dataPackage => {
@@ -109,32 +109,32 @@ export class EventoDetailComponent implements OnInit {
           duration: 3000,
         });
       }
-      );
-    }
-    
-    checkParticipacion(): void {
-      this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
-        this.participa = <boolean><unknown>dataPackage.data;
-      });
-    }
-    
-    salirValid(): boolean {
-      return this.participa;
-    }
-    inscribirseValid(): boolean {
-      // Imprime si la cantidad de participantes es menor que la cantidad máxima de participantes
-      console.info("Cantidad de participantes es menor que la cantidad máxima: ", this.evento.participantes < this.evento.cantidadMaximaParticipantes);
-      
-      // Imprime si el usuario ya está participando
-      console.info("Usuario participa: ", this.participa);
-      
-      // Imprime la evaluación completa antes de retornarla
-      const esValido = (this.evento.participantes < this.evento.cantidadMaximaParticipantes) && !this.participa;
-      console.info("Resultado de inscribirseValid: ", esValido);
-      
-      // Retorna el resultado de la validación
-      return esValido;
+    );
   }
-  
+
+  checkParticipacion(): void {
+    this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
+      this.participa = <boolean><unknown>dataPackage.data;
+    });
+  }
+
+  salirValid(): boolean {
+    return this.participa;
+  }
+  inscribirseValid(): boolean {
+    // Imprime si la cantidad de participantes es menor que la cantidad máxima de participantes
+    console.info("Cantidad de participantes es menor que la cantidad máxima: ", this.evento.participantes < this.evento.cantidadMaximaParticipantes);
+
+    // Imprime si el usuario ya está participando
+    console.info("Usuario participa: ", this.participa);
+
+    // Imprime la evaluación completa antes de retornarla
+    const esValido = (this.evento.participantes < this.evento.cantidadMaximaParticipantes) && !this.participa;
+    console.info("Resultado de inscribirseValid: ", esValido);
+
+    // Retorna el resultado de la validación
+    return esValido;
+  }
+
 
 }
