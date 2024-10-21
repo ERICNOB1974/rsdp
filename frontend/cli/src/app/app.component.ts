@@ -105,6 +105,20 @@ import { DataPackage } from './data-package';
           </li>
           <li class="dropdown">
             <a class="dropdown-toggle">
+              <span class="icon"><i class="fa fa-users"></i></span>
+              <span class="text">Rutinas</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <a href="/rutinas">Listar Rutinas</a>
+              </li>
+              <li>
+                <a href="/rutinas/nueva">Nueva Rutina</a>
+              </li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a class="dropdown-toggle">
               <span class="icon"><i class="fa fa-bell"></i></span>
               <span class="text">Notificaciones</span>
             </a>

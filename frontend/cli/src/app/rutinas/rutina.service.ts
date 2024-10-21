@@ -41,5 +41,15 @@ export class RutinaService {
     return this.http.get<DataPackage>(`${this.rutinasUrl}/${id}/ejercicios`);
   }
 
+  obtenerDiasEnRutina(idRutina: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.rutinasUrl}/obtenerDiasEnRutina/${idRutina}`);
+  }
+
+  obtenerRutinasPorUsuario(idUsuario: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.rutinasUrl}/realiza/${idUsuario}`);
+  }
   
+  obtenerEtiquetasDeRutina(idRutina: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.rutinasUrl}/etiquetas/${idRutina}`);
+  }
 }
