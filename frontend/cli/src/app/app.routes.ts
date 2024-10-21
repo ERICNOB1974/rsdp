@@ -21,9 +21,9 @@ import { PerfilComponent } from './perfil/perfil.component';
 import { PerfilDetailComponent } from './perfil/perfil-detail.component';
 import { CrearPublicacionComponent } from './publicaciones/crearPublicacion.component';
 import { PublicacionDetailComponent } from './publicaciones/publicacion-detail.component';
-import { RutinasComponent } from './rutinas/rutinas.component';
 import { ComunidadCreadorComponent } from './comunidades/comunidadCreador.component';
 import { EditarComunidadComponent } from './comunidades/editarComunidad.component';
+import { RutinasEjercicioComponent } from './rutinas/rutinasEjercicio.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -44,7 +44,7 @@ export const routes: Routes = [
   { path: 'amigos', component: AmigosComponent, canActivate: [AuthGuard] },
   { path: 'perfil/:id', component: PerfilComponent, canActivate: [AuthGuard] },
   { path: 'perfilEditable/:id', component: PerfilDetailComponent, canActivate: [AuthGuard] },
-  { path: 'rutinasHacer/:id', component: RutinasComponent,  canActivate: [AuthGuard] },
+  { path: 'rutinasHacer/:id', component: RutinasEjercicioComponent,  canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent }, 
   { path: 'registro', component: RegistroComponent },
   { path: 'verificar-codigo', component: VerificarCodigoComponent },

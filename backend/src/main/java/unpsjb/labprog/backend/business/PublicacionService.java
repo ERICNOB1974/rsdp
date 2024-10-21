@@ -54,7 +54,7 @@ public class PublicacionService {
 
     public Long obtenerCreadorPublicacion(Long idPublicacion){
         return publicacionRepository.obtenerCreadorPublicacion(idPublicacion);
-      
+    }
     public List<Publicacion> publicacionesUsuario(Long usuarioId) {
         return publicacionRepository.publicacionesUsuario(usuarioId);
     }

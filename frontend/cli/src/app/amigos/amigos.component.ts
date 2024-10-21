@@ -17,7 +17,6 @@ export class AmigosComponent implements OnInit {
   amigos: Usuario[] = []; // Arreglo para almacenar los amigos
   solicitudes: Usuario[] = []; // Arreglo para almacenar las solicitudes
   mostrarAmigos: boolean = true; // Estado para mostrar amigos o solicitudes
-  nombreUsuario: string = 'lucas123'; // Cambia esto según tus necesidades
 
   constructor(private usuarioService: UsuarioService,
               private router: Router) {}
@@ -29,7 +28,7 @@ export class AmigosComponent implements OnInit {
 
   obtenerAmigos(): void {
       // Llama al servicio para obtener la lista de amigos
-      this.usuarioService.obtenerAmigos(this.nombreUsuario).subscribe((dataPackage: DataPackage) => {
+      this.usuarioService.obtenerAmigos().subscribe((dataPackage: DataPackage) => {
           if (dataPackage.status === 200) { // Verifica el estado
               this.amigos = dataPackage.data as Usuario[]; // Asegúrate de que data sea un arreglo de Usuario
           } else {
