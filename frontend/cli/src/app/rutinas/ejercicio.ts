@@ -1,8 +1,14 @@
+import { TipoEjercicio } from "./tipoEjercicio";
+
 export interface Ejercicio {
-    id: number;
-    nombre: string;
+    nombre: any;
+    repeticiones: number | null;
+    series: number | null;
+    tiempo: string;
     descripcion: string;
-    cantidadRepeticiones:number;
-    cantidadTiempo: number;
-    esPorTiempo: boolean;
-}
+    imagen: string;
+    tipo: 'resistencia' | 'series';
+    seriesValido?: boolean;
+    repeticionesValido?: boolean;
+    tiempoValido?: boolean;
+  }

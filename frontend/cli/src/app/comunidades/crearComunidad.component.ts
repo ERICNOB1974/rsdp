@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -10,8 +10,10 @@ import axios from 'axios'; // Asegúrate de tener axios instalado
 import { UbicacionService } from '../ubicacion.service'; // Importa tu servicio de ubicación
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
 import { Etiqueta } from '../etiqueta/etiqueta';
-import { catchError, debounceTime, distinctUntilChanged, filter, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { EtiquetaPopularidadDTO } from '../etiqueta/etiquetaPopularidadDTO';
+import { DataPackage } from '../data-package';
 import { forkJoin } from 'rxjs';
 
 @Component({
@@ -45,7 +47,8 @@ export class CrearComunidadComponent {
     private comunidadService: ComunidadService,
     private etiquetaService: EtiquetaService,
     private router: Router,
-    private ubicacionService: UbicacionService
+    private ubicacionService: UbicacionService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   goBack(): void {
@@ -71,76 +74,97 @@ export class CrearComunidadComponent {
     });
   }
 
-  saveComunidad(): void {
-    this.comunidadService.save(this.comunidad).subscribe(dataPackage => {
+  async saveComunidad(): Promise<void> {
+    try {
+      console.log(this.comunidad.latitud + " " + this.comunidad.longitud);
+      
+      // Guardar la comunidad y obtener su ID
+      const dataPackage = await firstValueFrom(this.comunidadService.save(this.comunidad));
       this.comunidad = <Comunidad>dataPackage.data;
+      
       this.messageToShow = '¡La comunidad se ha guardado exitosamente!';
       this.showMessage = true; // Mostrar el mensaje
       setTimeout(() => {
         this.showMessage = false;
       }, 10000);
-
-      const etiquetarRequests = this.etiquetasSeleccionadas.map(etiqueta => {
-        return this.comunidadService.etiquetar(this.comunidad, etiqueta.id);
-      });
   
-      // Usar forkJoin para esperar a que todas las etiquetas se guarden
-      forkJoin(etiquetarRequests).subscribe(() => {
-        location.reload(); // Ahora se recarga solo después de guardar las etiquetas
-      });
-    },
-      error => {
-        this.messageToShow = 'Ocurrió un error al guardar la comunidad.';
-        this.showMessage = true; // Mostrar el mensaje de error
-        setTimeout(() => {
-          this.showMessage = false;
-        }, 10000);
-      });
-
+      // Verificar y crear etiquetas si es necesario
+      for (const etiqueta of this.etiquetasSeleccionadas) {
+        const existe = await this.etiquetaService.verificarExistencia(etiqueta.nombre).toPromise();
+        let etiquetaFinal = etiqueta;
+  
+        if (!existe) {
+          const nuevaEtiqueta = { id: 0, nombre: etiqueta.nombre };
+          etiquetaFinal = await firstValueFrom(this.etiquetaService.crearEtiqueta(nuevaEtiqueta));
+        }
+  
+        // Realizar la etiquetación con la etiqueta final
+        await this.comunidadService.etiquetar(this.comunidad, etiquetaFinal.id).toPromise();
+      }
+  
+    } catch (error) {
+      this.messageToShow = 'Ocurrió un error al guardar la comunidad.';
+      this.showMessage = true; // Mostrar el mensaje de error
+      setTimeout(() => {
+        this.showMessage = false;
+      }, 10000);
+    }
+  
+    // Recargar la página una vez que todo esté completo
+    location.reload();
   }
+  
 
   cancel(): void {
     this.router.navigate(['/comunidades']);
   }
 
-
-  searchEtiqueta = (text$: Observable<string>): Observable<Etiqueta[]> =>
+  searchEtiqueta = (text$: Observable<string>): Observable<EtiquetaPopularidadDTO[]> =>
     text$.pipe(
       debounceTime(300),
       distinctUntilChanged(),
       filter(term => term.length >= 2),
       tap(() => (this.searching = true)),
-      switchMap((term) =>
-        this.etiquetaService
-          .search(term)
-          .pipe(
-            map((response) => response.data as Etiqueta[]),
-            catchError(() => {
-              this.searchFailed = true;
-              return of([]);
-            })
-          )
+      switchMap(term =>
+        this.etiquetaService.search(term).pipe(
+          map((response: DataPackage) => response.data as EtiquetaPopularidadDTO[]),
+          catchError(() => {
+            this.searchFailed = true;
+            return of([]);
+          })
+        )
       ),
       tap(() => (this.searching = false))
     );
 
   agregarEtiqueta(event: any): void {
     const etiqueta: Etiqueta = event.item;
-    if (!this.etiquetasSeleccionadas.some(e => e.id === etiqueta.id)) {
+
+    // Verificar por nombre en lugar de por ID para evitar duplicados
+    if (!this.etiquetasSeleccionadas.some(e => e.nombre === etiqueta.nombre)) {
       this.etiquetasSeleccionadas.push(etiqueta);
     }
+
+    // Restablecer la etiqueta seleccionada
     this.etiquetaSeleccionada = null;
+
+    // Forzar actualización visual del input
+    this.cdr.detectChanges();
   }
+
 
   eliminarEtiqueta(etiqueta: Etiqueta): void {
-    this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(e => e.id !== etiqueta.id);
+    this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(
+      e => e.nombre !== etiqueta.nombre
+    );
   }
 
-  resultFormatEtiqueta(value: Etiqueta) {
-    return value.nombre;
+
+  resultFormatEtiqueta(value: EtiquetaPopularidadDTO): string {
+    return `${value.nombre} (${value.popularidad})`;
   }
 
-  inputFormatEtiqueta(value: Etiqueta) {
+  inputFormatEtiqueta(value: Etiqueta): string {
     return value ? value.nombre : '';
   }
 
