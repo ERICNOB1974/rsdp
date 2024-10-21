@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms'; // Importa FormsModule
 import { UsuarioService } from '../usuarios/usuario.service';
 import { Usuario } from '../usuarios/usuario';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Publicacion } from '../publicaciones/publicacion';
 
 @Component({
   selector: 'app-perfil-detail',
@@ -55,4 +56,6 @@ export class PerfilDetailComponent implements OnInit {
   cancelar(): void {
     this.router.navigate(['/perfil']); // Navegar de vuelta si se cancela
   }
+
+
 }

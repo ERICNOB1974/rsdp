@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { DataPackage } from '../data-package';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Evento } from './evento';
 import axios from 'axios';
 import { AuthService } from '../autenticacion/auth.service';
@@ -40,7 +40,7 @@ export class EventoService {
       return this.http.post<DataPackage>(url, evento);
     }
   }
-  
+
   sugerencias(): Observable<DataPackage> {
     const nombreUsuario = this.authService.getNombreUsuario();
     return this.http.get<DataPackage>(` ${this.eventosUrl}/sugerencias/${nombreUsuario}`);
@@ -84,6 +84,36 @@ export class EventoService {
     const idUsuario = this.authService.getUsuarioId();
     return this.http.get<DataPackage>(`${this.eventosUrl}/desinscribirse/${idEvento}/${idUsuario}`);
   }
+  filtrarParticipantes(min: number, max: number): Observable<DataPackage> {
+    // Agregamos los parámetros min y max a la URL
+    return this.http.get<DataPackage>(`${this.eventosUrl}/filtrar/participantes`, {
+      params: {
+        min: min.toString(),  // Convertimos a string porque los parámetros de URL deben ser strings
+        max: max.toString()
+      }
+    });
+  }
+  filtrarNombre(nombre: string): Observable<DataPackage> {
+    // Agregamos los parámetros min y max a la URL
+    return this.http.get<DataPackage>(`${this.eventosUrl}/filtrar/nombre`, {
+      params: {
+        nombre
+      }
+    });
+  }
+  filtrarFecha(min: string, max: string): Observable<DataPackage> {
+    // Agregamos los parámetros min y max a la URL
+    return this.http.get<DataPackage>(`${this.eventosUrl}/filtrar/fecha`, {
+      params: {
+        min: min,
+        max:max
+      }
+    });
+  }
+  filtrarEtiqueta(etiquetas: string[]): Observable<DataPackage> {
+    const params = new HttpParams().set('etiquetas', etiquetas.join(',')); // convierte el array a una cadena separada por comas
+    return this.http.get<DataPackage>(`${this.eventosUrl}/filtrar/etiquetas`, { params });
+}
 
 
 

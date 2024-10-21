@@ -12,8 +12,7 @@ import { EtiquetaService } from '../etiqueta/etiqueta.service';
 import { Etiqueta } from '../etiqueta/etiqueta';
 import { catchError, debounceTime, distinctUntilChanged, filter, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
-
-
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-crear-comunidad',
@@ -81,8 +80,13 @@ export class CrearComunidadComponent {
         this.showMessage = false;
       }, 10000);
 
-      this.etiquetasSeleccionadas.forEach(etiqueta => {
-        this.comunidadService.etiquetar(this.comunidad, etiqueta.id).subscribe();
+      const etiquetarRequests = this.etiquetasSeleccionadas.map(etiqueta => {
+        return this.comunidadService.etiquetar(this.comunidad, etiqueta.id);
+      });
+  
+      // Usar forkJoin para esperar a que todas las etiquetas se guarden
+      forkJoin(etiquetarRequests).subscribe(() => {
+        location.reload(); // Ahora se recarga solo después de guardar las etiquetas
       });
     },
       error => {
@@ -92,8 +96,6 @@ export class CrearComunidadComponent {
           this.showMessage = false;
         }, 10000);
       });
-
-    location.reload();
 
   }
 
@@ -126,7 +128,6 @@ export class CrearComunidadComponent {
     const etiqueta: Etiqueta = event.item;
     if (!this.etiquetasSeleccionadas.some(e => e.id === etiqueta.id)) {
       this.etiquetasSeleccionadas.push(etiqueta);
-      console.info(etiqueta.nombre);
     }
     this.etiquetaSeleccionada = null;
   }
