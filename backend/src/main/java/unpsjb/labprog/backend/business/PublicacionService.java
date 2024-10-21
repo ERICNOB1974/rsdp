@@ -2,13 +2,16 @@ package unpsjb.labprog.backend.business;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import unpsjb.labprog.backend.model.Comentario;
 import unpsjb.labprog.backend.model.Publicacion;
+import unpsjb.labprog.backend.model.Usuario;
 
 @Service
 public class PublicacionService {
@@ -33,8 +36,9 @@ public class PublicacionService {
     }
 
     public void likear(Long usuarioId, Long publicacionId) {
-        Long idCreador= this.obtenerCreadorPublicacion(publicacionId);
-        notificacionService.crearNotificacionPublicacion(idCreador, usuarioId, publicacionId, "LIKE", LocalDateTime.now());
+        Long idCreador = this.obtenerCreadorPublicacion(publicacionId).getId();
+        notificacionService.crearNotificacionPublicacion(idCreador, usuarioId, publicacionId, "LIKE",
+                LocalDateTime.now());
         publicacionRepository.likear(usuarioId, publicacionId);
     }
 
@@ -47,15 +51,55 @@ public class PublicacionService {
     }
 
     public void comentar(Long usuarioId, Long publicacionId, String comentario) {
-        Long idCreador= this.obtenerCreadorPublicacion(publicacionId);
-        notificacionService.crearNotificacionPublicacion(idCreador, usuarioId, publicacionId, "COMENTARIO", LocalDateTime.now());
+        Long idCreador = this.obtenerCreadorPublicacion(publicacionId).getId();
+        notificacionService.crearNotificacionPublicacion(idCreador, usuarioId, publicacionId, "COMENTARIO",
+                LocalDateTime.now());
         publicacionRepository.comentar(usuarioId, publicacionId, comentario, ZonedDateTime.now());
     }
 
-    public Long obtenerCreadorPublicacion(Long idPublicacion){
-        return publicacionRepository.obtenerCreadorPublicacion(idPublicacion);
-      
+    public Usuario obtenerCreadorPublicacion(Long idPublicacion) {
+        return usuarioRepository.publicadoPor(idPublicacion);
+    }
+
     public List<Publicacion> publicacionesUsuario(Long usuarioId) {
         return publicacionRepository.publicacionesUsuario(usuarioId);
     }
+
+    public List<Publicacion> publicacionesAmigos(Long usuarioId) {
+        return publicacionRepository.publicacionesAmigosUsuario(usuarioId);
+    }
+
+    public List<Comentario> obtenerComentariosPorPublicacion(Long usuarioId) throws Exception {
+        List<Long> comentariosId = publicacionRepository.idComentarios(usuarioId);
+
+        List<Comentario> comentarios = new ArrayList<>();
+        for (Long id : comentariosId) {
+            Comentario comentario = obtenerComentariosPorId(id);
+            if (comentario != null) {
+                comentarios.add(comentario);
+            }
+        }
+        // Collections.sort(comentarios, Collections.reverseOrder());
+
+        return comentarios;
+    }
+
+    private Comentario obtenerComentariosPorId(Long id) throws Exception {
+        String texto = publicacionRepository.findTextoById(id);
+        ZonedDateTime fecha = publicacionRepository.findFechaById(id);
+        Usuario usuario = usuarioRepository.findUsuarioById(id);
+        /// Usuario u = usuarioRepository.findById(usuario).get();
+        if (texto == null || fecha == null || usuario == null) {
+            throw new Exception("Comentario no encontrado con ID: " + id);
+        }
+
+        // Construir el objeto Notificacion
+        Comentario comentario = new Comentario();
+        comentario.setTexto(texto);
+        comentario.setFecha(fecha);
+        comentario.setUsuario(usuario);
+
+        return comentario;
+    }
+
 }

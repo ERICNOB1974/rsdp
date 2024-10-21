@@ -45,10 +45,17 @@ export class PublicacionService {
     return this.http.post<DataPackage>(` ${this.publicacionsUrl}/comentar/${this.authService.getUsuarioId()}/${idPublicacion}`, comentario);
   }
   comentarios(idPublicacion:number) {
-    return this.http.get<DataPackage>(` ${this.publicacionsUrl}/comentarios/${this.authService.getUsuarioId()}/${idPublicacion}`);
+    return this.http.get<DataPackage>(` ${this.publicacionsUrl}/comentarios/${idPublicacion}`);
   }
   publicaciones(idUsuario: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicaciones/usuario/${idUsuario}`);
+  }
+  publicacionesAmigos(idUsuario: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicaciones/amigos/usuario/${idUsuario}`);
+  }
+
+  publicadoPor(idPublicacion: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.publicacionsUrl}/usuarioPublicador/${idPublicacion}`);
   }
 
 

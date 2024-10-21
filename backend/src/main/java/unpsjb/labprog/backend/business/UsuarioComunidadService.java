@@ -213,6 +213,9 @@ public class UsuarioComunidadService {
         if (usuarioRepository.solicitudIngresoExiste(idUsuario, idComunidad)) {
             return "Pendiente";
         }
+        if (usuarioRepository.esCreador(idUsuario, idComunidad)) {
+            return "Creador";
+        }
         return "Vacio";
     }
 
