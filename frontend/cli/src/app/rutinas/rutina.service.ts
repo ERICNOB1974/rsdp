@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { DataPackage } from '../data-package';
 import { HttpClient } from '@angular/common/http';
 import { Rutina } from './rutina';
-import { Observable, firstValueFrom } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { DataPackage } from '../data-package';
+import { Ejercicio } from './ejercicio';
+import { Dia } from './dia';
 
 @Injectable({
   providedIn: 'root'
@@ -70,11 +71,6 @@ export class RutinaService {
     return this.http.post<DataPackage>(` ${this.rutinasUrl}/etiquetar/${idEtiqueta}`, rutina );
   }
 
-  save(rutina: Rutina): Observable<DataPackage> {
-    return rutina.id ? this.http.put<DataPackage>(` ${this.rutinasUrl}/actualizar`, rutina) :
-      this.http.post<DataPackage>(` ${this.rutinasUrl}/create`, rutina);
-  }
-
   sugerencias(nombreUsuario: string): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.rutinasUrl}/sugerencias/${nombreUsuario}`);
   }
@@ -85,6 +81,10 @@ export class RutinaService {
 
   get(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.rutinasUrl}/findById/${id}`);
+  }
+
+  getEjerciciosDeRutina(id: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.rutinasUrl}/${id}/ejercicios`);
   }
 
 }

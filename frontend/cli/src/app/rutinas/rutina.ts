@@ -1,7 +1,6 @@
-import { Ejercicio } from "./ejercicio";
+import { Dia } from "./dia";
 
 export interface Rutina {
-    id: number;
     nombre: string;
     descripcion: string;
     dias?: Dia[];

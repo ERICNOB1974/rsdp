@@ -1,9 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, NgModule } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, FormsModule, NgModel, ReactiveFormsModule } from '@angular/forms';
-import { Dia } from './dia';
 import { Ejercicio } from './ejercicio';
-import { TipoEjercicio } from './tipoEjercicio';
 import { RutinaService } from './rutina.service';
 import { Rutina } from './rutina';
 import { Observable, catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom, map, of, switchMap, tap } from 'rxjs';
@@ -12,6 +10,8 @@ import { EtiquetaService } from '../etiqueta/etiqueta.service';
 import { Etiqueta } from '../etiqueta/etiqueta';
 import { DataPackage } from '../data-package';
 import { EtiquetaPopularidadDTO } from '../etiqueta/etiquetaPopularidadDTO';
+import { Dia } from './dia';
+import { TipoEjercicio } from './tipoEjercicio';
 
 @Component({
   selector: 'app-crearRutina',
