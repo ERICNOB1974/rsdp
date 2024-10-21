@@ -50,8 +50,8 @@ export class UsuarioService {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/existeNombreUsuario/${nombreUsuario}`);
   }
 
-  obtenerAmigos(nombreUsuario: string): Observable<DataPackage> {
-    return this.http.get<DataPackage>(`${this.usuariosUrl}/amigos/${nombreUsuario}`);
+  obtenerAmigos(): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/amigos/${this.authService.getNombreUsuario()}`);
   }
 
   enviarSolicitudAmistad(idEmisor: number, idReceptor: number): Observable<DataPackage> {

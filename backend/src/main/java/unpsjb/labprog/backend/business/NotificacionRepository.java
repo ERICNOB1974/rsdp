@@ -11,10 +11,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NotificacionRepository extends Neo4jRepository<Notificacion, Long> {
 
-  
     @Query("MATCH (u:Usuario)<-[n:NOTIFICACION]-(notificacion) WHERE id(u) = $usuarioId RETURN id(n) AS notificacionId")
     List<Long> findNotificacionIdsByUsuario(@Param("usuarioId") Long usuarioId);
-    
 
     @Query("MATCH ()-[n:NOTIFICACION]->() WHERE id(n) = $id RETURN n.tipo AS tipo")
     String findTipoById(@Param("id") Long id);
@@ -33,7 +31,7 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
                 MATCH (entidad) WHERE id(entidad)=$idEntidad
                 WITH u, entidad,
                 CASE
-                    WHEN entidad:Evento THEN 
+                    WHEN entidad:Evento THEN
                         CASE
                             WHEN $tipo = 'RECORDATORIO_EVENTO_PROXIMO' THEN 'Evento proximo: '+ entidad.nombre + entidad.fechaHora
                             WHEN $tipo = 'INSCRIPCION_A_EVENTO' THEN 'Inscripción al evento: ' + entidad.nombre
@@ -45,7 +43,7 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
                             WHEN $tipo = 'SOLICITUD_ACEPTADA' THEN entidad.nombreUsuario + ' ha aceptado tu solicitud de amistad'
                             ELSE 'Notificación de usuario'
                         END
-                    WHEN entidad:Comunidad THEN 
+                    WHEN entidad:Comunidad THEN
                         CASE
                             WHEN $tipo = 'ACEPTACION_PRIVADA' THEN 'Has sido aceptado en la comunidad: '+ entidad.nombre
                             WHEN $tipo = 'UNION_PUBLICA' THEN 'Te has unido a la comunidad: ' + entidad.nombre
@@ -58,29 +56,40 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
     void crearNotificacion(Long idUsuario, Long idEntidad, String tipo, LocalDateTime fecha);
 
     @Query("""
+        MATCH (u:Usuario) WHERE id(u)=$idUsuarioReceptor
+        MATCH (u2:Usuario) WHERE id(u2)=$idUsuarioEmisor
+        MATCH (entidad) WHERE id(entidad)=$idEntidad
+        WITH u, u2, entidad
+        WITH u, u2, entidad,
+        CASE
+            WHEN $tipo = 'LIKE' THEN u2.nombreUsuario + ' le ha dado like a tu publicación: ' + id(entidad)
+            WHEN $tipo = 'COMENTARIO' THEN u2.nombreUsuario + 'ha hecho un comentario en tu publicación: '+ id(entidad) 
+            ELSE 'Notificación de publicación'
+        END AS mensaje
+        CREATE (u)<-[:NOTIFICACION {
+            tipo: $tipo,
+            mensaje: mensaje,
+            fecha: $fecha,
+            entidadId: id(entidad)
+        }]-(entidad)
+    """)
+    void crearNotificacionPublicacion(Long idUsuarioReceptor, Long idUsuarioEmisor, Long idEntidad, String tipo, LocalDateTime fecha);
+    
+    
+
+    @Query("""
                 MATCH (u:Usuario)-[n:NOTIFICACION]-(e:Usuario)
                 WHERE id(u) = $idReceptor AND id(e) = $idEmisor AND n.tipo = 'SOLICITUD_ENTRANTE'
                 DELETE n
             """)
     void eliminarNotificacion(Long idReceptor, Long idEmisor, String tipo);
 
-
     @Query("""
-        MATCH (u:Usuario) WHERE id(u)=$idUsuarioReceptor
-        MATCH (u2:Usuario) WHERE id(u2)=$idUsuarioEmisor
-        MATCH (entidad) WHERE id(entidad)=$idEntidad
-        WITH u, u2, entidad,
-        CASE
-            WHEN entidad:Publicacion THEN 
-                CASE
-                    WHEN $tipo = 'LIKE' THEN u2.nombreUsuario + ' le ha dado like a tu publicacion '+ entidad.id
-                    WHEN $tipo = 'COMENTARIO' THEN u2.nombreUsuario + ' ha hecho un comentario en tu publicacion ' + entidad.id
-                    ELSE 'Notificacion de publicacion'
-                END
-            ELSE 'Notificación'
-        END AS mensaje
-        CREATE (u)<-[:NOTIFICACION {tipo: $tipo, mensaje: mensaje, fecha: $fecha, entidadId: id(entidad)}]-(entidad)
-    """)
-    void crearNotificacionPublicacion(Long idUsuarioReceptor, Long idUsuarioEmisor, Long idEntidad, String tipo, LocalDateTime fecha);
+                MATCH (u:Usuario) WHERE id(u)=$idUsuarioReceptor
+                MATCH (entidad) WHERE id(entidad)=$idEntidad
+                CREATE (u)<-[:NOTIFICACION {tipo: $tipo, mensaje: 'Mensaje de prueba', fecha: $fecha, entidadId: id(entidad)}]-(entidad)
+            """)
+    void crearNotificacionPrueba(Long idUsuarioReceptor, Long usuarioEmisor, Long idEntidad, String tipo,
+            LocalDateTime fecha);
 
 }
