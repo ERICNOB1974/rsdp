@@ -63,4 +63,24 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
                 DELETE n
             """)
     void eliminarNotificacion(Long idReceptor, Long idEmisor, String tipo);
+
+
+    @Query("""
+        MATCH (u:Usuario) WHERE id(u)=$idUsuarioReceptor
+        MATCH (u2:Usuario) WHERE id(u2)=$idUsuarioEmisor
+        MATCH (entidad) WHERE id(entidad)=$idEntidad
+        WITH u, u2, entidad,
+        CASE
+            WHEN entidad:Publicacion THEN 
+                CASE
+                    WHEN $tipo = 'LIKE' THEN u2.nombreUsuario + ' le ha dado like a tu publicacion '+ entidad.id
+                    WHEN $tipo = 'COMENTARIO' THEN u2.nombreUsuario + ' ha hecho un comentario en tu publicacion ' + entidad.id
+                    ELSE 'Notificacion de publicacion'
+                END
+            ELSE 'Notificación'
+        END AS mensaje
+        CREATE (u)<-[:NOTIFICACION {tipo: $tipo, mensaje: mensaje, fecha: $fecha, entidadId: id(entidad)}]-(entidad)
+    """)
+    void crearNotificacionPublicacion(Long idUsuarioReceptor, Long idUsuarioEmisor, Long idEntidad, String tipo, LocalDateTime fecha);
+
 }
