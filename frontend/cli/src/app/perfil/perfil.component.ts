@@ -146,7 +146,7 @@ export class PerfilComponent implements OnInit {
       }
     });
   }
-}
+
 
 
   gestionarSolicitud(aceptar: boolean): void {
