@@ -21,7 +21,7 @@ public class InscripcionEventoService {
     @Autowired
     private NotificacionService notificacionService;
 
-    public String inscribirse(Long idUsuario, Long idEvento) {
+    public String inscribirse(Long idEvento, Long idUsuario) {
         Optional<Evento> evento = eventoRepository.findById(idEvento);
         if (evento.get().getCantidadMaximaParticipantes() == eventoRepository.participantesDeEvento(idEvento)) {
             return "No se registro la inscripcion debido a que no hay mas cupos.";
