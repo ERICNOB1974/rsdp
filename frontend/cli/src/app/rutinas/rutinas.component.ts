@@ -60,7 +60,7 @@ export class RutinasComponent implements OnInit {
 
   traerDias(rutinas: Rutina[]): void {
     for (let rutina of rutinas) {
-      this.rutinaService.obtenerDiasEnRutina(rutina.id).subscribe(
+      this.rutinaService.obtenerDiasEnRutina(rutina.id!).subscribe(
         (dataPackage) => {
           if (dataPackage && typeof dataPackage.data === 'number') {
             rutina.dias = dataPackage.data; // Asignar el número de días
@@ -76,7 +76,7 @@ export class RutinasComponent implements OnInit {
   traerEtiquetas(rutinas: Rutina[]): void {
       for (let rutina of rutinas) {
         console.info("AAAAA");
-      this.rutinaService.obtenerEtiquetasDeRutina(rutina.id).subscribe(
+      this.rutinaService.obtenerEtiquetasDeRutina(rutina.id!).subscribe(
         (dataPackage) => {
           if (dataPackage && Array.isArray(dataPackage.data)) {
             rutina.etiquetas = dataPackage.data; // Asignar el número de días
