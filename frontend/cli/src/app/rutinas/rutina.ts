@@ -1,10 +1,11 @@
-import { Ejercicio } from "./ejercicio";
+import { Etiqueta } from '../etiqueta/etiqueta';
+
+import { Dia } from "./dia";
 
 export interface Rutina {
-    id: number;
     nombre: string;
     descripcion: string;
-    duracionMinutosPorDia: number;
-    dificultad: string; // Asumiendo que dificultad es un String, ajústalo si es un Enum o clase
-    ejercicios: Ejercicio[]; // Array de ejercicios
+    dias: number
+    etiquetas: Etiqueta[]
+    dias?: Dia[];
 }

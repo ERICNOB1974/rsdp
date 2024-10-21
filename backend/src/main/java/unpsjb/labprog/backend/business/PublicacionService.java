@@ -61,6 +61,7 @@ public class PublicacionService {
         return usuarioRepository.publicadoPor(idPublicacion);
     }
 
+
     public List<Publicacion> publicacionesUsuario(Long usuarioId) {
         return publicacionRepository.publicacionesUsuario(usuarioId);
     }

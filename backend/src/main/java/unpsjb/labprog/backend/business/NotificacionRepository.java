@@ -56,6 +56,28 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
     void crearNotificacion(Long idUsuario, Long idEntidad, String tipo, LocalDateTime fecha);
 
     @Query("""
+        MATCH (u:Usuario) WHERE id(u)=$idUsuarioReceptor
+        MATCH (u2:Usuario) WHERE id(u2)=$idUsuarioEmisor
+        MATCH (entidad) WHERE id(entidad)=$idEntidad
+        WITH u, u2, entidad
+        WITH u, u2, entidad,
+        CASE
+            WHEN $tipo = 'LIKE' THEN u2.nombreUsuario + ' le ha dado like a tu publicación: ' + id(entidad)
+            WHEN $tipo = 'COMENTARIO' THEN u2.nombreUsuario + 'ha hecho un comentario en tu publicación: '+ id(entidad) 
+            ELSE 'Notificación de publicación'
+        END AS mensaje
+        CREATE (u)<-[:NOTIFICACION {
+            tipo: $tipo,
+            mensaje: mensaje,
+            fecha: $fecha,
+            entidadId: id(entidad)
+        }]-(entidad)
+    """)
+    void crearNotificacionPublicacion(Long idUsuarioReceptor, Long idUsuarioEmisor, Long idEntidad, String tipo, LocalDateTime fecha);
+    
+    
+
+    @Query("""
                 MATCH (u:Usuario)-[n:NOTIFICACION]-(e:Usuario)
                 WHERE id(u) = $idReceptor AND id(e) = $idEmisor AND n.tipo = 'SOLICITUD_ENTRANTE'
                 DELETE n
@@ -64,21 +86,10 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
 
     @Query("""
                 MATCH (u:Usuario) WHERE id(u)=$idUsuarioReceptor
-                MATCH (u2:Usuario) WHERE id(u2)=$idUsuarioEmisor
                 MATCH (entidad) WHERE id(entidad)=$idEntidad
-                WITH u, u2, entidad,
-                CASE
-                    WHEN entidad:Publicacion THEN
-                        CASE
-                            WHEN $tipo = 'LIKE' THEN u2.nombreUsuario + ' le ha dado like a tu publicacion '+ id(entidad)
-                            WHEN $tipo = 'COMENTARIO' THEN u2.nombreUsuario + ' ha hecho un comentario en tu publicacion ' + id(entidad)
-                            ELSE 'Notificacion de publicacion'
-                        END
-                    ELSE 'Notificación'
-                END AS mensaje
-                        CREATE (u)<-[:NOTIFICACION {tipo: $tipo, mensaje: mensaje, fecha: $fecha, entidadId: id(entidad)}]-(entidad)
+                CREATE (u)<-[:NOTIFICACION {tipo: $tipo, mensaje: 'Mensaje de prueba', fecha: $fecha, entidadId: id(entidad)}]-(entidad)
             """)
-    void crearNotificacionPublicacion(Long idUsuarioReceptor, Long idUsuarioEmisor, Long idEntidad, String tipo,
+    void crearNotificacionPrueba(Long idUsuarioReceptor, Long usuarioEmisor, Long idEntidad, String tipo,
             LocalDateTime fecha);
 
 }

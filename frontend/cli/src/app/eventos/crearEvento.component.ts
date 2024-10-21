@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { EventoService } from './evento.service';
 import { Evento } from './evento';
 import { FormsModule } from '@angular/forms';
-import { catchError, debounceTime, distinctUntilChanged, filter, forkJoin, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom, forkJoin, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { Etiqueta } from '../etiqueta/etiqueta';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
@@ -12,6 +12,8 @@ import * as L from 'leaflet';
 import axios from 'axios'; // Asegúrate de tener axios instalado
 import { CommonModule } from '@angular/common';
 import { UbicacionService } from '../ubicacion.service'; // Importa tu servicio de ubicación
+import { EtiquetaPopularidadDTO } from '../etiqueta/etiquetaPopularidadDTO';
+import { DataPackage } from '../data-package';
 
 @Component({
   selector: 'app-crear-evento',
@@ -44,7 +46,8 @@ export class CrearEventoComponent {
     private etiquetaService: EtiquetaService,
     private router: Router,
     private location: Location,
-    private ubicacionService: UbicacionService
+    private ubicacionService: UbicacionService,
+    private cdr: ChangeDetectorRef  
   ) { }
 
   ngOnInit(): void {
@@ -214,64 +217,92 @@ export class CrearEventoComponent {
     this.minFechaHora = `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
-  searchEtiqueta = (text$: Observable<string>): Observable<Etiqueta[]> =>
-    text$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      filter(term => term.length >= 2),
-      tap(() => (this.searching = true)),
-      switchMap((term) =>
-        this.etiquetaService
-          .search(term)
-          .pipe(
-            map((response) => response.data as Etiqueta[]),
-            catchError(() => {
-              this.searchFailed = true;
-              return of([]);
-            })
-          )
-      ),
-      tap(() => (this.searching = false))
-    );
+  searchEtiqueta = (text$: Observable<string>): Observable<EtiquetaPopularidadDTO[]> =>
+  text$.pipe(
+    debounceTime(300),
+    distinctUntilChanged(),
+    filter(term => term.length >= 2),
+    tap(() => (this.searching = true)),
+    switchMap(term =>
+      this.etiquetaService.search(term).pipe(
+        map((response: DataPackage) => response.data as EtiquetaPopularidadDTO[]),
+        catchError(() => {
+          this.searchFailed = true;
+          return of([]);
+        })
+      )
+    ),
+    tap(() => (this.searching = false))
+  );
+
 
   agregarEtiqueta(event: any): void {
     const etiqueta: Etiqueta = event.item;
-    if (!this.etiquetasSeleccionadas.some(e => e.id === etiqueta.id)) {
+  
+    // Verificar por nombre en lugar de por ID para evitar duplicados
+    if (!this.etiquetasSeleccionadas.some(e => e.nombre === etiqueta.nombre)) {
       this.etiquetasSeleccionadas.push(etiqueta);
-      console.info(etiqueta.nombre);
     }
+  
+    // Restablecer la etiqueta seleccionada
     this.etiquetaSeleccionada = null;
+  
+    // Forzar actualización visual del input
+    this.cdr.detectChanges();
   }
+  
 
   eliminarEtiqueta(etiqueta: Etiqueta): void {
-    this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(e => e.id !== etiqueta.id);
+    this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(
+      e => e.nombre !== etiqueta.nombre 
+    );
+  }
+  
+
+  resultFormatEtiqueta(value: EtiquetaPopularidadDTO): string {
+    return `${value.nombre} (${value.popularidad})`;
   }
 
-  resultFormatEtiqueta(value: Etiqueta) {
-    return value.nombre;
-  }
-
-  inputFormatEtiqueta(value: Etiqueta) {
+  inputFormatEtiqueta(value: Etiqueta): string {
     return value ? value.nombre : '';
   }
+
 
   cancel(): void {
     this.router.navigate(['/eventos']);
   }
 
-  saveEvento(): void {
-    //this.evento.fechaHora = this.formatFechaHora(this.evento.fechaHora); // Formatear la fecha
-    this.evento.fechaHora = new Date(this.evento.fechaHora).toISOString();
-    this.eventoService.saveConCreador(this.evento).subscribe(dataPackage => {
-      this.evento = <Evento>dataPackage.data;
-      const etiquetarRequests = this.etiquetasSeleccionadas.map(etiqueta => {
-        return this.eventoService.etiquetar(this.evento, etiqueta.id);
-      });
-      forkJoin(etiquetarRequests).subscribe(() => {
-        location.reload(); // Ahora se recarga solo después de guardar las etiquetas
-      });
-    });
+  async saveEvento() {
+    try {
+      // Formatear la fecha antes de guardar el evento
+      this.evento.fechaHora = new Date(this.evento.fechaHora).toISOString();
+  
+      // Guardar el evento y obtener su ID
+      const eventoGuardado = await firstValueFrom(this.eventoService.saveConCreador(this.evento));
+      this.evento = <Evento>eventoGuardado.data;
+  
+      // Verificar y crear etiquetas si es necesario
+      for (const etiqueta of this.etiquetasSeleccionadas) {
+        const existe = await this.etiquetaService.verificarExistencia(etiqueta.nombre).toPromise();
+        let etiquetaFinal = etiqueta;
+  
+        if (!existe) {
+          const nuevaEtiqueta = { id: 0, nombre: etiqueta.nombre };
+          etiquetaFinal = await firstValueFrom(this.etiquetaService.crearEtiqueta(nuevaEtiqueta));
+        }
+  
+        // Realizar la etiquetación con la etiqueta final
+        await this.eventoService.etiquetar(this.evento, etiquetaFinal.id).toPromise();
+      }
+  
+      alert('Evento guardado con éxito');
+      window.location.reload();
+    } catch (error) {
+      console.error('Error al guardar el evento:', error);
+      alert('Error al guardar el evento.');
+    }
   }
+  
 
   formatFechaHora(fechaHora: string): string {
     const fecha = new Date(fechaHora);
