@@ -21,7 +21,9 @@ import { PerfilComponent } from './perfil/perfil.component';
 import { PerfilDetailComponent } from './perfil/perfil-detail.component';
 import { CrearPublicacionComponent } from './publicaciones/crearPublicacion.component';
 import { PublicacionDetailComponent } from './publicaciones/publicacion-detail.component';
-import { CrearRutinaComponent } from './rutinas/crearRutina.component';
+import { ComunidadCreadorComponent } from './comunidades/comunidadCreador.component';
+import { EditarComunidadComponent } from './comunidades/editarComunidad.component';
+import { RutinasEjercicioComponent } from './rutinas/rutinasEjercicio.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -32,7 +34,8 @@ export const routes: Routes = [
   { path: 'comunidades', component: ComunidadesComponent, canActivate: [AuthGuard] },
   { path: 'comunidades/crearComunidad', component: CrearComunidadComponent, canActivate: [AuthGuard] },
   { path: 'comunidades/:id', component: ComunidadDetailComponent, canActivate: [AuthGuard] },
-  { path: 'rutinas/crearRutina', component: CrearRutinaComponent},
+  { path: 'creadorComunidad/:id', component: ComunidadCreadorComponent,  canActivate: [AuthGuard] },
+  { path: 'editarComunidad/:id', component: EditarComunidadComponent,  canActivate: [AuthGuard] },
   { path: 'sugerencias/amigos', component: SugerenciasAmigosComponent, canActivate: [AuthGuard] },
   { path: 'sugerencias/eventos', component: SugerenciasEventosComponent, canActivate: [AuthGuard] },
   { path: 'sugerencias/comunidades', component: SugerenciasComunidadesComponent, canActivate: [AuthGuard] },
@@ -41,10 +44,11 @@ export const routes: Routes = [
   { path: 'amigos', component: AmigosComponent, canActivate: [AuthGuard] },
   { path: 'perfil/:id', component: PerfilComponent, canActivate: [AuthGuard] },
   { path: 'perfilEditable/:id', component: PerfilDetailComponent, canActivate: [AuthGuard] },
+  { path: 'rutinasHacer/:id', component: RutinasEjercicioComponent,  canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent }, 
   { path: 'registro', component: RegistroComponent },
   { path: 'verificar-codigo', component: VerificarCodigoComponent },
   { path: 'verificar-mail', component: VerificarMailComponent },
-  { path: 'cambiar-contrasena', component: CambiarContrasenaComponent },
-  { path: '**', redirectTo: 'login' }
+  { path: 'cambiar-contrasena', component: CambiarContrasenaComponent }
+  //,{ path: '**', redirectTo: 'login' }
 ];

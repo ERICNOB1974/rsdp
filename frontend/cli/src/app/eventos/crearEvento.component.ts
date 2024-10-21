@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { EventoService } from './evento.service';
 import { Evento } from './evento';
 import { FormsModule } from '@angular/forms';
-import { catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom, forkJoin, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { Etiqueta } from '../etiqueta/etiqueta';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';

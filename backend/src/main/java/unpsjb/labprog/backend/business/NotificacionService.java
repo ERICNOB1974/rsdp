@@ -86,6 +86,10 @@ public class NotificacionService {
         notificacionRepository.crearNotificacion(idUsuario, idEntidad, tipo, fecha);
     }
 
+    public void crearNotificacionPublicacion(Long idUsuarioReceptor, Long idUsuarioEmisor, Long idEntidad, String tipo, LocalDateTime fecha){
+        notificacionRepository.crearNotificacionPublicacion(idUsuarioReceptor, idUsuarioEmisor, idEntidad, tipo, fecha);
+    }
+    
     public void eliminarNotificacionSolicitudEntrante(Long idReceptor, Long idEmisor) {
         notificacionRepository.eliminarNotificacion(idReceptor, idEmisor, "SOLICITUD_ENTRANTE");
     }

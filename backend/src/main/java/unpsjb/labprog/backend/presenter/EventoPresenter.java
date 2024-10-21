@@ -1,5 +1,6 @@
 package unpsjb.labprog.backend.presenter;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,12 +11,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.mail.MessagingException;
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.EventoService;
 import unpsjb.labprog.backend.business.InscripcionEventoService;
+import unpsjb.labprog.backend.business.ScoreEvento;
 import unpsjb.labprog.backend.business.UsuarioService;
 import unpsjb.labprog.backend.exceptions.EventoException;
 import unpsjb.labprog.backend.model.Evento;
@@ -117,5 +120,74 @@ public class EventoPresenter {
     @GetMapping("/desinscribirse/{idEvento}/{idUsuario}")
     public ResponseEntity<Object> salir(@PathVariable Long idEvento, @PathVariable Long idUsuario) {
         return Response.ok(null, eventoService.desinscribirse(idEvento, idUsuario));
+    }
+
+    @GetMapping("/filtrar/etiquetas")
+    public ResponseEntity<Object> eventosPorEtiquetas(@RequestParam List<String> etiquetas) {
+        return Response.ok( eventoService.eventosEtiquetas(etiquetas));
+    }
+
+    @GetMapping("/filtrar/nombre/{nombre}")
+    public ResponseEntity<Object> eventosPorNombre(@PathVariable String nombre) {
+        return Response.ok( eventoService.eventosNombre(nombre));
+    }
+
+    @GetMapping("/filtrar/fecha")
+    public ResponseEntity<Object> eventosPorFecha(@RequestParam ZonedDateTime min, @RequestParam ZonedDateTime max) {
+        return Response.ok( eventoService.eventosFecha(min, max));
+    }
+
+    @GetMapping("/filtrar/participantes")
+    public ResponseEntity<Object> eventosPorParticipantes(@RequestParam int min, @RequestParam int max) {
+        return Response.ok(eventoService.eventosParticipantes(min, max));
+    }
+
+    @RequestMapping(path = "/disponibles", method = RequestMethod.GET)
+    public ResponseEntity<Object> disponibles() {
+        return Response.ok(eventoService.disponibles());
+    }
+
+    @RequestMapping(path = "/participa/{idUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> participaUsuario(@PathVariable Long idUsuario) {
+        return Response.ok(eventoService.participaUsuario(idUsuario));
+    }
+
+
+     @GetMapping("/sugerenciasDeEventosBasadosEnEventos2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeEventosBasadosEnEventos2(@PathVariable String nombreUsuario) {
+        List<ScoreEvento> sugerenciasDeEventosBasadosEnEventos = eventoService
+                .sugerenciasDeEventosBasadosEnEventos2(nombreUsuario);
+        return Response.ok(sugerenciasDeEventosBasadosEnEventos);
+    }
+
+    @GetMapping("/sugerenciasDeEventosBasadosEnAmigos2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeEventosBasadosEnAmigos2(@PathVariable String nombreUsuario) {
+        List<ScoreEvento> sugerenciasDeEventosBasadosEnAmigos = eventoService
+                .sugerenciasDeEventosBasadosEnAmigos2(nombreUsuario);
+        return Response.ok(sugerenciasDeEventosBasadosEnAmigos);
+    }
+
+    @GetMapping("/sugerenciasDeEventosBasadosEnComunidades2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeEventosBasadosEnComunidades2(@PathVariable String nombreUsuario) {
+        List<ScoreEvento> sugerenciasDeEventosBasadosEnComunidades = eventoService
+                .sugerenciasDeEventosBasadosEnComunidades2(nombreUsuario);
+        return Response.ok(sugerenciasDeEventosBasadosEnComunidades);
+    }
+
+    @GetMapping("/sugerenciasDeEventosBasadosEnRutinas2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeEventosBasadosEnRutinas2(@PathVariable String nombreUsuario) {
+        List<ScoreEvento> sugerenciasDeEventosBasadosEnRutinas = eventoService
+                .sugerenciasDeEventosBasadosEnRutinas2(nombreUsuario);
+        return Response.ok(sugerenciasDeEventosBasadosEnRutinas);
+    }
+
+    @GetMapping("/sugerencias-combinadas/{nombreUsuario}")
+    public ResponseEntity<Object> obtenerSugerenciasCombinadas(@PathVariable String nombreUsuario) {
+        try {
+            return Response.ok(eventoService.obtenerTodasLasSugerenciasDeEventos(nombreUsuario));
+        } catch (Exception e) {
+            // Manejo del error
+            return Response.error("", "Error al obtener las sugerencias: " + e.getMessage());
+        }
     }
 }

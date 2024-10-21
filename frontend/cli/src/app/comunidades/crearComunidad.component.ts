@@ -14,8 +14,7 @@ import { catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom,
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { EtiquetaPopularidadDTO } from '../etiqueta/etiquetaPopularidadDTO';
 import { DataPackage } from '../data-package';
-
-
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-crear-comunidad',
