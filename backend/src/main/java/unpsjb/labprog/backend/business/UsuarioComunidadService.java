@@ -146,7 +146,7 @@ public class UsuarioComunidadService {
         comunidad.setFechaDeCreacion(LocalDate.now()); // Establece la fecha aquí
         return comunidadRepository.guardarComunidadYCreador(comunidad.getNombre(), comunidad.getDescripcion(),
                 comunidad.getCantidadMaximaMiembros(), comunidad.isEsPrivada(), idUsuario,
-                comunidad.getFechaDeCreacion(), comunidad.getLatitud(), comunidad.getLatitud());
+                comunidad.getFechaDeCreacion(), comunidad.getLatitud(), comunidad.getLongitud());
     }
 
     public String gestionarSolicitudes(Long idSuperUsuario, Long idUsuario, Long idComunidad, boolean aceptar)
