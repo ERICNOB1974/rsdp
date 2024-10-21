@@ -9,11 +9,13 @@ import { Evento } from './evento';
 import { EventoService } from './evento.service';
 import { catchError, debounceTime, distinctUntilChanged, filter, map, Observable, of, switchMap, tap } from 'rxjs';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { AuthService } from '../autenticacion/auth.service';
 
 @Component({
   selector: 'app-eventos',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, HttpClientModule, NgbTypeaheadModule ],
+
   templateUrl: 'eventos.component.html',
   styleUrls: ['eventos.component.css']
 })
@@ -42,12 +44,21 @@ export class EventosComponent implements OnInit {
 
   constructor(private eventoService: EventoService,
     private router: Router,
+    private authService: AuthService,  // Inyecta el AuthService
+
     private etiquetaService: EtiquetaService,
   ) { }
+  idUsuarioAutenticado!: number;  // ID del usuario autenticado
+  eventosParticipaUsuario: Evento[] = [];
+
+
 
   ngOnInit(): void {
     this.getEventos(); // Cargar los eventos al inicializar el componente
+    const usuarioId = this.authService.getUsuarioId();
+    this.idUsuarioAutenticado = Number(usuarioId);    this.ParticipaUsuario();
   }
+
 
   agregarEtiqueta(event: any): void {
     const etiqueta = event.item;
@@ -223,12 +234,13 @@ export class EventosComponent implements OnInit {
 
   }
 
+
   async getEventos(): Promise<void> {
-    this.eventoService.all().subscribe(async (dataPackage) => {
+    this.eventoService.disponibles().subscribe(async (dataPackage) => {
       const responseData = dataPackage.data;
       if (Array.isArray(responseData)) {
         this.results = responseData;
-        this.traerParticipantes(); // Llamar a traerParticipantes después de cargar los eventos
+        this.traerParticipantes(this.results); // Llamar a traerParticipantes después de cargar los eventos
         for (const evento of this.results) {
           if (evento.latitud && evento.longitud) {
             evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
@@ -236,15 +248,30 @@ export class EventosComponent implements OnInit {
             evento.ubicacion = 'Ubicación desconocida';
           }
         }
-      } else {
-        console.log("no traenada");
       }
     });
   }
 
-  traerParticipantes(): void {
+  async ParticipaUsuario(): Promise<void> {
+    this.eventoService.participaUsuario(this.idUsuarioAutenticado).subscribe(async (dataPackage) => {
+      const responseData = dataPackage.data;
+      if (Array.isArray(responseData)) {
+        this.eventosParticipaUsuario = responseData;
+        this.traerParticipantes(this.eventosParticipaUsuario); // Llamar a traerParticipantes después de cargar los eventos
+        for (const evento of this.results) {
+          if (evento.latitud && evento.longitud) {
+            evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
+          } else {
+            evento.ubicacion = 'Ubicación desconocida';
+          }
+        }
+      }
+    });
+  }
+
+  traerParticipantes(eventos: Evento[]): void {
     // Recorrer todos los eventos y obtener el número de participantes
-    for (let evento of this.results) {
+    for (let evento of eventos) {
       this.eventoService.participantesEnEvento(evento.id).subscribe(
         (dataPackage) => {
           // Asignar el número de participantes al evento
@@ -275,6 +302,7 @@ export class EventosComponent implements OnInit {
   }
 
   // Método para obtener los eventos a mostrar en el carrusel
+  // Método para obtener los eventos a mostrar en el carrusel
   obtenerEventosParaMostrar(): Evento[] {
     const eventosParaMostrar: Evento[] = [];
 
@@ -284,10 +312,21 @@ export class EventosComponent implements OnInit {
 
     for (let i = 0; i < 4; i++) {
       const index = (this.currentIndex + i) % this.results.length;
-      eventosParaMostrar.push(this.results[index]);
+      const evento = this.results[index];
+
+      // Excluir eventos en los que el usuario ya está participando
+      const yaParticipa = this.eventosParticipaUsuario.some(
+        (eventoParticipado) => eventoParticipado.id === evento.id
+      );
+
+      if (!yaParticipa) {
+        eventosParaMostrar.push(evento); // Agregar solo si no está participando
+      }
     }
+
     return eventosParaMostrar;
   }
+
 
   irADetallesDelEvento(id: number): void {
     this.router.navigate(['/eventos', id]); // Navega a la ruta /eventos/:id

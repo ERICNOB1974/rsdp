@@ -76,4 +76,38 @@ export class ComunidadService {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/salir/${idComunidad}/${this.idUsuario}`);
   }
 
+
+  miembroUsuario(idUsuario: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.comunidadesUrl}/miembro/${idUsuario}`);
+  }
+
+  disponibles(): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.comunidadesUrl}/disponibles`);
+  }
+
+  otorgarRolAdministrador(idCreador: number, idMiembro: number,idComunidad: number): Observable<DataPackage> {
+    const body ={}
+    return this.http.post<DataPackage>(` ${this.comunidadesUrl}/otorgarRolAdministrador/${idCreador}/${idMiembro}/${idComunidad}`, body);
+  }
+
+  quitarRolAdministrador(idCreador: number, idMiembro: number,idComunidad: number): Observable<DataPackage> {
+    const body ={}
+    return this.http.post<DataPackage>(` ${this.comunidadesUrl}/quitarRolAdministrador/${idCreador}/${idMiembro}/${idComunidad}`, body);
+  }
+
+  
+  gestionarSolicitudIngreso(idSuperUsuario: number, idMiembro: number,idComunidad: number, aceptada: boolean): Observable<DataPackage> {
+    const body ={}
+    return this.http.post<DataPackage>(` ${this.comunidadesUrl}/gestionarSolicitudIngreso/${idSuperUsuario}/${idMiembro}/${idComunidad}?aceptada=${aceptada}`, body);
+  }
+
+  visualizarSolicitudes(idSuperUsuario:number, idComunidad:number): Observable<DataPackage>{
+    return this.http.get<DataPackage>(` ${this.comunidadesUrl}/visualizarSolicitudes/${idSuperUsuario}/${idComunidad}`);
+  }
+
+
+  remove(id: number): Observable<DataPackage> {
+    return this.http.delete<DataPackage>(`${this.comunidadesUrl}/${id}`)
+  }
+
 }

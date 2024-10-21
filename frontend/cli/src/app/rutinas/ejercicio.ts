@@ -1,11 +1,8 @@
-import { TipoEjercicio } from "./tipoEjercicio";
-
 export interface Ejercicio {
+    id: number;
     nombre: string;
-    repeticiones?: number;
-    series?: number;
-    tiempo?: string;
     descripcion: string;
-    imagen: string;
-    tipo: TipoEjercicio;
-  }
+    cantidadRepeticiones:number;
+    cantidadTiempo: number;
+    esPorTiempo: boolean;
+}

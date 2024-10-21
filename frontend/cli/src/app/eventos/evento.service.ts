@@ -115,4 +115,18 @@ export class EventoService {
     return this.http.get<DataPackage>(`${this.eventosUrl}/filtrar/etiquetas`, { params });
 }
 
+
+
+  disponibles(): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.eventosUrl}/disponibles`);
+  }
+
+
+  participaUsuario(idUsuario: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.eventosUrl}/participa/${idUsuario}`);
+  }
+
+  
+
+
 }
