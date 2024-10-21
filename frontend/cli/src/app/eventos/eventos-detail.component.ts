@@ -17,8 +17,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class EventoDetailComponent implements OnInit {
 
   evento!: Evento; // Evento específico que se va a mostrar
-  participa: boolean = false;
-
+  participa!: boolean;
   constructor(
     private route: ActivatedRoute, // Para obtener el parámetro de la URL
     private eventoService: EventoService, // Servicio para obtener el evento por ID
@@ -30,7 +29,6 @@ export class EventoDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.getEvento();
-    console.info(this.evento.id);
     //this.traerParticipantes();
   }
 
@@ -75,27 +73,47 @@ export class EventoDetailComponent implements OnInit {
   goBack(): void {
     this.location.back();
   }
-
   inscribirse(): void {
-    this.participa=true;
-    this.eventoService.inscribirse(this.evento.id).subscribe();
-    this.snackBar.open('Inscripción guardada con éxito', 'Cerrar', {
-      duration: 3000, // Duración del snackbar en milisegundos
-    });
-    this.traerParticipantes();
-   /*  this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
-      this.participa = <boolean><unknown>dataPackage.data;
-    }); */
-    //location.reload();
+    this.participa = true;
+    if (this.inscribirseValid()) {
+      this.eventoService.inscribirse(this.evento.id).subscribe(
+        () => {
+          this.snackBar.open('Inscripción guardada con éxito', 'Cerrar', {
+            duration: 3000,
+          });
+          this.evento.participantes++;
+        },
+        error => {
+          console.error('Error al inscribirse:', error);
+          this.snackBar.open('Error al inscribirse', 'Cerrar', {
+            duration: 3000,
+          });
+        }
+      );
+    }
+  }
+  salir(): void {
+    this.eventoService.salir(this.evento.id).subscribe(
+      dataPackage => {
+        let mensaje = dataPackage.message;
+        this.snackBar.open(mensaje, 'Cerrar', {
+          duration: 3000,
+        });
+        this.participa = false; 
+        this.evento.participantes--;
+      },
+      error => {
+        console.error('Error al salir del evento:', error);
+        this.snackBar.open('Error al salir del evento', 'Cerrar', {
+          duration: 3000,
+        });
+      }
+    );
   }
 
-
-  salir(): void {
-    this.eventoService.salir(this.evento.id).subscribe(dataPackage => {
-      let mensaje = dataPackage.message;
-      this.snackBar.open(mensaje, 'Cerrar', {
-        duration: 3000, // Duración del snackbar en milisegundos
-      });
+  checkParticipacion(): void {
+    this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
+      this.participa = <boolean><unknown>dataPackage.data;
     });
   }
 
@@ -103,7 +121,7 @@ export class EventoDetailComponent implements OnInit {
     return this.participa;
   }
   inscribirseValid(): boolean {
-    return (!!(this.evento.participantes < this.evento.cantidadMaximaParticipantes) && !this.participa);
+    return (this.evento.participantes < this.evento.cantidadMaximaParticipantes) && !this.participa;
   }
 
 }
