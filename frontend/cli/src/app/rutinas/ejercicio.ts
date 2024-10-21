@@ -1,3 +1,5 @@
+import { TipoEjercicio } from "./tipoEjercicio";
+
 export interface Ejercicio {
     nombre: any;
     repeticiones: number | null;
@@ -5,7 +7,7 @@ export interface Ejercicio {
     tiempo: string;
     descripcion: string;
     imagen: string;
-    tipo: TipoEjercicio;
+    tipo: 'resistencia' | 'series';
     seriesValido?: boolean;
     repeticionesValido?: boolean;
     tiempoValido?: boolean;
