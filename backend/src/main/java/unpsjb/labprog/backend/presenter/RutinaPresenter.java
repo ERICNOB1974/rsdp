@@ -166,5 +166,14 @@ public class RutinaPresenter {
         }
     }
 
+    @GetMapping("/obtenerDiasEnRutina/{idRutina}")
+    public ResponseEntity<Object> obtenerDiasEnRutina(@PathVariable Long idRutina) {
+        return Response.ok(rutinaService.obtenerDiasEnRutina(idRutina));
+    }
+    @GetMapping("/etiquetas/{idRutina}")
+    public ResponseEntity<Object> obtenerEtiquetasDeRutina(@PathVariable Long idRutina) {
+        return Response.ok(rutinaService.obtenerEtiquetasDeRutina(idRutina));
+    }
+    
     
 }

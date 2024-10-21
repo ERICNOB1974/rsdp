@@ -13,6 +13,7 @@ import unpsjb.labprog.backend.model.Rutina;
 @Repository
 public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
 
+        
        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(evento:Evento)<-[:PARTICIPA_EN]-(participantes:Usuario)-[:REALIZA_RUTINA]->(r:Rutina) "
                      +
                      "WHERE NOT (u)-[:REALIZA_RUTINA]->(r) " +
@@ -21,6 +22,8 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                      "ORDER BY cantidad DESC, r.nombre ASC " +
                      "LIMIT 3")
        List<Rutina> sugerenciasDeRutinasBasadosEnEventos(String nombreUsuario);
+
+
 
        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(amigo:Usuario) " +
                      "MATCH (amigo)-[:REALIZA_RUTINA]->(rutina:Rutina) " +
@@ -95,54 +98,60 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
 
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(evento:Evento)<-[:PARTICIPA_EN]-(participantes:Usuario)-[:REALIZA_RUTINA]->(rutina:Rutina) "
-        +
-        "WHERE NOT (u)-[:REALIZA_RUTINA]->(rutina) " +
-        "WITH rutina, count(participantes) as score " +
-        "RETURN rutina, score " +
-        "ORDER BY score DESC, rutina.nombre ASC " +
-        "LIMIT 3")
-List<ScoreRutina> sugerenciasDeRutinasBasadosEnEventos2(String nombreUsuario);
+                        +
+                        "WHERE NOT (u)-[:REALIZA_RUTINA]->(rutina) " +
+                        "WITH rutina, count(participantes) as score " +
+                        "RETURN rutina, score " +
+                        "ORDER BY score DESC, rutina.nombre ASC " +
+                        "LIMIT 3")
+        List<ScoreRutina> sugerenciasDeRutinasBasadosEnEventos2(String nombreUsuario);
 
-@Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(amigo:Usuario) " +
-        "MATCH (amigo)-[:REALIZA_RUTINA]->(rutina:Rutina) " +
-        "WHERE NOT (u)-[:REALIZA_RUTINA]->(rutina) " +
-        "WITH rutina, COUNT(amigo) AS score " + // Contamos cuántos amigos realizan la rutina
-        "RETURN rutina, score " +
-        "ORDER BY score DESC " + // Ordenamos por popularidad, de mayor a menor
-        "LIMIT 3")
-List<ScoreRutina> sugerenciasDeRutinasBasadosEnAmigos2(String nombreUsuario);
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(amigo:Usuario) " +
+                        "MATCH (amigo)-[:REALIZA_RUTINA]->(rutina:Rutina) " +
+                        "WHERE NOT (u)-[:REALIZA_RUTINA]->(rutina) " +
+                        "WITH rutina, COUNT(amigo) AS score " + // Contamos cuántos amigos realizan la rutina
+                        "RETURN rutina, score " +
+                        "ORDER BY score DESC " + // Ordenamos por popularidad, de mayor a menor
+                        "LIMIT 3")
+        List<ScoreRutina> sugerenciasDeRutinasBasadosEnAmigos2(String nombreUsuario);
 
-@Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[PARTICIPA_EN]->(eventos:Evento) " +
-        " MATCH (eventos)-[:ETIQUETADO_CON]->(etiquetas:Etiqueta)" +
-        " MATCH (rutina:Rutina)-[:ETIQUETADA_CON]->(etiquetas) " +
-        " WHERE NOT (u)-[:REALIZA_RUTINA]->(rutina) " +
-        " WITH rutina, COUNT(DISTINCT etiquetas) AS score " +
-        " RETURN rutina, score " +
-        " ORDER BY score DESC" +
-        " LIMIT 3")
-List<ScoreRutina> sugerenciasDeRutinasBasadosEnEventosPorEtiqueta2(String nombreUsuario);
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[PARTICIPA_EN]->(eventos:Evento) " +
+                        " MATCH (eventos)-[:ETIQUETADO_CON]->(etiquetas:Etiqueta)" +
+                        " MATCH (rutina:Rutina)-[:ETIQUETADA_CON]->(etiquetas) " +
+                        " WHERE NOT (u)-[:REALIZA_RUTINA]->(rutina) " +
+                        " WITH rutina, COUNT(DISTINCT etiquetas) AS score " +
+                        " RETURN rutina, score " +
+                        " ORDER BY score DESC" +
+                        " LIMIT 3")
+        List<ScoreRutina> sugerenciasDeRutinasBasadosEnEventosPorEtiqueta2(String nombreUsuario);
 
-@Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:REALIZA_RUTINA]->(rc:Rutina)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) "
-        +
-        "WITH u, collect(DISTINCT etiqueta) AS etiquetasUsuario " +
-        "MATCH (rutina:Rutina)-[:ETIQUETADA_CON]->(etiqueta) " +
-        "WHERE etiqueta IN etiquetasUsuario AND NOT EXISTS { " +
-        " MATCH (u)-[:REALIZA_RUTINA]->(rutina) " +
-        "} " +
-        "WITH rutina, COUNT(DISTINCT etiqueta) AS score " +
-        "RETURN rutina, score " +
-        "ORDER BY score DESC " +
-        "LIMIT 3")
-List<ScoreRutina> sugerenciasDeRutinasBasadasEnRutinas2(String nombreUsuario);
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:REALIZA_RUTINA]->(rc:Rutina)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) "
+                        +
+                        "WITH u, collect(DISTINCT etiqueta) AS etiquetasUsuario " +
+                        "MATCH (rutina:Rutina)-[:ETIQUETADA_CON]->(etiqueta) " +
+                        "WHERE etiqueta IN etiquetasUsuario AND NOT EXISTS { " +
+                        " MATCH (u)-[:REALIZA_RUTINA]->(rutina) " +
+                        "} " +
+                        "WITH rutina, COUNT(DISTINCT etiqueta) AS score " +
+                        "RETURN rutina, score " +
+                        "ORDER BY score DESC " +
+                        "LIMIT 3")
+        List<ScoreRutina> sugerenciasDeRutinasBasadasEnRutinas2(String nombreUsuario);
 
-@Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(comunidad:Comunidad) " +
-        "MATCH (comunidad)<-[:MIEMBRO]-(miembro:Usuario)-[:REALIZA_RUTINA]->(rutina:Rutina) " +
-        "WHERE NOT EXISTS { " +
-        "    MATCH (u)-[:REALIZA_RUTINA]->(r) " +
-        "} " +
-        "WITH rutina, COUNT(DISTINCT miembro) AS score " +
-        "RETURN rutina, score " +
-        "ORDER BY score DESC " +
-        "LIMIT 3")
-List<ScoreRutina> sugerenciasDeRutinasBasadasEnComunidades2(String nombreUsuario);
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(comunidad:Comunidad) " +
+                        "MATCH (comunidad)<-[:MIEMBRO]-(miembro:Usuario)-[:REALIZA_RUTINA]->(rutina:Rutina) " +
+                        "WHERE NOT EXISTS { " +
+                        "    MATCH (u)-[:REALIZA_RUTINA]->(r) " +
+                        "} " +
+                        "WITH rutina, COUNT(DISTINCT miembro) AS score " +
+                        "RETURN rutina, score " +
+                        "ORDER BY score DESC " +
+                        "LIMIT 3")
+        List<ScoreRutina> sugerenciasDeRutinasBasadasEnComunidades2(String nombreUsuario);
+
+        @Query("MATCH (r:Rutina)-[:TIENE_DIA]->(d:Dia) " +
+                        "WHERE id(r) = $idRutina " +
+                        "RETURN COUNT(DISTINCT d) AS totalDias")
+        int obtenerDiasEnRutina(Long idRutina);
+
 }
