@@ -131,6 +131,7 @@ export class ComunidadCreadorComponent implements OnInit {
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000,
             });
+            this.traerMiembrosYAdministradores(); // Actualiza la lista de miembros
         });
     }
 
