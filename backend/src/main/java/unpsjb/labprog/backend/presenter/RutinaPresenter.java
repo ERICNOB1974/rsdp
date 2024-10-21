@@ -19,6 +19,7 @@ import unpsjb.labprog.backend.business.ScoreRutina;
 import unpsjb.labprog.backend.model.Rutina;
 import unpsjb.labprog.backend.model.DTO.DiaDTO;
 import unpsjb.labprog.backend.model.DTO.EjercicioResistenciaDTO;
+import unpsjb.labprog.backend.model.DTO.EjercicioSeriesDTO;
 
 @RestController
 @RequestMapping("rutinas")
@@ -93,6 +94,11 @@ public class RutinaPresenter {
     @PostMapping("/dias/ejerciciosResistencia/{diaId}")
     public void guardarEjercicioResistencia(@PathVariable Long diaId, @RequestBody EjercicioResistenciaDTO ejercicioResistenciaDTO) {
         rutinaService.guardarEjercicioResistencia(diaId, ejercicioResistenciaDTO.getEjercicio(), ejercicioResistenciaDTO.getOrden(), ejercicioResistenciaDTO.getTiempo());
+    }
+
+    @PostMapping("/dias/ejerciciosSeries/{diaId}")
+    public void guardarEjercicioSeries(@PathVariable Long diaId, @RequestBody EjercicioSeriesDTO ejercicioSeriesDTO) {
+        rutinaService.guardarEjercicioSeries(diaId, ejercicioSeriesDTO.getEjercicio(), ejercicioSeriesDTO.getOrden(), ejercicioSeriesDTO.getSeries(), ejercicioSeriesDTO.getRepeticiones());
     }
 
     @RequestMapping(value = "/search/{term}", method = RequestMethod.GET)
