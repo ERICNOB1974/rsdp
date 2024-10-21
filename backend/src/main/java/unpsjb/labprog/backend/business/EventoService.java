@@ -204,7 +204,21 @@ public class EventoService {
         return "Exito al desinscribirse del evento";
     }
 
+    public List<Evento> eventosEtiquetas(List<String> etiquetas) {
+        return eventoRepository.eventosEtiquetas(etiquetas);
+    }
 
+    public List<Evento> eventosNombre(String nombre) {
+        return eventoRepository.eventosNombre(nombre);
+    }
+
+    public List<Evento> eventosFecha(ZonedDateTime min, ZonedDateTime max) {
+        return eventoRepository.eventosFecha(min, max);
+    }
+
+    public List<Evento> eventosParticipantes(int min, int max) {
+        return eventoRepository.eventosCantidadParticipantes(min, max);
+    }
 
 
     public List<Evento> disponibles() {

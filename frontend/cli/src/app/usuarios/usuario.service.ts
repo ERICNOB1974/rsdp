@@ -55,10 +55,10 @@ export class UsuarioService {
   }
 
   enviarSolicitudAmistad(idEmisor: number, idReceptor: number): Observable<DataPackage> {
-    const body = { /* aquí puedes agregar datos si es necesario */ };
+    const body = {};
     return this.http.post<DataPackage>(`${this.usuariosUrl}/enviarSolicitudAmistad/${idEmisor}/${idReceptor}`, body);
   }
-
+ 
 
   save(usuario: Usuario): Observable<DataPackage> {
     return usuario.id ? this.http.put<DataPackage>(` ${this.usuariosUrl}/actualizar`, usuario) :

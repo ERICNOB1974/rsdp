@@ -119,7 +119,7 @@ export class ComunidadDetailComponent implements OnInit {
   }
 
   salirValid(): boolean {
-    return this.esParte || this.pendiente || !this.esCreador;
+    return this.esParte &&  !this.pendiente && !this.esCreador;
   }
 
   inscribirseValid(): boolean {
