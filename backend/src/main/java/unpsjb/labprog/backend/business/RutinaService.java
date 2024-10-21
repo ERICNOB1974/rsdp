@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import unpsjb.labprog.backend.model.Dia;
 import unpsjb.labprog.backend.model.Ejercicio;
-import unpsjb.labprog.backend.model.Ejercicio;
 import unpsjb.labprog.backend.model.Rutina;
 
 @Service
@@ -22,9 +21,6 @@ public class RutinaService {
 
     @Autowired
     DiaRepository diaRepository;
-
-    @Autowired
-    EjercicioRepository ejercicioRepository;
 
     @Autowired
     EjercicioRepository ejercicioRepository;
@@ -51,6 +47,10 @@ public class RutinaService {
         // if rutina no tiene ejercicios
 
         return rutinaRepository.save(rutina);
+    }
+
+    public List<Ejercicio> ejercicios(Long idRutina){
+        return ejercicioRepository.findEjerciciosByRutinaId(idRutina);
     }
 
     @Transactional

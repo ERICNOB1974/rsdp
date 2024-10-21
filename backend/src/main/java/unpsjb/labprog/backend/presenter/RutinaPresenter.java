@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,12 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.RutinaService;
-import unpsjb.labprog.backend.business.ScoreEvento;
 import unpsjb.labprog.backend.business.ScoreRutina;
 import unpsjb.labprog.backend.model.Rutina;
 import unpsjb.labprog.backend.model.DTO.DiaDTO;
 import unpsjb.labprog.backend.model.DTO.EjercicioResistenciaDTO;
-import unpsjb.labprog.backend.model.DTO.EjercicioSeriesDTO;
 
 @RestController
 @RequestMapping("rutinas")
@@ -94,11 +93,6 @@ public class RutinaPresenter {
     @PostMapping("/dias/ejerciciosResistencia/{diaId}")
     public void guardarEjercicioResistencia(@PathVariable Long diaId, @RequestBody EjercicioResistenciaDTO ejercicioResistenciaDTO) {
         rutinaService.guardarEjercicioResistencia(diaId, ejercicioResistenciaDTO.getEjercicio(), ejercicioResistenciaDTO.getOrden(), ejercicioResistenciaDTO.getTiempo());
-    }
-
-    @PostMapping("/dias/ejerciciosSeries/{diaId}")
-    public void guardarEjercicioSeries(@PathVariable Long diaId, @RequestBody EjercicioSeriesDTO ejercicioSeriesDTO) {
-        rutinaService.guardarEjercicioSeries(diaId, ejercicioSeriesDTO.getEjercicio(), ejercicioSeriesDTO.getOrden(), ejercicioSeriesDTO.getSeries(), ejercicioSeriesDTO.getRepeticiones());
     }
 
     @RequestMapping(value = "/search/{term}", method = RequestMethod.GET)
