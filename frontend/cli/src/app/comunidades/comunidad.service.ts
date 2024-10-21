@@ -16,23 +16,37 @@ export class ComunidadService {
 
   async obtenerUbicacion(latitud: number, longitud: number): Promise<string> {
     try {
-      const response = await axios.get(`https://nominatim.openstreetmap.org/reverse`, {
+      const response = await axios.get('https://nominatim.openstreetmap.org/reverse', {
         params: {
           lat: latitud,
           lon: longitud,
           format: 'json',
-        }
+        },
       });
-      
+  
       const { address } = response.data;
-      const ciudad = address.city || address.town || address.village || 'Ciudad desconocida';
-      const pais = address.country || 'País desconocido';
-      return `${ciudad}, ${pais}`;
+  
+      if (!address) {
+        return 'Dirección no disponible';
+      }
+  
+      const ciudad = address.city || address.town || address.village;
+      const pais = address.country;
+  
+      // Si la ciudad o el país no están disponibles, enviamos otro mensaje
+      if (!ciudad && !pais) {
+        return 'Ubicación indefinida';
+      }
+  
+      // Retorna la ciudad y el país si están disponibles
+      return `${ciudad || 'Ciudad desconocida'}, ${pais || 'País desconocido'}`;
+  
     } catch (error) {
       console.error('Error obteniendo la ubicación:', error);
       return 'Ubicación no disponible';
     }
   }
+  
 
   all(): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/findAll`);
