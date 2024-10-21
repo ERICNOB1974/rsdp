@@ -6,7 +6,7 @@
       class="carousel-item"
       *ngFor="let rutina of obtenerRutinasParaMostrar()"
       class="rutina-item"
-      (click)="irADetallesDeLaRutina(rutina.id)"
+      (click)="irADetallesDeLaRutina(rutina.id!)"
     >
       <div class="rutina-card clickable">
         <div class="rutina-details">
@@ -49,7 +49,7 @@
       class="carousel-item"
       *ngFor="let rutina of rutinasUsuario"
       class="rutina-item"
-      (click)="irADetallesDeLaRutina(rutina.id)"
+      (click)="irADetallesDeLaRutina(rutina.id!)"
     >
       <div class="rutina-card clickable">
         <div class="rutina-details">
