@@ -28,4 +28,9 @@ public interface PublicacionRepository extends Neo4jRepository<Publicacion, Long
         void comentar(@Param("usuarioId") Long usuarioId, @Param("publicacionId") Long publicacionId, String comentario,
                         ZonedDateTime fechaComentario);
 
+        @Query("MATCH (u:Usuario)-[:POSTEO]->(p:Publicacion) " +
+                        "WHERE id(p) = $publicacionId " +
+                        "RETURN id(u)")
+        Long obtenerCreadorPublicacion(@Param("publicacionId") Long publicacionId);
+
 }
