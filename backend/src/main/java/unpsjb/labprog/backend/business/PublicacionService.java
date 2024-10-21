@@ -1,6 +1,7 @@
 package unpsjb.labprog.backend.business;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,5 +43,9 @@ public class PublicacionService {
 
     public void comentar(Long usuarioId, Long publicacionId, String comentario) {
         publicacionRepository.comentar(usuarioId, publicacionId, comentario, ZonedDateTime.now());
+    }
+
+    public List<Publicacion> publicacionesUsuario(Long usuarioId) {
+        return publicacionRepository.publicacionesUsuario(usuarioId);
     }
 }

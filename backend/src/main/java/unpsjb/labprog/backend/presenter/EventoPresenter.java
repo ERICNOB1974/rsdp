@@ -1,5 +1,6 @@
 package unpsjb.labprog.backend.presenter;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.mail.MessagingException;
@@ -118,4 +120,25 @@ public class EventoPresenter {
     public ResponseEntity<Object> salir(@PathVariable Long idEvento, @PathVariable Long idUsuario) {
         return Response.ok(null, eventoService.desinscribirse(idEvento, idUsuario));
     }
+
+    @GetMapping("/filtrar/etiquetas")
+    public ResponseEntity<Object> eventosPorEtiquetas(@RequestParam List<String> etiquetas) {
+        return Response.ok( eventoService.eventosEtiquetas(etiquetas));
+    }
+
+    @GetMapping("/filtrar/nombre/{nombre}")
+    public ResponseEntity<Object> eventosPorNombre(@PathVariable String nombre) {
+        return Response.ok( eventoService.eventosNombre(nombre));
+    }
+
+    @GetMapping("/filtrar/fecha")
+    public ResponseEntity<Object> eventosPorFecha(@RequestParam ZonedDateTime min, @RequestParam ZonedDateTime max) {
+        return Response.ok( eventoService.eventosFecha(min, max));
+    }
+
+    @GetMapping("/filtrar/participantes")
+    public ResponseEntity<Object> eventosPorParticipantes(@RequestParam int min, @RequestParam int max) {
+        return Response.ok(eventoService.eventosParticipantes(min, max));
+    }
+
 }

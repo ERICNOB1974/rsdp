@@ -6,6 +6,8 @@ import { UsuarioService } from '../usuarios/usuario.service';
 import { Usuario } from '../usuarios/usuario';
 import { DataPackage } from '../data-package';
 import { AuthService } from '../autenticacion/auth.service';
+import { Publicacion } from '../publicaciones/publicacion';
+import { PublicacionService } from '../publicaciones/publicacion.service';
 
 @Component({
   selector: 'app-perfil',
@@ -19,18 +21,23 @@ export class PerfilComponent implements OnInit {
   idUsuario!: number;  // ID del perfil que se está viendo (viene de la URL o lógica del componente)
   idUsuarioAutenticado!: number;  // ID del usuario autenticado
   esMiPerfil: boolean = false;  // Para determinar si es el perfil del usuario autenticado
+  publicaciones!: Publicacion[];
 
   constructor(
     private route: ActivatedRoute,
     private usuarioService: UsuarioService,
+    private publicacionService: PublicacionService,
+
     private authService: AuthService,  // Inyecta el AuthService
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     // this.obtenerUsuarioAutenticado();
     this.idUsuario = Number(this.route.snapshot.paramMap.get('id'));
     this.cargarPerfil();  // Cargar la información del perfil
+    this.getPublicaciones();
+
   }
 
   // Obtén el usuario autenticado desde el AuthService
@@ -53,6 +60,8 @@ export class PerfilComponent implements OnInit {
         // Verifica si el usuario autenticado está viendo su propio perfil
         this.esMiPerfil = this.usuario.id == this.idUsuarioAutenticado;
         console.log(this.esMiPerfil);
+        this.publicacionService.publicaciones(this.idUsuario).subscribe();
+
       } else {
         console.error(dataPackage.message);
       }
@@ -77,6 +86,22 @@ export class PerfilComponent implements OnInit {
       error: (error) => {
         console.error('Error enviando solicitud de amistad:', error);
         alert('Error al enviar la solicitud de amistad.');
+      }
+    });
+  }
+  getPublicaciones(): void {
+    this.publicacionService.publicaciones(this.idUsuario).subscribe({
+      next: (dataPackage) => {
+        if (dataPackage.status === 200 && Array.isArray(dataPackage.data)) {
+          this.publicaciones = dataPackage.data;
+        } else {
+          console.error('Error al obtener las publicaciones:', dataPackage.message);
+          this.publicaciones = []; // Asigna un array vacío en caso de error
+        }
+      },
+      error: (error) => {
+        console.error('Error al obtener las publicaciones:', error);
+        this.publicaciones = []; // Asigna un array vacío en caso de error
       }
     });
   }

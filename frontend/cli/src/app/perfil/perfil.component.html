@@ -16,14 +16,38 @@
             <button *ngIf="!esMiPerfil" class="btn-solicitud" (click)="enviarSolicitudDeAmistad()">Enviar solicitud de amistad</button>
           </div>
       </div>
-
+<!-- 
     <div class="perfil-publicaciones">
         <h3>Publicaciones</h3>
         <div class="publicaciones-grid">
-            <!-- <div class="publicacion-item" *ngFor="let publicacion of publicaciones">
-                <img [src]="publicacion.imagenUrl" alt="Publicación" class="publicacion-imagen" />
-            </div> -->
+            <div class="publicacion-item" *ngFor="let publicacion of publicaciones">
+                <img [src]="publicacion.file" alt="Publicación" class="publicacion-imagen" />
+            </div> 
         </div>
     </div>
+    -->
+    <div class="perfil-publicaciones">
+        <h3>Publicaciones</h3>
+        <div class="publicaciones-grid">
+            <div class="publicacion-item" *ngFor="let publicacion of publicaciones">
+                <div class="publicacion-contenido">
+                    <p>{{ publicacion.texto }}</p>
+                    
+                    <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
+                        <img [src]="publicacion.file" alt="Imagen de la publicación" class="publicacion-imagen">
+                    </div>
+                    
+                    <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
+                        <video [src]="publicacion.file" controls class="publicacion-video"></video>
+                    </div>
+                    
+                    <div class="publicacion-fecha">
+                        {{ publicacion.fechaDeCreacion | date:'medium' }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 

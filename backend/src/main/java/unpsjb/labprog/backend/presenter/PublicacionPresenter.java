@@ -1,5 +1,7 @@
 package unpsjb.labprog.backend.presenter;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,28 +36,36 @@ public class PublicacionPresenter {
     @GetMapping("/likear/{idUsuario}/{idPublicacion}")
     public ResponseEntity<Object> likear(@PathVariable Long idUsuario, @PathVariable Long idPublicacion)
             throws Exception {
-                publicacionService.likear(idUsuario, idPublicacion);
+        publicacionService.likear(idUsuario, idPublicacion);
         return Response.ok(null, "OK");
     }
 
     @GetMapping("/deslikear/{idUsuario}/{idPublicacion}")
     public ResponseEntity<Object> sacarLike(@PathVariable Long idUsuario, @PathVariable Long idPublicacion)
             throws Exception {
-                publicacionService.sacarLike(idUsuario, idPublicacion);
+        publicacionService.sacarLike(idUsuario, idPublicacion);
         return Response.ok(null, "OK");
     }
 
     @GetMapping("/isLikeada/{idUsuario}/{idPublicacion}")
     public ResponseEntity<Object> estaLikeada(@PathVariable Long idUsuario, @PathVariable Long idPublicacion)
             throws Exception {
-               boolean like= publicacionService.estaLikeada(idUsuario, idPublicacion);
+        boolean like = publicacionService.estaLikeada(idUsuario, idPublicacion);
         return Response.ok(like, "OK");
     }
-    
+
     @PostMapping("/comentar/{idUsuario}/{idPublicacion}")
-    public ResponseEntity<Object> comentar(@PathVariable Long idUsuario, @PathVariable Long idPublicacion, @RequestBody String comentario)
+    public ResponseEntity<Object> comentar(@PathVariable Long idUsuario, @PathVariable Long idPublicacion,
+            @RequestBody String comentario)
             throws Exception {
-                publicacionService.comentar(idUsuario, idPublicacion, comentario);
+        publicacionService.comentar(idUsuario, idPublicacion, comentario);
         return Response.ok(null, "OK");
+    }
+
+    @GetMapping("/publicaciones/usuario/{idUsuario}")
+    public ResponseEntity<Object> publicacionesUsuario(@PathVariable Long idUsuario)
+            throws Exception {
+        List<Publicacion> publicaciones = publicacionService.publicacionesUsuario(idUsuario);
+        return Response.ok(publicaciones, "OK");
     }
 }
