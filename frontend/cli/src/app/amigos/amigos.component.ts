@@ -17,7 +17,7 @@ export class AmigosComponent implements OnInit {
   amigos: Usuario[] = []; // Arreglo para almacenar los amigos
   solicitudes: Usuario[] = []; // Arreglo para almacenar las solicitudes
   mostrarAmigos: boolean = true; // Estado para mostrar amigos o solicitudes
-    
+
   constructor(private usuarioService: UsuarioService,
               private router: Router) {}
               
