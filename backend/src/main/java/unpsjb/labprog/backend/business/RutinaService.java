@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.checkerframework.checker.units.qual.radians;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,9 +39,14 @@ public class RutinaService {
         return rutinaRepository.sugerenciasDeRutinasBasadosEnAmigos(nombreUsuario);
     }
 
-    @Transactional
-    public Rutina saveConCreador(Rutina rutina, Long usuarioId) throws Exception {
-        return rutinaRepository.saveConCreador(rutina.getNombre(), rutina.getDescripcion(), usuarioId);
+    public Long saveConCreador(Rutina rutina, Long usuarioId) throws Exception {
+        Long rutinaId = rutinaRepository.save(rutina).getId();
+        rutinaRepository.crearRelacionCreador(rutinaId, usuarioId);
+        return rutinaId;
+    }
+
+    public Long guardarRutina(Rutina rutina) {
+        return rutinaRepository.save(rutina).getId();
     }
 
     @Transactional
@@ -85,10 +89,6 @@ public class RutinaService {
         return rutinaRepository.sugerenciasDeRutinasBasadosEnEventosPorEtiqueta(nombreUsuario);
     }
 
-    public Long guardarRutina(Rutina rutina) {
-        return rutinaRepository.save(rutina).getId();
-    }
-
     @Transactional
     public Long guardarDia(Long rutinaId, Dia dia, int orden) {
         Long diaId = diaRepository.crearDia(dia.getNombre(), dia.getDescripcion());
@@ -97,14 +97,14 @@ public class RutinaService {
     }
 
     @Transactional
-    public void guardarEjercicioResistencia(Long diaId, Ejercicio ejercicio, int orden, String tiempo) {
+    public void guardarEjercicioResistencia(Long diaId, Ejercicio ejercicio, int orden, String tiempo, String imagen) {
         // Intentamos recuperar el ejercicio existente.
         Ejercicio ejercicioExistente = ejercicioRepository.findByNombre(ejercicio.getNombre());
 
         Long ejercicioId;
         if (ejercicioExistente == null) {
             // Si no existe, se crea uno nuevo.
-            ejercicioId = ejercicioRepository.crearEjercicio(ejercicio.getNombre(), ejercicio.getDescripcion());
+            ejercicioId = ejercicioRepository.crearEjercicio(ejercicio.getNombre(), ejercicio.getDescripcion(), ejercicio.getImagen());
         } else {
             // Si existe, usamos el ID del ejercicio encontrado.
             ejercicioId = ejercicioExistente.getId();
@@ -115,13 +115,13 @@ public class RutinaService {
     }
 
     @Transactional
-    public void guardarEjercicioSeries(Long diaId, Ejercicio ejercicio, int orden, int series, int repeticiones) {
+    public void guardarEjercicioSeries(Long diaId, Ejercicio ejercicio, int orden, int series, int repeticiones, String imagen) {
         if (ejercicioRepository.existeNombre(ejercicio.getNombre())) {
             Ejercicio ejercicioExistente = ejercicioRepository.findByNombre(ejercicio.getNombre());
             rutinaRepository.relacionarDiaEjercicioSeries(diaId, ejercicioExistente.getId(), orden, series,
                     repeticiones);
         } else {
-            Long ejercicioId = ejercicioRepository.crearEjercicio(ejercicio.getNombre(), ejercicio.getDescripcion());
+            Long ejercicioId = ejercicioRepository.crearEjercicio(ejercicio.getNombre(), ejercicio.getDescripcion(), ejercicio.getImagen());
             rutinaRepository.relacionarDiaEjercicioSeries(diaId, ejercicioId, orden, series, repeticiones);
         }
     }

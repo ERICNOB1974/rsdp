@@ -11,4 +11,5 @@ public class EjercicioSeriesDTO {
     private int orden;  
     private int series;
     private int repeticiones;
+    private String imagen;
 }

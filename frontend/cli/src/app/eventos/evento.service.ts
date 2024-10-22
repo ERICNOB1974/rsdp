@@ -43,7 +43,7 @@ export class EventoService {
 
   sugerencias(): Observable<DataPackage> {
     const nombreUsuario = this.authService.getNombreUsuario();
-    console.info("ayuda"+nombreUsuario);
+
     return this.http.get<DataPackage>(` ${this.eventosUrl}/sugerencias-combinadas/${nombreUsuario}`);
   }
 

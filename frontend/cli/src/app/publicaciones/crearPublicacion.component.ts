@@ -61,10 +61,10 @@ export class CrearPublicacionComponent implements OnInit {
           this.vistaPreviaArchivo = reader.result;
           this.publicacion.file = reader.result as string; // Aquí obtenemos la cadena base64
         };
-
         reader.readAsDataURL(file);
 
         this.publicacion.file = file;
+        
       } else {
         this.formatoValido = false; // El formato no es válido
         this.vistaPreviaArchivo = null; // No se muestra la vista previa
@@ -73,7 +73,6 @@ export class CrearPublicacionComponent implements OnInit {
     }
   }
 
-  
   publicacionValida(): boolean {
     return !(!this.publicacion.texto && !this.publicacion.file || !this.formatoValido);
   }
