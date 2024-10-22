@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import unpsjb.labprog.backend.model.Dia;
 import unpsjb.labprog.backend.model.Ejercicio;
+import unpsjb.labprog.backend.model.Etiqueta;
 import unpsjb.labprog.backend.model.Rutina;
 
 @Service
@@ -24,6 +25,9 @@ public class RutinaService {
 
     @Autowired
     EjercicioRepository ejercicioRepository;
+
+    @Autowired
+    EtiquetaRepository etiquetaRepository;
 
     public List<Rutina> findAll() {
         return rutinaRepository.findAll();
@@ -205,5 +209,15 @@ public class RutinaService {
         // Retornar la lista ordenada
         return listaSugerenciasSinDuplicados;
     }
+
+
+    public int obtenerDiasEnRutina(Long idRutina) {
+        return rutinaRepository.obtenerDiasEnRutina(idRutina);
+    }
+
+    public List<Etiqueta> obtenerEtiquetasDeRutina(Long idRutina) {
+        return etiquetaRepository.obtenerEtiquetasEnRutina(idRutina);
+    }
+
 
 }

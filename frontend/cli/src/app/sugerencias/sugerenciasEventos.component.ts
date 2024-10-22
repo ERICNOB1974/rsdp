@@ -27,6 +27,7 @@ export class SugerenciasEventosComponent implements OnInit {
     getEventos(): void {
         this.eventoService.sugerencias().subscribe((dataPackage) => {
           const responseData = dataPackage.data;
+          console.log(responseData);
           if (Array.isArray(responseData)) {
             this.results = responseData;
           }

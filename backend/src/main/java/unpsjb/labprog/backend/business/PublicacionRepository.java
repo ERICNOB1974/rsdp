@@ -43,7 +43,7 @@ public interface PublicacionRepository extends Neo4jRepository<Publicacion, Long
 
         @Query("MATCH (u:Usuario), (p:Publicacion) " +
                         "WHERE id(u) = $usuarioId AND id(p) = $publicacionId " +
-                        "CREATE (u)-[:COMENTA {fechaComentario:$fechaComentario, comentario: $comentario }]->(p)")
+                        "CREATE (u)-[:COMENTA {fechaComentario:$fechaComentario, comentario: $comentario}]->(p)")
         void comentar(@Param("usuarioId") Long usuarioId, @Param("publicacionId") Long publicacionId, String comentario,
                         ZonedDateTime fechaComentario);
 
@@ -51,16 +51,29 @@ public interface PublicacionRepository extends Neo4jRepository<Publicacion, Long
                         "WHERE id(p) = $publicacionId " +
                         "RETURN id(u)")
         Long obtenerCreadorPublicacion(@Param("publicacionId") Long publicacionId);
-  
-        @Query("MATCH (u:Usuario), (p:Publicacion) " +
-                        "WHERE id(p) = $publicacionId " +
-                        "CREATE (u)-[:COMENTA {fechaComentario:$fechaComentario, comentario: $comentario }]->(p)")
-        void comentarios(@Param("publicacionId") Long publicacionId);
+
+        @Query("MATCH (p:Publicacion)<-[c:COMENTA]-(Comentario) WHERE id(p) = $publicacionId RETURN id(c) AS comentarioId")
+        List<Long> idComentarios(@Param("publicacionId") Long publicacionId);
+
+        @Query("MATCH ()-[n:COMENTA]->() WHERE id(n) = $id RETURN n.comentario AS texto")
+        String findTextoById(@Param("id") Long id);
+
+        @Query("MATCH ()-[n:COMENTA]->() WHERE id(n) = $id RETURN n.fechaComentario AS fecha")
+        ZonedDateTime findFechaById(@Param("id") Long id);
 
         @Query("MATCH (u:Usuario), (p:Publicacion) " +
                         "WHERE id(u) = $usuarioId " +
                         "MATCH (u)-[:POSTEO]->(p) " +
                         "RETURN p ORDER BY p.fechaDeCreacion DESC")
         List<Publicacion> publicacionesUsuario(@Param("usuarioId") Long usuarioId);
+
+        @Query("""
+                 MATCH (u:Usuario)-[:ES_AMIGO_DE]->(us:Usuario)-[:POSTEO]->(p:Publicacion)
+                        WHERE id(u) = $usuarioId
+                        RETURN p
+                        ORDER BY p.fechaDeCreacion DESC
+                        """)
+
+        List<Publicacion> publicacionesAmigosUsuario(@Param("usuarioId") Long usuarioId);
 
 }

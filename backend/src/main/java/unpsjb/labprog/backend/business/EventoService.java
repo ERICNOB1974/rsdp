@@ -260,13 +260,7 @@ public class EventoService {
         List<ScoreEvento> sugerenciasAmigos = eventoRepository.sugerenciasDeEventosBasadosEnAmigos2(nombreUsuario);
         List<ScoreEvento> sugerenciasComunidades = eventoRepository.sugerenciasDeEventosBasadosEnComunidades2(nombreUsuario);
         List<ScoreEvento> sugerenciasRutinas = eventoRepository.sugerenciasDeEventosBasadosEnRutinas2(nombreUsuario);
-
-    
-        // Imprimir la cantidad de sugerencias para depuración
-        System.out.println("Sugerencias amigos: " + sugerenciasAmigos.size());
-        System.out.println("Sugerencias eventos: " + sugerenciasEventos.size());
-        System.out.println("Sugerencias comunidades: " + sugerenciasComunidades.size());
-    
+        
         // Combinar todas las sugerencias en una sola lista
         List<ScoreEvento> todasLasSugerencias = new ArrayList<>();
         todasLasSugerencias.addAll(sugerenciasAmigos);
