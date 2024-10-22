@@ -10,4 +10,5 @@ public class EjercicioResistenciaDTO {
     private Ejercicio ejercicio;
     private int orden;
     private String tiempo;
+    private String imagen;
 }
