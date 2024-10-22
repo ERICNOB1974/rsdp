@@ -128,33 +128,35 @@ export class ComunidadesComponent implements OnInit {
     this.currentIndex = (this.currentIndex - 1 + this.results.length) % this.results.length; // Decrementa el índice
   }
 
-  // Método para obtener las comunidades a mostrar en el carrusel
-  obtenerComunidadesParaMostrar(): Comunidad[] {
-    const comunidadesParaMostrar: Comunidad[] = [];
 
-    if (this.results.length === 0) {
-      return comunidadesParaMostrar; // Devuelve un arreglo vacío si no hay comunidades
-    }
-
-    // Definir cuántas comunidades mostrar, máximo 4 o el número total de comunidades disponibles
-    const cantidadComunidadesAMostrar = Math.min(this.results.length, 4);
-
-    for (let i = 0; i < cantidadComunidadesAMostrar; i++) {
-      const index = (this.currentIndex + i) % this.results.length;
-      const comunidad = this.results[index];
-
-      // Excluir comunidades en las que el usuario ya es miembro
-      const yaMiembro = this.comunidadesMiembroUsuario.some(
-        (comunidadMiembro) => comunidadMiembro.id === comunidad.id
-      );
-
-      if (!yaMiembro) {
-        comunidadesParaMostrar.push(comunidad); // Agregar solo si no es miembro
-      }
-    }
-
-    return comunidadesParaMostrar;
+// Método para obtener las comunidades a mostrar en el carrusel
+obtenerComunidadesParaMostrar(): Comunidad[] {
+  const comunidadesParaMostrar: Comunidad[] = [];
+  
+  if (this.results.length === 0) {
+    return comunidadesParaMostrar; // Devuelve un arreglo vacío si no hay comunidades
   }
+  
+  // Definir cuántas comunidades mostrar, máximo 4 o el número total de comunidades disponibles
+  const cantidadComunidadesAMostrar = Math.min(this.results.length, 4);
+  
+  for (let i = 0; i < cantidadComunidadesAMostrar; i++) {
+    const index = (this.currentIndex + i) % this.results.length;
+    const comunidad = this.results[index];
+    
+    // Excluir comunidades en las que el usuario ya es miembro
+    const yaMiembro = this.comunidadesMiembroUsuario.some(
+      (comunidadMiembro) => comunidadMiembro.id === comunidad.id
+    );
+    
+    if (!yaMiembro) {
+      comunidadesParaMostrar.push(comunidad); // Agregar solo si no es miembro
+    }
+  }
+  
+  return comunidadesParaMostrar;
+}
+
 
 
   irADetallesDeLaComunidad(id: number): void {

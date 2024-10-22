@@ -10,7 +10,7 @@ import { Evento } from '../eventos/evento';
     standalone: true,
     imports: [CommonModule, FormsModule, RouterModule],
     templateUrl: 'sugerenciasEventos.component.html',
-    styleUrls: ['eventos.component.css'] 
+    styleUrls: ['sugerencias.component.css'] 
 })
 export class SugerenciasEventosComponent implements OnInit {
     currentIndex: number = 0; // Índice actual del carrusel

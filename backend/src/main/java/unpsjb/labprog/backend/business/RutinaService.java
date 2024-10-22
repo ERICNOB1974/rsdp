@@ -44,6 +44,11 @@ public class RutinaService {
         return rutinaId;
     }
 
+    public Long crearRelacionRealizaRutina(Long rutinaId, Long usuarioId) throws Exception {
+        rutinaRepository.crearRelacionRealizaRutina(rutinaId, usuarioId);
+        return rutinaId;
+    }
+
     public Long guardarRutina(Rutina rutina) {
         return rutinaRepository.save(rutina).getId();
     }

@@ -26,6 +26,8 @@ import { EditarComunidadComponent } from './comunidades/editarComunidad.componen
 import { RutinasEjercicioComponent } from './rutinas/rutinasEjercicio.component';
 import { RutinasComponent } from './rutinas/rutinas.component';
 import { CrearRutinaComponent } from './rutinas/crearRutina.component';
+import { RutinaDetailComponent } from './rutinas/rutina-detail.component';
+import { SugerenciasRutinasComponent } from './sugerencias/sugerenciasRutinas.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -41,6 +43,7 @@ export const routes: Routes = [
   { path: 'sugerencias/amigos', component: SugerenciasAmigosComponent, canActivate: [AuthGuard] },
   { path: 'sugerencias/eventos', component: SugerenciasEventosComponent, canActivate: [AuthGuard] },
   { path: 'sugerencias/comunidades', component: SugerenciasComunidadesComponent, canActivate: [AuthGuard] },
+  { path: 'sugerencias/rutinas', component: SugerenciasRutinasComponent, canActivate: [AuthGuard] },
   { path: 'publicacion', component: CrearPublicacionComponent, canActivate: [AuthGuard] },  
   { path: 'publicacion/:id', component: PublicacionDetailComponent, canActivate: [AuthGuard] },
   { path: 'amigos', component: AmigosComponent, canActivate: [AuthGuard] },
@@ -48,7 +51,8 @@ export const routes: Routes = [
   { path: 'perfilEditable/:id', component: PerfilDetailComponent, canActivate: [AuthGuard] },
   { path: 'rutinas', component: RutinasComponent,  canActivate: [AuthGuard] },
   { path: 'rutinas/crearRutina', component: CrearRutinaComponent, canActivate: [AuthGuard]},
-  { path: 'rutinasHacer/:id', component: RutinasEjercicioComponent,  canActivate: [AuthGuard] },
+  { path: 'rutinas/hacer/:id', component: RutinasEjercicioComponent,  canActivate: [AuthGuard] },
+  { path: 'rutinas/:id', component: RutinaDetailComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent }, 
   { path: 'registro', component: RegistroComponent },
   { path: 'verificar-codigo', component: VerificarCodigoComponent },

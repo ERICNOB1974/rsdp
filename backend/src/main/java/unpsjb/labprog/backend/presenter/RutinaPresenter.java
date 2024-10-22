@@ -48,6 +48,11 @@ public class RutinaPresenter {
         return rutinaService.saveConCreador(rutina, usuarioId);
     }
 
+    @RequestMapping(path = "/create/{rutinaId}/{usuarioId}", method = RequestMethod.POST)
+    public Long crearRelacionRealizaRutina(@PathVariable Long rutinaId, @PathVariable Long usuarioId ) throws Exception{
+        return rutinaService.crearRelacionRealizaRutina(rutinaId, usuarioId);
+    }
+
     @RequestMapping(path = "/create", method = RequestMethod.POST)
     public ResponseEntity<Object> create(@RequestBody Rutina rutina) throws Exception {
         return Response.ok(rutinaService.save(rutina));

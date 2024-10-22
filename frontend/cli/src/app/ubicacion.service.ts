@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { AuthService } from './autenticacion/auth.service';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -7,7 +9,9 @@ export class UbicacionService {
   private latitud: number | null = null;
   private longitud: number | null = null;
 
-  constructor() {}
+  private usuariosUrl = 'rest/usuarios';
+
+  constructor(private authService: AuthService, private http: HttpClient) {}
 
   // Método para solicitar la ubicación al usuario
   obtenerUbicacion(): Promise<void> {
@@ -50,5 +54,24 @@ export class UbicacionService {
 
   getLongitud(): number | null {
     return this.longitud;
+  }
+
+  setearUbicacionDeUsuario(): void {
+    const idUsuario = this.authService.getUsuarioId();  // Obtener el ID del usuario
+    if (this.latitud !== null && this.longitud !== null && idUsuario) {
+      const url = `${this.usuariosUrl}/actualizarUbicacion/${idUsuario}`;
+      const data = {
+        latitud: this.latitud,
+        longitud: this.longitud
+      };
+      this.http.put(url, data).subscribe(
+        response => {
+          console.log('Ubicación actualizada correctamente:', response);
+        },
+        error => {
+          console.error('Error al actualizar la ubicación:', error);
+        }
+      );
+    }
   }
 }

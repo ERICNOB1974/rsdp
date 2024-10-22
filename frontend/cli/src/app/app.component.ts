@@ -52,7 +52,7 @@ import { DataPackage } from './data-package';
           </li>
           <li class="dropdown">
             <a class="dropdown-toggle">
-              <span class="icon"><i class="fa fa-users"></i></span>
+              <span class="icon"><i class="fa fa-user"></i></span>
               <span class="text">Amigos</span>
             </a>
             <ul class="dropdown-menu">
@@ -66,7 +66,7 @@ import { DataPackage } from './data-package';
           </li>
           <li class="dropdown">
             <a class="dropdown-toggle">
-              <span class="icon"><i class="fa fa-user"></i></span>
+              <span class="icon"><i class="fa fa-user-circle-o"></i></span>
               <span class="text">Perfil</span>
             </a>
             <ul class="dropdown-menu">
@@ -90,11 +90,14 @@ import { DataPackage } from './data-package';
                   <li>
                       <a href="/sugerencias/comunidades">De comunidades</a>
                   </li>
+                  <li>
+                      <a href="/sugerencias/rutinas">De rutinas</a>
+                  </li>
               </ul>
           </li>
           <li class="dropdown">
             <a class="dropdown-toggle">
-              <span class="icon"><i class="fa fa-question-circle"></i></span>
+              <span class="icon"><i class="fa fa-thumbs-o-up"></i></span>
               <span class="text">Publicación</span>
             </a>
             <ul class="dropdown-menu">
@@ -105,7 +108,7 @@ import { DataPackage } from './data-package';
           </li>
           <li class="dropdown">
             <a class="dropdown-toggle">
-              <span class="icon"><i class="fa fa-users"></i></span>
+              <span class="icon"><i class="fa fa-soccer-ball-o"></i></span>
               <span class="text">Rutinas</span>
             </a>
             <ul class="dropdown-menu">
@@ -151,7 +154,6 @@ export class AppComponent {
   idUsuarioAutenticado!: number; // Variable para almacenar el ID del usuario autenticado
 
   constructor(private router: Router, private ubicacionService: UbicacionService, private authService: AuthService, private notificacionService: NotificacionService,) { }
-
 
   ngOnInit(): void {
     this.router.events.subscribe(event => {
