@@ -7,12 +7,13 @@
 
 .carousel-container {
   display: flex;
+  justify-content: center; /* Centra los elementos cuando hay menos de 4 */
   transition: transform 0.5s ease; /* Para animar el desplazamiento */
   height: auto;
 }
 
 .carousel-item {
-  flex: 0 0 100%; /* Cada item ocupa todo el ancho */
+  flex: 0 0 25%; /* Cada item ocupa un cuarto del ancho si hay 4 o más */
   height: 100%;
   display: flex;
   align-items: center; /* Centra el contenido verticalmente */
@@ -81,7 +82,7 @@
 
 .comunidad-card {
   padding: 20px;
-  background-color: white;
+  background-color: rgb(241, 148, 86);
   border-radius: 8px;
   transition: transform 0.2s;
 }
@@ -89,4 +90,24 @@
 .comunidad-card:hover {
   transform: scale(1.05); /* Pequeña animación para indicar que es clickeable */
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Centrado adecuado si hay 1 o 2 comunidades */
+.carousel-container.few-items {
+  justify-content: center; /* Centra los elementos si hay pocos */
+}
+
+/* Ajuste para 1 sola comunidad */
+.carousel-item.single {
+  flex: 0 0 100%; /* Si solo hay 1 comunidad, ocupa todo el ancho */
+}
+
+/* Ajuste para 2 comunidades */
+.carousel-item.double {
+  flex: 0 0 50%; /* Si hay 2 comunidades, cada una ocupa la mitad del ancho */
+}
+
+/* Ajuste para 3 comunidades */
+.carousel-item.triple {
+  flex: 0 0 33.33%; /* Si hay 3 comunidades, cada una ocupa un tercio del ancho */
 }
