@@ -1,15 +1,15 @@
-import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { CommonModule } from '@angular/common'; // Para permitir navegar de vuelta
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PublicacionService } from './publicacion.service';
 import { Publicacion } from './publicacion';
-import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DataPackage } from '../data-package';
 import { Comentario } from './Comentario';
 import { AuthService } from '../autenticacion/auth.service';
+import { Usuario } from '../usuarios/usuario';
 
 
 
@@ -24,6 +24,7 @@ export class PublicacionDetailComponent implements OnInit {
 
   publicacion!: Publicacion;
   isActive: boolean = false;
+  usuarioId!: number;
 
   constructor(
     private route: ActivatedRoute, // Para obtener el parámetro de la URL
@@ -43,6 +44,7 @@ export class PublicacionDetailComponent implements OnInit {
   comentarios: Comentario[] = [];
   displayedComments: Comentario[] = [];
   commentsToShow: number = 4; // Número de comentarios a mostrar inicialmente
+  isOwnPublication: boolean = false;
 
   toggleLike() {
     if (this.isLiked) {
@@ -53,15 +55,25 @@ export class PublicacionDetailComponent implements OnInit {
     this.isLiked = !this.isLiked;
   }
 
+  checkIfOwnPublication(): void {
+    const currentUserId = this.authService.getUsuarioId();
+    this.publicacionService.publicadoPor(this.publicacion.id).subscribe(
+      (dataPackage: DataPackage) => {
+         const usuario = <Usuario><unknown>dataPackage.data;
+         this.usuarioId=usuario.id;
+        this.isOwnPublication = (this.usuarioId === Number(currentUserId));
+      });
+
+  }
+
   submitComment() {
     if (this.comment.trim()) {
       this.publicacionService.comentar(this.publicacion.id, this.comment).subscribe(
         (response: any) => {
-          // Asumiendo que el servidor devuelve el comentario creado
           const usuarioId = this.authService.getUsuarioId();
           const idUsuarioAutenticado = Number(usuarioId);
           const newComment: Comentario = {
-            id: response.id, // Asegúrate de que el servidor devuelve el ID del nuevo comentario
+            id: 0, // Asegúrate de que el servidor devuelve el ID del nuevo comentario
             texto: this.comment,
             fecha: new Date(),
             usuario: {
@@ -97,28 +109,42 @@ export class PublicacionDetailComponent implements OnInit {
   }
   ngOnInit(): void {
     this.getPublicacion();
-    // this.cargarComentarios();
+    //this.cargarComentarios();
     //this.traerParticipantes();
+    this.updateDisplayedComments();
+    this.checkIfOwnPublication();
   }
 
   cargarComentarios(): void {
     this.publicacionService.comentarios(this.publicacion.id)
-      .subscribe((dataPackage: DataPackage) => {
-        console.log('Comentarios cargados:', this.comentarios);
-        if (dataPackage.status === 200) {
-          this.comentarios = dataPackage.data as Comentario[];
-        } else {
-          console.error('Error al cargar los comentarios:', dataPackage.message);
+      .subscribe({
+        next: (dataPackage: DataPackage) => {
+          if (dataPackage && dataPackage.status === 200 && dataPackage.data) {
+            this.comentarios = dataPackage.data as Comentario[];
+          } else {
+            console.error('Error al cargar los comentarios:', dataPackage.message);
+          }
+        },
+        error: (error) => {
+          console.error('Error al comunicarse con el servicio de comentarios:', error);
         }
-      }, error => {
-        console.error('Error al comunicarse con el servicio de comentarios:', error);
       });
   }
 
-  getComentarios() {
-    return this.comentarios.slice(0, 5);
+  deletePublicacion(): void {
+    if (confirm('¿Estás seguro de que quieres eliminar esta publicación?')) {
+      this.publicacionService.eliminar(this.publicacion.id).subscribe(
+        () => {
+          this.snackBar.open('Publicación eliminada con éxito', 'Cerrar', { duration: 3000 });
+          this.router.navigate(['/publicaciones']); // O a donde quieras redirigir después de eliminar
+        },
+        error => {
+          console.error('Error al eliminar la publicación:', error);
+          this.snackBar.open('Error al eliminar la publicación', 'Cerrar', { duration: 3000 });
+        }
+      );
+    }
   }
-
   updateDisplayedComments() {
     this.displayedComments = this.comentarios.slice(0, this.commentsToShow);
   }
@@ -137,9 +163,9 @@ export class PublicacionDetailComponent implements OnInit {
         this.publicacion = <Publicacion>dataPackage.data;
         this.publicacionService.estaLikeada(this.publicacion.id).subscribe(dataPackage => {
           this.isLiked = <boolean><unknown>dataPackage.data;
-          console.log(this.isLiked);
-        })
-        this.cargarComentarios();
+          this.checkIfOwnPublication();
+          this.cargarComentarios();
+        });
       });
     }
   }
