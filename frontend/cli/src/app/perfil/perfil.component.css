@@ -1,19 +1,23 @@
 /* Asegura que todo el contenedor del perfil esté centrado en la página */
 .perfil-container {
     max-width: 900px;
-    margin: 40px auto; /* Centra horizontalmente */
+    margin: 40px auto;
+    /* Centra horizontalmente */
     padding: 20px;
     border-radius: 10px;
     background-color: #fff;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    text-align: center; /* Centra el texto en el contenedor */
+    text-align: center;
+    /* Centra el texto en el contenedor */
 }
 
 .perfil-info {
     display: flex;
     align-items: center;
-    justify-content: center; /* Asegura que el contenido esté centrado */
-    flex-direction: column; /* Coloca los elementos en columna */
+    justify-content: center;
+    /* Asegura que el contenido esté centrado */
+    flex-direction: column;
+    /* Coloca los elementos en columna */
     margin-bottom: 40px;
 }
 
@@ -60,6 +64,7 @@
 .btn-editar:hover {
     background-color: #0056b3;
 }
+
 .perfil-publicaciones {
     margin-top: 30px;
 }
@@ -74,14 +79,52 @@
     border: 1px solid #ddd;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-eliminar {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em;
+    transition: background-color 0.3s ease;
+}
+
+.btn-eliminar:hover {
+    background-color: #c82333;
+}
+
+.publicacion-item {
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.publicacion-item:hover {
+    transform: scale(1.02);
+}
+
+.btn-eliminar {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.publicacion-item:hover .btn-eliminar {
+    opacity: 1;
 }
 
 .publicacion-contenido {
     padding: 15px;
 }
 
-.publicacion-imagen, .publicacion-video {
+.publicacion-imagen,
+.publicacion-video {
     width: 100%;
     max-height: 300px;
     object-fit: cover;

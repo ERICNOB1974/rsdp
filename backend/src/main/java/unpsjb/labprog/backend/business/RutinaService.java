@@ -270,7 +270,7 @@ public class RutinaService {
                     String ejercicioNombre = rutinaRepository.findEjercicioNombreByRelacionId(relacionId);
                     String ejercicioDescripcion = rutinaRepository.findEjercicioDescripcionByRelacionId(relacionId);
                     Integer ejercicioOrden = rutinaRepository.findEjercicioOrdenByRelacionId(relacionId);
-                    
+                    String imagen = rutinaRepository.findImagenByRelacionId(relacionId);
                     // Obtener atributos adicionales
                     Integer repeticiones = rutinaRepository.findEjercicioRepeticionesByRelacionId(relacionId);
                     Integer series = rutinaRepository.findEjercicioSeriesByRelacionId(relacionId);
@@ -284,6 +284,7 @@ public class RutinaService {
                         ejercicioRepeticionesDTO.setOrden(ejercicioOrden);
                         ejercicioRepeticionesDTO.setRepeticiones(repeticiones);
                         ejercicioRepeticionesDTO.setSeries(series);
+                        ejercicioRepeticionesDTO.setImagen(imagen);
                         ejerciciosRepeticiones.add(ejercicioRepeticionesDTO);
                     } else if (tiempo != null) { // Ejercicio de tiempo
                         EjercicioTiempoDTO ejercicioTiempoDTO = new EjercicioTiempoDTO();
@@ -291,6 +292,7 @@ public class RutinaService {
                         ejercicioTiempoDTO.setDescripcion(ejercicioDescripcion);
                         ejercicioTiempoDTO.setOrden(ejercicioOrden);
                         ejercicioTiempoDTO.setTiempo(tiempo);
+                        ejercicioTiempoDTO.setImagen(imagen);
                         ejerciciosTiempo.add(ejercicioTiempoDTO);
                     }
                 }
