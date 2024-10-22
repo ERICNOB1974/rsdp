@@ -1,0 +1,53 @@
+<div class="container rutina-detail-container" *ngIf="rutina">
+    <div class="row justify-content-center">
+      <div class="card shadow-sm mt-4">
+        <div class="card-body">
+          <h2 class="card-title text-center mb-4">{{ rutina.nombre }}</h2>
+  
+          <p><strong>Descripción:</strong> {{ rutina.descripcion }}</p>
+  
+          <p><strong>Etiquetas:</strong> 
+            <span *ngFor="let etiqueta of rutina.etiquetas">
+              <span class="badge badge-info">{{ etiqueta.nombre }}</span>
+            </span>
+          </p>
+  
+          <h3>Días de entrenamiento</h3>
+          <div *ngFor="let dia of rutina.dias" class="dia-card mt-3">
+            <div class="card">
+              <div class="card-header">
+                <h4>{{ dia.nombre }} ({{ dia.tipo === 'trabajo' ? 'Día de Trabajo' : 'Día de Descanso' }})</h4>
+              </div>
+              <div class="card-body">
+                <p>{{ dia.descripcion }}</p>
+  
+                <div *ngIf="dia.ejercicios.length > 0">
+                  <h5>Ejercicios:</h5>
+                  <ul>
+                    <li *ngFor="let ejercicio of dia.ejercicios">
+                      <strong>{{ ejercicio.nombre }}:</strong>
+                      <span *ngIf="ejercicio.tipo === 'resistencia'">
+                        Tiempo: {{ ejercicio.tiempo }}
+                      </span>
+                      <span *ngIf="ejercicio.tipo === 'series'">
+                        Series: {{ ejercicio.series }} x Repeticiones: {{ ejercicio.repeticiones }}
+                      </span>
+                      <p>{{ ejercicio.descripcion }}</p>
+                      <img *ngIf="ejercicio.imagen" [src]="ejercicio.imagen" alt="{{ ejercicio.nombre }}" class="img-thumbnail">
+                    </li>
+                  </ul>
+                </div>
+                <div *ngIf="dia.ejercicios.length === 0">
+                  <p>No hay ejercicios asignados para este día.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Botón de regresar -->
+          <button (click)="goBack()" class="btn btn-secondary btn-block mt-2">Volver</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
