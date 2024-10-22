@@ -147,8 +147,11 @@ export class CrearRutinaComponent {
       const rutina = { nombre: this.nombreRutina, descripcion: this.descripcionRutina };
       this.rutinaId = await this.rutinaService.guardarRutina(rutina);
 
-      const rutinaConId = { id: this.rutinaId, nombre: this.nombreRutina, descripcion: this.descripcionRutina };
-
+      const rutinaConId: Rutina = { 
+        id: parseInt(this.rutinaId, 10), 
+        nombre: this.nombreRutina, 
+        descripcion: this.descripcionRutina 
+    };
       // Verificar y crear etiquetas si es necesario
       for (const etiqueta of this.etiquetasSeleccionadas) {
         const existe = await this.etiquetaService.verificarExistencia(etiqueta.nombre).toPromise();

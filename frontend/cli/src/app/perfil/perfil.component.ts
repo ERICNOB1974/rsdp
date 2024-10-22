@@ -68,7 +68,7 @@ export class PerfilComponent implements OnInit {
 
   // Navega a la página de edición de perfil
   editarPerfil(): void {
-    this.router.navigate(['/perfilEditable', this.usuario?.id]);
+    this.router.navigate(['/perfilEditable', this.idUsuarioAutenticado]);
   }
 
   verificarRelacion(): void {
@@ -121,6 +121,7 @@ export class PerfilComponent implements OnInit {
       next: (dataPackage: DataPackage) => {
         if (dataPackage.status === 200) {
           alert('Solicitud de amistad enviada exitosamente.');
+          window.location.reload(); // Recargar la página
         } else {
           alert('Error: ' + dataPackage.message);
         }
@@ -155,6 +156,7 @@ export class PerfilComponent implements OnInit {
         if (dataPackage.status === 200) {
           const mensaje = aceptar ? 'Solicitud de amistad aceptada exitosamente.' : 'Solicitud de amistad rechazada exitosamente.';
           alert(mensaje);
+          window.location.reload(); // Recargar la página
         } else {
           alert('Error: ' + dataPackage.message);
         }

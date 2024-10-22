@@ -28,13 +28,20 @@
       <button class="btn btn-success" (click)="submitComment()">Enviar</button>
     </div>
 
-    <div class="comments-container">
-      <div *ngFor="let comment of displayedComments" class="comment">
-        <p>{{ comment }}</p>
+
+
+
+    <div class="comments-section">
+      <div *ngFor="let com of comentarios" class="comment"
+        style="margin-bottom: 15px; padding: 10px; background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <div class="comment-header">
+          <span class="username" style="font-size: 12px; font-weight: bold; color: #3897f0;">{{
+            com.usuario.nombreUsuario }}</span>
+          <span class="date" style="font-size: 10px; color: #999;">{{ com.fecha | date:'short' }}</span>
+        </div>
+        <p class="comment-text" style="font-size: 14px; margin: 0; color: #262626;">{{ com.texto }}</p>
       </div>
     </div>
-
-    <button *ngIf="displayedComments.length < comments.length" class="btn btn-primary mt-2"
-      (click)="loadMoreComments()">Ver más</button>
   </div>
+
 </div>

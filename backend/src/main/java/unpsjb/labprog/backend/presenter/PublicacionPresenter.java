@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.PublicacionService;
 import unpsjb.labprog.backend.model.Publicacion;
+import unpsjb.labprog.backend.model.Usuario;
 
 @RestController
 @RequestMapping("publicacion")
@@ -67,5 +68,28 @@ public class PublicacionPresenter {
             throws Exception {
         List<Publicacion> publicaciones = publicacionService.publicacionesUsuario(idUsuario);
         return Response.ok(publicaciones, "OK");
+    }
+
+    @GetMapping("/usuarioPublicador/{idPublicacion}")
+    public ResponseEntity<Object> publicadoPor(@PathVariable Long idPublicacion)
+            throws Exception {
+        Usuario u = publicacionService.obtenerCreadorPublicacion(idPublicacion);
+        return Response.ok(u, "OK");
+    }
+
+    @GetMapping("/publicaciones/amigos/usuario/{idUsuario}")
+    public ResponseEntity<Object> publicacionesAmigo(@PathVariable Long idUsuario)
+            throws Exception {
+        List<Publicacion> publicaciones = publicacionService.publicacionesAmigos(idUsuario);
+        return Response.ok(publicaciones, "OK");
+    }
+
+    @GetMapping("/comentarios/{idPublicacion}")
+    public ResponseEntity<Object> obtenerNotificaciones(@PathVariable Long idPublicacion) {
+        try {
+            return Response.ok(publicacionService.obtenerComentariosPorPublicacion(idPublicacion));
+        } catch (Exception e) {
+            return Response.error("", "Error al obtener los comentarios: " + e.getMessage());
+        }
     }
 }
