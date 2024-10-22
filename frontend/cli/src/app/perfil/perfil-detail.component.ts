@@ -16,13 +16,14 @@ import { AuthService } from '../autenticacion/auth.service';
 })
 export class PerfilDetailComponent implements OnInit {
   usuario!: Usuario; // Usuario que se va a editar
-  idUsuario!: number;
-  idUsuarioAutenticado!:number;
+  idUsuarioAutenticado!: number;
+
 
   constructor(
     private usuarioService: UsuarioService,
     private authService: AuthService,
     private router: Router,
+    private authService: AuthService,  // Inyecta el AuthService
     private snackBar: MatSnackBar
   ) {}
 

@@ -85,6 +85,10 @@ export class RutinaService {
     return this.http.get<DataPackage>(` ${this.rutinasUrl}/findById/${id}`);
   }
 
+  getRutinaYejercicios(id: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.rutinasUrl}/rutina/${id}`);
+  }
+
   getEjerciciosDeRutina(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.rutinasUrl}/${id}/ejercicios`);
   }

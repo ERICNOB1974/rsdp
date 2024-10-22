@@ -113,7 +113,7 @@ import { DataPackage } from './data-package';
                 <a href="/rutinas">Listar Rutinas</a>
               </li>
               <li>
-                <a href="/rutinas/nueva">Nueva Rutina</a>
+                <a href="/rutinas/crearRutina">Nueva Rutina</a>
               </li>
             </ul>
           </li>
