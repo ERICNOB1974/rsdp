@@ -26,6 +26,7 @@ import { EditarComunidadComponent } from './comunidades/editarComunidad.componen
 import { RutinasEjercicioComponent } from './rutinas/rutinasEjercicio.component';
 import { RutinasComponent } from './rutinas/rutinas.component';
 import { CrearRutinaComponent } from './rutinas/crearRutina.component';
+import { RutinaDetailComponent } from './rutinas/rutina-detail.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -49,6 +50,7 @@ export const routes: Routes = [
   { path: 'rutinas', component: RutinasComponent,  canActivate: [AuthGuard] },
   { path: 'rutinasHacer/:id', component: RutinasEjercicioComponent,  canActivate: [AuthGuard] },
   { path: 'rutinas/crearRutina', component: CrearRutinaComponent},
+  { path: 'rutinas/:id', component: RutinaDetailComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent }, 
   { path: 'registro', component: RegistroComponent },
   { path: 'verificar-codigo', component: VerificarCodigoComponent },
