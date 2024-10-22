@@ -2,7 +2,7 @@
     <h1>Amigos</h1>
     <div class="tabs">
         <button (click)="cambiarVista('amigos')" [class.active]="mostrarAmigos">Amigos</button>
-        <button (click)="cambiarVista('solicitudes')" [class.active]="!mostrarAmigos">Solicitudes</button>
+        <!-- <button (click)="cambiarVista('solicitudes')" [class.active]="!mostrarAmigos">Solicitudes</button> -->
     </div>
 
     <div *ngIf="mostrarAmigos">
@@ -12,10 +12,10 @@
         </ul>
     </div>
 
-    <div *ngIf="!mostrarAmigos">
+    <!-- <div *ngIf="!mostrarAmigos">
         <h2>Solicitudes de Amistad</h2>
         <ul>
             <li *ngFor="let solicitud of solicitudes">{{ solicitud.nombreUsuario }}</li>
         </ul>
-    </div>
+    </div> -->
 </div>
