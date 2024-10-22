@@ -8,11 +8,38 @@
 .carousel-container {
   display: flex;
   transition: transform 0.5s ease; /* Para animar el desplazamiento */
+  justify-content: center; /* Centra los elementos cuando hay menos de 4 */
   height: auto;
 }
 
+.etiquetas {
+  display: flex; 
+  flex-wrap: wrap; 
+  margin-bottom: 10px; /* Espacio entre etiquetas y otros elementos */
+}
+
+.etiqueta {
+  background-color: #695d5d; /* Color de fondo para las etiquetas */
+  border-radius: 4px; /* Bordes redondeados */
+  padding: 5px 10px; /* Espaciado interno */
+  margin-right: 5px; /* Espacio a la derecha de cada etiqueta */
+}
+
+.dias {
+  display: flex; 
+  flex-wrap: wrap; 
+}
+
+.dia {
+  background-color: #c0c0c0; /* Color de fondo para los días */
+  border-radius: 4px; /* Bordes redondeados */
+  padding: 5px 10px; /* Espaciado interno */
+  margin-right: 5px; /* Espacio a la derecha de cada día */
+}
+
+
 .carousel-item {
-  flex: 0 0 100%; /* Cada item ocupa todo el ancho */
+  flex: 0 0 25%; /* Cada item ocupa un cuarto del ancho si hay 4 o más */
   height: 100%;
   display: flex;
   align-items: center; /* Centra el contenido verticalmente */
@@ -83,7 +110,7 @@
 
 .evento-card {
   padding: 20px;
-  background-color: white;
+  background-color: rgb(97, 125, 250);
   border-radius: 8px;
   transition: transform 0.2s;
 }

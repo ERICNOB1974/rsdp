@@ -222,7 +222,8 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
         @Query("MATCH (d:Dia) WHERE ID(d) = $diaId " +
                         "MATCH (e:Ejercicio) WHERE ID(e) = $ejercicioId " +
                         "CREATE (d)-[:TIENE_EJERCICIO {orden: $orden, tiempo: $tiempo}]->(e)")
-        void relacionarDiaEjercicioResistencia(Long diaId, Long ejercicioId, int orden, String tiempo);    
+
+        void relacionarDiaEjercicioResistencia(Long diaId, Long ejercicioId, int orden, String tiempo);
 
         @Query("MATCH (r:Rutina), (u:Usuario) " +
                         "WHERE id(u) = $usuarioId AND id(r) = $rutinaId " +
@@ -243,10 +244,13 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
         @Query("MATCH (c:Rutina) WHERE toUpper(c.nombre) CONTAINS toUpper($nombre) RETURN c")
         List<Rutina> rutinasNombre(String nombre);
 
-        //nivel de dificultad
-        //cant ejercicios
-        //popularidad
+     
 
+        @Query("MATCH (r:Rutina), (u:Usuario) " +
+        "WHERE id(u) = $usuarioId AND id(r) = $rutinaId " +
+        "MERGE (u)-[rel:REALIZA_RUTINA]->(r) " +
+        "ON CREATE SET rel.fechaComienzo = date()")
+        void crearRelacionRealizaRutina(Long rutinaId, Long usuarioId);
 
 
 }

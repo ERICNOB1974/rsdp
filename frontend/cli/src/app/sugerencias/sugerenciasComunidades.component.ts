@@ -10,7 +10,7 @@ import { ComunidadService } from '../comunidades/comunidad.service';
     standalone: true,
     imports: [CommonModule, FormsModule, RouterModule],
     templateUrl: 'sugerenciasComunidades.component.html',
-    styleUrls: ['eventos.component.css'] 
+    styleUrls: ['sugerencias.component.css'] 
 })
 export class SugerenciasComunidadesComponent implements OnInit {
     currentIndex: number = 0; // Índice actual del carrusel
@@ -47,16 +47,21 @@ export class SugerenciasComunidadesComponent implements OnInit {
     
       // Método para obtener los eventos a mostrar en el carrusel
       obtenerComunidadesParaMostrar(): Comunidad[] {
-        const eventosParaMostrar: Comunidad[] = [];
-    
+        const comunidadesParaMostrar: Comunidad[] = [];
+      
         if (this.results.length === 0) {
-          return eventosParaMostrar; // Devuelve un arreglo vacío si no hay eventos
+          return comunidadesParaMostrar; // Devuelve un arreglo vacío si no hay comunidades
         }
-    
-        for (let i = 0; i < 4; i++) {
+      
+        // Si hay menos de 4 comunidades, se muestran solo las disponibles sin repetir
+        const cantidadComunidadesAMostrar = Math.min(4, this.results.length);
+      
+        for (let i = 0; i < cantidadComunidadesAMostrar; i++) {
           const index = (this.currentIndex + i) % this.results.length;
-          eventosParaMostrar.push(this.results[index]);
+          comunidadesParaMostrar.push(this.results[index]);
         }
-        return eventosParaMostrar;
+      
+        return comunidadesParaMostrar;
       }
+      
 }

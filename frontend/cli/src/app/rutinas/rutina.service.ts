@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, map, of } from 'rxjs';
+
 import { Rutina } from './rutina';
 import { firstValueFrom } from 'rxjs';
 import { DataPackage } from '../data-package';
@@ -73,8 +75,13 @@ export class RutinaService {
     return this.http.post<DataPackage>(` ${this.rutinasUrl}/etiquetar/${idEtiqueta}`, rutina);
   }
 
+  crearRelacionRealizaRutina(rutinaId: number): Observable<DataPackage> {
+    const usuarioId = this.authService.getUsuarioId();
+    return this.http.post<DataPackage>(` ${this.rutinasUrl}/create/${rutinaId}/${usuarioId}`, null );
+  }
+
   sugerencias(nombreUsuario: string): Observable<DataPackage> {
-    return this.http.get<DataPackage>(` ${this.rutinasUrl}/sugerencias/${nombreUsuario}`);
+    return this.http.get<DataPackage>(` ${this.rutinasUrl}/sugerencias-combinadas/${nombreUsuario}`);
   }
 
   all(): Observable<DataPackage> {
@@ -93,6 +100,22 @@ export class RutinaService {
     return this.http.get<DataPackage>(`${this.rutinasUrl}/${id}/ejercicios`);
   }
 
+  getRutinaOrdenada(id: string): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.rutinasUrl}/rutina/${id}`).pipe(
+      map((response: DataPackage) => {
+        let data = response.data as any;
+        // Ordenar los días por el atributo "orden"
+        data.dias = data.dias.sort((a: any, b: any) => a.orden - b.orden);
+        // Ordenar los ejercicios dentro de cada día
+        data.dias.forEach((dia: any) => {
+          dia.ejerciciosRepeticiones = dia.ejerciciosRepeticiones.sort((a: any, b: any) => a.orden - b.orden);
+          dia.ejerciciosTiempo = dia.ejerciciosTiempo.sort((a: any, b: any) => a.orden - b.orden);
+        });
+        return response;
+      })
+    );
+  }
+  
   obtenerDiasEnRutina(idRutina: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.rutinasUrl}/obtenerDiasEnRutina/${idRutina}`);
   }
@@ -118,6 +141,7 @@ export class RutinaService {
     const params = new HttpParams().set('etiquetas', etiquetas.join(',')); // convierte el array a una cadena separada por comas
     return this.http.get<DataPackage>(`${this.rutinasUrl}/filtrar/etiquetas`, { params });
   }
+
 }
 
 
