@@ -11,6 +11,32 @@
   height: auto;
 }
 
+.etiquetas {
+  display: flex; 
+  flex-wrap: wrap; 
+  margin-bottom: 10px; /* Espacio entre etiquetas y otros elementos */
+}
+
+.etiqueta {
+  background-color: #695d5d; /* Color de fondo para las etiquetas */
+  border-radius: 4px; /* Bordes redondeados */
+  padding: 5px 10px; /* Espaciado interno */
+  margin-right: 5px; /* Espacio a la derecha de cada etiqueta */
+}
+
+.dias {
+  display: flex; 
+  flex-wrap: wrap; 
+}
+
+.dia {
+  background-color: #c0c0c0; /* Color de fondo para los días */
+  border-radius: 4px; /* Bordes redondeados */
+  padding: 5px 10px; /* Espaciado interno */
+  margin-right: 5px; /* Espacio a la derecha de cada día */
+}
+
+
 .carousel-item {
   flex: 0 0 100%; /* Cada item ocupa todo el ancho */
   height: 100%;

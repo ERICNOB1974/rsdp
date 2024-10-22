@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 import { RutinaService } from './rutina.service';
 import { Rutina } from './rutina';
 import { CommonModule, Location } from '@angular/common';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DataPackage } from '../data-package';
 
 @Component({
   selector: 'app-rutina-detail',
@@ -13,33 +14,30 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   standalone: true
 })
 export class RutinaDetailComponent implements OnInit {
-  rutina!: Rutina;
+  rutina: any;
+  dias: any[] = [];
+  isDayVisible: boolean[] = [];
 
-  constructor(
+  constructor(private rutinaService: RutinaService,
     private route: ActivatedRoute,
-    private rutinaService: RutinaService,
-    private location: Location,
-    private router: Router,
-    private snackBar: MatSnackBar
-  ) { }
+    private router: Router) { }
 
   ngOnInit(): void {
-    this.getRutina();
+    const id = this.route.snapshot.paramMap.get('id')!;
+    this.rutinaService.getRutinaOrdenada(id).subscribe((response: DataPackage) => {
+      this.rutina = response.data;
+      this.dias = this.rutina.dias;
+      this.isDayVisible = new Array(this.dias.length).fill(false); // Inicializar el estado de cada día como no visible
+    });
   }
 
-  getRutina(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (!id || isNaN(parseInt(id, 10))) {
-      this.router.navigate(['rutinas']);
-    } else {
-      this.rutinaService.get(parseInt(id)).subscribe(dataPackage => {
-        this.rutina = <Rutina>dataPackage.data;
-      });
-    }
-  }
-
-  goBack(): void {
-    this.location.back();
+  toggleDayVisibility(index: number): void {
+    this.isDayVisible[index] = !this.isDayVisible[index];
   }
   
+  iniciarRutina() {
+    const rutinaId = this.route.snapshot.paramMap.get('id')!;
+    this.router.navigate([`rutinas/hacer/${rutinaId}`]); 
+  }  
+
 }

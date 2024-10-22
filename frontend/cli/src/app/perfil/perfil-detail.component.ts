@@ -23,7 +23,6 @@ export class PerfilDetailComponent implements OnInit {
     private usuarioService: UsuarioService,
     private authService: AuthService,
     private router: Router,
-    private authService: AuthService,  // Inyecta el AuthService
     private snackBar: MatSnackBar
   ) {}
 

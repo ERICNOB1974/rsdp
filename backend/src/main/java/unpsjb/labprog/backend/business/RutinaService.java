@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +41,11 @@ public class RutinaService {
     public Long saveConCreador(Rutina rutina, Long usuarioId) throws Exception {
         Long rutinaId = rutinaRepository.save(rutina).getId();
         rutinaRepository.crearRelacionCreador(rutinaId, usuarioId);
+        return rutinaId;
+    }
+
+    public Long crearRelacionRealizaRutina(Long rutinaId, Long usuarioId) throws Exception {
+        rutinaRepository.crearRelacionRealizaRutina(rutinaId, usuarioId);
         return rutinaId;
     }
 

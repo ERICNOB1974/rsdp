@@ -8,7 +8,6 @@ import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.stereotype.Repository;
 
 import unpsjb.labprog.backend.model.Dia;
-import unpsjb.labprog.backend.model.Ejercicio;
 import unpsjb.labprog.backend.model.Rutina;
 
 @Repository
@@ -221,8 +220,6 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                         "CREATE (d)-[:TIENE_EJERCICIO {orden: $orden, tiempo: $tiempo}]->(e)")
         void relacionarDiaEjercicioResistencia(Long diaId, Long ejercicioId, int orden, String tiempo);
 
-    
-
         @Query("MATCH (r:Rutina), (u:Usuario) " +
                         "WHERE id(u) = $usuarioId AND id(r) = $rutinaId " +
                         "MERGE (r)-[:CREADA_POR]->(u)")
@@ -233,6 +230,10 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                         "MERGE (r)-[:ETIQUETADA_CON]->(e)")
         void etiquetarRutina(Long rutinaId, Long etiquetaId);
 
-
+        @Query("MATCH (r:Rutina), (u:Usuario) " +
+        "WHERE id(u) = $usuarioId AND id(r) = $rutinaId " +
+        "MERGE (u)-[rel:REALIZA_RUTINA]->(r) " +
+        "ON CREATE SET rel.fechaComienzo = date()")
+        void crearRelacionRealizaRutina(Long rutinaId, Long usuarioId);
 
 }
