@@ -22,5 +22,6 @@ public class Ejercicio {
 
     private String nombre;
     private String descripcion;
+    private String imagen;
 
 }

@@ -10,14 +10,13 @@
             <label for="archivo">Seleccionar imagen o video</label>
             <input type="file" id="archivo" (change)="onFileSelect($event)">
         </div>
-        
+
         <div>
             <img *ngIf="tipoArchivo === 'image'" [src]="vistaPreviaArchivo" alt="Vista previa de la imagen"
                 style="max-width: 100%; height: auto;">
             <video *ngIf="tipoArchivo === 'video'" [src]="vistaPreviaArchivo" controls
                 style="max-width: 100%; height: auto;"></video>
         </div>
-
 
         <div class="form-buttons">
             <button type="button" (click)="savePublicacion()" class="btn btn-success"
