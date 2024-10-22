@@ -25,6 +25,7 @@ export class PublicacionDetailComponent implements OnInit {
   publicacion!: Publicacion;
   isActive: boolean = false;
   usuarioId!: number;
+  numeroLikes!: number;
 
   constructor(
     private route: ActivatedRoute, // Para obtener el parámetro de la URL
@@ -34,7 +35,6 @@ export class PublicacionDetailComponent implements OnInit {
     private snackBar: MatSnackBar,
     private el: ElementRef,
     private authService: AuthService
-
   ) { }
 
   isLiked: boolean = false;
@@ -49,8 +49,11 @@ export class PublicacionDetailComponent implements OnInit {
   toggleLike() {
     if (this.isLiked) {
       this.publicacionService.sacarLike(this.publicacion.id).subscribe();
+      this.numeroLikes--;
     } else {
       this.publicacionService.darLike(this.publicacion.id).subscribe();
+      this.numeroLikes++;
+     // this.cantidadLikes();
     }
     this.isLiked = !this.isLiked;
   }
@@ -59,11 +62,17 @@ export class PublicacionDetailComponent implements OnInit {
     const currentUserId = this.authService.getUsuarioId();
     this.publicacionService.publicadoPor(this.publicacion.id).subscribe(
       (dataPackage: DataPackage) => {
-         const usuario = <Usuario><unknown>dataPackage.data;
-         this.usuarioId=usuario.id;
+        const usuario = <Usuario><unknown>dataPackage.data;
+        this.usuarioId = usuario.id;
         this.isOwnPublication = (this.usuarioId === Number(currentUserId));
       });
 
+  }
+
+  cantidadLikes(): void {
+    this.publicacionService.cantidadLikes(this.publicacion.id).subscribe((dataPackage: DataPackage) => {
+      this.numeroLikes = <number><unknown>dataPackage.data;
+    })
   }
 
   submitComment() {
@@ -113,6 +122,7 @@ export class PublicacionDetailComponent implements OnInit {
     //this.traerParticipantes();
     this.updateDisplayedComments();
     this.checkIfOwnPublication();
+
   }
 
   cargarComentarios(): void {
@@ -165,6 +175,7 @@ export class PublicacionDetailComponent implements OnInit {
           this.isLiked = <boolean><unknown>dataPackage.data;
           this.checkIfOwnPublication();
           this.cargarComentarios();
+          this.cantidadLikes(); 
         });
       });
     }

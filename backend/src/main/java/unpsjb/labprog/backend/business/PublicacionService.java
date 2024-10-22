@@ -3,7 +3,6 @@ package unpsjb.labprog.backend.business;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -106,6 +105,10 @@ public class PublicacionService {
         comentario.setUsuario(usuario);
 
         return comentario;
+    }
+
+    public Long cantidadLikes(Long idPublicacion){
+        return  publicacionRepository.cantidadLikes(idPublicacion);
     }
 
 }

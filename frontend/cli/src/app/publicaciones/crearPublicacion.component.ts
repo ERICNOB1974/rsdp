@@ -37,7 +37,7 @@ export class CrearPublicacionComponent implements OnInit {
   savePublicacion(): void {
     this.publicacion.fechaDeCreacion= new Date().toISOString();
     this.publicacionService.saveConCreador(this.publicacion).subscribe();
-    //location.reload(); 
+    location.reload(); 
   }
 
   onFileSelect(event: any) {

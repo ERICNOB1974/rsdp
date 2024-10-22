@@ -64,7 +64,7 @@ public class RutinaService {
         return rutinaRepository.save(rutina);
     }
 
-    public List<Ejercicio> ejercicios(Long idRutina){
+    public List<Ejercicio> ejercicios(Long idRutina) {
         return ejercicioRepository.findEjerciciosByRutinaId(idRutina);
     }
 
@@ -77,7 +77,7 @@ public class RutinaService {
         return rutinaRepository.findById(id).orElse(null);
     }
 
-    public List<Rutina> sugerenciasDeRutinasBasadasEnRutinas(String nombreUsuario){
+    public List<Rutina> sugerenciasDeRutinasBasadasEnRutinas(String nombreUsuario) {
         return rutinaRepository.sugerenciasDeRutinasBasadasEnRutinas(nombreUsuario);
     }
 
@@ -108,7 +108,8 @@ public class RutinaService {
         Long ejercicioId;
         if (ejercicioExistente == null) {
             // Si no existe, se crea uno nuevo.
-            ejercicioId = ejercicioRepository.crearEjercicio(ejercicio.getNombre(), ejercicio.getDescripcion(), ejercicio.getImagen());
+            ejercicioId = ejercicioRepository.crearEjercicio(ejercicio.getNombre(), ejercicio.getDescripcion(),
+                    ejercicio.getImagen());
         } else {
             // Si existe, usamos el ID del ejercicio encontrado.
             ejercicioId = ejercicioExistente.getId();
@@ -119,13 +120,15 @@ public class RutinaService {
     }
 
     @Transactional
-    public void guardarEjercicioSeries(Long diaId, Ejercicio ejercicio, int orden, int series, int repeticiones, String imagen) {
+    public void guardarEjercicioSeries(Long diaId, Ejercicio ejercicio, int orden, int series, int repeticiones,
+            String imagen) {
         if (ejercicioRepository.existeNombre(ejercicio.getNombre())) {
             Ejercicio ejercicioExistente = ejercicioRepository.findByNombre(ejercicio.getNombre());
             rutinaRepository.relacionarDiaEjercicioSeries(diaId, ejercicioExistente.getId(), orden, series,
                     repeticiones);
         } else {
-            Long ejercicioId = ejercicioRepository.crearEjercicio(ejercicio.getNombre(), ejercicio.getDescripcion(), ejercicio.getImagen());
+            Long ejercicioId = ejercicioRepository.crearEjercicio(ejercicio.getNombre(), ejercicio.getDescripcion(),
+                    ejercicio.getImagen());
             rutinaRepository.relacionarDiaEjercicioSeries(diaId, ejercicioId, orden, series, repeticiones);
         }
     }
@@ -140,31 +143,37 @@ public class RutinaService {
 
     public List<ScoreRutina> sugerenciasDeRutinasBasadosEnEventos2(String nombreUsuario) {
         List<ScoreRutina> sugerencias = rutinaRepository.sugerenciasDeRutinasBasadosEnEventos2(nombreUsuario);
-        sugerencias.forEach(s -> System.out.println("Comunidad: " + s.getRutina().getId() + ", Score: " + s.getScore()));
+        sugerencias
+                .forEach(s -> System.out.println("Comunidad: " + s.getRutina().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
     public List<ScoreRutina> sugerenciasDeRutinasBasadosEnAmigos2(String nombreUsuario) {
         List<ScoreRutina> sugerencias = rutinaRepository.sugerenciasDeRutinasBasadosEnAmigos2(nombreUsuario);
-        sugerencias.forEach(s -> System.out.println("Comunidad: " + s.getRutina().getId() + ", Score: " + s.getScore()));
+        sugerencias
+                .forEach(s -> System.out.println("Comunidad: " + s.getRutina().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
     public List<ScoreRutina> sugerenciasDeRutinasBasadosEnEventosPorEtiqueta2(String nombreUsuario) {
-        List<ScoreRutina> sugerencias = rutinaRepository.sugerenciasDeRutinasBasadosEnEventosPorEtiqueta2(nombreUsuario);
-        sugerencias.forEach(s -> System.out.println("Comunidad: " + s.getRutina().getId() + ", Score: " + s.getScore()));
+        List<ScoreRutina> sugerencias = rutinaRepository
+                .sugerenciasDeRutinasBasadosEnEventosPorEtiqueta2(nombreUsuario);
+        sugerencias
+                .forEach(s -> System.out.println("Comunidad: " + s.getRutina().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
     public List<ScoreRutina> sugerenciasDeRutinasBasadasEnRutinas2(String nombreUsuario) {
         List<ScoreRutina> sugerencias = rutinaRepository.sugerenciasDeRutinasBasadasEnRutinas2(nombreUsuario);
-        sugerencias.forEach(s -> System.out.println("Comunidad: " + s.getRutina().getId() + ", Score: " + s.getScore()));
+        sugerencias
+                .forEach(s -> System.out.println("Comunidad: " + s.getRutina().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
     public List<ScoreRutina> sugerenciasDeRutinasBasadasEnComunidades2(String nombreUsuario) {
         List<ScoreRutina> sugerencias = rutinaRepository.sugerenciasDeRutinasBasadasEnComunidades2(nombreUsuario);
-        sugerencias.forEach(s -> System.out.println("Comunidad: " + s.getRutina().getId() + ", Score: " + s.getScore()));
+        sugerencias
+                .forEach(s -> System.out.println("Comunidad: " + s.getRutina().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
@@ -172,17 +181,17 @@ public class RutinaService {
         // Obtener todas las sugerencias de comunidades desde las tres consultas
         List<ScoreRutina> sugerenciasEventos = rutinaRepository.sugerenciasDeRutinasBasadosEnEventos2(nombreUsuario);
         List<ScoreRutina> sugerenciasAmigos = rutinaRepository.sugerenciasDeRutinasBasadosEnAmigos2(nombreUsuario);
-        List<ScoreRutina> sugerenciasComunidades = rutinaRepository.sugerenciasDeRutinasBasadasEnComunidades2(nombreUsuario);
+        List<ScoreRutina> sugerenciasComunidades = rutinaRepository
+                .sugerenciasDeRutinasBasadasEnComunidades2(nombreUsuario);
         List<ScoreRutina> sugerenciasRutinas = rutinaRepository.sugerenciasDeRutinasBasadasEnRutinas2(nombreUsuario);
-        List<ScoreRutina> sugerenciasEventosPorEtiquetas = rutinaRepository.sugerenciasDeRutinasBasadosEnEventosPorEtiqueta2(nombreUsuario);
+        List<ScoreRutina> sugerenciasEventosPorEtiquetas = rutinaRepository
+                .sugerenciasDeRutinasBasadosEnEventosPorEtiqueta2(nombreUsuario);
 
-
-    
         // Imprimir la cantidad de sugerencias para depuración
         System.out.println("Sugerencias amigos: " + sugerenciasAmigos.size());
         System.out.println("Sugerencias eventos: " + sugerenciasEventos.size());
         System.out.println("Sugerencias comunidades: " + sugerenciasComunidades.size());
-    
+
         // Combinar todas las sugerencias en una sola lista
         List<ScoreRutina> todasLasSugerencias = new ArrayList<>();
         todasLasSugerencias.addAll(sugerenciasAmigos);
@@ -191,10 +200,9 @@ public class RutinaService {
         todasLasSugerencias.addAll(sugerenciasRutinas);
         todasLasSugerencias.addAll(sugerenciasEventosPorEtiquetas);
 
-
         // Usar un Map para eliminar duplicados y sumar los scores de las comunidades
         Map<Long, ScoreRutina> mapaSugerencias = new HashMap<>();
-    
+
         for (ScoreRutina scoreEvento : todasLasSugerencias) {
             // Si la comunidad ya existe en el mapa, sumar los scores
             mapaSugerencias.merge(scoreEvento.getRutina().getId(),
@@ -205,17 +213,16 @@ public class RutinaService {
                         return existente; // Retornar el objeto existente actualizado
                     });
         }
-    
+
         // Obtener la lista de ScoreComunidad sin duplicados con los scores sumados
         List<ScoreRutina> listaSugerenciasSinDuplicados = new ArrayList<>(mapaSugerencias.values());
-    
+
         // Ordenar la lista por score en orden descendente
         listaSugerenciasSinDuplicados.sort((a, b) -> Double.compare(b.getScore(), a.getScore())); // Orden descendente
-    
+
         // Retornar la lista ordenada
         return listaSugerenciasSinDuplicados;
     }
-
 
     public int obtenerDiasEnRutina(Long idRutina) {
         return rutinaRepository.obtenerDiasEnRutina(idRutina);
@@ -225,46 +232,42 @@ public class RutinaService {
         return etiquetaRepository.obtenerEtiquetasEnRutina(idRutina);
     }
 
-
-
-
-
     public Optional<RutinaDTO> getRutinaById(Long id) {
         Optional<Rutina> optionalRutina = rutinaRepository.findById(id);
-    
+
         if (optionalRutina.isPresent()) {
             Rutina rutina = optionalRutina.get();
             RutinaDTO rutinaDTO = new RutinaDTO();
             rutinaDTO.setId(id);
             rutinaDTO.setNombre(rutina.getNombre());
             rutinaDTO.setDescripcion(rutina.getDescripcion());
-    
+
             // Obtener los IDs de los días
             List<Long> diaIds = rutinaRepository.findDiasByRutina(id);
             List<DiaDTO> diasDTO = new ArrayList<>();
-    
+
             for (Long diaId : diaIds) {
                 // Crear un nuevo DiaDTO
                 DiaDTO diaDTO = new DiaDTO();
                 diaDTO.setId(diaId); // Establecer el ID del día
-    
+
                 // Obtener atributos del día
                 String nombre = rutinaRepository.findNombreById(diaId);
                 String descripcion = rutinaRepository.findDescripcionById(diaId);
                 Integer orden = rutinaRepository.findOrdenById(diaId);
-    
+
                 // Establecer los atributos en el objeto DiaDTO
                 diaDTO.setNombre(nombre);
                 diaDTO.setDescripcion(descripcion);
                 diaDTO.setOrden(orden);
-    
+
                 // Obtener los IDs de las relaciones "TIENE_EJERCICIO"
                 List<Long> relacionIds = rutinaRepository.findRelacionEjercicioIdsByDia(diaId);
-                
+
                 // Inicializar listas para ejercicios de repeticiones y de tiempo
                 List<EjercicioRepeticionesDTO> ejerciciosRepeticiones = new ArrayList<>();
                 List<EjercicioTiempoDTO> ejerciciosTiempo = new ArrayList<>();
-    
+
                 for (Long relacionId : relacionIds) {
                     // Obtener el nombre y descripción del ejercicio
                     String ejercicioNombre = rutinaRepository.findEjercicioNombreByRelacionId(relacionId);
@@ -275,7 +278,7 @@ public class RutinaService {
                     Integer repeticiones = rutinaRepository.findEjercicioRepeticionesByRelacionId(relacionId);
                     Integer series = rutinaRepository.findEjercicioSeriesByRelacionId(relacionId);
                     String tiempo = rutinaRepository.findEjercicioTiempoByRelacionId(relacionId);
-                    
+
                     // Diferenciar según el tipo de ejercicio
                     if (repeticiones != null) { // Ejercicio de repeticiones
                         EjercicioRepeticionesDTO ejercicioRepeticionesDTO = new EjercicioRepeticionesDTO();
@@ -296,21 +299,26 @@ public class RutinaService {
                         ejerciciosTiempo.add(ejercicioTiempoDTO);
                     }
                 }
-    
+
                 // Establecer las listas de ejercicios en el DiaDTO
                 diaDTO.setEjerciciosRepeticiones(ejerciciosRepeticiones);
                 diaDTO.setEjerciciosTiempo(ejerciciosTiempo);
                 diasDTO.add(diaDTO);
             }
-    
+
             rutinaDTO.setDias(diasDTO);
             return Optional.of(rutinaDTO);
         } else {
             return Optional.empty();
         }
     }
-    
 
+    public List<Rutina> rutinasEtiquetas(List<String> etiquetas) {
+        return rutinaRepository.rutinasEtiquetas(etiquetas);
+    }
 
+    public List<Rutina> rutinasNombre(String nombre) {
+        return rutinaRepository.rutinasNombre(nombre);
+    }
 
 }
