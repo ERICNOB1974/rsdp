@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
@@ -32,7 +33,7 @@ public class RutinaPresenter {
     RutinaService rutinaService;
 
     @GetMapping("/findAll")
-    public ResponseEntity<Object> findAll(){
+    public ResponseEntity<Object> findAll() {
         return Response.ok(rutinaService.findAll());
     }
 
@@ -43,7 +44,7 @@ public class RutinaPresenter {
     }
 
     @RequestMapping(path = "/create/{usuarioId}", method = RequestMethod.POST)
-    public Long createConCreador(@RequestBody Rutina rutina, @PathVariable Long usuarioId ) throws Exception{
+    public Long createConCreador(@RequestBody Rutina rutina, @PathVariable Long usuarioId) throws Exception {
         return rutinaService.saveConCreador(rutina, usuarioId);
     }
 
@@ -53,7 +54,7 @@ public class RutinaPresenter {
     }
 
     @RequestMapping(path = "/create", method = RequestMethod.POST)
-    public ResponseEntity<Object> create(@RequestBody Rutina rutina) throws Exception{
+    public ResponseEntity<Object> create(@RequestBody Rutina rutina) throws Exception {
         return Response.ok(rutinaService.save(rutina));
     }
 
@@ -83,11 +84,13 @@ public class RutinaPresenter {
         List<Rutina> amigosDeAmigos = rutinaService.sugerenciasDeRutinasBasadasEnComunidades(nombreUsuario);
         return Response.ok(amigosDeAmigos);
     }
+
     @GetMapping("/sugerenciasDeRutinasBasadasEnEventos/{nombreUsuario}")
     public ResponseEntity<Object> sugerenciasDeRutinasBasadasEnEventos(@PathVariable String nombreUsuario) {
         List<Rutina> amigosDeAmigos = rutinaService.sugerenciaDeRutinasBasadosEnEventos(nombreUsuario);
         return Response.ok(amigosDeAmigos);
     }
+
     @GetMapping("/sugerenciasDeRutinasBasadosEnEventosPorEtiqueta/{nombreUsuario}")
     public ResponseEntity<Object> sugerenciasDeRutinasBasadosEnEventosPorEtiqueta(@PathVariable String nombreUsuario) {
         List<Rutina> amigosDeAmigos = rutinaService.sugerenciasDeRutinasBasadosEnEventosPorEtiqueta(nombreUsuario);
@@ -100,13 +103,17 @@ public class RutinaPresenter {
     }
 
     @PostMapping("/dias/ejerciciosResistencia/{diaId}")
-    public void guardarEjercicioResistencia(@PathVariable Long diaId, @RequestBody EjercicioResistenciaDTO ejercicioResistenciaDTO) {
-        rutinaService.guardarEjercicioResistencia(diaId, ejercicioResistenciaDTO.getEjercicio(), ejercicioResistenciaDTO.getOrden(), ejercicioResistenciaDTO.getTiempo(), ejercicioResistenciaDTO.getImagen());
+    public void guardarEjercicioResistencia(@PathVariable Long diaId,
+            @RequestBody EjercicioResistenciaDTO ejercicioResistenciaDTO) {
+        rutinaService.guardarEjercicioResistencia(diaId, ejercicioResistenciaDTO.getEjercicio(),
+                ejercicioResistenciaDTO.getOrden(), ejercicioResistenciaDTO.getTiempo(),
+                ejercicioResistenciaDTO.getImagen());
     }
 
     @PostMapping("/dias/ejerciciosSeries/{diaId}")
     public void guardarEjercicioSeries(@PathVariable Long diaId, @RequestBody EjercicioSeriesDTO ejercicioSeriesDTO) {
-        rutinaService.guardarEjercicioSeries(diaId, ejercicioSeriesDTO.getEjercicio(), ejercicioSeriesDTO.getOrden(), ejercicioSeriesDTO.getSeries(), ejercicioSeriesDTO.getRepeticiones(), ejercicioSeriesDTO.getImagen());
+        rutinaService.guardarEjercicioSeries(diaId, ejercicioSeriesDTO.getEjercicio(), ejercicioSeriesDTO.getOrden(),
+                ejercicioSeriesDTO.getSeries(), ejercicioSeriesDTO.getRepeticiones(), ejercicioSeriesDTO.getImagen());
     }
 
     @RequestMapping(value = "/search/{term}", method = RequestMethod.GET)
@@ -117,16 +124,18 @@ public class RutinaPresenter {
     @PostMapping("/etiquetar/{idEtiqueta}")
     public ResponseEntity<Object> etiquetarRutina(@RequestBody Rutina rutina, @PathVariable Long idEtiqueta) {
         if (rutina == null || idEtiqueta == null) {
-            return ResponseEntity.badRequest().body(Collections.singletonMap("error", "Rutina o idEtiqueta no pueden ser nulos"));
+            return ResponseEntity.badRequest()
+                    .body(Collections.singletonMap("error", "Rutina o idEtiqueta no pueden ser nulos"));
         }
         try {
             rutinaService.etiquetarRutina(rutina, idEtiqueta);
             return ResponseEntity.ok(Collections.singletonMap("message", "ok"));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "Error al etiquetar la rutina"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", "Error al etiquetar la rutina"));
         }
     }
-    
+
     @GetMapping("/sugerenciasDeRutinasBasadosEnEventos2/{nombreUsuario}")
     public ResponseEntity<Object> sugerenciasDeRutinasBasadosEnEventos2(@PathVariable String nombreUsuario) {
         List<ScoreRutina> sugerenciasDeRutinasBasadosEnEventos = rutinaService
@@ -134,7 +143,7 @@ public class RutinaPresenter {
         return Response.ok(sugerenciasDeRutinasBasadosEnEventos);
     }
 
-        @GetMapping("/sugerenciasDeRutinasBasadosEnAmigos2/{nombreUsuario}")
+    @GetMapping("/sugerenciasDeRutinasBasadosEnAmigos2/{nombreUsuario}")
     public ResponseEntity<Object> sugerenciasDeRutinasBasadosEnAmigos2(@PathVariable String nombreUsuario) {
         List<ScoreRutina> sugerenciasDeRutinasBasadosEnAmigos = rutinaService
                 .sugerenciasDeRutinasBasadosEnAmigos2(nombreUsuario);
@@ -186,19 +195,28 @@ public class RutinaPresenter {
     public ResponseEntity<Object> getRutinaById(@PathVariable Long idRutina) {
         try {
             Optional<RutinaDTO> rutinaDTO = rutinaService.getRutinaById(idRutina);
-            
+
             if (rutinaDTO.isPresent()) {
                 return Response.ok(rutinaDTO.get()); // Rutina encontrada
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND) // Rutina no encontrada
-                                     .body("Rutina no encontrada con el ID: " + idRutina);
+                        .body("Rutina no encontrada con el ID: " + idRutina);
             }
         } catch (Exception e) {
             // Manejo del error
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR) // Error interno
-                                 .body("Error al obtener las sugerencias: " + e.getMessage());
+                    .body("Error al obtener las sugerencias: " + e.getMessage());
         }
     }
-    
-    
+
+    @GetMapping("/filtrar/etiquetas")
+    public ResponseEntity<Object> eventosPorEtiquetas(@RequestParam List<String> etiquetas) {
+        return Response.ok(rutinaService.rutinasEtiquetas(etiquetas));
+    }
+
+    @GetMapping("/filtrar/nombre/{nombre}")
+    public ResponseEntity<Object> eventosPorNombre(@PathVariable String nombre) {
+        return Response.ok(rutinaService.rutinasNombre(nombre));
+    }
+
 }

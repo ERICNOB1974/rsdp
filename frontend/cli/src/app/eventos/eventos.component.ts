@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Etiqueta } from '../etiqueta/etiqueta';
@@ -45,12 +45,11 @@ export class EventosComponent implements OnInit {
   constructor(private eventoService: EventoService,
     private router: Router,
     private authService: AuthService,  // Inyecta el AuthService
-
+    private cdr: ChangeDetectorRef,
     private etiquetaService: EtiquetaService,
   ) { }
   idUsuarioAutenticado!: number;  // ID del usuario autenticado
   eventosParticipaUsuario: Evento[] = [];
-
 
 
   ngOnInit(): void {
@@ -59,13 +58,14 @@ export class EventosComponent implements OnInit {
     this.idUsuarioAutenticado = Number(usuarioId);    this.ParticipaUsuario();
   }
 
-
   agregarEtiqueta(event: any): void {
     const etiqueta = event.item;
     if (!this.etiquetasSeleccionadas.some(e => e.id === etiqueta.id)) {
       this.etiquetasSeleccionadas.push(etiqueta);
     }
     this.etiquetaSeleccionada = null;
+    this.cdr.detectChanges();
+
   }
 
   removerEtiqueta(etiqueta: Etiqueta): void {
@@ -125,18 +125,6 @@ export class EventosComponent implements OnInit {
       tap(() => (this.searching = false))
     );
 
-/*   agregarEtiqueta(event: any): void {
-    const etiqueta: Etiqueta = event.item;
-    if (!this.etiquetasSeleccionadas.some(e => e.id === etiqueta.id)) {
-      this.etiquetasSeleccionadas.push(etiqueta);
-      console.info(etiqueta.nombre);
-    }
-    this.etiquetaSeleccionada = null;
-  }
-
-  eliminarEtiqueta(etiqueta: Etiqueta): void {
-    this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(e => e.id !== etiqueta.id);
-  } */
 
   resultFormatEtiqueta(value: Etiqueta) {
     return value.nombre;
