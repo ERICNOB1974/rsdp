@@ -68,7 +68,7 @@ export class PerfilComponent implements OnInit {
 
   // Navega a la página de edición de perfil
   editarPerfil(): void {
-    this.router.navigate(['/perfilEditable', this.usuario?.id]);
+    this.router.navigate(['/perfilEditable', this.idUsuarioAutenticado]);
   }
 
   verificarRelacion(): void {
