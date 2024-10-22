@@ -6,6 +6,7 @@ import { firstValueFrom } from 'rxjs';
 import { DataPackage } from '../data-package';
 import { Ejercicio } from './ejercicio';
 import { Dia } from './dia';
+import { AuthService } from '../autenticacion/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,11 +15,12 @@ export class RutinaService {
 
   private rutinasUrl = 'rest/rutinas';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
   async guardarRutina(rutina: Rutina): Promise<string> {
+    const usuarioId = this.authService.getUsuarioId();
     const response = await firstValueFrom(
-      this.http.post<string>(this.rutinasUrl, rutina)
+      this.http.post<string>(`${this.rutinasUrl}/create/${usuarioId}`, rutina)
     );
     if (!response) throw new Error('No se pudo guardar la rutina');
     return response;

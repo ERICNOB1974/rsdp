@@ -73,7 +73,6 @@ export class CrearPublicacionComponent implements OnInit {
     }
   }
 
-  
   publicacionValida(): boolean {
     return !(!this.publicacion.texto && !this.publicacion.file || !this.formatoValido);
   }
