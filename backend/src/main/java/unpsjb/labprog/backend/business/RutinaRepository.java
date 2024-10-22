@@ -5,10 +5,10 @@ import java.util.Optional;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import unpsjb.labprog.backend.model.Dia;
-import unpsjb.labprog.backend.model.Ejercicio;
 import unpsjb.labprog.backend.model.Rutina;
 
 @Repository
@@ -222,9 +222,7 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
         @Query("MATCH (d:Dia) WHERE ID(d) = $diaId " +
                         "MATCH (e:Ejercicio) WHERE ID(e) = $ejercicioId " +
                         "CREATE (d)-[:TIENE_EJERCICIO {orden: $orden, tiempo: $tiempo}]->(e)")
-        void relacionarDiaEjercicioResistencia(Long diaId, Long ejercicioId, int orden, String tiempo);
-
-    
+        void relacionarDiaEjercicioResistencia(Long diaId, Long ejercicioId, int orden, String tiempo);    
 
         @Query("MATCH (r:Rutina), (u:Usuario) " +
                         "WHERE id(u) = $usuarioId AND id(r) = $rutinaId " +
@@ -235,6 +233,19 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                         "WHERE id(r) = $rutinaId AND id(e) = $etiquetaId " +
                         "MERGE (r)-[:ETIQUETADA_CON]->(e)")
         void etiquetarRutina(Long rutinaId, Long etiquetaId);
+
+        @Query("MATCH (c:Rutina)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
+                        "WITH c, collect(etiqueta.nombre) AS etiquetasRutina " +
+                        "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasRutina) " +
+                        "RETURN c")
+        List<Rutina> rutinasEtiquetas(@Param("etiquetas") List<String> etiquetas);
+
+        @Query("MATCH (c:Rutina) WHERE toUpper(c.nombre) CONTAINS toUpper($nombre) RETURN c")
+        List<Rutina> rutinasNombre(String nombre);
+
+        //nivel de dificultad
+        //cant ejercicios
+        //popularidad
 
 
 

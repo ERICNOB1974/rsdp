@@ -1,0 +1,162 @@
+.filtros-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+  
+  .filtro-container {
+    flex: 0 1 calc(33.333% - 20px);
+    margin-bottom: 20px;
+  }
+  
+  .filtro-fecha {
+    margin-left: auto;
+  }
+  
+  .button-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+  }
+  
+  .aplicar-filtro,
+  .limpiar-filtro {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+  }
+  
+  .aplicar-filt ros {
+    background-color: #4CAF50;
+    color: #fff;
+    
+  }
+  
+  .limpiar-filtro {
+    background-color: #e4e4e4;
+    color: #333;
+    margin-left: 5px;
+  }
+  
+  .filtro-nombre {
+    width: 250px;
+    /* Aumentamos el ancho del contenedor del filtro de nombre */
+  }
+  
+  .filtro-toggle {
+    width: 100%;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .arrow {
+    border: solid black;
+    border-width: 0 2px 2px 0;
+    display: inline-block;
+    padding: 3px;
+  }
+  
+  .up {
+    transform: rotate(-135deg);
+  }
+  
+  .down {
+    transform: rotate(45deg);
+  }
+  
+  .filtro-content {
+    background-color: white;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-top: none;
+  }
+  
+  .input-group {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .input-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    /* Hacemos que el input ocupe todo el ancho disponible */
+  }
+  
+  .input-container input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+  
+  .aplicar-filtro {
+    width: 100%;
+    padding: 8px;
+    background-color: #3483fa;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    margin-top: 10px;
+  }
+  
+  .aplicar-filtro:hover {
+    background-color: #2968c8;
+  }
+  .aplicar-filtro:hover,
+  .limpiar-filtro:hover {
+    opacity: 0.9;
+  }
+  
+  /* Estilos específicos para el filtro de participantes */
+  .filtro-container:not(.filtro-nombre) .input-container {
+    width: 48%;
+  }
+  
+  
+  .selected-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  
+  .tag {
+    background-color: #e0e0e0;
+    border-radius: 16px;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+  }
+  
+  .remove-tag {
+    background: none;
+    border: none;
+    color: #ff0000;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-left: 4px;
+    padding: 0 4px;
+  }
+  
+  .remove-tag:hover {
+    background-color: rgba(255, 0, 0, 0.1);
+    border-radius: 50%;
+  }

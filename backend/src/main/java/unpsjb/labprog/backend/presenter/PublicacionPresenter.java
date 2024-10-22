@@ -100,4 +100,13 @@ public class PublicacionPresenter {
             return Response.error("", "Error al obtener los comentarios: " + e.getMessage());
         }
     }
+
+    @GetMapping("/cantidadLikes/{idPublicacion}")
+    public ResponseEntity<Object> cantidadLikes(@PathVariable Long idPublicacion) {
+        try {
+            return Response.ok(publicacionService.cantidadLikes(idPublicacion));
+        } catch (Exception e) {
+            return Response.error("", "Error al obtener los comentarios: " + e.getMessage());
+        }
+    }
 }

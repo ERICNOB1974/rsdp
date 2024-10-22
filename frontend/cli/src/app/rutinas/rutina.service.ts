@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Rutina } from './rutina';
 import { firstValueFrom } from 'rxjs';
 import { DataPackage } from '../data-package';
@@ -70,7 +70,7 @@ export class RutinaService {
   }
 
   etiquetar(rutina: Rutina, idEtiqueta: number): Observable<DataPackage> {
-    return this.http.post<DataPackage>(` ${this.rutinasUrl}/etiquetar/${idEtiqueta}`, rutina );
+    return this.http.post<DataPackage>(` ${this.rutinasUrl}/etiquetar/${idEtiqueta}`, rutina);
   }
 
   sugerencias(nombreUsuario: string): Observable<DataPackage> {
@@ -100,9 +100,23 @@ export class RutinaService {
   obtenerRutinasPorUsuario(idUsuario: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.rutinasUrl}/realiza/${idUsuario}`);
   }
-  
+
   obtenerEtiquetasDeRutina(idRutina: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.rutinasUrl}/etiquetas/${idRutina}`);
+  }
+
+  filtrarNombre(nombre: string): Observable<DataPackage> {
+    // Agregamos los parámetros min y max a la URL
+    return this.http.get<DataPackage>(`${this.rutinasUrl}/filtrar/nombre`, {
+      params: {
+        nombre
+      }
+    });
+  }
+
+  filtrarEtiqueta(etiquetas: string[]): Observable<DataPackage> {
+    const params = new HttpParams().set('etiquetas', etiquetas.join(',')); // convierte el array a una cadena separada por comas
+    return this.http.get<DataPackage>(`${this.rutinasUrl}/filtrar/etiquetas`, { params });
   }
 }
 

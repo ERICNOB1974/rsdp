@@ -57,9 +57,17 @@ export class PublicacionService {
   publicadoPor(idPublicacion: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.publicacionsUrl}/usuarioPublicador/${idPublicacion}`);
   }
+  
+  cantidadLikes(idPublicacion: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.publicacionsUrl}/cantidadLikes/${idPublicacion}`);
+  }
 
   eliminar(idPublicacion: number): Observable<DataPackage> {
     return this.http.delete<DataPackage>(`${this.publicacionsUrl}/eliminar/${idPublicacion}`);
+  }
+
+  publicacionesAmigos2(userId: number, page: number = 0, pageSize: number = 5): Observable<any> {
+    return this.http.get(`${this.publicacionsUrl}/publicaciones/amigos/usuario/${userId}?page=${page}&size=${pageSize}`);
   }
 
 
