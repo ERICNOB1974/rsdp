@@ -1,12 +1,14 @@
 package unpsjb.labprog.backend.presenter;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -230,4 +232,17 @@ public class UsuarioPresenter {
             return Response.error("", "Error al obtener las sugerencias: " + e.getMessage());
         }
     }
+
+    @PutMapping("/actualizarUbicacion/{idUsuario}")
+    public ResponseEntity<Object> actualizarUbicacion(@PathVariable Long idUsuario, @RequestBody Map<String, Double> ubicacion) {
+        try {
+            Double latitud = ubicacion.get("latitud");
+            Double longitud = ubicacion.get("longitud");
+            usuarioService.actualizarUbicacion(idUsuario, latitud, longitud);
+            return Response.ok("Ubicación actualizada correctamente");
+        } catch (Exception e) {
+            return Response.error("", "Error al actualizar la ubicación: " + e.getMessage());
+        }
+    }
+
 }

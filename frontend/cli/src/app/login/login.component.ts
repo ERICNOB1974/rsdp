@@ -12,6 +12,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { NgIf } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from '../autenticacion/auth.interceptor';
+import { UbicacionService } from '../ubicacion.service';
 
 @Component({
   selector: 'app-login',
@@ -36,6 +37,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     // private imageLoader: ImageLoaderService,
+    private ubicacionService: UbicacionService,
     private authService: AuthService,
     private router: Router
   ) {
@@ -69,8 +71,8 @@ export class LoginComponent implements OnInit {
     this.authService.login(email, password).subscribe(
       (dataPackage) => {
         if (dataPackage.status == 200){
-          console.log('Token obtenido:', dataPackage.data);
           this.authService.saveToken(<any>dataPackage.data);
+          this.ubicacionService.setearUbicacionDeUsuario(); 
           this.router.navigate(['/']); 
         } else {
           alert(dataPackage.message);
