@@ -40,13 +40,18 @@ public class RutinaPresenter {
     }
 
     @RequestMapping(path = "/create/{usuarioId}", method = RequestMethod.POST)
-    public ResponseEntity<Object> createConCreador(@RequestBody Rutina rutina, @PathVariable Long usuarioId ) throws Exception{
-        return Response.ok(rutinaService.saveConCreador(rutina, usuarioId));
+    public Long createConCreador(@RequestBody Rutina rutina, @PathVariable Long usuarioId ) throws Exception{
+        return rutinaService.saveConCreador(rutina, usuarioId);
     }
 
     @RequestMapping(path = "/create", method = RequestMethod.POST)
     public ResponseEntity<Object> create(@RequestBody Rutina rutina) throws Exception{
         return Response.ok(rutinaService.save(rutina));
+    }
+
+    @PostMapping
+    public Long guardarRutina(@RequestBody Rutina rutina) {
+        return rutinaService.guardarRutina(rutina);
     }
 
     @GetMapping("/findById/{id}")
@@ -81,11 +86,6 @@ public class RutinaPresenter {
         return Response.ok(amigosDeAmigos);
     }
 
-    @PostMapping
-    public Long guardarRutina(@RequestBody Rutina rutina) {
-        return rutinaService.guardarRutina(rutina);
-    }
-
     @PostMapping("/dias/{rutinaId}")
     public Long guardarDia(@PathVariable Long rutinaId, @RequestBody DiaDTO diaDTO) {
         return rutinaService.guardarDia(rutinaId, diaDTO.getDia(), diaDTO.getOrden());
@@ -93,12 +93,12 @@ public class RutinaPresenter {
 
     @PostMapping("/dias/ejerciciosResistencia/{diaId}")
     public void guardarEjercicioResistencia(@PathVariable Long diaId, @RequestBody EjercicioResistenciaDTO ejercicioResistenciaDTO) {
-        rutinaService.guardarEjercicioResistencia(diaId, ejercicioResistenciaDTO.getEjercicio(), ejercicioResistenciaDTO.getOrden(), ejercicioResistenciaDTO.getTiempo());
+        rutinaService.guardarEjercicioResistencia(diaId, ejercicioResistenciaDTO.getEjercicio(), ejercicioResistenciaDTO.getOrden(), ejercicioResistenciaDTO.getTiempo(), ejercicioResistenciaDTO.getImagen());
     }
 
     @PostMapping("/dias/ejerciciosSeries/{diaId}")
     public void guardarEjercicioSeries(@PathVariable Long diaId, @RequestBody EjercicioSeriesDTO ejercicioSeriesDTO) {
-        rutinaService.guardarEjercicioSeries(diaId, ejercicioSeriesDTO.getEjercicio(), ejercicioSeriesDTO.getOrden(), ejercicioSeriesDTO.getSeries(), ejercicioSeriesDTO.getRepeticiones());
+        rutinaService.guardarEjercicioSeries(diaId, ejercicioSeriesDTO.getEjercicio(), ejercicioSeriesDTO.getOrden(), ejercicioSeriesDTO.getSeries(), ejercicioSeriesDTO.getRepeticiones(), ejercicioSeriesDTO.getImagen());
     }
 
     @RequestMapping(value = "/search/{term}", method = RequestMethod.GET)

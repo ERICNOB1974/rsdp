@@ -29,12 +29,16 @@ export class CrearRutinaComponent {
   searchFailed: boolean = false;
   etiquetasSeleccionadas: Etiqueta[] = [];
   etiquetaSeleccionada: Etiqueta | null = null;
+  archivoSeleccionado!: File; // Para almacenar la imagen o video seleccionado
+  tipoArchivo: string = ''; // Para distinguir entre imagen o video
+  vistaPreviaArchivo: string | ArrayBuffer | null = null; // Para mostrar la vista previa de la imagen o video
+  formatoValido: boolean = true;
 
   constructor(
     private rutinaService: RutinaService,
     private etiquetaService: EtiquetaService,
-    private cdr: ChangeDetectorRef  
-  ) {}
+    private cdr: ChangeDetectorRef
+  ) { }
 
   agregarDiaTrabajo() {
     const nuevoDia: Dia = {
@@ -111,7 +115,7 @@ export class CrearRutinaComponent {
       this.dias.length === 0 ||
       this.dias[0].tipo === 'descanso' ||
       this.etiquetasSeleccionadas.length === 0 ||
-      this.etiquetasSeleccionadas.length > 15 
+      this.etiquetasSeleccionadas.length > 15
     ) {
       return false;
     }
@@ -243,28 +247,28 @@ export class CrearRutinaComponent {
       tap(() => (this.searching = false))
     );
 
-    agregarEtiqueta(event: any): void {
-      const etiqueta: Etiqueta = event.item;
-    
-      // Verificar por nombre en lugar de por ID para evitar duplicados
-      if (!this.etiquetasSeleccionadas.some(e => e.nombre === etiqueta.nombre)) {
-        this.etiquetasSeleccionadas.push(etiqueta);
-      }
-    
-      // Restablecer la etiqueta seleccionada
-      this.etiquetaSeleccionada = null;
-    
-      // Forzar actualización visual del input
-      this.cdr.detectChanges();
-    }
-    
+  agregarEtiqueta(event: any): void {
+    const etiqueta: Etiqueta = event.item;
 
-    eliminarEtiqueta(etiqueta: Etiqueta): void {
-      this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(
-        e => e.nombre !== etiqueta.nombre 
-      );
+    // Verificar por nombre en lugar de por ID para evitar duplicados
+    if (!this.etiquetasSeleccionadas.some(e => e.nombre === etiqueta.nombre)) {
+      this.etiquetasSeleccionadas.push(etiqueta);
     }
-    
+
+    // Restablecer la etiqueta seleccionada
+    this.etiquetaSeleccionada = null;
+
+    // Forzar actualización visual del input
+    this.cdr.detectChanges();
+  }
+
+
+  eliminarEtiqueta(etiqueta: Etiqueta): void {
+    this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(
+      e => e.nombre !== etiqueta.nombre
+    );
+  }
+
   resultFormatEtiqueta(value: EtiquetaPopularidadDTO): string {
     return `${value.nombre} (${value.popularidad})`;
   }
@@ -272,5 +276,24 @@ export class CrearRutinaComponent {
   inputFormatEtiqueta(value: Etiqueta): string {
     return value ? value.nombre : '';
   }
+
+  onFileSelect(event: any, ejercicio: Ejercicio) {
+    const file = event.target.files[0];
+    const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+  
+    if (file && validImageTypes.includes(file.type)) {
+      const reader = new FileReader();
+      
+      reader.onload = () => {
+        ejercicio.imagen = reader.result as string; // Almacena la cadena base64 en el ejercicio.
+        this.vistaPreviaArchivo = reader.result; // Para mostrar la vista previa.
+      };
+      
+      reader.readAsDataURL(file);
+    } else {
+      alert('Formato no válido. Solo se permiten imágenes JPEG, PNG, o GIF.');
+    }
+  }
+  
 
 }

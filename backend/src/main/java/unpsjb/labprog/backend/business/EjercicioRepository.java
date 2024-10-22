@@ -11,8 +11,8 @@ import unpsjb.labprog.backend.model.Ejercicio;
 @Repository
 public interface EjercicioRepository extends Neo4jRepository<Ejercicio, Long> {
 
-    @Query("CREATE (e:Ejercicio {nombre: $nombre, descripcion: $descripcion}) RETURN ID(e)")
-    Long crearEjercicio(String nombre, String descripcion);
+    @Query("CREATE (e:Ejercicio {nombre: $nombre, descripcion: $descripcion, imagen: $imagen}) RETURN ID(e)")
+    Long crearEjercicio(String nombre, String descripcion, String imagen);
 
     @Query("MATCH (e:Ejercicio) WHERE toUpper(e.nombre) CONTAINS toUpper($nombre) RETURN e")
     List<Ejercicio> search(String nombre);
