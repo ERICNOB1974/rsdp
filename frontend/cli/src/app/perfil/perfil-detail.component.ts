@@ -18,9 +18,10 @@ export class PerfilDetailComponent implements OnInit {
   usuario!: Usuario; // Usuario que se va a editar
   idUsuarioAutenticado!: number;
 
+
   constructor(
-    private route: ActivatedRoute,
     private usuarioService: UsuarioService,
+    private authService: AuthService,
     private router: Router,
     private authService: AuthService,  // Inyecta el AuthService
     private snackBar: MatSnackBar
@@ -40,14 +41,14 @@ export class PerfilDetailComponent implements OnInit {
         console.error(dataPackage.message);
       }
     });
-  }
+  } 
 
   guardarCambios(): void {
     this.usuarioService.save(this.usuario).subscribe(() => {
       this.snackBar.open('Perfil actualizado con éxito', 'Cerrar', {
         duration: 3000,
       });
-      this.router.navigate(['/perfil']); // Volver a la vista del perfil
+      this.router.navigate(['/perfil/', this.usuario.id]); // Navegar de vuelta si se cancela
     }, error => {
       console.error('Error al actualizar el perfil', error);
       this.snackBar.open('Error al actualizar el perfil', 'Cerrar', {
@@ -57,7 +58,7 @@ export class PerfilDetailComponent implements OnInit {
   }
 
   cancelar(): void {
-    this.router.navigate(['/perfil']); // Navegar de vuelta si se cancela
+    this.router.navigate(['/perfil/', this.usuario.id]); // Navegar de vuelta si se cancela
   }
 
 

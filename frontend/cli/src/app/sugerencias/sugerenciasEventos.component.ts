@@ -34,6 +34,7 @@ export class SugerenciasEventosComponent implements OnInit {
       });
     }
 
+
       // Método para mover al siguiente grupo de eventos en el carrusel
       siguienteEvento(): void {
         this.currentIndex = (this.currentIndex + 1) % this.results.length; // Incrementa el índice
