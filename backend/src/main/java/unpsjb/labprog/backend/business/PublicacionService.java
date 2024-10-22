@@ -3,13 +3,13 @@ package unpsjb.labprog.backend.business;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import unpsjb.labprog.backend.model.Comentario;
 import unpsjb.labprog.backend.model.Publicacion;
 import unpsjb.labprog.backend.model.Usuario;
 
@@ -42,6 +42,10 @@ public class PublicacionService {
         publicacionRepository.likear(usuarioId, publicacionId);
     }
 
+    public void eliminar(Long idPublicacion) {
+        publicacionRepository.delete(publicacionRepository.findById(idPublicacion).get());
+    }
+
     public void sacarLike(Long usuarioId, Long publicacionId) {
         publicacionRepository.sacarLike(usuarioId, publicacionId);
     }
@@ -61,7 +65,6 @@ public class PublicacionService {
         return usuarioRepository.publicadoPor(idPublicacion);
     }
 
-
     public List<Publicacion> publicacionesUsuario(Long usuarioId) {
         return publicacionRepository.publicacionesUsuario(usuarioId);
     }
@@ -70,8 +73,8 @@ public class PublicacionService {
         return publicacionRepository.publicacionesAmigosUsuario(usuarioId);
     }
 
-    public List<Comentario> obtenerComentariosPorPublicacion(Long usuarioId) throws Exception {
-        List<Long> comentariosId = publicacionRepository.idComentarios(usuarioId);
+    public List<Comentario> obtenerComentariosPorPublicacion(Long idPublicacion) throws Exception {
+        List<Long> comentariosId = publicacionRepository.idComentarios(idPublicacion);
 
         List<Comentario> comentarios = new ArrayList<>();
         for (Long id : comentariosId) {
@@ -80,7 +83,7 @@ public class PublicacionService {
                 comentarios.add(comentario);
             }
         }
-        // Collections.sort(comentarios, Collections.reverseOrder());
+        //Collections.sort(comentarios, Collections.reverseOrder());
 
         return comentarios;
     }
@@ -90,11 +93,13 @@ public class PublicacionService {
         ZonedDateTime fecha = publicacionRepository.findFechaById(id);
         Usuario usuario = usuarioRepository.findUsuarioById(id);
         /// Usuario u = usuarioRepository.findById(usuario).get();
+        System.out.println("TEXTO: "+texto+"\n");
+        System.out.println("FECHA: "+fecha+"\n");
+        System.out.println("USUARIO: "+usuario.getNombreReal()+"\n");
         if (texto == null || fecha == null || usuario == null) {
             throw new Exception("Comentario no encontrado con ID: " + id);
         }
 
-        // Construir el objeto Notificacion
         Comentario comentario = new Comentario();
         comentario.setTexto(texto);
         comentario.setFecha(fecha);

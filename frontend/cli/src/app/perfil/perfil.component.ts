@@ -23,6 +23,7 @@ export class PerfilComponent implements OnInit {
   esMiPerfil: boolean = false;  // Para determinar si es el perfil del usuario autenticado
   publicaciones!: Publicacion[];
   relacion: string ='';
+isOwnPublication: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -166,6 +167,33 @@ export class PerfilComponent implements OnInit {
         alert(mensaje);
       }
     });
+  }
+
+  confirmarEliminarPublicacion(idPublicacion: number): void {
+    if (confirm('¿Estás seguro de que quieres eliminar esta publicación?')) {
+      this.eliminarPublicacion(idPublicacion);
+    }
+  }
+  
+  eliminarPublicacion(idPublicacion: number): void {
+    this.publicacionService.eliminar(idPublicacion).subscribe({
+      next: (dataPackage: DataPackage) => {
+        if (dataPackage.status === 200) {
+          alert('Publicación eliminada exitosamente.');
+          // Actualizar la lista de publicaciones
+          this.getPublicaciones();
+        } else {
+          alert('Error: ' + dataPackage.message);
+        }
+      },
+      error: (error) => {
+        console.error('Error al eliminar la publicación:', error);
+        alert('Error al eliminar la publicación.');
+      }
+    });
+  }
+  irADetallePublicacion(idPublicacion: number): void {
+    this.router.navigate(['/publicacion', idPublicacion]);
   }
 }
 
