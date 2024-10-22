@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, from, of } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Comunidad } from './comunidad';
 import axios from 'axios';
 import { DataPackage } from '../data-package';
@@ -123,5 +123,30 @@ export class ComunidadService {
   remove(id: number): Observable<DataPackage> {
     return this.http.delete<DataPackage>(`${this.comunidadesUrl}/${id}`)
   }
+
+  filtrarParticipantes(min: number, max: number): Observable<DataPackage> {
+    // Agregamos los parámetros min y max a la URL
+    return this.http.get<DataPackage>(`${this.comunidadesUrl}/filtrar/participantes`, {
+      params: {
+        min: min.toString(),  // Convertimos a string porque los parámetros de URL deben ser strings
+        max: max.toString()
+      }
+    });
+  }
+  filtrarNombre(nombre: string): Observable<DataPackage> {
+    // Agregamos los parámetros min y max a la URL
+    return this.http.get<DataPackage>(`${this.comunidadesUrl}/filtrar/nombre`, {
+      params: {
+        nombre
+      }
+    });
+  }
+
+  filtrarEtiqueta(etiquetas: string[]): Observable<DataPackage> {
+    const params = new HttpParams().set('etiquetas', etiquetas.join(',')); // convierte el array a una cadena separada por comas
+    return this.http.get<DataPackage>(`${this.comunidadesUrl}/filtrar/etiquetas`, { params });
+}
+
+
 
 }
