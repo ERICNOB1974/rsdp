@@ -31,12 +31,12 @@ export class SugerenciasAmigosComponent implements OnInit {
 
   getUsuarios(): void {
     this.usuarioService.sugerencias().subscribe((dataPackage) => {
-      const responseData = dataPackage.data;
-      if (Array.isArray(responseData)) {
-        this.results = responseData;
+      if (Array.isArray(dataPackage.data)) {
+        this.results = dataPackage.data.map(item => item.usuario); // Extrae solo los objetos 'evento'
       }
     });
   }
+
 
   // Método para mover al siguiente grupo de eventos en el carrusel
   siguienteEvento(): void {
@@ -50,16 +50,20 @@ export class SugerenciasAmigosComponent implements OnInit {
 
   // Método para obtener los eventos a mostrar en el carrusel
   obtenerUsuariosParaMostrar(): Usuario[] {
-    const eventosParaMostrar: Usuario[] = [];
-
+    const usuariosParaMostrar: Usuario[] = [];
+  
     if (this.results.length === 0) {
-      return eventosParaMostrar; // Devuelve un arreglo vacío si no hay eventos
+      return usuariosParaMostrar; // Devuelve un arreglo vacío si no hay usuarios
     }
-
-    for (let i = 0; i < 4; i++) {
+  
+    // Si hay menos de 4 usuarios, se muestran solo los disponibles sin repetir
+    const cantidadUsuariosAMostrar = Math.min(4, this.results.length);
+  
+    for (let i = 0; i < cantidadUsuariosAMostrar; i++) {
       const index = (this.currentIndex + i) % this.results.length;
-      eventosParaMostrar.push(this.results[index]);
+      usuariosParaMostrar.push(this.results[index]);
     }
-    return eventosParaMostrar;
+  
+    return usuariosParaMostrar;
   }
 }
