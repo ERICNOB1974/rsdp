@@ -11,4 +11,5 @@ export interface Ejercicio {
     seriesValido?: boolean;
     repeticionesValido?: boolean;
     tiempoValido?: boolean;
+    orden?: number; // Añade esta línea
   }

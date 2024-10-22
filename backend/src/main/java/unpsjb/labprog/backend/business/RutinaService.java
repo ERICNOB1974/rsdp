@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -218,6 +220,91 @@ public class RutinaService {
     public List<Etiqueta> obtenerEtiquetasDeRutina(Long idRutina) {
         return etiquetaRepository.obtenerEtiquetasEnRutina(idRutina);
     }
+
+
+
+
+
+    public Optional<RutinaDTO> getRutinaById(Long id) {
+        Optional<Rutina> optionalRutina = rutinaRepository.findById(id);
+    
+        if (optionalRutina.isPresent()) {
+            Rutina rutina = optionalRutina.get();
+            RutinaDTO rutinaDTO = new RutinaDTO();
+            rutinaDTO.setId(id);
+            rutinaDTO.setNombre(rutina.getNombre());
+            rutinaDTO.setDescripcion(rutina.getDescripcion());
+    
+            // Obtener los IDs de los días
+            List<Long> diaIds = rutinaRepository.findDiasByRutina(id);
+            List<DiaDTO> diasDTO = new ArrayList<>();
+    
+            for (Long diaId : diaIds) {
+                // Crear un nuevo DiaDTO
+                DiaDTO diaDTO = new DiaDTO();
+                diaDTO.setId(diaId); // Establecer el ID del día
+    
+                // Obtener atributos del día
+                String nombre = rutinaRepository.findNombreById(diaId);
+                String descripcion = rutinaRepository.findDescripcionById(diaId);
+                Integer orden = rutinaRepository.findOrdenById(diaId);
+    
+                // Establecer los atributos en el objeto DiaDTO
+                diaDTO.setNombre(nombre);
+                diaDTO.setDescripcion(descripcion);
+                diaDTO.setOrden(orden);
+    
+                // Obtener los IDs de las relaciones "TIENE_EJERCICIO"
+                List<Long> relacionIds = rutinaRepository.findRelacionEjercicioIdsByDia(diaId);
+                
+                // Inicializar listas para ejercicios de repeticiones y de tiempo
+                List<EjercicioRepeticionesDTO> ejerciciosRepeticiones = new ArrayList<>();
+                List<EjercicioTiempoDTO> ejerciciosTiempo = new ArrayList<>();
+    
+                for (Long relacionId : relacionIds) {
+                    // Obtener el nombre y descripción del ejercicio
+                    String ejercicioNombre = rutinaRepository.findEjercicioNombreByRelacionId(relacionId);
+                    String ejercicioDescripcion = rutinaRepository.findEjercicioDescripcionByRelacionId(relacionId);
+                    Integer ejercicioOrden = rutinaRepository.findEjercicioOrdenByRelacionId(relacionId);
+                    
+                    // Obtener atributos adicionales
+                    Integer repeticiones = rutinaRepository.findEjercicioRepeticionesByRelacionId(relacionId);
+                    Integer series = rutinaRepository.findEjercicioSeriesByRelacionId(relacionId);
+                    String tiempo = rutinaRepository.findEjercicioTiempoByRelacionId(relacionId);
+                    
+                    // Diferenciar según el tipo de ejercicio
+                    if (repeticiones != null) { // Ejercicio de repeticiones
+                        EjercicioRepeticionesDTO ejercicioRepeticionesDTO = new EjercicioRepeticionesDTO();
+                        ejercicioRepeticionesDTO.setNombre(ejercicioNombre);
+                        ejercicioRepeticionesDTO.setDescripcion(ejercicioDescripcion);
+                        ejercicioRepeticionesDTO.setOrden(ejercicioOrden);
+                        ejercicioRepeticionesDTO.setRepeticiones(repeticiones);
+                        ejercicioRepeticionesDTO.setSeries(series);
+                        ejerciciosRepeticiones.add(ejercicioRepeticionesDTO);
+                    } else if (tiempo != null) { // Ejercicio de tiempo
+                        EjercicioTiempoDTO ejercicioTiempoDTO = new EjercicioTiempoDTO();
+                        ejercicioTiempoDTO.setNombre(ejercicioNombre);
+                        ejercicioTiempoDTO.setDescripcion(ejercicioDescripcion);
+                        ejercicioTiempoDTO.setOrden(ejercicioOrden);
+                        ejercicioTiempoDTO.setTiempo(tiempo);
+                        ejerciciosTiempo.add(ejercicioTiempoDTO);
+                    }
+                }
+    
+                // Establecer las listas de ejercicios en el DiaDTO
+                diaDTO.setEjerciciosRepeticiones(ejerciciosRepeticiones);
+                diaDTO.setEjerciciosTiempo(ejerciciosTiempo);
+                diasDTO.add(diaDTO);
+            }
+    
+            rutinaDTO.setDias(diasDTO);
+            return Optional.of(rutinaDTO);
+        } else {
+            return Optional.empty();
+        }
+    }
+    
+
 
 
 }

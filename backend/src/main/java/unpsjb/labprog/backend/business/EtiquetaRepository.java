@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EtiquetaRepository extends Neo4jRepository<Etiqueta, Long> {
+
     @Query("MATCH (e:Etiqueta) WHERE toUpper(e.nombre) CONTAINS toUpper($nombre) RETURN e")
     List<Etiqueta> buscarPorNombre(String nombre);
 
