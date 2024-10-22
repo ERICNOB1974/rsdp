@@ -12,11 +12,13 @@ public class EjercicioTiempoDTO {
     private String descripcion;
     private int orden;
     private String tiempo; // Solo tiene tiempo
+    private String imagen;
 
-    public EjercicioTiempoDTO(String nombre, String descripcion, int orden, String tiempo) {
+    public EjercicioTiempoDTO(String nombre, String descripcion, int orden, String tiempo,String imagen) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.orden = orden;
         this.tiempo = tiempo;
+        this.imagen = imagen;
     }
 }

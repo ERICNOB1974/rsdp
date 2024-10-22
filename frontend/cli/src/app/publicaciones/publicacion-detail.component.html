@@ -30,7 +30,6 @@
 
 
 
-
     <div class="comments-section">
       <div *ngFor="let com of comentarios" class="comment"
         style="margin-bottom: 15px; padding: 10px; background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
@@ -42,6 +41,9 @@
         <p class="comment-text" style="font-size: 14px; margin: 0; color: #262626;">{{ com.texto }}</p>
       </div>
     </div>
+    <button *ngIf="isOwnPublication" (click)="deletePublicacion()" class="btn btn-danger">
+      Eliminar publicación
+    </button>
   </div>
 
 </div>

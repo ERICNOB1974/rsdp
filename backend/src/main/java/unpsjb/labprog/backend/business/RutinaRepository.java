@@ -166,7 +166,10 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                      "RETURN te.tiempo AS tiempo")
        String findEjercicioTiempoByRelacionId(Long relacionId);
 
-
+       @Query("MATCH ()-[te:TIENE_EJERCICIO]->(e:Ejercicio) " +
+                     "WHERE id(te) = $relacionId " +
+                     "RETURN e.imagen AS ejercicioImagen")
+       String findImagenByRelacionId(Long relacionId);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(amigo:Usuario) " +
                         "MATCH (amigo)-[:REALIZA_RUTINA]->(rutina:Rutina) " +

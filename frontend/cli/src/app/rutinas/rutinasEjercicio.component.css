@@ -50,3 +50,14 @@ p {
     color: #155724; /* Color del texto */
     text-align: center; /* Centrar texto */
 }
+
+.exercise-image-container {
+    text-align: center; /* Centrar la imagen */
+    margin: 20px 0; /* Espacio alrededor de la imagen */
+}
+
+.exercise-image {
+    max-width: 100%; /* Asegura que la imagen no exceda el ancho del contenedor */
+    height: auto; /* Mantiene la proporción de la imagen */
+    border-radius: 8px; /* Bordes redondeados opcionales */
+}
