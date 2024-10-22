@@ -9,7 +9,7 @@ import { AuthService } from '../autenticacion/auth.service';
   providedIn: 'root'
 })
 export class PublicacionService {
-  
+
   private publicacionsUrl = 'rest/publicacion';
 
   constructor(
@@ -24,27 +24,27 @@ export class PublicacionService {
   get(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.publicacionsUrl}/findById/${id}`);
   }
-  
+
   saveConCreador(publicacion: Publicacion): Observable<DataPackage> {
     const idUsuario = this.authService.getUsuarioId();
     return publicacion.id ? this.http.put<DataPackage>(` ${this.publicacionsUrl}/actualizar`, publicacion) :
-    this.http.post<DataPackage>(` ${this.publicacionsUrl}/crear/${idUsuario}`, publicacion);
+      this.http.post<DataPackage>(` ${this.publicacionsUrl}/crear/${idUsuario}`, publicacion);
   }
-  estaLikeada(idPublicacion:number) {
+  estaLikeada(idPublicacion: number) {
     return this.http.get<DataPackage>(` ${this.publicacionsUrl}/isLikeada/${this.authService.getUsuarioId()}/${idPublicacion}`);
   }
 
-  sacarLike(idPublicacion:number) {
+  sacarLike(idPublicacion: number) {
     return this.http.get<DataPackage>(` ${this.publicacionsUrl}/deslikear/${this.authService.getUsuarioId()}/${idPublicacion}`);
   }
-  
-  darLike(idPublicacion:number) {
+
+  darLike(idPublicacion: number) {
     return this.http.get<DataPackage>(` ${this.publicacionsUrl}/likear/${this.authService.getUsuarioId()}/${idPublicacion}`);
   }
-  comentar(idPublicacion:number, comentario: string) {
+  comentar(idPublicacion: number, comentario: string) {
     return this.http.post<DataPackage>(` ${this.publicacionsUrl}/comentar/${this.authService.getUsuarioId()}/${idPublicacion}`, comentario);
   }
-  comentarios(idPublicacion:number) {
+  comentarios(idPublicacion: number) {
     return this.http.get<DataPackage>(` ${this.publicacionsUrl}/comentarios/${idPublicacion}`);
   }
   publicaciones(idUsuario: number): Observable<DataPackage> {
@@ -57,6 +57,12 @@ export class PublicacionService {
   publicadoPor(idPublicacion: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.publicacionsUrl}/usuarioPublicador/${idPublicacion}`);
   }
+
+  eliminar(idPublicacion: number): Observable<DataPackage> {
+    return this.http.delete<DataPackage>(`${this.publicacionsUrl}/eliminar/${idPublicacion}`);
+  }
+
+
 
 
 

@@ -87,7 +87,6 @@ public class NotificacionService {
     }
 
     public void crearNotificacionPublicacion(Long idUsuarioReceptor, Long idUsuarioEmisor, Long idEntidad, String tipo, LocalDateTime fecha){
-        System.out.println("ENTRO ACAAAAA\n"    );
         notificacionRepository.crearNotificacionPublicacion(idUsuarioReceptor, idUsuarioEmisor, idEntidad, tipo, fecha);
     }
     
