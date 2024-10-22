@@ -15,24 +15,25 @@ import { Evento } from '../eventos/evento';
 export class SugerenciasEventosComponent implements OnInit {
     currentIndex: number = 0; // Índice actual del carrusel
     eventos: Evento[] = []; // Arreglo para almacenar los eventos que provienen del backend
-    results: Evento[] = [];
+    results: any[] = [];
   
     constructor(private eventoService: EventoService,
         private router: Router) { }
 
     ngOnInit(): void {
-        this.getEventos()
+        this.getEventos();
+        console.info(this.results);
     }
 
     getEventos(): void {
-        this.eventoService.sugerencias().subscribe((dataPackage) => {
-          const responseData = dataPackage.data;
-          console.log(responseData);
-          if (Array.isArray(responseData)) {
-            this.results = responseData;
-          }
-        });
-      }
+      this.eventoService.sugerencias().subscribe((dataPackage) => {
+        if (Array.isArray(dataPackage.data)) {
+          this.results = dataPackage.data.map(item => item.evento); // Extrae solo los objetos 'evento'
+          console.info("Eventos recibidos: ", this.results);
+        }
+      });
+    }
+
 
       // Método para mover al siguiente grupo de eventos en el carrusel
       siguienteEvento(): void {
@@ -47,15 +48,18 @@ export class SugerenciasEventosComponent implements OnInit {
       // Método para obtener los eventos a mostrar en el carrusel
       obtenerEventosParaMostrar(): Evento[] {
         const eventosParaMostrar: Evento[] = [];
-    
+      
         if (this.results.length === 0) {
           return eventosParaMostrar; // Devuelve un arreglo vacío si no hay eventos
         }
-    
-        for (let i = 0; i < 4; i++) {
+      
+        const maxEventos = Math.min(4, this.results.length); // Calcula cuántos eventos puedes mostrar, como máximo 4 o menos
+      
+        for (let i = 0; i < maxEventos; i++) {
           const index = (this.currentIndex + i) % this.results.length;
           eventosParaMostrar.push(this.results[index]);
         }
+      
         return eventosParaMostrar;
       }
 }
