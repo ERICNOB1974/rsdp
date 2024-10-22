@@ -2,6 +2,8 @@ package unpsjb.labprog.backend.presenter;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import unpsjb.labprog.backend.Response;
+import unpsjb.labprog.backend.business.RutinaDTO;
 import unpsjb.labprog.backend.business.RutinaService;
 import unpsjb.labprog.backend.business.ScoreRutina;
 import unpsjb.labprog.backend.model.Rutina;
@@ -173,6 +176,25 @@ public class RutinaPresenter {
     @GetMapping("/etiquetas/{idRutina}")
     public ResponseEntity<Object> obtenerEtiquetasDeRutina(@PathVariable Long idRutina) {
         return Response.ok(rutinaService.obtenerEtiquetasDeRutina(idRutina));
+    }
+    
+
+    @GetMapping("/rutina/{idRutina}")
+    public ResponseEntity<Object> getRutinaById(@PathVariable Long idRutina) {
+        try {
+            Optional<RutinaDTO> rutinaDTO = rutinaService.getRutinaById(idRutina);
+            
+            if (rutinaDTO.isPresent()) {
+                return Response.ok(rutinaDTO.get()); // Rutina encontrada
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND) // Rutina no encontrada
+                                     .body("Rutina no encontrada con el ID: " + idRutina);
+            }
+        } catch (Exception e) {
+            // Manejo del error
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR) // Error interno
+                                 .body("Error al obtener las sugerencias: " + e.getMessage());
+        }
     }
     
     

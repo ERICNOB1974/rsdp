@@ -5,6 +5,7 @@ import { UsuarioService } from '../usuarios/usuario.service';
 import { Usuario } from '../usuarios/usuario';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Publicacion } from '../publicaciones/publicacion';
+import { AuthService } from '../autenticacion/auth.service';
 
 @Component({
   selector: 'app-perfil-detail',
@@ -15,22 +16,24 @@ import { Publicacion } from '../publicaciones/publicacion';
 })
 export class PerfilDetailComponent implements OnInit {
   usuario!: Usuario; // Usuario que se va a editar
-  idUsuario!: number;
+  idUsuarioAutenticado!: number;
 
   constructor(
     private route: ActivatedRoute,
     private usuarioService: UsuarioService,
     private router: Router,
+    private authService: AuthService,  // Inyecta el AuthService
     private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
-    this.idUsuario = Number(this.route.snapshot.paramMap.get('id'));
+    const usuarioId = this.authService.getUsuarioId();
+    this.idUsuarioAutenticado = Number(usuarioId);
     this.cargarPerfil();
   }
 
   cargarPerfil(): void {
-    this.usuarioService.get(this.idUsuario).subscribe((dataPackage) => {
+    this.usuarioService.get(this.idUsuarioAutenticado).subscribe((dataPackage) => {
       if (dataPackage.status === 200) {
         this.usuario = dataPackage.data as Usuario;
       } else {
