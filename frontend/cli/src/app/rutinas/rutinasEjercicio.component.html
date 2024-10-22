@@ -24,7 +24,10 @@
                         <p>Tiempo: {{ ejercicioActual.tiempo }}</p>
                     </div>
 
-                    <img *ngIf="ejercicioActual.imagen" [src]="ejercicioActual.imagen" alt="Imagen del ejercicio">
+                    <!-- Mostrar la imagen del ejercicio -->
+                    <div class="exercise-image-container">
+                        <img *ngIf="ejercicioActual.imagen" [src]="ejercicioActual.imagen" alt="Imagen del ejercicio" class="exercise-image">
+                    </div>
 
                     <button class="btn" (click)="terminarEjercicio()">Terminado</button>
                 </div>
