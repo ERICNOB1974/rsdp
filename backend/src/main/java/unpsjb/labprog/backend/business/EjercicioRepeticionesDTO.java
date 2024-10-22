@@ -13,12 +13,14 @@ public class EjercicioRepeticionesDTO {
     private int orden;
     private int repeticiones;
     private int series;
+    private String imagen;
 
-    public EjercicioRepeticionesDTO(String nombre, String descripcion, int orden, int repeticiones, int series) {
+    public EjercicioRepeticionesDTO(String nombre, String descripcion, int orden, int repeticiones, int series, String imagen) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.orden = orden;
         this.repeticiones = repeticiones;
         this.series = series;
+        this.imagen = imagen;
     }
 }

@@ -60,7 +60,7 @@ export class RutinasEjercicioComponent implements OnInit, OnDestroy {
                             series: ejercicio.series,
                             tiempo: '', // No aplica
                             descripcion: ejercicio.descripcion,
-                            imagen: '', // Puede ser un valor por defecto o dejarlo vacío
+                            imagen: ejercicio.imagen,
                             tipo: 'series', // Asumiendo que todos son de tipo 'series'
                             orden: ejercicio.orden // Asegúrate de que esta propiedad esté presente
                         });
@@ -74,7 +74,7 @@ export class RutinasEjercicioComponent implements OnInit, OnDestroy {
                             series: null, // No aplicable
                             tiempo: ejercicio.tiempo,
                             descripcion: ejercicio.descripcion,
-                            imagen: '', // Puede ser un valor por defecto o dejarlo vacío
+                            imagen: ejercicio.imagen,
                             tipo: 'resistencia', // Asumiendo que todos son de tipo 'resistencia'
                             orden: ejercicio.orden // Asegúrate de que esta propiedad esté presente
                         });
