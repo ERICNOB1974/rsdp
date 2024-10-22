@@ -10,7 +10,7 @@ import { ComunidadService } from '../comunidades/comunidad.service';
     standalone: true,
     imports: [CommonModule, FormsModule, RouterModule],
     templateUrl: 'sugerenciasComunidades.component.html',
-    styleUrls: ['eventos.component.css'] 
+    styleUrls: ['sugerencias.component.css'] 
 })
 export class SugerenciasComunidadesComponent implements OnInit {
     currentIndex: number = 0; // Índice actual del carrusel

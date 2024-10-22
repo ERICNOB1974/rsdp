@@ -179,4 +179,11 @@ public class UsuarioService {
         return listaSugerenciasSinDuplicados;
     }
 
+    public void actualizarUbicacion(Long idUsuario, Double latitud, Double longitud) {
+        Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        usuario.setLatitud(latitud);
+        usuario.setLongitud(longitud);
+        usuarioRepository.save(usuario);
+    }
+
 }
