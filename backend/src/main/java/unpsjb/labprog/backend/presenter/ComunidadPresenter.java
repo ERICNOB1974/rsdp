@@ -104,6 +104,18 @@ public class ComunidadPresenter {
         }
     }
 
+
+    @PostMapping("/eliminarUsuario/{idSuperUsuario}/{idMiembro}/{idComunidad}")
+    public ResponseEntity<Object> eliminarUsuario(@PathVariable Long idSuperUsuario,
+            @PathVariable Long idMiembro, @PathVariable Long idComunidad) {
+        try {
+            String respuesta = usuarioComunidadService.eliminarUsuario(idSuperUsuario, idMiembro, idComunidad);
+            return Response.ok(respuesta);
+        } catch (Exception e) {
+            return Response.error("", "Error al eliminar al usuario de la comunidad: " + e.getMessage());
+        }
+    }
+
     @RequestMapping(path = "/create/{idUsuario}", method = RequestMethod.POST)
     public ResponseEntity<Object> create(@RequestBody Comunidad comunidad, @PathVariable Long idUsuario) {
         try {

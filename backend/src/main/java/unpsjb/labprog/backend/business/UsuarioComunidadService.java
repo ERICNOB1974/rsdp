@@ -186,6 +186,37 @@ public class UsuarioComunidadService {
         return "Solicitud de ingreso aceptada correctamente";
     }
 
+    public String eliminarUsuario(Long idSuperUsuario, Long idUsuario, Long idComunidad)
+    throws Exception {
+Optional<Usuario> miembroOpt = usuarioRepository.findById(idUsuario);
+if (miembroOpt.isEmpty()) {
+    throw new Exception("El usuario no existe.");
+}
+Optional<Usuario> superUsuario = usuarioRepository.findById(idSuperUsuario);
+if (superUsuario.isEmpty()) {
+    throw new Exception("El usuario con permisos no existe.");
+}
+
+Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
+if (comunidadOpt.isEmpty()) {
+    throw new Exception("La comunidad no existe.");
+}
+Comunidad comunidad = comunidadOpt.get();
+if (!usuarioRepository.esMiembro(idUsuario, idComunidad)) {
+    throw new Exception("El usuario no es miembro de la comunidad");
+}
+if ((!usuarioRepository.esCreador(idSuperUsuario, idComunidad))
+        && (!usuarioRepository.esAdministrador(idSuperUsuario, idComunidad))) {
+    throw new Exception("Este usuario no puede gestionar solicitudes");
+}
+
+
+comunidadRepository.eliminarUsuario(idUsuario, idComunidad);
+
+return "Miembro eliminado de la comunidad correctamente";
+}
+
+
     public List<Usuario> visualizarSolicitudes(Long idSuperUsuario, Long idComunidad) throws Exception {
 
         Optional<Usuario> superUsuario = usuarioRepository.findById(idSuperUsuario);

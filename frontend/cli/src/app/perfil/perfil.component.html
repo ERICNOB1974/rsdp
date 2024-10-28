@@ -22,11 +22,12 @@
                 </button>
 
                 <!-- Caso 2: Ya son amigos, muestra texto de 'Amigos' (no clickeable) -->
-                <p *ngIf="relacion === 'amigos'" class="estado-amigos">Amigos</p>
-
+                <button *ngIf="relacion === 'amigos'" class="btn-eliminar-amigo" (click)="eliminarAmigo()">
+                    Eliminar amigo
+                </button>
                 <!-- Caso 3: Solicitud ya enviada, muestra botón no clickeable -->
-                <button *ngIf="relacion === 'solicitudEnviada'" class="btn-solicitud" disabled>
-                    Solicitud enviada
+                <button *ngIf="relacion === 'solicitudEnviada'" class="btn-cancelar-solicitud" (click)="cancelarSolicitudDeAmistad()">
+                    Cancelar solicitud de amistad
                 </button>
 
                 <!-- Caso 4: Solicitud pendiente, muestra botones para aceptar/rechazar -->
