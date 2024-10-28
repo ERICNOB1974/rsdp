@@ -158,6 +158,12 @@ public class ComunidadPresenter {
         // return Response.ok("ok");
     }
 
+    @GetMapping("/comunidadesCreadasPorUsuario/{idUsuario}")
+    public ResponseEntity<Object> comunidadesCreadasPorUsuario(@PathVariable Long idUsuario, @RequestParam int offset, @RequestParam int limit) {
+        List<Comunidad> comunidadesCreadasPorUsuario = comunidadService.comunidadesCreadasPorUsuario(idUsuario, offset, limit);
+        return Response.ok(comunidadesCreadasPorUsuario);
+    }
+
     @RequestMapping(path = "/disponibles", method = RequestMethod.GET)
     public ResponseEntity<Object> disponibles() {
         return Response.ok(comunidadService.disponibles());

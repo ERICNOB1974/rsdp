@@ -118,6 +118,16 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         + " RETURN e ORDER BY e.fechaHora ASC")
         List<Evento> eventosProximos();
 
+        
+        @Query("MATCH (e:Evento)-[:CREADO_POR]->(u:Usuario) " +
+        "WHERE id(u) = $idUsuario " +
+        "RETURN e " +
+        "ORDER BY abs(duration.between(date(), e.fechaHora).days) ASC " +
+        "SKIP $offset LIMIT $limit")
+ List<Evento> eventosCreadosPorUsuario(@Param("idUsuario") Long idUsuario, 
+                                       @Param("offset") int offset, 
+                                       @Param("limit") int limit);
+ 
         @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento) " +
                         "WHERE id(u) = $idUsuario AND id(e) = $idEvento " +
                         "RETURN COUNT(e) > 0")

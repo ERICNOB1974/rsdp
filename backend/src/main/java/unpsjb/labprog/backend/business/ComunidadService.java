@@ -172,4 +172,8 @@ public class ComunidadService {
         return comunidadRepository.comunidadesCantidadParticipantes(min, max);
     }
 
+    public List<Comunidad> comunidadesCreadasPorUsuario(Long idUsuario, int offset, int limit) {
+        return comunidadRepository.comunidadesCreadasPorUsuario(idUsuario, offset, limit);
+    }
+    
 }

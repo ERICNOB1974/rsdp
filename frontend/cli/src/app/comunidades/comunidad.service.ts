@@ -151,6 +151,9 @@ export class ComunidadService {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/filtrar/etiquetas`, { params });
 }
 
-
+comunidadesCreadasPorUsuario(offset: number, limit: number): Observable<DataPackage> {
+  const userId = this.authService.getUsuarioId();
+  return this.http.get<DataPackage>(`${this.comunidadesUrl}/comunidadesCreadasPorUsuario/${userId}?offset=${offset}&limit=${limit}`);
+}
 
 }

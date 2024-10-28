@@ -179,6 +179,11 @@ public class EventoService {
         return eventoRepository.eventosProximos();
     }
 
+    public List<Evento> eventosCreadosPorUsuario(Long idUsuario, int offset, int limit) {
+        return eventoRepository.eventosCreadosPorUsuario(idUsuario, offset, limit);
+    }
+    
+
     public List<Evento> eventosNuevosComunidad(Usuario u) {
         return eventoRepository.eventosNuevosComunidad(u);
     }

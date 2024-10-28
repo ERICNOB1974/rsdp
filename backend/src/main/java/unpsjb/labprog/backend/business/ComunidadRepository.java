@@ -87,6 +87,14 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "DELETE r ")
 void eliminarUsuario(Long idUsuario, Long idComunidad);
 
+
+        @Query("MATCH (c:Comunidad)-[:CREADA_POR]->(u:Usuario) " +
+        "WHERE id(u) = $idUsuario " +
+        "RETURN c " +
+        "ORDER BY c.fechaDeCreacion ASC " +
+        "SKIP $offset LIMIT $limit")
+        List<Comunidad> comunidadesCreadasPorUsuario(@Param("idUsuario") Long idUsuario, @Param("offset") int offset, @Param("limit") int limit);
+
         @Query("MATCH (c:Comunidad), (u:Usuario) WHERE id(c) = $idComunidad AND id(u) = $idUsuario " +
                         "MATCH (c)<-[r:MIEMBRO]-(u) DELETE r")
         void miembroSaliente(Long idComunidad, Long idUsuario);

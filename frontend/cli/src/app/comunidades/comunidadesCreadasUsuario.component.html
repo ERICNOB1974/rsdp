@@ -1,0 +1,26 @@
+<div class="comunidades-container" *ngIf="comunidadesUsuario.length > 0; else noComunidades">
+  <h2>Comunidades Creadas por Ti</h2>
+  <div class="comunidades-list">
+    <div class="comunidad-card" *ngFor="let comunidad of comunidadesUsuario">
+      <div class="comunidad-header">
+        <h3>{{ comunidad.nombre }}</h3>
+        <span class="badge" [ngClass]="{'private': comunidad.esPrivada, 'public': !comunidad.esPrivada}">
+          {{ comunidad.esPrivada ? 'Privada' : 'Pública' }}
+        </span>
+      </div>
+      <p class="descripcion">{{ comunidad.descripcion }}</p>
+      <p class="info">
+        <span><strong>{{ comunidad.participantes }}</strong> Participantes</span>
+        <span><strong>{{ comunidad.cantidadMaximaMiembros }}</strong> Máx. Miembros</span>
+      </p>
+      <p class="fecha-hora">{{ comunidad.fechaDeCreacion | date: 'dd/MM/yyyy' }}</p>
+      <button class="detalles-btn" (click)="irADetallesDeComunidad(comunidad.id)">Ver Detalles</button>
+    </div>
+  </div>
+</div>
+
+<ng-template #noComunidades>
+  <div class="no-comunidades">
+    <p>No tienes comunidades creadas.</p>
+  </div>
+</ng-template>

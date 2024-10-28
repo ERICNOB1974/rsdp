@@ -121,7 +121,11 @@ export class EventoService {
   disponibles(): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.eventosUrl}/disponibles`);
   }
-
+  
+  eventosCreadosPorUsuario(offset: number, limit: number): Observable<DataPackage> {
+    const userId = this.authService.getUsuarioId();
+    return this.http.get<DataPackage>(`${this.eventosUrl}/eventosCreadosPorUsuario/${userId}?offset=${offset}&limit=${limit}`);
+  }
 
   participaUsuario(idUsuario: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.eventosUrl}/participa/${idUsuario}`);
