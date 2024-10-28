@@ -2,20 +2,30 @@
     <h1>Amigos</h1>
     <div class="tabs">
         <button (click)="cambiarVista('amigos')" [class.active]="mostrarAmigos">Amigos</button>
-        <!-- <button (click)="cambiarVista('solicitudes')" [class.active]="!mostrarAmigos">Solicitudes</button> -->
+        <button (click)="cambiarVista('solicitudes')" [class.active]="!mostrarAmigos">Solicitudes</button>
     </div>
 
     <div *ngIf="mostrarAmigos">
         <h2>Lista de Amigos</h2>
         <ul>
-            <li *ngFor="let amigo of amigos">{{ amigo.nombreUsuario }}</li>
+            <li *ngFor="let amigo of amigos" (click)="verPerfil(amigo)" class="clickable">
+<!--                 <img [src]="amigo.fotoPerfil" alt="Foto de {{ amigo.nombreUsuario }}" class="avatar-circular">
+ -->                <span>{{ amigo.nombreUsuario }}</span>
+            </li>
         </ul>
     </div>
 
-    <!-- <div *ngIf="!mostrarAmigos">
+    <div *ngIf="!mostrarAmigos">
         <h2>Solicitudes de Amistad</h2>
         <ul>
-            <li *ngFor="let solicitud of solicitudes">{{ solicitud.nombreUsuario }}</li>
+            <li *ngFor="let solicitud of solicitudes" (click)="verPerfil(solicitud)" class="clickable">
+<!--                 <img [src]="solicitud.fotoPerfil" alt="Foto de {{ solicitud.nombreUsuario }}" class="avatar-circular">
+ -->                <span>{{ solicitud.nombreUsuario }}</span>
+                <div class="acciones-solicitud">
+                    <button (click)="gestionarSolicitud(solicitud, true); $event.stopPropagation()" class="btn-aceptar">Aceptar</button>
+                    <button (click)="gestionarSolicitud(solicitud, false);  $event.stopPropagation()" class="btn-rechazar">Rechazar</button>
+                </div>
+            </li>
         </ul>
-    </div> -->
+    </div> 
 </div>

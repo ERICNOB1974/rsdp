@@ -49,10 +49,10 @@ public class UsuarioPresenter {
         return Response.ok(amigosDeAmigos);
     }
 
-    @GetMapping("/solicitudes/{nombreUsuario}")
+    @GetMapping("/solicitudesAmistad/{nombreUsuario}")
     public ResponseEntity<Object> obtenerSolicitudes(@PathVariable String nombreUsuario) {
-        List<Usuario> amigosDeAmigos = usuarioService.solicitudes(nombreUsuario);
-        return Response.ok(amigosDeAmigos);
+        List<Usuario> solicitudes = usuarioService.solicitudes(nombreUsuario);
+        return Response.ok(solicitudes);
     }
 
     @GetMapping("/amigosDeAmigos/{nombreUsuario}")
@@ -139,6 +139,24 @@ public class UsuarioPresenter {
             return Response.ok(respuesta);
         } catch (Exception e) {
             return Response.error("", "Error al inscribirse: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/eliminarAmigo/{idEmisor}/{idReceptor}")
+    public ResponseEntity<Object> eliminarAmigo(@PathVariable Long idEmisor, @PathVariable Long idReceptor) {
+        try {
+            return Response.ok(usuarioService.eliminarAmigo(idEmisor, idReceptor));
+        } catch (Exception e) {
+            return Response.error("", "Error al eliminar amigo: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/cancelarSolicitudAmistad/{idUsuario}/{idReceptor}")
+    public ResponseEntity<Object> cancelarSolicitudAmistad(@PathVariable Long idUsuario, @PathVariable Long idReceptor) {
+        try {
+            return Response.ok(usuarioService.cancelarSolicitudAmistad(idUsuario, idReceptor));
+        } catch (Exception e) {
+            return Response.error("", "Error al cancelar la solicitud de amistad: " + e.getMessage());
         }
     }
 
