@@ -55,7 +55,8 @@ export class EventosComponent implements OnInit {
   ngOnInit(): void {
     this.getEventos(); // Cargar los eventos al inicializar el componente
     const usuarioId = this.authService.getUsuarioId();
-    this.idUsuarioAutenticado = Number(usuarioId);    this.ParticipaUsuario();
+    this.idUsuarioAutenticado = Number(usuarioId);    
+    this.ParticipaUsuario();
   }
 
   agregarEtiqueta(event: any): void {

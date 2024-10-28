@@ -100,6 +100,13 @@ public class EventoPresenter {
         return Response.ok(eventosDeRutinas);
     }
 
+    @GetMapping("/eventosCreadosPorUsuario/{idUsuario}")
+    public ResponseEntity<Object> eventosCreadosPorUsuario(@PathVariable Long idUsuario, @RequestParam int offset, @RequestParam int limit) {
+        List<Evento> eventosCreadosPorUsuario = eventoService.eventosCreadosPorUsuario(idUsuario, offset, limit);
+        return Response.ok(eventosCreadosPorUsuario);
+    }
+
+
     @PostMapping("/etiquetar/{idEtiqueta}")
     public ResponseEntity<Object> etiquetarEvento(@RequestBody Evento evento, @PathVariable Long idEtiqueta) {
         eventoService.etiquetarEvento(evento, idEtiqueta);
