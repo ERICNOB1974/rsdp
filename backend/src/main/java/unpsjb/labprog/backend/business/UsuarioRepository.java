@@ -123,6 +123,13 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
                         "DELETE r")
         void rechazarSolicitudAmistad(Long idEmisor, Long idReceptor);
 
+        @Query("MATCH (u:Usuario)-[r:ES_AMIGO_DE]-(u2:Usuario) " +
+                        "Where id(u) = $idEmisor AND id(u2) = $idReceptor " +
+                        "DELETE r")
+        void eliminarAmigo(Long idEmisor, Long idReceptor);
+
+        
+
         @Query("MATCH (u:Usuario) WHERE u.nombreUsuario = $nombre RETURN u")
         Optional<Usuario> findByNombreUsuario(String nombre);
 

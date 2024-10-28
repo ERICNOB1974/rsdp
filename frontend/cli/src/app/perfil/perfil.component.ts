@@ -132,6 +132,41 @@ isOwnPublication: any;
       }
     });
   }
+
+    // Lógica para enviar una solicitud de amistad
+    eliminarAmigo(): void {
+      this.usuarioService.eliminarAmigo(this.usuario.id).subscribe({
+        next: (dataPackage: DataPackage) => {
+          if (dataPackage.status === 200) {
+            alert('Amigo eliminado exitosamente.');
+            window.location.reload(); // Recargar la página
+          } else {
+            alert('Error: ' + dataPackage.message);
+          }
+        },
+        error: (error) => {
+          alert('Error al eliminar amigo.');
+        }
+      });
+    }
+
+    cancelarSolicitudDeAmistad(): void {
+      this.usuarioService.cancelarSolicitudAmistad(this.usuario.id).subscribe({
+        next: (dataPackage: DataPackage) => {
+          if (dataPackage.status === 200) {
+            alert('Solicitud canceladda exitosamente.');
+            window.location.reload(); // Recargar la página
+          } else {
+            alert('Error: ' + dataPackage.message);
+          }
+        },
+        error: (error) => {
+          alert('Error al cancelar solicitud de amistad.');
+        }
+      });
+    }
+
+
   getPublicaciones(): void {
     this.publicacionService.publicaciones(this.idUsuario).subscribe({
       next: (dataPackage) => {

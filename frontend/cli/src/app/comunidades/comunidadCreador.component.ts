@@ -7,6 +7,7 @@ import { CommonModule, Location } from '@angular/common'; // Para manejar navega
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { forkJoin } from 'rxjs';
 import { AuthService } from '../autenticacion/auth.service';
+import { Usuario } from '../usuarios/usuario';
 
 @Component({
     selector: 'app-comunidad-admin',
@@ -182,7 +183,14 @@ export class ComunidadCreadorComponent implements OnInit {
         return this.administradores.some(admin => admin.id === idMiembro);
     }
 
-    eliminarMiembro(): void {
+    eliminarMiembro(usuario: Usuario): void {
+        this.comunidadService.eliminarMiembro(this.idUsuarioAutenticado, usuario.id, this.comunidad.id).subscribe(dataPackage => {
+            let mensaje = JSON.stringify(dataPackage.data); // Convierte a string
+            this.snackBar.open(mensaje, 'Cerrar', {
+                duration: 3000,
+            });
+            this.traerMiembrosYAdministradores(); // Actualiza la lista de miembros
+        });
         }
     
 }
