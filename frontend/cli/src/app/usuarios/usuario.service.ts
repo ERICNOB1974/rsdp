@@ -54,6 +54,20 @@ export class UsuarioService {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/amigos/${this.authService.getNombreUsuario()}`);
   }
 
+  obtenerSolicitudes(): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/solicitudesAmistad/${this.authService.getNombreUsuario()}`);
+  }
+
+  eliminarAmigo(idAmigo: number): Observable<DataPackage> {
+    const body = {};
+    return this.http.post<DataPackage>(`${this.usuariosUrl}/eliminarAmigo/${this.authService.getUsuarioId()}/${idAmigo}`,body);
+  }
+
+  cancelarSolicitudAmistad(idUsuario: number): Observable<DataPackage> {
+    const body = {};
+    return this.http.post<DataPackage>(`${this.usuariosUrl}/cancelarSolicitudAmistad/${this.authService.getUsuarioId()}/${idUsuario}`,body);
+  }
+
   enviarSolicitudAmistad(idEmisor: number, idReceptor: number): Observable<DataPackage> {
     const body = {};
     return this.http.post<DataPackage>(`${this.usuariosUrl}/enviarSolicitudAmistad/${idEmisor}/${idReceptor}`, body);
