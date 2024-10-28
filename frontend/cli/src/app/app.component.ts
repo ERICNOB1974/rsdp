@@ -34,6 +34,9 @@ import { DataPackage } from './data-package';
                   <li>
                       <a href="/eventos/crearEvento">Crear evento</a>
                   </li>
+                  <li>
+                      <a href="/eventosUsuario">Mis Eventos</a>
+                  </li>
               </ul>
           </li>
           <li class="dropdown">
@@ -47,6 +50,9 @@ import { DataPackage } from './data-package';
                   </li>
                   <li>
                       <a href="/comunidades/crearComunidad">Crear comunidad</a>
+                  </li>
+                    <li>
+                      <a href="/comunidadesUsuario">Mis Comunidades</a>
                   </li>
               </ul>
           </li>

@@ -28,14 +28,18 @@ import { RutinasComponent } from './rutinas/rutinas.component';
 import { CrearRutinaComponent } from './rutinas/crearRutina.component';
 import { RutinaDetailComponent } from './rutinas/rutina-detail.component';
 import { SugerenciasRutinasComponent } from './sugerencias/sugerenciasRutinas.component';
+import { EventosCreadosUsuarioComponent } from './eventos/eventosCreadosUsuario.component';
+import { ComunidadesCreadasUsuarioComponent } from './comunidades/comunidadesCreadasUsuario.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
   { path: 'seleccionMapa', component: SeleccionMapaComponent, canActivate: [AuthGuard] },
   { path: 'eventos', component: EventosComponent, canActivate: [AuthGuard] },
+  { path: 'eventosUsuario', component: EventosCreadosUsuarioComponent, canActivate: [AuthGuard] },
   { path: 'eventos/crearEvento', component: CrearEventoComponent, canActivate: [AuthGuard] },
   { path: 'eventos/:id', component: EventoDetailComponent, canActivate: [AuthGuard] },
   { path: 'comunidades', component: ComunidadesComponent, canActivate: [AuthGuard] },
+  { path: 'comunidadesUsuario', component: ComunidadesCreadasUsuarioComponent, canActivate: [AuthGuard] },
   { path: 'comunidades/crearComunidad', component: CrearComunidadComponent, canActivate: [AuthGuard] },
   { path: 'comunidades/:id', component: ComunidadDetailComponent, canActivate: [AuthGuard] },
   { path: 'creadorComunidad/:id', component: ComunidadCreadorComponent,  canActivate: [AuthGuard] },
