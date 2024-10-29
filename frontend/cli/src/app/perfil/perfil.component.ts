@@ -255,7 +255,9 @@ export class PerfilComponent implements OnInit {
   confirmarEliminarPublicacion(idPublicacion: number): void {
     if (confirm('¿Estás seguro de que quieres eliminar esta publicación?')) {
       this.eliminarPublicacion(idPublicacion);
+      location.reload();
     }
+    
   }
 
   eliminarPublicacion(idPublicacion: number): void {
@@ -275,6 +277,7 @@ export class PerfilComponent implements OnInit {
       }
     });
   }
+
   irADetallePublicacion(idPublicacion: number): void {
     this.router.navigate(['/publicacion', idPublicacion]);
   }

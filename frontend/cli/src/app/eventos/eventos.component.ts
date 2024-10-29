@@ -77,9 +77,17 @@ export class EventosComponent implements OnInit {
     if (this.etiquetasSeleccionadas.length > 0) {
       const etiquetasIds = this.etiquetasSeleccionadas.map(e => e.nombre);
       this.eventoService.filtrarEtiqueta(etiquetasIds).subscribe(
-        (dataPackage) => {
+        async (dataPackage) => {
           if (Array.isArray(dataPackage.data)) {
             this.results = dataPackage.data;
+            this.traerParticipantes(this.results); // Llamar a traerParticipantes después de cargar los eventos
+            for (const evento of this.results) {
+              if (evento.latitud && evento.longitud) {
+                evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
+              } else {
+                evento.ubicacion = 'Ubicación desconocida';
+              }
+            }
           } else {
             console.log("No se obtuvieron datos de eventos");
           }
@@ -162,9 +170,17 @@ export class EventosComponent implements OnInit {
   aplicarFiltroParticipantes(): void {
     if (this.minParticipantes !== null || this.maxParticipantes !== null) {
       this.eventoService.filtrarParticipantes(this.minParticipantes || 0, this.maxParticipantes || Number.MAX_SAFE_INTEGER).subscribe(
-        (dataPackage) => {
+        async (dataPackage) => {
           if (Array.isArray(dataPackage.data)) {
             this.results = dataPackage.data;
+            this.traerParticipantes(this.results); // Llamar a traerParticipantes después de cargar los eventos
+            for (const evento of this.results) {
+              if (evento.latitud && evento.longitud) {
+                evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
+              } else {
+                evento.ubicacion = 'Ubicación desconocida';
+              }
+            }
           } else {
             console.log("No se obtuvieron datos de eventos");
           }
@@ -192,9 +208,17 @@ export class EventosComponent implements OnInit {
       const maxDate = new Date(this.fechaMaxFiltro);
 
       this.eventoService.filtrarFecha(minDate.toISOString(), maxDate.toISOString()).subscribe(
-        (dataPackage) => {
+        async (dataPackage) => {
           if (Array.isArray(dataPackage.data)) {
             this.results = dataPackage.data;
+            this.traerParticipantes(this.results); // Llamar a traerParticipantes después de cargar los eventos
+            for (const evento of this.results) {
+              if (evento.latitud && evento.longitud) {
+                evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
+              } else {
+                evento.ubicacion = 'Ubicación desconocida';
+              }
+            }
           } else {
             console.log("No se obtuvieron datos de eventos");
           }
@@ -299,7 +323,11 @@ export class EventosComponent implements OnInit {
       return eventosParaMostrar; // Devuelve un arreglo vacío si no hay eventos
     }
 
-    for (let i = 0; i < 4; i++) {
+
+  // Definir cuántas comunidades mostrar, máximo 4 o el número total de comunidades disponibles
+  const cantidadEventosAMostrar = Math.min(this.results.length, 4);
+  
+    for (let i = 0; i < cantidadEventosAMostrar; i++) {
       const index = (this.currentIndex + i) % this.results.length;
       const evento = this.results[index];
 

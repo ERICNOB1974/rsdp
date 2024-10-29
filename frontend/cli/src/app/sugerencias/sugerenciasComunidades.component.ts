@@ -28,9 +28,8 @@ export class SugerenciasComunidadesComponent implements OnInit {
 
     getEventos(): void {
         this.comunidadService.sugerencias().subscribe((dataPackage) => {
-          const responseData = dataPackage.data;
-          if (Array.isArray(responseData)) {
-            this.results = responseData;
+          if (Array.isArray(dataPackage.data)) {
+            this.results = dataPackage.data.map(item => item.comunidad); // Extrae solo los objetos 'evento'
           }
         });
       }
