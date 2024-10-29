@@ -5,19 +5,24 @@ import { Evento } from './evento';
 import { Location } from '@angular/common';
 import { CommonModule } from '@angular/common'; // Para permitir navegar de vuelta
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 
 
 @Component({
   selector: 'app-evento-detail',
   templateUrl: './eventos-detail.component.html',
   styleUrls: ['./eventos-detail.component.css'],
-  imports: [CommonModule],
+  imports: [MatProgressSpinnerModule,
+    CommonModule],
   standalone: true
 })
 export class EventoDetailComponent implements OnInit {
 
   evento!: Evento; // Evento específico que se va a mostrar
   participa: boolean = false;
+  isLoading: boolean = false;
+
   constructor(
     private route: ActivatedRoute, // Para obtener el parámetro de la URL
     private eventoService: EventoService, // Servicio para obtener el evento por ID
@@ -72,8 +77,10 @@ export class EventoDetailComponent implements OnInit {
   goBack(): void {
     this.location.back();
   }
+
   inscribirse(): void {
     if (this.inscribirseValid()) {
+      this.isLoading = true;
       this.participa = true;
       this.eventoService.inscribirse(this.evento.id).subscribe(
         () => {
@@ -81,33 +88,38 @@ export class EventoDetailComponent implements OnInit {
             duration: 3000,
           });
           this.evento.participantes++;
+          this.isLoading = false; // Habilita el botón nuevamente en caso de error
         },
         error => {
           console.error('Error al inscribirse:', error);
           this.snackBar.open('Error al inscribirse', 'Cerrar', {
             duration: 3000,
           });
+          this.isLoading = false; // Habilita el botón nuevamente
+
         }
       );
     }
   }
-  
+
   salir(): void {
     this.eventoService.salir(this.evento.id).subscribe(
       dataPackage => {
+        this.isLoading = true;
         let mensaje = dataPackage.message;
         this.snackBar.open(mensaje, 'Cerrar', {
           duration: 3000,
         });
         this.participa = false;
-
         this.evento.participantes--;
+        this.isLoading = false;
       },
       error => {
         console.error('Error al salir del evento:', error);
         this.snackBar.open('Error al salir del evento', 'Cerrar', {
           duration: 3000,
         });
+        this.isLoading = false;
       }
     );
   }

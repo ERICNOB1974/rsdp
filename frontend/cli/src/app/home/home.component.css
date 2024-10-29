@@ -1,13 +1,26 @@
 /* Contenedor principal de las publicaciones */
+.publicaciones-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+}
+
 .publicacion-container {
     max-width: 600px;
-    margin: 20px auto;
+    width: 100%;
+    margin: 20px 0;
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     overflow: hidden;
     transition: transform 0.3s ease-in-out;
 }
+
+/* ... (mantén el resto de los estilos como estaban) ... */
+
+
 
 .publicacion-container:hover {
     transform: translateY(-5px);
@@ -134,7 +147,7 @@
 @media (max-width: 600px) {
     .publicacion-container {
         max-width: 100%;
-        margin: 10px;
+        margin: 10px 0;
     }
 
     .publicacion-imagen, .publicacion-video {

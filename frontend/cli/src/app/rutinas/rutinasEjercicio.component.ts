@@ -22,7 +22,7 @@ export class RutinasEjercicioComponent implements OnInit, OnDestroy {
     rutinaTerminada: boolean = false; // Para controlar si la rutina ha terminado
     diaActual!: Dia;
     ejercicioActual!: Ejercicio | null;
-    tiempoDescanso: number = 30; // Tiempo de descanso en segundos
+    tiempoDescanso: number = 20; // Tiempo de descanso en segundos
     intervaloDescanso: any; // Variable para almacenar el intervalo del descanso
     enDescanso: boolean = false;
 
