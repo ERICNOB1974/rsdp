@@ -193,8 +193,11 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
 
         @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento) " +
                         "WHERE id(u) = $idUsuario " +
-                        "RETURN e ORDER BY e.fechaHora ASC")
+                        "RETURN e "+ 
+                        "ORDER BY abs(duration.between(date(), e.fechaHora).days) ASC") 
         List<Evento> participaUsuario(Long idUsuario);
+
+        
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(e:Evento)-[:ETIQUETADO_CON]->(et:Etiqueta) "
                         +
