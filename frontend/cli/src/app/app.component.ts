@@ -124,6 +124,9 @@ import { DataPackage } from './data-package';
               <li>
                 <a href="/rutinas/crearRutina">Nueva Rutina</a>
               </li>
+              <li>
+                <a href="/rutinasUsuario">Mis Rutinas Creadas</a>
+              </li>
             </ul>
           </li>
           <li class="dropdown">

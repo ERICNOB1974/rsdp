@@ -142,6 +142,11 @@ export class RutinaService {
     return this.http.get<DataPackage>(`${this.rutinasUrl}/filtrar/etiquetas`, { params });
   }
 
+
+rutinasCreadasPorUsuario(offset: number, limit: number): Observable<DataPackage> {
+  const userId = this.authService.getUsuarioId();
+  return this.http.get<DataPackage>(`${this.rutinasUrl}/rutinasCreadasPorUsuario/${userId}?offset=${offset}&limit=${limit}`);
+}
 }
 
 
