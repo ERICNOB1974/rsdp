@@ -20,6 +20,7 @@ import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.RutinaDTO;
 import unpsjb.labprog.backend.business.RutinaService;
 import unpsjb.labprog.backend.business.ScoreRutina;
+import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Rutina;
 import unpsjb.labprog.backend.model.DTO.DiaDTO;
 import unpsjb.labprog.backend.model.DTO.EjercicioResistenciaDTO;
@@ -219,4 +220,9 @@ public class RutinaPresenter {
         return Response.ok(rutinaService.rutinasNombre(nombre));
     }
 
+    @GetMapping("/rutinasCreadasPorUsuario/{idUsuario}")
+    public ResponseEntity<Object> rutinasCreadasPorUsuario(@PathVariable Long idUsuario, @RequestParam int offset, @RequestParam int limit) {
+        List<Rutina> rutinasCreadasPorUsuario = rutinaService.rutinasCreadasPorUsuario(idUsuario, offset, limit);
+        return Response.ok(rutinasCreadasPorUsuario);
+    }
 }

@@ -1,0 +1,36 @@
+<div class="rutinas-container" *ngIf="rutinasUsuario.length > 0; else noRutinas">
+  <h2>Rutinas Creadas por Ti</h2>
+  <div class="rutinas-list">
+    <div class="rutina-card" *ngFor="let rutina of rutinasUsuario">
+      <div class="rutina-header">
+        <h3>{{ rutina.nombre }}</h3>
+      </div>
+      <p class="descripcion">{{ rutina.descripcion }}</p>
+      <p class="info">
+        <span><strong>{{ rutina.etiquetas?.length || 0 }}</strong> Etiquetas</span>
+        <span><strong>{{ rutina.dias || 0 }}</strong> Días</span>
+      </p>
+
+      <!-- Mostrar etiquetas -->
+      <div class="etiquetas" *ngIf="rutina.etiquetas && rutina.etiquetas.length > 0">
+        <span *ngFor="let etiqueta of rutina.etiquetas" class="etiqueta">
+          {{ etiqueta.nombre }}
+        </span>
+      </div>
+
+      <button
+        class="detalles-btn"
+        *ngIf="rutina.id !== undefined"
+        (click)="irADetallesDeComunidad(rutina.id!)"
+      >
+        Ver Detalles
+      </button>
+    </div>
+  </div>
+</div>
+
+<ng-template #noRutinas>
+  <div class="no-rutinas">
+    <p>No tienes rutinas creadas.</p>
+  </div>
+</ng-template>
