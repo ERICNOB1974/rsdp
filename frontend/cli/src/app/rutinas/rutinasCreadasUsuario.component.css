@@ -1,0 +1,107 @@
+.rutinas-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f1f1f1;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+.rutinas-container h2 {
+  color: #444;
+  font-size: 2.5em;
+  margin-bottom: 20px;
+  font-family: 'Arial', sans-serif;
+}
+
+.rutinas-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.rutina-card {
+  padding: 20px;
+  background: linear-gradient(135deg, #e9f7fe, #d7e4f1);
+  border-radius: 15px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-align: left;
+  position: relative;
+}
+
+.rutina-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+}
+
+.rutina-header h3 {
+  color: #007BFF;
+  font-size: 1.8em;
+  margin: 0;
+}
+
+.descripcion {
+  font-size: 1em;
+  color: #555;
+  margin: 10px 0;
+}
+
+.info {
+  font-size: 0.9em;
+  color: #666;
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+.etiquetas {
+  margin: 15px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.etiqueta {
+  padding: 6px 10px;
+  font-size: 0.9em;
+  background: #007bff;
+  color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transition: background 0.3s, transform 0.2s;
+  cursor: pointer;
+}
+
+.etiqueta:hover {
+  background: #0056b3;
+  transform: scale(1.05);
+}
+
+.detalles-btn {
+  padding: 10px 20px;
+  background: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  font-size: 1em;
+  width: 100%;
+}
+
+.detalles-btn:hover {
+  background: #0056b3;
+  transform: scale(1.05);
+}
+
+.no-rutinas {
+  text-align: center;
+  font-size: 1.5em;
+  color: #666;
+  padding: 40px;
+  background: #fff3cd;
+  border: 1px solid #ffeeba;
+  border-radius: 8px;
+}
