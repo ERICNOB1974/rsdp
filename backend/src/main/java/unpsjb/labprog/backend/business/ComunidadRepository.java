@@ -166,9 +166,9 @@ void eliminarUsuario(Long idUsuario, Long idComunidad);
                         "RETURN c ORDER BY c.nombre ASC")
         List<Comunidad> disponibles();
 
-        @Query("MATCH (u:Usuario)-[:MIEMBRO]->(c:Comunidad) " +
+        @Query("MATCH (u:Usuario)-[r:MIEMBRO]->(c:Comunidad) " +
                         "WHERE id(u) = $idUsuario " +
-                        "RETURN c ORDER BY c.nombre ASC")
+                        "RETURN c ORDER BY r.fechaIngreso ASC")
         List<Comunidad> miembroUsuario(Long idUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario) " +

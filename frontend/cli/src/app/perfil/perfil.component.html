@@ -26,7 +26,8 @@
                     Eliminar amigo
                 </button>
                 <!-- Caso 3: Solicitud ya enviada, muestra botón no clickeable -->
-                <button *ngIf="relacion === 'solicitudEnviada'" class="btn-cancelar-solicitud" (click)="cancelarSolicitudDeAmistad()">
+                <button *ngIf="relacion === 'solicitudEnviada'" class="btn-cancelar-solicitud"
+                    (click)="cancelarSolicitudDeAmistad()">
                     Cancelar solicitud de amistad
                 </button>
 
@@ -39,32 +40,90 @@
         </div>
     </div>
 
-    <div class="perfil-publicaciones">
-        <h3>Publicaciones</h3>
-        <div class="publicaciones-grid">
-            <div class="publicacion-item" *ngFor="let publicacion of publicaciones" (click)="irADetallePublicacion(publicacion.id)">
-                <div class="publicacion-contenido">
-                    <p>{{ publicacion.texto }}</p>
-
-                    <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
-                        <img [src]="publicacion.file" alt="Imagen de la publicación" class="publicacion-imagen">
-                    </div>
-
-                    <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
-                        <video [src]="publicacion.file" controls class="publicacion-video"></video>
-                    </div>
-
-                    <div class="publicacion-fecha">
-                        {{ publicacion.fechaDeCreacion | date:'medium' }}
-                    </div>
-                </div>
-
-                <button *ngIf="esMiPerfil" (click)="confirmarEliminarPublicacion(publicacion.id)" class="btn-eliminar">
-                    Eliminar
-                </button>
-            </div>
-        </div>
-
+    <!-- Solapas para navegar entre Publicaciones, Rutinas, Eventos y Comunidades -->
+    <div class="tabs">
+        <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'publicaciones' }"
+            (click)="seleccionarTab('publicaciones')">Publicaciones</button>
+        <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'rutinas' }"
+            (click)="seleccionarTab('rutinas')">Rutinas</button>
+        <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'eventos' }"
+            (click)="seleccionarTab('eventos')">Eventos</button>
+        <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'comunidades' }"
+            (click)="seleccionarTab('comunidades')">Comunidades</button>
     </div>
 
-</div>
+    <div class="tab-content">
+        <div *ngIf="tabSeleccionada === 'publicaciones'" class="perfil-publicaciones">
+            <h3>Publicaciones</h3>
+            <div class="publicaciones-grid">
+                <div class="publicacion-item" *ngFor="let publicacion of publicaciones"
+                    (click)="irADetallePublicacion(publicacion.id)">
+                    <div class="publicacion-contenido">
+                        <p>{{ publicacion.texto }}</p>
+                        <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
+                            <img [src]="publicacion.file" alt="Imagen de la publicación" class="publicacion-imagen">
+                        </div>
+                        <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
+                            <video [src]="publicacion.file" controls class="publicacion-video"></video>
+                        </div>
+                        <div class="publicacion-fecha">{{ publicacion.fechaDeCreacion | date:'medium' }}</div>
+                    </div>
+                    <button *ngIf="esMiPerfil" (click)="confirmarEliminarPublicacion(publicacion.id)"
+                        class="btn-eliminar">
+                        Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+            <!-- Eventos -->
+            <div *ngIf="tabSeleccionada === 'eventos'" class="perfil-eventos">
+                <h3>Eventos</h3>
+                <div class="eventos-grid">
+                    <div class="evento-item" *ngFor="let evento of historicoEventos">
+                        <h4>{{ evento.nombre }}</h4>
+                        <p>Descripción: {{ evento.descripcion }}</p>
+                        <p>Ubicación: {{ evento.ubicacion }}</p>
+                        <p>Fecha: {{ evento.fechaDeCreacion | date:'medium' }}</p>
+                        <p>Fecha y hora: {{ evento.fechaHora | date:'medium' }}</p>
+                        <p>Participantes: {{ evento.participantes }} / {{ evento.cantidadMaximaParticipantes }}</p>
+                        <p *ngIf="evento.esPrivadoParaLaComunidad">Evento privado</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rutinas -->
+            <div *ngIf="tabSeleccionada === 'rutinas'" class="perfil-rutinas">
+                <h3>Rutinas</h3>
+                <div class="rutinas-grid">
+                    <div class="rutina-item" *ngFor="let rutina of historicoRutinas">
+                        <h4>{{ rutina.nombre }}</h4>
+                        <p>Descripción: {{ rutina.descripcion }}</p>
+                        <p>Etiquetas: <span *ngFor="let etiqueta of rutina.etiquetas">{{ etiqueta.nombre }}</span></p>
+                        <div *ngIf="rutina.dias">
+                            <h5>Días de rutina:</h5>
+                            <ul>
+                                <li *ngFor="let dia of rutina.dias">
+                                    Día {{ dia.nombre }} - {{ dia.descripcion }}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comunidades -->
+            <div *ngIf="tabSeleccionada === 'comunidades'" class="perfil-comunidades">
+                <h3>Comunidades</h3>
+                <div class="comunidades-grid">
+                    <div class="comunidad-item" *ngFor="let comunidad of historicoComunidades">
+                        <h4>{{ comunidad.nombre }}</h4>
+                        <p>Descripción: {{ comunidad.descripcion }}</p>
+                        <p>Miembros: {{ comunidad.miembros }} / {{ comunidad.cantidadMaximaMiembros }}</p>
+                        <p>Ubicación: {{ comunidad.ubicacion }}</p>
+                        <p *ngIf="comunidad.esPrivada">Comunidad privada</p>
+                        <p>Fecha de creación: {{ comunidad.fechaDeCreacion | date:'medium' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

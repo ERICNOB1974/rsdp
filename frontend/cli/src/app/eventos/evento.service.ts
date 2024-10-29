@@ -131,7 +131,6 @@ export class EventoService {
     return this.http.get<DataPackage>(` ${this.eventosUrl}/participa/${idUsuario}`);
   }
 
-  
 
 
 }

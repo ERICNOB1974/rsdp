@@ -83,6 +83,12 @@ export class VerificarCodigoComponent {
 
   crearUsuario() {
     const registroData = JSON.parse(localStorage.getItem('registroData') || '{}');
+    
+    // Atributos de privacidad predeterminados, solo si están en null o undefined
+    registroData.privacidadPerfil = registroData.privacidadPerfil ?? 'Privada';
+    registroData.privacidadEventos = registroData.privacidadEventos ?? 'Privada';
+    registroData.privacidadComunidades = registroData.privacidadComunidades ?? 'Privada';
+    
     this.authService
       .registro(
         registroData.nombreReal,
@@ -90,7 +96,10 @@ export class VerificarCodigoComponent {
         this.email,
         registroData.contrasena,
         registroData.fechaNacimiento,
-        registroData.descripcion
+        registroData.descripcion,
+        registroData.privacidadPerfil,
+        registroData.privacidadEventos,
+        registroData.privacidadComunidades
       )
       .subscribe(
         () => {
@@ -103,4 +112,5 @@ export class VerificarCodigoComponent {
         }
       );
   }
+  
 }
