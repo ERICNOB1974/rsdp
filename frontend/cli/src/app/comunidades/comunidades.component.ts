@@ -179,13 +179,21 @@ obtenerComunidadesParaMostrar(): Comunidad[] {
     this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(e => e.id !== etiqueta.id);
   }
 
-  aplicarFiltroEtiquetas(): void {
+  async aplicarFiltroEtiquetas(): Promise<void> {
     if (this.etiquetasSeleccionadas.length > 0) {
       const etiquetasIds = this.etiquetasSeleccionadas.map(e => e.nombre);
       this.comunidadService.filtrarEtiqueta(etiquetasIds).subscribe(
-        (dataPackage) => {
+        async (dataPackage) => {
           if (Array.isArray(dataPackage.data)) {
-            this.results = dataPackage.data;
+            this.results = <Comunidad []> dataPackage.data ;
+            this.traerMiembros(this.results); // Llamar a traerMiembros después de cargar las comunidades
+            for (const comunidad of this.results) {
+              if (comunidad.latitud && comunidad.longitud) {
+                comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
+              } else {
+                comunidad.ubicacion = 'Ubicación desconocida';
+              }
+            }
           } else {
             console.log("No se obtuvieron datos de eventos");
           }
@@ -194,6 +202,39 @@ obtenerComunidadesParaMostrar(): Comunidad[] {
           console.error("Error al filtrar por etiquetas:", error);
         }
       );
+    }
+  }
+
+   aplicarFiltroParticipantes(): void {
+    if (this.minParticipantes !== null || this.maxParticipantes !== null) {
+      this.comunidadService.filtrarParticipantes(this.minParticipantes || 0, this.maxParticipantes || Number.MAX_SAFE_INTEGER).subscribe(
+        async (dataPackage) => {
+          if (Array.isArray(dataPackage.data)) {
+            this.results = dataPackage.data;
+            this.traerMiembros(this.results); // Llamar a traerMiembros después de cargar las comunidades
+            for (const comunidad of this.results) {
+              if (comunidad.latitud && comunidad.longitud) {
+                comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
+              } else {
+                comunidad.ubicacion = 'Ubicación desconocida';
+              }
+            }
+          } else {
+            console.log("No se obtuvieron datos de eventos");
+          }
+        },
+        (error) => {
+          console.error("Error al filtrar participantes:", error);
+        }
+      );
+    }
+  }
+  aplicarFiltroNombre(): void {
+    if (this.nombreEventoFiltro) {
+      this.results = this.results.filter(comunidad =>
+        comunidad.nombre.toLowerCase().includes(this.nombreEventoFiltro.toLowerCase())
+      );
+
     }
   }
 
@@ -247,13 +288,7 @@ obtenerComunidadesParaMostrar(): Comunidad[] {
     this.filtroNombreAbierto = !this.filtroNombreAbierto;
   }
 
-  aplicarFiltroNombre(): void {
-    if (this.nombreEventoFiltro) {
-      this.results = this.results.filter(comunidad =>
-        comunidad.nombre.toLowerCase().includes(this.nombreEventoFiltro.toLowerCase())
-      );
-    }
-  }
+ 
 
   limpiarFiltroNombre(): void {
     this.nombreEventoFiltro = '';
@@ -265,22 +300,7 @@ obtenerComunidadesParaMostrar(): Comunidad[] {
     this.filtroParticipantesAbierto = !this.filtroParticipantesAbierto;
   }
 
-  aplicarFiltroParticipantes(): void {
-    if (this.minParticipantes !== null || this.maxParticipantes !== null) {
-      this.comunidadService.filtrarParticipantes(this.minParticipantes || 0, this.maxParticipantes || Number.MAX_SAFE_INTEGER).subscribe(
-        (dataPackage) => {
-          if (Array.isArray(dataPackage.data)) {
-            this.results = dataPackage.data;
-          } else {
-            console.log("No se obtuvieron datos de eventos");
-          }
-        },
-        (error) => {
-          console.error("Error al filtrar participantes:", error);
-        }
-      );
-    }
-  }
+ 
 
   limpiarFiltroParticipantes(): void {
     this.minParticipantes = null;
