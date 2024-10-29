@@ -39,7 +39,6 @@ isOwnPublication: any;
     this.idUsuarioAutenticado = Number(usuarioId);
     this.idUsuario = Number(this.route.snapshot.paramMap.get('id'));
     this.cargarPerfil();  // Cargar la información del perfil
-    this.getPublicaciones();
 
   }
 
@@ -48,71 +47,85 @@ isOwnPublication: any;
 
   // Cargar el perfil que se está viendo
   cargarPerfil(): void {
-    // Aquí puedes obtener el ID del perfil desde la ruta (dependiendo de cómo definas tus rutas)
-    // Supondré que el ID del perfil se asigna a `this.idUsuario`.
     this.usuarioService.get(this.idUsuario).subscribe((dataPackage: DataPackage) => {
       if (dataPackage.status === 200) {
         this.usuario = dataPackage.data as Usuario;
-
-        // Verifica si el usuario autenticado está viendo su propio perfil
-        this.esMiPerfil = this.usuario.id == this.idUsuarioAutenticado;
-
-
-        if(!this.esMiPerfil){
-          this.verificarRelacion();
+        this.esMiPerfil = this.usuario.id === this.idUsuarioAutenticado;
+  
+        if (!this.esMiPerfil) {
+          this.verificarRelacion().then(() => {
+            this.traerPublicacionesSegunPrivacidad();
+          }).catch((error) => {
+            console.error('Error en la verificación de relación:', error);
+          });
+        } else {
+          this.traerPublicacionesSegunPrivacidad();
         }
       } else {
         console.error(dataPackage.message);
       }
     });
   }
+  
 
   // Navega a la página de edición de perfil
   editarPerfil(): void {
     this.router.navigate(['/perfilEditable', this.idUsuarioAutenticado]);
   }
 
-  verificarRelacion(): void {
-    if (this.idUsuarioAutenticado && this.idUsuario) {
-      // Verificar si son amigos
-      this.usuarioService.sonAmigos(this.idUsuarioAutenticado,this.idUsuario).subscribe((dataPackage: DataPackage) => {
-        if (dataPackage.status === 200) {
-          let amigos = dataPackage.data;
-          if(amigos){
-            this.relacion='amigos'
-            return;
+  verificarRelacion(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (this.idUsuarioAutenticado && this.idUsuario) {
+        // Verificar si son amigos
+        this.usuarioService.sonAmigos(this.idUsuarioAutenticado, this.idUsuario).subscribe((dataPackage: DataPackage) => {
+          if (dataPackage.status === 200) {
+            let amigos = dataPackage.data;
+            if (amigos) {
+              this.relacion = 'amigos';
+            }
+          } else {
+            console.error('Error al verificar si son amigos:', dataPackage.message);
+            reject(dataPackage.message);
           }
-        }else{
-        console.error('Error al verificar si son amigos:', dataPackage.message);
+  
+          // Verificar si hay una solicitud de amistad pendiente
+          this.usuarioService.verificarSolicitudAmistad(this.idUsuarioAutenticado, this.idUsuario).subscribe((dataPackage: DataPackage) => {
+            if (dataPackage.status === 200) {
+              let solicitudAmistadPendiente = dataPackage.data;
+              if (solicitudAmistadPendiente) {
+                this.relacion = 'solicitudEnviada';
+              }
+            } else {
+              console.error('Error al verificar si son amigos:', dataPackage.message);
+              reject(dataPackage.message);
+            }
+  
+            // Verificar si hay una solicitud de amistad pendiente desde el otro lado
+            this.usuarioService.verificarSolicitudAmistad(this.idUsuario, this.idUsuarioAutenticado).subscribe((dataPackage: DataPackage) => {
+              if (dataPackage.status === 200) {
+                let solicitudAmistadPendiente = dataPackage.data;
+                if (solicitudAmistadPendiente) {
+                  this.relacion = 'solicitudPendiente';
+                }
+              } else {
+                console.error('Error al verificar si son amigos:', dataPackage.message);
+                reject(dataPackage.message);
+              }
+  
+              // Si no hay relación, asignar el valor predeterminado
+              if (!this.relacion) {
+                this.relacion = 'noSonAmigos';
+              }
+              resolve(); // Resuelve la promesa cuando todas las verificaciones han terminado
+            });
+          });
+        });
+      } else {
+        reject('IDs de usuario no válidos');
       }
     });
-    
-    // Verificar si hay una solicitud de amistad pendiente
-    this.usuarioService.verificarSolicitudAmistad(this.idUsuarioAutenticado, this.idUsuario).subscribe((dataPackage: DataPackage) => {
-        if (dataPackage.status === 200) {
-          let solicitudAmistadPendiente = dataPackage.data;
-          if(solicitudAmistadPendiente){
-            this.relacion='solicitudEnviada'
-            return;
-          }
-        }else{
-        console.error('Error al verificar si son amigos:', dataPackage.message);
-      }
-    });
-    this.usuarioService.verificarSolicitudAmistad(this.idUsuario,this.idUsuarioAutenticado).subscribe((dataPackage: DataPackage) => {
-      if (dataPackage.status === 200) {
-        let solicitudAmistadPendiente = dataPackage.data;
-        if(solicitudAmistadPendiente){
-          this.relacion='solicitudPendiente'
-          return;
-        }
-      }else{
-      console.error('Error al verificar si son amigos:', dataPackage.message);
-    }
-  });
-  this.relacion='noSonAmigos';
   }
-}
+  
 
 
 
@@ -166,6 +179,25 @@ isOwnPublication: any;
       });
     }
 
+
+    traerPublicacionesSegunPrivacidad() {
+      // Lógica para determinar la visibilidad de las publicaciones
+      if (this.esMiPerfil) {
+        // Si el usuario está viendo su propio perfil, mostrar todas las publicaciones
+        this.getPublicaciones(); // Cargar todas las publicaciones del usuario
+      } else if (this.usuario.privacidadPerfil === 'Privada') {
+        this.publicaciones = []; // No mostrar publicaciones
+      } else if (this.usuario.privacidadPerfil === 'Solo amigos') {
+        console.info(this.relacion);
+        if (this.relacion === 'amigos') {
+          this.getPublicaciones(); // Cargar publicaciones si son amigos
+        } else {
+          this.publicaciones = []; // No mostrar publicaciones si no son amigos
+        }
+      } else if (this.usuario.privacidadPerfil === 'Pública') {
+        this.getPublicaciones(); // Cargar publicaciones si son públicas
+      }
+    }
 
   getPublicaciones(): void {
     this.publicacionService.publicaciones(this.idUsuario).subscribe({
