@@ -30,6 +30,7 @@ import { RutinaDetailComponent } from './rutinas/rutina-detail.component';
 import { SugerenciasRutinasComponent } from './sugerencias/sugerenciasRutinas.component';
 import { EventosCreadosUsuarioComponent } from './eventos/eventosCreadosUsuario.component';
 import { ComunidadesCreadasUsuarioComponent } from './comunidades/comunidadesCreadasUsuario.component';
+import { RutinasCreadasUsuarioComponent } from './rutinas/rutinasCreadasUsuario.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -54,6 +55,7 @@ export const routes: Routes = [
   { path: 'perfil/:id', component: PerfilComponent, canActivate: [AuthGuard] },
   { path: 'perfilEditable/:id', component: PerfilDetailComponent, canActivate: [AuthGuard] },
   { path: 'rutinas', component: RutinasComponent,  canActivate: [AuthGuard] },
+  { path: 'rutinasUsuario', component: RutinasCreadasUsuarioComponent, canActivate: [AuthGuard] },
   { path: 'rutinas/crearRutina', component: CrearRutinaComponent, canActivate: [AuthGuard]},
   { path: 'rutinas/hacer/:id', component: RutinasEjercicioComponent,  canActivate: [AuthGuard] },
   { path: 'rutinas/:id', component: RutinaDetailComponent, canActivate: [AuthGuard] },

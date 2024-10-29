@@ -8,6 +8,7 @@ import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Dia;
 import unpsjb.labprog.backend.model.Rutina;
 
@@ -251,6 +252,15 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
         "MERGE (u)-[rel:REALIZA_RUTINA]->(r) " +
         "ON CREATE SET rel.fechaComienzo = date()")
         void crearRelacionRealizaRutina(Long rutinaId, Long usuarioId);
+
+
+        @Query("MATCH (r:Rutina)-[:CREADA_POR]->(u:Usuario) " +
+        "WHERE id(u) = $idUsuario " +
+        "RETURN r " +
+        "ORDER BY r.nombre ASC " +
+        "SKIP $offset LIMIT $limit")
+        List<Rutina> rutinasCreadasPorUsuario(@Param("idUsuario") Long idUsuario, @Param("offset") int offset, @Param("limit") int limit);
+
 
 
 }
