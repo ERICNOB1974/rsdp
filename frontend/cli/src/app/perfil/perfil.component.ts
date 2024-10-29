@@ -8,6 +8,11 @@ import { DataPackage } from '../data-package';
 import { AuthService } from '../autenticacion/auth.service';
 import { Publicacion } from '../publicaciones/publicacion';
 import { PublicacionService } from '../publicaciones/publicacion.service';
+import { Rutina } from '../rutinas/rutina';
+import { Evento } from '../eventos/evento';
+import { Comunidad } from '../comunidades/comunidad';
+import { EventoService } from '../eventos/evento.service';
+import { ComunidadService } from '../comunidades/comunidad.service';
 
 @Component({
   selector: 'app-perfil',
@@ -22,14 +27,19 @@ export class PerfilComponent implements OnInit {
   idUsuarioAutenticado!: number;  // ID del usuario autenticado
   esMiPerfil: boolean = false;  // Para determinar si es el perfil del usuario autenticado
   publicaciones!: Publicacion[];
-  relacion: string ='';
-isOwnPublication: any;
+  relacion: string = '';
+  isOwnPublication: any;
+  historicoRutinas: Rutina[] = [];
+  historicoEventos: Evento[] = [];
+  historicoComunidades: Comunidad[] = [];
+  tabSeleccionada: string = 'publicaciones';
 
   constructor(
     private route: ActivatedRoute,
     private usuarioService: UsuarioService,
     private publicacionService: PublicacionService,
-
+    private eventoService: EventoService, 
+    private comunidadService: ComunidadService, 
     private authService: AuthService,  // Inyecta el AuthService
     private router: Router
   ) { }
@@ -51,22 +61,27 @@ isOwnPublication: any;
       if (dataPackage.status === 200) {
         this.usuario = dataPackage.data as Usuario;
         this.esMiPerfil = this.usuario.id === this.idUsuarioAutenticado;
-  
+
         if (!this.esMiPerfil) {
           this.verificarRelacion().then(() => {
             this.traerPublicacionesSegunPrivacidad();
+            //this.traerHistoricoRutinas();
+            this.traerHistoricoEventos();
+            this.traerHistoricoComunidades();
           }).catch((error) => {
             console.error('Error en la verificación de relación:', error);
           });
         } else {
           this.traerPublicacionesSegunPrivacidad();
+          //this.traerHistoricoRutinas();
+          this.traerHistoricoEventos();
+          this.traerHistoricoComunidades();
         }
       } else {
         console.error(dataPackage.message);
       }
     });
   }
-  
 
   // Navega a la página de edición de perfil
   editarPerfil(): void {
@@ -87,7 +102,7 @@ isOwnPublication: any;
             console.error('Error al verificar si son amigos:', dataPackage.message);
             reject(dataPackage.message);
           }
-  
+
           // Verificar si hay una solicitud de amistad pendiente
           this.usuarioService.verificarSolicitudAmistad(this.idUsuarioAutenticado, this.idUsuario).subscribe((dataPackage: DataPackage) => {
             if (dataPackage.status === 200) {
@@ -99,7 +114,7 @@ isOwnPublication: any;
               console.error('Error al verificar si son amigos:', dataPackage.message);
               reject(dataPackage.message);
             }
-  
+
             // Verificar si hay una solicitud de amistad pendiente desde el otro lado
             this.usuarioService.verificarSolicitudAmistad(this.idUsuario, this.idUsuarioAutenticado).subscribe((dataPackage: DataPackage) => {
               if (dataPackage.status === 200) {
@@ -111,7 +126,7 @@ isOwnPublication: any;
                 console.error('Error al verificar si son amigos:', dataPackage.message);
                 reject(dataPackage.message);
               }
-  
+
               // Si no hay relación, asignar el valor predeterminado
               if (!this.relacion) {
                 this.relacion = 'noSonAmigos';
@@ -125,7 +140,7 @@ isOwnPublication: any;
       }
     });
   }
-  
+
 
 
 
@@ -146,58 +161,59 @@ isOwnPublication: any;
     });
   }
 
-    // Lógica para enviar una solicitud de amistad
-    eliminarAmigo(): void {
-      this.usuarioService.eliminarAmigo(this.usuario.id).subscribe({
-        next: (dataPackage: DataPackage) => {
-          if (dataPackage.status === 200) {
-            alert('Amigo eliminado exitosamente.');
-            window.location.reload(); // Recargar la página
-          } else {
-            alert('Error: ' + dataPackage.message);
-          }
-        },
-        error: (error) => {
-          alert('Error al eliminar amigo.');
-        }
-      });
-    }
-
-    cancelarSolicitudDeAmistad(): void {
-      this.usuarioService.cancelarSolicitudAmistad(this.usuario.id).subscribe({
-        next: (dataPackage: DataPackage) => {
-          if (dataPackage.status === 200) {
-            alert('Solicitud canceladda exitosamente.');
-            window.location.reload(); // Recargar la página
-          } else {
-            alert('Error: ' + dataPackage.message);
-          }
-        },
-        error: (error) => {
-          alert('Error al cancelar solicitud de amistad.');
-        }
-      });
-    }
-
-
-    traerPublicacionesSegunPrivacidad() {
-      // Lógica para determinar la visibilidad de las publicaciones
-      if (this.esMiPerfil) {
-        // Si el usuario está viendo su propio perfil, mostrar todas las publicaciones
-        this.getPublicaciones(); // Cargar todas las publicaciones del usuario
-      } else if (this.usuario.privacidadPerfil === 'Privada') {
-        this.publicaciones = []; // No mostrar publicaciones
-      } else if (this.usuario.privacidadPerfil === 'Solo amigos') {
-        console.info(this.relacion);
-        if (this.relacion === 'amigos') {
-          this.getPublicaciones(); // Cargar publicaciones si son amigos
+  // Lógica para enviar una solicitud de amistad
+  eliminarAmigo(): void {
+    this.usuarioService.eliminarAmigo(this.usuario.id).subscribe({
+      next: (dataPackage: DataPackage) => {
+        if (dataPackage.status === 200) {
+          alert('Amigo eliminado exitosamente.');
+          window.location.reload(); // Recargar la página
         } else {
-          this.publicaciones = []; // No mostrar publicaciones si no son amigos
+          alert('Error: ' + dataPackage.message);
         }
-      } else if (this.usuario.privacidadPerfil === 'Pública') {
-        this.getPublicaciones(); // Cargar publicaciones si son públicas
+      },
+      error: (error) => {
+        alert('Error al eliminar amigo.');
       }
+    });
+  }
+
+  cancelarSolicitudDeAmistad(): void {
+    this.usuarioService.cancelarSolicitudAmistad(this.usuario.id).subscribe({
+      next: (dataPackage: DataPackage) => {
+        if (dataPackage.status === 200) {
+          alert('Solicitud canceladda exitosamente.');
+          window.location.reload(); // Recargar la página
+        } else {
+          alert('Error: ' + dataPackage.message);
+        }
+      },
+      error: (error) => {
+        alert('Error al cancelar solicitud de amistad.');
+      }
+    });
+  }
+
+
+  traerPublicacionesSegunPrivacidad() {
+    // Lógica para determinar la visibilidad de las publicaciones
+    if (this.esMiPerfil) {
+      // Si el usuario está viendo su propio perfil, mostrar todas las publicaciones
+      this.getPublicaciones(); // Cargar todas las publicaciones del usuario
+    } else if (this.usuario.privacidadPerfil === 'Privada') {
+      this.publicaciones = []; // No mostrar publicaciones
+    } else if (this.usuario.privacidadPerfil === 'Solo amigos') {
+      console.info(this.relacion);
+      if (this.relacion === 'amigos') {
+        this.getPublicaciones(); // Cargar publicaciones si son amigos
+      } else {
+        this.publicaciones = []; // No mostrar publicaciones si no son amigos
+      }
+    } else if (this.usuario.privacidadPerfil === 'Pública') {
+      this.getPublicaciones(); // Cargar publicaciones si son públicas
     }
+
+  }
 
   getPublicaciones(): void {
     this.publicacionService.publicaciones(this.idUsuario).subscribe({
@@ -219,7 +235,7 @@ isOwnPublication: any;
 
 
   gestionarSolicitud(aceptar: boolean): void {
-    this.usuarioService.gestionarSolicitudAmistad(this.usuario.id,this.idUsuarioAutenticado, aceptar).subscribe({
+    this.usuarioService.gestionarSolicitudAmistad(this.usuario.id, this.idUsuarioAutenticado, aceptar).subscribe({
       next: (dataPackage: DataPackage) => {
         if (dataPackage.status === 200) {
           const mensaje = aceptar ? 'Solicitud de amistad aceptada exitosamente.' : 'Solicitud de amistad rechazada exitosamente.';
@@ -241,7 +257,7 @@ isOwnPublication: any;
       this.eliminarPublicacion(idPublicacion);
     }
   }
-  
+
   eliminarPublicacion(idPublicacion: number): void {
     this.publicacionService.eliminar(idPublicacion).subscribe({
       next: (dataPackage: DataPackage) => {
@@ -262,5 +278,100 @@ isOwnPublication: any;
   irADetallePublicacion(idPublicacion: number): void {
     this.router.navigate(['/publicacion', idPublicacion]);
   }
-}
+/* 
+  traerHistoricoRutinas(): void {
+    if (this.usuario.privacidadPerfil === 'Privada' && !this.esMiPerfil) return;
+    if (this.usuario.privacidadPerfil === 'Solo amigos' && this.relacion !== 'amigos' && !this.esMiPerfil) return;
 
+    this.usuarioService.getRutinas(this.idUsuario).subscribe((dataPackage: DataPackage) => {
+      if (dataPackage.status === 200) {
+        this.historicoRutinas = dataPackage.data;
+      } else {
+        console.error(dataPackage.message);
+      }
+    });
+  } */
+
+
+  async traerHistoricoEventos(): Promise<void> {
+    if (this.usuario.privacidadPerfil === 'Privada' && !this.esMiPerfil) return;
+    if (this.usuario.privacidadPerfil === 'Solo amigos' && this.relacion !== 'amigos' && !this.esMiPerfil) return;
+
+    this.eventoService.participaUsuario(this.idUsuario).subscribe(async (dataPackage) => {
+      if (Array.isArray(dataPackage.data)) {
+        this.historicoEventos = dataPackage.data;
+        console.info(this.historicoEventos);
+        this.traerParticipantes(this.historicoEventos);
+        for (const evento of this.historicoEventos) {
+          if (evento.latitud && evento.longitud) {
+            evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
+          } else {
+            evento.ubicacion = 'Ubicación desconocida';
+          }
+        }
+      } else {
+        console.error(dataPackage.message);
+      }
+    });
+  }
+
+  traerParticipantes(eventos: Evento[]): void {
+    // Recorrer todos los eventos y obtener el número de participantes
+    for (let evento of eventos) {
+      this.eventoService.participantesEnEvento(evento.id).subscribe(
+        (dataPackage) => {
+          // Asignar el número de participantes al evento
+          if (dataPackage && typeof dataPackage.data === 'number') {
+            evento.participantes = dataPackage.data; // Asignar el número de participantes
+          }
+        },
+        (error) => {
+          console.error(`Error al traer los participantes del evento ${evento.id}:`, error);
+        }
+      );
+    }
+  }
+
+  async traerHistoricoComunidades(): Promise<void> {
+    if (this.usuario.privacidadPerfil === 'Privada' && !this.esMiPerfil) return;
+    if (this.usuario.privacidadPerfil === 'Solo amigos' && this.relacion !== 'amigos' && !this.esMiPerfil) return;
+
+    this.comunidadService.miembroUsuario(this.idUsuario).subscribe(async(dataPackage) => {
+      if (Array.isArray(dataPackage.data)) {
+        this.historicoComunidades = dataPackage.data;
+        console.info(this.historicoComunidades);
+        this.traerMiembros(this.historicoComunidades); // Llamar a traerParticipantes después de cargar los eventos
+        for (const comunidad of this.historicoComunidades) {
+          if (comunidad.latitud && comunidad.longitud) {
+            comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
+          } else {
+            comunidad.ubicacion = 'Ubicación desconocida';
+          }
+        }
+      } else {
+        console.error(dataPackage.message);
+      }
+    });
+  }
+
+  traerMiembros(comunidades: Comunidad[]): void {
+    for (let comunidad of comunidades) {
+      this.comunidadService.miembrosEnComunidad(comunidad.id).subscribe(
+        (dataPackage) => {
+          if (dataPackage && typeof dataPackage.data === 'number') {
+            comunidad.miembros = dataPackage.data; // Asignar el número de miembros
+          }
+        },
+        (error) => {
+          console.error(`Error al traer los miembros de la comunidad ${comunidad.id}:`, error);
+        }
+      );
+    }
+  }
+
+
+  // Método para alternar entre pestañas
+  seleccionarTab(tab: string): void {
+    this.tabSeleccionada = tab;
+  }
+}
