@@ -9,4 +9,7 @@ export interface Usuario {
     descripcion: string;
     latitud: number;
     longitud: number;
+    privacidadPerfil?: 'Privada' | 'Solo amigos' | 'Pública';
+    privacidadEventos?: 'Privada' | 'Solo amigos' | 'Pública';
+    privacidadComunidades?: 'Privada' | 'Solo amigos' | 'Pública';
 }
