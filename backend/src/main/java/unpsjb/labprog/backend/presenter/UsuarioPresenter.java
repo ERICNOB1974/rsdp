@@ -76,6 +76,7 @@ public class UsuarioPresenter {
     public ResponseEntity<Object> obtenerSugerenciasDeAmigosBasadosEnComunidades(@PathVariable String nombreUsuario) {
         return Response.ok(usuarioService.sugerenciasDeAmigosBasadosEnComunidades(nombreUsuario));
     }
+
     @GetMapping("/sugerencias/{nombreUsuario}")
     public ResponseEntity<Object> sugerencias(@PathVariable String nombreUsuario) {
         return Response.ok(usuarioService.todasLasSugerencias(nombreUsuario));
@@ -84,7 +85,7 @@ public class UsuarioPresenter {
     @PostMapping("/enviarSolicitudAmistad/{idEmisor}/{idReceptor}")
     public ResponseEntity<Object> enviarSolicitudAmistad(@PathVariable Long idEmisor, @PathVariable Long idReceptor) {
         try {
-            String respuesta=solicitudAmistadService.enviarSolicitud(idEmisor, idReceptor);
+            String respuesta = solicitudAmistadService.enviarSolicitud(idEmisor, idReceptor);
             return Response.ok(respuesta);
         } catch (Exception e) {
             return Response.error("", "Error al enviar la solicitud: " + e.getMessage());
@@ -95,7 +96,7 @@ public class UsuarioPresenter {
     public ResponseEntity<Object> solicitarIngresoAComunidad(@PathVariable Long idUsuario,
             @PathVariable Long idComunidad) {
         try {
-            String respuesta=usuarioComunidadService.solicitarIngreso(idUsuario, idComunidad);
+            String respuesta = usuarioComunidadService.solicitarIngreso(idUsuario, idComunidad);
             return Response.ok(null, respuesta);
         } catch (Exception e) {
             return Response.error("", "Error al enviar solicitud de ingreso: " + e);
@@ -111,16 +112,17 @@ public class UsuarioPresenter {
     public ResponseEntity<Object> actualizar(@RequestBody Usuario usuario) {
         return Response.ok(usuarioService.save(usuario));
     }
-    
+
     @GetMapping("/findById/{id}")
     public ResponseEntity<Object> findById(@PathVariable Long id) {
         return Response.ok(usuarioService.findById(id));
     }
-    
-     @PostMapping("/gestionarSolicitudAmistad/{idEmisor}/{idReceptor}")
-    public ResponseEntity<Object> gestionarSolicitudAmistad(@PathVariable Long idEmisor, @PathVariable Long idReceptor, @RequestParam boolean aceptada) {
+
+    @PostMapping("/gestionarSolicitudAmistad/{idEmisor}/{idReceptor}")
+    public ResponseEntity<Object> gestionarSolicitudAmistad(@PathVariable Long idEmisor, @PathVariable Long idReceptor,
+            @RequestParam boolean aceptada) {
         try {
-            String respuesta=solicitudAmistadService.gestionarSolicitudAmistad(idEmisor, idReceptor, aceptada);
+            String respuesta = solicitudAmistadService.gestionarSolicitudAmistad(idEmisor, idReceptor, aceptada);
             return Response.ok(respuesta);
         } catch (Exception e) {
             return Response.error("", "Error al gestionar solicitud de amistad: " + e.getMessage());
@@ -135,7 +137,7 @@ public class UsuarioPresenter {
     @PostMapping("/inscribirseEvento/{idUsuario}/{idEvento}")
     public ResponseEntity<Object> inscribirseEvento(@PathVariable Long idUsuario, @PathVariable Long idEvento) {
         try {
-            String respuesta=inscripcionEventoService.inscribirse(idUsuario, idEvento);
+            String respuesta = inscripcionEventoService.inscribirse(idUsuario, idEvento);
             return Response.ok(respuesta);
         } catch (Exception e) {
             return Response.error("", "Error al inscribirse: " + e.getMessage());
@@ -152,7 +154,8 @@ public class UsuarioPresenter {
     }
 
     @PostMapping("/cancelarSolicitudAmistad/{idUsuario}/{idReceptor}")
-    public ResponseEntity<Object> cancelarSolicitudAmistad(@PathVariable Long idUsuario, @PathVariable Long idReceptor) {
+    public ResponseEntity<Object> cancelarSolicitudAmistad(@PathVariable Long idUsuario,
+            @PathVariable Long idReceptor) {
         try {
             return Response.ok(usuarioService.cancelarSolicitudAmistad(idUsuario, idReceptor));
         } catch (Exception e) {
@@ -170,40 +173,35 @@ public class UsuarioPresenter {
         return Response.ok(usuarioService.existeNombreUsuario(nombreUsuario));
     }
 
-
-
     @GetMapping("/sonAmigos/{idEmisor}/{idReceptor}")
     public ResponseEntity<Object> verificarAmistad(@PathVariable Long idEmisor, @PathVariable Long idReceptor) {
         try {
-            return Response.ok(usuarioService.sonAmigos(idEmisor, idReceptor));  // Enviamos el resultado (true o false)
+            return Response.ok(usuarioService.sonAmigos(idEmisor, idReceptor)); // Enviamos el resultado (true o false)
         } catch (Exception e) {
             return Response.error("", "Error al verificar la amistad: " + e.getMessage());
         }
     }
 
     @GetMapping("/solicitudAmistadExiste/{idEmisor}/{idReceptor}")
-    public ResponseEntity<Object> verificarSolicitudAmistad(@PathVariable Long idEmisor, @PathVariable Long idReceptor) {
+    public ResponseEntity<Object> verificarSolicitudAmistad(@PathVariable Long idEmisor,
+            @PathVariable Long idReceptor) {
         try {
-            return Response.ok(usuarioService.solicitudAmistadExiste(idEmisor, idReceptor));  // Enviamos el resultado (true o false)
+            return Response.ok(usuarioService.solicitudAmistadExiste(idEmisor, idReceptor)); // Enviamos el resultado
+                                                                                             // (true o false)
         } catch (Exception e) {
             return Response.error("", "Error al verificar la solicitud de amistad: " + e.getMessage());
         }
     }
 
-
-
-    
     @GetMapping("/esCreador/{idUsuario}/{idComunidad}")
-    public ResponseEntity<Object> esCreador(@PathVariable Long idUsuario,@PathVariable Long idComunidad) {
+    public ResponseEntity<Object> esCreador(@PathVariable Long idUsuario, @PathVariable Long idComunidad) {
         return Response.ok(usuarioService.esCreador(idUsuario, idComunidad));
     }
-
-
 
     @GetMapping("/miembrosComunidad/{idComunidad}")
     public ResponseEntity<Object> miembrosComunidad(@PathVariable Long idComunidad) {
         try {
-            return Response.ok(usuarioService.miembrosComunidad(idComunidad));  // Enviamos el resultado (true o false)
+            return Response.ok(usuarioService.miembrosComunidad(idComunidad)); // Enviamos el resultado (true o false)
         } catch (Exception e) {
             return Response.error("", "Error al visualizar los miembros de la comunidad: " + e.getMessage());
         }
@@ -212,15 +210,14 @@ public class UsuarioPresenter {
     @GetMapping("/administradoresComunidad/{idComunidad}")
     public ResponseEntity<Object> administradoresComunidad(@PathVariable Long idComunidad) {
         try {
-            return Response.ok(usuarioService.administradoresComunidad(idComunidad));  // Enviamos el resultado (true o false)
+            return Response.ok(usuarioService.administradoresComunidad(idComunidad)); // Enviamos el resultado (true o
+                                                                                      // false)
         } catch (Exception e) {
             return Response.error("", "Error al visualizar los miembros de la comunidad: " + e.getMessage());
         }
     }
 
-    
-
- @GetMapping("/sugerenciaDeAmigosBasadaEnAmigos2/{nombreUsuario}")
+    @GetMapping("/sugerenciaDeAmigosBasadaEnAmigos2/{nombreUsuario}")
     public ResponseEntity<Object> sugerenciaDeAmigosBasadaEnAmigos2(@PathVariable String nombreUsuario) {
         List<ScoreAmigo> sugerenciaDeAmigosBasadaEnAmigos = usuarioService
                 .sugerenciaDeAmigosBasadaEnAmigos2(nombreUsuario);
@@ -252,7 +249,8 @@ public class UsuarioPresenter {
     }
 
     @PutMapping("/actualizarUbicacion/{idUsuario}")
-    public ResponseEntity<Object> actualizarUbicacion(@PathVariable Long idUsuario, @RequestBody Map<String, Double> ubicacion) {
+    public ResponseEntity<Object> actualizarUbicacion(@PathVariable Long idUsuario,
+            @RequestBody Map<String, Double> ubicacion) {
         try {
             Double latitud = ubicacion.get("latitud");
             Double longitud = ubicacion.get("longitud");
@@ -261,6 +259,11 @@ public class UsuarioPresenter {
         } catch (Exception e) {
             return Response.error("", "Error al actualizar la ubicación: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/buscar/{term}")
+    public ResponseEntity<Object> eventosPorNombre(@PathVariable String term) {
+        return Response.ok(usuarioService.buscarUsuarios(term));
     }
 
 }

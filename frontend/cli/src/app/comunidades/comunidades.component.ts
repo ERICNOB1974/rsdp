@@ -160,7 +160,7 @@ obtenerComunidadesParaMostrar(): Comunidad[] {
 
 
   irADetallesDeLaComunidad(id: number): void {
-    this.router.navigate(['/comunidades', id]); // Navega a la ruta /comunidades/:id
+    this.router.navigate(['/comunidad-muro', id]); // Navega a la ruta /comunidades/:id
   }
 
 
