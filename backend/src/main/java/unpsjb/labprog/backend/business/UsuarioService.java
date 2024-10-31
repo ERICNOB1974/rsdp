@@ -93,9 +93,9 @@ public class UsuarioService {
     public boolean existeNombreUsuario(String nombreUsuario){
         return usuarioRepository.existeNombreUsuario(nombreUsuario);
     }
-
-
-
+    public List<Usuario> buscarUsuarios(String term){
+        return usuarioRepository.buscarUsuarios(term);
+    }
 
 
     public boolean sonAmigos(Long idEmisor, Long idReceptor){

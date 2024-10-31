@@ -30,6 +30,12 @@ export class PublicacionService {
     return publicacion.id ? this.http.put<DataPackage>(` ${this.publicacionsUrl}/actualizar`, publicacion) :
       this.http.post<DataPackage>(` ${this.publicacionsUrl}/crear/${idUsuario}`, publicacion);
   }
+
+  publicarEnComunidad(publicacion: Publicacion, idComunidad: number): Observable<DataPackage> {
+    const idUsuario = this.authService.getUsuarioId();
+    return publicacion.id ? this.http.put<DataPackage>(` ${this.publicacionsUrl}/actualizar`, publicacion) :
+      this.http.post<DataPackage>(` ${this.publicacionsUrl}/crear/${idUsuario}/${idComunidad}`, publicacion);
+  }
   estaLikeada(idPublicacion: number) {
     return this.http.get<DataPackage>(` ${this.publicacionsUrl}/isLikeada/${this.authService.getUsuarioId()}/${idPublicacion}`);
   }
@@ -49,6 +55,9 @@ export class PublicacionService {
   }
   publicaciones(idUsuario: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicaciones/usuario/${idUsuario}`);
+  }
+  publicacionesComunidad(idComunidad: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicaciones/comunidad/${idComunidad}`);
   }
   publicacionesAmigos(idUsuario: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicaciones/amigos/usuario/${idUsuario}`);

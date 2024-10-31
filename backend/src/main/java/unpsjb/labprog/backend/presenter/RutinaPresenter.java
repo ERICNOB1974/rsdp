@@ -20,7 +20,6 @@ import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.RutinaDTO;
 import unpsjb.labprog.backend.business.RutinaService;
 import unpsjb.labprog.backend.business.ScoreRutina;
-import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Rutina;
 import unpsjb.labprog.backend.model.DTO.DiaDTO;
 import unpsjb.labprog.backend.model.DTO.EjercicioResistenciaDTO;
