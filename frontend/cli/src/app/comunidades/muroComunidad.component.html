@@ -1,5 +1,5 @@
 <div class="perfil-container">
-    <h1>{{comunidad.nombre}}</h1>
+    <h1>{{ comunidad.nombre }}</h1>
     <div class="tabs">
         <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'publicaciones' }"
             (click)="seleccionarTab('publicaciones')">Publicaciones</button>
@@ -12,13 +12,7 @@
     <div class="tab-content">
         <div *ngIf="tabSeleccionada === 'publicaciones'" class="perfil-publicaciones">
             <h3>Publicaciones</h3>
-            <!-- 
-                <button class="btn primary"><i class="fas fa-exclamation-circle"></i> Secondary</button>
-                <button class="btn primary">Crear publicacion</button>
-                -->
-            <button class="btn primary">
-                Publicar
-            </button>
+            <button class="btn primary">Publicar</button>
 
             <div class="publicaciones-grid">
                 <div class="publicacion-item" *ngFor="let publicacion of publicaciones"
@@ -33,13 +27,22 @@
                         </div>
                         <div class="publicacion-fecha">{{ publicacion.fechaDeCreacion | date:'medium' }}</div>
                     </div>
-                    <!-- 
-                        <button *ngIf="esMiPerfil" (click)="confirmarEliminarPublicacion(publicacion.id)"
-                        class="btn-eliminar">
-                        Eliminar
-                    </button>
-                    -->
                 </div>
+            </div>
+        </div>
+
+        <div *ngIf="tabSeleccionada === 'miembros'" class="perfil-miembros">
+            <h3>Miembros</h3>
+            <div *ngFor="let miembro of miembrosVisibles">
+                <!-- Si no es anónimo, muestra el perfil -->
+                <div *ngIf="!miembro.anonimos">
+                    <img [src]="miembro.fotoPerfil" alt="{{ miembro.nombreUsuario }}" class="perfil-imagen">
+                    <span>{{ miembro.nombreUsuario }}</span>
+                </div>
+            </div>
+            <!-- Mostrar la cantidad de usuarios anónimos -->
+            <div *ngIf="usuariosAnonimos > 0">
+                <span>{{ usuariosAnonimos }} Usuario{{ usuariosAnonimos > 1 ? 's' : '' }} anónimo{{ usuariosAnonimos > 1 ? 's' : '' }}</span>
             </div>
         </div>
     </div>
