@@ -20,6 +20,8 @@ export class AmigosComponent implements OnInit {
     mostrarAmigos: boolean = true; // Estado para mostrar amigos o solicitudes
     idUsuarioAutenticado!: number;  // ID del usuario autenticado
 
+    usuariosBuscados: Usuario[] = []; //PARA BUSCAR USUARIOS
+
     constructor(private usuarioService: UsuarioService,
         private authService: AuthService,  // Inyecta el AuthService
 
@@ -54,7 +56,7 @@ export class AmigosComponent implements OnInit {
         });
     }
 
-    gestionarSolicitud(usuario: Usuario ,aceptar: boolean): void {
+    gestionarSolicitud(usuario: Usuario, aceptar: boolean): void {
         this.usuarioService.gestionarSolicitudAmistad(usuario.id, this.idUsuarioAutenticado, aceptar).subscribe({
             next: (dataPackage: DataPackage) => {
                 if (dataPackage.status === 200) {
@@ -79,4 +81,17 @@ export class AmigosComponent implements OnInit {
         this.router.navigate(['/perfil', usuario.id]); // Navega al perfil del usuario
     }
 
+    buscarUsuarios(termino: string) {
+        if (termino.trim() !== '') {
+            this.usuarioService.buscar(termino).subscribe((dataPackage: DataPackage) => {
+                if (dataPackage.status === 200) {
+                    this.usuariosBuscados = dataPackage.data as Usuario[];
+                } else {
+                    console.error('Error al buscar usuarios:', dataPackage.message);
+                }
+            });
+        } else {
+            this.usuariosBuscados = [];
+        }
+    }
 }

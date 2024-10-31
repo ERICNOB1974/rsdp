@@ -26,13 +26,10 @@ export class ComunidadDetailComponent implements OnInit {
     private location: Location, // Para manejar la navegación
     private router: Router,
     private snackBar: MatSnackBar // Agrega MatSnackBar en el constructor
-
-
   ) { }
 
   ngOnInit(): void {
     this.getComunidad(); // Al inicializar el componente, obtener los detalles de la comunidad
-    console.log(this.comunidad.id);
   }
 
   procesarEstado(): void {

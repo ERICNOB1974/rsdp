@@ -30,6 +30,13 @@ public class PublicacionPresenter {
         return Response.ok(publicacionService.save(publicacion, idUsuario));
     }
 
+    @RequestMapping(path = "/crear/{idUsuario}/{idComunidad}", method = RequestMethod.POST)
+    public ResponseEntity<Object> publicarEnComunidad(@RequestBody Publicacion publicacion,
+            @PathVariable Long idUsuario, @PathVariable Long idComunidad)
+            throws Exception {
+        return Response.ok(publicacionService.publicarEnComunidad(idComunidad, idUsuario, publicacion));
+    }
+
     @DeleteMapping(path = "/eliminar/{idPublicacion}")
     public ResponseEntity<Object> eliminar(@PathVariable Long idPublicacion)
             throws Exception {
@@ -89,6 +96,13 @@ public class PublicacionPresenter {
     public ResponseEntity<Object> publicacionesAmigo(@PathVariable Long idUsuario)
             throws Exception {
         List<Publicacion> publicaciones = publicacionService.publicacionesAmigos(idUsuario);
+        return Response.ok(publicaciones, "OK");
+    }
+
+    @GetMapping("/publicaciones/comunidad/{idComunidad}")
+    public ResponseEntity<Object> publicacionesComunidad(@PathVariable Long idComunidad)
+            throws Exception {
+        List<Publicacion> publicaciones = publicacionService.publicacionesComunidad(idComunidad);
         return Response.ok(publicaciones, "OK");
     }
 

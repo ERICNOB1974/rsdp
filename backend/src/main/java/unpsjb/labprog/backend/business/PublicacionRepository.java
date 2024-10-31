@@ -68,12 +68,26 @@ public interface PublicacionRepository extends Neo4jRepository<Publicacion, Long
         List<Publicacion> publicacionesUsuario(@Param("usuarioId") Long usuarioId);
 
         @Query("""
-                 MATCH (u:Usuario)-[:ES_AMIGO_DE]->(us:Usuario)-[:POSTEO]->(p:Publicacion)
-                        WHERE id(u) = $usuarioId
-                        RETURN p
-                        ORDER BY p.fechaDeCreacion DESC
-                        """)
+                        MATCH (u:Usuario)-[:ES_AMIGO_DE]->(us:Usuario)-[:POSTEO]->(p:Publicacion)
+                               WHERE id(u) = $usuarioId
+                               RETURN p
+                               ORDER BY p.fechaDeCreacion DESC
+                               """)
 
         List<Publicacion> publicacionesAmigosUsuario(@Param("usuarioId") Long usuarioId);
+
+        @Query("""
+                        MATCH (p:Publicacion) WHERE  id(p) = $publicacionId
+                        MATCH (c:Comunidad) WHERE  id(c) = $comunidadId
+                        CREATE (p)-[:PUBLICADO_DENTRO_DE]->(c)
+                        RETURN p
+                                """)
+        Publicacion publicarEnComunidad(Long publicacionId, Long comunidadId);
+
+        @Query("MATCH (c:Comunidad), (p:Publicacion) " +
+                        "WHERE id(c) = $comunidadId " +
+                        "MATCH (p)-[:PUBLICADO_DENTRO_DE]->(c) " +
+                        "RETURN p ORDER BY p.fechaDeCreacion DESC")
+        List<Publicacion> publicacionesComunidad(@Param("comunidadId") Long comunidadId);
 
 }

@@ -31,6 +31,7 @@ import { SugerenciasRutinasComponent } from './sugerencias/sugerenciasRutinas.co
 import { EventosCreadosUsuarioComponent } from './eventos/eventosCreadosUsuario.component';
 import { ComunidadesCreadasUsuarioComponent } from './comunidades/comunidadesCreadasUsuario.component';
 import { RutinasCreadasUsuarioComponent } from './rutinas/rutinasCreadasUsuario.component';
+import { MuroComunidadComponent } from './comunidades/muroComunidadComponent';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -63,6 +64,7 @@ export const routes: Routes = [
   { path: 'registro', component: RegistroComponent },
   { path: 'verificar-codigo', component: VerificarCodigoComponent },
   { path: 'verificar-mail', component: VerificarMailComponent },
-  { path: 'cambiar-contrasena', component: CambiarContrasenaComponent }
+  { path: 'cambiar-contrasena', component: CambiarContrasenaComponent },
+  { path: 'comunidad-muro/:id', component: MuroComunidadComponent }
   //,{ path: '**', redirectTo: 'login' }
 ];

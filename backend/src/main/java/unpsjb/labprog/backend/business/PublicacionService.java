@@ -71,6 +71,9 @@ public class PublicacionService {
     public List<Publicacion> publicacionesAmigos(Long usuarioId) {
         return publicacionRepository.publicacionesAmigosUsuario(usuarioId);
     }
+    public List<Publicacion> publicacionesComunidad(Long comunidadId) {
+        return publicacionRepository.publicacionesComunidad(comunidadId);
+    }
 
     public List<Comentario> obtenerComentariosPorPublicacion(Long idPublicacion) throws Exception {
         List<Long> comentariosId = publicacionRepository.idComentarios(idPublicacion);
@@ -109,6 +112,11 @@ public class PublicacionService {
 
     public Long cantidadLikes(Long idPublicacion){
         return  publicacionRepository.cantidadLikes(idPublicacion);
+    }
+    
+    public Publicacion publicarEnComunidad(Long idComunidad, Long idUsuario, Publicacion publicacion){
+        this.save(publicacion, idUsuario);
+        return publicacionRepository.publicarEnComunidad(idComunidad, publicacion.getId());
     }
 
 }
