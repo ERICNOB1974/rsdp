@@ -128,8 +128,6 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
                         "DELETE r")
         void eliminarAmigo(Long idEmisor, Long idReceptor);
 
-        
-
         @Query("MATCH (u:Usuario) WHERE u.nombreUsuario = $nombre RETURN u")
         Optional<Usuario> findByNombreUsuario(String nombre);
 
@@ -202,8 +200,14 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
         @Query("MATCH (u:Usuario)-[n:COMENTA]->() WHERE id(n) = $id RETURN u AS usuario")
         Usuario findUsuarioById(@Param("id") Long id);
 
-
         @Query("MATCH (u:Usuario)-[:POSTEO]->(p:Publicacion) WHERE id(p) = $idPublicacion RETURN u AS usuario")
         Usuario publicadoPor(@Param("idPublicacion") Long idPublicacion);
+
+        @Query("""
+                        MATCH (u:Usuario) WHERE toUPPER(u.nombreUsuario) CONTAINS toUPPER($term)
+                        OR toUPPER(u.nombreReal) CONTAINS toUPPER($term)
+                        RETURN u
+                        """)
+        List<Usuario> buscarUsuarios(String term);
 
 }

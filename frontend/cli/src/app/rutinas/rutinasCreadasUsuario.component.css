@@ -71,13 +71,15 @@
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   transition: background 0.3s, transform 0.2s;
-  cursor: pointer;
+  cursor: default;
 }
 
+/*
 .etiqueta:hover {
   background: #0056b3;
   transform: scale(1.05);
 }
+  */
 
 .detalles-btn {
   padding: 10px 20px;

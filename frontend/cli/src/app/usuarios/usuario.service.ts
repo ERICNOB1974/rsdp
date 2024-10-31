@@ -60,19 +60,19 @@ export class UsuarioService {
 
   eliminarAmigo(idAmigo: number): Observable<DataPackage> {
     const body = {};
-    return this.http.post<DataPackage>(`${this.usuariosUrl}/eliminarAmigo/${this.authService.getUsuarioId()}/${idAmigo}`,body);
+    return this.http.post<DataPackage>(`${this.usuariosUrl}/eliminarAmigo/${this.authService.getUsuarioId()}/${idAmigo}`, body);
   }
 
   cancelarSolicitudAmistad(idUsuario: number): Observable<DataPackage> {
     const body = {};
-    return this.http.post<DataPackage>(`${this.usuariosUrl}/cancelarSolicitudAmistad/${this.authService.getUsuarioId()}/${idUsuario}`,body);
+    return this.http.post<DataPackage>(`${this.usuariosUrl}/cancelarSolicitudAmistad/${this.authService.getUsuarioId()}/${idUsuario}`, body);
   }
 
   enviarSolicitudAmistad(idEmisor: number, idReceptor: number): Observable<DataPackage> {
     const body = {};
     return this.http.post<DataPackage>(`${this.usuariosUrl}/enviarSolicitudAmistad/${idEmisor}/${idReceptor}`, body);
   }
- 
+
 
   save(usuario: Usuario): Observable<DataPackage> {
     return usuario.id ? this.http.put<DataPackage>(` ${this.usuariosUrl}/actualizar`, usuario) :
@@ -80,30 +80,33 @@ export class UsuarioService {
   }
 
 
-  sonAmigos(idEmisor: number, idReceptor: number) :Observable<DataPackage>{
+  sonAmigos(idEmisor: number, idReceptor: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/sonAmigos/${idEmisor}/${idReceptor}`);
   }
 
-  verificarSolicitudAmistad(idEmisor: number, idReceptor: number) :Observable<DataPackage>{
+  verificarSolicitudAmistad(idEmisor: number, idReceptor: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/solicitudAmistadExiste/${idEmisor}/${idReceptor}`);
   }
 
-  gestionarSolicitudAmistad(idEmisor: number, idReceptor: number, aceptada: boolean) :Observable<DataPackage>{
-    const body ={}
-    return this.http.post<DataPackage>(`${this.usuariosUrl}/gestionarSolicitudAmistad/${idEmisor}/${idReceptor}?aceptada=${aceptada}`,body);
+  gestionarSolicitudAmistad(idEmisor: number, idReceptor: number, aceptada: boolean): Observable<DataPackage> {
+    const body = {}
+    return this.http.post<DataPackage>(`${this.usuariosUrl}/gestionarSolicitudAmistad/${idEmisor}/${idReceptor}?aceptada=${aceptada}`, body);
   }
 
 
-  miembrosComunidad(idComunidad: number) :Observable<DataPackage>{
+  miembrosComunidad(idComunidad: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/miembrosComunidad/${idComunidad}`);
   }
 
-  administradoresComunidad(idComunidad: number) :Observable<DataPackage>{
+  administradoresComunidad(idComunidad: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/administradoresComunidad/${idComunidad}`);
   }
-  
-  getCreadorComunidad(idUsuario:number, idComunidad:number): Observable<DataPackage>{
+
+  getCreadorComunidad(idUsuario: number, idComunidad: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.usuariosUrl}/esCreador/${idUsuario}/${idComunidad}`);
+  }
+  buscar(term: string): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.usuariosUrl}/buscar/${term}`);
   }
 
 
