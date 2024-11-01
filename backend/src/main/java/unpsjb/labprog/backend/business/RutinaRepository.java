@@ -262,5 +262,11 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
         List<Rutina> rutinasCreadasPorUsuario(@Param("idUsuario") Long idUsuario, @Param("offset") int offset, @Param("limit") int limit);
 
 
+      @Query("MATCH (r:Rutina)-[rel:REALIZA_RUTINA]-(u:Usuario) " +
+        "WHERE id(u) = $idUsuario " +
+        "RETURN r " +
+        "ORDER BY rel.fechaComienzo ASC")
+        List<Rutina> rutinasRealizaUsuario(@Param("idUsuario") Long idUsuario);
+
 
 }
