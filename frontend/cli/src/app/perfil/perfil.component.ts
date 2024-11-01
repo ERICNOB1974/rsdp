@@ -13,6 +13,7 @@ import { Evento } from '../eventos/evento';
 import { Comunidad } from '../comunidades/comunidad';
 import { EventoService } from '../eventos/evento.service';
 import { ComunidadService } from '../comunidades/comunidad.service';
+import { RutinaService } from '../rutinas/rutina.service';
 
 @Component({
   selector: 'app-perfil',
@@ -40,6 +41,7 @@ export class PerfilComponent implements OnInit {
     private publicacionService: PublicacionService,
     private eventoService: EventoService, 
     private comunidadService: ComunidadService, 
+    private rutinaService: RutinaService,
     private authService: AuthService,  // Inyecta el AuthService
     private router: Router
   ) { }
@@ -65,7 +67,7 @@ export class PerfilComponent implements OnInit {
         if (!this.esMiPerfil) {
           this.verificarRelacion().then(() => {
             this.traerPublicacionesSegunPrivacidad();
-            //this.traerHistoricoRutinas();
+            this.getRutinaRealizaUsuario();
             this.traerHistoricoEventos();
             this.traerHistoricoComunidades();
           }).catch((error) => {
@@ -73,7 +75,7 @@ export class PerfilComponent implements OnInit {
           });
         } else {
           this.traerPublicacionesSegunPrivacidad();
-          //this.traerHistoricoRutinas();
+          this.getRutinaRealizaUsuario();
           this.traerHistoricoEventos();
           this.traerHistoricoComunidades();
         }
@@ -81,6 +83,7 @@ export class PerfilComponent implements OnInit {
         console.error(dataPackage.message);
       }
     });
+    console.info(this.historicoRutinas);
   }
 
   // Navega a la página de edición de perfil
@@ -275,28 +278,65 @@ export class PerfilComponent implements OnInit {
       }
     });
   }
-  irADetallePublicacion(idPublicacion: number): void {
-    this.router.navigate(['/publicacion', idPublicacion]);
-  }
-/* 
-  traerHistoricoRutinas(): void {
-    if (this.usuario.privacidadPerfil === 'Privada' && !this.esMiPerfil) return;
-    if (this.usuario.privacidadPerfil === 'Solo amigos' && this.relacion !== 'amigos' && !this.esMiPerfil) return;
-
-    this.usuarioService.getRutinas(this.idUsuario).subscribe((dataPackage: DataPackage) => {
-      if (dataPackage.status === 200) {
-        this.historicoRutinas = dataPackage.data;
-      } else {
-        console.error(dataPackage.message);
+  
+  
+  getRutinaRealizaUsuario(): void {
+    this.rutinaService.rutinasRealizaUsuario().subscribe(
+      (dataPackage) => {
+        const responseData = dataPackage.data;
+        if (Array.isArray(responseData)) {
+          this.historicoRutinas= dataPackage.data as Rutina[]; // Agregar comunidades a la lista existente
+          this.traerDias(this.historicoRutinas); // Llamar a traerDias después de cargar las rutinas
+          this.traerEtiquetas(this.historicoRutinas);
+        }
+      },
+      (error) => {
+        console.error("Error al cargar las comunidades del usuario:", error);
       }
-    });
-  } */
-
-
+    );
+  }
+  
+  
+  
+  traerEtiquetas(rutinas: Rutina[]): void {
+    for (let rutina of rutinas) {
+      this.rutinaService.obtenerEtiquetasDeRutina(rutina.id!).subscribe(
+        (dataPackage) => {
+          if (dataPackage && Array.isArray(dataPackage.data)) {
+            rutina.etiquetas = dataPackage.data; 
+          } else {
+            rutina.etiquetas = []; // Aseguramos que etiquetas sea siempre un array
+          }
+        },
+        (error) => {
+          console.error(`Error al traer las etiquetas de la rutina ${rutina.id}:`, error);
+          rutina.etiquetas = []; // En caso de error, etiquetas será un array vacío
+        }
+      );
+    }
+  }
+  
+  traerDias(rutinas: Rutina[]): void {
+    for (let rutina of rutinas) {
+      console.info(rutina);
+      this.rutinaService.obtenerDiasEnRutina(rutina.id!).subscribe(
+        (dataPackage) => {
+          if (dataPackage && typeof dataPackage.data === 'number') {
+            rutina.dias = dataPackage.data; // Asigna el número de días
+          }
+        },
+        (error) => {
+          console.error(`Error al traer los días de la rutina ${rutina.id}:`, error);
+        }
+      );
+    }
+  }
+  
+  
   async traerHistoricoEventos(): Promise<void> {
     if (this.usuario.privacidadPerfil === 'Privada' && !this.esMiPerfil) return;
     if (this.usuario.privacidadPerfil === 'Solo amigos' && this.relacion !== 'amigos' && !this.esMiPerfil) return;
-
+    
     this.eventoService.participaUsuario(this.idUsuario).subscribe(async (dataPackage) => {
       if (Array.isArray(dataPackage.data)) {
         this.historicoEventos = dataPackage.data;
@@ -314,7 +354,7 @@ export class PerfilComponent implements OnInit {
       }
     });
   }
-
+  
   traerParticipantes(eventos: Evento[]): void {
     // Recorrer todos los eventos y obtener el número de participantes
     for (let evento of eventos) {
@@ -331,11 +371,11 @@ export class PerfilComponent implements OnInit {
       );
     }
   }
-
+  
   async traerHistoricoComunidades(): Promise<void> {
     if (this.usuario.privacidadPerfil === 'Privada' && !this.esMiPerfil) return;
     if (this.usuario.privacidadPerfil === 'Solo amigos' && this.relacion !== 'amigos' && !this.esMiPerfil) return;
-
+    
     this.comunidadService.miembroUsuario(this.idUsuario).subscribe(async(dataPackage) => {
       if (Array.isArray(dataPackage.data)) {
         this.historicoComunidades = dataPackage.data;
@@ -353,7 +393,7 @@ export class PerfilComponent implements OnInit {
       }
     });
   }
-
+  
   traerMiembros(comunidades: Comunidad[]): void {
     for (let comunidad of comunidades) {
       this.comunidadService.miembrosEnComunidad(comunidad.id).subscribe(
@@ -368,10 +408,21 @@ export class PerfilComponent implements OnInit {
       );
     }
   }
-
-
+  
+  
   // Método para alternar entre pestañas
   seleccionarTab(tab: string): void {
     this.tabSeleccionada = tab;
   }
+  irADetallePublicacion(idPublicacion: number): void {
+    this.router.navigate(['/publicacion', idPublicacion]);
+  }
+  irADetalleComunidad(idComunidad: number): void {
+    this.router.navigate(['/comunidad-muro', idComunidad]);
+  }
+  irADetalleRutina(idRutina: number): void {
+    this.router.navigate(['/rutinas', idRutina]);
+  }
+
+
 }

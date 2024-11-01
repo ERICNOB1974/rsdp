@@ -326,4 +326,7 @@ public class RutinaService {
         return rutinaRepository.rutinasCreadasPorUsuario(idUsuario, offset, limit);
     }
 
+    public List<Rutina> rutinasRealizaUsuario(Long idUsuario) {
+        return rutinaRepository.rutinasRealizaUsuario(idUsuario);
+    }
 }

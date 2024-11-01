@@ -224,4 +224,10 @@ public class RutinaPresenter {
         List<Rutina> rutinasCreadasPorUsuario = rutinaService.rutinasCreadasPorUsuario(idUsuario, offset, limit);
         return Response.ok(rutinasCreadasPorUsuario);
     }
+
+     @GetMapping("/rutinasRealizaUsuario/{idUsuario}")
+    public ResponseEntity<Object> rutinasRealizaUsuario(@PathVariable Long idUsuario) {
+        List<Rutina> rutinasRealizaUsuario = rutinaService.rutinasRealizaUsuario(idUsuario);
+        return Response.ok(rutinasRealizaUsuario);
+    }
 }

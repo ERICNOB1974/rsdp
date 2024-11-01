@@ -131,6 +131,9 @@ import { Notificacion } from './notificaciones/notificacion';
             <a class="dropdown-toggle">
               <span class="icon"><i class="fa fa-bell"></i></span>
               <span class="text">Notificaciones</span>
+              <span *ngIf="notificaciones.filter(n => !n.leido).length > 0" class="badge">
+                {{ notificaciones.filter(n => !n.leido).length }}
+              </span>
             </a>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
               <li *ngFor="let notificacion of notificaciones">
@@ -223,37 +226,37 @@ export class AppComponent {
   navegarPorNotificacion(notificacion: Notificacion): void {
     // Determinar la URL de destino basado en el tipo de notificación
     let urlDestino: string;
-    
+
     switch (notificacion.tipo) {
       case 'ACEPTACION_PRIVADA':
       case 'UNION_PUBLICA':
         // Notificaciones relacionadas con comunidades
         urlDestino = `/comunidad-muro/${notificacion.entidadId}`;
         break;
-  
+
       case 'INSCRIPCION_A_EVENTO':
       case 'RECORDATORIO_EVENTO_PROXIMO':
         // Notificaciones relacionadas con eventos
         urlDestino = `/eventos/${notificacion.entidadId}`;
         break;
-  
+
       case 'SOLICITUD_ENTRANTE':
       case 'SOLICITUD_ACEPTADA':
         // Notificaciones relacionadas con usuarios
         urlDestino = `/perfil/${notificacion.entidadId}`;
         break;
-  
+
       case 'LIKE':
       case 'COMENTARIO':
         // Notificaciones relacionadas con publicaciones
         urlDestino = `/publicacion/${notificacion.entidadId}`;
         break;
-  
+
       default:
         console.warn('Tipo de notificación no manejado:', notificacion.tipo);
         return; // Salir si el tipo no está manejado
     }
-  
+
     // Navegar a la URL de destino
     this.router.navigate([urlDestino]);
   }

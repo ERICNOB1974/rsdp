@@ -95,27 +95,24 @@
         <div *ngIf="tabSeleccionada === 'rutinas'" class="perfil-rutinas">
             <h3>Rutinas</h3>
             <div class="rutinas-grid">
-                <div class="rutina-item" *ngFor="let rutina of historicoRutinas">
+                <div class="rutina-item" *ngFor="let rutina of historicoRutinas" (click)="irADetalleRutina(rutina.id ?? 0)">
                     <h4>{{ rutina.nombre }}</h4>
                     <p>Descripción: {{ rutina.descripcion }}</p>
                     <p>Etiquetas: <span *ngFor="let etiqueta of rutina.etiquetas">{{ etiqueta.nombre }}</span></p>
-                    <div *ngIf="rutina.dias">
-                        <h5>Días de rutina:</h5>
-                        <ul>
-                            <li *ngFor="let dia of rutina.dias">
-                                Día {{ dia.nombre }} - {{ dia.descripcion }}
-                            </li>
-                        </ul>
+                    <div *ngIf="rutina.dias !== undefined">
+                        <p>Total de días: {{ rutina.dias }}</p>
                     </div>
                 </div>
             </div>
         </div>
+        
 
         <!-- Comunidades -->
         <div *ngIf="tabSeleccionada === 'comunidades'" class="perfil-comunidades">
             <h3>Comunidades</h3>
             <div class="comunidades-grid">
-                <div class="comunidad-item" *ngFor="let comunidad of historicoComunidades">
+                <div class="comunidad-item" *ngFor="let comunidad of historicoComunidades"
+                    (click)="irADetalleComunidad(comunidad.id ?? 0)">
                     <h4>{{ comunidad.nombre }}</h4>
                     <p>Descripción: {{ comunidad.descripcion }}</p>
                     <p>Miembros: {{ comunidad.miembros }} / {{ comunidad.cantidadMaximaMiembros }}</p>
