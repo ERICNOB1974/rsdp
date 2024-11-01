@@ -71,6 +71,7 @@ public class PublicacionService {
     public List<Publicacion> publicacionesAmigos(Long usuarioId) {
         return publicacionRepository.publicacionesAmigosUsuario(usuarioId);
     }
+
     public List<Publicacion> publicacionesComunidad(Long comunidadId) {
         return publicacionRepository.publicacionesComunidad(comunidadId);
     }
@@ -85,7 +86,7 @@ public class PublicacionService {
                 comentarios.add(comentario);
             }
         }
-        //Collections.sort(comentarios, Collections.reverseOrder());
+        // Collections.sort(comentarios, Collections.reverseOrder());
 
         return comentarios;
     }
@@ -95,9 +96,9 @@ public class PublicacionService {
         ZonedDateTime fecha = publicacionRepository.findFechaById(id);
         Usuario usuario = usuarioRepository.findUsuarioById(id);
         /// Usuario u = usuarioRepository.findById(usuario).get();
-        System.out.println("TEXTO: "+texto+"\n");
-        System.out.println("FECHA: "+fecha+"\n");
-        System.out.println("USUARIO: "+usuario.getNombreReal()+"\n");
+        System.out.println("TEXTO: " + texto + "\n");
+        System.out.println("FECHA: " + fecha + "\n");
+        System.out.println("USUARIO: " + usuario.getNombreReal() + "\n");
         if (texto == null || fecha == null || usuario == null) {
             throw new Exception("Comentario no encontrado con ID: " + id);
         }
@@ -110,13 +111,14 @@ public class PublicacionService {
         return comentario;
     }
 
-    public Long cantidadLikes(Long idPublicacion){
-        return  publicacionRepository.cantidadLikes(idPublicacion);
+    public Long cantidadLikes(Long idPublicacion) {
+        return publicacionRepository.cantidadLikes(idPublicacion);
     }
-    
-    public Publicacion publicarEnComunidad(Long idComunidad, Long idUsuario, Publicacion publicacion){
+
+    public void publicarEnComunidad(Long idComunidad, Long idUsuario, Publicacion publicacion) {
         this.save(publicacion, idUsuario);
-        return publicacionRepository.publicarEnComunidad(idComunidad, publicacion.getId());
+        System.out.println(publicacion.getId());
+        publicacionRepository.publicarEnComunidad( publicacion.getId(), idComunidad);
     }
 
 }
