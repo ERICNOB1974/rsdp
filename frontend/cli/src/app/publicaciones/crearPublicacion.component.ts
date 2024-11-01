@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Publicacion } from './publicacion';
 import { PublicacionService } from './publicacion.service';
@@ -19,8 +19,17 @@ export class CrearPublicacionComponent implements OnInit {
   archivoSeleccionado!: File; // Para almacenar la imagen o video seleccionado
   tipoArchivo: string = ''; // Para distinguir entre imagen o video
   vistaPreviaArchivo: string | ArrayBuffer | null = null; // Para mostrar la vista previa de la imagen o video
+  tipo!: 'comunidad' | 'publicacion'; // Tipo de flujo (registro o recuperación)
+  idComunidad: number | null = null;
+  
+  constructor(private router: Router,
+    private publicacionService: PublicacionService,
+    private route: ActivatedRoute,
+  ) {
+    const tipoParam = this.route.snapshot.queryParamMap.get('tipo') as 'comunidad' | 'publicacion';
+    this.tipo = tipoParam;
 
-  constructor(private router: Router, private publicacionService: PublicacionService) { }
+  }
 
   ngOnInit(): void {
     this.publicacion = <Publicacion>{
@@ -28,17 +37,30 @@ export class CrearPublicacionComponent implements OnInit {
       file: ''
     };
 
+    this.route.queryParams.subscribe(params => {
+      this.tipo = params['tipo'] as 'comunidad' | 'publicacion';
+      if (this.tipo === 'comunidad') {
+        this.idComunidad = +params['idComunidad']; // El '+' convierte el string a número
+      }
+    });
   }
 
   cancel(): void {
     this.router.navigate(['/']);
   }
-
   savePublicacion(): void {
-    this.publicacion.fechaDeCreacion= new Date().toISOString();
-    this.publicacionService.saveConCreador(this.publicacion).subscribe();
-    location.reload(); 
-  }
+    this.publicacion.fechaDeCreacion = new Date().toISOString();
+    console.log(this.tipo)
+    if (this.tipo === 'comunidad' && this.idComunidad) {
+        this.publicacionService.publicarEnComunidad(this.publicacion, this.idComunidad).subscribe(() => {
+            this.router.navigate(['/comunidad-muro', this.idComunidad]);
+        });
+    } else {
+        this.publicacionService.saveConCreador(this.publicacion).subscribe(() => {
+            this.router.navigate(['/']);
+        });
+    }
+}
 
   onFileSelect(event: any) {
     const file = event.target.files[0];
@@ -64,7 +86,7 @@ export class CrearPublicacionComponent implements OnInit {
         reader.readAsDataURL(file);
 
         this.publicacion.file = file;
-        
+
       } else {
         this.formatoValido = false; // El formato no es válido
         this.vistaPreviaArchivo = null; // No se muestra la vista previa
@@ -77,3 +99,4 @@ export class CrearPublicacionComponent implements OnInit {
     return !(!this.publicacion.texto && !this.publicacion.file || !this.formatoValido);
   }
 }
+

@@ -20,8 +20,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export class EventoDetailComponent implements OnInit {
 
   evento!: Evento; // Evento específico que se va a mostrar
-  participa: boolean = false;
   isLoading: boolean = false;
+  participa: boolean = false;
+  creador: boolean = false;
 
   constructor(
     private route: ActivatedRoute, // Para obtener el parámetro de la URL
@@ -127,6 +128,9 @@ export class EventoDetailComponent implements OnInit {
   checkParticipacion(): void {
     this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
       this.participa = <boolean><unknown>dataPackage.data;
+    });
+    this.eventoService.creador(this.evento.id).subscribe((dataPackage) => {
+      this.creador = <boolean><unknown>dataPackage.data;
     });
   }
 

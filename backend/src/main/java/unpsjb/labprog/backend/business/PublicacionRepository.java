@@ -67,6 +67,7 @@ public interface PublicacionRepository extends Neo4jRepository<Publicacion, Long
                         "RETURN p ORDER BY p.fechaDeCreacion DESC")
         List<Publicacion> publicacionesUsuario(@Param("usuarioId") Long usuarioId);
 
+        //sacar los que esten dentro de la comunidad
         @Query("""
                         MATCH (u:Usuario)-[:ES_AMIGO_DE]->(us:Usuario)-[:POSTEO]->(p:Publicacion)
                                WHERE id(u) = $usuarioId
@@ -76,13 +77,14 @@ public interface PublicacionRepository extends Neo4jRepository<Publicacion, Long
 
         List<Publicacion> publicacionesAmigosUsuario(@Param("usuarioId") Long usuarioId);
 
+        
         @Query("""
                         MATCH (p:Publicacion) WHERE  id(p) = $publicacionId
                         MATCH (c:Comunidad) WHERE  id(c) = $comunidadId
                         CREATE (p)-[:PUBLICADO_DENTRO_DE]->(c)
-                        RETURN p
+                        
                                 """)
-        Publicacion publicarEnComunidad(Long publicacionId, Long comunidadId);
+        void publicarEnComunidad(Long publicacionId, Long comunidadId);
 
         @Query("MATCH (c:Comunidad), (p:Publicacion) " +
                         "WHERE id(c) = $comunidadId " +

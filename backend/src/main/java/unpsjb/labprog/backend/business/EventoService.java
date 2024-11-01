@@ -182,7 +182,6 @@ public class EventoService {
     public List<Evento> eventosCreadosPorUsuario(Long idUsuario, int offset, int limit) {
         return eventoRepository.eventosCreadosPorUsuario(idUsuario, offset, limit);
     }
-    
 
     public List<Evento> eventosNuevosComunidad(Usuario u) {
         return eventoRepository.eventosNuevosComunidad(u);
@@ -225,47 +224,50 @@ public class EventoService {
         return eventoRepository.eventosCantidadParticipantes(min, max);
     }
 
-
     public List<Evento> disponibles() {
         return eventoRepository.disponibles();
     }
 
-    public List<Evento> participaUsuario(Long idUsuario){
+    public List<Evento> participaUsuario(Long idUsuario) {
         return eventoRepository.participaUsuario(idUsuario);
     }
 
     public List<ScoreEvento> sugerenciasDeEventosBasadosEnEventos2(String nombreUsuario) {
         List<ScoreEvento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnEventos2(nombreUsuario);
-        sugerencias.forEach(s -> System.out.println("Comunidad: " + s.getEvento().getId() + ", Score: " + s.getScore()));
+        sugerencias
+                .forEach(s -> System.out.println("Comunidad: " + s.getEvento().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
     public List<ScoreEvento> sugerenciasDeEventosBasadosEnAmigos2(String nombreUsuario) {
         List<ScoreEvento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnAmigos2(nombreUsuario);
-        sugerencias.forEach(s -> System.out.println("Comunidad: " + s.getEvento().getId() + ", Score: " + s.getScore()));
+        sugerencias
+                .forEach(s -> System.out.println("Comunidad: " + s.getEvento().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
     public List<ScoreEvento> sugerenciasDeEventosBasadosEnComunidades2(String nombreUsuario) {
         List<ScoreEvento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnComunidades2(nombreUsuario);
-        sugerencias.forEach(s -> System.out.println("Comunidad: " + s.getEvento().getId() + ", Score: " + s.getScore()));
+        sugerencias
+                .forEach(s -> System.out.println("Comunidad: " + s.getEvento().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
     public List<ScoreEvento> sugerenciasDeEventosBasadosEnRutinas2(String nombreUsuario) {
         List<ScoreEvento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnRutinas2(nombreUsuario);
-        sugerencias.forEach(s -> System.out.println("Comunidad: " + s.getEvento().getId() + ", Score: " + s.getScore()));
+        sugerencias
+                .forEach(s -> System.out.println("Comunidad: " + s.getEvento().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
-
 
     public List<ScoreEvento> obtenerTodasLasSugerenciasDeEventos(String nombreUsuario) {
         // Obtener todas las sugerencias de comunidades desde las tres consultas
         List<ScoreEvento> sugerenciasEventos = eventoRepository.sugerenciasDeEventosBasadosEnEventos2(nombreUsuario);
         List<ScoreEvento> sugerenciasAmigos = eventoRepository.sugerenciasDeEventosBasadosEnAmigos2(nombreUsuario);
-        List<ScoreEvento> sugerenciasComunidades = eventoRepository.sugerenciasDeEventosBasadosEnComunidades2(nombreUsuario);
+        List<ScoreEvento> sugerenciasComunidades = eventoRepository
+                .sugerenciasDeEventosBasadosEnComunidades2(nombreUsuario);
         List<ScoreEvento> sugerenciasRutinas = eventoRepository.sugerenciasDeEventosBasadosEnRutinas2(nombreUsuario);
-        
+
         // Combinar todas las sugerencias en una sola lista
         List<ScoreEvento> todasLasSugerencias = new ArrayList<>();
         todasLasSugerencias.addAll(sugerenciasAmigos);
@@ -275,7 +277,7 @@ public class EventoService {
 
         // Usar un Map para eliminar duplicados y sumar los scores de las comunidades
         Map<Long, ScoreEvento> mapaSugerencias = new HashMap<>();
-    
+
         for (ScoreEvento scoreEvento : todasLasSugerencias) {
             // Si la comunidad ya existe en el mapa, sumar los scores
             mapaSugerencias.merge(scoreEvento.getEvento().getId(),
@@ -286,14 +288,18 @@ public class EventoService {
                         return existente; // Retornar el objeto existente actualizado
                     });
         }
-    
+
         // Obtener la lista de ScoreComunidad sin duplicados con los scores sumados
         List<ScoreEvento> listaSugerenciasSinDuplicados = new ArrayList<>(mapaSugerencias.values());
-    
+
         // Ordenar la lista por score en orden descendente
         listaSugerenciasSinDuplicados.sort((a, b) -> Double.compare(b.getScore(), a.getScore())); // Orden descendente
-    
+
         // Retornar la lista ordenada
         return listaSugerenciasSinDuplicados;
+    }
+
+    public boolean esCreadoPor(Long idUsuario, Long idEvento) {
+        return eventoRepository.eventoCreadoPor(idUsuario, idEvento);
     }
 }
