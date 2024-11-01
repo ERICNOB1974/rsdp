@@ -255,9 +255,7 @@ export class PerfilComponent implements OnInit {
   confirmarEliminarPublicacion(idPublicacion: number): void {
     if (confirm('¿Estás seguro de que quieres eliminar esta publicación?')) {
       this.eliminarPublicacion(idPublicacion);
-      location.reload();
     }
-    
   }
 
   eliminarPublicacion(idPublicacion: number): void {
@@ -277,7 +275,6 @@ export class PerfilComponent implements OnInit {
       }
     });
   }
-
   irADetallePublicacion(idPublicacion: number): void {
     this.router.navigate(['/publicacion', idPublicacion]);
   }
@@ -329,7 +326,7 @@ export class PerfilComponent implements OnInit {
           }
         },
         (error) => {
-          console.error(`Error al traer los participantes del evento ${evento.id}:`, error);
+          console.error('Error al traer los participantes del evento ${evento.id}:', error);
         }
       );
     }
@@ -366,7 +363,7 @@ export class PerfilComponent implements OnInit {
           }
         },
         (error) => {
-          console.error(`Error al traer los miembros de la comunidad ${comunidad.id}:`, error);
+          console.error('Error al traer los miembros de la comunidad ${comunidad.id}:', error);
         }
       );
     }

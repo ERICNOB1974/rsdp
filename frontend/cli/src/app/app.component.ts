@@ -6,6 +6,7 @@ import { AuthService } from './autenticacion/auth.service';
 import { CommonModule } from '@angular/common';
 import { NotificacionService } from './notificaciones/notificacion.service';
 import { DataPackage } from './data-package';
+import { Notificacion } from './notificaciones/notificacion';
 
 @Component({
   selector: 'app-root',
@@ -15,13 +16,10 @@ import { DataPackage } from './data-package';
 
     <div *ngIf="!esPantallaLogin" class="sidebar">
       <ul>
-          <h5 style="text-align: center; margin: 10px;">RSDP</h5>
-          <li class="logo">
-              <a href="">
-                  <span class="icon"><i class="fa fa-home"></i></span>
-                  <span class="text">Inicio</span>
-              </a>
-          </li> 
+        <li class="logo">
+          <h5 (click)="navigateTo('/')" style="text-align: center; margin: 10px; cursor: pointer;">RSDP</h5> <!-- Enlace añadido -->
+        </li>          
+
           <li class="dropdown">
               <a class="dropdown-toggle">
                   <span class="icon"><i class="fa fa-calendar"></i></span>
@@ -136,7 +134,7 @@ import { DataPackage } from './data-package';
             </a>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
               <li *ngFor="let notificacion of notificaciones">
-                <a class="dropdown-item" href="#">{{ notificacion.mensaje }}</a>
+                <a class="dropdown-item" (click)="navegarPorNotificacion(notificacion)">{{ notificacion.mensaje }}</a>
               </li>
             </ul>
           </li>
@@ -220,6 +218,44 @@ export class AppComponent {
 
   navigateTo(route: string) {
     this.router.navigateByUrl(route);
+  }
+
+  navegarPorNotificacion(notificacion: Notificacion): void {
+    // Determinar la URL de destino basado en el tipo de notificación
+    let urlDestino: string;
+    
+    switch (notificacion.tipo) {
+      case 'ACEPTACION_PRIVADA':
+      case 'UNION_PUBLICA':
+        // Notificaciones relacionadas con comunidades
+        urlDestino = `/comunidad-muro/${notificacion.entidadId}`;
+        break;
+  
+      case 'INSCRIPCION_A_EVENTO':
+      case 'RECORDATORIO_EVENTO_PROXIMO':
+        // Notificaciones relacionadas con eventos
+        urlDestino = `/eventos/${notificacion.entidadId}`;
+        break;
+  
+      case 'SOLICITUD_ENTRANTE':
+      case 'SOLICITUD_ACEPTADA':
+        // Notificaciones relacionadas con usuarios
+        urlDestino = `/perfil/${notificacion.entidadId}`;
+        break;
+  
+      case 'LIKE':
+      case 'COMENTARIO':
+        // Notificaciones relacionadas con publicaciones
+        urlDestino = `/publicacion/${notificacion.entidadId}`;
+        break;
+  
+      default:
+        console.warn('Tipo de notificación no manejado:', notificacion.tipo);
+        return; // Salir si el tipo no está manejado
+    }
+  
+    // Navegar a la URL de destino
+    this.router.navigate([urlDestino]);
   }
 
 }
