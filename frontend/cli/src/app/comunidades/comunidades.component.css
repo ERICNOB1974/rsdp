@@ -2,7 +2,7 @@
 
 .carousel {
   position: relative;
-  width: 100vh;
+  width: 100%;
   height: 50vh; /* Ajusta a toda la altura de la ventana */
   overflow: hidden;
 }
@@ -21,6 +21,7 @@
   align-items: center; /* Centra el contenido verticalmente */
   justify-content: center; /* Centra el contenido horizontalmente */
   position: relative;
+  box-sizing: border-box; /* Incluye el padding y el borde en el ancho y altura */
 }
 
 .large-event {

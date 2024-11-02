@@ -81,6 +81,8 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  
+
   toggleLike(publicacion: Publicacion) {
     this.publicacionService.estaLikeada(publicacion.id).subscribe(
       (dataPackage) => {
@@ -101,6 +103,8 @@ export class HomeComponent implements OnInit {
   }
 
   
-
+  goToPerfil(usuarioId: number) {
+    this.router.navigate(['/perfil', usuarioId]); // Ajusta la ruta según tu configuración de enrutamiento
+  }
 
 }

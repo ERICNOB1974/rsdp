@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class NotificacionService {
- 
+
 
   private notificacionesUrl = 'rest/notificaciones';
 
@@ -15,10 +15,12 @@ export class NotificacionService {
     private http: HttpClient
   ) { }
 
- 
-  obtenerNotificaciones(idUsuario: number) :Observable<DataPackage>{
+
+  obtenerNotificaciones(idUsuario: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.notificacionesUrl}/notificaciones/${idUsuario}`);
-}
+  }
 
-
+  marcarLeida(idNotificacion: number): Observable<DataPackage> {
+    return this.http.post<DataPackage>(`${this.notificacionesUrl}/marcar-leida/${idNotificacion}`, {});
+  }
 }
