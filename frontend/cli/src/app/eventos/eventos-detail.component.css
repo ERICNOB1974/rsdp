@@ -19,6 +19,28 @@ html, body {
   box-sizing: border-box; /* Para que el padding no afecte el tamaño total */
 }
 
+.mx-auto {
+  display: block;
+  margin: 0 auto;
+}
+
+.modal-header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-close {
+  position: absolute;
+  right: 0;
+  font-size: 1.2rem;
+  color: #6c757d;
+}
+
+.btn-close:hover {
+  color: #dc3545;
+}
+
 .evento-detail {
   width: 100%; /* Ocupa el ancho completo */
   max-width: 600px; /* Limita el contenido internamente */
@@ -55,4 +77,24 @@ html, body {
   display: block;
   margin: 10px auto;
 }
+
+/* Estilo para el botón de invitación */
+.animate-btn {
+  transition: transform 0.2s ease-in-out;
+}
+.animate-btn:active {
+  transform: scale(1.1);
+}
+
+/* Estilo para la ventana modal */
+.modal-body {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.modal-title {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: #007bff;
+}
+
 

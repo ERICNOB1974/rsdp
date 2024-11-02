@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,10 @@ public class EmailService {
     @Autowired
     private LocationService locationService;
 
+    @Lazy
+    @Autowired
+    private EventoService eventoService;
+
     public void recordatorioEvento() throws MessagingException {
         try {
             Map<Evento, List<Usuario>> usuarios = usuariosNotificables();
@@ -63,6 +68,16 @@ public class EmailService {
         } catch (Exception e) {
             throw new RuntimeException("Error al enviar el correo: " + e.getMessage());
         }
+    }
+
+    public void invitacionEvento(Long idUsuarioEmisor, Long idUsuarioReceptor, Long idEvento){
+        Usuario usuarioEmisor = usuarioRepository.findById(idUsuarioEmisor).orElse(null);
+        Usuario usuarioReceptor = usuarioRepository.findById(idUsuarioReceptor).orElse(null);
+        Email email = new Email();
+        email.setAsunto("Invitación a evento");
+        email.setDestinatario(usuarioReceptor.getCorreoElectronico());
+        email.setMensaje("El usuario " + usuarioEmisor.getNombreUsuario() + " te ha invitado al evento: " + eventoService.findById(idEvento).getNombre());
+        this.enviarMailGenerico(email);
     }
 
     public void enviarMailCambio(boolean cambioFecha, boolean cambioUbicacion, Evento evento)

@@ -207,6 +207,53 @@ List<Usuario> miembros(Long idComunidad);
     @Query("MATCH (u:Usuario)-[:POSTEO]->(p:Publicacion) WHERE id(p) = $idPublicacion RETURN u AS usuario")
     Usuario publicadoPor(@Param("idPublicacion") Long idPublicacion);
 
+        @Query("MATCH (emisor:Usuario), (receptor:Usuario) " +
+                        "WHERE id(emisor) = $idUsuarioEmisor AND id(receptor) = $idUsuarioReceptor " +
+                        "MERGE (emisor)-[inv:INVITACION_EVENTO {idEvento: $idEvento}]->(receptor) ")
+        void enviarInvitacionEvento(Long idUsuarioEmisor, Long idUsuarioReceptor, Long idEvento);
+
+        @Query("MATCH (emisor:Usuario), (receptor:Usuario) " +
+        "WHERE id(emisor) = $idUsuarioEmisor AND id(receptor) = $idUsuarioReceptor " +
+        "MERGE (emisor)-[inv:INVITACION_COMUNIDAD {idComunidad: $idComunidad}]->(receptor) ")
+        void enviarInvitacionComunidad(Long idUsuarioEmisor, Long idUsuarioReceptor, Long idComunidad);
+
+        @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario)-[:PARTICIPA_EN]->(evento:Evento) " +
+                        "WHERE id(u) = $idUsuario AND id(evento) = $idEvento " +
+                        "RETURN amigo")
+        List<Usuario> todosLosAmigosDeUnUsuarioPertenecientesAUnEvento(Long idUsuario, Long idEvento);
+
+        @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
+        "WHERE id(u) = $idUsuario AND id(comunidad) = $idComunidad " +
+        "AND ( (amigo)-[:MIEMBRO]->(comunidad:Comunidad) " +
+        "       OR (amigo)-[:ADMINISTRADA_POR]->(comunidad) " +
+        "       OR (amigo)-[:CREADA_POR]->(comunidad) ) " +
+        "RETURN amigo")
+        List<Usuario> todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad);
+ 
+        @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
+                        "WHERE id(u) = $idUsuario AND NOT (amigo)-[:PARTICIPA_EN]->(:Evento {id: $idEvento}) " +
+                        "RETURN amigo")
+        List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(Long idUsuario, Long idEvento);
+
+        @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
+        "WHERE id(u) = $idUsuario AND NOT ( (amigo)-[:MIEMBRO]->(:Comunidad {id: $idComunidad}) " +
+        "       OR (amigo)-[:ADMINISTRADA_POR]->(:Comunidad {id: $idComunidad}) " +
+        "       OR (amigo)-[:CREADA_POR]->(:Comunidad {id: $idComunidad}) ) " +
+        "RETURN amigo")
+        List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad);
+
+        @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
+                        "MATCH (u)-[inv:INVITACION_EVENTO]->(amigo) " +
+                        "WHERE id(u) = $idUsuario AND inv.idEvento = $idEvento " +
+                        "RETURN amigo")
+        List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(Long idUsuario, Long idEvento);
+
+        @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
+        "MATCH (u)-[inv:INVITACION_COMUNIDAD]->(amigo) " +
+        "WHERE id(u) = $idUsuario AND inv.idComunidad = $idComunidad " +
+        "RETURN amigo")
+        List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(Long idUsuario, Long idComunidad);
+
     @Query("""
                         MATCH (u:Usuario) WHERE toUPPER(u.nombreUsuario) CONTAINS toUPPER($term)
                         OR toUPPER(u.nombreReal) CONTAINS toUPPER($term)

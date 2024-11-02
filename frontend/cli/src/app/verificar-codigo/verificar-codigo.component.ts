@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChildren, QueryList } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../autenticacion/auth.service';
@@ -15,24 +15,23 @@ export class VerificarCodigoComponent {
   email!: string;
   tipo!: 'registro' | 'recuperacion'; // Tipo de flujo (registro o recuperación)
 
+  @ViewChildren('codigoInput') codigoInputs!: QueryList<ElementRef>;
+
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
     private authService: AuthService
   ) {
-    // Obtener el tipo desde los parámetros de la URL
     const tipoParam = this.route.snapshot.queryParamMap.get('tipo') as 'registro' | 'recuperacion';
 
     if (tipoParam !== 'registro' && tipoParam !== 'recuperacion') {
-      // Si el tipo es inválido, redirigir al login
       this.router.navigate(['/login']);
       return;
     }
 
     this.tipo = tipoParam;
 
-    // Determinar el email según el tipo
     if (this.tipo === 'registro') {
       const registroData = JSON.parse(localStorage.getItem('registroData') || '{}');
       this.email = registroData.correoElectronico || '';
@@ -40,13 +39,11 @@ export class VerificarCodigoComponent {
       this.email = localStorage.getItem('correoElectronico') || '';
     }
 
-    // Si no hay email en el flujo esperado, redirigir al login
     if (!this.email) {
       this.router.navigate(['/login']);
       return;
     }
 
-    // Crear el formulario para ingresar el código
     this.codigoForm = this.formBuilder.group({
       codigo1: ['', [Validators.required, Validators.maxLength(1)]],
       codigo2: ['', [Validators.required, Validators.maxLength(1)]],
@@ -55,6 +52,51 @@ export class VerificarCodigoComponent {
       codigo5: ['', [Validators.required, Validators.maxLength(1)]],
       codigo6: ['', [Validators.required, Validators.maxLength(1)]],
     });
+  }
+
+  ngAfterViewInit() {
+    this.codigoInputs.forEach((input, index) => {
+      input.nativeElement.addEventListener('input', (event: any) => this.onInput(event, index));
+      input.nativeElement.addEventListener('paste', (event: ClipboardEvent) => this.onPaste(event));
+      input.nativeElement.addEventListener('keydown', (event: KeyboardEvent) => this.onKeyDown(event, index));
+    });
+  }
+
+  onInput(event: any, index: number) {
+    const input = event.target;
+    const value = input.value;
+
+    if (value.length > 1) {
+      input.value = value[0]; // Solo permite un carácter por campo
+    }
+
+    // Mover al siguiente campo si hay un carácter ingresado
+    if (value && index < this.codigoInputs.length - 1) {
+      this.codigoInputs.toArray()[index + 1].nativeElement.focus();
+    }
+  }
+
+  onKeyDown(event: KeyboardEvent, index: number) {
+    const input = this.codigoInputs.toArray()[index].nativeElement;
+
+    // Mover al campo anterior si se presiona 'Backspace' y el campo está vacío
+    if (event.key === 'Backspace' && !input.value && index > 0) {
+      this.codigoInputs.toArray()[index - 1].nativeElement.focus();
+    }
+  }
+
+  onPaste(event: ClipboardEvent) {
+    event.preventDefault();
+
+    const pasteData = event.clipboardData?.getData('text')?.trim() || '';
+    if (pasteData.length === 6) {
+      pasteData.split('').forEach((char, index) => {
+        this.codigoForm.controls[`codigo${index + 1}`].setValue(char);
+      });
+
+      // Después de pegar, poner el foco en el último campo
+      this.codigoInputs.toArray()[5].nativeElement.focus();
+    }
   }
 
   onSubmit() {

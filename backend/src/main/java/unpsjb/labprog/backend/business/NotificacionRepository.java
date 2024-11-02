@@ -83,6 +83,33 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
     """)
     void crearNotificacionPublicacion(Long idUsuarioReceptor, Long idUsuarioEmisor, Long idEntidad, String tipo, LocalDateTime fecha);
     
+    @Query("""
+    MATCH (u:Usuario) WHERE id(u) = $idUsuarioReceptor
+    MATCH (uEmisor:Usuario) WHERE id(uEmisor) = $idUsuarioEmisor
+    MATCH (evento:Evento) WHERE id(evento) = $idEvento
+    WITH u, uEmisor, evento
+    CREATE (u)<-[:NOTIFICACION {
+        tipo: 'INVITACION_EVENTO',
+        mensaje: uEmisor.nombreUsuario + ' te ha invitado al evento: ' + evento.nombre,
+        fecha: $fecha,
+        entidadId: id(evento)
+    }]-(evento)
+    """)
+    void crearNotificacionInvitacionEvento(Long idUsuarioReceptor, Long idUsuarioEmisor, Long idEvento, LocalDateTime fecha);
+
+    @Query("""
+        MATCH (u:Usuario) WHERE id(u) = $idUsuarioReceptor
+        MATCH (uEmisor:Usuario) WHERE id(uEmisor) = $idUsuarioEmisor
+        MATCH (comunidad:Comunidad) WHERE id(comunidad) = $idComunidad
+        WITH u, uEmisor, comunidad
+        CREATE (u)<-[:NOTIFICACION {
+            tipo: 'INVITACION_COMUNIDAD',
+            mensaje: uEmisor.nombreUsuario + ' te ha invitado a la comunidad: ' + comunidad.nombre,
+            fecha: $fecha,
+            entidadId: id(comunidad)
+        }]-(comunidad)
+        """)
+    void crearNotificacionInvitacionComunidad(Long idUsuarioReceptor, Long idUsuarioEmisor, Long idComunidad, LocalDateTime fecha);
     
 
     @Query("""

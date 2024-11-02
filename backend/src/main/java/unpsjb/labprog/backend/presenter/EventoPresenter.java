@@ -203,4 +203,11 @@ public class EventoPresenter {
             return Response.error("", "Error al obtener las sugerencias: " + e.getMessage());
         }
     }
+
+    @GetMapping("/eventosFuturosPertenecientesAUnUsuario/{nombreUsuario}")
+    public ResponseEntity<Object> eventosFuturosPertenecientesAUnUsuario(@PathVariable String nombreUsuario) {
+        List<Evento> eventosDeRutinas = eventoService.eventosFuturosPertenecientesAUnUsuario(nombreUsuario);
+        return Response.ok(eventosDeRutinas);
+    }
+
 }

@@ -1,68 +1,28 @@
-<div *ngIf="!rutinaTerminada; else rutinaCompletada" class="exercise-container">
-    <!-- Mostrar el día actual -->
-    <div *ngIf="diaActual">
-        <h2>Día: {{ diaActual.nombre }}</h2>
-        <p>{{ diaActual.descripcion }}</p>
-        <p>Tipo: {{ diaActual.tipo === 'trabajo' ? 'Día de Trabajo' : 'Día de Descanso' }}</p>
+<div *ngIf="!rutinaTerminada">
+    <div *ngIf="mostrarComenzarDia && diaActual">
+        <h2>{{ diaActual.nombre }}</h2>
+        <button (click)="comenzarDia()">Comenzar día</button>
+    </div>
 
-        <!-- Mostrar los ejercicios del día si es un día de trabajo -->
-        <div *ngIf="diaActual.tipo === 'trabajo'">
-            <div *ngIf="ejercicioActual; else noEjercicios">
-                <!-- Mostrar el ejercicio actual si no está en descanso -->
-                <div *ngIf="!enDescanso; else descansoTemplate">
-                    <h3>{{ ejercicioActual.nombre }}</h3>
-                    <p>{{ ejercicioActual.descripcion }}</p>
-
-                    <!-- Mostrar campos de repeticiones y series si el ejercicio es de tipo 'series' -->
-                    <div *ngIf="ejercicioActual.tipo === 'series'">
-                        <p>Repeticiones: {{ ejercicioActual.repeticiones }}</p>
-                        <p>Series: {{ ejercicioActual.series }}</p>
-                    </div>
-
-                    <!-- Mostrar campo de tiempo si el ejercicio es de tipo 'resistencia' -->
-                    <div *ngIf="ejercicioActual.tipo === 'resistencia'">
-                        <p>Tiempo: {{ ejercicioActual.tiempo }}</p>
-                    </div>
-
-                    <!-- Mostrar la imagen del ejercicio -->
-                    <div class="exercise-image-container">
-                        <img *ngIf="ejercicioActual.imagen" [src]="ejercicioActual.imagen" alt="Imagen del ejercicio" class="exercise-image">
-                    </div>
-
-                    <button class="btn" (click)="terminarEjercicio()">Terminado</button>
-                </div>
-
-                <!-- Template para el descanso entre ejercicios -->
-                <ng-template #descansoTemplate>
-                    <div class="rest-container">
-                        <h3>Descanso</h3>
-                        <p>Tómate un descanso de {{ tiempoDescanso }} segundos.</p>
-                        <button class="btn" (click)="terminarEjercicio()">Terminado</button>
-                    </div>
-                </ng-template>
-            </div>
-
-            <!-- Mensaje si no hay ejercicios disponibles -->
-            <ng-template #noEjercicios>
-                <p>No hay ejercicios disponibles para este día.</p>
-            </ng-template>
-        </div>
-
-        <!-- Mensaje si es un día de descanso -->
-        <div *ngIf="diaActual.tipo === 'descanso'">
-            <h3>Este es un día de descanso. ¡Relájate!</h3>
-            <button class="btn" (click)="terminarEjercicio()">Pasar al siguiente día</button>
+    <div *ngIf="!mostrarComenzarDia && !mostrarPantallaFinalizacion && diaActual">
+        <h2>{{ diaActual.nombre }}</h2>
+        <div *ngIf="ejercicioActual">
+            <h3>{{ ejercicioActual.nombre }}</h3>
+            <p *ngIf="ejercicioActual.descripcion">{{ ejercicioActual.descripcion }}</p>
+            <img *ngIf="ejercicioActual.imagen" [src]="ejercicioActual.imagen" alt="{{ ejercicioActual.nombre }}"/>
+            <p *ngIf="ejercicioActual.tipo === 'resistencia'">{{ ejercicioActual.tiempo }}</p>
+            <p *ngIf="ejercicioActual.tipo === 'series'">{{ ejercicioActual.repeticiones }} series de {{ ejercicioActual.series }}</p>
+            <button (click)="terminarEjercicio()">Ejercicio finalizado</button>
         </div>
     </div>
 
-    <!-- Mensaje si no hay días disponibles -->
-    <ng-template #noDias>
-        <p>No hay días disponibles para esta rutina.</p>
-    </ng-template>
+    <div *ngIf="mostrarPantallaFinalizacion">
+        <h2>{{ mensajeFinalizacion }}</h2>
+        <button *ngIf="!rutinaTerminada" (click)="siguienteDia()">Continuar al siguiente día</button>
+    </div>
+    
 </div>
 
-<!-- Mensaje de rutina completada -->
-<ng-template #rutinaCompletada>
-    <h3>¡Rutina completada!</h3>
-    <p>Has terminado todos los días y ejercicios. ¡Felicidades!</p>
-</ng-template>
+<div *ngIf="rutinaTerminada">
+    <h2>¡Felicidades! Has terminado todos los días de tu rutina.</h2>
+</div>

@@ -8,6 +8,7 @@ import unpsjb.labprog.backend.model.Usuario;
 import unpsjb.labprog.backend.config.JwtUtils;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
@@ -35,12 +36,20 @@ public class AuthService {
     }
 
     public String loginUser(Usuario usuario) throws Exception {
-        // Buscar el usuario por correo electrónico
-        Usuario user = userRepository.findByCorreoElectronico(usuario.getCorreoElectronico())
-                .orElseThrow(() -> new Exception("Usuario no encontrado"));
-
-        // Comparar la contraseña ingresada (texto plano) con la encriptada en la base
-        // de datos
+        Optional<Usuario> userOpt;
+    
+        // Verifica si es un correo electrónico usando una expresión regular simple
+        if (usuario.getCorreoElectronico().matches("^[\\w-.]+@([\\w-]+\\.)+[\\w-]{2,4}$")) {
+            // Si es un correo electrónico, busca por correo
+            userOpt = userRepository.findByCorreoElectronico(usuario.getCorreoElectronico());
+        } else {
+            // Si no, busca por nombre de usuario
+            userOpt = userRepository.findByNombreUsuario(usuario.getCorreoElectronico());
+        }
+    
+        Usuario user = userOpt.orElseThrow(() -> new Exception("Usuario no encontrado"));
+    
+        // Compara la contraseña ingresada con la encriptada en la base de datos
         if (passwordEncoder.matches(usuario.getContrasena(), user.getContrasena())) {
             // Si coincide, generar y devolver el token JWT
             return "Bearer " + jwtUtils.generateJwtToken(user);
@@ -49,6 +58,7 @@ public class AuthService {
             throw new Exception("Contraseña incorrecta.");
         }
     }
+    
 
     public void cambiarContrasena(CambioContrasenaRequest request) throws Exception {
 
