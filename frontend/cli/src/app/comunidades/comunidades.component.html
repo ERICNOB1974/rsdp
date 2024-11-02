@@ -1,75 +1,96 @@
 <div class="filtros-container" style="display: flex; gap: 10px;">
+
+
+
   <!-- Filtro por nombre -->
-  <div class="filtro-container filtro-nombre">
-    <button (click)="toggleFiltroNombre()" class="filtro-toggle">
-      Filtrar por nombre <i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
-    </button>
-    <div *ngIf="filtroNombreAbierto" class="filtro-content">
-      <div class="input-group">
-        <div class="input-container">
-          <label for="nombreEvento">Nombre del evento:</label>
-          <input type="text" id="nombreEvento" [(ngModel)]="nombreEventoFiltro">
+  <div class="filtro">
+    <label class="container">
+      <input type="checkbox" [(ngModel)]="filtroNombreActivo">
+      <div class="checkmark"></div>
+    </label>
+    <!-- Filtro por nombre -->
+    <div class="filtro-container filtro-nombre">
+      <button (click)="toggleFiltroNombre()" class="filtro-toggle">
+        Filtrar por nombre <i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
+      </button>
+      <div *ngIf="filtroNombreAbierto" class="filtro-content">
+        <div class="input-group">
+          <div class="input-container">
+            <label for="nombreEvento">Nombre de la comunidad:</label>
+            <input type="text" id="nombreEvento" [(ngModel)]="nombreEventoFiltro">
+          </div>
         </div>
-      </div>
-      <div class="button-group">
-        <button (click)="aplicarFiltroNombre()" class="aplicar-filtro">Aplicar</button>
-        <button (click)="limpiarFiltroNombre()" class="limpiar-filtro">Limpiar</button>
+        <div class="button-group">
+          <button (click)="aplicarFiltroNombre()" class="aplicar-filtro">Aplicar</button>
+          <button (click)="limpiarFiltroNombre()" class="limpiar-filtro">Limpiar</button>
+        </div>
       </div>
     </div>
   </div>
 
+
   <!-- Filtro por participantes -->
-  <div class="filtro-container filtro-participantes">
-    <button (click)="toggleFiltroParticipantes()" class="filtro-toggle">
-      Filtrar por participantes <i [class]="filtroParticipantesAbierto ? 'arrow up' : 'arrow down'"></i>
-    </button>
-    <div *ngIf="filtroParticipantesAbierto" class="filtro-content">
-      <div class="input-group">
-        <div class="input-container">
-          <label for="minParticipantes">Mínimo:</label>
-          <input type="number" id="minParticipantes" [(ngModel)]="minParticipantes">
+  <div>
+    <label class="container">
+      <input type="checkbox" [(ngModel)]="filtroParticipantesActivo">
+      <div class="checkmark"></div>
+    </label>
+    <div class="filtro-container filtro-participantes">
+      <button (click)="toggleFiltroParticipantes()" class="filtro-toggle">
+        Filtrar por participantes <i [class]="filtroParticipantesAbierto ? 'arrow up' : 'arrow down'"></i>
+      </button>
+      <div *ngIf="filtroParticipantesAbierto" class="filtro-content">
+        <div class="input-group">
+          <div class="input-container">
+            <label for="minParticipantes">Mínimo:</label>
+            <input type="number" id="minParticipantes" [(ngModel)]="minParticipantes">
+          </div>
+          <div class="input-container">
+            <label for="maxParticipantes">Máximo:</label>
+            <input type="number" id="maxParticipantes" [(ngModel)]="maxParticipantes">
+          </div>
         </div>
-        <div class="input-container">
-          <label for="maxParticipantes">Máximo:</label>
-          <input type="number" id="maxParticipantes" [(ngModel)]="maxParticipantes">
+        <div class="button-group">
+          <button (click)="aplicarFiltroParticipantes()" class="aplicar-filtro">Aplicar</button>
+          <button (click)="limpiarFiltroParticipantes()" class="limpiar-filtro">Limpiar</button>
         </div>
-      </div>
-      <div class="button-group">
-        <button (click)="aplicarFiltroParticipantes()" class="aplicar-filtro">Aplicar</button>
-        <button (click)="limpiarFiltroParticipantes()" class="limpiar-filtro">Limpiar</button>
       </div>
     </div>
   </div>
 
 
   <!-- Filtro por etiquetas -->
-  <div class=" filtro-container filtro-etiquetas">
-    <button (click)="toggleFiltroEtiquetas()" class="filtro-toggle">
-      Filtrar por etiquetas <i [class]="filtroEtiquetasAbierto ? 'arrow up' : 'arrow down'"></i>
-    </button>
-    <div class="filtro-content" *ngIf="filtroEtiquetasAbierto">
-      <input id="etiquetas" class="form-control" [(ngModel)]="etiquetaSeleccionada" [ngbTypeahead]="searchEtiqueta"
-        [resultFormatter]="resultFormatEtiqueta" [inputFormatter]="inputFormatEtiqueta"
-        (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada" placeholder="Buscar etiqueta" />
-      <div class="selected-tags">
-        <span *ngFor="let etiqueta of etiquetasSeleccionadas" class="tag">
-          {{ etiqueta.nombre }}
-          <button (click)="removerEtiqueta(etiqueta)" class="remove-tag">
-            &times;
-          </button>
-        </span>
+  <div>
+    <label class="container">
+      <input type="checkbox" [(ngModel)]="filtroParticipantesActivo">
+      <div class="checkmark"></div>
+    </label>
+    <div class=" filtro-container filtro-etiquetas">
+      <button (click)="toggleFiltroEtiquetas()" class="filtro-toggle">
+        Filtrar por etiquetas <i [class]="filtroEtiquetasAbierto ? 'arrow up' : 'arrow down'"></i>
+      </button>
+      <div class="filtro-content" *ngIf="filtroEtiquetasAbierto">
+        <input id="etiquetas" class="form-control" [(ngModel)]="etiquetaSeleccionada" [ngbTypeahead]="searchEtiqueta"
+          [resultFormatter]="resultFormatEtiqueta" [inputFormatter]="inputFormatEtiqueta"
+          (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada" placeholder="Buscar etiqueta" />
+        <div class="selected-tags">
+          <span *ngFor="let etiqueta of etiquetasSeleccionadas" class="tag">
+            {{ etiqueta.nombre }}
+            <button (click)="removerEtiqueta(etiqueta)" class="remove-tag">
+              &times;
+            </button>
+          </span>
+        </div>
+        <button (click)="aplicarFiltroEtiquetas()" class="btn btn-primary">
+          Aplicar filtro
+        </button>
+        <button (click)="limpiarFiltroEtiquetas()" class="btn btn-secondary">
+          Limpiar filtro
+        </button>
       </div>
-      <button (click)="aplicarFiltroEtiquetas()" class="btn btn-primary">
-        Aplicar filtro
-      </button>
-      <button (click)="limpiarFiltroEtiquetas()" class="btn btn-secondary">
-        Limpiar filtro
-      </button>
     </div>
   </div>
 
-  <!-- Botón de limpiar todos los filtros -->
-  <button (click)="limpiarTodosLosFiltros()" class="limpiar-todos-filtros">Limpiar todos los filtros</button>
 </div>
 
 <section class="carousel">
@@ -126,4 +147,3 @@
   <button class="carousel-control next" (click)="siguienteComunidad()"
     [disabled]="comunidadesMiembroUsuario.length === 0">›</button>
 </section>
-

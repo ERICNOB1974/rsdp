@@ -12,7 +12,14 @@
     <div class="tab-content">
         <div *ngIf="tabSeleccionada === 'publicaciones'" class="perfil-publicaciones">
             <h3>Publicaciones</h3>
-            <button class="btn primary">Publicar</button>
+
+                <button class="btn primary"><i class="fas fa-exclamation-circle"></i> Secondary</button>
+                <button class="btn primary">Crear publicacion</button>
+                -->
+            <button class="btn primary" (click)="publicarEnComunidad()">
+                Publicar
+            </button>
+
 
             <div class="publicaciones-grid">
                 <div class="publicacion-item" *ngFor="let publicacion of publicaciones"

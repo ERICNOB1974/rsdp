@@ -19,7 +19,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     public JWTAuthenticationFilter(JwtUtils jwtUtils) {
         this.jwtUtils = jwtUtils;
     }
-
+    
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {

@@ -34,7 +34,8 @@ public class PublicacionPresenter {
     public ResponseEntity<Object> publicarEnComunidad(@RequestBody Publicacion publicacion,
             @PathVariable Long idUsuario, @PathVariable Long idComunidad)
             throws Exception {
-        return Response.ok(publicacionService.publicarEnComunidad(idComunidad, idUsuario, publicacion));
+                publicacionService.publicarEnComunidad(idComunidad, idUsuario, publicacion);
+        return Response.ok("OK");
     }
 
     @DeleteMapping(path = "/eliminar/{idPublicacion}")

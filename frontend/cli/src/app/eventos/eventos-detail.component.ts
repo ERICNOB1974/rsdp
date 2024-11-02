@@ -20,8 +20,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 export class EventoDetailComponent implements OnInit {
 
   evento!: Evento; // Evento específico que se va a mostrar
-  participa: boolean = false;
   isLoading: boolean = false;
+  participa: boolean = false;
+  creador: boolean = false;
 
   constructor(
     private route: ActivatedRoute, // Para obtener el parámetro de la URL
@@ -124,28 +125,25 @@ export class EventoDetailComponent implements OnInit {
     );
   }
 
+  editarEvento():void{
+    
+  }
+
   checkParticipacion(): void {
     this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
       this.participa = <boolean><unknown>dataPackage.data;
+    });
+    this.eventoService.creador(this.evento.id).subscribe((dataPackage) => {
+      this.creador = <boolean><unknown>dataPackage.data;
     });
   }
 
   salirValid(): boolean {
     return this.participa;
   }
+
   inscribirseValid(): boolean {
-    // Imprime si la cantidad de participantes es menor que la cantidad máxima de participantes
-    console.info("Cantidad de participantes es menor que la cantidad máxima: ", this.evento.participantes < this.evento.cantidadMaximaParticipantes);
-
-    // Imprime si el usuario ya está participando
-    console.info("Usuario participa: ", this.participa);
-
-    // Imprime la evaluación completa antes de retornarla
-    const esValido = (this.evento.participantes < this.evento.cantidadMaximaParticipantes) && !this.participa;
-    console.info("Resultado de inscribirseValid: ", esValido);
-
-    // Retorna el resultado de la validación
-    return esValido;
+    return (this.evento.participantes < this.evento.cantidadMaximaParticipantes) && !this.participa;
   }
 
 

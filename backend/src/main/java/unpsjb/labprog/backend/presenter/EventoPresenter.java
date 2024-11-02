@@ -106,6 +106,12 @@ public class EventoPresenter {
         return Response.ok(eventosCreadosPorUsuario);
     }
 
+    @GetMapping("/esCreadoPor/{idUsuario}/{idEvento}")
+    public ResponseEntity<Object> esCreadoPor(@PathVariable Long idUsuario, @PathVariable Long idEvento) {
+        boolean eventosCreadosPorUsuario = eventoService.esCreadoPor(idUsuario, idEvento);
+        return Response.ok(eventosCreadosPorUsuario);
+    }
+
 
     @PostMapping("/etiquetar/{idEtiqueta}")
     public ResponseEntity<Object> etiquetarEvento(@RequestBody Evento evento, @PathVariable Long idEtiqueta) {
