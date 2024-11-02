@@ -1,0 +1,20 @@
+/* Asegura que el texto del evento envuelva en lugar de cortarse */
+.fc-daygrid-event .fc-event-title {
+  white-space: normal; /* Permite que el texto se envuelva */
+  overflow: visible; /* Evita que el texto se recorte */
+  display: block; /* Asegura que el título se muestre en bloque */
+  text-align: left; /* Alinea el texto a la izquierda */
+}
+
+.fc-daygrid-event {
+  max-height: none; /* Permite que el evento crezca verticalmente */
+  height: auto; /* Ajusta la altura automáticamente */
+  line-height: 1.2; /* Ajusta el interlineado para mejorar la visibilidad */
+  padding: 0.2rem; /* Agrega un poco de espacio alrededor del texto */
+}
+
+/* Resalta el día actual en el calendario */
+.fc-day-today {
+  background-color: rgba(255, 200, 0, 0.2); /* Cambia el color de fondo del día actual */
+  border-radius: 4px; /* Redondea los bordes */
+}

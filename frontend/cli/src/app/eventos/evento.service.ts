@@ -142,10 +142,17 @@ export class EventoService {
     return this.http.get<DataPackage>(` ${this.eventosUrl}/participa/${idUsuario}`);
   }
 
+
   eliminar(idEvento: number): Observable<DataPackage> {
     return this.http.delete<DataPackage>(` ${this.eventosUrl}/eliminar/${idEvento}`);
   }
 
+
+
+  eventosFuturosPertenecientesAUnUsuario(): Observable<DataPackage> {
+    const nombreUsuario = this.authService.getNombreUsuario();
+    return this.http.get<DataPackage>(` ${this.eventosUrl}/eventosFuturosPertenecientesAUnUsuario/${nombreUsuario}`);
+  }
 
 
 }

@@ -300,4 +300,9 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "LIMIT 3")
         List<ScoreEvento> sugerenciasDeEventosBasadosEnRutinas2(String nombreUsuario);
 
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN|CREADO_POR]-(e:Evento) " +
+        "WHERE e.fechaHora > datetime() " + 
+        "RETURN e")
+        List<Evento> eventosFuturosPertenecientesAUnUsuario(String nombreUsuario);
+
 }

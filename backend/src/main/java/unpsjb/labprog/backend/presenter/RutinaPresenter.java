@@ -48,9 +48,19 @@ public class RutinaPresenter {
         return rutinaService.saveConCreador(rutina, usuarioId);
     }
 
-    @RequestMapping(path = "/create/{rutinaId}/{usuarioId}", method = RequestMethod.POST)
+    @RequestMapping(path = "/crearRelacionRealizaRutina/{rutinaId}/{usuarioId}", method = RequestMethod.POST)
     public Long crearRelacionRealizaRutina(@PathVariable Long rutinaId, @PathVariable Long usuarioId ) throws Exception{
         return rutinaService.crearRelacionRealizaRutina(rutinaId, usuarioId);
+    }
+
+    @RequestMapping(path = "/crearRelacionDiaFinalizado/{diaId}/{usuarioId}", method = RequestMethod.POST)
+    public Long crearRelacionDiaFinalizado(@PathVariable Long diaId, @PathVariable Long usuarioId ) throws Exception{
+        return rutinaService.crearRelacionDiaFinalizado(diaId, usuarioId);
+    }
+
+    @RequestMapping(path = "/verificarDiaFinalizado/{diaId}/{usuarioId}", method = RequestMethod.GET)
+    public boolean verificarDiaFinalizado(@PathVariable Long diaId, @PathVariable Long usuarioId ) throws Exception{
+        return rutinaService.verificarDiaFinalizado(diaId, usuarioId);
     }
 
     @RequestMapping(path = "/create", method = RequestMethod.POST)
@@ -223,5 +233,11 @@ public class RutinaPresenter {
     public ResponseEntity<Object> rutinasCreadasPorUsuario(@PathVariable Long idUsuario, @RequestParam int offset, @RequestParam int limit) {
         List<Rutina> rutinasCreadasPorUsuario = rutinaService.rutinasCreadasPorUsuario(idUsuario, offset, limit);
         return Response.ok(rutinasCreadasPorUsuario);
+    }
+
+     @GetMapping("/rutinasRealizaUsuario/{idUsuario}")
+    public ResponseEntity<Object> rutinasRealizaUsuario(@PathVariable Long idUsuario) {
+        List<Rutina> rutinasRealizaUsuario = rutinaService.rutinasRealizaUsuario(idUsuario);
+        return Response.ok(rutinasRealizaUsuario);
     }
 }

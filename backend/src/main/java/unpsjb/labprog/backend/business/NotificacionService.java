@@ -64,6 +64,7 @@ public class NotificacionService {
         String tipo = notificacionRepository.findTipoById(id);
         String mensaje = notificacionRepository.findMensajeById(id);
         LocalDateTime fecha = notificacionRepository.findFechaById(id);
+        boolean leida = notificacionRepository.findLeidaById(id);
         Long entidadId = notificacionRepository.findEntidadIdById(id);
 
 
@@ -73,9 +74,11 @@ public class NotificacionService {
 
         // Construir el objeto Notificacion
         Notificacion notificacion = new Notificacion();
+        notificacion.setId(id);
         notificacion.setTipo(tipo);
         notificacion.setMensaje(mensaje);
         notificacion.setFecha(fecha);
+        notificacion.setLeida(leida);
         notificacion.setEntidadId(entidadId);
 
         return notificacion;
@@ -104,5 +107,10 @@ public class NotificacionService {
         }
     }
 
+    public String marcarLeida(Long idNotificacion) {
+            notificacionRepository.setearNotifacionLeida(idNotificacion);
+            return "Notificacion marcada como leida correctamente";
+    }
+    
     // Otros métodos para diferentes tipos de notificaciones
 }

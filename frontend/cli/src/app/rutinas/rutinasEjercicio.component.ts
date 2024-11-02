@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RutinaService } from './rutina.service';
 import { Rutina } from './rutina';
@@ -14,18 +14,17 @@ import { CommonModule } from '@angular/common';
     styleUrls: ['./rutinasEjercicio.component.css'],
     imports: [CommonModule]
 })
-export class RutinasEjercicioComponent implements OnInit, OnDestroy {
+export class RutinasEjercicioComponent implements OnInit {
     rutina!: Rutina;
     dias: Dia[] = [];
-    diaActualIndex: number = 0; 
-    ejercicioActualIndex: number = 0; 
-    rutinaTerminada: boolean = false; // Para controlar si la rutina ha terminado
+    diaActualIndex: number = 0;
+    ejercicioActualIndex: number = 0;
+    rutinaTerminada: boolean = false;
     diaActual!: Dia;
     ejercicioActual!: Ejercicio | null;
-    tiempoDescanso: number = 20; // Tiempo de descanso en segundos
-    intervaloDescanso: any; // Variable para almacenar el intervalo del descanso
-    enDescanso: boolean = false;
-
+    mostrarPantallaFinalizacion: boolean = false;
+    mensajeFinalizacion: string = '';
+    mostrarComenzarDia: boolean = true;
 
     constructor(
         private rutinaService: RutinaService,
@@ -34,139 +33,155 @@ export class RutinasEjercicioComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         const idRutina = Number(this.route.snapshot.paramMap.get('id'));
-        console.info('ID de la rutina obtenida:', idRutina);
         this.obtenerRutina(idRutina);
     }
 
     obtenerRutina(idRutina: number): void {
-        console.info('Solicitando rutina con ID:', idRutina);
         this.rutinaService.getRutinaYejercicios(idRutina).subscribe((dataPackage: DataPackage) => {
             if (dataPackage.status === 200) {
                 this.rutina = dataPackage.data as Rutina;
-                this.dias = this.rutina.dias || [];
-                console.info('Rutina obtenida:', this.rutina);
-    
-                this.dias.sort((a, b) => (a.orden || 0) - (b.orden || 0));
+                this.dias = (this.rutina.dias || []).sort((a, b) => (a.orden || 0) - (b.orden || 0));
 
-                // Procesar cada día para crear un único array de ejercicios
+                // Filtrar y preparar los días
                 this.dias.forEach(dia => {
-                    const ejercicios: Ejercicio[] = []; // Array para almacenar los ejercicios
-    
-                    // Agregar ejercicios de repeticiones
-                    dia.ejerciciosRepeticiones?.forEach(ejercicio => {
-                        ejercicios.push({
-                            nombre: ejercicio.nombre,
-                            repeticiones: ejercicio.repeticiones,
-                            series: ejercicio.series,
-                            tiempo: '', // No aplica
-                            descripcion: ejercicio.descripcion,
-                            imagen: ejercicio.imagen,
-                            tipo: 'series', // Asumiendo que todos son de tipo 'series'
-                            orden: ejercicio.orden // Asegúrate de que esta propiedad esté presente
-                        });
-                    });
-    
-                    // Agregar ejercicios de tiempo
-                    dia.ejerciciosTiempo?.forEach(ejercicio => {
-                        ejercicios.push({
-                            nombre: ejercicio.nombre,
-                            repeticiones: null, // No aplicable
-                            series: null, // No aplicable
-                            tiempo: ejercicio.tiempo,
-                            descripcion: ejercicio.descripcion,
-                            imagen: ejercicio.imagen,
-                            tipo: 'resistencia', // Asumiendo que todos son de tipo 'resistencia'
-                            orden: ejercicio.orden // Asegúrate de que esta propiedad esté presente
-                        });
-                    });
-    
-                    dia.tipo = ejercicios.length > 0 ? 'trabajo' : 'descanso';
-                    // Ordenar ejercicios por el atributo orden
-                    dia.ejercicios = ejercicios.sort((a, b) => (a.orden || 0) - (b.orden || 0));
-    
-                    console.info('Ejercicios para el día:', dia.nombre, dia.ejercicios);
+                    dia.ejercicios = [
+                        ...(dia.ejerciciosRepeticiones || []).map(e => ({ ...e, tipo: 'series' as 'series' })),
+                        ...(dia.ejerciciosTiempo || []).map(e => ({ ...e, tipo: 'resistencia' as 'resistencia' }))
+                    ].sort((a, b) => (a.orden || 0) - (b.orden || 0));
+                    dia.tipo = dia.ejercicios.length > 0 ? 'trabajo' : 'descanso';
                 });
-    
-                if (this.dias.length > 0) {
-                    this.diaActual = this.dias[this.diaActualIndex];
-                    this.ejercicioActual = this.diaActual.ejercicios[this.ejercicioActualIndex] || null;
-                    console.info('Día actual:', this.diaActual);
-                    console.info('Ejercicio actual:', this.ejercicioActual);
-                }
-            } else {
-                console.error(dataPackage.message);
+
+                this.establecerProgresoUsuario();
             }
         });
     }
 
-    terminarEjercicio(): void {
-        console.info('Terminando ejercicio...');
-    
-        if (!this.rutinaTerminada) {
-            // Verificar si hay más ejercicios en el día actual
-            if (this.ejercicioActualIndex < this.diaActual.ejercicios.length - 1) {
-                if (!this.enDescanso) {
-                    console.info('Iniciando descanso...');
-                    this.enDescanso = true;
-                    this.iniciarDescanso();
-                } else {
-                    console.info('Finalizando descanso, pasando al siguiente ejercicio...');
-                    this.ejercicioActualIndex++;
-                    this.ejercicioActual = this.diaActual.ejercicios[this.ejercicioActualIndex] || null;
-                    this.enDescanso = false;
-                    this.tiempoDescanso = 30; // Reiniciar el tiempo de descanso
-                    clearInterval(this.intervaloDescanso);
-                    console.info('Ejercicio actual actualizado:', this.ejercicioActual);
-                }
-            } else if (this.diaActualIndex < this.dias.length - 1) {
-                console.info('Cambiando a siguiente día...');
-                this.diaActualIndex++;
-                this.diaActual = this.dias[this.diaActualIndex];
-                this.ejercicioActualIndex = 0;
-                this.ejercicioActual = this.diaActual.ejercicios[this.ejercicioActualIndex] || null;
-                this.enDescanso = false; // Reiniciar descanso para el nuevo día
-                console.info('Día actual cambiado a:', this.diaActual);
-                console.info('Ejercicio actual:', this.ejercicioActual);
-            } else {
-                console.info('Rutina completada.');
-                this.rutinaTerminada = true; // Rutina completada
+    establecerProgresoUsuario(): void {
+        const diasOrdenados = this.dias.filter(dia => dia.tipo === 'trabajo').map(dia => dia.id);
+        let diaEncontrado = false;
+
+        const comprobarDias = (index: number) => {
+            if (index < diasOrdenados.length) {
+                this.rutinaService.verificarDiaFinalizado(diasOrdenados[index]!).subscribe((dataPackage: DataPackage) => {
+                    if (!dataPackage.data && !diaEncontrado) {
+                        diaEncontrado = true;
+                        this.diaActualIndex = this.dias.findIndex(d => d.id === diasOrdenados[index]);
+                        this.diaActual = this.dias[this.diaActualIndex];
+                        this.mostrarComenzarDia = this.diaActual.tipo === 'trabajo';
+                    } else if (dataPackage.data) {
+                        // Si todos los días están finalizados
+                        if (index === diasOrdenados.length - 1) {
+                            this.rutinaTerminada = true;
+                        }
+                    }
+                    // Llamar recursivamente para el siguiente día
+                    comprobarDias(index + 1);
+                });
             }
+        };
+
+        comprobarDias(0);
+    }
+
+    comenzarDia(): void {
+        if (this.diaActual.tipo === 'trabajo') {
+            this.mostrarComenzarDia = false;
+            this.ejercicioActualIndex = 0;
+            this.ejercicioActual = this.diaActual.ejercicios[this.ejercicioActualIndex] || null;
         }
     }
 
-
-
-    iniciarDescanso(): void {
-        this.intervaloDescanso = setInterval(() => {
-            if (this.tiempoDescanso > 0) {
-                this.tiempoDescanso--;
-            } else {
-                clearInterval(this.intervaloDescanso);
-                this.terminarEjercicio(); // Llama a terminarEjercicio para continuar con el siguiente ejercicio
-            }
-        }, 1000); // 1000 ms = 1 segundo
+    terminarEjercicio(): void {
+        if (this.ejercicioActualIndex < this.diaActual.ejercicios.length - 1) {
+            this.ejercicioActualIndex++;
+            this.ejercicioActual = this.diaActual.ejercicios[this.ejercicioActualIndex];
+        } else {
+            this.finalizarDia();
+        }
     }
 
+    finalizarDia(): void {
+        this.rutinaService.crearRelacionDiaFinalizado(this.diaActual.id!).subscribe(() => {
+            this.calcularProximoDia();
+        });
+    }
+
+    calcularProximoDia(): void {
+        let diasDeDescanso = 0;
+        let proximoDiaTrabajo: Dia | null = null;
+    
+        // Contamos los días de descanso después del día actual
+        for (let i = this.diaActualIndex + 1; i < this.dias.length; i++) {
+            if (this.dias[i].tipo === 'descanso') {
+                diasDeDescanso++;
+                this.rutinaService.crearRelacionDiaFinalizado(this.dias[i].id!).subscribe();
+            } else {
+                proximoDiaTrabajo = this.dias[i];
+                break;
+            }
+        }
+    
+        console.log('Días de descanso:', diasDeDescanso);
+        console.log('Próximo día de trabajo:', proximoDiaTrabajo);
+    
+        if (proximoDiaTrabajo) {
+            this.diaActualIndex++;
+            this.diaActual = proximoDiaTrabajo;
+            this.ejercicioActualIndex = 0;
+            this.ejercicioActual = this.diaActual.ejercicios[this.ejercicioActualIndex] || null;
+            this.mostrarComenzarDia = this.diaActual.tipo === 'trabajo';
+        } else {
+            this.generarMensajeFinalizacion(diasDeDescanso, proximoDiaTrabajo);
+        }
+    }
+        
+    generarMensajeFinalizacion(diasDeDescanso: number, proximoDiaTrabajo: Dia | null): void {
+        this.mensajeFinalizacion = diasDeDescanso > 0 
+            ? `Terminaste el día de trabajo. Los siguientes ${diasDeDescanso} día(s) son de descanso. Vuelve dentro de ${diasDeDescanso + 1} días.`
+            : proximoDiaTrabajo
+                ? 'El siguiente día es de trabajo. Vuelve mañana para continuar.'
+                : '¡Felicidades! Has terminado todos los días de tu rutina.';
+    
+        this.mostrarPantallaFinalizacion = true;
+    }
     
     siguienteDia(): void {
-        if (!this.rutinaTerminada && this.diaActualIndex < this.dias.length - 1) {
-            this.diaActualIndex++;
-            this.diaActual = this.dias[this.diaActualIndex];
-            this.ejercicioActualIndex = 0; // Reiniciar el índice de ejercicios
-            this.ejercicioActual = this.diaActual.ejercicios[this.ejercicioActualIndex] || null;
-            console.info('Cambiando a siguiente día:', this.diaActual);
+        // Verifica si hay un día de descanso antes de avanzar al siguiente día de trabajo
+        if (this.diaActualIndex < this.dias.length - 1) {
+            let diasDeDescanso = 0;
+    
+            // Contamos los días de descanso después del día actual
+            for (let i = this.diaActualIndex + 1; i < this.dias.length; i++) {
+                if (this.dias[i].tipo === 'descanso') {
+                    diasDeDescanso++;
+                } else {
+                    // Si encontramos un día de trabajo, salimos del bucle
+                    break;
+                }
+            }
+    
+            // Crear relaciones para cada día de descanso
+            for (let i = 1; i <= diasDeDescanso; i++) {
+                this.rutinaService.crearRelacionDiaFinalizado(this.dias[this.diaActualIndex + i].id!).subscribe();
+            }
+    
+            // Ahora, avanzar al siguiente día de trabajo
+            this.diaActualIndex += diasDeDescanso + 1; // Avanzamos al día de trabajo
+            if (this.diaActualIndex < this.dias.length) {
+                this.diaActual = this.dias[this.diaActualIndex];
+                this.mostrarPantallaFinalizacion = false;
+                this.mostrarComenzarDia = this.diaActual.tipo === 'trabajo';
+    
+                if (this.diaActual.tipo === 'trabajo') {
+                    this.ejercicioActualIndex = 0;
+                    this.ejercicioActual = this.diaActual.ejercicios[this.ejercicioActualIndex] || null;
+                }
+            } else {
+                this.rutinaTerminada = true; // Si no hay más días de rutina
+            }
+        } else {
+            this.rutinaTerminada = true; // Si estamos en el último día
         }
     }
-
-    get ejercicioActualInfo(): Ejercicio | null {
-        return this.ejercicioActual;
-    }
-
-    get diaActualInfo(): Dia | null {
-        return this.diaActual;
-    }
-
-    ngOnDestroy(): void {
-        console.info('Componente destruido.');
-    }
+    
 }

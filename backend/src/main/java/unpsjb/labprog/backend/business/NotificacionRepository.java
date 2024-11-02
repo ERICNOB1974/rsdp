@@ -2,6 +2,7 @@ package unpsjb.labprog.backend.business;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
@@ -10,6 +11,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface NotificacionRepository extends Neo4jRepository<Notificacion, Long> {
+
+    @Query("MATCH ()-[n:NOTIFICACION]->() WHERE id(n) = $id RETURN n")
+    Optional<Notificacion> findById(@Param("id") Long id);
 
     @Query("MATCH (u:Usuario)<-[n:NOTIFICACION]-(notificacion) WHERE id(u) = $usuarioId RETURN id(n) AS notificacionId")
     List<Long> findNotificacionIdsByUsuario(@Param("usuarioId") Long usuarioId);
@@ -25,6 +29,9 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
 
     @Query("MATCH ()-[n:NOTIFICACION]->() WHERE id(n) = $id RETURN n.entidadId AS entidadId")
     Long findEntidadIdById(@Param("id") Long id);
+
+    @Query("MATCH ()-[n:NOTIFICACION]->() WHERE id(n) = $id RETURN n.leida AS leida")
+    boolean findLeidaById(@Param("id") Long id);
 
     @Query("""
                 MATCH (u:Usuario) WHERE id(u)=$idUsuario
@@ -51,7 +58,7 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
                         END
                     ELSE 'Notificación'
                 END AS mensaje
-                CREATE (u)<-[:NOTIFICACION {tipo: $tipo, mensaje: mensaje, fecha: $fecha, entidadId: id(entidad)}]-(entidad)
+                CREATE (u)<-[:NOTIFICACION {tipo: $tipo, mensaje: mensaje, fecha: $fecha, leida: false, entidadId: id(entidad)}]-(entidad)
             """)
     void crearNotificacion(Long idUsuario, Long idEntidad, String tipo, LocalDateTime fecha);
 
@@ -70,11 +77,39 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
             tipo: $tipo,
             mensaje: mensaje,
             fecha: $fecha,
+            leida: false,
             entidadId: id(entidad)
         }]-(entidad)
     """)
     void crearNotificacionPublicacion(Long idUsuarioReceptor, Long idUsuarioEmisor, Long idEntidad, String tipo, LocalDateTime fecha);
     
+    @Query("""
+    MATCH (u:Usuario) WHERE id(u) = $idUsuarioReceptor
+    MATCH (uEmisor:Usuario) WHERE id(uEmisor) = $idUsuarioEmisor
+    MATCH (evento:Evento) WHERE id(evento) = $idEvento
+    WITH u, uEmisor, evento
+    CREATE (u)<-[:NOTIFICACION {
+        tipo: 'INVITACION_EVENTO',
+        mensaje: uEmisor.nombreUsuario + ' te ha invitado al evento: ' + evento.nombre,
+        fecha: $fecha,
+        entidadId: id(evento)
+    }]-(evento)
+    """)
+    void crearNotificacionInvitacionEvento(Long idUsuarioReceptor, Long idUsuarioEmisor, Long idEvento, LocalDateTime fecha);
+
+    @Query("""
+        MATCH (u:Usuario) WHERE id(u) = $idUsuarioReceptor
+        MATCH (uEmisor:Usuario) WHERE id(uEmisor) = $idUsuarioEmisor
+        MATCH (comunidad:Comunidad) WHERE id(comunidad) = $idComunidad
+        WITH u, uEmisor, comunidad
+        CREATE (u)<-[:NOTIFICACION {
+            tipo: 'INVITACION_COMUNIDAD',
+            mensaje: uEmisor.nombreUsuario + ' te ha invitado a la comunidad: ' + comunidad.nombre,
+            fecha: $fecha,
+            entidadId: id(comunidad)
+        }]-(comunidad)
+        """)
+    void crearNotificacionInvitacionComunidad(Long idUsuarioReceptor, Long idUsuarioEmisor, Long idComunidad, LocalDateTime fecha);
     
 
     @Query("""
@@ -92,4 +127,8 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
     void crearNotificacionPrueba(Long idUsuarioReceptor, Long usuarioEmisor, Long idEntidad, String tipo,
             LocalDateTime fecha);
 
+            @Query("MATCH ()-[n:NOTIFICACION]->() " +
+            "WHERE id(n) = $idNotificacion " +
+            "SET n.leida = true")
+     void setearNotifacionLeida(Long idNotificacion);
 }

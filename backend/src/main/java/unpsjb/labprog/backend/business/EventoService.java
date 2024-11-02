@@ -303,6 +303,11 @@ public class EventoService {
         return listaSugerenciasSinDuplicados;
     }
 
+    public List<Evento> eventosFuturosPertenecientesAUnUsuario(String nombreUsuario) {
+        return eventoRepository.eventosFuturosPertenecientesAUnUsuario(nombreUsuario);
+    }
+
+
     public boolean esCreadoPor(Long idUsuario, Long idEvento) {
         return eventoRepository.eventoCreadoPor(idUsuario, idEvento);
     }

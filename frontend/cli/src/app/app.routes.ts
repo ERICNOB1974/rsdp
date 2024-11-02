@@ -33,6 +33,7 @@ import { ComunidadesCreadasUsuarioComponent } from './comunidades/comunidadesCre
 import { RutinasCreadasUsuarioComponent } from './rutinas/rutinasCreadasUsuario.component';
 import { MuroComunidadComponent } from './comunidades/muroComunidadComponent';
 import { EditarEventoComponent } from './eventos/editarEventoComponent';
+import { CalendarioEventosComponent } from './calendario/calendario-eventos.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -62,11 +63,12 @@ export const routes: Routes = [
   { path: 'rutinas/crearRutina', component: CrearRutinaComponent, canActivate: [AuthGuard]},
   { path: 'rutinas/hacer/:id', component: RutinasEjercicioComponent,  canActivate: [AuthGuard] },
   { path: 'rutinas/:id', component: RutinaDetailComponent, canActivate: [AuthGuard] },
+  { path: 'calendario', component: CalendarioEventosComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent }, 
   { path: 'registro', component: RegistroComponent },
   { path: 'verificar-codigo', component: VerificarCodigoComponent },
   { path: 'verificar-mail', component: VerificarMailComponent },
   { path: 'cambiar-contrasena', component: CambiarContrasenaComponent },
   { path: 'comunidad-muro/:id', component: MuroComunidadComponent }
-  //,{ path: '**', redirectTo: 'login' }
+  ,{ path: '**', redirectTo: 'login' }
 ];
