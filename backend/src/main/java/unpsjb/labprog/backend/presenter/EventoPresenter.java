@@ -221,4 +221,10 @@ public class EventoPresenter {
     public ResponseEntity<Object> todosLosParticipantes(@PathVariable Long idEvento) {
         return  Response.ok(eventoService.todosLosParticipantes(idEvento));
     }
+    @GetMapping("/eventosFuturosPertenecientesAUnUsuario/{nombreUsuario}")
+    public ResponseEntity<Object> eventosFuturosPertenecientesAUnUsuario(@PathVariable String nombreUsuario) {
+        List<Evento> eventosDeRutinas = eventoService.eventosFuturosPertenecientesAUnUsuario(nombreUsuario);
+        return Response.ok(eventosDeRutinas);
+    }
+
 }

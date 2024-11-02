@@ -1,5 +1,6 @@
 package unpsjb.labprog.backend.business;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,13 @@ public class UsuarioService {
 
     @Autowired
     UsuarioRepository usuarioRepository;
+
+    @Autowired
+    NotificacionRepository notificacionRepository;
+
+    @Lazy
+    @Autowired
+    EmailService emailService;
 
     @Autowired
     NotificacionService notificacionService;
@@ -196,5 +205,42 @@ public class UsuarioService {
     public List<Usuario> inscriptosEvento(Long idEvento) {
         return usuarioRepository.inscriptosEvento(idEvento);
     }
+
+    public Long enviarInvitacionEvento(Long idUsuarioEmisor, Long idUsuarioReceptor, Long idEvento){
+        usuarioRepository.enviarInvitacionEvento(idUsuarioEmisor, idUsuarioReceptor, idEvento);
+        notificacionRepository.crearNotificacionInvitacionEvento(idUsuarioReceptor, idUsuarioEmisor, idEvento, LocalDateTime.now());
+        return idEvento;
+    }
+
+    public Long enviarInvitacionComunidad(Long idUsuarioEmisor, Long idUsuarioReceptor, Long idComunidad){
+        usuarioRepository.enviarInvitacionComunidad(idUsuarioEmisor, idUsuarioReceptor, idComunidad);
+        notificacionRepository.crearNotificacionInvitacionComunidad(idUsuarioReceptor, idUsuarioEmisor, idComunidad, LocalDateTime.now());
+        return idComunidad;
+    }
+
+    public List<Usuario> todosLosAmigosDeUnUsuarioPertenecientesAUnEvento(Long idUsuario, Long idEvento){
+        return usuarioRepository.todosLosAmigosDeUnUsuarioPertenecientesAUnEvento(idUsuario, idEvento);
+    }
+
+    public List<Usuario> todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad){
+        return usuarioRepository.todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(idUsuario, idComunidad);
+    }
+
+    public List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(Long idUsuario, Long idEvento){
+        return usuarioRepository.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(idUsuario, idEvento);
+    }
+
+    public List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad){
+        return usuarioRepository.todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(idUsuario, idComunidad);
+    }
+
+    public List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(Long idUsuario, Long idEvento){
+        return usuarioRepository.todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(idUsuario, idEvento);
+    }
+
+    public List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(Long idUsuario, Long idComunidad){
+        return usuarioRepository.todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(idUsuario, idComunidad);
+    }
+
 
 }

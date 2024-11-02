@@ -1,139 +1,142 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet');
-:root{
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap');
+
+:root {
     --mdc-theme-error: #B00020;
-    --mdc-outlined-card-outline-width:2px;
+    --mdc-outlined-card-outline-width: 2px;
 }
+
 .wrap-login {
-    height: calc(100vh - 65px); /* Altura total menos la altura de la barra superior */
+    height: calc(100vh - 65px);
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #ffffff;
-    margin: 0 auto; /* Centra horizontalmente */
-    position: absolute; /* Permite que el elemento sea posicionado en relación a la pantalla */
-    top: 40px; /* Alinea desde la parte superior (altura de la barra) */
-    left: 1000%; /* Coloca el elemento en el centro horizontalmente */
-    transform: translate(-50%, 0); /* Ajusta para centrar completamente */
+    margin: 0 auto;
+    position: absolute;
+    top: 65px; /* Ajustado para evitar que se superponga con la barra superior */
+    left: 50%; /* Centra el contenedor */
+    transform: translate(-50%, 0);
 }
-
 
 .container {
     background: #FFFFFF;
-    box-shadow: 0px 3px 6px #00000029;
-    border-radius: 4px;
-    max-width: 768px;
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1); /* Sombra más suave */
+    border-radius: 12px; /* Bordes más redondeados */
+    max-width: 400px; /* Ancho máximo ajustado */
     width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px; /* Espaciado interno */
+    padding: 30px; /* Espaciado interno aumentado */
+    animation: fadeIn 0.5s; /* Animación al entrar */
 }
 
-.login-box{
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-box {
     display: flex;
+    flex-direction: column; /* Organiza los elementos en columna */
     justify-content: center;
-    width: 328px;
-    border-color: inherit;
-    box-shadow: inherit;
 }
+
 .login-box mat-card-header {
-    width: 128px;
-    height: 128px;
-    padding: 0;
-    margin-bottom: 16px;
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
+    text-align: center; /* Centra el encabezado */
+    margin-bottom: 20px; /* Espacio debajo del encabezado */
 }
-.login-box mat-card-header img{
-    width: 128px;
-    height: 128px;
-    border-radius: inherit;
+
+.login-box mat-card-header img {
+    width: 100px; /* Tamaño de imagen ajustado */
+    height: 100px; /* Tamaño de imagen ajustado */
+    border-radius: 50%; /* Hace que la imagen sea circular */
 }
+
 .mat-mdc-card-content {
-    padding:0;
+    padding: 0;
 }
-.login-box mat-form-field{
-    border-color: #0000001F !important;
-    border-radius: 4px;
-}
-.mdc-text-field--invalid .mdc-text-field__input,.mdc-text-field .mdc-text-field__input,.form-field{
-    caret-color: #B00020!important;
-}
-.form-field{
-    font-size: 16px;
-    letter-spacing: 0.15px!important;
-    color: #000000BC!important;
-}
-.mat-mdc-form-field-error-wrapper{
-    height: 18px;
-}
-.login-box mat-label,.mat-mdc-form-field-error{
-    color: #B00020 !important;
-}
-mat-form-field {
+
+.login-box mat-form-field {
+    margin-bottom: 16px; /* Espacio uniforme entre campos */
     width: 100%;
 }
-.mdc-text-field--invalid:not(.mdc-text-field--disabled) .mdc-floating-label {
-    color: #B00020;
-    text-align: left;
-    font-family: 'Roboto';
-    letter-spacing: 0.15px;
-    border: 2px solid #B00020;
+
+.mdc-text-field--invalid .mdc-text-field__input,
+.mdc-text-field .mdc-text-field__input,
+.form-field {
+    caret-color: #B00020 !important;
 }
-.mdc-text-field--focused{
-    border: 2px solid #B00020;
-}
-.login-box .mat-form-field-invalid .mat-form-field-outline{
-    border-color: #B00020 !important;
-}
-.mdc-card__actions{
-    padding: 0;
-    min-height: 36px; 
-}
-.mat-mdc-raised-button:not(:disabled){
-    background-color: #217d94;
-    box-shadow: 0px 3px 6px #00000029;
-    border-radius: 4px;
-    width: 98px;
-    text-align: left;
-    font-family: Roboto, Medium;
-    letter-spacing: 1.25px;
-    color: #FFFFFF;
-    text-transform: uppercase;
-    font-size: 14px;
-    font-weight: 400;
-}
-mat-form-field .form-field{
+
+.form-field {
+    font-size: 16px;
+    letter-spacing: 0.15px !important;
     color: #000000BC !important;
 }
+
+.mat-mdc-form-field-error-wrapper {
+    height: 18px;
+}
+
+.login-box mat-label,
+.mat-mdc-form-field-error {
+    color: #B00020 !important;
+}
+
+.mat-mdc-raised-button:not(:disabled) {
+    background-color: #00796b; /* Color de fondo del botón */
+    border-radius: 4px;
+    text-align: center; /* Centra el texto */
+    font-size: 16px; /* Aumenta el tamaño de la fuente */
+    font-weight: 500; /* Aumenta el grosor del texto */
+    padding: 10px 20px; /* Espaciado interno en el botón */
+    transition: background-color 0.3s; /* Efecto de transición */
+}
+
+.mat-mdc-raised-button:not(:disabled):hover {
+    background-color: #004d40; /* Color de fondo al pasar el mouse */
+}
+
 mat-card-actions {
     display: flex;
-    justify-content: flex-end;
-    margin-bottom: 30px;
+    flex-direction: column; /* Organiza los botones en columna */
+    align-items: center; /* Centra los botones */
+    margin-bottom: 20px;
 }
+
+mat-card-actions button {
+    margin-top: 8px; /* Espacio entre los botones */
+    color: #00796b; /* Color de los botones secundarios */
+    font-size: 14px; /* Tamaño de fuente de los botones */
+}
+
+mat-card-actions button:hover {
+    text-decoration: underline; /* Subraya el texto al pasar el mouse */
+}
+
 @media(max-width:768px) {
-    .wrap-login{
+    .wrap-login {
         background: #EFEFEF;
         padding: 0 30px;
     }
-    .container{
-        background: #FFFFFF;
-        height: auto;
-        padding:22px 21px;
+
+    .container {
+        padding: 22px 21px;
         width: auto;
         max-width: inherit;
     }
 }
+
 @media(max-width:430px) {
-    .container{
-        background: #FFFFFF;
-        box-shadow: inherit;  
+    .container {
         display: block;
         justify-content: inherit;
         align-items: inherit;
     }
-    .login-box{
+
+    .login-box {
         width: 100%;
     }
 }
@@ -145,4 +148,3 @@ mat-card-actions {
 .login-box mat-form-field:first-of-type {
     margin-bottom: 10px; /* Ajusta el espacio debajo del campo de correo */
 }
-

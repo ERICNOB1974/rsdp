@@ -184,14 +184,31 @@ button {
     padding: 20px;
     text-align: left;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer; /* Cambia el cursor a pointer */
+}
+
+.evento-item:hover, .rutina-item:hover, .comunidad-item:hover {
+    transform: translateY(-2px); /* Levantar un poco el elemento */
+    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2); /* Sombra más intensa */
+    background-color: #ffb806; /* Cambia el color de fondo al hacer hover */
 }
 
 .evento-item h4, .rutina-item h4, .comunidad-item h4 {
     color: #333;
     font-size: 1.25em;
     margin-bottom: 10px;
+    transition: color 0.3s ease; /* Transición de color de texto */
 }
 
+evento-item:hover, .rutina-item:hover, .comunidad-item:hover {
+    transform: translateY(-2px); /* Levantar un poco el elemento */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra más intensa */
+    background-color: #f1b157; /* Cambia el color de fondo al hacer hover */
+}
+
+.evento-item:hover h4, .rutina-item:hover h4, .comunidad-item:hover h4 {
+    color: #000000; /* Cambia el color del texto al hacer hover */
+}
 .evento-item p, .rutina-item p, .comunidad-item p {
     color: #555;
     margin-bottom: 8px;

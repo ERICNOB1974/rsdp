@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Dia;
 import unpsjb.labprog.backend.model.Ejercicio;
 import unpsjb.labprog.backend.model.Etiqueta;
@@ -48,6 +47,15 @@ public class RutinaService {
     public Long crearRelacionRealizaRutina(Long rutinaId, Long usuarioId) throws Exception {
         rutinaRepository.crearRelacionRealizaRutina(rutinaId, usuarioId);
         return rutinaId;
+    }
+
+    public Long crearRelacionDiaFinalizado(Long diaId, Long usuarioId) throws Exception {
+        diaRepository.crearRelacionDiaFinalizado(diaId, usuarioId);
+        return diaId;
+    }
+
+    public boolean verificarDiaFinalizado(Long diaId, Long usuarioId) throws Exception {
+        return diaRepository.verificarDiaFinalizado(diaId, usuarioId);
     }
 
     public Long guardarRutina(Rutina rutina) {
@@ -326,4 +334,7 @@ public class RutinaService {
         return rutinaRepository.rutinasCreadasPorUsuario(idUsuario, offset, limit);
     }
 
+    public List<Rutina> rutinasRealizaUsuario(Long idUsuario) {
+        return rutinaRepository.rutinasRealizaUsuario(idUsuario);
+    }
 }

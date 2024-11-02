@@ -1,4 +1,4 @@
-<div class="container evento-detail-container">
+<div class="container evento-detail-container" *ngIf="evento">
   <div class="row justify-content-center">
     <div class="card shadow-sm mt-4">
       <div class="card-body">
@@ -8,13 +8,41 @@
         <p><strong>Ubicación:</strong> {{ evento.ubicacion }}</p>
         <p><strong>Descripción:</strong> {{ evento.descripcion }}</p>
         <p><strong>Cantidad máxima de participantes:</strong> {{ evento.cantidadMaximaParticipantes }}</p>
-
-
-        <button class="btn btn-success btn-block ingresar-button"
-          [disabled]="isLoading || !(inscribirseValid() || salirValid())"
-          (click)="salirValid() ? salir() : inscribirse()">
-          <!-- Mostrar texto según la funcionalidad -->
+        
+        <!-- Botón Inscribirse o Desinscribirse centrado -->
+        <button class="btn btn-primary btn-block ingresar-button mx-auto" 
+                [disabled]="!(inscribirseValid() || salirValid())" 
+                (click)="salirValid() ? salir() : inscribirse()">
           {{ salirValid() ? 'Desinscribirse' : 'Inscribirse' }}
+        </button>
+        
+        <!-- Botón de regresar centrado -->
+        <button (click)="goBack()" class="btn btn-secondary btn-block mx-auto mt-2">Volver</button>
+
+        <!-- Botón Invitar Amigos centrado, visible solo si el usuario ya está inscrito -->
+        <button *ngIf="salirValid()" (click)="abrirModalInvitarAmigos()" 
+                class="btn btn-success btn-block mx-auto mt-3">
+          Invitar amigos
+        </button>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #modalInvitarAmigos>
+  <div class="modal-header">
+    <h5 class="modal-title">Invitar amigos al evento</h5>
+    <button type="button" class="close btn-close" aria-label="Close" (click)="cerrarModal()"></button>
+  </div>
+  <div class="modal-body">
+    <!-- Amigos no en evento -->
+    <h6 class="text-primary">Amigos que aún no están en el evento</h6>
+    <div *ngIf="amigosNoEnEvento.length > 0; else sinAmigosNoEnEvento">
+      <div *ngFor="let amigo of amigosNoEnEvento" class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
+        <span>{{ amigo.nombreUsuario }}</span>
+        <button (click)="invitarAmigo(amigo.id)" class="btn btn-outline-primary btn-sm ml-2 animate-btn">
+          Invitar al evento
         </button>
 
         <ng-container *ngIf="creador">
@@ -60,7 +88,38 @@
         </mat-progress-spinner>
         Botón de regresar -->
         <button (click)="goBack()" class="btn btn-secondary btn-block mt-2" [disabled]="isLoading">Volver</button>
+
       </div>
     </div>
+    <ng-template #sinAmigosNoEnEvento>
+      <p class="text-muted">No tienes amigos disponibles para invitar.</p>
+    </ng-template>
+
+    <!-- Amigos en evento -->
+    <h6 class="text-success mt-4">Amigos ya en el evento</h6>
+    <div *ngIf="amigosEnEvento.length > 0; else sinAmigosEnEvento">
+      <div *ngFor="let amigo of amigosEnEvento" class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
+        <span>{{ amigo.nombreUsuario }}</span>
+        <span class="badge bg-success text-white">En el evento</span>
+      </div>
+    </div>
+    <ng-template #sinAmigosEnEvento>
+      <p class="text-muted">No tienes amigos en el evento.</p>
+    </ng-template>
+
+    <!-- Amigos ya invitados -->
+    <h6 class="text-warning mt-4">Amigos ya invitados</h6>
+    <div *ngIf="amigosYaInvitados.length > 0; else sinAmigosYaInvitados">
+      <div *ngFor="let amigo of amigosYaInvitados" class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
+        <span>{{ amigo.nombreUsuario }}</span>
+        <span class="badge bg-warning text-dark">Ya invitado</span>
+      </div>
+    </div>
+    <ng-template #sinAmigosYaInvitados>
+      <p class="text-muted">No tienes amigos ya invitados.</p>
+    </ng-template>
   </div>
-</div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
+  </div>
+</ng-template>

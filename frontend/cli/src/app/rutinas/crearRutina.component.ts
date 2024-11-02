@@ -45,7 +45,7 @@ export class CrearRutinaComponent {
       nombre: '',
       descripcion: '',
       ejercicios: [],
-      tipo: 'trabajo',
+      tipo: 'trabajo'
     };
     this.dias.push(nuevoDia);
   }
