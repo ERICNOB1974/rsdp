@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.mail.MessagingException;
 import unpsjb.labprog.backend.exceptions.EventoException;
+import unpsjb.labprog.backend.model.Etiqueta;
 import unpsjb.labprog.backend.model.Evento;
 import unpsjb.labprog.backend.model.Usuario;
 
@@ -24,6 +25,9 @@ public class EventoService {
 
     @Autowired
     EventoRepository eventoRepository;
+
+    @Autowired
+    EtiquetaRepository etiquetaRepository;
 
     @Autowired
     UsuarioService usuarioService;
@@ -301,5 +305,17 @@ public class EventoService {
 
     public boolean esCreadoPor(Long idUsuario, Long idEvento) {
         return eventoRepository.eventoCreadoPor(idUsuario, idEvento);
+    }
+
+    public List<Etiqueta> etiquetasEvento(Long idEvento) {
+        return etiquetaRepository.etiquetasEnEvento(idEvento);
+    }
+
+    public void eliminar(Long idEvento) {
+        this.eventoRepository.delete(this.eventoRepository.findById(idEvento).get());
+    }
+
+    public List<Usuario> todosLosParticipantes(Long idEvento){
+        return usuarioService.inscriptosEvento(idEvento);
     }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +22,7 @@ import unpsjb.labprog.backend.business.InscripcionEventoService;
 import unpsjb.labprog.backend.business.ScoreEvento;
 import unpsjb.labprog.backend.business.UsuarioService;
 import unpsjb.labprog.backend.exceptions.EventoException;
+import unpsjb.labprog.backend.model.Etiqueta;
 import unpsjb.labprog.backend.model.Evento;
 
 @RestController
@@ -101,7 +103,8 @@ public class EventoPresenter {
     }
 
     @GetMapping("/eventosCreadosPorUsuario/{idUsuario}")
-    public ResponseEntity<Object> eventosCreadosPorUsuario(@PathVariable Long idUsuario, @RequestParam int offset, @RequestParam int limit) {
+    public ResponseEntity<Object> eventosCreadosPorUsuario(@PathVariable Long idUsuario, @RequestParam int offset,
+            @RequestParam int limit) {
         List<Evento> eventosCreadosPorUsuario = eventoService.eventosCreadosPorUsuario(idUsuario, offset, limit);
         return Response.ok(eventosCreadosPorUsuario);
     }
@@ -112,7 +115,6 @@ public class EventoPresenter {
         return Response.ok(eventosCreadosPorUsuario);
     }
 
-
     @PostMapping("/etiquetar/{idEtiqueta}")
     public ResponseEntity<Object> etiquetarEvento(@RequestBody Evento evento, @PathVariable Long idEtiqueta) {
         eventoService.etiquetarEvento(evento, idEtiqueta);
@@ -120,7 +122,7 @@ public class EventoPresenter {
     }
 
     @PostMapping("/inscribirse/{idEvento}/{idUsuario}")
-    public ResponseEntity<Object> etiquetarEvento(@PathVariable Long idEvento, @PathVariable Long idUsuario) {
+    public ResponseEntity<Object> inscribirse(@PathVariable Long idEvento, @PathVariable Long idUsuario) {
         inscripcionEventoService.inscribirse(idEvento, idUsuario);
         return Response.ok("ok");
     }
@@ -137,17 +139,17 @@ public class EventoPresenter {
 
     @GetMapping("/filtrar/etiquetas")
     public ResponseEntity<Object> eventosPorEtiquetas(@RequestParam List<String> etiquetas) {
-        return Response.ok( eventoService.eventosEtiquetas(etiquetas));
+        return Response.ok(eventoService.eventosEtiquetas(etiquetas));
     }
 
     @GetMapping("/filtrar/nombre/{nombre}")
     public ResponseEntity<Object> eventosPorNombre(@PathVariable String nombre) {
-        return Response.ok( eventoService.eventosNombre(nombre));
+        return Response.ok(eventoService.eventosNombre(nombre));
     }
 
     @GetMapping("/filtrar/fecha")
     public ResponseEntity<Object> eventosPorFecha(@RequestParam ZonedDateTime min, @RequestParam ZonedDateTime max) {
-        return Response.ok( eventoService.eventosFecha(min, max));
+        return Response.ok(eventoService.eventosFecha(min, max));
     }
 
     @GetMapping("/filtrar/participantes")
@@ -165,8 +167,7 @@ public class EventoPresenter {
         return Response.ok(eventoService.participaUsuario(idUsuario));
     }
 
-
-     @GetMapping("/sugerenciasDeEventosBasadosEnEventos2/{nombreUsuario}")
+    @GetMapping("/sugerenciasDeEventosBasadosEnEventos2/{nombreUsuario}")
     public ResponseEntity<Object> sugerenciasDeEventosBasadosEnEventos2(@PathVariable String nombreUsuario) {
         List<ScoreEvento> sugerenciasDeEventosBasadosEnEventos = eventoService
                 .sugerenciasDeEventosBasadosEnEventos2(nombreUsuario);
@@ -202,5 +203,22 @@ public class EventoPresenter {
             // Manejo del error
             return Response.error("", "Error al obtener las sugerencias: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/etiquetas/{idEvento}")
+    public ResponseEntity<Object> etiquetasEvento(@PathVariable Long idEvento) {
+        List<Etiqueta> etiquetas = eventoService.etiquetasEvento(idEvento);
+        return Response.ok(etiquetas);
+    }
+
+    @DeleteMapping("/eliminar/{idEvento}")
+    public ResponseEntity<Object> eliminar(@PathVariable Long idEvento) {
+        eventoService.eliminar(idEvento);
+        return Response.ok("OK");
+    }
+
+    @GetMapping("/listaParticipantes/{idEvento}")
+    public ResponseEntity<Object> todosLosParticipantes(@PathVariable Long idEvento) {
+        return  Response.ok(eventoService.todosLosParticipantes(idEvento));
     }
 }

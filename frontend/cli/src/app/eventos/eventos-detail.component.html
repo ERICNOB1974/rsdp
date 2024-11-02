@@ -16,10 +16,49 @@
           <!-- Mostrar texto según la funcionalidad -->
           {{ salirValid() ? 'Desinscribirse' : 'Inscribirse' }}
         </button>
-        <button class="btn btn-primary" [disabled]="!creador" (click)="editarEvento()">Editar</button>
+
+        <ng-container *ngIf="creador">
+          <h3>Miembros</h3>
+          <ul>
+            <li *ngFor="let miembro of miembros">
+              {{ miembro.nombreUsuario }}
+
+              <!-- Los creadores pueden gestionar roles de administrador
+            -->
+              <!-- Solo creadores pueden eliminar miembros -->
+              <button *ngIf="(creador)" (click)="eliminarMiembro(miembro)">Eliminar Miembro</button>
+            </li>
+          </ul>
+        </ng-container>
+
+        <button  *ngIf="creador" class="btn btn-primary" (click)="editarEvento()">Editar</button>
+        <button *ngIf="creador" (click)="eliminarEvento()" class="btn btn-danger">Eliminar Comunidad</button>
+
+
+
+        <div *ngIf="isLoading" aria-label="Orange and tan hamster running in a metal wheel" role="img"
+          class="wheel-and-hamster">
+          <div class="wheel"></div>
+          <div class="hamster">
+            <div class="hamster__body">
+              <div class="hamster__head">
+                <div class="hamster__ear"></div>
+                <div class="hamster__eye"></div>
+                <div class="hamster__nose"></div>
+              </div>
+              <div class="hamster__limb hamster__limb--fr"></div>
+              <div class="hamster__limb hamster__limb--fl"></div>
+              <div class="hamster__limb hamster__limb--br"></div>
+              <div class="hamster__limb hamster__limb--bl"></div>
+              <div class="hamster__tail"></div>
+            </div>
+          </div>
+          <div class="spoke"></div>
+        </div>
+        <!-- 
         <mat-progress-spinner *ngIf="isLoading" mode="indeterminate" diameter="24" color="primary"  class="spinner">
         </mat-progress-spinner>
-        <!-- Botón de regresar -->
+        Botón de regresar -->
         <button (click)="goBack()" class="btn btn-secondary btn-block mt-2" [disabled]="isLoading">Volver</button>
       </div>
     </div>

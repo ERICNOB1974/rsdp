@@ -122,8 +122,6 @@ export class ComunidadesComponent implements OnInit {
   }
 
 
-
-
   // Método para mover al siguiente grupo de comunidades en el carrusel
   siguienteComunidad(): void {
     this.currentIndex = (this.currentIndex + 1) % this.results.length; // Incrementa el índice

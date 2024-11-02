@@ -32,6 +32,7 @@ import { EventosCreadosUsuarioComponent } from './eventos/eventosCreadosUsuario.
 import { ComunidadesCreadasUsuarioComponent } from './comunidades/comunidadesCreadasUsuario.component';
 import { RutinasCreadasUsuarioComponent } from './rutinas/rutinasCreadasUsuario.component';
 import { MuroComunidadComponent } from './comunidades/muroComunidadComponent';
+import { EditarEventoComponent } from './eventos/editarEventoComponent';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -39,6 +40,7 @@ export const routes: Routes = [
   { path: 'eventos', component: EventosComponent, canActivate: [AuthGuard] },
   { path: 'eventosUsuario', component: EventosCreadosUsuarioComponent, canActivate: [AuthGuard] },
   { path: 'eventos/crearEvento', component: CrearEventoComponent, canActivate: [AuthGuard] },
+  { path: 'eventos/editarEvento/:id', component: EditarEventoComponent, canActivate: [AuthGuard] },
   { path: 'eventos/:id', component: EventoDetailComponent, canActivate: [AuthGuard] },
   { path: 'comunidades', component: ComunidadesComponent, canActivate: [AuthGuard] },
   { path: 'comunidadesUsuario', component: ComunidadesCreadasUsuarioComponent, canActivate: [AuthGuard] },
