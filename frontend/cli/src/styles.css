@@ -13,7 +13,6 @@
 body {
     min-height: 100vh;
     background: #ffffff;
-    display: flex; /* Usar flexbox para el cuerpo */
 }
 
 /* Barra lateral */

@@ -12,10 +12,6 @@
     <div class="tab-content">
         <div *ngIf="tabSeleccionada === 'publicaciones'" class="perfil-publicaciones">
             <h3>Publicaciones</h3>
-
-                <button class="btn primary"><i class="fas fa-exclamation-circle"></i> Secondary</button>
-                <button class="btn primary">Crear publicacion</button>
-                -->
             <button class="btn primary" (click)="publicarEnComunidad()">
                 Publicar
             </button>
@@ -49,7 +45,8 @@
             </div>
             <!-- Mostrar la cantidad de usuarios anónimos -->
             <div *ngIf="usuariosAnonimos > 0">
-                <span>{{ usuariosAnonimos }} Usuario{{ usuariosAnonimos > 1 ? 's' : '' }} anónimo{{ usuariosAnonimos > 1 ? 's' : '' }}</span>
+                <span>{{ usuariosAnonimos }} Usuario{{ usuariosAnonimos > 1 ? 's' : '' }} anónimo{{ usuariosAnonimos > 1
+                    ? 's' : '' }}</span>
             </div>
         </div>
     </div>

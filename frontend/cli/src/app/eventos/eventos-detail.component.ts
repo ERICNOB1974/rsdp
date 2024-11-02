@@ -6,6 +6,7 @@ import { Location } from '@angular/common';
 import { CommonModule } from '@angular/common'; // Para permitir navegar de vuelta
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Usuario } from '../usuarios/usuario';
 
 
 
@@ -18,11 +19,16 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   standalone: true
 })
 export class EventoDetailComponent implements OnInit {
+  eliminarMiembro(_t21: any) {
+    throw new Error('Method not implemented.');
+  }
 
   evento!: Evento; // Evento específico que se va a mostrar
   isLoading: boolean = false;
   participa: boolean = false;
   creador: boolean = false;
+  miembros: Usuario[] = []; // Lista de miembros de la comunidad
+
 
   constructor(
     private route: ActivatedRoute, // Para obtener el parámetro de la URL
@@ -46,7 +52,7 @@ export class EventoDetailComponent implements OnInit {
       this.router.navigate(['eventos/crearEvento']);
     }
     else {
-      this.eventoService.get(parseInt(id)).subscribe(async dataPackage => {
+      this.eventoService.get(id).subscribe(async dataPackage => {
         this.evento = <Evento>dataPackage.data;
         if (this.evento.latitud && this.evento.longitud) {
           this.evento.ubicacion = await this.eventoService.obtenerUbicacion(this.evento.latitud, this.evento.longitud);
@@ -60,7 +66,7 @@ export class EventoDetailComponent implements OnInit {
         }
         this.traerParticipantes();
         this.checkParticipacion()
-
+        this.traerMiembros();
       });
     }
   }
@@ -125,9 +131,7 @@ export class EventoDetailComponent implements OnInit {
     );
   }
 
-  editarEvento():void{
-    
-  }
+
 
   checkParticipacion(): void {
     this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
@@ -146,5 +150,24 @@ export class EventoDetailComponent implements OnInit {
     return (this.evento.participantes < this.evento.cantidadMaximaParticipantes) && !this.participa;
   }
 
+  editarEvento(): void {
+    this.router.navigate(['/eventos/editarEvento/', this.evento.id]);
+  }
 
+  traerMiembros(): void {
+    this.eventoService.listaParticipantes(this.evento.id).subscribe(dataPackage => {
+      this.miembros = <Usuario[]>dataPackage.data;
+      
+    });
+  }
+
+  eliminarEvento(): void {
+    this.eventoService.eliminar(this.evento.id).subscribe(dataPackage => {
+      let mensaje = dataPackage.message;
+      this.snackBar.open(mensaje, 'Cerrar', {
+        duration: 3000,
+      });
+      this.router.navigate(['/eventos']);
+    });
+  }
 }
