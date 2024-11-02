@@ -22,8 +22,11 @@ export class EventoService {
     return this.http.get<DataPackage>(` ${this.eventosUrl}/findAll`);
   }
 
-  get(id: number): Observable<DataPackage> {
+  get(id: string): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.eventosUrl}/findById/${id}`);
+  }
+  etiquetasDelEvento(id: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.eventosUrl}/etiquetas/${id}`);
   }
 
   save(evento: Evento): Observable<DataPackage> {
@@ -56,14 +59,20 @@ export class EventoService {
     return this.http.post<DataPackage>(` ${this.eventosUrl}/inscribirse/${idEvento}/${idUsuario}`, null);
   }
 
+  //trae la cantidad de participantes
   participantesEnEvento(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.eventosUrl}/${id}/participantes`);
+  }
+
+  listaParticipantes(id: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.eventosUrl}/listaParticipantes${id}`);
   }
 
   participa(idEvento: number): Observable<DataPackage> {
     const nombreUsuario = this.authService.getNombreUsuario();
     return this.http.get<DataPackage>(`${this.eventosUrl}/estaInscripto/${nombreUsuario}/${idEvento}`);
   }
+
   creador(idEvento: number): Observable<DataPackage> {
     const idUsuario = this.authService.getUsuarioId();
     return this.http.get<DataPackage>(`${this.eventosUrl}/esCreadoPor/${idUsuario}/${idEvento}`);
@@ -111,21 +120,19 @@ export class EventoService {
     return this.http.get<DataPackage>(`${this.eventosUrl}/filtrar/fecha`, {
       params: {
         min: min,
-        max:max
+        max: max
       }
     });
   }
   filtrarEtiqueta(etiquetas: string[]): Observable<DataPackage> {
     const params = new HttpParams().set('etiquetas', etiquetas.join(',')); // convierte el array a una cadena separada por comas
     return this.http.get<DataPackage>(`${this.eventosUrl}/filtrar/etiquetas`, { params });
-}
-
-
+  }
 
   disponibles(): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.eventosUrl}/disponibles`);
   }
-  
+
   eventosCreadosPorUsuario(offset: number, limit: number): Observable<DataPackage> {
     const userId = this.authService.getUsuarioId();
     return this.http.get<DataPackage>(`${this.eventosUrl}/eventosCreadosPorUsuario/${userId}?offset=${offset}&limit=${limit}`);
@@ -135,9 +142,17 @@ export class EventoService {
     return this.http.get<DataPackage>(` ${this.eventosUrl}/participa/${idUsuario}`);
   }
 
+
+  eliminar(idEvento: number): Observable<DataPackage> {
+    return this.http.delete<DataPackage>(` ${this.eventosUrl}/eliminar/${idEvento}`);
+  }
+
+
+
   eventosFuturosPertenecientesAUnUsuario(): Observable<DataPackage> {
     const nombreUsuario = this.authService.getNombreUsuario();
     return this.http.get<DataPackage>(` ${this.eventosUrl}/eventosFuturosPertenecientesAUnUsuario/${nombreUsuario}`);
   }
+
 
 }

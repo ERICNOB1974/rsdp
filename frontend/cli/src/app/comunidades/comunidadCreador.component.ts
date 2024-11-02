@@ -23,8 +23,8 @@ export class ComunidadCreadorComponent implements OnInit {
     miembros: any[] = []; // Lista de miembros de la comunidad
     administradores: any[] = []; // Lista de miembros de la comunidad
     idUsuarioAutenticado!: number;  // ID del usuario autenticado
-    esCreador: boolean = false;  
-    esAdmin: boolean = false;    
+    esCreador: boolean = false;
+    esAdmin: boolean = false;
 
     constructor(
         private route: ActivatedRoute, // Para obtener el parámetro de la URL
@@ -53,7 +53,7 @@ export class ComunidadCreadorComponent implements OnInit {
 
                 // Ahora, hacer una llamada adicional para obtener el creador
                 this.getCreadorComunidad();
-                
+
                 if (this.comunidad.esPrivada) {
                     this.getSolicitudesPendientes();
                 }
@@ -71,7 +71,7 @@ export class ComunidadCreadorComponent implements OnInit {
     }
 
     getCreadorComunidad(): void {
-        this.usuarioService.getCreadorComunidad(this.idUsuarioAutenticado,this.comunidad.id).subscribe(dataPackage => {
+        this.usuarioService.getCreadorComunidad(this.idUsuarioAutenticado, this.comunidad.id).subscribe(dataPackage => {
             const creador = dataPackage.data;
             console.log('Creador de la comunidad:', creador); // Añadir log para verificar el valor
             if (creador) {
@@ -79,7 +79,7 @@ export class ComunidadCreadorComponent implements OnInit {
             }
         });
     }
-    
+
     verificarRoles(): void {
         // Si el usuario autenticado está en la lista de administradores, también es un admin
         if (this.administradores.some(admin => admin.id == this.idUsuarioAutenticado)) {
@@ -87,20 +87,20 @@ export class ComunidadCreadorComponent implements OnInit {
         }
     }
 
-    
+
     traerMiembrosYAdministradores(): void {
         const miembros$ = this.usuarioService.miembrosComunidad(this.comunidad.id);
         const administradores$ = this.usuarioService.administradoresComunidad(this.comunidad.id);
-    
+
         forkJoin([miembros$, administradores$]).subscribe(([miembrosData, administradoresData]) => {
             if (Array.isArray(miembrosData.data)) {
                 this.miembros = miembrosData.data;
             }
-    
+
             if (Array.isArray(administradoresData.data)) {
                 this.administradores = administradoresData.data;
             }
-            
+
             // Combina ambos arrays después de que se hayan completado las solicitudes
             this.miembros = this.miembros.concat(this.administradores);
             this.verificarRoles(); // Verificar roles después de obtener los miembros y admins
@@ -114,7 +114,7 @@ export class ComunidadCreadorComponent implements OnInit {
             }
         });
     }
-    
+
     traerAdministradores(): void {
         this.usuarioService.administradoresComunidad(this.comunidad.id).subscribe(dataPackage => {
             if (Array.isArray(dataPackage.data)) {
@@ -138,13 +138,13 @@ export class ComunidadCreadorComponent implements OnInit {
 
     // Método para eliminar la comunidad
     eliminarComunidad(): void {
-           this.comunidadService.remove(this.comunidad.id).subscribe(dataPackage => {
-             let mensaje = dataPackage.message;
-             this.snackBar.open(mensaje, 'Cerrar', {
-               duration: 3000,
-             });
-             this.router.navigate(['/comunidades']);
-           }); 
+        this.comunidadService.remove(this.comunidad.id).subscribe(dataPackage => {
+            let mensaje = dataPackage.message;
+            this.snackBar.open(mensaje, 'Cerrar', {
+                duration: 3000,
+            });
+            this.router.navigate(['/comunidades']);
+        });
     }
 
     // Método para otorgar el rol de organizador a un miembro
@@ -191,6 +191,6 @@ export class ComunidadCreadorComponent implements OnInit {
             });
             this.traerMiembrosYAdministradores(); // Actualiza la lista de miembros
         });
-        }
-    
+    }
+
 }
