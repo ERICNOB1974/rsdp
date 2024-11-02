@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { NotificacionService } from './notificaciones/notificacion.service';
 import { DataPackage } from './data-package';
 import { Notificacion } from './notificaciones/notificacion';
+//import { Notificacion } from './notificaciones/notificacion';
 
 @Component({
   selector: 'app-root',
@@ -239,6 +240,7 @@ export class AppComponent {
 
       case 'INSCRIPCION_A_EVENTO':
       case 'RECORDATORIO_EVENTO_PROXIMO':
+      case 'MODIFICACION_EVENTO':
         // Notificaciones relacionadas con eventos
         urlDestino = `/eventos/${notificacion.entidadId}`;
         break;
@@ -289,7 +291,6 @@ export class AppComponent {
     return this.notificaciones.filter(notificacion => !notificacion.leida);
   }
 
-  
 
 
   manejarClickNotificacion(notificacion: Notificacion): void {
@@ -298,5 +299,6 @@ export class AppComponent {
     }).catch(error => {
       console.error('Error al manejar la notificación:', error);
     });
+  
   }
 }
