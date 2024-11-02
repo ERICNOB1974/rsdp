@@ -73,6 +73,7 @@
     color: #777;
     margin-top: 8px;
 }
+
 /* Ajustes del botón */
 /* Base button styles */
 .btn {
@@ -82,36 +83,49 @@
     cursor: pointer;
     border-radius: 5px;
     display: inline-flex;
-    align-items: center; /* Center vertically */
-    justify-content: center; /* Center horizontally */
-    font-size: 18px; /* Text size */
-    font-weight: bold; /* Bold text */
-    background-color: #007bff; /* Primary color */
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+    align-items: center;
+    /* Center vertically */
+    justify-content: center;
+    /* Center horizontally */
+    font-size: 18px;
+    /* Text size */
+    font-weight: bold;
+    /* Bold text */
+    background-color: #007bff;
+    /* Primary color */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    /* Smooth transitions */
 }
 
 /* Icon styles */
 .btn img.icono-boton {
-    width: 30px; /* Icon size */
+    width: 30px;
+    /* Icon size */
     height: 30px;
-    margin-right: 10px; /* Space between icon and text */
+    margin-right: 10px;
+    /* Space between icon and text */
 }
 
 /* Hover effect */
 .btn:hover {
-    background-color: #0056b3; /* Darker shade on hover */
-    transform: scale(1.05); /* Slightly enlarge the button */
+    background-color: #0056b3;
+    /* Darker shade on hover */
+    transform: scale(1.05);
+    /* Slightly enlarge the button */
 }
 
 /* Active effect */
 .btn:active {
-    transform: scale(0.95); /* Slightly shrink when clicked */
+    transform: scale(0.95);
+    /* Slightly shrink when clicked */
 }
 
 /* Focus effect for accessibility */
 .btn:focus {
-    outline: 2px solid #fff; /* White outline for focus */
-    outline-offset: 2px; /* Space between outline and button */
+    outline: 2px solid #fff;
+    /* White outline for focus */
+    outline-offset: 2px;
+    /* Space between outline and button */
 }
 
 .primary {
@@ -121,4 +135,15 @@
 
 .primary:hover {
     background: #0b7dda;
+}
+
+.perfil-imagen {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px solid #000000;
+    object-fit: cover;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+    margin-right: 10px;
+    vertical-align: middle;
 }
