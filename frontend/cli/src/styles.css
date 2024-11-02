@@ -166,3 +166,15 @@ body {
 .alert {
     font-size: 1rem;
 }
+.notificacion-count {
+    position: absolute; /* Posiciona el contador sobre el icono */
+    top: -10px; /* Ajusta según sea necesario */
+    right: 0px; /* Ajusta según sea necesario */
+    background-color: red; /* Color de fondo rojo */
+    color: white; /* Color de texto blanco */
+    border-radius: 50%; /* Hace que el contador sea circular */
+    padding: 2px 5px; /* Espaciado dentro del contador */
+    font-size: 12px; /* Tamaño de fuente para el número */
+    min-width: 20px; /* Ancho mínimo para que el contador tenga un buen aspecto */
+    text-align: center; /* Centra el texto */
+  }

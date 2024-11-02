@@ -129,15 +129,18 @@ import { Notificacion } from './notificaciones/notificacion';
           </li>
           <li class="dropdown">
             <a class="dropdown-toggle">
-              <span class="icon"><i class="fa fa-bell"></i></span>
-              <span class="text">Notificaciones</span>
-              <span *ngIf="notificaciones.filter(n => !n.leido).length > 0" class="badge">
-                {{ notificaciones.filter(n => !n.leido).length }}
+              <span class="icon" style="position: relative;"> <!-- Añadir posición relativa aquí -->
+                <i class="fa fa-bell"></i>
+                <span *ngIf="getNotificacionesNoLeidas().length > 0" class="notificacion-count">{{ getNotificacionesNoLeidas().length }}</span>
               </span>
+              <span class="text">Notificaciones</span>
             </a>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <li *ngFor="let notificacion of notificaciones">
-                <a class="dropdown-item" (click)="navegarPorNotificacion(notificacion)">{{ notificacion.mensaje }}</a>
+              <li *ngFor="let notificacion of getNotificacionesNoLeidas()">
+                <a class="dropdown-item" (click)="manejarClickNotificacion(notificacion)">
+                  {{ notificacion.mensaje }}
+                  <span *ngIf="!notificacion.leida">(No leída)</span>
+                </a>
               </li>
             </ul>
           </li>
@@ -160,8 +163,9 @@ export class AppComponent {
   esPantallaLogin = false;
   rutasSinSidebar: string[] = ['/login', '/registro', '/verificar-codigo', '/recuperar-contrasena', '/verificar-codigo?tipo=registro', '/verificar-codigo?tipo=recuperacion', '/verificar-mail', '/cambiar-contrasena'];
 
-  notificaciones: any[] = []; // Cambiamos el tipo a `any[]` para recibir cualquier tipo de datos de notificación
+  notificaciones: Notificacion[] = []; // Cambiamos el tipo a `any[]` para recibir cualquier tipo de datos de notificación
   idUsuarioAutenticado!: number; // Variable para almacenar el ID del usuario autenticado
+  notificacionesNoLeidasCount = 0;
 
   constructor(private router: Router, private ubicacionService: UbicacionService, private authService: AuthService, private notificacionService: NotificacionService,) { }
 
@@ -183,21 +187,18 @@ export class AppComponent {
     }
   }
 
+
   cargarNotificaciones(): void {
-    // Llama al servicio para obtener las notificaciones del usuario autenticado
     this.notificacionService.obtenerNotificaciones(this.idUsuarioAutenticado)
       .subscribe((dataPackage: DataPackage) => {
-        // Verifica si el status de la respuesta es exitoso (por ejemplo, 200 OK)
         if (dataPackage.status === 200) {
-          // Asigna las notificaciones del usuario autenticado
-          this.notificaciones = dataPackage.data as any[];
+          this.notificaciones = dataPackage.data as Notificacion[];
+          this.notificacionesNoLeidasCount = this.getNotificacionesNoLeidas().length; // Contar las no leídas
           console.log('Notificaciones cargadas:', this.notificaciones);
         } else {
-          // Maneja el error si el status no es exitoso
           console.error('Error al cargar las notificaciones:', dataPackage.message);
         }
       }, error => {
-        // Maneja posibles errores de la llamada HTTP
         console.error('Error al comunicarse con el servicio de notificaciones:', error);
       });
   }
@@ -261,4 +262,39 @@ export class AppComponent {
     this.router.navigate([urlDestino]);
   }
 
+  marcarLeida(idNotificacion: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.notificacionService.marcarLeida(idNotificacion).subscribe(
+        (dataPackage: DataPackage) => {
+          if (dataPackage.status === 200) {
+            const notificacion = this.notificaciones.find(n => n.id === idNotificacion);
+            if (notificacion) {
+              notificacion.leida = true;
+            }
+            resolve();
+          } else {
+            reject(new Error('No se pudo marcar la notificación como leída'));
+          }
+        },
+        error => {
+          reject(error);
+        }
+      );
+    });
+  }
+
+  getNotificacionesNoLeidas(): Notificacion[] {
+    return this.notificaciones.filter(notificacion => !notificacion.leida);
+  }
+
+  
+
+
+  manejarClickNotificacion(notificacion: Notificacion): void {
+    this.marcarLeida(notificacion.id).then(() => {
+      this.navegarPorNotificacion(notificacion);
+    }).catch(error => {
+      console.error('Error al manejar la notificación:', error);
+    });
+  }
 }
