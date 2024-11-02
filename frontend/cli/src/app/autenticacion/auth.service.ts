@@ -28,14 +28,27 @@ export class AuthService {
     return this.http.post<DataPackage>(`${this.autenticacionUrl}/cambiar-contrasena`, cambioContrasenaRequest);
   }
 
-  registro(nombreReal: string, nombreUsuario: string, correoElectronico: string, contrasena: string, fechaNacimiento: string, descripcion: string): Observable<any> {
+  registro(
+    nombreReal: string,
+    nombreUsuario: string,
+    correoElectronico: string,
+    contrasena: string,
+    fechaNacimiento: string,
+    descripcion: string,
+    privacidadPerfil: string,
+    privacidadEventos: string,
+    privacidadComunidades: string
+  ): Observable<any> {
     const usuario = {
       nombreReal,
       nombreUsuario,
       correoElectronico,
       contrasena,
       fechaNacimiento,
-      descripcion
+      descripcion,
+      privacidadPerfil,
+      privacidadEventos,
+      privacidadComunidades
     };
     return this.http.post(`${this.autenticacionUrl}/registro`, usuario);
   }

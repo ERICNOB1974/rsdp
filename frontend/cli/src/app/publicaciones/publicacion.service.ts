@@ -30,6 +30,12 @@ export class PublicacionService {
     return publicacion.id ? this.http.put<DataPackage>(` ${this.publicacionsUrl}/actualizar`, publicacion) :
       this.http.post<DataPackage>(` ${this.publicacionsUrl}/crear/${idUsuario}`, publicacion);
   }
+
+
+  publicarEnComunidad(publicacion: Publicacion, idComunidad: number): Observable<DataPackage> {
+    const idUsuario = this.authService.getUsuarioId();
+    return this.http.post<DataPackage>(`${this.publicacionsUrl}/crear/${idUsuario}/${idComunidad}`, publicacion);
+}
   estaLikeada(idPublicacion: number) {
     return this.http.get<DataPackage>(` ${this.publicacionsUrl}/isLikeada/${this.authService.getUsuarioId()}/${idPublicacion}`);
   }
@@ -50,6 +56,10 @@ export class PublicacionService {
   publicaciones(idUsuario: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicaciones/usuario/${idUsuario}`);
   }
+  publicacionesComunidad(idComunidad: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicaciones/comunidad/${idComunidad}`);
+  }
+
   publicacionesAmigos(idUsuario: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicaciones/amigos/usuario/${idUsuario}`);
   }
@@ -57,9 +67,17 @@ export class PublicacionService {
   publicadoPor(idPublicacion: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.publicacionsUrl}/usuarioPublicador/${idPublicacion}`);
   }
+  
+  cantidadLikes(idPublicacion: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.publicacionsUrl}/cantidadLikes/${idPublicacion}`);
+  }
 
   eliminar(idPublicacion: number): Observable<DataPackage> {
     return this.http.delete<DataPackage>(`${this.publicacionsUrl}/eliminar/${idPublicacion}`);
+  }
+
+  publicacionesAmigos2(userId: number, page: number = 0, pageSize: number = 5): Observable<any> {
+    return this.http.get(`${this.publicacionsUrl}/publicaciones/amigos/usuario/${userId}?page=${page}&size=${pageSize}`);
   }
 
 

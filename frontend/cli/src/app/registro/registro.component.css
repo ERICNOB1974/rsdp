@@ -8,7 +8,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #ffffff;
     margin: 0 auto; /* Centra horizontalmente */
     position: absolute; /* Permite que el elemento sea posicionado en relación a la pantalla */
     top: 40px; /* Alinea desde la parte superior (altura de la barra) */

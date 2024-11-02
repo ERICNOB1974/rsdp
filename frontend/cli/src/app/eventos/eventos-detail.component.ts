@@ -9,24 +9,30 @@ import { UsuarioService } from '../usuarios/usuario.service';
 import { MatDialog } from '@angular/material/dialog'; // Importar MatDialog para el modal
 import { ViewChild, TemplateRef } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom } from 'rxjs';import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
+
 
 @Component({
   selector: 'app-evento-detail',
   templateUrl: './eventos-detail.component.html',
   styleUrls: ['./eventos-detail.component.css'],
-  imports: [CommonModule],
+  imports: [MatProgressSpinnerModule,
+    CommonModule],
   standalone: true
 })
 export class EventoDetailComponent implements OnInit {
 
   evento!: Evento; // Evento específico que se va a mostrar
+  isLoading: boolean = false;
   participa: boolean = false;
   amigosNoEnEvento: any[] = [];
   amigosEnEvento: any[] = [];
   amigosYaInvitados: any[] = [];
 
   @ViewChild('modalInvitarAmigos') modalInvitarAmigos!: TemplateRef<any>;
+
+  creador: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -84,8 +90,10 @@ export class EventoDetailComponent implements OnInit {
     this.location.back();
   }
 
+
   inscribirse(): void {
     if (this.inscribirseValid()) {
+      this.isLoading = true;
       this.participa = true;
       this.eventoService.inscribirse(this.evento.id).subscribe(
         () => {
@@ -93,40 +101,52 @@ export class EventoDetailComponent implements OnInit {
             duration: 3000,
           });
           this.evento.participantes++;
+          this.isLoading = false; // Habilita el botón nuevamente en caso de error
         },
         error => {
           console.error('Error al inscribirse:', error);
           this.snackBar.open('Error al inscribirse', 'Cerrar', {
             duration: 3000,
           });
+          this.isLoading = false; // Habilita el botón nuevamente
+
         }
       );
     }
   }
-  
+
   salir(): void {
     this.eventoService.salir(this.evento.id).subscribe(
       dataPackage => {
+        this.isLoading = true;
         let mensaje = dataPackage.message;
         this.snackBar.open(mensaje, 'Cerrar', {
           duration: 3000,
         });
         this.participa = false;
-
         this.evento.participantes--;
+        this.isLoading = false;
       },
       error => {
         console.error('Error al salir del evento:', error);
         this.snackBar.open('Error al salir del evento', 'Cerrar', {
           duration: 3000,
         });
+        this.isLoading = false;
       }
     );
+  }
+
+  editarEvento():void{
+    
   }
 
   checkParticipacion(): void {
     this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
       this.participa = <boolean><unknown>dataPackage.data;
+    });
+    this.eventoService.creador(this.evento.id).subscribe((dataPackage) => {
+      this.creador = <boolean><unknown>dataPackage.data;
     });
   }
 
@@ -134,14 +154,9 @@ export class EventoDetailComponent implements OnInit {
     return this.participa;
   }
 
+
   inscribirseValid(): boolean {
-
-    // Imprime la evaluación completa antes de retornarla
-    const esValido = (this.evento.participantes < this.evento.cantidadMaximaParticipantes) && !this.participa;
-
-
-    // Retorna el resultado de la validación
-    return esValido;
+    return (this.evento.participantes < this.evento.cantidadMaximaParticipantes) && !this.participa;
   }
 
   abrirModalInvitarAmigos(): void {

@@ -14,10 +14,11 @@
   </div>
 
   <div class="interaction-container">
-    <div class="icons-container">
+    <div class="heart-container">
       <div class="heart" (click)="toggleLike()" [ngClass]="{'liked': isLiked}">
         <i class="fa" [ngClass]="isLiked ? 'fa-heart' : 'fa-heart-o'"></i>
       </div>
+      <span class="likes-count">{{ numeroLikes }}</span>
       <div class="comment-icon" (click)="showCommentInput = !showCommentInput">
         <i class="fa fa-comment"></i>
       </div>
@@ -41,9 +42,11 @@
         <p class="comment-text" style="font-size: 14px; margin: 0; color: #262626;">{{ com.texto }}</p>
       </div>
     </div>
+    
     <button *ngIf="isOwnPublication" (click)="deletePublicacion()" class="btn btn-danger">
       Eliminar publicación
     </button>
+    
   </div>
 
 </div>

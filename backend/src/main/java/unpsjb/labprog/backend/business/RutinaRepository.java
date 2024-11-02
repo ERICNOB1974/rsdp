@@ -5,8 +5,10 @@ import java.util.Optional;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Dia;
 import unpsjb.labprog.backend.model.Rutina;
 
@@ -221,6 +223,7 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
         @Query("MATCH (d:Dia) WHERE ID(d) = $diaId " +
                         "MATCH (e:Ejercicio) WHERE ID(e) = $ejercicioId " +
                         "CREATE (d)-[:TIENE_EJERCICIO {orden: $orden, tiempo: $tiempo}]->(e)")
+
         void relacionarDiaEjercicioResistencia(Long diaId, Long ejercicioId, int orden, String tiempo);
 
         @Query("MATCH (r:Rutina), (u:Usuario) " +
@@ -233,10 +236,37 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                         "MERGE (r)-[:ETIQUETADA_CON]->(e)")
         void etiquetarRutina(Long rutinaId, Long etiquetaId);
 
+        @Query("MATCH (c:Rutina)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
+                        "WITH c, collect(etiqueta.nombre) AS etiquetasRutina " +
+                        "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasRutina) " +
+                        "RETURN c")
+        List<Rutina> rutinasEtiquetas(@Param("etiquetas") List<String> etiquetas);
+
+        @Query("MATCH (c:Rutina) WHERE toUpper(c.nombre) CONTAINS toUpper($nombre) RETURN c")
+        List<Rutina> rutinasNombre(String nombre);
+
+     
+
         @Query("MATCH (r:Rutina), (u:Usuario) " +
         "WHERE id(u) = $usuarioId AND id(r) = $rutinaId " +
         "MERGE (u)-[rel:REALIZA_RUTINA]->(r) " +
         "ON CREATE SET rel.fechaComienzo = date()")
         void crearRelacionRealizaRutina(Long rutinaId, Long usuarioId);
+
+
+        @Query("MATCH (r:Rutina)-[:CREADA_POR]->(u:Usuario) " +
+        "WHERE id(u) = $idUsuario " +
+        "RETURN r " +
+        "ORDER BY r.nombre ASC " +
+        "SKIP $offset LIMIT $limit")
+        List<Rutina> rutinasCreadasPorUsuario(@Param("idUsuario") Long idUsuario, @Param("offset") int offset, @Param("limit") int limit);
+
+
+      @Query("MATCH (r:Rutina)-[rel:REALIZA_RUTINA]-(u:Usuario) " +
+        "WHERE id(u) = $idUsuario " +
+        "RETURN r " +
+        "ORDER BY rel.fechaComienzo ASC")
+        List<Rutina> rutinasRealizaUsuario(@Param("idUsuario") Long idUsuario);
+
 
 }

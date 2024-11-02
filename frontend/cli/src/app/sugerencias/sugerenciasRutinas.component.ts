@@ -83,7 +83,6 @@ getSugerencias(): void {
 
   traerEtiquetas(rutinas: Rutina[]): void {
       for (let rutina of rutinas) {
-        console.info("AAAAA");
       this.rutinaService.obtenerEtiquetasDeRutina(rutina.id!).subscribe(
         (dataPackage) => {
           if (dataPackage && Array.isArray(dataPackage.data)) {

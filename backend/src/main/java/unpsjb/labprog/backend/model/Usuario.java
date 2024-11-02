@@ -29,6 +29,9 @@ public class Usuario {
     private String descripcion;
     private double latitud;
     private double longitud;
+    private String privacidadPerfil;
+    private String privacidadEventos;
+    private String privacidadComunidades;
 
     
 }

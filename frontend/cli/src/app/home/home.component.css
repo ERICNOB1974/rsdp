@@ -1,7 +1,17 @@
 /* Contenedor principal de las publicaciones */
+.publicaciones-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+}
+
+/* Contenedor de cada publicación */
 .publicacion-container {
     max-width: 600px;
-    margin: 20px auto;
+    width: 100%;
+    margin: 20px 0;
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -9,6 +19,7 @@
     transition: transform 0.3s ease-in-out;
 }
 
+/* Efecto hover para las publicaciones */
 .publicacion-container:hover {
     transform: translateY(-5px);
 }
@@ -17,23 +28,29 @@
 .publicacion-header {
     padding: 12px;
     display: flex;
+    justify-content: space-between; /* Distribuir espacio entre usuario y fecha */
     align-items: center;
     border-bottom: 1px solid #efefef;
     background-color: #f9f9f9;
 }
 
-.publicacion-usuario {
+/* Estilo del usuario publicador */
+.usuario-publicador {
     font-weight: bold;
-    margin-left: 10px;
-    color: #333;
+    color: #0095f6; /* Color de enlace */
+    text-decoration: none; /* Sin subrayado */
+}
+
+.usuario-publicador:hover {
+    text-decoration: underline; /* Subrayado al pasar el mouse */
 }
 
 /* Contenido de la publicación */
 .publicacion-content {
     padding: 12px;
-    background-color: #fff;
 }
 
+/* Texto de la publicación */
 .publicacion-texto {
     margin-bottom: 10px;
     font-size: 1rem;
@@ -52,8 +69,6 @@
 .publicacion-fecha {
     font-size: 0.85rem;
     color: #777;
-    margin-top: 10px;
-    text-align: right;
 }
 
 /* Grid de publicaciones */
@@ -67,59 +82,14 @@
     gap: 20px;
 }
 
+/* Efecto hover para los ítems de publicación */
 .publicacion-item {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease-in-out;
-  cursor: pointer; /* Añadir cursor tipo pointer */
+    cursor: pointer; /* Añadir cursor tipo pointer */
 }
 
 .publicacion-item:hover {
-  transform: translateY(-5px); /* Efecto hover */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.publicacion-contenido {
-  padding: 15px;
-  background-color: #fff;
-}
-
-
-/* Estilo para los botones de acciones */
-.publicacion-actions {
-    padding: 12px;
-    border-top: 1px solid #efefef;
-    display: flex;
-    justify-content: space-between;
-}
-
-.btn {
-    padding: 8px 16px;
-    margin-right: 10px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.btn-primary {
-    background-color: #0095f6;
-    color: white;
-}
-
-.btn-primary:hover {
-    background-color: #007bb5;
-}
-
-.btn-secondary {
-    background-color: #efefef;
-    color: #262626;
-}
-
-.btn-secondary:hover {
-    background-color: #e0e0e0;
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* Estilo para el mensaje de carga */
@@ -134,7 +104,7 @@
 @media (max-width: 600px) {
     .publicacion-container {
         max-width: 100%;
-        margin: 10px;
+        margin: 10px 0;
     }
 
     .publicacion-imagen, .publicacion-video {
