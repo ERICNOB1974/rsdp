@@ -224,7 +224,6 @@ export class MuroComunidadComponent implements OnInit {
             }
         });
 
-        this.router.navigate(['/publicarEnComunidad']);
     }
 
     traerAdministradores(): Promise<void> {
