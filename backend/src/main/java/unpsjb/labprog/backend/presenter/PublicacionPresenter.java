@@ -30,6 +30,14 @@ public class PublicacionPresenter {
         return Response.ok(publicacionService.save(publicacion, idUsuario));
     }
 
+    @RequestMapping(path = "/crear/{idUsuario}/{idComunidad}", method = RequestMethod.POST)
+    public ResponseEntity<Object> publicarEnComunidad(@RequestBody Publicacion publicacion,
+            @PathVariable Long idUsuario, @PathVariable Long idComunidad)
+            throws Exception {
+                publicacionService.publicarEnComunidad(idComunidad, idUsuario, publicacion);
+        return Response.ok("OK");
+    }
+
     @DeleteMapping(path = "/eliminar/{idPublicacion}")
     public ResponseEntity<Object> eliminar(@PathVariable Long idPublicacion)
             throws Exception {
@@ -92,10 +100,26 @@ public class PublicacionPresenter {
         return Response.ok(publicaciones, "OK");
     }
 
+    @GetMapping("/publicaciones/comunidad/{idComunidad}")
+    public ResponseEntity<Object> publicacionesComunidad(@PathVariable Long idComunidad)
+            throws Exception {
+        List<Publicacion> publicaciones = publicacionService.publicacionesComunidad(idComunidad);
+        return Response.ok(publicaciones, "OK");
+    }
+
     @GetMapping("/comentarios/{idPublicacion}")
     public ResponseEntity<Object> obtenerNotificaciones(@PathVariable Long idPublicacion) {
         try {
             return Response.ok(publicacionService.obtenerComentariosPorPublicacion(idPublicacion));
+        } catch (Exception e) {
+            return Response.error("", "Error al obtener los comentarios: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/cantidadLikes/{idPublicacion}")
+    public ResponseEntity<Object> cantidadLikes(@PathVariable Long idPublicacion) {
+        try {
+            return Response.ok(publicacionService.cantidadLikes(idPublicacion));
         } catch (Exception e) {
             return Response.error("", "Error al obtener los comentarios: " + e.getMessage());
         }

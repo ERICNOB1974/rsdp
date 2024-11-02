@@ -8,6 +8,7 @@
 .carousel-container {
   display: flex;
   transition: transform 0.5s ease; /* Para animar el desplazamiento */
+  justify-content: center; /* Centra los elementos cuando hay menos de 4 */
   height: auto;
 }
 
@@ -38,7 +39,7 @@
 
 
 .carousel-item {
-  flex: 0 0 100%; /* Cada item ocupa todo el ancho */
+  flex: 0 0 25%; /* Cada item ocupa un cuarto del ancho si hay 4 o más */
   height: 100%;
   display: flex;
   align-items: center; /* Centra el contenido verticalmente */
@@ -109,7 +110,7 @@
 
 .evento-card {
   padding: 20px;
-  background-color: white;
+  background-color: rgb(97, 125, 250);
   border-radius: 8px;
   transition: transform 0.2s;
 }

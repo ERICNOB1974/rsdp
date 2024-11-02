@@ -5,17 +5,48 @@
         <button (click)="cambiarVista('solicitudes')" [class.active]="!mostrarAmigos">Solicitudes</button>
     </div>
 
+
     <div *ngIf="mostrarAmigos">
         <h2>Lista de Amigos</h2>
         <ul>
-            <li *ngFor="let amigo of amigos">{{ amigo.nombreUsuario }}</li>
+            <li *ngFor="let amigo of amigos" (click)="verPerfil(amigo)" class="clickable">
+                <!--<img [src]="amigo.fotoPerfil" alt="Foto de {{ amigo.nombreUsuario }}" class="avatar-circular">
+                -->
+                <span>{{ amigo.nombreUsuario }}</span>
+            </li>
         </ul>
     </div>
 
     <div *ngIf="!mostrarAmigos">
         <h2>Solicitudes de Amistad</h2>
         <ul>
-            <li *ngFor="let solicitud of solicitudes">{{ solicitud.nombreUsuario }}</li>
+            <li *ngFor="let solicitud of solicitudes" (click)="verPerfil(solicitud)" class="clickable">
+                <!--                 <img [src]="solicitud.fotoPerfil" alt="Foto de {{ solicitud.nombreUsuario }}" class="avatar-circular">
+ --> <span>{{ solicitud.nombreUsuario }}</span>
+                <div class="acciones-solicitud">
+                    <button (click)="gestionarSolicitud(solicitud, true); $event.stopPropagation()"
+                        class="btn-aceptar">Aceptar</button>
+                    <button (click)="gestionarSolicitud(solicitud, false);  $event.stopPropagation()"
+                        class="btn-rechazar">Rechazar</button>
+                </div>
+            </li>
+        </ul>
+
+
+
+    </div>
+    <!-- Buscador de usuarios -->
+    <div class="col-lg-5">
+        <div class="search-container">
+            <input type="text" placeholder="Buscar usuarios" #searchInput (input)="buscarUsuarios(searchInput.value)"
+                class="form-control search-input">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+        <ul class="list-group user-list">
+            <li *ngFor="let usuario of usuariosBuscados" class="list-group-item user-item">
+                <span>{{ usuario.nombreUsuario }} {{ usuario.nombreReal }}</span>
+                <button (click)="verPerfil(usuario)" class="btn btn-primary btn-sm">Ver perfil</button>
+            </li>
         </ul>
     </div>
 </div>

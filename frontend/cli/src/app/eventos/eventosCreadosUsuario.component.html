@@ -1,0 +1,16 @@
+<div class="eventos-container" *ngIf="eventosUsuario.length > 0; else noEventos">
+  <h2>Eventos Creados por Ti</h2>
+  <div class="eventos-list">
+    <div class="evento-card" *ngFor="let evento of eventosUsuario">
+      <h3>{{ evento.nombre }}</h3>
+      <p class="fecha-hora">Fecha y Hora: {{ evento.fechaHora | date:'medium' }}</p>
+      <button class="detalles-btn" (click)="irADetallesDelEvento(evento.id)">Ver Detalles</button>
+    </div>
+  </div>
+</div>
+
+<ng-template #noEventos>
+  <div class="no-eventos">
+    <p>No tienes eventos creados.</p>
+  </div>
+</ng-template>

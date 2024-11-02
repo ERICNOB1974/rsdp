@@ -1,6 +1,5 @@
 <div class="form-container">
-    <h2>Nueva publicacion</h2>
-    <form #form="ngForm" class="evento-form">
+    <h2>{{ tipo === 'comunidad' ? 'Nueva publicación en comunidad' : 'Nueva publicación' }}</h2>    <form #form="ngForm" class="evento-form">
         <div class="form-group">
             <label for="descripcion">Descripción</label>
             <input [(ngModel)]="publicacion.texto" name="descripcion">

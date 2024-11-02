@@ -1,5 +1,9 @@
 package unpsjb.labprog.backend.business;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
@@ -7,10 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Evento;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 @Repository
 public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
@@ -82,6 +82,19 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "CREATE (c)<-[:MIEMBRO {fechaIngreso: $fechaIngreso}]-(u)")
         void nuevoMiembro(Long idComunidad, Long idUsuario, LocalDateTime fechaIngreso);
 
+        @Query("MATCH (c:Comunidad)<-[r:MIEMBRO]-(u:Usuario) " +
+                        "WHERE id(c) = $idComunidad AND id(u) = $idUsuario " +
+                        "DELETE r ")
+void eliminarUsuario(Long idUsuario, Long idComunidad);
+
+
+        @Query("MATCH (c:Comunidad)-[:CREADA_POR]->(u:Usuario) " +
+        "WHERE id(u) = $idUsuario " +
+        "RETURN c " +
+        "ORDER BY c.fechaDeCreacion ASC " +
+        "SKIP $offset LIMIT $limit")
+        List<Comunidad> comunidadesCreadasPorUsuario(@Param("idUsuario") Long idUsuario, @Param("offset") int offset, @Param("limit") int limit);
+
         @Query("MATCH (c:Comunidad), (u:Usuario) WHERE id(c) = $idComunidad AND id(u) = $idUsuario " +
                         "MATCH (c)<-[r:MIEMBRO]-(u) DELETE r")
         void miembroSaliente(Long idComunidad, Long idUsuario);
@@ -122,6 +135,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
 
         @Query("MATCH (u:Usuario)-[r]-(c:Comunidad {id: $idComunidad}) " +
                         "WHERE type(r) <> 'SOLICITUD_DE_INGRESO '" +
+                        " AND type(r) <> 'NOTIFICACION' " +
                         "RETURN count(DISTINCT u) AS totalUsuarios")
         int cantidadUsuarios(Long idComunidad);
 
@@ -152,9 +166,9 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "RETURN c ORDER BY c.nombre ASC")
         List<Comunidad> disponibles();
 
-        @Query("MATCH (u:Usuario)-[:MIEMBRO]->(c:Comunidad) " +
+        @Query("MATCH (u:Usuario)-[r:MIEMBRO]->(c:Comunidad) " +
                         "WHERE id(u) = $idUsuario " +
-                        "RETURN c ORDER BY c.nombre ASC")
+                        "RETURN c ORDER BY r.fechaIngreso ASC")
         List<Comunidad> miembroUsuario(Long idUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario) " +
@@ -214,5 +228,22 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "LIMIT 3")
         List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnComunidades2(
                         @Param("nombreUsuario") String nombreUsuario);
+
+        @Query("MATCH (c:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
+                        "WITH c, collect(etiqueta.nombre) AS etiquetasComunidad " +
+                        "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasComunidad) " +
+                        "RETURN c")
+        List<Comunidad> comunidadesEtiquetas(@Param("etiquetas") List<String> etiquetas);
+
+        @Query("MATCH (c:Comunidad) WHERE toUpper(c.nombre) CONTAINS toUpper($nombre) RETURN c")
+        List<Comunidad> comunidadesNombre(String nombre);
+
+        @Query("MATCH (c:Comunidad) " +
+                        "OPTIONAL MATCH (u:Usuario)-[r]-(c) " +
+                        "WHERE type(r) <> 'SOLICITUD_DE_INGRESO' AND type(r) <> 'NOTIFICACION' " +
+                        "WITH c, count(DISTINCT u) AS totalUsuarios " +
+                        "WHERE totalUsuarios >= $min AND totalUsuarios <= $max " +
+                        "RETURN c")
+        List<Comunidad> comunidadesCantidadParticipantes(int min, int max);
 
 }

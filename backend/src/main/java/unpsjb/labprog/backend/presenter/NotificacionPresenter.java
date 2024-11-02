@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.NotificacionService;
@@ -26,5 +27,11 @@ public class NotificacionPresenter {
         } catch (Exception e) {
             return Response.error("", "Error al obtener las notificaciones: " + e.getMessage());
         }
+    }
+
+    @PostMapping("/marcar-leida/{id}")
+    public ResponseEntity<Object> marcarNotificacionLeida(@PathVariable Long id) {
+            return Response.ok(notificacionService.marcarLeida(id));
+        
     }
 }

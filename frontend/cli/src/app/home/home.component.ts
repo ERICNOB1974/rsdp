@@ -43,7 +43,7 @@ export class HomeComponent implements OnInit {
     this.loading = true;
     const userId = this.authService.getUsuarioId();
     if (userId) {
-      this.publicacionService.publicacionesAmigos(+userId).subscribe(
+      this.publicacionService.publicacionesAmigos2(+userId).subscribe(
         (dataPackage) => {
           if (dataPackage.status === 200) {
             const newPublicaciones = dataPackage.data as Publicacion[];
@@ -81,6 +81,8 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  
+
   toggleLike(publicacion: Publicacion) {
     this.publicacionService.estaLikeada(publicacion.id).subscribe(
       (dataPackage) => {
@@ -101,6 +103,8 @@ export class HomeComponent implements OnInit {
   }
 
   
-
+  goToPerfil(usuarioId: number) {
+    this.router.navigate(['/perfil', usuarioId]); // Ajusta la ruta según tu configuración de enrutamiento
+  }
 
 }

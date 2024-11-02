@@ -64,6 +64,10 @@ export class EventoService {
     const nombreUsuario = this.authService.getNombreUsuario();
     return this.http.get<DataPackage>(`${this.eventosUrl}/estaInscripto/${nombreUsuario}/${idEvento}`);
   }
+  creador(idEvento: number): Observable<DataPackage> {
+    const idUsuario = this.authService.getUsuarioId();
+    return this.http.get<DataPackage>(`${this.eventosUrl}/esCreadoPor/${idUsuario}/${idEvento}`);
+  }
 
   async obtenerUbicacion(latitud: number, longitud: number): Promise<string> {
     try {
@@ -121,7 +125,11 @@ export class EventoService {
   disponibles(): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.eventosUrl}/disponibles`);
   }
-
+  
+  eventosCreadosPorUsuario(offset: number, limit: number): Observable<DataPackage> {
+    const userId = this.authService.getUsuarioId();
+    return this.http.get<DataPackage>(`${this.eventosUrl}/eventosCreadosPorUsuario/${userId}?offset=${offset}&limit=${limit}`);
+  }
 
   participaUsuario(idUsuario: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.eventosUrl}/participa/${idUsuario}`);

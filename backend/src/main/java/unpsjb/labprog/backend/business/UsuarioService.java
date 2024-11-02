@@ -29,6 +29,9 @@ public class UsuarioService {
     @Autowired
     EmailService emailService;
 
+    @Autowired
+    NotificacionService notificacionService;
+
     public List<Usuario> findAll() {
         return usuarioRepository.findAll();
     }
@@ -98,14 +101,25 @@ public class UsuarioService {
     public boolean existeNombreUsuario(String nombreUsuario){
         return usuarioRepository.existeNombreUsuario(nombreUsuario);
     }
-
-
-
+    public List<Usuario> buscarUsuarios(String term){
+        return usuarioRepository.buscarUsuarios(term);
+    }
 
 
     public boolean sonAmigos(Long idEmisor, Long idReceptor){
         return usuarioRepository.sonAmigos(idEmisor, idReceptor);
     }
+
+    public String eliminarAmigo(Long idEmisor, Long idReceptor){
+         usuarioRepository.eliminarAmigo(idEmisor,idReceptor);
+         return "Amigo eliminado Correctamente";
+    }
+
+    public String cancelarSolicitudAmistad(Long idUsuario, Long idReceptor){
+        usuarioRepository.rechazarSolicitudAmistad(idUsuario, idReceptor);
+        notificacionService.eliminarNotificacionSolicitudEntrante(idUsuario, idReceptor);
+        return "solicitud cancelada correctamente";
+   }
 
     public boolean solicitudAmistadExiste(Long idEmisor, Long idReceptor){
         return usuarioRepository.solicitudAmistadExiste(idEmisor, idReceptor);
