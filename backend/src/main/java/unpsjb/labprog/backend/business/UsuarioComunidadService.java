@@ -23,7 +23,6 @@ public class UsuarioComunidadService {
     @Autowired
     private NotificacionService notificacionService;
 
-
     public String solicitarIngreso(Long idUsuario, Long idComunidad) throws Exception {
         Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
         if (comunidadOpt.isEmpty()) {
@@ -36,7 +35,6 @@ public class UsuarioComunidadService {
         Comunidad comunidad = comunidadOpt.get();
         Usuario usuario = usuarioOpt.get();
 
-        
         // Verificar si el usuario ya es miembro de la comunidad
         if (usuarioRepository.esMiembro(idUsuario, idComunidad)) {
             throw new Exception("El usuario ya es miembro de la comunidad.");
@@ -93,7 +91,6 @@ public class UsuarioComunidadService {
         comunidadRepository.otorgarRolAdministrador(idMiembro, idComunidad, fechaIngreso, LocalDateTime.now());
         return "Rol administrador otorgado a: " + usuario.getNombreUsuario() + " correctamente";
     }
-    
 
     public String quitarRolAdministrador(Long idCreador, Long idAdministrador, Long idComunidad) throws Exception {
         // Verificar la existencia de la comunidad
@@ -101,42 +98,41 @@ public class UsuarioComunidadService {
         if (comunidadOpt.isEmpty()) {
             throw new Exception("La comunidad no existe.");
         }
-    
+
         // Verificar la existencia del creador
         Optional<Usuario> creadorOpt = usuarioRepository.findById(idCreador);
         if (creadorOpt.isEmpty()) {
             throw new Exception("El usuario creador no existe.");
         }
-    
+
         // Verificar la existencia del administrador
         Optional<Usuario> miembroOpt = usuarioRepository.findById(idAdministrador);
         if (miembroOpt.isEmpty()) {
             throw new Exception("El usuario administrador no existe.");
         }
         Usuario usuario = miembroOpt.get();
-    
+
         // Verificar permisos
         if (!usuarioRepository.esCreador(idCreador, idComunidad)) {
             throw new Exception("No posee los permisos para otorgar el rol.");
         }
-    
+
         // Verificar si el usuario es realmente un administrador
         if (!usuarioRepository.esAdministrador(idAdministrador, idComunidad)) {
             throw new Exception("El usuario al que se le quiere quitar el rol no es administrador.");
         }
-    
+
         // Obtener la fecha de ingreso
         LocalDateTime fechaIngreso = comunidadRepository.obtenerFechaIngreso(idAdministrador, idComunidad);
         if (fechaIngreso == null) {
             throw new Exception("No se pudo obtener la fecha de ingreso del administrador.");
         }
-    
+
         // Realizar la operación en la base de datos
         comunidadRepository.quitarRolAdministrador(idAdministrador, idComunidad, fechaIngreso);
-        
+
         return "Rol administrador quitado a: " + usuario.getNombreUsuario() + " correctamente.";
     }
-    
 
     public Comunidad guardarComunidadYCreador(Comunidad comunidad, Long idUsuario) throws Exception {
         Optional<Usuario> miembroOpt = usuarioRepository.findById(idUsuario);
@@ -180,42 +176,39 @@ public class UsuarioComunidadService {
             throw new Exception("La comunidad esta llena");
         }
         comunidadRepository.eliminarSolicitudIngreso(idUsuario, idComunidad);
-        comunidadRepository.nuevoMiembro(idComunidad,idUsuario,LocalDateTime.now());
+        comunidadRepository.nuevoMiembro(idComunidad, idUsuario, LocalDateTime.now());
         notificacionService.crearNotificacion(idUsuario, idComunidad, "ACEPTACION_PRIVADA", LocalDateTime.now());
 
         return "Solicitud de ingreso aceptada correctamente";
     }
 
     public String eliminarUsuario(Long idSuperUsuario, Long idUsuario, Long idComunidad)
-    throws Exception {
-Optional<Usuario> miembroOpt = usuarioRepository.findById(idUsuario);
-if (miembroOpt.isEmpty()) {
-    throw new Exception("El usuario no existe.");
-}
-Optional<Usuario> superUsuario = usuarioRepository.findById(idSuperUsuario);
-if (superUsuario.isEmpty()) {
-    throw new Exception("El usuario con permisos no existe.");
-}
+            throws Exception {
+        Optional<Usuario> miembroOpt = usuarioRepository.findById(idUsuario);
+        if (miembroOpt.isEmpty()) {
+            throw new Exception("El usuario no existe.");
+        }
+        Optional<Usuario> superUsuario = usuarioRepository.findById(idSuperUsuario);
+        if (superUsuario.isEmpty()) {
+            throw new Exception("El usuario con permisos no existe.");
+        }
 
-Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
-if (comunidadOpt.isEmpty()) {
-    throw new Exception("La comunidad no existe.");
-}
-Comunidad comunidad = comunidadOpt.get();
-if (!usuarioRepository.esMiembro(idUsuario, idComunidad)) {
-    throw new Exception("El usuario no es miembro de la comunidad");
-}
-if ((!usuarioRepository.esCreador(idSuperUsuario, idComunidad))
-        && (!usuarioRepository.esAdministrador(idSuperUsuario, idComunidad))) {
-    throw new Exception("Este usuario no puede gestionar solicitudes");
-}
+        Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
+        if (comunidadOpt.isEmpty()) {
+            throw new Exception("La comunidad no existe.");
+        }
+        if (!usuarioRepository.esMiembro(idUsuario, idComunidad)) {
+            throw new Exception("El usuario no es miembro de la comunidad");
+        }
+        if ((!usuarioRepository.esCreador(idSuperUsuario, idComunidad))
+                && (!usuarioRepository.esAdministrador(idSuperUsuario, idComunidad))) {
+            throw new Exception("Este usuario no puede gestionar solicitudes");
+        }
 
+        comunidadRepository.eliminarUsuario(idUsuario, idComunidad);
 
-comunidadRepository.eliminarUsuario(idUsuario, idComunidad);
-
-return "Miembro eliminado de la comunidad correctamente";
-}
-
+        return "Miembro eliminado de la comunidad correctamente";
+    }
 
     public List<Usuario> visualizarSolicitudes(Long idSuperUsuario, Long idComunidad) throws Exception {
 
