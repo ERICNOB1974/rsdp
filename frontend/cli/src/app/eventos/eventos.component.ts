@@ -348,4 +348,6 @@ export class EventosComponent implements OnInit {
   irADetallesDelEvento(id: number): void {
     this.router.navigate(['/eventos', id]); // Navega a la ruta /eventos/:id
   }
+
+  
 }

@@ -17,12 +17,12 @@ import { DataPackage } from '../data-package';
 
 @Component({
   selector: 'app-crear-evento',
-  templateUrl: './crearEvento.component.html',
+  templateUrl: './editarEvento.component.html',
   styleUrls: ['./crearEvento.component.css'],
   standalone: true,
   imports: [FormsModule, NgbTypeaheadModule, CommonModule]
 })
-export class CrearEventoComponent {
+export class EditarEventoComponent {
 
   evento!: Evento;
   minFechaHora: string = '';
@@ -39,6 +39,10 @@ export class CrearEventoComponent {
   marcador!: L.Marker; // Agregar una propiedad para el marcador
   private buscarDireccionSubject = new Subject<string>();
   ubicacionAceptada: boolean = false; // Nueva propiedad
+  latitud: number = 0;
+  longitud: number = 0;
+  participantes: number = 0;
+  maxParticipantes: number = 1; // Inicializar con 1
 
 
   constructor(
@@ -51,40 +55,51 @@ export class CrearEventoComponent {
     private route: ActivatedRoute
   ) { }
 
-  ngOnInit(): void {
-    this.evento = <Evento>{
-      fechaDeCreacion: new Date(),
-      nombre: "",
-      descripcion: "",
-      esPrivadoParaLaComunidad: false,
-      participantes: 0
-    }; // Aseguramos que el objeto evento esté inicializado
-    this.setMinFechaHora();
-    this.obtenerUbicacionYIniciarMapa();
-    // Suscribirse al Subject para realizar la búsqueda con debounce
-    this.buscarDireccionSubject.pipe(debounceTime(300)).subscribe((query: string) => {
-      this.realizarBusqueda(query);
-    });
+  async ngOnInit(): Promise<void> {
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id != "new" && id != null) {
+      this.eventoService.get(id).subscribe(async (dataPackage) => {
+        this.evento = <Evento>dataPackage.data;
+        this.latitud = this.evento.latitud;
+        this.longitud = this.evento.longitud;
+        this.obtenerUbicacionYIniciarMapa();
+        if (this.evento.fechaHora) {
+          const fecha = new Date(this.evento.fechaHora);
+          const year = fecha.getFullYear();
+          const month = String(fecha.getMonth() + 1).padStart(2, '0');
+          const day = String(fecha.getDate()).padStart(2, '0');
+          const hours = String(fecha.getHours()).padStart(2, '0');
+          const minutes = String(fecha.getMinutes()).padStart(2, '0');
+
+          this.evento.fechaHora = `${year}-${month}-${day}T${hours}:${minutes}`;
+          this.eventoService.etiquetasDelEvento(this.evento.id).subscribe(dataPackage => {
+            this.etiquetasSeleccionadas = <Etiqueta[]>dataPackage.data;
+          });
+          this.eventoService.participantesEnEvento(this.evento.id).subscribe(dataPackage => {
+            this.participantes = <number><unknown>dataPackage.data;
+            this.maxParticipantes = Math.max(1, this.participantes); // Actualizar el máximo permitido
+
+          })
+          console.log(this.participantes);
+        }
+      });
+
+
+      // Suscribirse al Subject para realizar la búsqueda con debounce
+      this.buscarDireccionSubject.pipe(debounceTime(300)).subscribe((query: string) => {
+        this.realizarBusqueda(query);
+      });
+    } else {
+      this.router.navigate(['eventos/crearEvento']);
+    }
   }
 
   private obtenerUbicacionYIniciarMapa(): void {
-    this.ubicacionService.obtenerUbicacion().then(() => {
-      const latitud = this.ubicacionService.getLatitud();
-      const longitud = this.ubicacionService.getLongitud();
+    if (this.latitud !== null && this.longitud !== null) {
+      this.iniciarMapa(this.latitud, this.longitud); // Inicia el mapa con las coordenadas del usuario
+      this.ubicacionAceptada = true; // Habilitar la interacción
+    }
 
-      if (latitud !== null && longitud !== null) {
-        this.iniciarMapa(latitud, longitud); // Inicia el mapa con las coordenadas del usuario
-        this.ubicacionAceptada = true; // Habilitar la interacción
-      } else {
-        this.ubicacionAceptada = false;
-        console.error('No se pudo obtener la ubicación del usuario.');
-        this.iniciarMapa(-42.7692, -65.0385); // Coordenadas por defecto
-      }
-    }).catch((error) => {
-      this.ubicacionAceptada = false; // Deshabilitar la interacción
-      this.mostrarAlertaDeUbicacionRechazada(); // Mostrar un mensaje al usuario
-      console.error('Error al obtener la ubicación:', error);
-    });
   }
 
   private mostrarAlertaDeUbicacionRechazada(): void {
@@ -135,13 +150,18 @@ export class CrearEventoComponent {
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
     }).addTo(this.mapa);
+    this.marcador = L.marker([lat, lng]).addTo(this.mapa);
+
 
     // Agregar evento de clic en el mapa para mover el marcador
-    this.mapa.on('click', (event: L.LeafletMouseEvent) => {
-      this.moverMarcador(event.latlng);
-      this.evento.latitud = event.latlng.lat;
-      this.evento.longitud = event.latlng.lng;
+    this.marcador.on('dragend', (event) => {
+      const position = event.target.getLatLng();
+      this.evento.latitud = position.latlng.lat;
+      this.evento.longitud = position.latlng
+        .lng;
     });
+
+
   }
 
   buscarDireccion(event: Event): void {
@@ -205,18 +225,6 @@ export class CrearEventoComponent {
     this.mapa.setView(latlng, 16);
   }
 
-  setMinFechaHora(): void {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = (today.getMonth() + 1).toString().padStart(2, '0');
-    const day = today.getDate().toString().padStart(2, '0');
-    const hours = today.getHours().toString().padStart(2, '0');
-    const minutes = today.getMinutes().toString().padStart(2, '0');
-    //const seconds = today.getSeconds().toString().padStart(2, '0');
-    //  const milliseconds = today.getMilliseconds().toString().padStart(3, '0');
-    //    this.minFechaHora=`${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}`;
-    this.minFechaHora = `${year}-${month}-${day}T${hours}:${minutes}`;
-  }
 
   searchEtiqueta = (text$: Observable<string>): Observable<EtiquetaPopularidadDTO[]> =>
     text$.pipe(
@@ -305,19 +313,6 @@ export class CrearEventoComponent {
   }
 
 
-  formatFechaHora(fechaHora: string): string {
-    const fecha = new Date(fechaHora);
-    const year = fecha.getFullYear();
-    const month = (fecha.getMonth() + 1).toString().padStart(2, '0');
-    const day = fecha.getDate().toString().padStart(2, '0');
-    const hours = fecha.getHours().toString().padStart(2, '0');
-    const minutes = fecha.getMinutes().toString().padStart(2, '0');
-    const seconds = fecha.getSeconds().toString().padStart(2, '0');
-    const milliseconds = fecha.getMilliseconds().toString().padStart(3, '0');
-
-    // Formatear la fecha como "yyyy-MM-ddThh:mm:ss.SSS"
-    return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}`;
-  }
 
   isFormValid(): boolean {
     return !!this.evento &&
@@ -327,7 +322,12 @@ export class CrearEventoComponent {
       !!(this.etiquetasSeleccionadas.length <= 15) &&
       !!this.evento.cantidadMaximaParticipantes &&
       !!this.evento.latitud &&
-      !!this.evento.longitud
+      !!this.evento.longitud &&
+      this.evento.cantidadMaximaParticipantes >= this.maxParticipantes
+
   }
 
+
 }
+
+
