@@ -127,23 +127,25 @@ import { Notificacion } from './notificaciones/notificacion';
               </li>
             </ul>
           </li>
-          <li class="dropdown">
-            <a class="dropdown-toggle">
-              <span class="icon" style="position: relative;"> <!-- Añadir posición relativa aquí -->
-                <i class="fa fa-bell"></i>
-                <span *ngIf="getNotificacionesNoLeidas().length > 0" class="notificacion-count">{{ getNotificacionesNoLeidas().length }}</span>
-              </span>
-              <span class="text">Notificaciones</span>
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <li *ngFor="let notificacion of getNotificacionesNoLeidas()">
-                <a class="dropdown-item" (click)="manejarClickNotificacion(notificacion)">
-                  {{ notificacion.mensaje }}
-                  <span *ngIf="!notificacion.leida">(No leída)</span>
-                </a>
-              </li>
-            </ul>
-          </li>
+            <li class="dropdown">
+              <a class="dropdown-toggle">
+                <span class="icon" style="position: relative;">
+                  <i class="fa fa-bell"></i>
+                  <span *ngIf="getNotificacionesNoLeidas().length > 0" class="notificacion-count">{{ getNotificacionesNoLeidas().length }}</span>
+                </span>
+                <span class="text">Notificaciones</span>
+              </a>
+              <ul class="dropdown-menu notificaciones-menu" aria-labelledby="dropdownMenuButton">
+                <li *ngFor="let notificacion of getNotificacionesNoLeidas()">
+                  <a class="dropdown-item" (click)="manejarClickNotificacion(notificacion)">
+                    <div class="notificacion-item">
+                      <p>{{ notificacion.mensaje }}</p>
+                      <span *ngIf="!notificacion.leida" class="notificacion-nueva"></span>
+                    </div>
+                  </a>
+                </li>
+              </ul>
+            </li>
           <li>
               <a (click)="logout()" class="logout-button" href="javascript:void(0);">
                   <span class="icon"><i class="fa fa-sign-out"></i></span>

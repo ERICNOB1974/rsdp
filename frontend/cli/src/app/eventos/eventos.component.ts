@@ -340,7 +340,7 @@ export class EventosComponent implements OnInit {
         eventosParaMostrar.push(evento); // Agregar solo si no está participando
       }
     }
-
+    console.info(eventosParaMostrar);
     return eventosParaMostrar;
   }
 
