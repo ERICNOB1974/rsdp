@@ -9,7 +9,6 @@ import unpsjb.labprog.backend.model.Usuario;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Optional;
 import java.util.List;
 
 @Service

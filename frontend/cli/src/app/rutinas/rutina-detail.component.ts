@@ -37,7 +37,18 @@ export class RutinaDetailComponent implements OnInit {
   
   iniciarRutina() {
     const rutinaId = this.route.snapshot.paramMap.get('id')!;
+    this.rutinaService.crearRelacionRealizaRutina(Number(rutinaId)).subscribe(
+      response => {
+        // Aquí puedes manejar el éxito de la operación, por ejemplo, redirigir o mostrar un mensaje.
+        console.log('Rutina iniciada exitosamente', response);
+      },
+      error => {
+        // Aquí puedes manejar el error, como mostrar un mensaje de error
+        console.error('Error al iniciar la rutina', error);
+      }
+    );
     this.router.navigate([`rutinas/hacer/${rutinaId}`]); 
-  }  
-
+  }
+  
+  
 }

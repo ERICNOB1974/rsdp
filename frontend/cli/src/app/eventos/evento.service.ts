@@ -135,6 +135,9 @@ export class EventoService {
     return this.http.get<DataPackage>(` ${this.eventosUrl}/participa/${idUsuario}`);
   }
 
-
+  eventosFuturosPertenecientesAUnUsuario(): Observable<DataPackage> {
+    const nombreUsuario = this.authService.getNombreUsuario();
+    return this.http.get<DataPackage>(` ${this.eventosUrl}/eventosFuturosPertenecientesAUnUsuario/${nombreUsuario}`);
+  }
 
 }
