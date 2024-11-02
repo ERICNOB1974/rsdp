@@ -222,12 +222,11 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
                         "RETURN amigo")
         List<Usuario> todosLosAmigosDeUnUsuarioPertenecientesAUnEvento(Long idUsuario, Long idEvento);
 
-        @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
-                        "WHERE id(u) = $idUsuario AND id(comunidad) = $idComunidad " +
-                        "AND ( (amigo)-[:MIEMBRO]->(comunidad:Comunidad) " +
-                        "       OR (amigo)-[:ADMINISTRADA_POR]->(comunidad) " +
-                        "       OR (amigo)-[:CREADA_POR]->(comunidad) ) " +
-                        "RETURN amigo")
+        @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario), " +
+        "(amigo)-[rel]->(comunidad:Comunidad) " +
+        "WHERE id(u) = $idUsuario AND id(comunidad) = $idComunidad " +
+        "AND type(rel) IN ['MIEMBRO', 'ADMINISTRADA_POR', 'CREADA_POR'] " +
+        "RETURN amigo") 
         List<Usuario> todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad);
 
         @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
@@ -236,10 +235,9 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
         List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(Long idUsuario, Long idEvento);
 
         @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
-                        "WHERE id(u) = $idUsuario AND NOT ( (amigo)-[:MIEMBRO]->(:Comunidad {id: $idComunidad}) " +
-                        "       OR (amigo)-[:ADMINISTRADA_POR]->(:Comunidad {id: $idComunidad}) " +
-                        "       OR (amigo)-[:CREADA_POR]->(:Comunidad {id: $idComunidad}) ) " +
-                        "RETURN amigo")
+        "WHERE id(u) = $idUsuario AND NOT " +
+        "((amigo)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]->(:Comunidad {id: $idComunidad})) " +
+        "RETURN amigo") 
         List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad);
 
         @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario) " +

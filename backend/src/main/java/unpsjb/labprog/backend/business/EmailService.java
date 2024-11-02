@@ -44,6 +44,10 @@ public class EmailService {
     @Autowired
     private EventoService eventoService;
 
+    @Lazy
+    @Autowired
+    private ComunidadService comunidadService;
+
     public void recordatorioEvento() throws MessagingException {
         try {
             Map<Evento, List<Usuario>> usuarios = usuariosNotificables();
@@ -79,6 +83,17 @@ public class EmailService {
         email.setMensaje("El usuario " + usuarioEmisor.getNombreUsuario() + " te ha invitado al evento: " + eventoService.findById(idEvento).getNombre());
         this.enviarMailGenerico(email);
     }
+
+    public void invitacionComunidad(Long idUsuarioEmisor, Long idUsuarioReceptor, Long idComunidad){
+        Usuario usuarioEmisor = usuarioRepository.findById(idUsuarioEmisor).orElse(null);
+        Usuario usuarioReceptor = usuarioRepository.findById(idUsuarioReceptor).orElse(null);
+        Email email = new Email();
+        email.setAsunto("Invitación a comunidad");
+        email.setDestinatario(usuarioReceptor.getCorreoElectronico());
+        email.setMensaje("El usuario " + usuarioEmisor.getNombreUsuario() + " te ha invitado a la comunidad: " + comunidadService.findById(idComunidad).getNombre());
+        this.enviarMailGenerico(email);
+    }
+
 
     public void enviarMailCambio(boolean cambioFecha, boolean cambioUbicacion, Evento evento)
             throws MessagingException {
