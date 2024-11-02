@@ -217,10 +217,17 @@ public class EventoPresenter {
         return Response.ok("OK");
     }
 
+    @DeleteMapping("/eliminarParticipante/{idEvento}/{idUsuario}")
+    public ResponseEntity<Object> eliminarParticipante(@PathVariable Long idEvento, @PathVariable Long idUsuario) {
+        eventoService.eliminarUsuario(idEvento, idUsuario);
+        return Response.ok("OK");
+    }
+
     @GetMapping("/listaParticipantes/{idEvento}")
     public ResponseEntity<Object> todosLosParticipantes(@PathVariable Long idEvento) {
-        return  Response.ok(eventoService.todosLosParticipantes(idEvento));
+        return Response.ok(eventoService.todosLosParticipantes(idEvento));
     }
+
     @GetMapping("/eventosFuturosPertenecientesAUnUsuario/{nombreUsuario}")
     public ResponseEntity<Object> eventosFuturosPertenecientesAUnUsuario(@PathVariable String nombreUsuario) {
         List<Evento> eventosDeRutinas = eventoService.eventosFuturosPertenecientesAUnUsuario(nombreUsuario);

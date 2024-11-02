@@ -301,8 +301,14 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
         List<ScoreEvento> sugerenciasDeEventosBasadosEnRutinas2(String nombreUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN|CREADO_POR]-(e:Evento) " +
-        "WHERE e.fechaHora > datetime() " + 
-        "RETURN e")
+                        "WHERE e.fechaHora > datetime() " +
+                        "RETURN e")
         List<Evento> eventosFuturosPertenecientesAUnUsuario(String nombreUsuario);
 
+        @Query("""
+                        MATCH (u:Usuario) WHERE id(u)=$idUsuario
+                        MATCH (e:Evento) WHERE id(e)=$idEvento
+                        MATCH (u)-[r:PARTICIPA_EN]->(e) DELETE r
+                                   """)
+        void eliminarUsuario(Long idEvento, Long idUsuario);
 }
