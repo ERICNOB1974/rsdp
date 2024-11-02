@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -67,6 +68,18 @@ public class EmailPresenter {
 
     private String generarCodigo() {
         return String.format("%06d", (int) (Math.random() * 1_000_000)); // Código de 6 dígitos
+    }
+
+    @GetMapping("/invitacionEvento/{idUsuarioEmisor}/{idUsuarioReceptor}/{idEvento}")
+    public ResponseEntity<Object> invitacionEvento(@PathVariable Long idUsuarioEmisor, @PathVariable Long idUsuarioReceptor, @PathVariable Long idEvento) throws MessagingException {
+        emailService.invitacionEvento(idUsuarioEmisor,idUsuarioReceptor,idEvento);
+        return Response.ok("Correo enviado exitosamente");
+    }
+
+    @GetMapping("/invitacionComunidad/{idUsuarioEmisor}/{idUsuarioReceptor}/{idComunidad}")
+    public ResponseEntity<Object> invitacionComunidad(@PathVariable Long idUsuarioEmisor, @PathVariable Long idUsuarioReceptor, @PathVariable Long idComunidad) throws MessagingException {
+        emailService.invitacionEvento(idUsuarioEmisor,idUsuarioReceptor,idComunidad);
+        return Response.ok("Correo enviado exitosamente");
     }
 
 }

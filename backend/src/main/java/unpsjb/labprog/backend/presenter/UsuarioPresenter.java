@@ -245,4 +245,44 @@ public class UsuarioPresenter {
         }
     }
 
+    @PostMapping("/enviarInvitacionEvento/{idUsuarioEmisor}/{idUsuarioReceptor}/{idEvento}")
+    public ResponseEntity<Object> enviarInvitacionEvento(@PathVariable Long idUsuarioEmisor, @PathVariable Long idUsuarioReceptor, @PathVariable Long idEvento){
+        return Response.ok(usuarioService.enviarInvitacionEvento(idUsuarioEmisor, idUsuarioReceptor, idEvento));
+    }
+
+    @PostMapping("/enviarInvitacionComunidad/{idUsuarioEmisor}/{idUsuarioReceptor}/{idComunidad}")
+    public ResponseEntity<Object> enviarInvitacionComunidad(@PathVariable Long idUsuarioEmisor, @PathVariable Long idUsuarioReceptor, @PathVariable Long idComunidad){
+        return Response.ok(usuarioService.enviarInvitacionComunidad(idUsuarioEmisor, idUsuarioReceptor, idComunidad));
+    }
+    
+    @GetMapping("/todosLosAmigosDeUnUsuarioPertenecientesAUnEvento/{idUsuario}/{idEvento}")
+    public ResponseEntity<Object> todosLosAmigosDeUnUsuarioPertenecientesAUnEvento(@PathVariable Long idUsuario, @PathVariable Long idEvento){
+        return Response.ok(usuarioService.todosLosAmigosDeUnUsuarioPertenecientesAUnEvento(idUsuario, idEvento));
+    }
+
+    @GetMapping("/todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad/{idUsuario}/{idComunidad}")
+    public ResponseEntity<Object> todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(@PathVariable Long idUsuario, @PathVariable Long idComunidad){
+        return Response.ok(usuarioService.todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(idUsuario, idComunidad));
+    }
+
+    @GetMapping("/todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento/{idUsuario}/{idEvento}")
+    public ResponseEntity<Object> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(@PathVariable Long idUsuario, @PathVariable Long idEvento){
+        return Response.ok(usuarioService.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(idUsuario, idEvento));
+    }
+
+    @GetMapping("/todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad/{idUsuario}/{idComunidad}")
+    public ResponseEntity<Object> todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(@PathVariable Long idUsuario, @PathVariable Long idComunidad){
+        return Response.ok(usuarioService.todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(idUsuario, idComunidad));
+    }
+
+    @GetMapping("/todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario/{idUsuario}/{idEvento}")
+    public ResponseEntity<Object> todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(@PathVariable Long idUsuario, @PathVariable Long idEvento){
+        return Response.ok(usuarioService.todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(idUsuario, idEvento));
+    }
+
+    @GetMapping("/todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario/{idUsuario}/{idComunidad}")
+    public ResponseEntity<Object> todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(@PathVariable Long idUsuario, @PathVariable Long idComunidad){
+        return Response.ok(usuarioService.todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(idUsuario, idComunidad));
+    }
+
 }

@@ -49,6 +49,15 @@ public class RutinaService {
         return rutinaId;
     }
 
+    public Long crearRelacionDiaFinalizado(Long diaId, Long usuarioId) throws Exception {
+        diaRepository.crearRelacionDiaFinalizado(diaId, usuarioId);
+        return diaId;
+    }
+
+    public boolean verificarDiaFinalizado(Long diaId, Long usuarioId) throws Exception {
+        return diaRepository.verificarDiaFinalizado(diaId, usuarioId);
+    }
+
     public Long guardarRutina(Rutina rutina) {
         return rutinaRepository.save(rutina).getId();
     }

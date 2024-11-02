@@ -28,6 +28,7 @@ import { RutinasComponent } from './rutinas/rutinas.component';
 import { CrearRutinaComponent } from './rutinas/crearRutina.component';
 import { RutinaDetailComponent } from './rutinas/rutina-detail.component';
 import { SugerenciasRutinasComponent } from './sugerencias/sugerenciasRutinas.component';
+import { CalendarioEventosComponent } from './calendario/calendario-eventos.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -53,10 +54,11 @@ export const routes: Routes = [
   { path: 'rutinas/crearRutina', component: CrearRutinaComponent, canActivate: [AuthGuard]},
   { path: 'rutinas/hacer/:id', component: RutinasEjercicioComponent,  canActivate: [AuthGuard] },
   { path: 'rutinas/:id', component: RutinaDetailComponent, canActivate: [AuthGuard] },
+  { path: 'calendario', component: CalendarioEventosComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent }, 
   { path: 'registro', component: RegistroComponent },
   { path: 'verificar-codigo', component: VerificarCodigoComponent },
   { path: 'verificar-mail', component: VerificarMailComponent },
   { path: 'cambiar-contrasena', component: CambiarContrasenaComponent }
-  //,{ path: '**', redirectTo: 'login' }
+  ,{ path: '**', redirectTo: 'login' }
 ];
