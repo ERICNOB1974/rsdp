@@ -39,7 +39,7 @@
             <div *ngFor="let miembro of miembrosVisibles">
                 <!-- Si no es anÃ³nimo, muestra el perfil -->
                 <div *ngIf="!miembro.anonimos">
-                    <img [src]="miembro.fotoPerfil" alt="{{ miembro.nombreUsuario }}" class="perfil-imagen">
+                    <img [src]="miembro.fotoPerfil" alt="Foto de {{ miembro.nombreUsuario }}" class="avatar-circular">
                     <span>{{ miembro.nombreUsuario }}</span>
                 </div>
             </div>
