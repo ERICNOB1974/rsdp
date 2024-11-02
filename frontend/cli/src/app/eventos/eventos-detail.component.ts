@@ -125,6 +125,10 @@ export class EventoDetailComponent implements OnInit {
     );
   }
 
+  editarEvento():void{
+    
+  }
+
   checkParticipacion(): void {
     this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
       this.participa = <boolean><unknown>dataPackage.data;
@@ -137,19 +141,9 @@ export class EventoDetailComponent implements OnInit {
   salirValid(): boolean {
     return this.participa;
   }
+
   inscribirseValid(): boolean {
-    // Imprime si la cantidad de participantes es menor que la cantidad máxima de participantes
-    console.info("Cantidad de participantes es menor que la cantidad máxima: ", this.evento.participantes < this.evento.cantidadMaximaParticipantes);
-
-    // Imprime si el usuario ya está participando
-    console.info("Usuario participa: ", this.participa);
-
-    // Imprime la evaluación completa antes de retornarla
-    const esValido = (this.evento.participantes < this.evento.cantidadMaximaParticipantes) && !this.participa;
-    console.info("Resultado de inscribirseValid: ", esValido);
-
-    // Retorna el resultado de la validación
-    return esValido;
+    return (this.evento.participantes < this.evento.cantidadMaximaParticipantes) && !this.participa;
   }
 
 
