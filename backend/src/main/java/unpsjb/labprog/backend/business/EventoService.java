@@ -291,4 +291,9 @@ public class EventoService {
         // Retornar la lista ordenada
         return listaSugerenciasSinDuplicados;
     }
+
+    public List<Evento> eventosFuturosPertenecientesAUnUsuario(String nombreUsuario) {
+        return eventoRepository.eventosFuturosPertenecientesAUnUsuario(nombreUsuario);
+    }
+
 }

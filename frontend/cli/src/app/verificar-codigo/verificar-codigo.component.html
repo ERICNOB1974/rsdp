@@ -4,12 +4,12 @@
 
   <form [formGroup]="codigoForm" (ngSubmit)="onSubmit()">
     <div class="codigo-inputs">
-      <input formControlName="codigo1" maxlength="1" />
-      <input formControlName="codigo2" maxlength="1" />
-      <input formControlName="codigo3" maxlength="1" />
-      <input formControlName="codigo4" maxlength="1" />
-      <input formControlName="codigo5" maxlength="1" />
-      <input formControlName="codigo6" maxlength="1" />
+      <input #codigoInput formControlName="codigo1" maxlength="1" />
+      <input #codigoInput formControlName="codigo2" maxlength="1" />
+      <input #codigoInput formControlName="codigo3" maxlength="1" />
+      <input #codigoInput formControlName="codigo4" maxlength="1" />
+      <input #codigoInput formControlName="codigo5" maxlength="1" />
+      <input #codigoInput formControlName="codigo6" maxlength="1" />
     </div>
 
     <button mat-raised-button color="primary" type="submit" class="btn-left" [disabled]="!codigoForm.valid">
