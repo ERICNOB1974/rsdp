@@ -19,13 +19,16 @@ public class Notificacion implements Comparable<Notificacion>{
     String tipo;
     String mensaje;
     LocalDateTime fecha;
+    boolean leida;
     Long entidadId;
 
+
     // Constructor
-    public Notificacion(String tipo, String mensaje, LocalDateTime fecha, long entidadId) {
+    public Notificacion(String tipo, String mensaje, LocalDateTime fecha,boolean leida, long entidadId) {
         this.tipo = tipo;
         this.mensaje = mensaje;
         this.fecha = fecha;
+        this.leida = leida;
         this.entidadId = entidadId;    
     }
 
