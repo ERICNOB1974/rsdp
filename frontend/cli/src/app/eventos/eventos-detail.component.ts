@@ -11,7 +11,7 @@ import { UsuarioService } from '../usuarios/usuario.service';
 import { MatDialog } from '@angular/material/dialog'; // Importar MatDialog para el modal
 import { ViewChild, TemplateRef } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
-import { lastValueFrom } from 'rxjs';import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { lastValueFrom } from 'rxjs';
 
 
 
