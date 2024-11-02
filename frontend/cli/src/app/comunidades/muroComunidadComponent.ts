@@ -158,6 +158,13 @@ export class MuroComunidadComponent implements OnInit {
     }
 
     publicarEnComunidad(): void {
+        this.router.navigate(['/publicacion'], { 
+            queryParams: { 
+                tipo: 'comunidad',
+                idComunidad: this.idComunidad 
+            }
+        });
+
         this.router.navigate(['/publicarEnComunidad']);
     }
 

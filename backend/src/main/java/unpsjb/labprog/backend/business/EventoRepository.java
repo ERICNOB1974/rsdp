@@ -118,16 +118,24 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         + " RETURN e ORDER BY e.fechaHora ASC")
         List<Evento> eventosProximos();
 
-        
         @Query("MATCH (e:Evento)-[:CREADO_POR]->(u:Usuario) " +
-        "WHERE id(u) = $idUsuario " +
-        "RETURN e " +
-        "ORDER BY abs(duration.between(date(), e.fechaHora).days) ASC " +
-        "SKIP $offset LIMIT $limit")
- List<Evento> eventosCreadosPorUsuario(@Param("idUsuario") Long idUsuario, 
-                                       @Param("offset") int offset, 
-                                       @Param("limit") int limit);
- 
+                        "WHERE id(u) = $idUsuario " +
+                        "RETURN e " +
+                        "ORDER BY abs(duration.between(date(), e.fechaHora).days) ASC " +
+                        "SKIP $offset LIMIT $limit")
+        List<Evento> eventosCreadosPorUsuario(@Param("idUsuario") Long idUsuario,
+                        @Param("offset") int offset,
+                        @Param("limit") int limit);
+
+        @Query("""
+                        MATCH (e:Evento) WHERE id(e)=$idEvento
+                        MATCH (u:Usuario) WHERE id(u) = $idUsuario
+                        MATCH (e)-[r:CREADO_POR]->(u)
+                        RETURN (COUNT(r)>0)
+                                """)
+        boolean eventoCreadoPor(@Param("idUsuario") Long idUsuario,
+                        @Param("idEvento") Long idEvento);
+
         @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento) " +
                         "WHERE id(u) = $idUsuario AND id(e) = $idEvento " +
                         "RETURN COUNT(e) > 0")
@@ -182,7 +190,6 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
         @Query("MATCH (e:Evento) WHERE e.cantidadMaximaParticipantes <= $max AND e.cantidadMaximaParticipantes >= $min RETURN e")
         List<Evento> eventosCantidadParticipantes(int min, int max);
 
-
         @Query("MATCH (e:Evento) " +
                         "WHERE date(e.fechaHora) > date(datetime()) " +
                         "AND NOT e.esPrivadoParaLaComunidad " +
@@ -193,11 +200,9 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
 
         @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento) " +
                         "WHERE id(u) = $idUsuario " +
-                        "RETURN e "+ 
-                        "ORDER BY abs(duration.between(date(), e.fechaHora).days) ASC") 
+                        "RETURN e " +
+                        "ORDER BY abs(duration.between(date(), e.fechaHora).days) ASC")
         List<Evento> participaUsuario(Long idUsuario);
-
-        
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(e:Evento)-[:ETIQUETADO_CON]->(et:Etiqueta) "
                         +

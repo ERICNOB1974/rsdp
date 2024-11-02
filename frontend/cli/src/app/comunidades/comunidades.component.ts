@@ -26,18 +26,20 @@ export class ComunidadesComponent implements OnInit {
   comunidadesMiembroUsuario: Comunidad[] = [];
 
   filtroNombreAbierto: boolean = false;
+  filtroNombreActivo: boolean = false;
   nombreEventoFiltro: string = '';
 
   // Filtro por participantes
   filtroParticipantesAbierto: boolean = false;
+  filtroParticipantesActivo: boolean = false;
   minParticipantes: number | null = null;
   maxParticipantes: number | null = null;
 
-  // Filtro por fecha
-  filtroFechaAbierto: boolean = false;
+  
   fechaMinFiltro: string = '';
   fechaMaxFiltro: string = '';
   filtroEtiquetasAbierto: boolean = false;
+  filtroEtiquetasActivo: boolean = false;
   searching: boolean = false;
   searchFailed: boolean = false;
   etiquetasSeleccionadas: Etiqueta[] = [];
@@ -96,6 +98,10 @@ export class ComunidadesComponent implements OnInit {
         }
       }
     });
+  }
+
+  toggleFiltro(filtro: string) {
+    // Aquí puedes añadir lógica adicional para aplicar el filtro
   }
 
 
