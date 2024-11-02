@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ComunidadService } from './comunidad.service';
@@ -11,6 +11,8 @@ import { AuthService } from '../autenticacion/auth.service';
 import { UsuarioService } from '../usuarios/usuario.service';
 import { Usuario } from '../usuarios/usuario';
 import { DataPackage } from '../data-package';
+import { lastValueFrom } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-editar-comunidad',
@@ -34,6 +36,12 @@ export class MuroComunidadComponent implements OnInit {
     miembrosVisibles: any[] = []; // Almacena los usuarios visibles en la interfaz
     publicaciones!: Publicacion[];
 
+    amigosNoEnComunidad: any[] = [];
+    amigosEnComunidad: any[] = [];
+    amigosYaInvitados: any[] = [];
+  
+    @ViewChild('modalInvitarAmigos') modalInvitarAmigos!: TemplateRef<any>;
+
     constructor(
         private route: ActivatedRoute,
         private comunidadService: ComunidadService,
@@ -41,8 +49,14 @@ export class MuroComunidadComponent implements OnInit {
         private usuarioService: UsuarioService,
         private authService: AuthService,
         private router: Router,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
+        private cdr: ChangeDetectorRef,
+        private dialog: MatDialog
     ) { }
+
+    salirValid(): boolean {
+        return this.esParte;
+    }
 
     ngOnInit(): void {
         this.idUsuarioAutenticado = Number(this.authService.getUsuarioId());
@@ -52,7 +66,52 @@ export class MuroComunidadComponent implements OnInit {
                 this.traerMiembros();
             } 
         });
+        this.cargarAmigos();
     }
+
+    cargarAmigos(): void {
+        const idComunidad = this.comunidad.id;
+      
+        this.usuarioService.todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(idComunidad).subscribe((dataPackage) => {
+          this.amigosNoEnComunidad = dataPackage.data as Comunidad[];
+      
+          // Filtrar amigos ya invitados y ya en Comunidad de la lista de no pertenecientes
+          this.amigosNoEnComunidad = this.amigosNoEnComunidad.filter(
+            amigoNoEnComunidad => !this.amigosEnComunidad.some(amigoEnComunidad => amigoEnComunidad.id === amigoNoEnComunidad.id) &&
+                                !this.amigosYaInvitados.some(amigoYaInvitado => amigoYaInvitado.id === amigoNoEnComunidad.id)
+          );
+        });
+      
+        this.usuarioService.todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(idComunidad).subscribe((dataPackage) => {
+          this.amigosEnComunidad = dataPackage.data as Comunidad[];
+        });
+      
+        this.usuarioService.todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(idComunidad).subscribe((dataPackage) => {
+          this.amigosYaInvitados = dataPackage.data as Comunidad[];
+        });
+      }
+      
+      invitarAmigo(idUsuarioReceptor: number): void {
+        const idComunidad = this.comunidad.id;
+        this.usuarioService.enviarInvitacionComunidad(idUsuarioReceptor, idComunidad).subscribe(() => {
+          this.cargarAmigos();
+          this.cargarAmigos();
+          this.cdr.detectChanges(); // Fuerza la actualización del modal
+          this.snackBar.open('Invitación enviada con éxito', 'Cerrar', {
+            duration: 3000,
+          });
+        },
+        error => {
+          console.error('Error al invitar al amigo:', error);
+          this.snackBar.open('Error al enviar la invitación', 'Cerrar', {
+            duration: 3000,
+          });
+        });
+    
+        lastValueFrom(this.usuarioService.invitacionComunidad(idUsuarioReceptor, idComunidad)).catch(error => {
+          console.error('Error al enviar el email de invitación:', error);
+        });
+      }
 
     getPublicaciones(): void {
         this.publicacionService.publicacionesComunidad(this.idComunidad).subscribe({
@@ -251,4 +310,15 @@ export class MuroComunidadComponent implements OnInit {
             }
         } 
     }
+
+    cerrarModal(): void {
+        this.dialog.closeAll();
+    }
+
+    abrirModalInvitarAmigos(): void {
+        // Cargar listas de amigos antes de abrir el modal
+        this.cargarAmigos();
+        this.dialog.open(this.modalInvitarAmigos);
+      }
+
 }

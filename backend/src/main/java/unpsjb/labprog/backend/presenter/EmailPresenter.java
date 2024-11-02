@@ -78,7 +78,7 @@ public class EmailPresenter {
 
     @GetMapping("/invitacionComunidad/{idUsuarioEmisor}/{idUsuarioReceptor}/{idComunidad}")
     public ResponseEntity<Object> invitacionComunidad(@PathVariable Long idUsuarioEmisor, @PathVariable Long idUsuarioReceptor, @PathVariable Long idComunidad) throws MessagingException {
-        emailService.invitacionEvento(idUsuarioEmisor,idUsuarioReceptor,idComunidad);
+        emailService.invitacionComunidad(idUsuarioEmisor,idUsuarioReceptor,idComunidad);
         return Response.ok("Correo enviado exitosamente");
     }
 
