@@ -158,9 +158,8 @@ rutinasCreadasPorUsuario(offset: number, limit: number): Observable<DataPackage>
   return this.http.get<DataPackage>(`${this.rutinasUrl}/rutinasCreadasPorUsuario/${userId}?offset=${offset}&limit=${limit}`);
 }
 
-rutinasRealizaUsuario(): Observable<DataPackage> {
-  const userId = this.authService.getUsuarioId();
-  return this.http.get<DataPackage>(`${this.rutinasUrl}/rutinasRealizaUsuario/${userId}`);
+rutinasRealizaUsuario(usuarioId: number): Observable<DataPackage> {
+  return this.http.get<DataPackage>(`${this.rutinasUrl}/rutinasRealizaUsuario/${usuarioId}`);
 }
 }
 

@@ -88,6 +88,10 @@ body {
     max-width: 300px; 
 }
 
+.dropdown-item {
+    white-space: normal; /* Permite que el texto se ajuste y no se corte */
+    padding: 10px; /* Espaciado interno */
+  }
 .dropdown-menu li a {
     padding: 10px 12px; 
     color: #333; 
@@ -178,3 +182,23 @@ body {
     min-width: 20px; /* Ancho mínimo para que el contador tenga un buen aspecto */
     text-align: center; /* Centra el texto */
   }
+
+  .notificaciones-menu {
+    max-height: 300px; /* Limitar la altura máxima del menú */
+    overflow-y: auto; /* Agregar desplazamiento si es necesario */
+    width: 300px; /* Ancho del menú */
+    background-color: white; /* Color de fondo */
+    border: 1px solid #ddd; /* Borde del menú */
+    border-radius: 5px; /* Bordes redondeados */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra para efecto de elevación */
+  }
+  
+  .notificacion-item {
+    padding: 10px; /* Espaciado interno */
+    border-bottom: 1px solid #f1f1f1; /* Separador entre notificaciones */
+  }
+  
+  .notificacion-item:last-child {
+    border-bottom: none; /* Sin borde en el último elemento */
+  }
+  
