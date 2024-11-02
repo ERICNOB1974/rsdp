@@ -48,6 +48,7 @@ export class CrearPublicacionComponent implements OnInit {
   cancel(): void {
     this.router.navigate(['/']);
   }
+  
   savePublicacion(): void {
     this.publicacion.fechaDeCreacion = new Date().toISOString();
     console.log(this.tipo)

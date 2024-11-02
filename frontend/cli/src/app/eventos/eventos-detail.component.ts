@@ -160,7 +160,6 @@ export class EventoDetailComponent implements OnInit {
     return this.participa;
   }
 
-
   inscribirseValid(): boolean {
     return (this.evento.participantes < this.evento.cantidadMaximaParticipantes) && !this.participa;
   }
