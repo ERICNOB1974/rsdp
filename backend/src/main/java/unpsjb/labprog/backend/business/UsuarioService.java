@@ -101,6 +101,10 @@ public class UsuarioService {
         return usuarioRepository.existeNombreUsuario(nombreUsuario);
     }
 
+    public boolean existeNombreUsuarioMenosElActual(String nombreUsuarioIngresado, String nombreUsuarioActual) {
+        return usuarioRepository.existeNombreUsuarioMenosElActual(nombreUsuarioIngresado, nombreUsuarioActual);
+    }
+
     public List<Usuario> buscarUsuarios(String term) {
         return usuarioRepository.buscarUsuarios(term);
     }
