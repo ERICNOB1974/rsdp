@@ -28,6 +28,7 @@ export class PerfilDetailComponent implements OnInit {
   campoModificado: boolean = false;
   nombreUsuarioValido: boolean = true;
   nombreRealValido: boolean = true;
+  
 
   constructor(
     private usuarioService: UsuarioService,
