@@ -11,9 +11,11 @@ import unpsjb.labprog.backend.model.Comunidad;
 public class ScoreComunidad {
     private Comunidad comunidad;
     private Double score;
+    private String motivo;
 
-    public ScoreComunidad(Comunidad comunidad, Double score) {
+    public ScoreComunidad(Comunidad comunidad, Double score, String motivo) {
         this.comunidad = comunidad;
         this.score = score;
+        this.motivo = motivo;
     }
 }
