@@ -4,11 +4,15 @@
 
 <section class="carousel">
   <div class="carousel-container">
-    <div class="carousel-item" *ngFor="let rutina of obtenerRutinasParaMostrar()" class="evento-item">
+    <div *ngFor="let rutina of obtenerRutinasParaMostrar()" class="carousel-item evento-item">
       <div class="evento-card clickable" [routerLink]="['/rutinas', rutina.id]">
         <div class="evento-details">
           <h3>{{ rutina.nombre }}</h3>
           <p>{{ rutina.descripcion }}</p>
+          <div class="motivo-container" *ngIf="rutina.id !== undefined && motivos[rutina.id]">
+            <p class="motivo-text">Motivo: "{{ motivos[rutina.id] }}"</p>
+          </div>
+          
         </div>
       </div>
     </div>

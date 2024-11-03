@@ -16,8 +16,7 @@ import { Usuario } from '../usuarios/usuario';
 })
 export class SugerenciasAmigosComponent implements OnInit {
   currentIndex: number = 0; // Índice actual del carrusel
-  eventos: Usuario[] = []; // Arreglo para almacenar los eventos que provienen del backend
-  results: Usuario[] = [];
+  results: Usuario[] = [];              
   motivos: { [key: number]: String } = {}; // Para almacenar comentarios por publicación
 
   constructor(private eventoService: EventoService,
