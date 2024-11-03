@@ -10,4 +10,5 @@ export interface Comunidad {
     longitud: number;
     miembros: number;
     ubicacion: any;
+    imagen:string;
 }
