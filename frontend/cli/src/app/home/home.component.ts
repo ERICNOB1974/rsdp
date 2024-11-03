@@ -43,7 +43,7 @@ export class HomeComponent implements OnInit {
     this.loading = true;
     const userId = this.authService.getUsuarioId();
     if (userId) {
-      this.publicacionService.publicacionesAmigos2(+userId).subscribe(
+      this.publicacionService.publicacionesHome(+userId).subscribe(
         (dataPackage) => {
           if (dataPackage.status === 200) {
             const newPublicaciones = dataPackage.data as Publicacion[];

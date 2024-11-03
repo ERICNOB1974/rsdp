@@ -23,6 +23,7 @@ export class ComunidadCreadorComponent implements OnInit {
     miembros: any[] = []; // Lista de miembros de la comunidad
     administradores: any[] = []; // Lista de miembros de la comunidad
     idUsuarioAutenticado!: number;  // ID del usuario autenticado
+    creadorComunidad!: Usuario;
     esCreador: boolean = false;
     esAdmin: boolean = false;
 
@@ -71,10 +72,10 @@ export class ComunidadCreadorComponent implements OnInit {
     }
 
     getCreadorComunidad(): void {
-        this.usuarioService.getCreadorComunidad(this.idUsuarioAutenticado, this.comunidad.id).subscribe(dataPackage => {
-            const creador = dataPackage.data;
-            console.log('Creador de la comunidad:', creador); // Añadir log para verificar el valor
-            if (creador) {
+        this.usuarioService.usuarioCreadorComunidad(this.comunidad.id).subscribe(dataPackage => {
+            this.creadorComunidad = dataPackage.data as Usuario;
+            console.log('Creador de la comunidad:', this.creadorComunidad); // Añadir log para verificar el valor
+            if (this.creadorComunidad.id == this.idUsuarioAutenticado) {
                 this.esCreador = true;  // El usuario es el creador
             }
         });
@@ -87,23 +88,32 @@ export class ComunidadCreadorComponent implements OnInit {
         }
     }
 
-
     traerMiembrosYAdministradores(): void {
         const miembros$ = this.usuarioService.miembrosComunidad(this.comunidad.id);
         const administradores$ = this.usuarioService.administradoresComunidad(this.comunidad.id);
-
+    
         forkJoin([miembros$, administradores$]).subscribe(([miembrosData, administradoresData]) => {
             if (Array.isArray(miembrosData.data)) {
-                this.miembros = miembrosData.data;
+                this.miembros = miembrosData.data as Usuario[];
             }
-
+    
             if (Array.isArray(administradoresData.data)) {
-                this.administradores = administradoresData.data;
+                this.administradores = administradoresData.data as Usuario[];
             }
-
-            // Combina ambos arrays después de que se hayan completado las solicitudes
+    
+            // Combina ambos arrays
             this.miembros = this.miembros.concat(this.administradores);
-            this.verificarRoles(); // Verificar roles después de obtener los miembros y admins
+    
+            // Verificar roles
+            this.verificarRoles();
+    
+            // Eliminar duplicados después de verificar roles
+            this.miembros = this.miembros.reduce((acc: Usuario[], user: Usuario) => {
+                if (!acc.some((existingUser: Usuario) => existingUser.id === user.id)) {
+                    acc.push(user);
+                }
+                return acc;
+            }, []);
         });
     }
 
