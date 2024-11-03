@@ -302,9 +302,13 @@ export class CrearEventoComponent {
         // Realizar la etiquetación con la etiqueta final
         await this.eventoService.etiquetar(this.evento, etiquetaFinal.id).toPromise();
       }
-
+  
       alert('Evento guardado con éxito');
-      window.location.reload();
+      if (this.comunidadId){
+        this.location.back();
+      } else {
+        window.location.reload();
+      }
     } catch (error) {
       console.error('Error al guardar el evento:', error);
       alert('Error al guardar el evento.');
