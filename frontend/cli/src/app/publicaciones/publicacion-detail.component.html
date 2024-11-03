@@ -34,10 +34,14 @@
     <div class="comments-section">
       <div *ngFor="let com of comentarios" class="comment"
         style="margin-bottom: 15px; padding: 10px; background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-        <div class="comment-header">
-          <span class="username" style="font-size: 12px; font-weight: bold; color: #3897f0;">{{
-            com.usuario.nombreUsuario }}</span>
-          <span class="date" style="font-size: 10px; color: #999;">{{ com.fecha | date:'short' }}</span>
+        <div class="comment-header" style="display: flex; align-items: center;">
+          <a [routerLink]="['/perfil', com.usuario.id]" style="text-decoration: none; display: flex; align-items: center;">
+            <img [src]="com.usuario.fotoPerfil" alt="foto de Perfil" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 8px;">
+          </a>
+          <a [routerLink]="['/perfil', com.usuario.id]" style="text-decoration: none; color: #3897f0;">
+            <span class="username" style="font-size: 12px; font-weight: bold;">{{ com.usuario.nombreUsuario }}</span>
+          </a>
+          <span class="date" style="font-size: 10px; color: #999; margin-left: auto;">{{ com.fecha | date:'short' }}</span>
         </div>
         <p class="comment-text" style="font-size: 14px; margin: 0; color: #262626;">{{ com.texto }}</p>
       </div>
