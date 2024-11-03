@@ -11,9 +11,11 @@ import unpsjb.labprog.backend.model.Evento;
 public class ScoreEvento {
     private Evento evento;
     private Double score;
+    private String motivo;
 
-    public ScoreEvento(Evento evento, Double score) {
+    public ScoreEvento(Evento evento, Double score, String motivo) {
         this.evento = evento;
         this.score = score;
+        this.motivo = motivo;
     }
 }

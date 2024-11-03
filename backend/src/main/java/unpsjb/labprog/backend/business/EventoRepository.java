@@ -115,9 +115,9 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
         int participantesDeEvento(Long idEvento);
 
         @Query("MATCH (e:Evento)-[:EVENTO_INTERNO]->(c:Comunidad) " +
-        "WHERE id(c) = $comunidadId " +
-        "RETURN e")
-        List<Evento> eventosDeUnaComunidad(Long comunidadId); 
+                        "WHERE id(c) = $comunidadId " +
+                        "RETURN e")
+        List<Evento> eventosDeUnaComunidad(Long comunidadId);
 
         @Query("MATCH (e:Evento) " + "WHERE date(e.fechaHora) = date(datetime()) + duration({days: 1}) "
                         + " RETURN e ORDER BY e.fechaHora ASC")
@@ -164,10 +164,10 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
         void establecerCreador(Long idEvento, Long idUsuario);
 
         @Query("MATCH (e:Evento), (c:Comunidad) " +
-        "WHERE id(e) = $idEvento AND id(c) = $comunidadId " +
-        "MERGE (e)-[:EVENTO_INTERNO]->(c)")
+                        "WHERE id(e) = $idEvento AND id(c) = $comunidadId " +
+                        "MERGE (e)-[:EVENTO_INTERNO]->(c)")
         void establecerEventoInterno(Long idEvento, Long comunidadId);
-        
+
         @Query("MATCH (e:Evento) WHERE id(e) = $ide RETURN e")
         Optional<Evento> encontrarEventoPorId(Long ide);
 
@@ -259,7 +259,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "AND NOT (u)-[:PARTICIPA_EN]->(evento) " +
                         "AND NOT (u)<-[:CREADO_POR]-(evento) " +
                         "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
-                        "RETURN evento, score " +
+                        "RETURN evento, score, 'tenes '+amigosParticipando+' amigos participando' AS motivo " +
                         "ORDER BY score DESC, amigosParticipando DESC, evento.fechaHora ASC " +
                         "LIMIT 3")
         List<ScoreEvento> sugerenciasDeEventosBasadosEnAmigos2(String nombreUsuario);
@@ -284,7 +284,8 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                                                                                               // cupos
                                                                                               // disponibles
                         "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
-                        "RETURN evento, score " +
+                        "RETURN evento, score, 'son similares porque tienen '+etiquetasCompartidas+' etiqueta/s compartida/s con comunidades en las que participas' AS motivo  "
+                        +
                         "ORDER BY score DESC, evento.fechaHora ASC " +
                         "LIMIT 3")
         List<ScoreEvento> sugerenciasDeEventosBasadosEnComunidades2(String nombreUsuario);
@@ -302,10 +303,12 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "WITH evento, etiquetasCompartidas, distancia, " +
                         "(etiquetasCompartidas/(distancia+1500000)) AS score " +
                         "OPTIONAL MATCH (evento)<-[:PARTICIPA_EN]-(participante:Usuario) " +
-                        "WITH evento, score, COUNT(DISTINCT participante) AS cantidadParticipantes " +
+                        "WITH evento, score,etiquetasCompartidas, COUNT(DISTINCT participante) AS cantidadParticipantes "
+                        +
                         "WHERE cantidadParticipantes < evento.cantidadMaximaParticipantes " +
                         "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
-                        "RETURN evento, score " +
+                        "RETURN evento, score, 'son similares porque tienen '+etiquetasCompartidas+' etiqueta/s compartida/s con rutinas que realizas' AS motivo "
+                        +
                         "ORDER BY score DESC, evento.fechaHora ASC " +
                         "LIMIT 3")
         List<ScoreEvento> sugerenciasDeEventosBasadosEnRutinas2(String nombreUsuario);

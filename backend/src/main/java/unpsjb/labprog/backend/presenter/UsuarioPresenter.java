@@ -331,9 +331,9 @@ public class UsuarioPresenter {
         return Response.ok(usuarioService.todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(idUsuario, idComunidad));
     }
 
-    @GetMapping("/buscar/{term}")
-    public ResponseEntity<Object> eventosPorNombre(@PathVariable String term) {
-        return Response.ok(usuarioService.buscarUsuarios(term));
+    @GetMapping("/buscar/{nombreUsuario}/{term}")
+    public ResponseEntity<Object> eventosPorNombre(@PathVariable String nombreUsuario, @PathVariable String term) {
+        return Response.ok(usuarioService.buscarUsuarios(nombreUsuario, term));
     }
 
 }
