@@ -1,11 +1,9 @@
-import { Component, OnInit, ViewChild, forwardRef } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPlugin, { DateClickArg, EventDragStopArg } from '@fullcalendar/interaction';
+import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction';
 import { EventoService } from '../eventos/evento.service';
 import { FullCalendarComponent, FullCalendarModule } from '@fullcalendar/angular';
-import { BrowserModule } from '@angular/platform-browser';
-import { Calendar, CalendarOptions, EventClickArg, EventInput, EventMountArg } from '@fullcalendar/core';
+import { CalendarOptions, EventClickArg } from '@fullcalendar/core';
 import { NgIf } from '@angular/common';
 import { Evento } from '../eventos/evento';
 import { DataPackage } from '../data-package';

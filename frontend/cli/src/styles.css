@@ -4,177 +4,361 @@
 @import url('https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap');
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
 }
 
 body {
-    min-height: 100vh;
-    background: #ffffff; /* Cambié el color de fondo a uno más suave */
+  min-height: 100vh;
+  background: #ffffff;
+  /* Cambié el color de fondo a uno más suave */
 }
 
-/* Barra lateral */
+/* Barra lateral 
 .sidebar {
-    position: fixed; 
-    top: 0;
-    left: 0;
-    width: 300px; 
-    height: 100%; 
-    padding-top: 60px; /* Espacio para la barra de navegación */
-    background: #fc974e; /* Cambié el color a un tono más atractivo */
-    z-index: 1000; 
-    overflow-y: auto; 
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Sombra sutil para darle profundidad */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 1000%;
+  padding-top: 60px;
+  background: #fc974e;
+  z-index: 1001;
+  overflow-y: auto;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+*/
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 250px;
+  /* Ajusta según sea necesario */
+  overflow-y: auto;
+  background: #fc974e;
+  /* Cambié el color a un tono más atractivo */
+  z-index: 1001;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  /* Sombra sutil para darle profundidad */
+
 }
 
 /* Contenido principal */
 .main-content {
-    margin-left: 300px; 
-    padding: 30px;
+  margin-left: 300px;
+  padding: 30px;
 }
 
 /* Estilos de la lista de la barra lateral */
 .sidebar ul {
-    padding: 1; 
+  padding: 1;
 }
 
 .sidebar ul li {
-    list-style: none;
-    transition: background 0.3s; /* Transición suave para el hover */
+  list-style: none;
+  transition: background 0.3s;
+  /* Transición suave para el hover */
 }
 
 .sidebar ul li:hover {
-    background: #1a1919f8; /* Color de fondo más claro al pasar el mouse */
+  background: #1a1919f8;
+  /* Color de fondo más claro al pasar el mouse */
 }
 
 .sidebar ul li a {
-    color: #000000;
-    display: flex;
-    align-items: center; 
-    white-space: nowrap;
-    text-decoration: none;
-    height: 60px; 
-    padding: 0 15px; /* Espaciado a los lados */
+  color: #000000;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  text-decoration: none;
+  height: 60px;
+  padding: 0 15px;
+  /* Espaciado a los lados */
 }
 
 .sidebar ul li a .icon {
-    min-width: 60px;
-    font-size: 1.5em;
-    color: #000000;
+  min-width: 60px;
+  font-size: 1.5em;
+  color: #000000;
 }
 
 .sidebar ul li a .text {
-    font-size: 1em;
-    color: #5a4e4e; /* Color más sutil para el texto */
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    transition: color 0.3s; /* Transición suave para el color */
+  font-size: 1em;
+  color: #5a4e4e;
+  /* Color más sutil para el texto */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: color 0.3s;
+  /* Transición suave para el color */
 }
 
 .sidebar ul li a:hover .text {
-    color: #d08e61; /* Color del texto al pasar el mouse */
+  color: #d08e61;
+  /* Color del texto al pasar el mouse */
 }
 
 /* Estilos del submenú */
 .dropdown-menu {
-    display: none; 
-    position: absolute; 
-    background: #7a7a7a; 
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); 
-    z-index: 1000; 
-    padding: 0; 
-    max-width: 300px; 
+  display: none;
+  position: absolute;
+  background: #7a7a7a;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  padding: 0;
+  max-width: 300px;
+}
+
+.dropdown-item {
+  white-space: normal;
+  /* Permite que el texto se ajuste y no se corte */
+  padding: 10px;
+  /* Espaciado interno */
 }
 
 .dropdown-menu li a {
-    padding: 10px 12px; 
-    color: #333; 
-    white-space: normal; 
+  padding: 10px 12px;
+  color: #333;
+  white-space: normal;
 }
 
 .dropdown:hover .dropdown-menu,
 .dropdown:focus-within .dropdown-menu {
-    display: block; 
+  display: block;
 }
 
 .dropdown-menu li a:hover {
-    background-color: #ec8626; /* Color más atractivo al pasar el mouse */
+  background-color: #ec8626;
+  /* Color más atractivo al pasar el mouse */
 }
 
 /* Estilos adicionales opcionales */
 .sidebar ul li.logo {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 .sidebar ul li.logo:hover {
-    background: #fff;
+  background: #fff;
 }
 
 .sidebar ul li.logo .icon {
-    font-size: 2em;
+  font-size: 2em;
 }
 
 .sidebar ul li.logo .text {
-    font-size: 1.2em;
-    font-weight: 500;
+  font-size: 1.2em;
+  font-weight: 500;
 }
 
 /* Responsividad */
 @media (max-width: 768px) {
-    .sidebar {
-        background: #444343; /* Cambiar el fondo a blanco en pantallas pequeñas */
-    }
+  .sidebar {
+    background: #444343;
+    /* Cambiar el fondo a blanco en pantallas pequeñas */
+  }
 
-    .dropdown-menu {
-        position: static; 
-        width: 100%; 
-    }
+  .dropdown-menu {
+    position: static;
+    width: 100%;
+  }
 }
 
 /* Estilos del modal */
 .modal-backdrop.show {
-    opacity: 0.75;
-    background-color: rgba(0, 0, 0, 0.75); 
+  opacity: 0.75;
+  background-color: rgba(0, 0, 0, 0.75);
 }
 
 .modal-content {
-    border-radius: 10px;
-    background: #fff; /* Fondo blanco más limpio */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Sombra más ligera */
+  border-radius: 10px;
+  background: #fff;
+  /* Fondo blanco más limpio */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  /* Sombra más ligera */
 }
 
 .modal-header {
-    background-color: #343a40;
-    color: white;
-    border-bottom: none; /* Sin borde inferior */
+  background-color: #343a40;
+  color: white;
+  border-bottom: none;
+  /* Sin borde inferior */
 }
 
 .modal-body {
-    padding: 2rem;
+  padding: 2rem;
 }
 
 .modal-footer {
-    padding: 1rem;
+  padding: 1rem;
 }
 
 .lead {
-    font-size: 1.25rem;
+  font-size: 1.25rem;
 }
 
 .alert {
-    font-size: 1rem;
+  font-size: 1rem;
 }
+
 .notificacion-count {
-    position: absolute; /* Posiciona el contador sobre el icono */
-    top: -10px; /* Ajusta según sea necesario */
-    right: 0px; /* Ajusta según sea necesario */
-    background-color: red; /* Color de fondo rojo */
-    color: white; /* Color de texto blanco */
-    border-radius: 50%; /* Hace que el contador sea circular */
-    padding: 2px 5px; /* Espaciado dentro del contador */
-    font-size: 12px; /* Tamaño de fuente para el número */
-    min-width: 20px; /* Ancho mínimo para que el contador tenga un buen aspecto */
-    text-align: center; /* Centra el texto */
-  }
+  position: absolute;
+  /* Posiciona el contador sobre el icono */
+  top: -10px;
+  /* Ajusta según sea necesario */
+  right: 0px;
+  /* Ajusta según sea necesario */
+  background-color: red;
+  /* Color de fondo rojo */
+  color: white;
+  /* Color de texto blanco */
+  border-radius: 50%;
+  /* Hace que el contador sea circular */
+  padding: 2px 5px;
+  /* Espaciado dentro del contador */
+  font-size: 12px;
+  /* Tamaño de fuente para el número */
+  min-width: 20px;
+  /* Ancho mínimo para que el contador tenga un buen aspecto */
+  text-align: center;
+  /* Centra el texto */
+}
+
+
+
+.notificacion-item {
+  padding: 10px;
+  /* Espaciado interno */
+  border-bottom: 1px solid #f1f1f1;
+  /* Separador entre notificaciones */
+}
+
+.notificacion-item:last-child {
+  border-bottom: none;
+  /* Sin borde en el último elemento */
+}
+
+.notification-icon {
+  font-size: 20px;
+  color: #333;
+  cursor: pointer;
+}
+
+
+
+.top-navbar {
+  position: fixed;
+  top: 0;
+  left: 250px;
+  right: 0;
+  height: 60px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  padding: 0 20px;
+}
+
+.nav-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+/*
+max-width: 1200px;
+margin: 0 auto;
+*/
+}
+
+.nav-brand h5 {
+  margin: 0;
+  color: #333;
+}
+
+.nav-items {
+  display: flex;
+  align-items: center;
+  margin-left: auto; /* Esto empuja los elementos hacia la derecha */
+
+}
+
+.notifications-dropdown {
+  position: relative;
+  padding: 0 15px;
+  margin-left: auto; /* Esto empuja las notificaciones hacia la derecha */
+
+}
+
+.notification-badge {
+  position: absolute;
+  top: -8px;
+  right: 5px;
+  background-color: #ff4444;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.notifications-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 300px;
+  background-color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  display: none;
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 1002; /* Asegura que el menú desplegable esté por encima de otros elementos */
+}
+
+.notifications-dropdown:hover .notifications-menu {
+  display: block;
+}
+
+.notification-item {
+  padding: 10px 15px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.notification-item:hover {
+  background-color: #f5f5f5;
+}
+
+.new-notification-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #ff4444;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 5px;
+}
+
+.no-notifications {
+  padding: 15px;
+  text-align: center;
+  color: #666;
+}
+
+/* Ajustar el main-content para la nueva navbar */
+.main-content {
+  margin-left: 250px;
+  margin-top: 60px;
+  /* El mismo margen que tenías para el sidebar */
+  padding: 20px;
+}
+
+/* Ajustar la posición del sidebar */
+.sidebar {
+  top: 0px;
+  /* Comenzar después de la navbar */
+  height: calc(100vh);
+  /* Altura total menos la altura de la navbar */
+}

@@ -32,6 +32,8 @@ public class Usuario {
     private String privacidadPerfil;
     private String privacidadEventos;
     private String privacidadComunidades;
+    private String fotoPerfil;
+
 
     
 }

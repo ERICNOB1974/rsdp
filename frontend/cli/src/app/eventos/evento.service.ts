@@ -71,7 +71,7 @@ export class EventoService {
   }
 
   listaParticipantes(id: number): Observable<DataPackage> {
-    return this.http.get<DataPackage>(`${this.eventosUrl}/listaParticipantes${id}`);
+    return this.http.get<DataPackage>(`${this.eventosUrl}/listaParticipantes/${id}`);
   }
 
   participa(idEvento: number): Observable<DataPackage> {
@@ -152,7 +152,9 @@ export class EventoService {
   eliminar(idEvento: number): Observable<DataPackage> {
     return this.http.delete<DataPackage>(` ${this.eventosUrl}/eliminar/${idEvento}`);
   }
-
+  eliminarMiembro(idEvento: number, idUsuario:number): Observable<DataPackage> {
+    return this.http.delete<DataPackage>(` ${this.eventosUrl}/eliminarParticipante/${idEvento}/${idUsuario}`);
+  }
 
 
   eventosFuturosPertenecientesAUnUsuario(): Observable<DataPackage> {
