@@ -30,6 +30,17 @@
                 </div>
             </li>
         </ul>
+        <h2>Solicitudes de Amistad Enviadas</h2>
+        <ul>
+            <li *ngFor="let solicitudEnviada of solicitudesEnviadas" (click)="verPerfil(solicitudEnviada)" class="clickable">
+                <img [src]="solicitudEnviada.fotoPerfil" alt="Foto de {{ solicitudEnviada.nombreUsuario }}" class="avatar-circular">
+                <span>{{ solicitudEnviada.nombreUsuario }}</span>
+                <div class="acciones-solicitud">
+                    <button (click)="cancelarSolicitudDeAmistad(solicitudEnviada.id);  $event.stopPropagation()"
+                        class="btn-rechazar">Cancelar</button>
+                </div>
+            </li>
+        </ul>
 
 
 

@@ -17,6 +17,7 @@ import { AuthService } from '../autenticacion/auth.service';
 export class AmigosComponent implements OnInit {
     amigos: Usuario[] = []; // Arreglo para almacenar los amigos
     solicitudes: Usuario[] = []; // Arreglo para almacenar las solicitudes
+    solicitudesEnviadas: Usuario[] = []; // Arreglo para almacenar las solicitudes enviadas
     mostrarAmigos: boolean = true; // Estado para mostrar amigos o solicitudes
     idUsuarioAutenticado!: number;  // ID del usuario autenticado
 
@@ -30,6 +31,7 @@ export class AmigosComponent implements OnInit {
     ngOnInit(): void {
         this.obtenerAmigos(); // Obtener amigos al iniciar
         this.obtenerSolicitudes(); // Obtener solicitudes al iniciar
+        this.obtenerSolicitudesEnviadas();
         const usuarioId = this.authService.getUsuarioId();
         this.idUsuarioAutenticado = Number(usuarioId);
     }
@@ -50,6 +52,18 @@ export class AmigosComponent implements OnInit {
         this.usuarioService.obtenerSolicitudes().subscribe((dataPackage: DataPackage) => {
             if (dataPackage.status === 200) { // Verifica el estado
                 this.solicitudes = dataPackage.data as Usuario[]; // Asegúrate de que data sea un arreglo de Usuario
+            } else {
+                console.error(dataPackage.message); // Manejo de errores
+            }
+        });
+    }
+
+    obtenerSolicitudesEnviadas(): void {
+        // Llama al servicio para obtener la lista de solicitudes
+        this.usuarioService.obtenerSolicitudesEnviadas().subscribe((dataPackage: DataPackage) => {
+            if (dataPackage.status === 200) { // Verifica el estado
+                this.solicitudesEnviadas = dataPackage.data as Usuario[]; // Asegúrate de que data sea un arreglo de Usuario
+                console.info(this.solicitudesEnviadas);
             } else {
                 console.error(dataPackage.message); // Manejo de errores
             }
@@ -94,4 +108,21 @@ export class AmigosComponent implements OnInit {
             this.usuariosBuscados = [];
         }
     }
+
+    cancelarSolicitudDeAmistad(idUsuarioCancelar: number): void {
+        this.usuarioService.cancelarSolicitudAmistad(idUsuarioCancelar).subscribe({
+          next: (dataPackage: DataPackage) => {
+            if (dataPackage.status === 200) {
+              alert('Solicitud canceladda exitosamente.');
+              window.location.reload(); // Recargar la página
+            } else {
+              alert('Error: ' + dataPackage.message);
+            }
+          },
+          error: (error) => {
+            alert('Error al cancelar solicitud de amistad.');
+          }
+        });
+      }
+    
 }

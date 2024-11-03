@@ -43,6 +43,11 @@ public class UsuarioService {
         return usuarioRepository.solicitudesDeAmistad(nombreUsuario);
     }
 
+    public List<Usuario> solicitudesEnviadas(String nombreUsuario) {
+        return usuarioRepository.solicitudesDeAmistadEnviadas(nombreUsuario);
+    }
+
+
     public List<Usuario> amigosDeAmigos(String nombreUsuario) {
         return usuarioRepository.amigosDeAmigos(nombreUsuario);
     }
@@ -121,6 +126,14 @@ public class UsuarioService {
 
     public boolean esCreador(Long idUsuario, Long idComunidad) {
         return usuarioRepository.esCreador(idUsuario, idComunidad);
+    }
+
+    public Usuario creadorComunidad(Long idComunidad) {
+        return usuarioRepository.creadorComunidad(idComunidad);
+    }
+    
+    public Usuario creadorEvento(Long idEvento) {
+        return usuarioRepository.creadorEvento(idEvento);
     }
 
     public List<Usuario> miembrosComunidad(Long idComunidad) {
