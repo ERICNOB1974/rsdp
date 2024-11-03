@@ -47,6 +47,7 @@ export const routes: Routes = [
   { path: 'comunidadesUsuario', component: ComunidadesCreadasUsuarioComponent, canActivate: [AuthGuard] },
   { path: 'comunidades/crearComunidad', component: CrearComunidadComponent, canActivate: [AuthGuard] },
   { path: 'comunidades/:id', component: ComunidadDetailComponent, canActivate: [AuthGuard] },
+  { path: 'comunidades/:comunidadId/eventos/crearEvento', component: CrearEventoComponent, canActivate: [AuthGuard] },
   { path: 'creadorComunidad/:id', component: ComunidadCreadorComponent,  canActivate: [AuthGuard] },
   { path: 'editarComunidad/:id', component: EditarComunidadComponent,  canActivate: [AuthGuard] },
   { path: 'sugerencias/amigos', component: SugerenciasAmigosComponent, canActivate: [AuthGuard] },

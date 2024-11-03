@@ -39,6 +39,7 @@ export class CrearEventoComponent {
   marcador!: L.Marker; // Agregar una propiedad para el marcador
   private buscarDireccionSubject = new Subject<string>();
   ubicacionAceptada: boolean = false; // Nueva propiedad
+  comunidadId: string | null = null;
 
 
   constructor(
@@ -65,6 +66,7 @@ export class CrearEventoComponent {
     this.buscarDireccionSubject.pipe(debounceTime(300)).subscribe((query: string) => {
       this.realizarBusqueda(query);
     });
+    this.comunidadId = this.route.snapshot.paramMap.get('comunidadId');
   }
 
   private obtenerUbicacionYIniciarMapa(): void {
@@ -279,8 +281,13 @@ export class CrearEventoComponent {
       this.evento.fechaHora = new Date(this.evento.fechaHora).toISOString();
 
       // Guardar el evento y obtener su ID
-      const eventoGuardado = await firstValueFrom(this.eventoService.saveConCreador(this.evento));
-      this.evento = <Evento>eventoGuardado.data;
+      if (this.comunidadId) {
+        const eventoGuardado = await firstValueFrom(this.eventoService.saveConCreadorComunidad(this.evento,<number><unknown>this.comunidadId));
+        this.evento = <Evento>eventoGuardado.data;
+      } else {
+        const eventoGuardado = await firstValueFrom(this.eventoService.saveConCreador(this.evento));
+        this.evento = <Evento>eventoGuardado.data;
+      }
 
       // Verificar y crear etiquetas si es necesario
       for (const etiqueta of this.etiquetasSeleccionadas) {
