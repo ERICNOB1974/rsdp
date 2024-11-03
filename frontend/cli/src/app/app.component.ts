@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterModule, RouterOutlet } from '@angular/router';
 import { UbicacionService } from './ubicacion.service';
 import { NgIf } from '@angular/common';
 import { AuthService } from './autenticacion/auth.service';
@@ -12,7 +12,7 @@ import { Notificacion } from './notificaciones/notificacion';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NgIf, CommonModule],
+  imports: [RouterOutlet, NgIf, CommonModule, RouterModule],
   templateUrl:'./app.component.html',
   styleUrls: ['../styles.css']
 })

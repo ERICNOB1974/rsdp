@@ -5,7 +5,7 @@
 <section class="carousel">
     <div class="carousel-container">
       <div class="carousel-item" *ngFor="let comunidad of obtenerComunidadesParaMostrar()" class="evento-item">
-        <div class="evento-card clickable">
+        <div class="evento-card clickable" [routerLink]="['/comunidad-muro', comunidad.id]">
           <div class="evento-details">
             <h3>{{ comunidad.nombre }}</h3>
             <p>{{ comunidad.descripcion }}</p>
