@@ -10,9 +10,11 @@ import { PublicacionService } from '../publicaciones/publicacion.service';
 import { AuthService } from '../autenticacion/auth.service';
 import { UsuarioService } from '../usuarios/usuario.service';
 import { Usuario } from '../usuarios/usuario';
+import { Evento } from '../eventos/evento'
 import { DataPackage } from '../data-package';
 import { lastValueFrom } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
+import { EventoService } from '../eventos/evento.service';
 
 @Component({
     selector: 'app-editar-comunidad',
@@ -43,6 +45,8 @@ export class MuroComunidadComponent implements OnInit {
 
     @ViewChild('modalInvitarAmigos') modalInvitarAmigos!: TemplateRef<any>;
 
+    eventos: any[] = [];
+
     constructor(
         private route: ActivatedRoute,
         private comunidadService: ComunidadService,
@@ -52,7 +56,8 @@ export class MuroComunidadComponent implements OnInit {
         private router: Router,
         private snackBar: MatSnackBar,
         private cdr: ChangeDetectorRef,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private eventoService: EventoService
     ) { }
     /*
     salirValid(): boolean {
@@ -66,9 +71,57 @@ export class MuroComunidadComponent implements OnInit {
             this.traerMiembros();
             if ((!this.comunidad.esPrivada) || (this.esParte)) {
                 this.getPublicaciones();
-                this.cargarAmigos();
+                this.traerMiembros();
+                this.obtenerEventosDeLaComunidad();
+            }
+            this.cargarAmigos();
+        });
+    }
+
+    obtenerEventosDeLaComunidad(): void {
+        this.eventoService.eventosDeUnaComunidad(this.comunidad.id).subscribe((dataPackage: DataPackage) => {
+            this.eventos = dataPackage.data as Evento[];
+            this.eventos.forEach(async (evento) => {
+                this.obtenerCreadorDelEvento(this.comunidad.id, evento.id); // Obtener el creador del evento
+                // Setear la ubicación solo si tiene latitud y longitud
+                if (evento.latitud && evento.longitud) {
+                    evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
+                } else {
+                    evento.ubicacion = 'Ubicación desconocida';
+                }
+            });
+            this.traerParticipantes(this.eventos); // Obtener los participantes
+        });
+    }
+
+    obtenerCreadorDelEvento(comunidadId: number, eventoId: number): void {
+        this.eventoService.buscarCreadorDeUnEventoInterno(comunidadId, eventoId).subscribe((dataPackage: DataPackage) => {
+            const evento = this.eventos.find(e => e.id === eventoId);
+            if (evento) {
+                evento.creador = dataPackage.data; // Asigna el creador al evento
             }
         });
+    }
+
+    traerParticipantes(eventos: Evento[]): void {
+        // Recorrer todos los eventos y obtener el número de participantes
+        for (let evento of eventos) {
+            this.eventoService.participantesEnEvento(evento.id).subscribe(
+                (dataPackage) => {
+                    // Asignar el número de participantes al evento
+                    if (dataPackage && typeof dataPackage.data === 'number') {
+                        evento.participantes = dataPackage.data; // Asignar el número de participantes
+                    }
+                },
+                (error) => {
+                    console.error(`Error al traer los participantes del evento ${evento.id}:`, error);
+                }
+            );
+        }
+    }
+
+    irADetalleEvento(eventoId: number): void {
+        this.router.navigate([`eventos/${eventoId}`]);
     }
 
     cargarAmigos(): void {

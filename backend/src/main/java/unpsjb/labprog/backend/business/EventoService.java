@@ -118,10 +118,21 @@ public class EventoService {
             throw new EventoException("El evento no puede crearse en el futuro");
         }
 
+        evento.setEsPrivadoParaLaComunidad(true);
+    
+        // Guardar el evento
         Evento c = eventoRepository.save(evento);
-        eventoRepository.establecerCreadorParaEventoInternoParaComunidad(c.getId(), usuarioService.findByNombreUsuario(nombreUsuario).getId(), comunidadId);
+        
+        // Establecer la relación CREADO_POR entre el evento y el usuario
+        eventoRepository.establecerCreador(c.getId(), usuarioService.findByNombreUsuario(nombreUsuario).getId());
+    
+        // Establecer la relación EVENTO_INTERNO entre el evento y la comunidad
+        eventoRepository.establecerEventoInterno(c.getId(), comunidadId);
+    
         return c;
+        
     }
+    
 
     public List<Evento> todasLasSugerencias(String nombreUsuario) {
         List<Evento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnAmigos(nombreUsuario);
@@ -237,6 +248,10 @@ public class EventoService {
 
     public int participantesDeEvento(Long idEvento) {
         return eventoRepository.participantesDeEvento(idEvento);
+    }
+
+    public List<Evento> eventosDeUnaComunidad(Long comunidadId) {
+        return eventoRepository.eventosDeUnaComunidad(comunidadId);
     }
 
     public void etiquetarEvento(Evento evento, Long etiqueta) {
@@ -370,4 +385,5 @@ public class EventoService {
     public void eliminarUsuario(Long idEvento, Long idUsuario) {
         this.eventoRepository.eliminarUsuario(idEvento, idUsuario);
     }
+    
 }

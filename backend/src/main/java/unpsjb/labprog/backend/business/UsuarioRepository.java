@@ -276,4 +276,12 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
                         """)
         List<Usuario> buscarUsuarios(String term);
 
+        @Query("""
+                MATCH (evento:Evento)-[:EVENTO_INTERNO]->(comunidad:Comunidad)
+                WHERE id(comunidad) = $comunidadId AND id(evento) = $eventoId
+                MATCH (evento)-[:CREADO_POR]->(usuario:Usuario)
+                RETURN usuario
+               """)
+        Usuario buscarCreadorDeUnEventoInterno(@Param("comunidadId") Long comunidadId, @Param("eventoId") Long eventoId);
+        
 }
