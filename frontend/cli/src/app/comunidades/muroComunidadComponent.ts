@@ -28,6 +28,7 @@ export class MuroComunidadComponent implements OnInit {
     pendiente: boolean = false;
     tabSeleccionada: string = 'publicaciones';
     esCreador: boolean = false;
+    creadorComunidad!: Usuario;
     miembros!: Usuario[];
     amigos!: Usuario[];
     administradores!: Usuario[];
@@ -62,12 +63,12 @@ export class MuroComunidadComponent implements OnInit {
     ngOnInit(): void {
         this.idUsuarioAutenticado = Number(this.authService.getUsuarioId());
         this.getComunidad().then(() => {
-            if (this.esParte) {  // Solo trae publicaciones y miembros si es parte de la comunidad
+            this.traerMiembros();
+            if ((!this.comunidad.esPrivada) || (this.esParte)) {
                 this.getPublicaciones();
-                this.traerMiembros();
+                this.cargarAmigos();
             }
         });
-        this.cargarAmigos();
     }
 
     cargarAmigos(): void {
@@ -163,6 +164,20 @@ export class MuroComunidadComponent implements OnInit {
         });
     }
 
+    async getCreadorComunidad(): Promise<void> {
+        return new Promise((resolve) => {
+            this.usuarioService.usuarioCreadorComunidad(this.comunidad.id).subscribe(dataPackage => {
+                this.creadorComunidad = dataPackage.data as Usuario;
+                console.log('Creador de la comunidad:', this.creadorComunidad); // Añadir log para verificar el valor
+                if (this.creadorComunidad.id == this.idUsuarioAutenticado) {
+                    this.esCreador = true;  // El usuario es el creador
+                }
+                resolve(); // Resuelve la promesa después de procesar el estado
+            });
+        });
+    }
+
+
     async procesarEstado(): Promise<void> {
         return new Promise((resolve) => {
             this.comunidadService.estadoSolicitud(this.comunidad.id).subscribe(dataPackage => {
@@ -183,7 +198,6 @@ export class MuroComunidadComponent implements OnInit {
                     this.esCreador = true;
                     this.esParte = true; // El creador es parte de la comunidad por defecto
                 }
-                console.log(estado)
                 resolve(); // Resuelve la promesa después de procesar el estado
             });
         });
@@ -200,6 +214,8 @@ export class MuroComunidadComponent implements OnInit {
                     this.comunidad = <Comunidad>dataPackage.data;
                     this.idComunidad = this.comunidad.id;
                     await this.procesarEstado(); // Asegúrate de que procesarEstado complete
+                    await this.getCreadorComunidad();
+
                     resolve();
                 });
             }
@@ -274,10 +290,14 @@ export class MuroComunidadComponent implements OnInit {
             // Iterar sobre los miembros y añadir solo aquellos que sean visibles
             this.miembros.forEach(miembro => {
                 console.info(this.idUsuarioAutenticado + "A");
-                console.info(miembro.id + "B");
+                console.info(miembro.nombreUsuario + "B");
 
                 if (miembro.id === this.idUsuarioAutenticado) {
                     // Siempre mostrar el usuario que está viendo la lista
+                    if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
+                        this.miembrosVisibles.push(miembro);
+                    }
+                } else if (miembro.id == this.creadorComunidad.id) {
                     if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
                         this.miembrosVisibles.push(miembro);
                     }
@@ -292,7 +312,7 @@ export class MuroComunidadComponent implements OnInit {
                         if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
                             this.miembrosVisibles.push(miembro);
                         }
-                    } else if (miembro.privacidadComunidades === 'Privada' && amigosIds.includes(miembro.id)) {
+                    } else if (miembro.privacidadComunidades === 'Solo amigos' && amigosIds.includes(miembro.id)) {
                         if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
                             this.miembrosVisibles.push(miembro);
                         }

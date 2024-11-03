@@ -59,6 +59,10 @@ export class UsuarioService {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/solicitudesAmistad/${this.authService.getNombreUsuario()}`);
   }
 
+  obtenerSolicitudesEnviadas(): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/solicitudesAmistadEnviadas/${this.authService.getNombreUsuario()}`);
+  }
+
   eliminarAmigo(idAmigo: number): Observable<DataPackage> {
     const body = {};
     return this.http.post<DataPackage>(`${this.usuariosUrl}/eliminarAmigo/${this.authService.getUsuarioId()}/${idAmigo}`, body);
@@ -105,6 +109,14 @@ export class UsuarioService {
 
   getCreadorComunidad(idUsuario: number, idComunidad: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.usuariosUrl}/esCreador/${idUsuario}/${idComunidad}`);
+  }
+
+  usuarioCreadorEvento(idEvento: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.usuariosUrl}/creadorEvento/${idEvento}`);
+  }
+
+  usuarioCreadorComunidad(idComunidad: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.usuariosUrl}/creadorComunidad/${idComunidad}`);
   }
   buscar(term: string): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.usuariosUrl}/buscar/${term}`);

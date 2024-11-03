@@ -88,6 +88,7 @@ export class AppComponent {
     switch (notificacion.tipo) {
       case 'ACEPTACION_PRIVADA':
       case 'UNION_PUBLICA':
+      case 'INVITACION_COMUNIDAD':
         // Notificaciones relacionadas con comunidades
         urlDestino = `/comunidad-muro/${notificacion.entidadId}`;
         break;
@@ -95,6 +96,7 @@ export class AppComponent {
       case 'INSCRIPCION_A_EVENTO':
       case 'RECORDATORIO_EVENTO_PROXIMO':
       case 'MODIFICACION_EVENTO':
+      case 'INVITACION_EVENTO':
         // Notificaciones relacionadas con eventos
         urlDestino = `/eventos/${notificacion.entidadId}`;
         break;
