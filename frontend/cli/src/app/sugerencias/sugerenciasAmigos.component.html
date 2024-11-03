@@ -1,6 +1,4 @@
-<h1>
-    Sugerencias de amigos
-</h1>
+<h1>Sugerencias de amigos</h1>
 
 <section class="carousel">
     <div class="carousel-container">
@@ -10,6 +8,9 @@
             <h3>{{ usuario.nombreReal }}</h3>
             <p>{{ usuario.nombreUsuario }}</p>
             <p>{{ usuario.descripcion }}</p>
+          <!-- Motivo estilizado -->
+          <div class="motivo-container" *ngIf="motivos[usuario.id]">
+            <p class="motivo-text">Motivo: "{{ motivos[usuario.id] }}"</p>
           </div>
         </div>
       </div>
@@ -19,3 +20,4 @@
     <button class="carousel-control prev" (click)="usuarioAnterior()" [disabled]="results.length === 0">‹</button>
     <button class="carousel-control next" (click)="siguienteUsuario()" [disabled]="results.length === 0">›</button>
   </section>
+

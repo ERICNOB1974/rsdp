@@ -19,15 +19,15 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['comunidades.component.css', '../css/filtros.css'] // Ruta relativa correcta si está en la misma carpeta
 })
 export class ComunidadesComponent implements OnInit {
-  comunidades: Comunidad[] = []; // Arreglo para almacenar las comunidades que provienen del backend
   currentIndexComunidades: number = 0; // Índice actual del carrusel
   currentIndexMiembro: number = 0; // Índice actual del carrusel
-  results: Comunidad[] = [];
   idUsuarioAutenticado!: number;  // ID del usuario autenticado
   comunidadesMiembroUsuario: Comunidad[] = [];
-
+  comunidades: Comunidad[] = []; // Arreglo para almacenar las comunidades que provienen del backend
+  resultadosOriginales: Comunidad[] = []; // Nueva variable para mantener los datos originales
+  results: Comunidad[] = [];
   filtroNombreAbierto: boolean = false;
-  filtroNombreActivo: boolean = false;
+  filtroNombreActivo: boolean = true;
   nombreEventoFiltro: string = '';
 
   // Filtro por participantes
@@ -62,14 +62,13 @@ export class ComunidadesComponent implements OnInit {
   }
 
 
-
   async getComunidades(): Promise<void> {
     this.comunidadService.disponibles().subscribe(async (dataPackage) => {
       const responseData = dataPackage.data;
       if (Array.isArray(responseData)) {
-        this.results = responseData;
-        this.traerMiembros(this.results); // Llamar a traerMiembros después de cargar las comunidades
-        // Recorrer todas las comunidades y asignar la ubicación
+        this.resultadosOriginales = responseData; // Guardar los datos originales
+        this.results = [...responseData]; // Hacer una copia para los resultados filtrados
+        this.traerMiembros(this.results);
         for (const comunidad of this.results) {
           if (comunidad.latitud && comunidad.longitud) {
             comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
@@ -82,7 +81,6 @@ export class ComunidadesComponent implements OnInit {
       }
     });
   }
-
 
   async miembroUsuario(): Promise<void> {
     this.comunidadService.miembroUsuario(this.idUsuarioAutenticado).subscribe(async (dataPackage) => {
@@ -168,8 +166,6 @@ obtenerComunidadesParaMostrar(): Comunidad[] {
 
 
 
-
-
   irADetallesDeLaComunidad(id: number): void {
     this.router.navigate(['/comunidad-muro', id]); // Navega a la ruta /comunidades/:id
   }
@@ -240,27 +236,26 @@ obtenerComunidadesParaMostrar(): Comunidad[] {
   }
 
   aplicarFiltroNombre(): void {
-    if (this.filtroNombreActivo) {
-      this.results = this.results.filter(comunidad =>
+    if (this.filtroNombreActivo && this.nombreEventoFiltro) {
+      this.results = this.resultadosOriginales.filter(comunidad =>
         comunidad.nombre.toLowerCase().includes(this.nombreEventoFiltro.toLowerCase())
       );
+    } else {
+      this.results = [...this.resultadosOriginales]; // Restaurar todos los resultados si el filtro está desactivado
     }
   }
-
   
-
-  aplicarFiltrosActivados(): void {
-    console.log("filtro nombre " +this  .nombreEventoFiltro);
-    this.getComunidades(); 
-
+  async aplicarFiltrosActivados(): Promise<void> {
+    this.results = [...this.resultadosOriginales]; // Comenzar con los datos originales
+  
     if (this.filtroNombreActivo) {
-      this.aplicarFiltroNombre()
+      this.aplicarFiltroNombre();
     }
     if (this.filtroParticipantesActivo) {
-      this.aplicarFiltroParticipantes()
+      this.aplicarFiltroParticipantes();
     }
     if (this.filtroEtiquetasActivo) {
-      this.aplicarFiltroEtiquetas()
+      this.aplicarFiltroEtiquetas();
     }
   }
 
@@ -317,7 +312,8 @@ obtenerComunidadesParaMostrar(): Comunidad[] {
 
   limpiarFiltroNombre(): void {
     this.nombreEventoFiltro = '';
-    this.getComunidades(); // Recargar todos los eventos
+    this.filtroNombreActivo = false;
+    this.results = [...this.resultadosOriginales];
   }
 
   // Métodos para el filtro por participantes

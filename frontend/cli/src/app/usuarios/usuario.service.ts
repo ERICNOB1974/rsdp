@@ -20,6 +20,10 @@ export class UsuarioService {
     private authService: AuthService
   ) { }
 
+  actualizarCorreo(nuevoCorreo: string): Observable<DataPackage> {
+    const idUsuario = this.authService.getUsuarioId();
+    return this.http.put<DataPackage>(`${this.usuariosUrl}/actualizarCorreo/${idUsuario}`, nuevoCorreo);
+  }
 
   all(): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.usuariosUrl}/findAll`);
@@ -123,7 +127,7 @@ export class UsuarioService {
     return this.http.get<DataPackage>(` ${this.usuariosUrl}/creadorComunidad/${idComunidad}`);
   }
   buscar(term: string): Observable<DataPackage> {
-    return this.http.get<DataPackage>(` ${this.usuariosUrl}/buscar/${term}`);
+    return this.http.get<DataPackage>(` ${this.usuariosUrl}/buscar/${this.authService.getNombreUsuario()}/${term}`);
   }
 
   enviarInvitacionEvento(idUsuarioReceptor: number, idEvento: number): Observable<DataPackage>{

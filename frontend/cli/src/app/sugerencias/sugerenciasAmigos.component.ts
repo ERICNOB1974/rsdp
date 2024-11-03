@@ -18,6 +18,7 @@ export class SugerenciasAmigosComponent implements OnInit {
   currentIndex: number = 0; // Índice actual del carrusel
   eventos: Usuario[] = []; // Arreglo para almacenar los eventos que provienen del backend
   results: Usuario[] = [];
+  motivos: { [key: number]: String } = {}; // Para almacenar comentarios por publicación
 
   constructor(private eventoService: EventoService,
     private comunidadService: ComunidadService,
@@ -32,10 +33,18 @@ export class SugerenciasAmigosComponent implements OnInit {
   getUsuarios(): void {
     this.usuarioService.sugerencias().subscribe((dataPackage) => {
       if (Array.isArray(dataPackage.data)) {
-        this.results = dataPackage.data.map(item => item.usuario); // Extrae solo los objetos 'evento'
+        // Extrae solo los usuarios
+        this.results = dataPackage.data.map(item => item.usuario);
+  
+        // Llena el objeto `motivos` con pares id: motivo
+        this.motivos = {};
+        dataPackage.data.forEach(item => {
+          this.motivos[item.usuario.id] = item.motivo;
+        });
       }
     });
   }
+  
 
 
   // Método para mover al siguiente grupo de eventos en el carrusel
