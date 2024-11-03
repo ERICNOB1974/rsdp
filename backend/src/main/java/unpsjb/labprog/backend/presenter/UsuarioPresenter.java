@@ -168,6 +168,16 @@ public class UsuarioPresenter {
         }
     }
 
+    @PutMapping("/actualizarCorreo/{idUsuario}")
+    public ResponseEntity<Object> actualizarCorreo(@PathVariable Long idUsuario, @RequestBody String nuevoCorreo) {
+        try {
+            usuarioService.actualizarCorreo(idUsuario, nuevoCorreo);
+            return Response.ok("Correo electrónico actualizado correctamente");
+        } catch (Exception e) {
+            return Response.error("", "Error al actualizar el correo electrónico: " + e.getMessage());
+        }
+    }
+
     @GetMapping("/existeMail/{correoElectronico}")
     public ResponseEntity<Object> existeMail(@PathVariable String correoElectronico) {
         return Response.ok(usuarioService.existeMail(correoElectronico));

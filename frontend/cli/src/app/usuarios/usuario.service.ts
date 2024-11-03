@@ -20,6 +20,10 @@ export class UsuarioService {
     private authService: AuthService
   ) { }
 
+  actualizarCorreo(nuevoCorreo: string): Observable<DataPackage> {
+    const idUsuario = this.authService.getUsuarioId();
+    return this.http.put<DataPackage>(`${this.usuariosUrl}/actualizarCorreo/${idUsuario}`, nuevoCorreo);
+  }
 
   all(): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.usuariosUrl}/findAll`);

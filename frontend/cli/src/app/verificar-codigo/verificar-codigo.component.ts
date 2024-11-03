@@ -2,6 +2,8 @@ import { Component, ElementRef, ViewChildren, QueryList } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../autenticacion/auth.service';
+import { DataPackage } from '../data-package';
+import { UsuarioService } from '../usuarios/usuario.service';
 
 @Component({
   selector: 'app-verificar-codigo',
@@ -13,7 +15,7 @@ import { AuthService } from '../autenticacion/auth.service';
 export class VerificarCodigoComponent {
   codigoForm!: FormGroup;
   email!: string;
-  tipo!: 'registro' | 'recuperacion'; // Tipo de flujo (registro o recuperación)
+  tipo!: 'registro' | 'recuperacion' | 'cambio-correo'; // Tipo de flujo (registro o recuperación)
 
   @ViewChildren('codigoInput') codigoInputs!: QueryList<ElementRef>;
 
@@ -21,20 +23,23 @@ export class VerificarCodigoComponent {
     private formBuilder: FormBuilder,
     private router: Router,
     private route: ActivatedRoute,
-    private authService: AuthService
+    private authService: AuthService,
+    private usuarioService: UsuarioService
   ) {
-    const tipoParam = this.route.snapshot.queryParamMap.get('tipo') as 'registro' | 'recuperacion';
+    const tipoParam = this.route.snapshot.queryParamMap.get('tipo') as 'registro' | 'recuperacion' | 'cambio-correo';
 
-    if (tipoParam !== 'registro' && tipoParam !== 'recuperacion') {
+    if (tipoParam !== 'registro' && tipoParam !== 'recuperacion' && tipoParam !== 'cambio-correo') {
       this.router.navigate(['/login']);
       return;
     }
-
+    
     this.tipo = tipoParam;
-
+    
     if (this.tipo === 'registro') {
       const registroData = JSON.parse(localStorage.getItem('registroData') || '{}');
       this.email = registroData.correoElectronico || '';
+    } else if (this.tipo === 'cambio-correo') {
+      this.email = localStorage.getItem('nuevoCorreo') || '';
     } else {
       this.email = localStorage.getItem('correoElectronico') || '';
     }
@@ -107,15 +112,36 @@ export class VerificarCodigoComponent {
       this.codigoForm.value.codigo4 +
       this.codigoForm.value.codigo5 +
       this.codigoForm.value.codigo6;
-
+  
     this.authService.verificarCodigo(this.email, codigo).subscribe((dataPackage) => {
       if (dataPackage.status === 200) {
         alert('Código verificado exitosamente.');
-
+  
         if (this.tipo === 'registro') {
           this.crearUsuario();
-        } else {
+        } else if (this.tipo === 'recuperacion') {
           this.router.navigate(['/cambiar-contrasena']);
+        } else if (this.tipo === 'cambio-correo') {
+          const nuevoCorreo = localStorage.getItem('nuevoCorreo');
+          if (nuevoCorreo) {
+            this.usuarioService.actualizarCorreo(nuevoCorreo).subscribe(
+              (response: DataPackage) => {
+                if (response.status === 200) {
+                  alert('Correo electrónico actualizado correctamente.');
+                  localStorage.removeItem('nuevoCorreo'); // Limpiamos el localStorage
+                  this.authService.logout(); // Cerramos la sesión actual
+                  this.router.navigate(['/login']); // Redirigimos al login
+                } else {
+                  alert('Error al actualizar el correo electrónico: ' + response.message);
+                }
+              },
+              () => {
+                alert('Error en el servidor al actualizar el correo electrónico');
+              }
+            );
+          } else {
+            alert('No se encontró el nuevo correo electrónico');
+          }
         }
       } else {
         alert(dataPackage.message);

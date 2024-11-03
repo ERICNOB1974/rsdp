@@ -129,4 +129,8 @@ export class PerfilDetailComponent implements OnInit {
     this.nombreRealValido = this.usuario.nombreReal.length >= 3;
   }
   
+  irACambiarCorreo(): void {
+    this.router.navigate(['/cambiar-correo']);
+  }
+
 }
