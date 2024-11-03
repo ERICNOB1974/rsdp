@@ -242,5 +242,8 @@ public class UsuarioService {
         return usuarioRepository.todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(idUsuario, idComunidad);
     }
 
+    public Usuario buscarCreadorDeUnEventoInterno(Long comunidadId, Long eventoId) {
+        return usuarioRepository.buscarCreadorDeUnEventoInterno(comunidadId, eventoId);
+    }
 
 }
