@@ -28,6 +28,15 @@ export class AuthService {
     return this.http.post<DataPackage>(`${this.autenticacionUrl}/cambiar-contrasena`, cambioContrasenaRequest);
   }
 
+  verificarContrasena(contrasena: string): Observable<DataPackage> {
+    const correoActual = this.getCorreoElectronico(); // Obtiene el correo del usuario actual
+    const verificacionRequest = { 
+        correoElectronico: correoActual, 
+        contrasena: contrasena 
+    };
+    return this.http.post<DataPackage>(`${this.autenticacionUrl}/verificar-contrasena`, verificacionRequest);
+  }
+
   registro(
     nombreReal: string,
     nombreUsuario: string,

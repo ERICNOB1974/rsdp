@@ -15,6 +15,7 @@ import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.AuthService;
 import unpsjb.labprog.backend.model.CambioContrasenaRequest;
 import unpsjb.labprog.backend.model.Usuario;
+
 @RestController
 @RequestMapping("/autenticacion")
 public class AuthPresenter {
@@ -45,7 +46,25 @@ public class AuthPresenter {
             return Response.error(null, "Error de inicio de sesión: " + e.getMessage());
         }
     }
-    
+
+    @PostMapping("/verificar-contrasena")
+    public ResponseEntity<Object> verificarContrasena(@RequestBody Map<String, String> request) {
+        try {
+            String correoElectronico = request.get("correoElectronico");
+            String contrasena = request.get("contrasena");
+
+            boolean esValida = authService.verificarContrasena(correoElectronico, contrasena);
+
+            if (esValida) {
+                return Response.ok("Contraseña válida");
+            } else {
+                return Response.error(null, "Contraseña incorrecta");
+            }
+        } catch (Exception e) {
+            return Response.error(null, "Error al verificar la contraseña: " + e.getMessage());
+        }
+    }
+
     @PostMapping("/recuperar")
     public ResponseEntity<Object> recuperarContraseña(@RequestBody String correo) {
         try {
@@ -65,7 +84,7 @@ public class AuthPresenter {
         } catch (Exception e) {
             return Response.error(null, "Error al cambiar la contraseña: " + e.getMessage());
         }
-    }    
+    }
 
     // Endpoint protegido (requiere autenticación)
     @GetMapping("/protegido")

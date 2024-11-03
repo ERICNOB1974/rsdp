@@ -59,6 +59,14 @@ public class AuthService {
         }
     }
     
+    public boolean verificarContrasena(String correoElectronico, String contrasena) throws Exception {
+        // Buscar el usuario por correo electrónico
+        Usuario usuario = userRepository.findByCorreoElectronico(correoElectronico)
+                .orElseThrow(() -> new Exception("Usuario no encontrado"));
+    
+        // Verificar si la contraseña coincide
+        return passwordEncoder.matches(contrasena, usuario.getContrasena());
+    }
 
     public void cambiarContrasena(CambioContrasenaRequest request) throws Exception {
 
