@@ -16,6 +16,8 @@ export class SugerenciasEventosComponent implements OnInit {
     currentIndex: number = 0; // Índice actual del carrusel
     eventos: Evento[] = []; // Arreglo para almacenar los eventos que provienen del backend
     results: any[] = [];
+    motivos: { [key: number]: String } = {}; // Para almacenar comentarios por publicación
+
   
     constructor(private eventoService: EventoService,
         private router: Router) { }
@@ -30,6 +32,10 @@ export class SugerenciasEventosComponent implements OnInit {
         if (Array.isArray(dataPackage.data)) {
           this.results = dataPackage.data.map(item => item.evento); // Extrae solo los objetos 'evento'
           console.info("Eventos recibidos: ", this.results);
+          this.motivos = {};
+          dataPackage.data.forEach(item => {
+            this.motivos[item.evento.id] = item.motivo;
+          });
         }
       });
     }
