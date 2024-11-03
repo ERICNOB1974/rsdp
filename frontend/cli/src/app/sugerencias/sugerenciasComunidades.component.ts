@@ -16,35 +16,44 @@ export class SugerenciasComunidadesComponent implements OnInit {
     currentIndex: number = 0; // Índice actual del carrusel
     comunidades: Comunidad[] = []; // Arreglo para almacenar los eventos que provienen del backend
     results: Comunidad[] = [];
-  
+    motivos: { [key: number]: String } = {}; // Para almacenar comentarios por publicación
+
     constructor(
         private comunidadService: ComunidadService,
         private router: Router) { }
 
     ngOnInit(): void {
-        this.getEventos()
+        this.getComunidades()
     }
 
 
-    getEventos(): void {
+      getComunidades(): void {
         this.comunidadService.sugerencias().subscribe((dataPackage) => {
           if (Array.isArray(dataPackage.data)) {
-            this.results = dataPackage.data.map(item => item.comunidad); // Extrae solo los objetos 'evento'
+            // Extrae solo los usuarios
+            this.results = dataPackage.data.map(item => item.comunidad);
+      
+            // Llena el objeto `motivos` con pares id: motivo
+            this.motivos = {};
+            dataPackage.data.forEach(item => {
+              this.motivos[item.comunidad.id] = item.motivo;
+            });
           }
         });
       }
+      
 
-      // Método para mover al siguiente grupo de eventos en el carrusel
-      siguienteEvento(): void {
+      // Método para mover al siguiente grupo de comunidades en el carrusel
+      siguienteComunidad(): void {
         this.currentIndex = (this.currentIndex + 1) % this.results.length; // Incrementa el índice
       }
     
-      // Método para mover al grupo anterior de eventos en el carrusel
-      eventoAnterior(): void {
+      // Método para mover al grupo anterior de comunidades en el carrusel
+      comunidadAnterior(): void {
         this.currentIndex = (this.currentIndex - 1 + this.results.length) % this.results.length; // Decrementa el índice
       }
     
-      // Método para obtener los eventos a mostrar en el carrusel
+      // Método para obtener las comunidades a mostrar en el carrusel
       obtenerComunidadesParaMostrar(): Comunidad[] {
         const comunidadesParaMostrar: Comunidad[] = [];
       

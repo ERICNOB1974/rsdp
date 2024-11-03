@@ -231,7 +231,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "WITH evento, score, COUNT(DISTINCT participante) AS cantidadParticipantes " +
                         "WHERE cantidadParticipantes < evento.cantidadMaximaParticipantes " +
                         "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
-                        "RETURN evento, score " +
+                        "RETURN evento, score, 'son similares porque tienen '+etiquetasCompartidas+' etiqueta/s compartida/s con comunidades en las que participas' AS motivo " +
                         "ORDER BY score DESC, evento.fechaHora ASC " +
                         "LIMIT 5")
         List<ScoreEvento> sugerenciasDeEventosBasadosEnEventos2(String nombreUsuario);

@@ -142,10 +142,12 @@ public class ComunidadService {
         for (ScoreComunidad scoreComunidad : todasLasSugerencias) {
             // Si la comunidad ya existe en el mapa, sumar los scores
             mapaSugerencias.merge(scoreComunidad.getComunidad().getId(),
-                    new ScoreComunidad(scoreComunidad.getComunidad(), scoreComunidad.getScore()),
+                    new ScoreComunidad(scoreComunidad.getComunidad(), scoreComunidad.getScore(), scoreComunidad.getMotivo()),
                     (existente, nuevo) -> {
                         double nuevoScore = existente.getScore() + nuevo.getScore(); // Sumar scores
                         existente.setScore(nuevoScore); // Actualizar el score sumado
+                        String nuevoMotivo = existente.getMotivo() + " --- " + nuevo.getMotivo();
+                        existente.setMotivo(nuevoMotivo);
                         return existente; // Retornar el objeto existente actualizado
                     });
         }
