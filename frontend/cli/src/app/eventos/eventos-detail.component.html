@@ -25,20 +25,24 @@
         <!-- Botón de regresar centrado -->
 
         <!-- Botón Invitar Amigos centrado, visible solo si el usuario ya está inscrito -->
-        <button *ngIf="salirValid()" (click)="abrirModalInvitarAmigos()" class="btn btn-success btn-block mx-auto mt-3">
+        <button *ngIf="botonInvitar()" (click)="abrirModalInvitarAmigos()" class="btn btn-success btn-block mx-auto mt-3">
           Invitar amigos
         </button>
 
 
-        <ng-container *ngIf="creador">
-          <h3>Miembros</h3>
-          <ul>
-            <li *ngFor="let miembro of miembros">
-              {{ miembro.nombreUsuario }}
-              <button *ngIf="(creador)" (click)="eliminarMiembro(miembro.id)">Eliminar Miembro</button>
-            </li>
-          </ul>
-        </ng-container>
+        <h3>Miembros</h3>
+        <div *ngFor="let miembro of participantesVisibles">
+          <!-- Si no es anónimo, muestra el perfil -->
+          <div *ngIf="!miembro.anonimos">
+            <img [src]="miembro.fotoPerfil" alt="{{ miembro.nombreUsuario }}" class="perfil-imagen">
+            <span>{{ miembro.nombreUsuario }}</span>
+            <button *ngIf="creador" (click)="eliminarMiembro(miembro.id)">Eliminar Miembro</button>
+          </div>
+        </div>
+        <!-- Mostrar la cantidad de usuarios anónimos -->
+        <div *ngIf="usuariosAnonimos > 0">
+          <span>{{ usuariosAnonimos }} Usuario{{ usuariosAnonimos > 1 ? 's' : '' }} anónimo{{ usuariosAnonimos > 1 ? 's' : '' }}</span>
+        </div>
 
         <button *ngIf="creador" class="btn btn-primary" (click)="editarEvento()">Editar</button>
         <button *ngIf="creador" (click)="eliminarEvento()" class="btn btn-danger">Eliminar evento</button>

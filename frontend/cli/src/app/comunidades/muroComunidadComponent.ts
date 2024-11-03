@@ -10,9 +10,11 @@ import { PublicacionService } from '../publicaciones/publicacion.service';
 import { AuthService } from '../autenticacion/auth.service';
 import { UsuarioService } from '../usuarios/usuario.service';
 import { Usuario } from '../usuarios/usuario';
+import { Evento } from '../eventos/evento'
 import { DataPackage } from '../data-package';
 import { lastValueFrom } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
+import { EventoService } from '../eventos/evento.service';
 
 @Component({
     selector: 'app-editar-comunidad',
@@ -28,6 +30,7 @@ export class MuroComunidadComponent implements OnInit {
     pendiente: boolean = false;
     tabSeleccionada: string = 'publicaciones';
     esCreador: boolean = false;
+    creadorComunidad!: Usuario;
     miembros!: Usuario[];
     amigos!: Usuario[];
     administradores!: Usuario[];
@@ -42,6 +45,8 @@ export class MuroComunidadComponent implements OnInit {
 
     @ViewChild('modalInvitarAmigos') modalInvitarAmigos!: TemplateRef<any>;
 
+    eventos: any[] = [];
+
     constructor(
         private route: ActivatedRoute,
         private comunidadService: ComunidadService,
@@ -51,7 +56,8 @@ export class MuroComunidadComponent implements OnInit {
         private router: Router,
         private snackBar: MatSnackBar,
         private cdr: ChangeDetectorRef,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private eventoService: EventoService
     ) { }
     /*
     salirValid(): boolean {
@@ -62,12 +68,60 @@ export class MuroComunidadComponent implements OnInit {
     ngOnInit(): void {
         this.idUsuarioAutenticado = Number(this.authService.getUsuarioId());
         this.getComunidad().then(() => {
-            if (this.esParte) {  // Solo trae publicaciones y miembros si es parte de la comunidad
+            this.traerMiembros();
+            if ((!this.comunidad.esPrivada) || (this.esParte)) {
                 this.getPublicaciones();
                 this.traerMiembros();
+                this.obtenerEventosDeLaComunidad();
+            }
+            this.cargarAmigos();
+        });
+    }
+
+    obtenerEventosDeLaComunidad(): void {
+        this.eventoService.eventosDeUnaComunidad(this.comunidad.id).subscribe((dataPackage: DataPackage) => {
+            this.eventos = dataPackage.data as Evento[];
+            this.eventos.forEach(async (evento) => {
+                this.obtenerCreadorDelEvento(this.comunidad.id, evento.id); // Obtener el creador del evento
+                // Setear la ubicación solo si tiene latitud y longitud
+                if (evento.latitud && evento.longitud) {
+                    evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
+                } else {
+                    evento.ubicacion = 'Ubicación desconocida';
+                }
+            });
+            this.traerParticipantes(this.eventos); // Obtener los participantes
+        });
+    }
+
+    obtenerCreadorDelEvento(comunidadId: number, eventoId: number): void {
+        this.eventoService.buscarCreadorDeUnEventoInterno(comunidadId, eventoId).subscribe((dataPackage: DataPackage) => {
+            const evento = this.eventos.find(e => e.id === eventoId);
+            if (evento) {
+                evento.creador = dataPackage.data; // Asigna el creador al evento
             }
         });
-        this.cargarAmigos();
+    }
+
+    traerParticipantes(eventos: Evento[]): void {
+        // Recorrer todos los eventos y obtener el número de participantes
+        for (let evento of eventos) {
+            this.eventoService.participantesEnEvento(evento.id).subscribe(
+                (dataPackage) => {
+                    // Asignar el número de participantes al evento
+                    if (dataPackage && typeof dataPackage.data === 'number') {
+                        evento.participantes = dataPackage.data; // Asignar el número de participantes
+                    }
+                },
+                (error) => {
+                    console.error(`Error al traer los participantes del evento ${evento.id}:`, error);
+                }
+            );
+        }
+    }
+
+    irADetalleEvento(eventoId: number): void {
+        this.router.navigate([`eventos/${eventoId}`]);
     }
 
     cargarAmigos(): void {
@@ -163,6 +217,20 @@ export class MuroComunidadComponent implements OnInit {
         });
     }
 
+    async getCreadorComunidad(): Promise<void> {
+        return new Promise((resolve) => {
+            this.usuarioService.usuarioCreadorComunidad(this.comunidad.id).subscribe(dataPackage => {
+                this.creadorComunidad = dataPackage.data as Usuario;
+                console.log('Creador de la comunidad:', this.creadorComunidad); // Añadir log para verificar el valor
+                if (this.creadorComunidad.id == this.idUsuarioAutenticado) {
+                    this.esCreador = true;  // El usuario es el creador
+                }
+                resolve(); // Resuelve la promesa después de procesar el estado
+            });
+        });
+    }
+
+
     async procesarEstado(): Promise<void> {
         return new Promise((resolve) => {
             this.comunidadService.estadoSolicitud(this.comunidad.id).subscribe(dataPackage => {
@@ -183,7 +251,6 @@ export class MuroComunidadComponent implements OnInit {
                     this.esCreador = true;
                     this.esParte = true; // El creador es parte de la comunidad por defecto
                 }
-                console.log(estado)
                 resolve(); // Resuelve la promesa después de procesar el estado
             });
         });
@@ -200,6 +267,8 @@ export class MuroComunidadComponent implements OnInit {
                     this.comunidad = <Comunidad>dataPackage.data;
                     this.idComunidad = this.comunidad.id;
                     await this.procesarEstado(); // Asegúrate de que procesarEstado complete
+                    await this.getCreadorComunidad();
+
                     resolve();
                 });
             }
@@ -274,10 +343,14 @@ export class MuroComunidadComponent implements OnInit {
             // Iterar sobre los miembros y añadir solo aquellos que sean visibles
             this.miembros.forEach(miembro => {
                 console.info(this.idUsuarioAutenticado + "A");
-                console.info(miembro.id + "B");
+                console.info(miembro.nombreUsuario + "B");
 
                 if (miembro.id === this.idUsuarioAutenticado) {
                     // Siempre mostrar el usuario que está viendo la lista
+                    if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
+                        this.miembrosVisibles.push(miembro);
+                    }
+                } else if (miembro.id == this.creadorComunidad.id) {
                     if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
                         this.miembrosVisibles.push(miembro);
                     }
@@ -292,7 +365,7 @@ export class MuroComunidadComponent implements OnInit {
                         if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
                             this.miembrosVisibles.push(miembro);
                         }
-                    } else if (miembro.privacidadComunidades === 'Privada' && amigosIds.includes(miembro.id)) {
+                    } else if (miembro.privacidadComunidades === 'Solo amigos' && amigosIds.includes(miembro.id)) {
                         if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
                             this.miembrosVisibles.push(miembro);
                         }
@@ -362,7 +435,17 @@ export class MuroComunidadComponent implements OnInit {
         return false
     }
 
+
     gestionarComunidad(){
         this.router.navigate(['/creadorComunidad', this.comunidad.id]);
     }
+
+
+    crearEvento() {
+        if (this.esParte) {
+            this.router.navigate([`/comunidades/${this.comunidad.id}/eventos/crearEvento`]);
+        }
+    }
+
 }
+

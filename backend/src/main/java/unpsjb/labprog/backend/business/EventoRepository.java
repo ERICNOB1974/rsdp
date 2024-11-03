@@ -114,6 +114,11 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "RETURN COUNT(DISTINCT u) AS totalParticipaciones")
         int participantesDeEvento(Long idEvento);
 
+        @Query("MATCH (e:Evento)-[:EVENTO_INTERNO]->(c:Comunidad) " +
+        "WHERE id(c) = $comunidadId " +
+        "RETURN e")
+        List<Evento> eventosDeUnaComunidad(Long comunidadId); 
+
         @Query("MATCH (e:Evento) " + "WHERE date(e.fechaHora) = date(datetime()) + duration({days: 1}) "
                         + " RETURN e ORDER BY e.fechaHora ASC")
         List<Evento> eventosProximos();
@@ -158,6 +163,11 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "MERGE (e)-[:CREADO_POR]->(u)")
         void establecerCreador(Long idEvento, Long idUsuario);
 
+        @Query("MATCH (e:Evento), (c:Comunidad) " +
+        "WHERE id(e) = $idEvento AND id(c) = $comunidadId " +
+        "MERGE (e)-[:EVENTO_INTERNO]->(c)")
+        void establecerEventoInterno(Long idEvento, Long comunidadId);
+        
         @Query("MATCH (e:Evento) WHERE id(e) = $ide RETURN e")
         Optional<Evento> encontrarEventoPorId(Long ide);
 

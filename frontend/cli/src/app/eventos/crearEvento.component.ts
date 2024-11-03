@@ -44,6 +44,8 @@ export class CrearEventoComponent {
   tipoArchivo: string = ''; // Para distinguir entre imagen o video
   vistaPreviaArchivo: string | ArrayBuffer | null = null;
   
+  comunidadId: string | null = null;
+
 
   constructor(
     private eventoService: EventoService,
@@ -69,6 +71,7 @@ export class CrearEventoComponent {
     this.buscarDireccionSubject.pipe(debounceTime(300)).subscribe((query: string) => {
       this.realizarBusqueda(query);
     });
+    this.comunidadId = this.route.snapshot.paramMap.get('comunidadId');
   }
 
   private obtenerUbicacionYIniciarMapa(): void {
@@ -283,8 +286,13 @@ export class CrearEventoComponent {
       this.evento.fechaHora = new Date(this.evento.fechaHora).toISOString();
 
       // Guardar el evento y obtener su ID
-      const eventoGuardado = await firstValueFrom(this.eventoService.saveConCreador(this.evento));
-      this.evento = <Evento>eventoGuardado.data;
+      if (this.comunidadId) {
+        const eventoGuardado = await firstValueFrom(this.eventoService.saveConCreadorComunidad(this.evento,<number><unknown>this.comunidadId));
+        this.evento = <Evento>eventoGuardado.data;
+      } else {
+        const eventoGuardado = await firstValueFrom(this.eventoService.saveConCreador(this.evento));
+        this.evento = <Evento>eventoGuardado.data;
+      }
 
       // Verificar y crear etiquetas si es necesario
       for (const etiqueta of this.etiquetasSeleccionadas) {
@@ -299,9 +307,13 @@ export class CrearEventoComponent {
         // Realizar la etiquetación con la etiqueta final
         await this.eventoService.etiquetar(this.evento, etiquetaFinal.id).toPromise();
       }
-
+  
       alert('Evento guardado con éxito');
-      window.location.reload();
+      if (this.comunidadId){
+        this.location.back();
+      } else {
+        window.location.reload();
+      }
     } catch (error) {
       console.error('Error al guardar el evento:', error);
       alert('Error al guardar el evento.');

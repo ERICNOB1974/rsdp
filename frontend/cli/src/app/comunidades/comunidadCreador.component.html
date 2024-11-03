@@ -1,48 +1,50 @@
 <div class="comunidad-admin">
-    <h2>Administración de la Comunidad: {{ comunidad?.nombre }}</h2>
-  
-    <!-- Solo los creadores pueden editar la comunidad -->
-    <button *ngIf="esCreador" (click)="editarComunidad()">Editar Información de la Comunidad</button>
-  
-    <!-- Sección de miembros (visible para creadores, administradores y miembros) -->
-    <h3>Miembros</h3>
-    <ul>
+  <h2>Administración de la Comunidad: {{ comunidad?.nombre }}</h2>
+
+  <!-- Solo los creadores pueden editar la comunidad -->
+  <button *ngIf="esCreador" (click)="editarComunidad()">Editar Información de la Comunidad</button>
+
+  <!-- Sección de miembros (visible para creadores, administradores y miembros) -->
+  <h3>Miembros</h3>
+  <ul>
       <li *ngFor="let miembro of miembros">
-        {{ miembro.nombreUsuario }}
-  
-        <!-- Los creadores pueden gestionar roles de administrador -->
-        <ng-container *ngIf="esCreador">
-          <!-- Si el miembro es un administrador, mostrar el botón para quitar rol -->
-          <button *ngIf="esAdministrador(miembro.id)" (click)="quitarRolOrganizador(miembro.id)">
-            Quitar Rol de Administrador
+          {{ miembro.nombreUsuario }}
+
+          <!-- Los creadores pueden gestionar roles de administrador -->
+          <ng-container *ngIf="esCreador && miembro.id !== idUsuarioAutenticado">
+              <!-- Si el miembro es un administrador, mostrar el botón para quitar rol -->
+              <button *ngIf="esAdministrador(miembro.id)" (click)="quitarRolOrganizador(miembro.id)">
+                  Quitar Rol de Administrador
+              </button>
+
+              <!-- Si el miembro no es un administrador, mostrar el botón para otorgar rol -->
+              <button *ngIf="!esAdministrador(miembro.id)" (click)="otorgarRolOrganizador(miembro.id)">
+                  Otorgar Rol de Administrador
+              </button>
+          </ng-container>
+
+          <!-- Solo creadores pueden eliminar miembros, y administradores solo si no son el creador o administradores -->
+          <button *ngIf="(esCreador || (esAdmin && !esAdministrador(miembro.id) && miembro.id !== creadorComunidad.id)) && miembro.id !== idUsuarioAutenticado" (click)="eliminarMiembro(miembro)">
+              Eliminar Miembro
           </button>
-  
-          <!-- Si el miembro no es un administrador, mostrar el botón para otorgar rol -->
-          <button *ngIf="!esAdministrador(miembro.id)" (click)="otorgarRolOrganizador(miembro.id)">
-            Otorgar Rol de Administrador
-          </button>
-        </ng-container>
-  
-        <!-- Solo creadores pueden eliminar miembros -->
-        <button *ngIf="(esCreador || esAdmin)" (click)="eliminarMiembro(miembro)">Eliminar Miembro</button>
       </li>
-    </ul>
-  
-    <!-- Sección de solicitudes pendientes (solo para creadores y administradores) -->
-    <div *ngIf="comunidad.esPrivada && (esAdmin || esCreador)">
+  </ul>
+
+  <!-- Sección de solicitudes pendientes (solo para creadores y administradores) -->
+  <div *ngIf="comunidad.esPrivada && (esAdmin || esCreador)">
       <h3>Solicitudes Pendientes</h3>
       <ul>
-        <li *ngFor="let solicitud of solicitudesPendientes">
-          {{ solicitud.nombreUsuario }}
-          <button (click)="gestionarSolicitud(solicitud.id, true)">Aceptar</button>
-          <button (click)="gestionarSolicitud(solicitud.id, false)">Rechazar</button>
-        </li>
+          <li *ngFor="let solicitud of solicitudesPendientes">
+              {{ solicitud.nombreUsuario }}
+              <button (click)="gestionarSolicitud(solicitud.id, true)">Aceptar</button>
+              <button (click)="gestionarSolicitud(solicitud.id, false)">Rechazar</button>
+          </li>
       </ul>
-    </div>
-  
-    <!-- Solo los creadores pueden eliminar la comunidad -->
-    <button *ngIf="esCreador" (click)="eliminarComunidad()" class="danger-button">Eliminar Comunidad</button>
-  
-    <!-- Botón para regresar a la página anterior (visible para todos) -->
-    <button (click)="goBack()">Regresar</button>
   </div>
+
+  <!-- Solo los creadores pueden eliminar la comunidad -->
+  <button *ngIf="esCreador" (click)="eliminarComunidad()" class="danger-button">Eliminar Comunidad</button>
+
+  <!-- Botón para regresar a la página anterior (visible para todos) -->
+  <button (click)="goBack()">Regresar</button>
+</div>

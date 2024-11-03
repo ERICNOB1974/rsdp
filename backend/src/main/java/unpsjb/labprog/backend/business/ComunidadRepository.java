@@ -144,7 +144,7 @@ void eliminarUsuario(Long idUsuario, Long idComunidad);
                         " RETURN c")
         Comunidad comunidadOrganizadora(Evento e);
 
-        @Query("MATCH (u:Usuario)-[:MIEMBRO]->(c:Comunidad)" +
+        @Query("MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c:Comunidad)" +
                         "WHERE id(c) = $idComunidad " +
                         "RETURN COUNT(DISTINCT u) AS totalParticipaciones")
         int miembrosDeComunidad(Long idComunidad);

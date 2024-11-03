@@ -5,6 +5,7 @@
   <div *ngIf="!comunidad.imagen">
     <img src="../../assets/comunidad.jpg" style="max-width: 400px; max-height: 400px;">
   </div>
+
   <h1>{{ comunidad.nombre }}</h1>
   <button *ngIf="!esCreador" class="btn btn-primary btn-block ingresar-button"
     [disabled]="!(salirValid() || !inscribirseValid())" (click)="salirValid() ? salir() : ingresar()">
@@ -31,7 +32,6 @@
         Publicar
       </button>
 
-
       <div class="publicaciones-grid">
         <div class="publicacion-item" *ngFor="let publicacion of publicaciones"
           (click)="irADetallePublicacion(publicacion.id)">
@@ -47,6 +47,28 @@
           </div>
         </div>
       </div>
+    </div>
+
+    <div *ngIf="tabSeleccionada === 'eventos'" class="perfil-eventos">
+      <h3>Eventos</h3>
+
+      <button *ngIf="esParte" (click)="crearEvento()" class="btn btn-primary mt-3">
+        Crear Evento
+      </button>
+
+      <div class="eventos-grid">
+        <div class="evento-item" *ngFor="let evento of eventos" (click)="irADetalleEvento(evento.id)">
+            <h4>{{ evento.nombre }}</h4>
+            <p>Descripción: {{ evento.descripcion }}</p>
+            <p>Ubicación: {{ evento.ubicacion }}</p>
+            <p>Fecha: {{ evento.fechaDeCreacion | date:'medium' }}</p>
+            <p>Fecha y hora: {{ evento.fechaHora | date:'medium' }}</p>
+            <p>Participantes: {{ evento.participantes }} / {{ evento.cantidadMaximaParticipantes }}</p>
+            <p *ngIf="evento.esPrivadoParaLaComunidad">Evento privado</p>
+            <p *ngIf="evento.creador">Creador: {{ evento.creador.nombreUsuario }}</p>
+        </div>
+      </div>  
+
     </div>
 
     <div *ngIf="tabSeleccionada === 'miembros'" class="perfil-miembros">

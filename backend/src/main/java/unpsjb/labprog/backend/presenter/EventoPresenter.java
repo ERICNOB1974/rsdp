@@ -51,6 +51,16 @@ public class EventoPresenter {
         return Response.ok(eventoService.participantesDeEvento(id));
     }
 
+    @GetMapping("/eventosDeUnaComunidad/{comunidadId}")
+    public ResponseEntity<Object> eventosDeUnaComunidad(@PathVariable Long comunidadId) {
+        return Response.ok(eventoService.eventosDeUnaComunidad(comunidadId));
+    }
+
+    @GetMapping("/buscarCreadorDeUnEventoInterno/{comunidadId}/{eventoId}")
+    public ResponseEntity<Object> buscarCreadorDeUnEventoInterno(@PathVariable Long comunidadId, @PathVariable Long eventoId) {
+        return Response.ok(usuarioService.buscarCreadorDeUnEventoInterno(comunidadId, eventoId));
+    }
+
     @RequestMapping(path = "/create", method = RequestMethod.POST)
     public ResponseEntity<Object> create(@RequestBody Evento evento) throws MessagingException, EventoException {
         return Response.ok(eventoService.crear(evento));
@@ -60,6 +70,12 @@ public class EventoPresenter {
     public ResponseEntity<Object> createConCreador(@RequestBody Evento evento, @PathVariable String nombreUsuario)
             throws MessagingException, EventoException {
         return Response.ok(eventoService.crearConCreador(evento, nombreUsuario));
+    }
+
+    @RequestMapping(path = "/crearParaComunidad/{nombreUsuario}/{comunidadId}", method = RequestMethod.POST)
+    public ResponseEntity<Object> crearConCreadorParaEventoInternoParaComunidad(@RequestBody Evento evento, @PathVariable String nombreUsuario, @PathVariable Long comunidadId)
+            throws MessagingException, EventoException {
+        return Response.ok(eventoService.crearConCreadorParaEventoInternoParaComunidad(evento, nombreUsuario, comunidadId));
     }
 
     @GetMapping("/sugerencias/{nombreUsuario}")

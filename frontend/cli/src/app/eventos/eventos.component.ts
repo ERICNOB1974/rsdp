@@ -21,7 +21,8 @@ import { AuthService } from '../autenticacion/auth.service';
 })
 export class EventosComponent implements OnInit {
   eventos: Evento[] = []; // Arreglo para almacenar los eventos que provienen del backend
-  currentIndex: number = 0; // Índice actual del carrusel
+  currentIndexEventos: number = 0; // Índice actual del carrusel
+  currentIndexParticipa: number = 0;
   results: Evento[] = [];
   filtroNombreAbierto: boolean = false;
   nombreEventoFiltro: string = '';
@@ -305,17 +306,24 @@ export class EventosComponent implements OnInit {
   }
 
   // Método para mover al siguiente grupo de eventos en el carrusel
-  siguienteEvento(): void {
-    this.currentIndex = (this.currentIndex + 1) % this.results.length; // Incrementa el índice
-  }
+// Métodos para el primer carrusel (eventos)
+siguienteEvento(): void {
+  this.currentIndexEventos = (this.currentIndexEventos + 1) % this.results.length; // Incrementa el índice del primer carrusel
+}
 
-  // Método para mover al grupo anterior de eventos en el carrusel
-  eventoAnterior(): void {
-    this.currentIndex = (this.currentIndex - 1 + this.results.length) % this.results.length; // Decrementa el índice
-  }
+eventoAnterior(): void {
+  this.currentIndexEventos = (this.currentIndexEventos - 1 + this.results.length) % this.results.length; // Decrementa el índice del primer carrusel
+}
 
-  // Método para obtener los eventos a mostrar en el carrusel
-  // Método para obtener los eventos a mostrar en el carrusel
+// Métodos para el segundo carrusel (eventos en los que participa el usuario)
+siguienteEventoParticipa(): void {
+  this.currentIndexParticipa = (this.currentIndexParticipa + 1) % this.eventosParticipaUsuario.length; // Incrementa el índice del segundo carrusel
+}
+
+eventoAnteriorParticipa(): void {
+  this.currentIndexParticipa = (this.currentIndexParticipa - 1 + this.eventosParticipaUsuario.length) % this.eventosParticipaUsuario.length; // Decrementa el índice del segundo carrusel
+}
+
   obtenerEventosParaMostrar(): Evento[] {
     const eventosParaMostrar: Evento[] = [];
 
@@ -323,24 +331,19 @@ export class EventosComponent implements OnInit {
       return eventosParaMostrar; // Devuelve un arreglo vacío si no hay eventos
     }
 
+    // Definir cuántos eventos mostrar, máximo 4 o el número total de eventos disponibles
+    const cantidadEventosAMostrar = Math.min(this.results.length, 4);
 
-  // Definir cuántas comunidades mostrar, máximo 4 o el número total de comunidades disponibles
-  const cantidadEventosAMostrar = Math.min(this.results.length, 4);
-  
     for (let i = 0; i < cantidadEventosAMostrar; i++) {
-      const index = (this.currentIndex + i) % this.results.length;
+      const index = (this.currentIndexEventos + i) % this.results.length;
       const evento = this.results[index];
 
-      // Excluir eventos en los que el usuario ya está participando
-      const yaParticipa = this.eventosParticipaUsuario.some(
-        (eventoParticipado) => eventoParticipado.id === evento.id
-      );
-
-      if (!yaParticipa) {
-        eventosParaMostrar.push(evento); // Agregar solo si no está participando
+      // Excluir eventos en los que el usuario ya participa
+      if (!this.eventosParticipaUsuario.some(e => e.id === evento.id)) {
+        eventosParaMostrar.push(evento);
       }
     }
-    console.info(eventosParaMostrar);
+
     return eventosParaMostrar;
   }
 

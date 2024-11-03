@@ -353,6 +353,7 @@ export class PerfilComponent implements OnInit {
         console.error(dataPackage.message);
       }
     });
+  
   }
   
   traerParticipantes(eventos: Evento[]): void {
@@ -423,6 +424,8 @@ export class PerfilComponent implements OnInit {
   irADetalleRutina(idRutina: number): void {
     this.router.navigate(['/rutinas', idRutina]);
   }
-
+  irADetalleEvento(idEvento: number): void {
+    this.router.navigate(['/eventos', idEvento]);
+  }
 
 }
