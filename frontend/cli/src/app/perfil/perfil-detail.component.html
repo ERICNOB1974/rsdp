@@ -71,6 +71,22 @@
           </select>
         </div>
 
+        <div class="mb-3">
+          <label for="correoActual" class="form-label">Correo electrónico actual</label>
+          <input type="email" 
+                 class="form-control bg-light text-muted" 
+                 style="opacity: 0.8; cursor: default;" 
+                 id="correoActual" 
+                 [value]="usuario.correoElectronico" 
+                 readonly>
+        </div>
+
+        <div class="mb-3">
+          <button type="button" class="btn btn-info w-100" (click)="irACambiarCorreo()">
+            Cambiar Correo Electrónico
+          </button>
+        </div>
+
         <div class="d-grid gap-2 mt-4">
           <button type="submit" class="btn btn-primary" [disabled]="!verificarHabilitacionBotonGuardar()">
             Guardar cambios

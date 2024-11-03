@@ -105,6 +105,13 @@ public class UsuarioService {
         return usuarioRepository.existeNombreUsuarioMenosElActual(nombreUsuarioIngresado, nombreUsuarioActual);
     }
 
+    public void actualizarCorreo(Long idUsuario, String nuevoCorreo) throws Exception {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new Exception("Usuario no encontrado"));
+        usuario.setCorreoElectronico(nuevoCorreo);
+        usuarioRepository.save(usuario);
+    }
+
     public List<Usuario> buscarUsuarios(String term) {
         return usuarioRepository.buscarUsuarios(term);
     }

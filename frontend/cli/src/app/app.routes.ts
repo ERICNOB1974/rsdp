@@ -34,6 +34,8 @@ import { RutinasCreadasUsuarioComponent } from './rutinas/rutinasCreadasUsuario.
 import { MuroComunidadComponent } from './comunidades/muroComunidadComponent';
 import { EditarEventoComponent } from './eventos/editarEventoComponent';
 import { CalendarioEventosComponent } from './calendario/calendario-eventos.component';
+import { CambiarCorreoComponent } from './cambiarCorreo/cambiar-correo.component';
+import { NuevoCorreoComponent } from './cambiarCorreo/nuevo-correo.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -65,6 +67,8 @@ export const routes: Routes = [
   { path: 'rutinas/hacer/:id', component: RutinasEjercicioComponent,  canActivate: [AuthGuard] },
   { path: 'rutinas/:id', component: RutinaDetailComponent, canActivate: [AuthGuard] },
   { path: 'calendario', component: CalendarioEventosComponent, canActivate: [AuthGuard] },
+  { path: 'cambiar-correo', component: CambiarCorreoComponent, canActivate: [AuthGuard] },
+  { path: 'nuevo-correo', component: NuevoCorreoComponent, canActivate: [AuthGuard] },
   { path: 'login', component: LoginComponent }, 
   { path: 'registro', component: RegistroComponent },
   { path: 'verificar-codigo', component: VerificarCodigoComponent },
