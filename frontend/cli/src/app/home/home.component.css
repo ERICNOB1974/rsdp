@@ -115,3 +115,70 @@
         font-size: 0.75rem;
     }
 }
+.publicacion-interactions {
+    padding: 12px;
+    border-top: 1px solid #efefef;
+}
+
+.likes-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.like-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    color: #262626;
+}
+
+.like-button.liked {
+    color: #ed4956;
+}
+
+.comment {
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.comment-input-container {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.publicacion-input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #efefef;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.publicacion-button {
+    padding: 8px 16px;
+    background-color: #0095f6;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.publicacion-button:hover {
+    background-color: #0081d6;
+}
+
+.comment-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    color: #262626;
+}
+
+.comment-button:hover {
+    color: #8e8e8e;
+}

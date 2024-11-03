@@ -1,8 +1,8 @@
 export interface Evento {
     id: number;
     nombre: string;
-    fechaDeCreacion: Date; 
-    fechaHora: string | Date; 
+    fechaDeCreacion: Date;
+    fechaHora: string | Date;
     descripcion: string;
     cantidadMaximaParticipantes: number;
     esPrivadoParaLaComunidad: boolean;
@@ -10,4 +10,5 @@ export interface Evento {
     latitud: number;
     longitud: number;
     ubicacion: string;
+    imagen: string;
 }

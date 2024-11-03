@@ -15,6 +15,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class EditarComunidadComponent implements OnInit {
   comunidad!: Comunidad; // Comunidad que se va a editar
   idComunidad!: number;
+  formatoValido: boolean = true;
+  archivoSeleccionado!: File; // Para almacenar la imagen o video seleccionado
+  tipoArchivo: string = ''; // Para distinguir entre imagen o video
+  vistaPreviaArchivo: string | ArrayBuffer | null = null;
+  
 
   constructor(
     private route: ActivatedRoute,
@@ -54,5 +59,39 @@ export class EditarComunidadComponent implements OnInit {
 
   cancelar(): void {
     this.router.navigate(['/comunidades']); // Navegar de vuelta si se cancela
+  }
+
+
+
+  onFileSelect(event: any) {
+    const file = event.target.files[0];
+    const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+    if (file) {
+      // Verificar si el archivo es una imagen o un video
+      if (validImageTypes.includes(file.type) ) {
+        this.formatoValido = true; // El formato es válido
+        this.archivoSeleccionado = file;
+
+        // Detecta el tipo de archivo
+        const fileType = file.type.split('/')[0];
+        this.tipoArchivo = fileType; // 'image' o 'video'
+
+        // Crea la vista previa
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.vistaPreviaArchivo = reader.result;
+          this.comunidad.imagen = reader.result as string; // Aquí obtenemos la cadena base64
+        };
+        reader.readAsDataURL(file);
+
+        this.comunidad.imagen = file;
+
+      } else {
+        this.formatoValido = false; // El formato no es válido
+        this.vistaPreviaArchivo = null; // No se muestra la vista previa
+        alert('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF).');
+      }
+    }
   }
 }

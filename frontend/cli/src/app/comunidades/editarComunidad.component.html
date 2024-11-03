@@ -1,30 +1,35 @@
 <div class="form-container">
-    <h2>Editar Comunidad</h2>
-    <form (ngSubmit)="guardarCambios()">
-      <div class="form-group">
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" [(ngModel)]="comunidad.nombre" name="nombre" required>
-      </div>
-      
-      <div class="form-group">
-        <label for="descripcion">Descripción:</label>
-        <textarea id="descripcion" [(ngModel)]="comunidad.descripcion" name="descripcion" required></textarea>
-      </div>
-      
-      <div class="form-group">
-        <label for="cantidadMaximaMiembros">Cantidad Máxima de Miembros:</label>
-        <input type="number" id="cantidadMaximaMiembros" [(ngModel)]="comunidad.cantidadMaximaMiembros" name="cantidadMaximaMiembros" min="1" required>
-      </div>
-      
-      <div class="form-group checkbox-group">
-        <label for="esPrivada">¿Es Privada?</label>
-        <input type="checkbox" id="esPrivada" [(ngModel)]="comunidad.esPrivada" name="esPrivada">
-      </div>
-      
-      <div class="button-group">
-        <button type="submit" class="btn btn-primary">Actualizar Comunidad</button>
-        <button type="button" class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
-      </div>
-    </form>
-  </div>
-  
+  <h2>Editar Comunidad</h2>
+  <form (ngSubmit)="guardarCambios()">
+    <div class="form-group">
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" [(ngModel)]="comunidad.nombre" name="nombre" required>
+    </div>
+
+    <div class="form-group">
+      <label for="archivo">Seleccionar imagen o video</label>
+      <input type="file" id="archivo" (change)="onFileSelect($event)">
+    </div>
+
+    <div class="form-group">
+      <label for="descripcion">Descripción:</label>
+      <textarea id="descripcion" [(ngModel)]="comunidad.descripcion" name="descripcion" required></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="cantidadMaximaMiembros">Cantidad Máxima de Miembros:</label>
+      <input type="number" id="cantidadMaximaMiembros" [(ngModel)]="comunidad.cantidadMaximaMiembros"
+        name="cantidadMaximaMiembros" min="1" required>
+    </div>
+
+    <div class="form-group checkbox-group">
+      <label for="esPrivada">¿Es Privada?</label>
+      <input type="checkbox" id="esPrivada" [(ngModel)]="comunidad.esPrivada" name="esPrivada">
+    </div>
+
+    <div class="button-group">
+      <button type="submit" class="btn btn-primary">Actualizar Comunidad</button>
+      <button type="button" class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+    </div>
+  </form>
+</div>

@@ -3,6 +3,12 @@
     <div class="card shadow-sm mt-4">
       <div class="card-body">
         <h2 class="card-title text-center mb-4">{{ evento.nombre }}</h2>
+        <div *ngIf="evento.imagen && evento.imagen.startsWith('data:image')">
+          <img [src]="evento.imagen" style="max-width: 400px; max-height: 400px;">
+        </div>
+        <div *ngIf="!evento.imagen" class="align-items-center">
+          <img src="../../assets/evento.webp" style="max-width: 400px; max-height: 400px; ">
+        </div>
         <p><strong>Fecha de creación:</strong> {{ evento.fechaDeCreacion | date:'dd-MM-yyyy' : '+00:00'}}</p>
         <p><strong>Fecha y hora:</strong> {{ evento.fechaHora | date:'short' }}</p>
         <p><strong>Ubicación:</strong> {{ evento.ubicacion }}</p>
@@ -11,7 +17,8 @@
 
         <!-- Botón Inscribirse o Desinscribirse centrado -->
         <button class="btn btn-primary btn-block ingresar-button mx-auto"
-          [disabled]="!(inscribirseValid() || salirValid()) || isLoading" (click)="salirValid() ? salir() : inscribirse()">
+          [disabled]="!(inscribirseValid() || salirValid()) || isLoading"
+          (click)="salirValid() ? salir() : inscribirse()">
           {{ salirValid() ? 'Desinscribirse' : 'Inscribirse' }}
         </button>
 
@@ -89,8 +96,6 @@
         <button (click)="invitarAmigo(amigo.id)" class="btn btn-outline-primary btn-sm ml-2 animate-btn">
           Invitar al evento
         </button>
-        <button (click)="goBack()" class="btn btn-secondary btn-block mt-2" [disabled]="isLoading">Volver</button>
-
       </div>
     </div>
     <ng-template #sinAmigosNoEnEvento>
