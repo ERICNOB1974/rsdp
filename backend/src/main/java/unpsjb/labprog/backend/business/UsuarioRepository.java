@@ -181,6 +181,9 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
         @Query("MATCH (u:Usuario) WHERE u.nombreUsuario = $nombreUsuario RETURN COUNT(u) > 0")
         boolean existeNombreUsuario(String nombreUsuario);
 
+        @Query("MATCH (u:Usuario) WHERE u.nombreUsuario = $nombreUsuarioIngresado AND u.nombreUsuario <> $nombreUsuarioActual RETURN COUNT(u) > 0")
+        boolean existeNombreUsuarioMenosElActual(String nombreUsuarioIngresado, String nombreUsuarioActual);
+        
         @Query("MATCH (u:Usuario) WHERE id(u)=$idUsuario "
                         + "MATCH (e:Evento) WHERE id(e)=$idEvento "
                         + "CREATE (u)-[:NOTIFICACION {fechaInscripcion: $fechaInscripcion}]-(e)")
@@ -247,7 +250,7 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
         List<Usuario> todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad);
 
         @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
-                        "WHERE id(u) = $idUsuario AND NOT (amigo)-[:PARTICIPA_EN]->(:Evento {id: $idEvento}) " +
+                        "WHERE id(u) = $idUsuario AND NOT ((amigo)-[:PARTICIPA_EN|CREADO_POR]->(:Evento {id: $idEvento})) " +
                         "RETURN amigo")
         List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(Long idUsuario, Long idEvento);
 
