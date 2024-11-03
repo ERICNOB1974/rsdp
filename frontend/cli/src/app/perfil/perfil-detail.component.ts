@@ -76,10 +76,9 @@ export class PerfilDetailComponent implements OnInit {
   onFileSelect(event: any) {
     const file = event.target.files[0];
     const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
-    const validVideoTypes = ['video/mp4'];
 
     if (file) {
-      if (validImageTypes.includes(file.type) || validVideoTypes.includes(file.type)) {
+      if (validImageTypes.includes(file.type)) {
         this.formatoValido = true;
         this.archivoSeleccionado = file;
         this.campoModificado = true;  
@@ -93,7 +92,7 @@ export class PerfilDetailComponent implements OnInit {
       } else {
         this.formatoValido = false;
         this.vistaPreviaArchivo = null;
-        alert('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF) o videos (MP4).');
+        alert('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF).');
       }
     }
   }
