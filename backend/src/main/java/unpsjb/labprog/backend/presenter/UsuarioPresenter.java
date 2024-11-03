@@ -178,6 +178,11 @@ public class UsuarioPresenter {
         return Response.ok(usuarioService.existeNombreUsuario(nombreUsuario));
     }
 
+    @GetMapping("/existeNombreUsuarioMenosElActual/{nombreUsuarioIngresado}/{nombreUsuarioActual}")
+    public ResponseEntity<Object> existeNombreUsuarioMenosElActual(@PathVariable String nombreUsuarioIngresado, @PathVariable String nombreUsuarioActual) {
+        return Response.ok(usuarioService.existeNombreUsuarioMenosElActual(nombreUsuarioIngresado, nombreUsuarioActual));
+    }
+
     @GetMapping("/sonAmigos/{idEmisor}/{idReceptor}")
     public ResponseEntity<Object> verificarAmistad(@PathVariable Long idEmisor, @PathVariable Long idReceptor) {
         try {
