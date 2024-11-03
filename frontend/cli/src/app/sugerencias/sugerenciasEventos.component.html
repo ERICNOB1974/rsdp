@@ -3,13 +3,13 @@
 </h1>
 
 <section class="carousel">
-  <div class="carousel-container">
-    <div class="carousel-item" *ngFor="let evento of obtenerEventosParaMostrar()" class="evento-item">
-      <div class="evento-card clickable">
-        <div class="evento-details">
-          <h3>{{ evento.nombre }}</h3>
-          <p>{{ evento.descripcion }}</p>
 
+    <div class="carousel-container">
+      <div class="carousel-item" *ngFor="let evento of obtenerEventosParaMostrar()" class="evento-item">
+        <div class="evento-card clickable" [routerLink]="['/eventos', evento.id]">
+          <div class="evento-details">
+            <h3>{{ evento.nombre }}</h3>
+            <p>{{ evento.descripcion }}</p>
           <div class="motivo-container" *ngIf="motivos[evento.id]">
             <p class="motivo-text">Motivo: "{{ motivos[evento.id] }}"</p>
           </div>

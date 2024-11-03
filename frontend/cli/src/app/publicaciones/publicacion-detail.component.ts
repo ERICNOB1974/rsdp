@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Location } from '@angular/common';
 import { CommonModule } from '@angular/common'; // Para permitir navegar de vuelta
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -16,7 +16,7 @@ import { Usuario } from '../usuarios/usuario';
 @Component({
   selector: 'app-publicaciones',
   templateUrl: './publicacion-detail.component.html',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   styleUrls: ['./publicacion-detail.component.css'],
   standalone: true
 })
