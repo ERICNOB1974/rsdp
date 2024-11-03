@@ -17,7 +17,7 @@ import { Usuario } from '../usuarios/usuario';
   selector: 'app-publicaciones',
   templateUrl: './publicacion-detail.component.html',
   imports: [CommonModule, FormsModule],
-  styleUrls: ['./heart.component.css'],
+  styleUrls: ['./publicacion-detail.component.css'],
   standalone: true
 })
 export class PublicacionDetailComponent implements OnInit {

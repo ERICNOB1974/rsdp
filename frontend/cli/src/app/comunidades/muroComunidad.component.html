@@ -1,8 +1,17 @@
 <div class="perfil-container">
+  <div *ngIf="comunidad.imagen && comunidad.imagen.startsWith('data:image')">
+    <img [src]="comunidad.imagen" style="max-width: 400px; max-height: 400px;">
+  </div>
+  <div *ngIf="!comunidad.imagen">
+    <img src="../../assets/comunidad.jpg" style="max-width: 400px; max-height: 400px;">
+  </div>
   <h1>{{ comunidad.nombre }}</h1>
   <button *ngIf="!esCreador" class="btn btn-primary btn-block ingresar-button"
     [disabled]="!(salirValid() || !inscribirseValid())" (click)="salirValid() ? salir() : ingresar()">
     {{ salirValid() ? 'Abandonar comunidad' : (comunidad.esPrivada ? 'Solicitar ingreso' : 'Ingresar') }}
+  </button>
+  <button *ngIf="esCreador" class="btn btn-primary btn-block ingresar-button" (click)="gestionarComunidad()">
+    Gestionar
   </button>
 
 
