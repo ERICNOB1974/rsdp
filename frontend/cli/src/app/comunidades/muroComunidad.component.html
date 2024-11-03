@@ -22,32 +22,31 @@
         Publicar
       </button>
 
-            <div class="publicaciones-grid">
-                <div class="publicacion-item" *ngFor="let publicacion of publicaciones"
-                    (click)="irADetallePublicacion(publicacion.id)">
-                    <div class="publicacion-contenido">
-                        <p>{{ publicacion.texto }}</p>
-                        <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
-                            <img [src]="publicacion.file" alt="Imagen de la publicaciÃ³n" class="publicacion-imagen">
-                        </div>
-                        <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
-                            <video [src]="publicacion.file" controls class="publicacion-video"></video>
-                        </div>
-                        <div class="publicacion-fecha">{{ publicacion.fechaDeCreacion | date:'medium' }}</div>
-                    </div>
-                </div>
+      <div class="publicaciones-grid">
+        <div class="publicacion-item" *ngFor="let publicacion of publicaciones"
+          (click)="irADetallePublicacion(publicacion.id)">
+          <div class="publicacion-contenido">
+            <p>{{ publicacion.texto }}</p>
+            <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
+              <img [src]="publicacion.file" alt="Imagen de la publicaciÃ³n" class="publicacion-imagen">
             </div>
+            <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
+              <video [src]="publicacion.file" controls class="publicacion-video"></video>
+            </div>
+            <div class="publicacion-fecha">{{ publicacion.fechaDeCreacion | date:'medium' }}</div>
+          </div>
         </div>
+      </div>
+    </div>
 
-        <div *ngIf="tabSeleccionada === 'eventos'" class="perfil-eventos">
-          <h3>Eventos</h3>
+    <div *ngIf="tabSeleccionada === 'eventos'" class="perfil-eventos">
+      <h3>Eventos</h3>
 
-          <button *ngIf="esParte" (click)="crearEvento()" class="btn btn-primary mt-3">
-              Crear Evento
-          </button>
+      <button *ngIf="esParte" (click)="crearEvento()" class="btn btn-primary mt-3">
+        Crear Evento
+      </button>
 
-        </div>
-
+    </div>
 
     <div *ngIf="tabSeleccionada === 'miembros'" class="perfil-miembros">
       <h3>Miembros</h3>
