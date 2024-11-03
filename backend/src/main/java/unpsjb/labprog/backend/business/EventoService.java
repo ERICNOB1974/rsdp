@@ -109,7 +109,8 @@ public class EventoService {
     }
 
     @Transactional
-    public Evento crearConCreadorParaEventoInternoParaComunidad(Evento evento, String nombreUsuario, Long comunidadId) throws MessagingException, EventoException {
+    public Evento crearConCreadorParaEventoInternoParaComunidad(Evento evento, String nombreUsuario, Long comunidadId)
+            throws MessagingException, EventoException {
         if (evento.getFechaHora().isBefore(ZonedDateTime.now()) ||
                 evento.getFechaHora().isEqual(ZonedDateTime.now())) {
             throw new EventoException("El evento no puede tener una fecha anterior a ahora");
@@ -119,20 +120,19 @@ public class EventoService {
         }
 
         evento.setEsPrivadoParaLaComunidad(true);
-    
+
         // Guardar el evento
         Evento c = eventoRepository.save(evento);
-        
+
         // Establecer la relación CREADO_POR entre el evento y el usuario
         eventoRepository.establecerCreador(c.getId(), usuarioService.findByNombreUsuario(nombreUsuario).getId());
-    
+
         // Establecer la relación EVENTO_INTERNO entre el evento y la comunidad
         eventoRepository.establecerEventoInterno(c.getId(), comunidadId);
-    
+
         return c;
-        
+
     }
-    
 
     public List<Evento> todasLasSugerencias(String nombreUsuario) {
         List<Evento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnAmigos(nombreUsuario);
@@ -344,10 +344,12 @@ public class EventoService {
         for (ScoreEvento scoreEvento : todasLasSugerencias) {
             // Si la comunidad ya existe en el mapa, sumar los scores
             mapaSugerencias.merge(scoreEvento.getEvento().getId(),
-                    new ScoreEvento(scoreEvento.getEvento(), scoreEvento.getScore()),
+                    new ScoreEvento(scoreEvento.getEvento(), scoreEvento.getScore(), scoreEvento.getMotivo()),
                     (existente, nuevo) -> {
                         double nuevoScore = existente.getScore() + nuevo.getScore(); // Sumar scores
                         existente.setScore(nuevoScore); // Actualizar el score sumado
+                        String nuevoMotivo = existente.getMotivo() + " --- " + nuevo.getMotivo();
+                        existente.setMotivo(nuevoMotivo);
                         return existente; // Retornar el objeto existente actualizado
                     });
         }
@@ -385,5 +387,5 @@ public class EventoService {
     public void eliminarUsuario(Long idEvento, Long idUsuario) {
         this.eventoRepository.eliminarUsuario(idEvento, idUsuario);
     }
-    
+
 }
