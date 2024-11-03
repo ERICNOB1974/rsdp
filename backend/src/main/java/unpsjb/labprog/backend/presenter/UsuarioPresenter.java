@@ -54,6 +54,11 @@ public class UsuarioPresenter {
         List<Usuario> solicitudes = usuarioService.solicitudes(nombreUsuario);
         return Response.ok(solicitudes);
     }
+    @GetMapping("/solicitudesAmistadEnviadas/{nombreUsuario}")
+    public ResponseEntity<Object> obtenerSolicitudesEnviadas(@PathVariable String nombreUsuario) {
+        List<Usuario> solicitudes = usuarioService.solicitudesEnviadas(nombreUsuario);
+        return Response.ok(solicitudes);
+    }
 
     @GetMapping("/amigosDeAmigos/{nombreUsuario}")
     public ResponseEntity<Object> obtenerAmigosDeAmigos(@PathVariable String nombreUsuario) {
@@ -196,6 +201,16 @@ public class UsuarioPresenter {
     @GetMapping("/esCreador/{idUsuario}/{idComunidad}")
     public ResponseEntity<Object> esCreador(@PathVariable Long idUsuario, @PathVariable Long idComunidad) {
         return Response.ok(usuarioService.esCreador(idUsuario, idComunidad));
+    }
+
+    @GetMapping("/creadorComunidad/{idComunidad}")
+    public ResponseEntity<Object> creadorComunidad(@PathVariable Long idComunidad) {
+        return Response.ok(usuarioService.creadorComunidad(idComunidad));
+    }
+
+    @GetMapping("/creadorEvento/{idEvento}")
+    public ResponseEntity<Object> creadorEvento(@PathVariable Long idEvento) {
+        return Response.ok(usuarioService.creadorEvento(idEvento));
     }
 
     @GetMapping("/miembrosComunidad/{idComunidad}")

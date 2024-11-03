@@ -113,6 +113,32 @@
 
   <!-- Controles del carrusel -->
   <button class="carousel-control prev" (click)="eventoAnterior()" [disabled]="results.length === 0">‹</button>
-  <button class="carousel-control next" (click)="siguienteEvento()" [disabled]="results.length === 0">›</button>
+  <button class="carousel-control next" (click)="siguienteEvento()" [disabled]="results.length === 0">›</button>  
 </section>
 
+<!-- Espacio entre los carruseles -->
+
+<section class="carousel">
+  <!-- Carrusel de comunidades en las que el usuario participa -->
+  <h2>Comunidades en las que Participas</h2>
+  <div class="carousel-container">
+    <div class="carousel-item" *ngFor="let evento of eventosParticipaUsuario" class="evento-item"
+      (click)="irADetallesDelEvento(evento.id)">
+      <div class="evento-card clickable">
+        <div class="evento-details">
+          <h3>{{ evento.nombre }}
+            <!-- Mostrar el candado si la comunidad es privada -->
+            <i *ngIf="evento.esPrivadoParaLaComunidad" class="fa fa-lock" aria-hidden="true"></i>
+          </h3>
+          <p>{{ evento.descripcion }}</p>
+          <p>Miembros: {{ evento.participantes }}/{{evento.cantidadMaximaParticipantes}}</p>
+          <p>Ubicación: {{evento.ubicacion}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controles del carrusel -->
+  <button class="carousel-control prev" (click)="eventoAnteriorParticipa()" [disabled]="eventosParticipaUsuario.length === 0">‹</button>
+  <button class="carousel-control next" (click)="siguienteEventoParticipa()" [disabled]="eventosParticipaUsuario.length === 0">›</button>  
+</section>

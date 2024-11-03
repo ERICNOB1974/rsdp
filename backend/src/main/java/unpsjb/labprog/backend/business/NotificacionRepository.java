@@ -101,6 +101,7 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
                 tipo: 'INVITACION_EVENTO',
                 mensaje: uEmisor.nombreUsuario + ' te ha invitado al evento: ' + evento.nombre,
                 fecha: $fecha,
+                leida: false,
                 entidadId: id(evento)
             }]-(evento)
             """)
@@ -116,6 +117,7 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
                 tipo: 'INVITACION_COMUNIDAD',
                 mensaje: uEmisor.nombreUsuario + ' te ha invitado a la comunidad: ' + comunidad.nombre,
                 fecha: $fecha,
+                leida: false,
                 entidadId: id(comunidad)
             }]-(comunidad)
             """)
@@ -129,13 +131,6 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
             """)
     void eliminarNotificacion(Long idReceptor, Long idEmisor, String tipo);
 
-    @Query("""
-                MATCH (u:Usuario) WHERE id(u)=$idUsuarioReceptor
-                MATCH (entidad) WHERE id(entidad)=$idEntidad
-                CREATE (u)<-[:NOTIFICACION {tipo: $tipo, mensaje: 'Mensaje de prueba', fecha: $fecha, entidadId: id(entidad)}]-(entidad)
-            """)
-    void crearNotificacionPrueba(Long idUsuarioReceptor, Long usuarioEmisor, Long idEntidad, String tipo,
-            LocalDateTime fecha);
 
     @Query("MATCH ()-[n:NOTIFICACION]->() " +
             "WHERE id(n) = $idNotificacion " +
