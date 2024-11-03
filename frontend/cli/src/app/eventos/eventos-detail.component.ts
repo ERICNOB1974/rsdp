@@ -11,9 +11,7 @@ import { UsuarioService } from '../usuarios/usuario.service';
 import { MatDialog } from '@angular/material/dialog'; // Importar MatDialog para el modal
 import { ViewChild, TemplateRef } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
-import { lastValueFrom } from 'rxjs';import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-
-
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-evento-detail',
@@ -24,6 +22,7 @@ import { lastValueFrom } from 'rxjs';import { MatProgressSpinnerModule } from '@
   standalone: true
 })
 export class EventoDetailComponent implements OnInit {
+  
   eliminarMiembro(_t21: any) {
     throw new Error('Method not implemented.');
   }

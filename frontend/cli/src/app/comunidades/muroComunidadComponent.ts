@@ -39,7 +39,7 @@ export class MuroComunidadComponent implements OnInit {
     amigosNoEnComunidad: any[] = [];
     amigosEnComunidad: any[] = [];
     amigosYaInvitados: any[] = [];
-  
+
     @ViewChild('modalInvitarAmigos') modalInvitarAmigos!: TemplateRef<any>;
 
     constructor(
@@ -64,54 +64,54 @@ export class MuroComunidadComponent implements OnInit {
             if (this.esParte) {  // Solo trae publicaciones y miembros si es parte de la comunidad
                 this.getPublicaciones();
                 this.traerMiembros();
-            } 
+            }
         });
         this.cargarAmigos();
     }
 
     cargarAmigos(): void {
         const idComunidad = this.comunidad.id;
-      
+
         this.usuarioService.todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(idComunidad).subscribe((dataPackage) => {
-          this.amigosNoEnComunidad = dataPackage.data as Comunidad[];
-      
-          // Filtrar amigos ya invitados y ya en Comunidad de la lista de no pertenecientes
-          this.amigosNoEnComunidad = this.amigosNoEnComunidad.filter(
-            amigoNoEnComunidad => !this.amigosEnComunidad.some(amigoEnComunidad => amigoEnComunidad.id === amigoNoEnComunidad.id) &&
-                                !this.amigosYaInvitados.some(amigoYaInvitado => amigoYaInvitado.id === amigoNoEnComunidad.id)
-          );
+            this.amigosNoEnComunidad = dataPackage.data as Comunidad[];
+
+            // Filtrar amigos ya invitados y ya en Comunidad de la lista de no pertenecientes
+            this.amigosNoEnComunidad = this.amigosNoEnComunidad.filter(
+                amigoNoEnComunidad => !this.amigosEnComunidad.some(amigoEnComunidad => amigoEnComunidad.id === amigoNoEnComunidad.id) &&
+                    !this.amigosYaInvitados.some(amigoYaInvitado => amigoYaInvitado.id === amigoNoEnComunidad.id)
+            );
         });
-      
+
         this.usuarioService.todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(idComunidad).subscribe((dataPackage) => {
-          this.amigosEnComunidad = dataPackage.data as Comunidad[];
+            this.amigosEnComunidad = dataPackage.data as Comunidad[];
         });
-      
+
         this.usuarioService.todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(idComunidad).subscribe((dataPackage) => {
-          this.amigosYaInvitados = dataPackage.data as Comunidad[];
+            this.amigosYaInvitados = dataPackage.data as Comunidad[];
         });
-      }
-      
-      invitarAmigo(idUsuarioReceptor: number): void {
+    }
+
+    invitarAmigo(idUsuarioReceptor: number): void {
         const idComunidad = this.comunidad.id;
         this.usuarioService.enviarInvitacionComunidad(idUsuarioReceptor, idComunidad).subscribe(() => {
-          this.cargarAmigos();
-          this.cargarAmigos();
-          this.cdr.detectChanges(); // Fuerza la actualización del modal
-          this.snackBar.open('Invitación enviada con éxito', 'Cerrar', {
-            duration: 3000,
-          });
+            this.cargarAmigos();
+            this.cargarAmigos();
+            this.cdr.detectChanges(); // Fuerza la actualización del modal
+            this.snackBar.open('Invitación enviada con éxito', 'Cerrar', {
+                duration: 3000,
+            });
         },
-        error => {
-          console.error('Error al invitar al amigo:', error);
-          this.snackBar.open('Error al enviar la invitación', 'Cerrar', {
-            duration: 3000,
-          });
-        });
-    
+            error => {
+                console.error('Error al invitar al amigo:', error);
+                this.snackBar.open('Error al enviar la invitación', 'Cerrar', {
+                    duration: 3000,
+                });
+            });
+
         lastValueFrom(this.usuarioService.invitacionComunidad(idUsuarioReceptor, idComunidad)).catch(error => {
-          console.error('Error al enviar el email de invitación:', error);
+            console.error('Error al enviar el email de invitación:', error);
         });
-      }
+    }
 
     getPublicaciones(): void {
         this.publicacionService.publicacionesComunidad(this.idComunidad).subscribe({
@@ -185,7 +185,7 @@ export class MuroComunidadComponent implements OnInit {
                     this.esCreador = true;
                     this.esParte = true; // El creador es parte de la comunidad por defecto
                 }
-                console.info(this.esParte+"HOLAFACU");
+                console.info(this.esParte + "HOLAFACU");
                 resolve(); // Resuelve la promesa después de procesar el estado
             });
         });
@@ -217,10 +217,10 @@ export class MuroComunidadComponent implements OnInit {
     }
 
     publicarEnComunidad(): void {
-        this.router.navigate(['/publicacion'], { 
-            queryParams: { 
+        this.router.navigate(['/publicacion'], {
+            queryParams: {
                 tipo: 'comunidad',
-                idComunidad: this.idComunidad 
+                idComunidad: this.idComunidad
             }
         });
 
@@ -257,7 +257,7 @@ export class MuroComunidadComponent implements OnInit {
         const amigosIds = this.amigos.map(amigo => amigo.id);
         this.miembrosVisibles = []; // Reiniciamos la lista de miembros visibles
         this.usuariosAnonimos = 0; // Reiniciamos el conteo de usuarios anónimos
-        
+
         const creador = this.miembros[0]; // Asumiendo que `this.miembros[0]` es el creador
         if (creador) {
             this.miembrosVisibles.push(creador);
@@ -270,44 +270,44 @@ export class MuroComunidadComponent implements OnInit {
             }
         });
         // Verificamos si la comunidad es privada
-        if ((!this.comunidad.esPrivada)|| ((this.comunidad.esPrivada) && (this.esParte))) {
+        if ((!this.comunidad.esPrivada) || ((this.comunidad.esPrivada) && (this.esParte))) {
             // Solo se mostrará el creador y los miembros si el usuario es parte
 
             // Iterar sobre los miembros y añadir solo aquellos que sean visibles
             this.miembros.forEach(miembro => {
-                console.info(this.idUsuarioAutenticado+"A");
-                console.info(miembro.id+"B");
+                console.info(this.idUsuarioAutenticado + "A");
+                console.info(miembro.id + "B");
 
                 if (miembro.id === this.idUsuarioAutenticado) {
-                        // Siempre mostrar el usuario que está viendo la lista
+                    // Siempre mostrar el usuario que está viendo la lista
+                    if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
+                        this.miembrosVisibles.push(miembro);
+                    }
+                } else if (this.esCreador || this.administradores.some(admin => admin.id === this.idUsuarioAutenticado)) {
+                    // Si es el creador o un administrador, añadir todos los miembros
+                    if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
+                        this.miembrosVisibles.push(miembro);
+                    }
+                } else {
+                    // Para miembros normales, aplicar la lógica de privacidad
+                    if (miembro.privacidadComunidades === 'Pública') {
                         if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
                             this.miembrosVisibles.push(miembro);
                         }
-                    } else if (this.esCreador || this.administradores.some(admin => admin.id === this.idUsuarioAutenticado)) {
-                        // Si es el creador o un administrador, añadir todos los miembros
+                    } else if (miembro.privacidadComunidades === 'Privada' && amigosIds.includes(miembro.id)) {
                         if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
                             this.miembrosVisibles.push(miembro);
                         }
                     } else {
-                        // Para miembros normales, aplicar la lógica de privacidad
-                        if (miembro.privacidadComunidades === 'Pública') {
-                            if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
-                                this.miembrosVisibles.push(miembro);
-                            }
-                        } else if (miembro.privacidadComunidades === 'Privada' && amigosIds.includes(miembro.id)) {
-                            if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
-                                this.miembrosVisibles.push(miembro);
-                            }
-                        } else {
-                            this.usuariosAnonimos++; // Aumentar el conteo de anónimos si no se muestra
-                        }
+                        this.usuariosAnonimos++; // Aumentar el conteo de anónimos si no se muestra
                     }
-                });
-            } else if(!this.esParte && this.comunidad.esPrivada) {
-                {
-                    this.usuariosAnonimos=this.miembros.length-this.miembrosVisibles.length;
+                }
+            });
+        } else if (!this.esParte && this.comunidad.esPrivada) {
+            {
+                this.usuariosAnonimos = this.miembros.length - this.miembrosVisibles.length;
             }
-        } 
+        }
     }
 
     cerrarModal(): void {
@@ -318,6 +318,12 @@ export class MuroComunidadComponent implements OnInit {
         // Cargar listas de amigos antes de abrir el modal
         this.cargarAmigos();
         this.dialog.open(this.modalInvitarAmigos);
-      }
+    }
+
+    crearEvento() {
+        if (this.esParte) {
+            this.router.navigate([`/comunidades/${this.comunidad.id}/eventos/crearEvento`]);
+        }
+    }
 
 }

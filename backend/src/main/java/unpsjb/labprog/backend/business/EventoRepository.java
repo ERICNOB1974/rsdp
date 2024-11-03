@@ -158,6 +158,11 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "MERGE (e)-[:CREADO_POR]->(u)")
         void establecerCreador(Long idEvento, Long idUsuario);
 
+        @Query("MATCH (e:Evento), (c:Comunidad) " +
+        "WHERE id(e) = $idEvento AND id(c) = $comunidadId " +
+        "MERGE (e)-[rel:EVENTO_INTERNO {creadorId: $idUsuario}]->(c)")
+        void establecerCreadorParaEventoInternoParaComunidad(Long idEvento, Long idUsuario, Long comunidadId);
+ 
         @Query("MATCH (e:Evento) WHERE id(e) = $ide RETURN e")
         Optional<Evento> encontrarEventoPorId(Long ide);
 

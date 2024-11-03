@@ -96,13 +96,24 @@ public class EventoService {
         if (evento.getFechaDeCreacion().isAfter(LocalDate.now())) {
             throw new EventoException("El evento no puede crearse en el futuro");
         }
-        /*
-         * if (evento.isEsPrivadoParaLaComunidad()) {
-         * // enviar mail a todos los usuarios de la comunidad
-         * }
-         */
+
         Evento c = eventoRepository.save(evento);
         eventoRepository.establecerCreador(c.getId(), usuarioService.findByNombreUsuario(nombreUsuario).getId());
+        return c;
+    }
+
+    @Transactional
+    public Evento crearConCreadorParaEventoInternoParaComunidad(Evento evento, String nombreUsuario, Long comunidadId) throws MessagingException, EventoException {
+        if (evento.getFechaHora().isBefore(ZonedDateTime.now()) ||
+                evento.getFechaHora().isEqual(ZonedDateTime.now())) {
+            throw new EventoException("El evento no puede tener una fecha anterior a ahora");
+        }
+        if (evento.getFechaDeCreacion().isAfter(LocalDate.now())) {
+            throw new EventoException("El evento no puede crearse en el futuro");
+        }
+
+        Evento c = eventoRepository.save(evento);
+        eventoRepository.establecerCreadorParaEventoInternoParaComunidad(c.getId(), usuarioService.findByNombreUsuario(nombreUsuario).getId(), comunidadId);
         return c;
     }
 
@@ -306,7 +317,6 @@ public class EventoService {
     public List<Evento> eventosFuturosPertenecientesAUnUsuario(String nombreUsuario) {
         return eventoRepository.eventosFuturosPertenecientesAUnUsuario(nombreUsuario);
     }
-
 
     public boolean esCreadoPor(Long idUsuario, Long idEvento) {
         return eventoRepository.eventoCreadoPor(idUsuario, idEvento);
