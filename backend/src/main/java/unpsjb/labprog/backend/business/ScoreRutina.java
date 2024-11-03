@@ -11,9 +11,11 @@ import unpsjb.labprog.backend.model.Rutina;
 public class ScoreRutina {
     private Rutina rutina;
     private Double score;
+    private String motivo;
 
-    public ScoreRutina(Rutina rutina, Double score) {
+    public ScoreRutina(Rutina rutina, Double score, String motivo) {
         this.rutina = rutina;
         this.score = score;
+        this.motivo = motivo;
     }
 }

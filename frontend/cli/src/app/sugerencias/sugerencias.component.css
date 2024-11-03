@@ -1,9 +1,13 @@
+
+
 .carousel {
   position: relative;
   width: 100%;
   height: 100vh; /* Ajusta a toda la altura de la ventana */
   overflow: hidden;
 }
+
+
 
 .carousel-container {
   display: flex;
@@ -38,13 +42,16 @@
 }
 
 
+
 .carousel-item {
-  flex: 0 0 25%; /* Cada item ocupa un cuarto del ancho si hay 4 o más */
-  height: 100%;
+  flex: 0 0 auto; /* Permite que el elemento se ajuste automáticamente al tamaño */
+  height: auto;
   display: flex;
-  align-items: center; /* Centra el contenido verticalmente */
-  justify-content: center; /* Centra el contenido horizontalmente */
+  align-items: center;
+  justify-content: center;
   position: relative;
+  max-width: 400px; /* Ajusta el tamaño máximo para un solo elemento */
+  margin: 0 15px; /* Añade espacio a los lados */
 }
 
 .large-event {
@@ -59,9 +66,9 @@
 .evento-card {
   padding: 20px;
   margin: 10px;
-  background-color: #f8f9fa;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  background-color: #b81919be;
+  border-radius: 0px;
+  border: 1px solid #ee6d03;
 }
 
 .evento-details {
@@ -131,4 +138,12 @@
   font-style: italic;
   color: #333;
   font-size: 0.9rem;
+}
+.evento-item{
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: left;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer; /* Cambia el cursor a pointer */
 }

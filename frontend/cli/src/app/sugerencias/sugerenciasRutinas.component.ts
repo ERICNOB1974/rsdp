@@ -10,36 +10,45 @@ import { AuthService } from '../autenticacion/auth.service';
   selector: 'app-sugerencias',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
-  templateUrl: 'sugerenciasRutinas.component.html',
+  templateUrl: './sugerenciasRutinas.component.html',
   styleUrls: ['sugerencias.component.css']
 })
 export class SugerenciasRutinasComponent implements OnInit {
   sugerencias: Rutina[] = []; // Arreglo para almacenar las rutinas sugeridas
   currentIndex: number = 0; // Índice actual del carrusel
+  motivos: { [key: number]: String } = {}; // Para almacenar comentarios por publicación
 
   constructor(
     private rutinaService: RutinaService,
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getSugerencias(); // Cargar las sugerencias al inicializar el componente
   }
 
-getSugerencias(): void {
-  const nombreUsuario = this.authService.getNombreUsuario();
-  this.rutinaService.sugerencias(<string>nombreUsuario).subscribe((dataPackage) => {
-    if (Array.isArray(dataPackage.data)) {
-      this.sugerencias = dataPackage.data.map(item => item.rutina);
-      console.info("Rutinas recibidas: ", this.sugerencias);
-      
-      // Llamar a los métodos para obtener días y etiquetas
-      this.traerDias(this.sugerencias);
-      this.traerEtiquetas(this.sugerencias);
-    }
-  });
-}
+  getSugerencias(): void {
+    const nombreUsuario = this.authService.getNombreUsuario();
+    this.rutinaService.sugerencias(<string>nombreUsuario).subscribe((dataPackage) => {
+      if (Array.isArray(dataPackage.data)) {
+
+        this.sugerencias = dataPackage.data
+          .map(item => item.rutina)
+          .filter(rutina => rutina.id !== undefined); // Filtrar rutinas sin id
+
+        this.motivos = {};
+        dataPackage.data.forEach(item => {
+
+          this.motivos[item.rutina.id] = item.motivo;
+        });
+        // Llamar a los métodos para obtener días y etiquetas
+        this.traerDias(this.sugerencias);
+        this.traerEtiquetas(this.sugerencias);
+      }
+    });
+  }
+
 
   siguienteRutina(): void {
     this.currentIndex = (this.currentIndex + 1) % this.sugerencias.length; // Incrementa el índice
@@ -82,7 +91,7 @@ getSugerencias(): void {
   }
 
   traerEtiquetas(rutinas: Rutina[]): void {
-      for (let rutina of rutinas) {
+    for (let rutina of rutinas) {
       this.rutinaService.obtenerEtiquetasDeRutina(rutina.id!).subscribe(
         (dataPackage) => {
           if (dataPackage && Array.isArray(dataPackage.data)) {
