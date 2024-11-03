@@ -119,3 +119,16 @@
   transform: scale(1.05); /* Pequeña animación para indicar que es clickeable */
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
 }
+.motivo-container {
+  margin-top: 10px;
+  padding: 8px;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+  border-left: 4px solid #3a86ff;
+}
+
+.motivo-text {
+  font-style: italic;
+  color: #333;
+  font-size: 0.9rem;
+}

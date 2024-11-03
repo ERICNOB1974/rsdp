@@ -47,7 +47,6 @@ public class UsuarioService {
         return usuarioRepository.solicitudesDeAmistadEnviadas(nombreUsuario);
     }
 
-
     public List<Usuario> amigosDeAmigos(String nombreUsuario) {
         return usuarioRepository.amigosDeAmigos(nombreUsuario);
     }
@@ -112,8 +111,8 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
 
-    public List<Usuario> buscarUsuarios(String term) {
-        return usuarioRepository.buscarUsuarios(term);
+    public List<Usuario> buscarUsuarios(String nombreUsuario, String term) {
+        return usuarioRepository.buscarUsuarios(nombreUsuario, term);
     }
 
     public boolean sonAmigos(Long idEmisor, Long idReceptor) {
@@ -142,7 +141,7 @@ public class UsuarioService {
     public Usuario creadorComunidad(Long idComunidad) {
         return usuarioRepository.creadorComunidad(idComunidad);
     }
-    
+
     public Usuario creadorEvento(Long idEvento) {
         return usuarioRepository.creadorEvento(idEvento);
     }
@@ -183,11 +182,6 @@ public class UsuarioService {
         List<ScoreAmigo> sugerenciasComunidades = usuarioRepository
                 .sugerenciasDeAmigosBasadosEnComunidades2(nombreUsuario);
 
-        // Imprimir la cantidad de sugerencias para depuración
-        System.out.println("Sugerencias amigos: " + sugerenciasAmigos.size());
-        System.out.println("Sugerencias eventos: " + sugerenciasEventos.size());
-        System.out.println("Sugerencias comunidades: " + sugerenciasComunidades.size());
-
         // Combinar todas las sugerencias en una sola lista
         List<ScoreAmigo> todasLasSugerencias = new ArrayList<>();
         todasLasSugerencias.addAll(sugerenciasAmigos);
@@ -200,10 +194,12 @@ public class UsuarioService {
         for (ScoreAmigo scoreAmigo : todasLasSugerencias) {
             // Si la comunidad ya existe en el mapa, sumar los scores
             mapaSugerencias.merge(scoreAmigo.getUsuario().getId(),
-                    new ScoreAmigo(scoreAmigo.getUsuario(), scoreAmigo.getScore()),
+                    new ScoreAmigo(scoreAmigo.getUsuario(), scoreAmigo.getScore(), scoreAmigo.getMotivo()),
                     (existente, nuevo) -> {
                         double nuevoScore = existente.getScore() + nuevo.getScore(); // Sumar scores
+                        String nuevoMotivo = existente.getMotivo() + " --- " + nuevo.getMotivo();
                         existente.setScore(nuevoScore); // Actualizar el score sumado
+                        existente.setMotivo(nuevoMotivo);
                         return existente; // Retornar el objeto existente actualizado
                     });
         }
@@ -230,39 +226,42 @@ public class UsuarioService {
         return usuarioRepository.inscriptosEvento(idEvento);
     }
 
-    public Long enviarInvitacionEvento(Long idUsuarioEmisor, Long idUsuarioReceptor, Long idEvento){
+    public Long enviarInvitacionEvento(Long idUsuarioEmisor, Long idUsuarioReceptor, Long idEvento) {
         usuarioRepository.enviarInvitacionEvento(idUsuarioEmisor, idUsuarioReceptor, idEvento);
-        notificacionRepository.crearNotificacionInvitacionEvento(idUsuarioReceptor, idUsuarioEmisor, idEvento, LocalDateTime.now());
+        notificacionRepository.crearNotificacionInvitacionEvento(idUsuarioReceptor, idUsuarioEmisor, idEvento,
+                LocalDateTime.now());
         return idEvento;
     }
 
-    public Long enviarInvitacionComunidad(Long idUsuarioEmisor, Long idUsuarioReceptor, Long idComunidad){
+    public Long enviarInvitacionComunidad(Long idUsuarioEmisor, Long idUsuarioReceptor, Long idComunidad) {
         usuarioRepository.enviarInvitacionComunidad(idUsuarioEmisor, idUsuarioReceptor, idComunidad);
-        notificacionRepository.crearNotificacionInvitacionComunidad(idUsuarioReceptor, idUsuarioEmisor, idComunidad, LocalDateTime.now());
+        notificacionRepository.crearNotificacionInvitacionComunidad(idUsuarioReceptor, idUsuarioEmisor, idComunidad,
+                LocalDateTime.now());
         return idComunidad;
     }
 
-    public List<Usuario> todosLosAmigosDeUnUsuarioPertenecientesAUnEvento(Long idUsuario, Long idEvento){
+    public List<Usuario> todosLosAmigosDeUnUsuarioPertenecientesAUnEvento(Long idUsuario, Long idEvento) {
         return usuarioRepository.todosLosAmigosDeUnUsuarioPertenecientesAUnEvento(idUsuario, idEvento);
     }
 
-    public List<Usuario> todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad){
+    public List<Usuario> todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad) {
         return usuarioRepository.todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(idUsuario, idComunidad);
     }
 
-    public List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(Long idUsuario, Long idEvento){
+    public List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(Long idUsuario, Long idEvento) {
         return usuarioRepository.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(idUsuario, idEvento);
     }
 
-    public List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad){
+    public List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad) {
         return usuarioRepository.todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(idUsuario, idComunidad);
     }
 
-    public List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(Long idUsuario, Long idEvento){
+    public List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(Long idUsuario, Long idEvento) {
         return usuarioRepository.todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(idUsuario, idEvento);
     }
 
-    public List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(Long idUsuario, Long idComunidad){
+    public List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(Long idUsuario,
+            Long idComunidad) {
         return usuarioRepository.todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(idUsuario, idComunidad);
     }
 
