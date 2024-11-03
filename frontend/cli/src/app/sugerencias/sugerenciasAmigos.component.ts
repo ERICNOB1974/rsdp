@@ -39,12 +39,12 @@ export class SugerenciasAmigosComponent implements OnInit {
 
 
   // Método para mover al siguiente grupo de eventos en el carrusel
-  siguienteEvento(): void {
+  siguienteUsuario(): void {
     this.currentIndex = (this.currentIndex + 1) % this.results.length; // Incrementa el índice
   }
 
   // Método para mover al grupo anterior de eventos en el carrusel
-  eventoAnterior(): void {
+  usuarioAnterior(): void {
     this.currentIndex = (this.currentIndex - 1 + this.results.length) % this.results.length; // Decrementa el índice
   }
 
