@@ -7,156 +7,13 @@ import { CommonModule } from '@angular/common';
 import { NotificacionService } from './notificaciones/notificacion.service';
 import { DataPackage } from './data-package';
 import { Notificacion } from './notificaciones/notificacion';
+//import { Notificacion } from './notificaciones/notificacion';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, NgIf, CommonModule],
-  template: `
-
-    <div *ngIf="!esPantallaLogin" class="sidebar">
-      <ul>
-        <li class="logo">
-          <h5 (click)="navigateTo('/')" style="text-align: center; margin: 10px; cursor: pointer;">RSDP</h5> <!-- Enlace añadido -->
-        </li>          
-
-          <li class="dropdown">
-              <a class="dropdown-toggle">
-                  <span class="icon"><i class="fa fa-calendar"></i></span>
-                  <span class="text">Eventos</span>
-              </a>
-              <ul class="dropdown-menu">
-                  <li>
-                      <a href="/eventos">Listar eventos</a>
-                  </li>
-                  <li>
-                      <a href="/eventos/crearEvento">Crear evento</a>
-                  </li>
-                  <li>
-                      <a href="/eventosUsuario">Mis Eventos</a>
-                  </li>
-              </ul>
-          </li>
-          <li class="dropdown">
-              <a class="dropdown-toggle">
-                <span class="icon"><i class="fa fa-users"></i></span>
-                <span class="text">Comunidades</span>
-              </a>
-              <ul class="dropdown-menu">
-                  <li>
-                      <a href="/comunidades">Listar comunidades</a>
-                  </li>
-                  <li>
-                      <a href="/comunidades/crearComunidad">Crear comunidad</a>
-                  </li>
-                    <li>
-                      <a href="/comunidadesUsuario">Mis Comunidades</a>
-                  </li>
-              </ul>
-          </li>
-          <li class="dropdown">
-            <a class="dropdown-toggle">
-              <span class="icon"><i class="fa fa-user"></i></span>
-              <span class="text">Amigos</span>
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <a href="/amigos">Amigos</a>
-              </li>
-              <li>
-                <a href="/amigos/solicitudes">Solicitudes</a>
-              </li>
-            </ul>
-          </li>
-          <li class="dropdown">
-            <a class="dropdown-toggle">
-              <span class="icon"><i class="fa fa-user-circle-o"></i></span>
-              <span class="text">Perfil</span>
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <a (click)="navigateToMiPerfil()">Mi perfil</a>
-              </li>
-            </ul>
-          </li>
-          <li class="dropdown">
-              <a class="dropdown-toggle">
-                <span class="icon"><i class="fa fa-question-circle"></i></span>
-                <span class="text">Sugerencias</span>
-              </a>
-              <ul class="dropdown-menu">
-                  <li>
-                      <a href="/sugerencias/amigos">De amigos</a>
-                  </li>
-                  <li>
-                      <a href="/sugerencias/eventos">De eventos</a>
-                  </li>
-                  <li>
-                      <a href="/sugerencias/comunidades">De comunidades</a>
-                  </li>
-                  <li>
-                      <a href="/sugerencias/rutinas">De rutinas</a>
-                  </li>
-              </ul>
-          </li>
-          <li class="dropdown">
-            <a class="dropdown-toggle">
-              <span class="icon"><i class="fa fa-thumbs-o-up"></i></span>
-              <span class="text">Publicación</span>
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <a href="/publicacion">Nueva</a>
-              </li>
-            </ul>
-          </li>
-          <li class="dropdown">
-            <a class="dropdown-toggle">
-              <span class="icon"><i class="fa fa-soccer-ball-o"></i></span>
-              <span class="text">Rutinas</span>
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <a href="/rutinas">Listar Rutinas</a>
-              </li>
-              <li>
-                <a href="/rutinas/crearRutina">Nueva Rutina</a>
-              </li>
-              <li>
-                <a href="/rutinasUsuario">Mis Rutinas Creadas</a>
-              </li>
-            </ul>
-          </li>
-          <li class="dropdown">
-            <a class="dropdown-toggle">
-              <span class="icon" style="position: relative;"> <!-- Añadir posición relativa aquí -->
-                <i class="fa fa-bell"></i>
-                <span *ngIf="getNotificacionesNoLeidas().length > 0" class="notificacion-count">{{ getNotificacionesNoLeidas().length }}</span>
-              </span>
-              <span class="text">Notificaciones</span>
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <li *ngFor="let notificacion of getNotificacionesNoLeidas()">
-                <a class="dropdown-item" (click)="manejarClickNotificacion(notificacion)">
-                  {{ notificacion.mensaje }}
-                  <span *ngIf="!notificacion.leida">(No leída)</span>
-                </a>
-              </li>
-            </ul>
-          </li>
-          <li>
-              <a (click)="logout()" class="logout-button" href="javascript:void(0);">
-                  <span class="icon"><i class="fa fa-sign-out"></i></span>
-                  <span class="text">Cerrar sesión</span>
-              </a>
-          </li>
-
-      </ul>
-    </div>
-    <div class="main-content">
-      <router-outlet></router-outlet>
-    </div>
-  `,
+  templateUrl:'./app.component.html',
   styleUrls: ['../styles.css']
 })
 export class AppComponent {
@@ -237,6 +94,7 @@ export class AppComponent {
 
       case 'INSCRIPCION_A_EVENTO':
       case 'RECORDATORIO_EVENTO_PROXIMO':
+      case 'MODIFICACION_EVENTO':
         // Notificaciones relacionadas con eventos
         urlDestino = `/eventos/${notificacion.entidadId}`;
         break;
@@ -287,7 +145,6 @@ export class AppComponent {
     return this.notificaciones.filter(notificacion => !notificacion.leida);
   }
 
-  
 
 
   manejarClickNotificacion(notificacion: Notificacion): void {
@@ -296,5 +153,6 @@ export class AppComponent {
     }).catch(error => {
       console.error('Error al manejar la notificación:', error);
     });
+
   }
 }

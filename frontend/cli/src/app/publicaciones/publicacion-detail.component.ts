@@ -95,7 +95,8 @@ export class PublicacionDetailComponent implements OnInit {
               contrasena: '',
               descripcion: '',
               latitud: 0,
-              longitud: 0
+              longitud: 0,
+              fotoPerfil:''
             }
           };
 

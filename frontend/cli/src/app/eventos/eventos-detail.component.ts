@@ -13,6 +13,8 @@ import { ViewChild, TemplateRef } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
 
+
+
 @Component({
   selector: 'app-evento-detail',
   templateUrl: './eventos-detail.component.html',
@@ -22,9 +24,12 @@ import { lastValueFrom } from 'rxjs';
   standalone: true
 })
 export class EventoDetailComponent implements OnInit {
-  
-  eliminarMiembro(_t21: any) {
-    throw new Error('Method not implemented.');
+
+  eliminarMiembro(idUsuario: number) {
+    this.eventoService.eliminarMiembro(this.evento.id, idUsuario).subscribe(dataPackage => {
+
+      this.traerMiembros();
+    });
   }
 
   evento!: Evento; // Evento específico que se va a mostrar
@@ -97,30 +102,28 @@ export class EventoDetailComponent implements OnInit {
     this.location.back();
   }
 
-
-  inscribirse(): void {
+  async inscribirse(): Promise<void> {
     if (this.inscribirseValid()) {
       this.isLoading = true;
       this.participa = true;
-      this.eventoService.inscribirse(this.evento.id).subscribe(
-        () => {
-          this.snackBar.open('Inscripción guardada con éxito', 'Cerrar', {
-            duration: 3000,
-          });
-          this.evento.participantes++;
-          this.isLoading = false; // Habilita el botón nuevamente en caso de error
-        },
-        error => {
-          console.error('Error al inscribirse:', error);
-          this.snackBar.open('Error al inscribirse', 'Cerrar', {
-            duration: 3000,
-          });
-          this.isLoading = false; // Habilita el botón nuevamente
-
-        }
-      );
+  
+      try {
+        const dataPackage = await lastValueFrom(this.eventoService.inscribirse(this.evento.id));
+        this.snackBar.open('Inscripción guardada con éxito', 'Cerrar', {
+          duration: 3000,
+        });
+        this.evento.participantes++;
+      } catch (error) {
+        console.error('Error al inscribirse:', error);
+        this.snackBar.open('Error al inscribirse', 'Cerrar', {
+          duration: 3000,
+        });
+      } finally {
+        this.isLoading = false; // Habilita el botón nuevamente
+      }
     }
   }
+  
 
   salir(): void {
     this.eventoService.salir(this.evento.id).subscribe(
@@ -169,8 +172,8 @@ export class EventoDetailComponent implements OnInit {
 
   traerMiembros(): void {
     this.eventoService.listaParticipantes(this.evento.id).subscribe(dataPackage => {
-      this.miembros = <Usuario[]>dataPackage.data;
-      
+      console.log(dataPackage.data)
+      this.miembros = dataPackage.data as Usuario[];
     });
   }
   abrirModalInvitarAmigos(): void {
@@ -185,26 +188,26 @@ export class EventoDetailComponent implements OnInit {
 
   cargarAmigos(): void {
     const idEvento = this.evento.id;
-  
+
     this.usuarioService.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(idEvento).subscribe((dataPackage) => {
       this.amigosNoEnEvento = dataPackage.data as Evento[];
-  
+
       // Filtrar amigos ya invitados y ya en evento de la lista de no pertenecientes
       this.amigosNoEnEvento = this.amigosNoEnEvento.filter(
         amigoNoEnEvento => !this.amigosEnEvento.some(amigoEnEvento => amigoEnEvento.id === amigoNoEnEvento.id) &&
-                            !this.amigosYaInvitados.some(amigoYaInvitado => amigoYaInvitado.id === amigoNoEnEvento.id)
+          !this.amigosYaInvitados.some(amigoYaInvitado => amigoYaInvitado.id === amigoNoEnEvento.id)
       );
     });
-  
+
     this.usuarioService.todosLosAmigosDeUnUsuarioPertenecientesAUnEvento(idEvento).subscribe((dataPackage) => {
       this.amigosEnEvento = dataPackage.data as Evento[];
     });
-  
+
     this.usuarioService.todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(idEvento).subscribe((dataPackage) => {
       this.amigosYaInvitados = dataPackage.data as Evento[];
     });
   }
-  
+
   invitarAmigo(idUsuarioReceptor: number): void {
     const idEvento = this.evento.id;
     this.usuarioService.enviarInvitacionEvento(idUsuarioReceptor, idEvento).subscribe(() => {
@@ -215,18 +218,18 @@ export class EventoDetailComponent implements OnInit {
         duration: 3000,
       });
     },
-    error => {
-      console.error('Error al invitar al amigo:', error);
-      this.snackBar.open('Error al enviar la invitación', 'Cerrar', {
-        duration: 3000,
+      error => {
+        console.error('Error al invitar al amigo:', error);
+        this.snackBar.open('Error al enviar la invitación', 'Cerrar', {
+          duration: 3000,
+        });
       });
-    });
 
     lastValueFrom(this.usuarioService.invitacionEvento(idUsuarioReceptor, idEvento)).catch(error => {
       console.error('Error al enviar el email de invitación:', error);
     });
   }
-  
+
 
   eliminarEvento(): void {
     this.eventoService.eliminar(this.evento.id).subscribe(dataPackage => {

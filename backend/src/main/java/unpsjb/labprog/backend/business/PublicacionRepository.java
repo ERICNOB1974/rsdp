@@ -71,6 +71,7 @@ public interface PublicacionRepository extends Neo4jRepository<Publicacion, Long
         @Query("""
                         MATCH (u:Usuario)-[:ES_AMIGO_DE]->(us:Usuario)-[:POSTEO]->(p:Publicacion)
                                WHERE id(u) = $usuarioId
+                               AND us.privacidadPerfil <> 'Privada' 
                                RETURN p
                                ORDER BY p.fechaDeCreacion DESC
                                """)

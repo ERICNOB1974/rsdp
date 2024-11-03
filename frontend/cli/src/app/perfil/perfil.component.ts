@@ -51,7 +51,6 @@ export class PerfilComponent implements OnInit {
     this.idUsuarioAutenticado = Number(usuarioId);
     this.idUsuario = Number(this.route.snapshot.paramMap.get('id'));
     this.cargarPerfil();  // Cargar la información del perfil
-
   }
 
   // Obtén el usuario autenticado desde el AuthService
@@ -59,6 +58,7 @@ export class PerfilComponent implements OnInit {
 
   // Cargar el perfil que se está viendo
   cargarPerfil(): void {
+    
     this.usuarioService.get(this.idUsuario).subscribe((dataPackage: DataPackage) => {
       if (dataPackage.status === 200) {
         this.usuario = dataPackage.data as Usuario;
@@ -281,7 +281,7 @@ export class PerfilComponent implements OnInit {
   
   
   getRutinaRealizaUsuario(): void {
-    this.rutinaService.rutinasRealizaUsuario().subscribe(
+    this.rutinaService.rutinasRealizaUsuario(this.idUsuario).subscribe(
       (dataPackage) => {
         const responseData = dataPackage.data;
         if (Array.isArray(responseData)) {
