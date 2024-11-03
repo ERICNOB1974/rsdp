@@ -53,7 +53,7 @@ export class ComunidadesCreadasUsuarioComponent implements OnInit, OnDestroy {
   }
 
   irADetallesDeComunidad(id: number): void {
-    this.router.navigate(['/creadorComunidad', id]); // Navega a la ruta /comunidades/:id
+    this.router.navigate(['/comunidad-muro', id]); // Navega a la ruta /comunidades/:id
   }
 
   onScroll(): void {

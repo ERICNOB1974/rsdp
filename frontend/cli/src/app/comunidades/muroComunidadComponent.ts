@@ -362,5 +362,7 @@ export class MuroComunidadComponent implements OnInit {
         return false
     }
 
-
+    gestionarComunidad(){
+        this.router.navigate(['/creadorComunidad', this.comunidad.id]);
+    }
 }

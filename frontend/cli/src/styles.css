@@ -208,7 +208,7 @@ body {
   /* Posiciona el contador sobre el icono */
   top: -10px;
   /* Ajusta según sea necesario */
-  right: 0px;
+  right: -9px;
   /* Ajusta según sea necesario */
   background-color: red;
   /* Color de fondo rojo */
@@ -286,7 +286,7 @@ margin: 0 auto;
 
 .notifications-dropdown {
   position: relative;
-  padding: 0 15px;
+  padding: 0 25px;
   margin-left: auto; /* Esto empuja las notificaciones hacia la derecha */
 
 }
@@ -294,7 +294,7 @@ margin: 0 auto;
 .notification-badge {
   position: absolute;
   top: -8px;
-  right: 5px;
+  right: 10px;
   background-color: #ff4444;
   color: white;
   border-radius: 50%;
@@ -318,6 +318,14 @@ margin: 0 auto;
   z-index: 1002; /* Asegura que el menú desplegable esté por encima de otros elementos */
 }
 
+.fa-bell {
+  font-size: 20px;
+  color: #333;
+  margin-right: 12px; /* Esto moverá la campana más a la izquierda */
+  position: relative;
+  left: 0px; /* Ajusta este valor para mover la campana más a la izquierda */
+}
+
 .notifications-dropdown:hover .notifications-menu {
   display: block;
 }
@@ -339,6 +347,10 @@ margin: 0 auto;
   border-radius: 50%;
   display: inline-block;
   margin-left: 5px;
+}
+.nav-link {
+  position: relative; /* Importante para posicionar el badge */
+  display: inline-block;
 }
 
 .no-notifications {
