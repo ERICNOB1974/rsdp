@@ -27,5 +27,5 @@ public class Comunidad {
     private boolean esPrivada;
     private double latitud;
     private double longitud;
-
+    private String imagen;
 }

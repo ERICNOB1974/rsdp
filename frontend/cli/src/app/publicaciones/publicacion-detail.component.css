@@ -20,7 +20,7 @@
 .heart-container {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 10px;
   /* Espacio entre el corazón y el número */
 }
 

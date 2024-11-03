@@ -435,6 +435,12 @@ export class MuroComunidadComponent implements OnInit {
         return false
     }
 
+
+    gestionarComunidad(){
+        this.router.navigate(['/creadorComunidad', this.comunidad.id]);
+    }
+
+
     crearEvento() {
         if (this.esParte) {
             this.router.navigate([`/comunidades/${this.comunidad.id}/eventos/crearEvento`]);
@@ -442,3 +448,4 @@ export class MuroComunidadComponent implements OnInit {
     }
 
 }
+

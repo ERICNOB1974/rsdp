@@ -16,20 +16,22 @@ import java.time.ZonedDateTime;
 @Node("Evento")
 @NoArgsConstructor
 public class Evento {
-    
+
     @Id
     @GeneratedValue
     private Long id;
 
     private String nombre;
     private LocalDate fechaDeCreacion;
-    private ZonedDateTime fechaHora; 
+    private ZonedDateTime fechaHora;
 
     private double latitud;
     private double longitud;
-    
+
     private String descripcion;
     private int cantidadMaximaParticipantes;
     private boolean esPrivadoParaLaComunidad;
+
+    private String imagen;
 
 }

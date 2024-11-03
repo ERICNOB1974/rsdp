@@ -36,7 +36,7 @@ export class ComunidadesComponent implements OnInit {
   minParticipantes: number | null = null;
   maxParticipantes: number | null = null;
 
-  
+
   fechaMinFiltro: string = '';
   fechaMaxFiltro: string = '';
   filtroEtiquetasAbierto: boolean = false;
@@ -101,10 +101,6 @@ export class ComunidadesComponent implements OnInit {
     });
   }
 
-  toggleFiltro(filtro: string) {
-    // Aquí puedes añadir lógica adicional para aplicar el filtro
-  }
-
 
 
   traerMiembros(comunidades: Comunidad[]): void {
@@ -143,6 +139,7 @@ export class ComunidadesComponent implements OnInit {
   
 
 
+
 // Método para obtener las comunidades a mostrar en el carrusel
 obtenerComunidadesParaMostrar(): Comunidad[] {
   const comunidadesParaMostrar: Comunidad[] = [];
@@ -166,6 +163,7 @@ obtenerComunidadesParaMostrar(): Comunidad[] {
   }
   return comunidadesParaMostrar;
 }
+
 
 
 
@@ -198,7 +196,7 @@ obtenerComunidadesParaMostrar(): Comunidad[] {
       this.comunidadService.filtrarEtiqueta(etiquetasIds).subscribe(
         async (dataPackage) => {
           if (Array.isArray(dataPackage.data)) {
-            this.results = <Comunidad []> dataPackage.data ;
+            this.results = <Comunidad[]>dataPackage.data;
             this.traerMiembros(this.results); // Llamar a traerMiembros después de cargar las comunidades
             for (const comunidad of this.results) {
               if (comunidad.latitud && comunidad.longitud) {
@@ -218,7 +216,7 @@ obtenerComunidadesParaMostrar(): Comunidad[] {
     }
   }
 
-   aplicarFiltroParticipantes(): void {
+  aplicarFiltroParticipantes(): void {
     if (this.minParticipantes !== null || this.maxParticipantes !== null) {
       this.comunidadService.filtrarParticipantes(this.minParticipantes || 0, this.maxParticipantes || Number.MAX_SAFE_INTEGER).subscribe(
         async (dataPackage) => {
@@ -232,9 +230,7 @@ obtenerComunidadesParaMostrar(): Comunidad[] {
                 comunidad.ubicacion = 'Ubicación desconocida';
               }
             }
-          } else {
-            console.log("No se obtuvieron datos de eventos");
-          }
+          } 
         },
         (error) => {
           console.error("Error al filtrar participantes:", error);
@@ -242,12 +238,29 @@ obtenerComunidadesParaMostrar(): Comunidad[] {
       );
     }
   }
+
   aplicarFiltroNombre(): void {
-    if (this.nombreEventoFiltro) {
+    if (this.filtroNombreActivo) {
       this.results = this.results.filter(comunidad =>
         comunidad.nombre.toLowerCase().includes(this.nombreEventoFiltro.toLowerCase())
       );
+    }
+  }
 
+  
+
+  aplicarFiltrosActivados(): void {
+    console.log("filtro nombre " +this  .nombreEventoFiltro);
+    this.getComunidades(); 
+
+    if (this.filtroNombreActivo) {
+      this.aplicarFiltroNombre()
+    }
+    if (this.filtroParticipantesActivo) {
+      this.aplicarFiltroParticipantes()
+    }
+    if (this.filtroEtiquetasActivo) {
+      this.aplicarFiltroEtiquetas()
     }
   }
 
@@ -264,7 +277,6 @@ obtenerComunidadesParaMostrar(): Comunidad[] {
     this.etiquetasSeleccionadas = [];
     this.getComunidades(); // Recargar todos los eventos
   }
-
 
   searchEtiqueta = (text$: Observable<string>): Observable<Etiqueta[]> =>
     text$.pipe(
@@ -301,7 +313,7 @@ obtenerComunidadesParaMostrar(): Comunidad[] {
     this.filtroNombreAbierto = !this.filtroNombreAbierto;
   }
 
- 
+
 
   limpiarFiltroNombre(): void {
     this.nombreEventoFiltro = '';
@@ -313,7 +325,7 @@ obtenerComunidadesParaMostrar(): Comunidad[] {
     this.filtroParticipantesAbierto = !this.filtroParticipantesAbierto;
   }
 
- 
+
 
   limpiarFiltroParticipantes(): void {
     this.minParticipantes = null;
