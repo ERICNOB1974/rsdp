@@ -162,6 +162,10 @@ export class EventoDetailComponent implements OnInit {
     return this.participa;
   }
 
+  botonInvitar(): boolean {
+    return this.participa && !this.evento.esPrivadoParaLaComunidad;
+  }
+
   inscribirseValid(): boolean {
     return (this.evento.participantes < this.evento.cantidadMaximaParticipantes) && !this.participa;
   }

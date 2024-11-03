@@ -353,6 +353,7 @@ export class PerfilComponent implements OnInit {
         console.error(dataPackage.message);
       }
     });
+  
   }
   
   traerParticipantes(eventos: Evento[]): void {
