@@ -202,24 +202,30 @@ export class CrearRutinaComponent {
 
 
   searchEjercicio = (text$: Observable<string>): Observable<Ejercicio[]> =>
-    text$.pipe(
-      debounceTime(300),
-      distinctUntilChanged(),
-      filter(term => term.length >= 2),
-      tap(() => (this.searching = true)),
-      switchMap((term) =>
-        this.rutinaService
-          .search(term)
-          .pipe(
-            map((response) => response.data as Ejercicio[]),
-            catchError(() => {
-              this.searchFailed = true;
-              return of([]);
-            })
-          )
-      ),
-      tap(() => (this.searching = false))
-    );
+  text$.pipe(
+    debounceTime(300),
+    distinctUntilChanged(),
+    filter(term => term.length >= 2),
+    tap(() => (this.searching = true)),
+    switchMap((term) =>
+      this.rutinaService
+        .search(term)
+        .pipe(
+          map((response) => response.data as Ejercicio[]),
+          map((ejercicios) => 
+            ejercicios.filter((value, index, self) =>
+              index === self.findIndex((e) => e.nombre === value.nombre) 
+            )
+          ),
+          catchError(() => {
+            this.searchFailed = true;
+            return of([]);
+          })
+        )
+    ),
+    tap(() => (this.searching = false))
+  );
+
 
   resultFormatEjercicio(value: Ejercicio) {
     return value.nombre;

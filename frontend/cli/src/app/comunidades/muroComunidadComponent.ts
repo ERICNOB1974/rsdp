@@ -362,5 +362,10 @@ export class MuroComunidadComponent implements OnInit {
         return false
     }
 
+    crearEvento() {
+        if (this.esParte) {
+            this.router.navigate([`/comunidades/${this.comunidad.id}/eventos/crearEvento`]);
+        }
+    }
 
 }

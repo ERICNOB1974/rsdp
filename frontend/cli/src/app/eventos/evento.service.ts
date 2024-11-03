@@ -44,6 +44,12 @@ export class EventoService {
     }
   }
 
+  saveConCreadorComunidad(evento: Evento, comunidadId: number): Observable<DataPackage> {
+    const nombreUsuario = this.authService.getNombreUsuario();
+    const url = `${this.eventosUrl}/crearParaComunidad/${nombreUsuario}/${comunidadId}`;
+    return this.http.post<DataPackage>(url, evento);
+  }
+
   sugerencias(): Observable<DataPackage> {
     const nombreUsuario = this.authService.getNombreUsuario();
 

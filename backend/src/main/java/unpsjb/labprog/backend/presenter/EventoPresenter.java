@@ -62,6 +62,12 @@ public class EventoPresenter {
         return Response.ok(eventoService.crearConCreador(evento, nombreUsuario));
     }
 
+    @RequestMapping(path = "/crearParaComunidad/{nombreUsuario}/{comunidadId}", method = RequestMethod.POST)
+    public ResponseEntity<Object> crearConCreadorParaEventoInternoParaComunidad(@RequestBody Evento evento, @PathVariable String nombreUsuario, @PathVariable Long comunidadId)
+            throws MessagingException, EventoException {
+        return Response.ok(eventoService.crearConCreadorParaEventoInternoParaComunidad(evento, nombreUsuario, comunidadId));
+    }
+
     @GetMapping("/sugerencias/{nombreUsuario}")
     public ResponseEntity<Object> sugerencias(@PathVariable String nombreUsuario) {
         return Response.ok(eventoService.todasLasSugerencias(nombreUsuario));
