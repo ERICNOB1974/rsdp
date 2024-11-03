@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Comparator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,6 +71,16 @@ public class PublicacionService {
 
     public List<Publicacion> publicacionesAmigos(Long usuarioId) {
         return publicacionRepository.publicacionesAmigosUsuario(usuarioId);
+    }
+
+    public List<Publicacion> publicacionesHome(Long usuarioId) {
+        // Obtener las publicaciones del usuario y de sus amigos
+        List<Publicacion> publicaciones = publicacionRepository.publicacionesUsuarioYAmigos(usuarioId);
+        
+        // Ordenar las publicaciones por fechaDeCreacion en orden descendente
+        publicaciones.sort(Comparator.comparing(Publicacion::getFechaDeCreacion).reversed());
+        
+        return publicaciones;
     }
 
     public List<Publicacion> publicacionesComunidad(Long comunidadId) {

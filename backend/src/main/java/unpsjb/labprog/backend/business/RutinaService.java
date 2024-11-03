@@ -111,36 +111,34 @@ public class RutinaService {
 
     @Transactional
     public void guardarEjercicioResistencia(Long diaId, Ejercicio ejercicio, int orden, String tiempo, String imagen) {
-        // Intentamos recuperar el ejercicio existente.
-        Ejercicio ejercicioExistente = ejercicioRepository.findByNombre(ejercicio.getNombre());
-
+        Ejercicio ejercicioExistente = ejercicioRepository.findByNombreDescripcionImagen(
+            ejercicio.getNombre(), ejercicio.getDescripcion(), ejercicio.getImagen());
+    
         Long ejercicioId;
         if (ejercicioExistente == null) {
-            // Si no existe, se crea uno nuevo.
-            ejercicioId = ejercicioRepository.crearEjercicio(ejercicio.getNombre(), ejercicio.getDescripcion(),
-                    ejercicio.getImagen());
+            ejercicioId = ejercicioRepository.crearEjercicio(ejercicio.getNombre(), ejercicio.getDescripcion(), ejercicio.getImagen());
         } else {
-            // Si existe, usamos el ID del ejercicio encontrado.
             ejercicioId = ejercicioExistente.getId();
         }
-
-        // Relacionamos el día con el ejercicio correspondiente.
+    
         rutinaRepository.relacionarDiaEjercicioResistencia(diaId, ejercicioId, orden, tiempo);
     }
-
+    
     @Transactional
-    public void guardarEjercicioSeries(Long diaId, Ejercicio ejercicio, int orden, int series, int repeticiones,
-            String imagen) {
-        if (ejercicioRepository.existeNombre(ejercicio.getNombre())) {
-            Ejercicio ejercicioExistente = ejercicioRepository.findByNombre(ejercicio.getNombre());
-            rutinaRepository.relacionarDiaEjercicioSeries(diaId, ejercicioExistente.getId(), orden, series,
-                    repeticiones);
+    public void guardarEjercicioSeries(Long diaId, Ejercicio ejercicio, int orden, int series, int repeticiones, String imagen) {
+        Ejercicio ejercicioExistente = ejercicioRepository.findByNombreDescripcionImagen(
+            ejercicio.getNombre(), ejercicio.getDescripcion(), ejercicio.getImagen());
+    
+        Long ejercicioId;
+        if (ejercicioExistente == null) {
+            ejercicioId = ejercicioRepository.crearEjercicio(ejercicio.getNombre(), ejercicio.getDescripcion(), ejercicio.getImagen());
         } else {
-            Long ejercicioId = ejercicioRepository.crearEjercicio(ejercicio.getNombre(), ejercicio.getDescripcion(),
-                    ejercicio.getImagen());
-            rutinaRepository.relacionarDiaEjercicioSeries(diaId, ejercicioId, orden, series, repeticiones);
+            ejercicioId = ejercicioExistente.getId();
         }
+    
+        rutinaRepository.relacionarDiaEjercicioSeries(diaId, ejercicioId, orden, series, repeticiones);
     }
+    
 
     public List<Ejercicio> search(String term) {
         return ejercicioRepository.search(term.toUpperCase());

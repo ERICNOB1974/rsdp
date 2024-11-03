@@ -44,6 +44,12 @@ export class EventoService {
     }
   }
 
+  saveConCreadorComunidad(evento: Evento, comunidadId: number): Observable<DataPackage> {
+    const nombreUsuario = this.authService.getNombreUsuario();
+    const url = `${this.eventosUrl}/crearParaComunidad/${nombreUsuario}/${comunidadId}`;
+    return this.http.post<DataPackage>(url, evento);
+  }
+
   sugerencias(): Observable<DataPackage> {
     const nombreUsuario = this.authService.getNombreUsuario();
 
@@ -150,11 +156,17 @@ export class EventoService {
     return this.http.delete<DataPackage>(` ${this.eventosUrl}/eliminarParticipante/${idEvento}/${idUsuario}`);
   }
 
-
   eventosFuturosPertenecientesAUnUsuario(): Observable<DataPackage> {
     const nombreUsuario = this.authService.getNombreUsuario();
     return this.http.get<DataPackage>(` ${this.eventosUrl}/eventosFuturosPertenecientesAUnUsuario/${nombreUsuario}`);
   }
 
+  eventosDeUnaComunidad(comunidadId: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.eventosUrl}/eventosDeUnaComunidad/${comunidadId}`);
+  }
+
+  buscarCreadorDeUnEventoInterno(comunidadId: number, eventoId: number){
+    return this.http.get<DataPackage>(`${this.eventosUrl}/buscarCreadorDeUnEventoInterno/${comunidadId}/${eventoId}`);
+  }
 
 }

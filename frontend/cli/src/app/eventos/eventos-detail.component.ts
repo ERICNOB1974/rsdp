@@ -12,6 +12,7 @@ import { MatDialog } from '@angular/material/dialog'; // Importar MatDialog para
 import { ViewChild, TemplateRef } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
+import { AuthService } from '../autenticacion/auth.service';
 
 
 
@@ -38,6 +39,10 @@ export class EventoDetailComponent implements OnInit {
   amigosNoEnEvento: any[] = [];
   amigosEnEvento: any[] = [];
   amigosYaInvitados: any[] = [];
+  participantesVisibles: any[] = [];
+  usuariosAnonimos: number = 0; // Inicializamos la variable
+  idUsuarioAutenticado!: number;
+  creadorEvento!: Usuario;
 
   @ViewChild('modalInvitarAmigos') modalInvitarAmigos!: TemplateRef<any>;
 
@@ -52,11 +57,13 @@ export class EventoDetailComponent implements OnInit {
     private router: Router,
     private snackBar: MatSnackBar,
     private usuarioService: UsuarioService,
+    private authService: AuthService,
     private dialog: MatDialog,
     private cdr: ChangeDetectorRef // Inyección de ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
+    this.idUsuarioAutenticado = Number(this.authService.getUsuarioId());
     this.getEvento();
   }
 
@@ -79,6 +86,7 @@ export class EventoDetailComponent implements OnInit {
           this.evento.fechaDeCreacion = new Date(this.evento.fechaDeCreacion);
           this.evento.fechaHora = new Date(this.evento.fechaHora);
         }
+        await this.getCreadorEvento();
         this.traerParticipantes();
         this.checkParticipacion();
         this.traerMiembros();
@@ -98,6 +106,19 @@ export class EventoDetailComponent implements OnInit {
     );
   }
 
+  async getCreadorEvento(): Promise<void> {
+    return new Promise((resolve) => {
+        this.usuarioService.usuarioCreadorEvento(this.evento.id).subscribe(dataPackage => {
+            this.creadorEvento = dataPackage.data as Usuario;
+            console.log('Creador del evento:', this.creadorEvento); // Añadir log para verificar el valor
+            if (this.creadorEvento.id == this.idUsuarioAutenticado) {
+                this.creador = true;  // El usuario es el creador
+            }
+            resolve(); // Resuelve la promesa después de procesar el estado
+        });
+    });
+}
+
   goBack(): void {
     this.location.back();
   }
@@ -106,13 +127,14 @@ export class EventoDetailComponent implements OnInit {
     if (this.inscribirseValid()) {
       this.isLoading = true;
       this.participa = true;
-  
+
       try {
         const dataPackage = await lastValueFrom(this.eventoService.inscribirse(this.evento.id));
         this.snackBar.open('Inscripción guardada con éxito', 'Cerrar', {
           duration: 3000,
         });
         this.evento.participantes++;
+        window.location.reload();
       } catch (error) {
         console.error('Error al inscribirse:', error);
         this.snackBar.open('Error al inscribirse', 'Cerrar', {
@@ -123,7 +145,7 @@ export class EventoDetailComponent implements OnInit {
       }
     }
   }
-  
+
 
   salir(): void {
     this.eventoService.salir(this.evento.id).subscribe(
@@ -136,6 +158,7 @@ export class EventoDetailComponent implements OnInit {
         this.participa = false;
         this.evento.participantes--;
         this.isLoading = false;
+        window.location.reload();
       },
       error => {
         console.error('Error al salir del evento:', error);
@@ -162,6 +185,10 @@ export class EventoDetailComponent implements OnInit {
     return this.participa;
   }
 
+  botonInvitar(): boolean {
+    return this.participa && !this.evento.esPrivadoParaLaComunidad;
+  }
+
   inscribirseValid(): boolean {
     return (this.evento.participantes < this.evento.cantidadMaximaParticipantes) && !this.participa;
   }
@@ -172,10 +199,17 @@ export class EventoDetailComponent implements OnInit {
 
   traerMiembros(): void {
     this.eventoService.listaParticipantes(this.evento.id).subscribe(dataPackage => {
-      console.log(dataPackage.data)
-      this.miembros = dataPackage.data as Usuario[];
+      if (Array.isArray(dataPackage.data)) {
+        this.miembros = dataPackage.data as Usuario[];
+         this.cargarAmigos(); // Espera a obtener amigos
+         this.filtrarParticipantesVisibles(); // Filtra miembros después de obtener amigos
+      }
     });
   }
+
+
+
+
   abrirModalInvitarAmigos(): void {
     // Cargar listas de amigos antes de abrir el modal
     this.cargarAmigos();
@@ -212,7 +246,6 @@ export class EventoDetailComponent implements OnInit {
     const idEvento = this.evento.id;
     this.usuarioService.enviarInvitacionEvento(idUsuarioReceptor, idEvento).subscribe(() => {
       this.cargarAmigos();
-      this.cargarAmigos();
       this.cdr.detectChanges(); // Fuerza la actualización del modal
       this.snackBar.open('Invitación enviada con éxito', 'Cerrar', {
         duration: 3000,
@@ -238,6 +271,55 @@ export class EventoDetailComponent implements OnInit {
         duration: 3000,
       });
       this.router.navigate(['/eventos']);
+    });
+  }
+
+  filtrarParticipantesVisibles(): void {
+    // Verificamos que los datos requeridos estén definidos
+    if (!this.amigosEnEvento || !this.miembros) {
+      console.error("Amigos o miembros no están definidos.");
+      return;
+    }
+
+    const amigosIds = this.amigosEnEvento.map(amigo => amigo.id);
+    this.participantesVisibles = []; // Reiniciamos la lista de miembros visibles
+    this.usuariosAnonimos = 0; // Reiniciamos el conteo de usuarios anónimos
+
+    const creador = this.miembros[0]; // Asumiendo que `this.miembros[0]` es el creador
+    if (creador) {
+      this.participantesVisibles.push(creador);
+    }
+    // Iterar sobre los miembros y añadir solo aquellos que sean visibles
+    this.miembros.forEach(miembro => {
+      if (miembro.id === this.idUsuarioAutenticado) {
+        // Siempre mostrar el usuario que está viendo la lista
+        if (!this.participantesVisibles.some(m => m.id === miembro.id)) {
+          this.participantesVisibles.push(miembro);
+        }
+      } else if (miembro.id == this.creadorEvento.id) {
+        if (!this.participantesVisibles.some(m => m.id === miembro.id)) {
+            this.participantesVisibles.push(miembro);
+        }
+      } else if (this.creador) {
+        // Si es el creador , añadir todos los miembros
+        if (!this.participantesVisibles.some(m => m.id === miembro.id)) {
+          this.participantesVisibles.push(miembro);
+        }
+      } else {
+        // Para miembros normales, aplicar la lógica de privacidad
+        if (miembro.privacidadEventos === 'Pública') {
+          if (!this.participantesVisibles.some(m => m.id === miembro.id)) {
+            this.participantesVisibles.push(miembro);
+          }
+        } else if (miembro.privacidadEventos === 'Solo amigos' && amigosIds.includes(miembro.id)) {
+          if (!this.participantesVisibles.some(m => m.id === miembro.id)) {
+            this.participantesVisibles.push(miembro);
+          }
+        } else {
+          console.info("ocultando a"+miembro.nombreUsuario);
+          this.usuariosAnonimos++; // Aumentar el conteo de anónimos si no se muestra
+        }
+      }
     });
   }
 }

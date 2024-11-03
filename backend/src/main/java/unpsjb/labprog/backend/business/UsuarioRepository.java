@@ -24,14 +24,17 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
                             OPTIONAL MATCH (solicitante:Usuario)-[r:SOLICITUD_DE_AMISTAD]->(u)
                             WHERE solicitante IS NOT NULL
                             RETURN solicitante AS usuario
-                            UNION
-                            MATCH (u:Usuario {nombreUsuario: $nombreUsuario})
-                            OPTIONAL MATCH (u)-[r2:SOLICITUD_DE_AMISTAD]->(destinatario:Usuario)
-                            WHERE destinatario IS NOT NULL
-                            RETURN destinatario AS usuario
-                            ORDER BY usuario.nombreUsuario ASC
                         """)
         List<Usuario> solicitudesDeAmistad(String nombreUsuario);
+
+        @Query("""
+                MATCH (u:Usuario {nombreUsuario: $nombreUsuario})
+                OPTIONAL MATCH (u)-[r:SOLICITUD_DE_AMISTAD]->(solicitado:Usuario)
+                WHERE solicitado IS NOT NULL
+                RETURN solicitado AS usuario
+            """)
+        List<Usuario> solicitudesDeAmistadEnviadas(String nombreUsuario);
+
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(amigo)-[:ES_AMIGO_DE]->(amigosDeAmigos) "
                         + "WHERE amigosDeAmigos <> u AND NOT (u)-[:ES_AMIGO_DE]-(amigosDeAmigos) "
@@ -92,6 +95,16 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
                         + "RETURN COUNT(c) > 0")
         boolean esCreador(Long idUsuario, Long idComunidad);
 
+        @Query("MATCH (u:Usuario)<-[r:CREADA_POR]-(c:Comunidad) "
+                + "WHERE id(c) = $idComunidad "
+                + "RETURN u")
+        Usuario creadorComunidad(Long idComunidad);
+
+        @Query("MATCH (u:Usuario)<-[r:CREADO_POR]-(e:Evento) "
+                        + "WHERE id(e) = $idEvento "
+                        + "RETURN u")
+        Usuario creadorEvento(Long idEvento);
+
         @Query("MATCH (u:Usuario)<-[:ADMINISTRADA_POR]-(c:Comunidad) "
                         + "WHERE id(u) = $idMiembro AND id(c) = $idComunidad "
                         + "RETURN COUNT(c) > 0")
@@ -129,9 +142,13 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
         @Query("MATCH (u:Usuario) WHERE u.nombreUsuario = $nombre RETURN u")
         Optional<Usuario> findByNombreUsuario(String nombre);
 
-        @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]->(ev:Evento) "
+        @Query("MATCH (u:Usuario)-[r:PARTICIPA_EN|CREADO_POR]-(ev:Evento) "
                         + "WHERE id(ev) = $eventId "
-                        + "RETURN u")
+                        + "RETURN DISTINCT u, r "
+                        + "ORDER BY CASE " +
+                        "    WHEN type(r) = 'CREADO_POR' THEN 1 " +
+                        "    WHEN type(r) = 'PARTICIPA_EN' THEN 2 " +
+                        "END")
         List<Usuario> inscriptosEvento(Long eventId);
 
         @Query("MATCH (u:Usuario)-[r:MIEMBRO|CREADA_POR|ADMINISTRADA_POR]-(c:Comunidad) " +
@@ -259,4 +276,12 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
                         """)
         List<Usuario> buscarUsuarios(String term);
 
+        @Query("""
+                MATCH (evento:Evento)-[:EVENTO_INTERNO]->(comunidad:Comunidad)
+                WHERE id(comunidad) = $comunidadId AND id(evento) = $eventoId
+                MATCH (evento)-[:CREADO_POR]->(usuario:Usuario)
+                RETURN usuario
+               """)
+        Usuario buscarCreadorDeUnEventoInterno(@Param("comunidadId") Long comunidadId, @Param("eventoId") Long eventoId);
+        
 }

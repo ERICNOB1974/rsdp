@@ -20,7 +20,8 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 })
 export class ComunidadesComponent implements OnInit {
   comunidades: Comunidad[] = []; // Arreglo para almacenar las comunidades que provienen del backend
-  currentIndex: number = 0; // Índice actual del carrusel
+  currentIndexComunidades: number = 0; // Índice actual del carrusel
+  currentIndexMiembro: number = 0; // Índice actual del carrusel
   results: Comunidad[] = [];
   idUsuarioAutenticado!: number;  // ID del usuario autenticado
   comunidadesMiembroUsuario: Comunidad[] = [];
@@ -120,42 +121,52 @@ export class ComunidadesComponent implements OnInit {
 
   // Método para mover al siguiente grupo de comunidades en el carrusel
   siguienteComunidad(): void {
-    this.currentIndex = (this.currentIndex + 1) % this.results.length; // Incrementa el índice
+    this.currentIndexComunidades = (this.currentIndexComunidades + 1) % this.results.length; // Incrementa el índice
   }
 
   // Método para mover al grupo anterior de comunidades en el carrusel
   comunidadAnterior(): void {
-    this.currentIndex = (this.currentIndex - 1 + this.results.length) % this.results.length; // Decrementa el índice
+    this.currentIndexComunidades = (this.currentIndexComunidades - 1 + this.results.length) % this.results.length; // Decrementa el índice
   }
 
-
-  // Método para obtener las comunidades a mostrar en el carrusel
-  obtenerComunidadesParaMostrar(): Comunidad[] {
-    const comunidadesParaMostrar: Comunidad[] = [];
-
-    if (this.results.length === 0) {
-      return comunidadesParaMostrar; // Devuelve un arreglo vacío si no hay comunidades
-    }
-
-    // Definir cuántas comunidades mostrar, máximo 4 o el número total de comunidades disponibles
-    const cantidadComunidadesAMostrar = Math.min(this.results.length, 4);
-
-    for (let i = 0; i < cantidadComunidadesAMostrar; i++) {
-      const index = (this.currentIndex + i) % this.results.length;
-      const comunidad = this.results[index];
-
-      // Excluir comunidades en las que el usuario ya es miembro
-      const yaMiembro = this.comunidadesMiembroUsuario.some(
-        (comunidadMiembro) => comunidadMiembro.id === comunidad.id
-      );
-
-      if (!yaMiembro) {
-        comunidadesParaMostrar.push(comunidad); // Agregar solo si no es miembro
-      }
-    }
-
-    return comunidadesParaMostrar;
+  siguienteComunidadParticipa(): void {
+    this.currentIndexMiembro = (this.currentIndexMiembro + 1) % this.comunidadesMiembroUsuario.length; // Incrementa el índice del segundo carrusel
   }
+  
+  comunidadAnteriorParticipa(): void {
+    this.currentIndexMiembro = (this.currentIndexMiembro - 1 + this.comunidadesMiembroUsuario.length) % this.comunidadesMiembroUsuario.length; // Decrementa el índice del segundo carrusel
+  }
+  
+
+
+
+// Método para obtener las comunidades a mostrar en el carrusel
+obtenerComunidadesParaMostrar(): Comunidad[] {
+  const comunidadesParaMostrar: Comunidad[] = [];
+  
+  if (this.results.length === 0) {
+    return comunidadesParaMostrar; // Devuelve un arreglo vacío si no hay comunidades
+  }
+  
+  // Definir cuántas comunidades mostrar, máximo 4 o el número total de comunidades disponibles
+  const cantidadComunidadesAMostrar = Math.min(this.results.length, 4);
+  
+  for (let i = 0; i < cantidadComunidadesAMostrar; i++) {
+    const index = (this.currentIndexComunidades + i) % this.results.length;
+    const comunidad = this.results[index];
+    
+    // Excluir comunidades en las que el usuario ya es miembro
+    if (!this.comunidadesMiembroUsuario.some(c => c.id === comunidad.id)) {
+      comunidadesParaMostrar.push(comunidad);
+    }
+  
+  }
+  return comunidadesParaMostrar;
+}
+
+
+
+
 
 
 

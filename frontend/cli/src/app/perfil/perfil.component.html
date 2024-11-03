@@ -81,7 +81,8 @@
         <div *ngIf="tabSeleccionada === 'eventos'" class="perfil-eventos">
             <h3>Eventos</h3>
             <div class="eventos-grid">
-                <div class="evento-item" *ngFor="let evento of historicoEventos">
+                <div class="evento-item" *ngFor="let evento of historicoEventos"
+                    (click)="irADetalleEvento(evento.id)">
                     <h4>{{ evento.nombre }}</h4>
                     <p>Descripción: {{ evento.descripcion }}</p>
                     <p>Ubicación: {{ evento.ubicacion }}</p>

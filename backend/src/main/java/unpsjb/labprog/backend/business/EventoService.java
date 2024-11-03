@@ -102,15 +102,37 @@ public class EventoService {
         if (evento.getFechaDeCreacion().isAfter(LocalDate.now())) {
             throw new EventoException("El evento no puede crearse en el futuro");
         }
-        /*
-         * if (evento.isEsPrivadoParaLaComunidad()) {
-         * // enviar mail a todos los usuarios de la comunidad
-         * }
-         */
+
         Evento c = eventoRepository.save(evento);
         eventoRepository.establecerCreador(c.getId(), usuarioService.findByNombreUsuario(nombreUsuario).getId());
         return c;
     }
+
+    @Transactional
+    public Evento crearConCreadorParaEventoInternoParaComunidad(Evento evento, String nombreUsuario, Long comunidadId) throws MessagingException, EventoException {
+        if (evento.getFechaHora().isBefore(ZonedDateTime.now()) ||
+                evento.getFechaHora().isEqual(ZonedDateTime.now())) {
+            throw new EventoException("El evento no puede tener una fecha anterior a ahora");
+        }
+        if (evento.getFechaDeCreacion().isAfter(LocalDate.now())) {
+            throw new EventoException("El evento no puede crearse en el futuro");
+        }
+
+        evento.setEsPrivadoParaLaComunidad(true);
+    
+        // Guardar el evento
+        Evento c = eventoRepository.save(evento);
+        
+        // Establecer la relación CREADO_POR entre el evento y el usuario
+        eventoRepository.establecerCreador(c.getId(), usuarioService.findByNombreUsuario(nombreUsuario).getId());
+    
+        // Establecer la relación EVENTO_INTERNO entre el evento y la comunidad
+        eventoRepository.establecerEventoInterno(c.getId(), comunidadId);
+    
+        return c;
+        
+    }
+    
 
     public List<Evento> todasLasSugerencias(String nombreUsuario) {
         List<Evento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnAmigos(nombreUsuario);
@@ -226,6 +248,10 @@ public class EventoService {
 
     public int participantesDeEvento(Long idEvento) {
         return eventoRepository.participantesDeEvento(idEvento);
+    }
+
+    public List<Evento> eventosDeUnaComunidad(Long comunidadId) {
+        return eventoRepository.eventosDeUnaComunidad(comunidadId);
     }
 
     public void etiquetarEvento(Evento evento, Long etiqueta) {
@@ -359,4 +385,5 @@ public class EventoService {
     public void eliminarUsuario(Long idEvento, Long idUsuario) {
         this.eventoRepository.eliminarUsuario(idEvento, idUsuario);
     }
+    
 }
