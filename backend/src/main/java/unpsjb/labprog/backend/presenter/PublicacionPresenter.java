@@ -100,6 +100,14 @@ public class PublicacionPresenter {
         return Response.ok(publicaciones, "OK");
     }
 
+    @GetMapping("/publicacionesHome/{idUsuario}")
+    public ResponseEntity<Object> publicacionesHome(@PathVariable Long idUsuario)
+            throws Exception {
+        List<Publicacion> publicaciones = publicacionService.publicacionesHome(idUsuario);
+        return Response.ok(publicaciones, "OK");
+    }
+
+
     @GetMapping("/publicaciones/comunidad/{idComunidad}")
     public ResponseEntity<Object> publicacionesComunidad(@PathVariable Long idComunidad)
             throws Exception {
