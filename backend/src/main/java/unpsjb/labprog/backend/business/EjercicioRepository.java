@@ -26,4 +26,8 @@ public interface EjercicioRepository extends Neo4jRepository<Ejercicio, Long> {
     @Query("MATCH (r:Rutina)-[:TIENE]->(e:Ejercicio) WHERE id(r) = $idRutina RETURN e")
     List<Ejercicio> findEjerciciosByRutinaId(Long idRutina);
 
+    @Query("MATCH (e:Ejercicio) WHERE e.nombre = $nombre AND e.descripcion = $descripcion AND e.imagen = $imagen RETURN e LIMIT 1")
+    Ejercicio findByNombreDescripcionImagen(String nombre, String descripcion, String imagen);
+
+
 }

@@ -34,6 +34,16 @@
             </div>
         </div>
 
+        <div *ngIf="tabSeleccionada === 'eventos'" class="perfil-eventos">
+          <h3>Eventos</h3>
+
+          <button *ngIf="esParte" (click)="crearEvento()" class="btn btn-primary mt-3">
+              Crear Evento
+          </button>
+
+        </div>
+
+
         <div *ngIf="tabSeleccionada === 'miembros'" class="perfil-miembros">
             <h3>Miembros</h3>
             <div *ngFor="let miembro of miembrosVisibles">
