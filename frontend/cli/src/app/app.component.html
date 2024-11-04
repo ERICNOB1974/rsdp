@@ -76,27 +76,17 @@
                 </li>
             </ul>
         </li>
-        <li class="dropdown">
-            <a class="dropdown-toggle">
+        <li class="friends-link">
+            <a [routerLink]="['/amigos']">
                 <span class="icon"><i class="fa fa-user"></i></span>
                 <span class="text">Amigos</span>
             </a>
-            <ul class="dropdown-menu">
-                <li>
-                    <a href="/amigos">Amigos</a>
-                </li>
-            </ul>
         </li>
-        <li class="dropdown">
-            <a class="dropdown-toggle">
+        <li class="profile-link">
+            <a (click)="navigateToMiPerfil()">
                 <span class="icon"><i class="fa fa-user-circle-o"></i></span>
-                <span class="text">Perfil</span>
+                <span class="text">Mi perfil</span>
             </a>
-            <ul class="dropdown-menu">
-                <li>
-                    <a (click)="navigateToMiPerfil()">Mi perfil</a>
-                </li>
-            </ul>
         </li>
         <li class="dropdown">
             <a class="dropdown-toggle">
