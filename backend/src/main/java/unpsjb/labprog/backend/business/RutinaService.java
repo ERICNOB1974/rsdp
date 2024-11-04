@@ -193,12 +193,7 @@ public class RutinaService {
         List<ScoreRutina> sugerenciasRutinas = rutinaRepository.sugerenciasDeRutinasBasadasEnRutinas2(nombreUsuario);
         List<ScoreRutina> sugerenciasEventosPorEtiquetas = rutinaRepository
                 .sugerenciasDeRutinasBasadosEnEventosPorEtiqueta2(nombreUsuario);
-
-        // Imprimir la cantidad de sugerencias para depuración
-        System.out.println("Sugerencias amigos: " + sugerenciasAmigos.size());
-        System.out.println("Sugerencias eventos: " + sugerenciasEventos.size());
-        System.out.println("Sugerencias comunidades: " + sugerenciasComunidades.size());
-
+  
         // Combinar todas las sugerencias en una sola lista
         List<ScoreRutina> todasLasSugerencias = new ArrayList<>();
         todasLasSugerencias.addAll(sugerenciasAmigos);
@@ -210,13 +205,15 @@ public class RutinaService {
         // Usar un Map para eliminar duplicados y sumar los scores de las comunidades
         Map<Long, ScoreRutina> mapaSugerencias = new HashMap<>();
 
-        for (ScoreRutina scoreEvento : todasLasSugerencias) {
+        for (ScoreRutina scoreRutina : todasLasSugerencias) {
             // Si la comunidad ya existe en el mapa, sumar los scores
-            mapaSugerencias.merge(scoreEvento.getRutina().getId(),
-                    new ScoreRutina(scoreEvento.getRutina(), scoreEvento.getScore()),
+            mapaSugerencias.merge(scoreRutina.getRutina().getId(),
+                    new ScoreRutina(scoreRutina.getRutina(), scoreRutina.getScore(), scoreRutina.getMotivo()),
                     (existente, nuevo) -> {
                         double nuevoScore = existente.getScore() + nuevo.getScore(); // Sumar scores
                         existente.setScore(nuevoScore); // Actualizar el score sumado
+                        String nuevoMotivo = existente.getMotivo() + " --- " + nuevo.getMotivo();
+                        existente.setMotivo(nuevoMotivo);
                         return existente; // Retornar el objeto existente actualizado
                     });
         }

@@ -11,9 +11,11 @@ import unpsjb.labprog.backend.model.Usuario;
 public class ScoreAmigo {
     private Usuario usuario;
     private Double score;
+    private String motivo;
 
-    public ScoreAmigo(Usuario usuario, Double score) {
+    public ScoreAmigo(Usuario usuario, Double score, String motivo) {
         this.usuario = usuario;
         this.score = score;
+        this.motivo = motivo;
     }
 }
