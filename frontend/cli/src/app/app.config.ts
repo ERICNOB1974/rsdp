@@ -9,6 +9,7 @@ import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { routes } from './app.routes';
 import { FlatpickrModule } from 'angularx-flatpickr';
 import { FullCalendarModule } from '@fullcalendar/angular';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask'; // Importar ngx-mask
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -18,10 +19,11 @@ export const appConfig: ApplicationConfig = {
     importProvidersFrom(
       FullCalendarModule
     ),
+    provideNgxMask(), // Agregar proveedor de ngx-mask
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
-      multi: true
+      multi: true,
     },
     provideAnimationsAsync(),
   ]
