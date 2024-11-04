@@ -12,12 +12,13 @@ import { DataPackage } from '../data-package';
 import { EtiquetaPopularidadDTO } from '../etiqueta/etiquetaPopularidadDTO';
 import { Dia } from './dia';
 import { TipoEjercicio } from './tipoEjercicio';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-crearRutina',
   templateUrl: './crearRutina.component.html',
   styleUrls: ['./crearRutina.component.css'],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbTypeaheadModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbTypeaheadModule, NgxMaskDirective],
   standalone: true
 })
 export class CrearRutinaComponent {
@@ -98,10 +99,10 @@ export class CrearRutinaComponent {
     return this.dias.some((dia) => dia.tipo === 'trabajo');
   }
 
-  validarTiempo(ejercicio: Ejercicio) {
-    const tiempoRegex = /^([0-5]?[0-9]):([0-5][0-9])$/;
-    ejercicio.tiempoValido = tiempoRegex.test(ejercicio.tiempo || '');
-  }
+  // validarTiempo(ejercicio: Ejercicio) {
+  //   const tiempoRegex = /^([0-5]?[0-9]):([0-5][0-9])$/;
+  //   ejercicio.tiempoValido = tiempoRegex.test(ejercicio.tiempo || '');
+  // }
 
   validarNumerico(ejercicio: Ejercicio & { [key: string]: any }, campo: 'series' | 'repeticiones') {
     const valor = ejercicio[campo];
@@ -300,6 +301,41 @@ export class CrearRutinaComponent {
       alert('Formato no válido. Solo se permiten imágenes JPEG, PNG, o GIF.');
     }
   }
+  
+  filtrarEntrada(event: Event, ejercicio: Ejercicio) {
+    const input = (event.target as HTMLInputElement);
+    let valor = input.value.replace(/[^0-9]/g, ''); // Eliminar caracteres no numéricos
+
+    // Forzar formato MM:SS
+    if (valor.length > 2) {
+      valor = valor.slice(0, 2) + ':' + valor.slice(2, 4);
+    }
+    
+    input.value = valor; // Actualizar el input para reflejar el cambio
+    ejercicio.tiempo = valor; // Guardar el valor formateado en la propiedad
+    
+    this.validarTiempo(ejercicio);
+  }
+
+  validarTiempo(ejercicio: Ejercicio) {
+    const [minutosStr, segundosStr] = ejercicio.tiempo.split(':');
+    const minutos = parseInt(minutosStr || '0', 10);
+    const segundos = parseInt(segundosStr || '0', 10);
+
+    // Validación: entre 00:01 y 59:59
+    if (
+      minutos >= 0 && minutos < 60 &&
+      segundos >= 0 && segundos < 60 &&
+      (minutos > 0 || segundos > 0)
+    ) {
+      ejercicio.tiempoValido = true;
+    } else {
+      ejercicio.tiempoValido = false;
+    }
+  }
+
+
+  
   
 
 }
