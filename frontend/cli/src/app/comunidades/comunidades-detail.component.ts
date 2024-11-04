@@ -81,7 +81,7 @@ export class ComunidadDetailComponent implements OnInit {
 
 
   traerMiembros(): void {
-    this.comunidadService.miembrosEnComunidad(this.comunidad.id).subscribe(dataPackage => {
+    this.comunidadService.cantidadMiembrosEnComunidad(this.comunidad.id).subscribe(dataPackage => {
       if (dataPackage && typeof dataPackage.data === 'number') {
         this.comunidad.miembros = dataPackage.data; // Asignar el número de miembros
       }

@@ -240,6 +240,9 @@ public class UsuarioComunidadService {
         if (usuarioRepository.esCreador(idUsuario, idComunidad)) {
             return "Creador";
         }
+        if (usuarioRepository.esAdministrador(idUsuario, idComunidad)) {
+            return "Administrador";
+        }
         return "Vacio";
     }
 

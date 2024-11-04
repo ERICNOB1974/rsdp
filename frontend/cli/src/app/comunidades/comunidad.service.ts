@@ -24,30 +24,30 @@ export class ComunidadService {
           format: 'json',
         },
       });
-  
+
       const { address } = response.data;
-  
+
       if (!address) {
         return 'Dirección no disponible';
       }
-  
+
       const ciudad = address.city || address.town || address.village;
       const pais = address.country;
-  
+
       // Si la ciudad o el país no están disponibles, enviamos otro mensaje
       if (!ciudad && !pais) {
         return 'Ubicación indefinida';
       }
-  
+
       // Retorna la ciudad y el país si están disponibles
       return `${ciudad || 'Ciudad desconocida'}, ${pais || 'País desconocido'}`;
-  
+
     } catch (error) {
       console.error('Error obteniendo la ubicación:', error);
       return 'Ubicación no disponible';
     }
   }
-  
+
 
   all(): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/findAll`);
@@ -55,6 +55,10 @@ export class ComunidadService {
 
   get(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/findById/${id}`);
+  }
+
+  puedeVer(idComunidad: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.comunidadesUrl}/puedeVer/${idComunidad}/${this.authService.getUsuarioId()}`);
   }
 
   save(comunidad: Comunidad): Observable<DataPackage> {
@@ -74,7 +78,9 @@ export class ComunidadService {
   participantesEncomunidad(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/${id}/participantes`);
   }
-  miembrosEnComunidad(id: number): Observable<DataPackage> {
+
+  //cantidad
+  cantidadMiembrosEnComunidad(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/${id}/miembros`);
   }
 
@@ -99,27 +105,27 @@ export class ComunidadService {
     return this.http.get<DataPackage>(` ${this.comunidadesUrl}/disponibles`);
   }
 
-  otorgarRolAdministrador(idCreador: number, idMiembro: number,idComunidad: number): Observable<DataPackage> {
-    const body ={}
+  otorgarRolAdministrador(idCreador: number, idMiembro: number, idComunidad: number): Observable<DataPackage> {
+    const body = {}
     return this.http.post<DataPackage>(` ${this.comunidadesUrl}/otorgarRolAdministrador/${idCreador}/${idMiembro}/${idComunidad}`, body);
   }
 
-  quitarRolAdministrador(idCreador: number, idMiembro: number,idComunidad: number): Observable<DataPackage> {
-    const body ={}
+  quitarRolAdministrador(idCreador: number, idMiembro: number, idComunidad: number): Observable<DataPackage> {
+    const body = {}
     return this.http.post<DataPackage>(` ${this.comunidadesUrl}/quitarRolAdministrador/${idCreador}/${idMiembro}/${idComunidad}`, body);
   }
 
-  eliminarMiembro(idSuperUsuario: number, idMiembro: number,idComunidad: number): Observable<DataPackage> {
-    const body ={}
+  eliminarMiembro(idSuperUsuario: number, idMiembro: number, idComunidad: number): Observable<DataPackage> {
+    const body = {}
     return this.http.post<DataPackage>(` ${this.comunidadesUrl}/eliminarUsuario/${idSuperUsuario}/${idMiembro}/${idComunidad}`, body);
   }
-  
-  gestionarSolicitudIngreso(idSuperUsuario: number, idMiembro: number,idComunidad: number, aceptada: boolean): Observable<DataPackage> {
-    const body ={}
+
+  gestionarSolicitudIngreso(idSuperUsuario: number, idMiembro: number, idComunidad: number, aceptada: boolean): Observable<DataPackage> {
+    const body = {}
     return this.http.post<DataPackage>(` ${this.comunidadesUrl}/gestionarSolicitudIngreso/${idSuperUsuario}/${idMiembro}/${idComunidad}?aceptada=${aceptada}`, body);
   }
 
-  visualizarSolicitudes(idSuperUsuario:number, idComunidad:number): Observable<DataPackage>{
+  visualizarSolicitudes(idSuperUsuario: number, idComunidad: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.comunidadesUrl}/visualizarSolicitudes/${idSuperUsuario}/${idComunidad}`);
   }
 
@@ -149,11 +155,11 @@ export class ComunidadService {
   filtrarEtiqueta(etiquetas: string[]): Observable<DataPackage> {
     const params = new HttpParams().set('etiquetas', etiquetas.join(',')); // convierte el array a una cadena separada por comas
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/filtrar/etiquetas`, { params });
-}
+  }
 
-comunidadesCreadasPorUsuario(offset: number, limit: number): Observable<DataPackage> {
-  const userId = this.authService.getUsuarioId();
-  return this.http.get<DataPackage>(`${this.comunidadesUrl}/comunidadesCreadasPorUsuario/${userId}?offset=${offset}&limit=${limit}`);
-}
+  comunidadesCreadasPorUsuario(offset: number, limit: number): Observable<DataPackage> {
+    const userId = this.authService.getUsuarioId();
+    return this.http.get<DataPackage>(`${this.comunidadesUrl}/comunidadesCreadasPorUsuario/${userId}?offset=${offset}&limit=${limit}`);
+  }
 
 }

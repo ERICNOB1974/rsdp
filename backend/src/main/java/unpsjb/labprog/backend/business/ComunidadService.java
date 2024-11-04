@@ -178,4 +178,17 @@ public class ComunidadService {
         return comunidadRepository.comunidadesCreadasPorUsuario(idUsuario, offset, limit);
     }
     
+    public boolean puedeVer(Long idComunidad, Long idUsuario){
+        Comunidad c= comunidadRepository.findById(idComunidad).orElse(null);
+        if (c==null){
+            return false;
+        }
+        if (!c.isEsPrivada()){
+            return true;
+        }
+        if (c.isEsPrivada()&& comunidadRepository.esMiembro(idComunidad, idUsuario)){
+            return true;
+        }
+        return false;
+    }
 }
