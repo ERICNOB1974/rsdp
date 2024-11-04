@@ -18,3 +18,29 @@
   background-color: rgba(255, 200, 0, 0.2); /* Cambia el color de fondo del día actual */
   border-radius: 4px; /* Redondea los bordes */
 }
+
+/* Estilos existentes ... */
+
+/* Nuevo estilo para el contenedor del calendario */
+:host {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Estilo para el componente full-calendar */
+full-calendar {
+  width: 100%;
+  max-width: 1200px; /* Ajusta este valor según tus necesidades */
+  height: auto;
+  margin: 0 auto;
+}
+
+/* Asegúrate de que el calendario sea responsive */
+@media (max-width: 768px) {
+  full-calendar {
+    max-width: 100%;
+  }
+}

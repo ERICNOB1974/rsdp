@@ -8,6 +8,7 @@ import { NgIf } from '@angular/common';
 import { Evento } from '../eventos/evento';
 import { DataPackage } from '../data-package';
 import { Router } from '@angular/router';
+import esLocale from '@fullcalendar/core/locales/es';
 
 @Component({
   selector: 'app-calendario',
@@ -25,6 +26,9 @@ export class CalendarioEventosComponent {
   constructor(private eventosService: EventoService, private router: Router) {
     this.calendarOptions = {
       plugins: [dayGridPlugin, interactionPlugin],
+      height: 'auto', // Esto permitirá que el calendario se ajuste automáticamente
+      aspectRatio: 1.35,
+      locale: esLocale,
       headerToolbar: {
         left: 'prev,next today', // Mantiene el botón para navegar entre meses y el botón de "Hoy"
         center: 'title',
