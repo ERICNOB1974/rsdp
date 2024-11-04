@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ComunidadService } from './comunidad.service';
 import { Comunidad } from './comunidad';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { Publicacion } from '../publicaciones/publicacion';
 import { PublicacionService } from '../publicaciones/publicacion.service';
 import { AuthService } from '../autenticacion/auth.service';
@@ -19,7 +19,7 @@ import { EventoService } from '../eventos/evento.service';
 @Component({
     selector: 'app-editar-comunidad',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, NgIf],
     templateUrl: './muroComunidad.component.html',
     styleUrls: ['./comunidadMuro.css']
 })
@@ -38,10 +38,13 @@ export class MuroComunidadComponent implements OnInit {
     usuariosAnonimos: number = 0; // Inicializamos la variable
     miembrosVisibles: any[] = []; // Almacena los usuarios visibles en la interfaz
     publicaciones!: Publicacion[];
+    visible: boolean = false;
+    esAdministrador: boolean = false;
 
     amigosNoEnComunidad: any[] = [];
     amigosEnComunidad: any[] = [];
     amigosYaInvitados: any[] = [];
+    cantidadMiembros: number = 0;
 
     @ViewChild('modalInvitarAmigos') modalInvitarAmigos!: TemplateRef<any>;
 
@@ -217,16 +220,20 @@ export class MuroComunidadComponent implements OnInit {
         });
     }
 
-    async getCreadorComunidad(): Promise<void> {
+    async getCantidadMiembros() {
+        this.comunidadService.cantidadMiembrosEnComunidad(this.comunidad.id).subscribe(dataPackage => {
+            this.cantidadMiembros = <number><unknown>dataPackage.data;
+        });
+    }
+    async getCreadorOAdministradorComunidad(): Promise<void> {
         return new Promise((resolve) => {
             this.usuarioService.usuarioCreadorComunidad(this.comunidad.id).subscribe(dataPackage => {
                 this.creadorComunidad = dataPackage.data as Usuario;
-                console.log('Creador de la comunidad:', this.creadorComunidad); // Añadir log para verificar el valor
                 if (this.creadorComunidad.id == this.idUsuarioAutenticado) {
                     this.esCreador = true;  // El usuario es el creador
                 }
                 resolve(); // Resuelve la promesa después de procesar el estado
-            });
+            })
         });
     }
 
@@ -251,6 +258,10 @@ export class MuroComunidadComponent implements OnInit {
                     this.esCreador = true;
                     this.esParte = true; // El creador es parte de la comunidad por defecto
                 }
+                if (estado == "Administrador") {
+                    this.esAdministrador = true;
+                    this.esParte = true; // El creador es parte de la comunidad por defecto
+                }
                 resolve(); // Resuelve la promesa después de procesar el estado
             });
         });
@@ -264,11 +275,17 @@ export class MuroComunidadComponent implements OnInit {
                 resolve();
             } else {
                 this.comunidadService.get(parseInt(id)).subscribe(async dataPackage => {
+                    this.comunidadService.puedeVer(parseInt(id)).subscribe(dataP => {
+                        this.visible = <boolean><unknown>dataP.data
+                    });
+                    this.visible = true
                     this.comunidad = <Comunidad>dataPackage.data;
                     this.idComunidad = this.comunidad.id;
                     await this.procesarEstado(); // Asegúrate de que procesarEstado complete
-                    await this.getCreadorComunidad();
-
+                    await this.getCreadorOAdministradorComunidad();
+                    if (this.visible) {
+                        this.getCantidadMiembros();
+                    }
                     resolve();
                 });
             }
@@ -436,7 +453,7 @@ export class MuroComunidadComponent implements OnInit {
     }
 
 
-    gestionarComunidad(){
+    gestionarComunidad() {
         this.router.navigate(['/creadorComunidad', this.comunidad.id]);
     }
 

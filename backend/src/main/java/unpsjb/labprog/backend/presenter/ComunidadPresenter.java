@@ -65,8 +65,15 @@ public class ComunidadPresenter {
         return Response.ok(sugerenciasDeComunidadesBasadasEnEventos);
     }
 
+    
+    @GetMapping("/puedeVer/{idComunidad}/{idUsuario}")
+    public ResponseEntity<Object> puedeVer(@PathVariable Long idComunidad, @PathVariable Long idUsuario) {
+        return Response.ok(comunidadService.puedeVer(idComunidad, idUsuario));
+    }
+
+
     @GetMapping("/findById/{id}")
-    public ResponseEntity<Object> recomendarComunidadesPorAmigos(@PathVariable Long id) {
+    public ResponseEntity<Object> findByIdPrivacidad(@PathVariable Long id) {
         return Response.ok(comunidadService.findById(id));
     }
 
@@ -103,7 +110,6 @@ public class ComunidadPresenter {
             return Response.error("", "Error al gestionar solicitud de ingreso: " + e.getMessage());
         }
     }
-
 
     @PostMapping("/eliminarUsuario/{idSuperUsuario}/{idMiembro}/{idComunidad}")
     public ResponseEntity<Object> eliminarUsuario(@PathVariable Long idSuperUsuario,
@@ -159,8 +165,10 @@ public class ComunidadPresenter {
     }
 
     @GetMapping("/comunidadesCreadasPorUsuario/{idUsuario}")
-    public ResponseEntity<Object> comunidadesCreadasPorUsuario(@PathVariable Long idUsuario, @RequestParam int offset, @RequestParam int limit) {
-        List<Comunidad> comunidadesCreadasPorUsuario = comunidadService.comunidadesCreadasPorUsuario(idUsuario, offset, limit);
+    public ResponseEntity<Object> comunidadesCreadasPorUsuario(@PathVariable Long idUsuario, @RequestParam int offset,
+            @RequestParam int limit) {
+        List<Comunidad> comunidadesCreadasPorUsuario = comunidadService.comunidadesCreadasPorUsuario(idUsuario, offset,
+                limit);
         return Response.ok(comunidadesCreadasPorUsuario);
     }
 
@@ -223,7 +231,7 @@ public class ComunidadPresenter {
     public ResponseEntity<Object> actualizar(@RequestBody Comunidad comunidad) {
         return ResponseEntity.ok(comunidadService.save(comunidad));
     }
-    
+
     @GetMapping("/filtrar/etiquetas")
     public ResponseEntity<Object> eventosPorEtiquetas(@RequestParam List<String> etiquetas) {
         return Response.ok(comunidadService.comunidadesEtiquetas(etiquetas));
