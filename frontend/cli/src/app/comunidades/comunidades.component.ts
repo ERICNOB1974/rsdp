@@ -103,7 +103,7 @@ export class ComunidadesComponent implements OnInit {
 
   traerMiembros(comunidades: Comunidad[]): void {
     for (let comunidad of comunidades) {
-      this.comunidadService.miembrosEnComunidad(comunidad.id).subscribe(
+      this.comunidadService.cantidadMiembrosEnComunidad(comunidad.id).subscribe(
         (dataPackage) => {
           if (dataPackage && typeof dataPackage.data === 'number') {
             comunidad.miembros = dataPackage.data; // Asignar el número de miembros
