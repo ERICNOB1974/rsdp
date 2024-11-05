@@ -25,7 +25,8 @@
         <!-- Botón de regresar centrado -->
 
         <!-- Botón Invitar Amigos centrado, visible solo si el usuario ya está inscrito -->
-        <button *ngIf="botonInvitar()" (click)="abrirModalInvitarAmigos()" class="btn btn-success btn-block mx-auto mt-3">
+        <button *ngIf="botonInvitar()" (click)="abrirModalInvitarAmigos()"
+          class="btn btn-success btn-block mx-auto mt-3">
           Invitar amigos
         </button>
 
@@ -36,38 +37,44 @@
           <div *ngIf="!miembro.anonimos">
             <img [src]="miembro.fotoPerfil" alt="{{ miembro.nombreUsuario }}" class="perfil-imagen">
             <span>{{ miembro.nombreUsuario }}</span>
-            <button *ngIf="creador && miembro.id !== idUsuarioAutenticado" (click)="eliminarMiembro(miembro.id)">Eliminar Miembro</button>
+            <button *ngIf="creador && miembro.id !== idUsuarioAutenticado"
+              (click)="eliminarMiembro(miembro.id)">Eliminar Miembro</button>
           </div>
         </div>
         <!-- Mostrar la cantidad de usuarios anónimos -->
         <div *ngIf="usuariosAnonimos > 0">
-          <span>{{ usuariosAnonimos }} Usuario{{ usuariosAnonimos > 1 ? 's' : '' }} anónimo{{ usuariosAnonimos > 1 ? 's' : '' }}</span>
+          <span>{{ usuariosAnonimos }} Usuario{{ usuariosAnonimos > 1 ? 's' : '' }} anónimo{{ usuariosAnonimos > 1 ? 's'
+            : '' }}</span>
         </div>
 
         <button *ngIf="creador" class="btn btn-primary" (click)="editarEvento()">Editar</button>
         <button *ngIf="creador" (click)="eliminarEvento()" class="btn btn-danger">Eliminar evento</button>
-
-
-        <div *ngIf="isLoading" aria-label="Orange and tan hamster running in a metal wheel" role="img"
-          class="wheel-and-hamster">
-          <div class="wheel"></div>
-          <div class="hamster">
-            <div class="hamster__body">
-              <div class="hamster__head">
-                <div class="hamster__ear"></div>
-                <div class="hamster__eye"></div>
-                <div class="hamster__nose"></div>
-              </div>
-              <div class="hamster__limb hamster__limb--fr"></div>
-              <div class="hamster__limb hamster__limb--fl"></div>
-              <div class="hamster__limb hamster__limb--br"></div>
-              <div class="hamster__limb hamster__limb--bl"></div>
-              <div class="hamster__tail"></div>
-            </div>
-          </div>
-          <div class="spoke"></div>
+        <div *ngIf="isLoading" class="d-flex justify-content-center mt-3">
+          <mat-progress-spinner mode="indeterminate" diameter="50" color="primary">
+          </mat-progress-spinner>
         </div>
-      
+        <!-- 
+  <div *ngIf="isLoading" aria-label="Orange and tan hamster running in a metal wheel" role="img"
+  class="wheel-and-hamster">
+  <div class="wheel"></div>
+  <div class="hamster">
+    <div class="hamster__body">
+      <div class="hamster__head">
+        <div class="hamster__ear"></div>
+        <div class="hamster__eye"></div>
+        <div class="hamster__nose"></div>
+      </div>
+      <div class="hamster__limb hamster__limb--fr"></div>
+      <div class="hamster__limb hamster__limb--fl"></div>
+      <div class="hamster__limb hamster__limb--br"></div>
+      <div class="hamster__limb hamster__limb--bl"></div>
+      <div class="hamster__tail"></div>
+    </div>
+  </div>
+  <div class="spoke"></div>
+</div>
+-->
+
         <button (click)="goBack()" class="btn btn-secondary btn-block mt-2">Volver</button>
 
       </div>

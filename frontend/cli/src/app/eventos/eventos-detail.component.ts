@@ -134,7 +134,6 @@ export class EventoDetailComponent implements OnInit {
           duration: 3000,
         });
         this.evento.participantes++;
-        window.location.reload();
       } catch (error) {
         console.error('Error al inscribirse:', error);
         this.snackBar.open('Error al inscribirse', 'Cerrar', {
@@ -158,7 +157,6 @@ export class EventoDetailComponent implements OnInit {
         this.participa = false;
         this.evento.participantes--;
         this.isLoading = false;
-        window.location.reload();
       },
       error => {
         console.error('Error al salir del evento:', error);
