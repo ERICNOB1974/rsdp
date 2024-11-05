@@ -285,10 +285,7 @@ export class EventoDetailComponent implements OnInit {
     this.participantesVisibles = []; // Reiniciamos la lista de miembros visibles
     this.usuariosAnonimos = 0; // Reiniciamos el conteo de usuarios anónimos
 
-    const creador = this.miembros[0]; // Asumiendo que `this.miembros[0]` es el creador
-    if (creador) {
-      this.participantesVisibles.push(creador);
-    }
+   
     // Iterar sobre los miembros y añadir solo aquellos que sean visibles
     this.miembros.forEach(miembro => {
       if (miembro.id === this.idUsuarioAutenticado) {
