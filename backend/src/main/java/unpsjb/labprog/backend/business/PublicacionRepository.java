@@ -64,14 +64,16 @@ public interface PublicacionRepository extends Neo4jRepository<Publicacion, Long
         @Query("MATCH (u:Usuario), (p:Publicacion) " +
                         "WHERE id(u) = $usuarioId " +
                         "MATCH (u)-[:POSTEO]->(p) " +
+                        "WHERE NOT (p)-[:PUBLICADO_DENTRO_DE]->() " +
                         "RETURN p ORDER BY p.fechaDeCreacion DESC")
         List<Publicacion> publicacionesUsuario(@Param("usuarioId") Long usuarioId);
 
-        //sacar los que esten dentro de la comunidad
+        // sacar los que esten dentro de la comunidad
         @Query("""
                         MATCH (u:Usuario)-[:ES_AMIGO_DE]->(us:Usuario)-[:POSTEO]->(p:Publicacion)
                                WHERE id(u) = $usuarioId
-                               AND us.privacidadPerfil <> 'Privada' 
+                               AND us.privacidadPerfil <> 'Privada'
+                               AND NOT (p)-[:PUBLICADO_DENTRO_DE]->()
                                RETURN p
                                ORDER BY p.fechaDeCreacion DESC
                                """)
@@ -79,22 +81,24 @@ public interface PublicacionRepository extends Neo4jRepository<Publicacion, Long
         List<Publicacion> publicacionesAmigosUsuario(@Param("usuarioId") Long usuarioId);
 
         @Query("""
-                MATCH (u:Usuario)-[:POSTEO]->(p:Publicacion)
-                WHERE id(u) = $usuarioId
-                RETURN p
-                UNION
-                MATCH (u:Usuario)-[:ES_AMIGO_DE]->(us:Usuario)-[:POSTEO]->(p:Publicacion)
-                WHERE id(u) = $usuarioId AND us.privacidadPerfil <> 'Privada'
-                RETURN p
-                ORDER BY p.fechaDeCreacion DESC
-                """)
+                        MATCH (u:Usuario)-[:POSTEO]->(p:Publicacion)
+                        WHERE id(u) = $usuarioId
+                        AND NOT (p)-[:PUBLICADO_DENTRO_DE]->()
+                        RETURN p
+                        UNION
+                        MATCH (u:Usuario)-[:ES_AMIGO_DE]->(us:Usuario)-[:POSTEO]->(p:Publicacion)
+                        WHERE id(u) = $usuarioId AND us.privacidadPerfil <> 'Privada'
+                        AND NOT (p)-[:PUBLICADO_DENTRO_DE]->()
+                        RETURN p
+                        ORDER BY p.fechaDeCreacion DESC
+                        """)
         List<Publicacion> publicacionesUsuarioYAmigos(@Param("usuarioId") Long usuarioId);
-        
+
         @Query("""
                         MATCH (p:Publicacion) WHERE  id(p) = $publicacionId
                         MATCH (c:Comunidad) WHERE  id(c) = $comunidadId
                         CREATE (p)-[:PUBLICADO_DENTRO_DE]->(c)
-                        
+
                                 """)
         void publicarEnComunidad(Long publicacionId, Long comunidadId);
 
