@@ -27,6 +27,8 @@ export class EventosComponent implements OnInit {
   filtroNombreAbierto: boolean = false;
   nombreEventoFiltro: string = '';
   filtroNombreActivo: boolean = true;
+  resultadosOriginales: Evento[] = []; // Nueva variable para mantener los datos originales
+
 
 
   // Filtro por participantes
@@ -156,14 +158,17 @@ export class EventosComponent implements OnInit {
     this.filtroNombreAbierto = !this.filtroNombreAbierto;
   }
 
+ 
+
   aplicarFiltroNombre(): void {
-    if (this.nombreEventoFiltro) {
-      this.results = this.results.filter(evento =>
+    if (this.filtroNombreActivo && this.nombreEventoFiltro) {
+      this.results = this.resultadosOriginales.filter(evento =>
         evento.nombre.toLowerCase().includes(this.nombreEventoFiltro.toLowerCase())
       );
+    } else {
+      this.results = [...this.resultadosOriginales]; // Restaurar todos los resultados si el filtro está desactivado
     }
   }
-
   limpiarFiltroNombre(): void {
     this.nombreEventoFiltro = '';
     this.getEventos(); // Recargar todos los eventos
@@ -259,7 +264,8 @@ export class EventosComponent implements OnInit {
     this.eventoService.disponibles().subscribe(async (dataPackage) => {
       const responseData = dataPackage.data;
       if (Array.isArray(responseData)) {
-        this.results = responseData;
+        this.resultadosOriginales = responseData; // Guardar los datos originales
+        this.results = [...responseData];
         this.traerParticipantes(this.results); // Llamar a traerParticipantes después de cargar los eventos
         for (const evento of this.results) {
           if (evento.latitud && evento.longitud) {
