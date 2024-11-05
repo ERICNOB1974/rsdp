@@ -1,7 +1,5 @@
 package unpsjb.labprog.backend.business;
 
-import java.util.List;
-
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.stereotype.Repository;
@@ -15,47 +13,27 @@ public interface DiaRepository extends Neo4jRepository<Dia, Long> {
     Long crearDia(String nombre, String descripcion);
 
     @Query("MATCH (u:Usuario)-[r:DIA_FINALIZADO]->(d:Dia) " +
-    "WHERE id(u) = $usuarioId AND id(d) = $diaId " +
-    "RETURN COUNT(r) > 0")
+            "WHERE id(u) = $usuarioId AND id(d) = $diaId " +
+            "RETURN COUNT(r) > 0")
     boolean verificarDiaFinalizado(Long diaId, Long usuarioId);
 
     @Query("MATCH (d:Dia), (u:Usuario) " +
-    "WHERE id(u) = $usuarioId AND id(d) = $diaId " +
-    "CREATE (u)-[rel:DIA_FINALIZADO {intento: $intento,fechaFin: datetime()}]->(d)")
-void crearRelacionDiaFinalizado(Long diaId, Long usuarioId, Integer intento);
+            "WHERE id(u) = $usuarioId AND id(d) = $diaId " +
+            "CREATE (u)-[rel:DIA_FINALIZADO {intento: $intento,fechaFin: datetime()}]->(d)")
+    void crearRelacionDiaFinalizado(Long diaId, Long usuarioId, Integer intento);
 
     @Query("MATCH (d:Dia)-[:TIENE_DIA]-(ru:Rutina) " +
-        "WHERE id(d) = $diaId " +
-        "MATCH (ru)-[rd:TIENE_DIA]-(diaOrden1:Dia) " +
-        "WHERE rd.orden = 1 " +
-        "OPTIONAL MATCH (u:Usuario)-[rel:DIA_FINALIZADO]->(diaOrden1) " +
-        "WHERE id(u) = $usuarioId " +
-        "RETURN coalesce(max(rel.intento), 0) AS intento")
-        Integer buscarMaxIntento(Long diaId, Long usuarioId);
+            "WHERE id(d) = $diaId " +
+            "MATCH (ru)-[rd:TIENE_DIA]-(diaOrden1:Dia) " +
+            "WHERE rd.orden = 1 " +
+            "OPTIONAL MATCH (u:Usuario)-[rel:DIA_FINALIZADO]->(diaOrden1) " +
+            "WHERE id(u) = $usuarioId " +
+            "RETURN coalesce(max(rel.intento), 0) AS intento")
+    Integer buscarMaxIntento(Long diaId, Long usuarioId);
 
-@Query ("MATCH (d:Dia)-[r:TIENE_DIA]-(ru:Rutina) "+
-        "WHERE id(d) = $diaId "+
-        "RETURN r.orden")
-int buscarNumeroDia(Long diaId);
-
-    @Query("MATCH (u:Usuario)-[rel:DIA_FINALIZADO]->(d:Dia)-[r:TIENE_DIA]-(ru:Rutina) " +
-       "WHERE id(u) = $usuarioId AND id(ru) = $rutinaId AND r.orden = 1 " +
-       "RETURN coalesce(MAX(rel.intento), 0)")
-    int obtenerIntentoMaximo(Long usuarioId, Long rutinaId);
-
-    @Query("MATCH (ru:Rutina)-[r:TIENE_DIA]->(d:Dia) " +
-       "WHERE id(ru) = $rutinaId AND NOT EXISTS((u:Usuario)-[rel:DIA_FINALIZADO]->(d)) " +
-       "AND id(u) = $usuarioId AND rel.intento = $intento " +
-       "RETURN d " +
-       "ORDER BY r.orden")
-    List<Dia> obtenerDiasNoCompletadosEnUltimoIntento(Long usuarioId, Long rutinaId, int intento);
-
-    @Query("MATCH (u:Usuario)-[rel:DIA_FINALIZADO]->(d:Dia)-[r:TIENE_DIA]-(ru:Rutina) " +
-       "WHERE id(u) = $usuarioId AND id(ru) = $rutinaId AND rel.intento = $intento " +
-       "RETURN d " +
-       "ORDER BY r.orden")
-    List<Dia> obtenerDiasCompletadosEnUltimoIntento(Long usuarioId, Long rutinaId, int intento);
-
-
+    @Query("MATCH (d:Dia)-[r:TIENE_DIA]-(ru:Rutina) " +
+            "WHERE id(d) = $diaId " +
+            "RETURN r.orden")
+    int buscarNumeroDia(Long diaId);
 
 }
