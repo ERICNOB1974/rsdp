@@ -158,7 +158,7 @@ export class EventosComponent implements OnInit {
     this.filtroNombreAbierto = !this.filtroNombreAbierto;
   }
 
- 
+
 
   aplicarFiltroNombre(): void {
     if (this.filtroNombreActivo && this.nombreEventoFiltro) {
@@ -169,9 +169,11 @@ export class EventosComponent implements OnInit {
       this.results = [...this.resultadosOriginales]; // Restaurar todos los resultados si el filtro está desactivado
     }
   }
+
   limpiarFiltroNombre(): void {
     this.nombreEventoFiltro = '';
-    this.getEventos(); // Recargar todos los eventos
+    this.filtroNombreActivo = false;
+    this.results = [...this.resultadosOriginales];
   }
 
   // Métodos para el filtro por participantes
@@ -223,7 +225,7 @@ export class EventosComponent implements OnInit {
         async (dataPackage) => {
           if (Array.isArray(dataPackage.data)) {
             this.results = dataPackage.data;
-            this.traerParticipantes(this.results); // Llamar a traerParticipantes después de cargar los eventos
+            //this.traerParticipantes(this.results); // Llamar a traerParticipantes después de cargar los eventos
             for (const evento of this.results) {
               if (evento.latitud && evento.longitud) {
                 evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
@@ -244,6 +246,7 @@ export class EventosComponent implements OnInit {
     }
   }
 
+ 
   limpiarFiltroFecha(): void {
     this.fechaMinFiltro = '';
     this.fechaMaxFiltro = '';
@@ -366,27 +369,96 @@ export class EventosComponent implements OnInit {
 
 
 
-  aplicarTodosLosFiltros(): void {
-  // Reiniciar los resultados a todos los eventos
-  this.getEventos().then(() => {
-    // Aplicar cada filtro activo en secuencia
+  aplicarTodosLosFiltros2(): void {
+    // Reiniciar los resultados a todos los eventos
+    this.getEventos().then(() => {
+      // Aplicar cada filtro activo en secuencia
+      if (this.filtroNombreActivo && this.nombreEventoFiltro) {
+        this.aplicarFiltroNombre();
+      }
+
+      if (this.filtroParticipantesActivo && (this.minParticipantes !== null || this.maxParticipantes !== null)) {
+        this.aplicarFiltroParticipantes();
+      }
+
+      if (this.filtroFechaActivo && this.fechaMinFiltro && this.fechaMaxFiltro) {
+        this.aplicarFiltroFecha();
+      }
+
+      if (this.filtroEtiquetasActivo && this.etiquetasSeleccionadas.length > 0) {
+        this.aplicarFiltroEtiquetas();
+      }
+    });
+  }
+
+
+  async aplicarTodosLosFiltros(): Promise<void> {
+    // Comenzamos con todos los resultados originales
+    let resultadosFiltrados = [...this.resultadosOriginales];
+
+    // Aplicar filtro por nombre si está activo
     if (this.filtroNombreActivo && this.nombreEventoFiltro) {
-      this.aplicarFiltroNombre();
+      resultadosFiltrados = resultadosFiltrados.filter(comunidad =>
+        comunidad.nombre.toLowerCase().includes(this.nombreEventoFiltro.toLowerCase())
+      );
     }
-    
+
+    // Aplicar filtro por participantes si está activo
     if (this.filtroParticipantesActivo && (this.minParticipantes !== null || this.maxParticipantes !== null)) {
-      this.aplicarFiltroParticipantes();
+      const min = this.minParticipantes || 0;
+      const max = this.maxParticipantes || Number.MAX_SAFE_INTEGER;
+
+      resultadosFiltrados = resultadosFiltrados.filter(evento =>
+        evento.participantes >= min && evento.participantes <= max
+      );
     }
-    
-    if (this.filtroFechaActivo && this.fechaMinFiltro && this.fechaMaxFiltro) {
-      this.aplicarFiltroFecha();
-    }
-    
+
+    // Aplicar filtro por etiquetas si hay etiquetas seleccionadas
     if (this.filtroEtiquetasActivo && this.etiquetasSeleccionadas.length > 0) {
-      this.aplicarFiltroEtiquetas();
+      const etiquetasIds = this.etiquetasSeleccionadas.map(e => e.nombre);
+
+      try {
+        const response = await this.eventoService.filtrarEtiqueta(etiquetasIds).toPromise();
+        if (response && response.data && Array.isArray(response.data)) {
+          const comunidadesFiltradas = response.data as Evento[];
+          resultadosFiltrados = resultadosFiltrados.filter(comunidad =>
+            comunidadesFiltradas.some(c => c.id === comunidad.id)
+          );
+        }
+      } catch (error) {
+        console.error("Error al filtrar por etiquetas:", error);
+      }
     }
-  });
-}
+
+    // Actualizar los resultados filtrados
+    this.results = resultadosFiltrados;
+
+    // Actualizar información adicional para los resultados filtrados
+    await this.actualizarInformacionAdicional();
+  }
+
+
+  private async actualizarInformacionAdicional(): Promise<void> {
+    this.traerParticipantes(this.results); // Llamar a traerParticipantes después de cargar los eventos
+
+    for (const comunidad of this.results) {
+      if (comunidad.latitud && comunidad.longitud) {
+        try {
+          comunidad.ubicacion = await this.eventoService.obtenerUbicacion(
+            comunidad.latitud,
+            comunidad.longitud
+          );
+        } catch (error) {
+          comunidad.ubicacion = 'Ubicación desconocida';
+        }
+      } else {
+        comunidad.ubicacion = 'Ubicación desconocida';
+      }
+    }
+  }
+
+
+
 
 
 }
