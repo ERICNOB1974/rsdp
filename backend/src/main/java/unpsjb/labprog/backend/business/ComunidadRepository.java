@@ -130,7 +130,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
 
         @Query("MATCH (u:Usuario)-[r:SOLICITUD_DE_INGRESO]->(c:Comunidad) " +
                         "Where id(u) = $idUsuario AND id(c) = $idComunidad " +
-                        "DELETE r")
+                        "DETACH DELETE r")
         void eliminarSolicitudIngreso(Long idUsuario, Long idComunidad);
 
         @Query("MATCH (u:Usuario)-[r]-(c:Comunidad {id: $idComunidad}) " +
