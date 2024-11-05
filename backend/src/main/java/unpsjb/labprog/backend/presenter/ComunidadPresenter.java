@@ -131,11 +131,6 @@ public class ComunidadPresenter {
         }
     }
 
-    @GetMapping("/sugerencias/{nombreUsuario}")
-    public ResponseEntity<Object> sugerencias(@PathVariable String nombreUsuario) {
-        return Response.ok(comunidadService.todasLasSugerencias(nombreUsuario));
-    }
-
     @GetMapping("/visualizarSolicitudes/{idSuperUsuario}/{idComunidad}")
     public ResponseEntity<Object> visualizarSolicitudesPendientes(@PathVariable Long idSuperUsuario,
             @PathVariable Long idComunidad) {

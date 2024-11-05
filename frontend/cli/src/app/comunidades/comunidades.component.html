@@ -3,8 +3,7 @@
   <!-- Filtro por nombre -->
   <div class="filtro">
     <label class="container">
-      <input type="checkbox" [(ngModel)]="filtroNombreActivo"
-        (change)="aplicarFiltrosActivados()">
+      <input type="checkbox" [(ngModel)]="filtroNombreActivo" (change)="aplicarTodosLosFiltros()">
       <div class="checkmark"></div>
     </label>
     <!-- Filtro por nombre -->
@@ -20,7 +19,7 @@
           </div>
         </div>
         <div class="button-group">
-          <button (click)="aplicarFiltroNombre()" class="aplicar-filtro">Aplicar</button>
+          <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar</button>
           <button (click)="limpiarFiltroNombre()" class="limpiar-filtro">Limpiar</button>
         </div>
       </div>
@@ -29,9 +28,9 @@
 
 
   <!-- Filtro por participantes -->
-  <div>
+  <div class="filtro">
     <label class="container">
-      <input type="checkbox" [(ngModel)]="filtroParticipantesActivo" (change)="aplicarFiltrosActivados()">
+      <input type="checkbox" [(ngModel)]="filtroParticipantesActivo" (change)="aplicarTodosLosFiltros()">
       <div class="checkmark"></div>
     </label>
     <div class="filtro-container filtro-participantes">
@@ -50,8 +49,12 @@
           </div>
         </div>
         <div class="button-group">
-          <button (click)="aplicarFiltroParticipantes()" class="aplicar-filtro">Aplicar</button>
-          <button (click)="limpiarFiltroParticipantes()" class="limpiar-filtro">Limpiar</button>
+
+          <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro"
+            *ngIf="filtroParticipantesActivo">Aplicar</button>
+          <button (click)="limpiarFiltroParticipantes()" *ngIf="filtroParticipantesActivo"
+            class="limpiar-filtro">Limpiar</button>
+
         </div>
       </div>
     </div>
@@ -61,7 +64,7 @@
   <!-- Filtro por etiquetas -->
   <div>
     <label class="container">
-      <input type="checkbox" [(ngModel)]="filtroEtiquetasActivo" (change)="aplicarFiltrosActivados()">
+      <input type="checkbox" [(ngModel)]="filtroEtiquetasActivo" (change)="aplicarTodosLosFiltros()">
       <div class="checkmark"></div>
     </label>
     <div class=" filtro-container filtro-etiquetas">
@@ -80,7 +83,7 @@
             </button>
           </span>
         </div>
-        <button (click)="aplicarFiltroEtiquetas()" class="btn btn-primary">
+        <button (click)="aplicarTodosLosFiltros()" class="btn btn-primary">
           Aplicar filtro
         </button>
         <button (click)="limpiarFiltroEtiquetas()" class="btn btn-secondary">
@@ -141,6 +144,8 @@
   </div>
 
   <!-- Controles del carrusel -->
-  <button class="carousel-control prev" (click)="comunidadAnteriorParticipa()" [disabled]="comunidadesMiembroUsuario.length === 0">‹</button>
-  <button class="carousel-control next" (click)="siguienteComunidadParticipa()" [disabled]="comunidadesMiembroUsuario.length === 0">›</button>  
+  <button class="carousel-control prev" (click)="comunidadAnteriorParticipa()"
+    [disabled]="comunidadesMiembroUsuario.length === 0">‹</button>
+  <button class="carousel-control next" (click)="siguienteComunidadParticipa()"
+    [disabled]="comunidadesMiembroUsuario.length === 0">›</button>
 </section>

@@ -1,17 +1,17 @@
 package unpsjb.labprog.backend.business;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import unpsjb.labprog.backend.model.Comunidad;
+import unpsjb.labprog.backend.model.Usuario;
 
 @Service
 public class ComunidadService {
@@ -20,6 +20,8 @@ public class ComunidadService {
     ComunidadRepository comunidadRepository;
     @Autowired
     UsuarioRepository usuarioRepository;
+    @Autowired
+    private NotificacionService notificacionService;
 
     public List<Comunidad> findAll() {
         return comunidadRepository.findAll();
@@ -43,7 +45,26 @@ public class ComunidadService {
 
     @Transactional
     public Comunidad save(Comunidad comunidad) {
+        if (comunidad.getId() != null) {
+            Comunidad comVieja = comunidadRepository.findById(comunidad.getId()).get();
+            if (comVieja.isEsPrivada() && !comunidad.isEsPrivada()) {
+                cambioAPublico(comVieja.getId());
+            }
+        }
         return comunidadRepository.save(comunidad);
+    }
+
+    public void cambioAPublico(Long idComunidad) {
+        List<Usuario> solicitudes = this.usuarioRepository.solicititudesPendientes(idComunidad);
+        solicitudes.stream().forEach(usuario -> aceptarSolicitud(usuario.getId(), idComunidad));
+        //ojo, los que quedan sin lugar quedarian con una solicitud
+    }
+
+    public void aceptarSolicitud(Long idUsuario, Long idComunidad) {
+        comunidadRepository.eliminarSolicitudIngreso(idUsuario, idComunidad);
+        comunidadRepository.nuevoMiembro(idComunidad, idUsuario, LocalDateTime.now());
+        notificacionService.crearNotificacion(idUsuario, idComunidad, "ACEPTACION_PRIVADA", LocalDateTime.now());
+
     }
 
     @Transactional
@@ -55,32 +76,8 @@ public class ComunidadService {
         return comunidadRepository.findById(id).orElse(null);
     }
 
-    public List<Comunidad> todasLasSugerencias(String nombreUsuario) {
-        List<Comunidad> sugerencias = comunidadRepository.sugerenciasDeComunidadesBasadasEnAmigos(nombreUsuario);
-        sugerencias.addAll(comunidadRepository.sugerenciasDeComunidadesBasadasEnEventos(nombreUsuario));
-        sugerencias.addAll(comunidadRepository.sugerenciasDeComunidadesBasadasEnComunidades(nombreUsuario));
-        Set<Comunidad> setUsuarios = new HashSet<Comunidad>();
-        setUsuarios.addAll(sugerencias);
-        sugerencias.removeAll(sugerencias);
-        sugerencias.addAll(setUsuarios);
-        return sugerencias;
-    }
-
     public void etiquetarComunidad(Comunidad comunidad, Long etiqueta) {
         comunidadRepository.etiquetarComunidad(comunidad.getId(), etiqueta);
-    }
-
-    /*
-     * esto tambien esta en UsuarioComunidadServce ver donde lo dejamos
-     */
-    public String verEstado(Long idComunidad, Long idUsuario) {
-        if (usuarioRepository.esMiembro(idUsuario, idComunidad)) {
-            return "Miembro";
-        }
-        if (usuarioRepository.solicitudIngresoExiste(idUsuario, idComunidad)) {
-            return "Pendiente";
-        }
-        return "Vacio";
     }
 
     public String miembroSale(Long idComunidad, Long idUsuario) {
@@ -142,7 +139,8 @@ public class ComunidadService {
         for (ScoreComunidad scoreComunidad : todasLasSugerencias) {
             // Si la comunidad ya existe en el mapa, sumar los scores
             mapaSugerencias.merge(scoreComunidad.getComunidad().getId(),
-                    new ScoreComunidad(scoreComunidad.getComunidad(), scoreComunidad.getScore(), scoreComunidad.getMotivo()),
+                    new ScoreComunidad(scoreComunidad.getComunidad(), scoreComunidad.getScore(),
+                            scoreComunidad.getMotivo()),
                     (existente, nuevo) -> {
                         double nuevoScore = existente.getScore() + nuevo.getScore(); // Sumar scores
                         existente.setScore(nuevoScore); // Actualizar el score sumado
@@ -177,16 +175,16 @@ public class ComunidadService {
     public List<Comunidad> comunidadesCreadasPorUsuario(Long idUsuario, int offset, int limit) {
         return comunidadRepository.comunidadesCreadasPorUsuario(idUsuario, offset, limit);
     }
-    
-    public boolean puedeVer(Long idComunidad, Long idUsuario){
-        Comunidad c= comunidadRepository.findById(idComunidad).orElse(null);
-        if (c==null){
+
+    public boolean puedeVer(Long idComunidad, Long idUsuario) {
+        Comunidad c = comunidadRepository.findById(idComunidad).orElse(null);
+        if (c == null) {
             return false;
         }
-        if (!c.isEsPrivada()){
+        if (!c.isEsPrivada()) {
             return true;
         }
-        if (c.isEsPrivada()&& comunidadRepository.esMiembro(idComunidad, idUsuario)){
+        if (c.isEsPrivada() && comunidadRepository.esMiembro(idComunidad, idUsuario)) {
             return true;
         }
         return false;
