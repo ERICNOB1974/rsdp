@@ -183,7 +183,8 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "point({latitude: u.latitud, longitude: u.longitud}) AS ubicacionUsuario " +
                         "WITH comunidad, etiquetasEnComun, " +
                         "point.distance(ubicacionComunidad, ubicacionUsuario) AS distancia " +
-                        "RETURN comunidad, (etiquetasEnComun / (distancia + 1500000)) AS score, 'a tus amigos le gustan eventos de este tipo, porque tienen '+etiquetasEnComun+' etiqueta/s compartida/s con las comunidades en las que participas' AS motivo " + // Cambiar aquí
+                        "RETURN comunidad, (etiquetasEnComun / (distancia + 1500000)) AS score, 'a tus amigos le gustan eventos de este tipo, porque tienen '+etiquetasEnComun+' etiqueta/s compartida/s con las comunidades en las que participas' AS motivo "
+                        + // Cambiar aquí
                         "ORDER BY score DESC " +
                         "LIMIT 3")
         List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario);
@@ -203,7 +204,8 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "point.distance(ubicacionComunidad, ubicacionUsuario) AS distancia " +
                         "WITH comunidad, etiquetasEnComun, distancia, " +
                         "(etiquetasEnComun/(distancia+1500000)) AS score " +
-                        "RETURN comunidad, score, 'son similares porque tienen '+etiquetasEnComun+' etiqueta/s compartida/s con eventos en los que participas' AS motivo  " +
+                        "RETURN comunidad, score, 'son similares porque tienen '+etiquetasEnComun+' etiqueta/s compartida/s con eventos en los que participas' AS motivo  "
+                        +
                         "ORDER BY score DESC " +
                         "LIMIT 3")
         List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnEventos2(String nombreUsuario);
@@ -223,7 +225,8 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         +
                         "WITH comunidad, etiquetasEnComun, distancia, (etiquetasEnComun/(distancia+1500000)) AS score "
                         +
-                        "RETURN comunidad, score, 'son similares porque tienen '+etiquetasEnComun+' etiqueta/s compartida/s con comunidades en las que perteneces' AS motivo   " +
+                        "RETURN comunidad, score, 'son similares porque tienen '+etiquetasEnComun+' etiqueta/s compartida/s con comunidades en las que perteneces' AS motivo   "
+                        +
                         "ORDER BY score DESC " +
                         "LIMIT 3")
         List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnComunidades2(
@@ -253,5 +256,11 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         RETURN COUNT(r)>0
                         """)
         boolean esMiembro(Long idComunidad, Long idUsuario);
+
+        @Query("MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c:Comunidad)" +
+                        "WHERE id(c) = $idComunidad " +
+                        "WITH c, COUNT(DISTINCT u) AS ocupados " +
+                        "RETURN (c.cantidadMaximaMiembros - ocupados ) AS cantidad")
+        int cuposDisponibles(Long idComunidad);
 
 }
