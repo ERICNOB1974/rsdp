@@ -89,12 +89,13 @@ button.btn-secondary {
   }
   
   #map {
-    height: 500px; /* Altura fija o ajustable del mapa */
-    width: 300%;    /* El mapa ocupará el 90% del ancho de su contenedor */
-    margin: 0 auto; /* Para centrar el mapa horizontalmente */
-    border: 1px solid #ccc; /* Borde opcional */
-    box-sizing: border-box;  /* Asegura que el tamaño incluya el borde */
-  }
+    height: 400px; /* Ajusta la altura según tus necesidades */
+    width: 100%;   /* El mapa ocupará todo el ancho del contenedor */
+    max-width: 100%; /* Asegura que no se salga del contenedor */
+    border: 1px solid #ccc;
+    box-sizing: border-box; /* Incluye el borde en el tamaño total */
+    border-radius: 8px; /* Opcional: agrega bordes redondeados */
+}
   
   .list-group {
     position: relative;
