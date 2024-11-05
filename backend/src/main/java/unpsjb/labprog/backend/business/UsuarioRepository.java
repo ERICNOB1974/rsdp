@@ -120,7 +120,7 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
     @Query("MATCH (u:Usuario)-[r:SOLICITUD_DE_INGRESO]->(c:Comunidad) "
             + "WHERE id(c) = $idComunidad "
             + "RETURN u "
-            + "ORDER BY r.fechaSolicitud ASC, u.nombreUsuario ASC")
+            + "ORDER BY r.fechaSolicitud DESC, u.nombreUsuario ASC")
     List<Usuario> solicititudesPendientes(Long idComunidad);
 
     @Query("MATCH (u:Usuario), (u2:Usuario) WHERE id(u) = $idEmisor AND id(u2) = $idReceptor "
@@ -141,13 +141,10 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
     @Query("MATCH (u:Usuario) WHERE u.nombreUsuario = $nombre RETURN u")
     Optional<Usuario> findByNombreUsuario(String nombre);
 
-    @Query("MATCH (u:Usuario)-[r:PARTICIPA_EN|CREADO_POR]-(ev:Evento) "
+    @Query("MATCH (u:Usuario)-[r:PARTICIPA_EN]-(ev:Evento) "
             + "WHERE id(ev) = $eventId "
-            + "RETURN DISTINCT u, r "
-            + "ORDER BY CASE " +
-            "    WHEN type(r) = 'CREADO_POR' THEN 1 " +
-            "    WHEN type(r) = 'PARTICIPA_EN' THEN 2 " +
-            "END")
+            + "RETURN DISTINCT u"
+           )
     List<Usuario> inscriptosEvento(Long eventId);
 
     @Query("MATCH (u:Usuario)-[r:MIEMBRO|CREADA_POR|ADMINISTRADA_POR]-(c:Comunidad) " +
