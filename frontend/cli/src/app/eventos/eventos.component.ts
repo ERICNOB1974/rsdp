@@ -14,7 +14,7 @@ import { AuthService } from '../autenticacion/auth.service';
 @Component({
   selector: 'app-eventos',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HttpClientModule, NgbTypeaheadModule ],
+  imports: [CommonModule, FormsModule, RouterModule, HttpClientModule, NgbTypeaheadModule],
 
   templateUrl: 'eventos.component.html',
   styleUrls: ['eventos.component.css']
@@ -26,11 +26,17 @@ export class EventosComponent implements OnInit {
   results: Evento[] = [];
   filtroNombreAbierto: boolean = false;
   nombreEventoFiltro: string = '';
+  filtroNombreActivo: boolean = true;
+
 
   // Filtro por participantes
   filtroParticipantesAbierto: boolean = false;
   minParticipantes: number | null = null;
   maxParticipantes: number | null = null;
+  // Variables para control de filtros activos
+  filtroParticipantesActivo: boolean = false;
+  filtroFechaActivo: boolean = false;
+  filtroEtiquetasActivo: boolean = false;
 
   // Filtro por fecha
   filtroFechaAbierto: boolean = false;
@@ -56,7 +62,7 @@ export class EventosComponent implements OnInit {
   ngOnInit(): void {
     this.getEventos(); // Cargar los eventos al inicializar el componente
     const usuarioId = this.authService.getUsuarioId();
-    this.idUsuarioAutenticado = Number(usuarioId);    
+    this.idUsuarioAutenticado = Number(usuarioId);
     this.ParticipaUsuario();
   }
 
@@ -107,7 +113,7 @@ export class EventosComponent implements OnInit {
   toggleFiltroEtiquetas(): void {
     this.filtroEtiquetasAbierto = !this.filtroEtiquetasAbierto;
   }
-  
+
 
   limpiarFiltroEtiquetas(): void {
     this.etiquetasSeleccionadas = [];
@@ -143,7 +149,7 @@ export class EventosComponent implements OnInit {
   inputFormatEtiqueta(value: Etiqueta) {
     return value ? value.nombre : '';
   }
-  
+
 
 
   toggleFiltroNombre(): void {
@@ -306,23 +312,23 @@ export class EventosComponent implements OnInit {
   }
 
   // Método para mover al siguiente grupo de eventos en el carrusel
-// Métodos para el primer carrusel (eventos)
-siguienteEvento(): void {
-  this.currentIndexEventos = (this.currentIndexEventos + 1) % this.results.length; // Incrementa el índice del primer carrusel
-}
+  // Métodos para el primer carrusel (eventos)
+  siguienteEvento(): void {
+    this.currentIndexEventos = (this.currentIndexEventos + 1) % this.results.length; // Incrementa el índice del primer carrusel
+  }
 
-eventoAnterior(): void {
-  this.currentIndexEventos = (this.currentIndexEventos - 1 + this.results.length) % this.results.length; // Decrementa el índice del primer carrusel
-}
+  eventoAnterior(): void {
+    this.currentIndexEventos = (this.currentIndexEventos - 1 + this.results.length) % this.results.length; // Decrementa el índice del primer carrusel
+  }
 
-// Métodos para el segundo carrusel (eventos en los que participa el usuario)
-siguienteEventoParticipa(): void {
-  this.currentIndexParticipa = (this.currentIndexParticipa + 1) % this.eventosParticipaUsuario.length; // Incrementa el índice del segundo carrusel
-}
+  // Métodos para el segundo carrusel (eventos en los que participa el usuario)
+  siguienteEventoParticipa(): void {
+    this.currentIndexParticipa = (this.currentIndexParticipa + 1) % this.eventosParticipaUsuario.length; // Incrementa el índice del segundo carrusel
+  }
 
-eventoAnteriorParticipa(): void {
-  this.currentIndexParticipa = (this.currentIndexParticipa - 1 + this.eventosParticipaUsuario.length) % this.eventosParticipaUsuario.length; // Decrementa el índice del segundo carrusel
-}
+  eventoAnteriorParticipa(): void {
+    this.currentIndexParticipa = (this.currentIndexParticipa - 1 + this.eventosParticipaUsuario.length) % this.eventosParticipaUsuario.length; // Decrementa el índice del segundo carrusel
+  }
 
   obtenerEventosParaMostrar(): Evento[] {
     const eventosParaMostrar: Evento[] = [];
@@ -352,5 +358,29 @@ eventoAnteriorParticipa(): void {
     this.router.navigate(['/eventos', id]); // Navega a la ruta /eventos/:id
   }
 
-  
+
+
+  aplicarTodosLosFiltros(): void {
+  // Reiniciar los resultados a todos los eventos
+  this.getEventos().then(() => {
+    // Aplicar cada filtro activo en secuencia
+    if (this.filtroNombreActivo && this.nombreEventoFiltro) {
+      this.aplicarFiltroNombre();
+    }
+    
+    if (this.filtroParticipantesActivo && (this.minParticipantes !== null || this.maxParticipantes !== null)) {
+      this.aplicarFiltroParticipantes();
+    }
+    
+    if (this.filtroFechaActivo && this.fechaMinFiltro && this.fechaMaxFiltro) {
+      this.aplicarFiltroFecha();
+    }
+    
+    if (this.filtroEtiquetasActivo && this.etiquetasSeleccionadas.length > 0) {
+      this.aplicarFiltroEtiquetas();
+    }
+  });
+}
+
+
 }
