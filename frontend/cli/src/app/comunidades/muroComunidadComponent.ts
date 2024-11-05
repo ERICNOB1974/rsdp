@@ -433,7 +433,7 @@ export class MuroComunidadComponent implements OnInit {
     }
 
     salirValid(): boolean {
-        if (this.esParte) {
+        if (this.esParte || this.esCreador || this.esAdministrador) {
             return true;
         }
         return false;
