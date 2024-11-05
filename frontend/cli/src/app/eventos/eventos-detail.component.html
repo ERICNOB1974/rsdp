@@ -36,7 +36,7 @@
           <div *ngIf="!miembro.anonimos">
             <img [src]="miembro.fotoPerfil" alt="{{ miembro.nombreUsuario }}" class="perfil-imagen">
             <span>{{ miembro.nombreUsuario }}</span>
-            <button *ngIf="creador" (click)="eliminarMiembro(miembro.id)">Eliminar Miembro</button>
+            <button *ngIf="creador && miembro.id !== idUsuarioAutenticado" (click)="eliminarMiembro(miembro.id)">Eliminar Miembro</button>
           </div>
         </div>
         <!-- Mostrar la cantidad de usuarios anónimos -->
