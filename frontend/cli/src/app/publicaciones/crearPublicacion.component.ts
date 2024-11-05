@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Publicacion } from './publicacion';
@@ -25,6 +25,7 @@ export class CrearPublicacionComponent implements OnInit {
   constructor(private router: Router,
     private publicacionService: PublicacionService,
     private route: ActivatedRoute,
+    private location: Location,
   ) {
     const tipoParam = this.route.snapshot.queryParamMap.get('tipo') as 'comunidad' | 'publicacion';
     this.tipo = tipoParam;
@@ -46,7 +47,7 @@ export class CrearPublicacionComponent implements OnInit {
   }
 
   cancel(): void {
-    this.router.navigate(['/']);
+    this.location.back()
   }
   
   savePublicacion(): void {
@@ -54,11 +55,11 @@ export class CrearPublicacionComponent implements OnInit {
     console.log(this.tipo)
     if (this.tipo === 'comunidad' && this.idComunidad) {
         this.publicacionService.publicarEnComunidad(this.publicacion, this.idComunidad).subscribe(() => {
-            this.router.navigate(['/comunidad-muro', this.idComunidad]);
+            this.location.back()
         });
     } else {
         this.publicacionService.saveConCreador(this.publicacion).subscribe(() => {
-            this.router.navigate(['/']);
+            this.location.back()
         });
     }
 }

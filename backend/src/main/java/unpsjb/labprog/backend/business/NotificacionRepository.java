@@ -77,8 +77,8 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
                 WITH u, u2, entidad
                 WITH u, u2, entidad,
                 CASE
-                    WHEN $tipo = 'LIKE' THEN u2.nombreUsuario + ' le ha dado like a tu publicación: ' + id(entidad)
-                    WHEN $tipo = 'COMENTARIO' THEN u2.nombreUsuario + 'ha hecho un comentario en tu publicación: '+ id(entidad)
+                    WHEN $tipo = 'LIKE' THEN u2.nombreUsuario + ' le ha dado like a tu publicación'
+                    WHEN $tipo = 'COMENTARIO' THEN u2.nombreUsuario + 'ha hecho un comentario en tu publicación'
                     ELSE 'Notificación de publicación'
                 END AS mensaje
                 CREATE (u)<-[:NOTIFICACION {

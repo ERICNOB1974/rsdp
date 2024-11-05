@@ -7,11 +7,14 @@
   </div>
 
   <h1>{{ comunidad.nombre }}</h1>
+
+
   <button *ngIf="!esCreador" class="btn btn-primary btn-block ingresar-button"
     [disabled]="!(salirValid() || !inscribirseValid())" (click)="salirValid() ? salir() : ingresar()">
     {{ salirValid() ? 'Abandonar comunidad' : (comunidad.esPrivada ? 'Solicitar ingreso' : 'Ingresar') }}
   </button>
-  <button *ngIf="esCreador" class="btn btn-primary btn-block ingresar-button" (click)="gestionarComunidad()">
+  <button *ngIf="esCreador || esAdministrador" class="btn btn-primary btn-block ingresar-button"
+    (click)="gestionarComunidad()">
     Gestionar
   </button>
 
@@ -24,40 +27,41 @@
     <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'miembros' }"
       (click)="seleccionarTab('miembros')">Miembros</button>
   </div>
+  <div *ngIf="visible">
 
-  <div class="tab-content">
-    <div *ngIf="tabSeleccionada === 'publicaciones'" class="perfil-publicaciones">
-      <h3>Publicaciones</h3>
-      <button class="btn primary" (click)="publicarEnComunidad()">
-        Publicar
-      </button>
+    <div class="tab-content">
+      <div *ngIf="tabSeleccionada === 'publicaciones'" class="perfil-publicaciones">
+        <h3>Publicaciones</h3>
+        <button *ngIf="esParte" class="btn primary" (click)="publicarEnComunidad()">
+          Publicar
+        </button>
 
-      <div class="publicaciones-grid">
-        <div class="publicacion-item" *ngFor="let publicacion of publicaciones"
-          (click)="irADetallePublicacion(publicacion.id)">
-          <div class="publicacion-contenido">
-            <p>{{ publicacion.texto }}</p>
-            <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
-              <img [src]="publicacion.file" alt="Imagen de la publicaciÃ³n" class="publicacion-imagen">
+        <div class="publicaciones-grid">
+          <div class="publicacion-item" *ngFor="let publicacion of publicaciones"
+            (click)="esParte ? irADetallePublicacion(publicacion.id): null">
+            <div class="publicacion-contenido">
+              <p>{{ publicacion.texto }}</p>
+              <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
+                <img [src]="publicacion.file" alt="Imagen de la publicaciÃ³n" class="publicacion-imagen">
+              </div>
+              <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
+                <video [src]="publicacion.file" controls class="publicacion-video"></video>
+              </div>
+              <div class="publicacion-fecha">{{ publicacion.fechaDeCreacion | date:'medium' }}</div>
             </div>
-            <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
-              <video [src]="publicacion.file" controls class="publicacion-video"></video>
-            </div>
-            <div class="publicacion-fecha">{{ publicacion.fechaDeCreacion | date:'medium' }}</div>
           </div>
         </div>
       </div>
-    </div>
 
-    <div *ngIf="tabSeleccionada === 'eventos'" class="perfil-eventos">
-      <h3>Eventos</h3>
+      <div *ngIf="tabSeleccionada === 'eventos'" class="perfil-eventos">
+        <h3>Eventos</h3>
 
-      <button *ngIf="esParte" (click)="crearEvento()" class="btn btn-primary mt-3">
-        Crear Evento
-      </button>
+        <button *ngIf="esParte" (click)="crearEvento()" class="btn btn-primary mt-3">
+          Crear Evento
+        </button>
 
-      <div class="eventos-grid">
-        <div class="evento-item" *ngFor="let evento of eventos" (click)="irADetalleEvento(evento.id)">
+        <div class="eventos-grid">
+          <div class="evento-item" *ngFor="let evento of eventos" (click)="irADetalleEvento(evento.id)">
             <h4>{{ evento.nombre }}</h4>
             <p>Descripción: {{ evento.descripcion }}</p>
             <p>Ubicación: {{ evento.ubicacion }}</p>
@@ -66,33 +70,43 @@
             <p>Participantes: {{ evento.participantes }} / {{ evento.cantidadMaximaParticipantes }}</p>
             <p *ngIf="evento.esPrivadoParaLaComunidad">Evento privado</p>
             <p *ngIf="evento.creador">Creador: {{ evento.creador.nombreUsuario }}</p>
+          </div>
         </div>
-      </div>  
 
-    </div>
+      </div>
 
-    <div *ngIf="tabSeleccionada === 'miembros'" class="perfil-miembros">
-      <h3>Miembros</h3>
-      <div *ngFor="let miembro of miembrosVisibles">
-        <!-- Si no es anÃ³nimo, muestra el perfil -->
-        <div *ngIf="!miembro.anonimos">
-          <img [src]="miembro.fotoPerfil" alt="{{ miembro.nombreUsuario }}" class="perfil-imagen">
-          <span>{{ miembro.nombreUsuario }}</span>
+      <div *ngIf="tabSeleccionada === 'miembros'" class="perfil-miembros">
+        <h3>Miembros</h3>
+        <div *ngFor="let miembro of miembrosVisibles">
+          <!-- Si no es anÃ³nimo, muestra el perfil -->
+          <div *ngIf="!miembro.anonimos">
+            <img [src]="miembro.fotoPerfil" alt="{{ miembro.nombreUsuario }}" class="perfil-imagen">
+            <span>{{ miembro.nombreUsuario }}</span>
+          </div>
+        </div>
+        <!-- Mostrar la cantidad de usuarios anÃ³nimos -->
+        <div *ngIf="usuariosAnonimos > 0">
+          <span>{{ usuariosAnonimos }} Usuario{{ usuariosAnonimos > 1 ? 's' : '' }} anónimo{{ usuariosAnonimos > 1
+            ? 's' : '' }}</span>
         </div>
       </div>
-      <!-- Mostrar la cantidad de usuarios anÃ³nimos -->
-      <div *ngIf="usuariosAnonimos > 0">
-        <span>{{ usuariosAnonimos }} Usuario{{ usuariosAnonimos > 1 ? 's' : '' }} anónimo{{ usuariosAnonimos > 1
-          ? 's' : '' }}</span>
-      </div>
+
+      <button *ngIf="salirValid()" (click)="abrirModalInvitarAmigos()" class="btn btn-success btn-block mx-auto mt-3">
+        Invitar amigos
+      </button>
+
     </div>
+  </div>
 
-    <button *ngIf="salirValid()" (click)="abrirModalInvitarAmigos()" class="btn btn-success btn-block mx-auto mt-3">
-      Invitar amigos
-    </button>
-
+  <div *ngIf="tabSeleccionada === 'miembros' && !visible" class="perfil-miembros">
+    <h3>Creador</h3>
+    <img [src]="creadorComunidad.fotoPerfil" alt="{{ creadorComunidad.nombreUsuario }}" class="perfil-imagen">
+    <span>{{ creadorComunidad.nombreUsuario }}</span>
+    <h3>Cantidad de miembros</h3>
+    <h1>{{cantidadMiembros}}</h1>
   </div>
 </div>
+
 
 <ng-template #modalInvitarAmigos>
   <div class="modal-header">
