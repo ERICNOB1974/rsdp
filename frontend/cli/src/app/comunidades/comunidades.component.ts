@@ -130,38 +130,37 @@ export class ComunidadesComponent implements OnInit {
   siguienteComunidadParticipa(): void {
     this.currentIndexMiembro = (this.currentIndexMiembro + 1) % this.comunidadesMiembroUsuario.length; // Incrementa el índice del segundo carrusel
   }
-  
+
   comunidadAnteriorParticipa(): void {
     this.currentIndexMiembro = (this.currentIndexMiembro - 1 + this.comunidadesMiembroUsuario.length) % this.comunidadesMiembroUsuario.length; // Decrementa el índice del segundo carrusel
   }
-  
 
 
 
-// Método para obtener las comunidades a mostrar en el carrusel
-obtenerComunidadesParaMostrar(): Comunidad[] {
-  const comunidadesParaMostrar: Comunidad[] = [];
-  
-  if (this.results.length === 0) {
-    return comunidadesParaMostrar; // Devuelve un arreglo vacío si no hay comunidades
-  }
-  
-  // Definir cuántas comunidades mostrar, máximo 4 o el número total de comunidades disponibles
-  const cantidadComunidadesAMostrar = Math.min(this.results.length, 4);
-  
-  for (let i = 0; i < cantidadComunidadesAMostrar; i++) {
-    const index = (this.currentIndexComunidades + i) % this.results.length;
-    const comunidad = this.results[index];
-    
-    // Excluir comunidades en las que el usuario ya es miembro
-    if (!this.comunidadesMiembroUsuario.some(c => c.id === comunidad.id)) {
-      comunidadesParaMostrar.push(comunidad);
+
+  // Método para obtener las comunidades a mostrar en el carrusel
+  obtenerComunidadesParaMostrar(): Comunidad[] {
+    const comunidadesParaMostrar: Comunidad[] = [];
+
+    if (this.results.length === 0) {
+      return comunidadesParaMostrar; // Devuelve un arreglo vacío si no hay comunidades
     }
-  
-  }
-  return comunidadesParaMostrar;
-}
 
+    // Definir cuántas comunidades mostrar, máximo 4 o el número total de comunidades disponibles
+    const cantidadComunidadesAMostrar = Math.min(this.results.length, 4);
+
+    for (let i = 0; i < cantidadComunidadesAMostrar; i++) {
+      const index = (this.currentIndexComunidades + i) % this.results.length;
+      const comunidad = this.results[index];
+
+      // Excluir comunidades en las que el usuario ya es miembro
+      if (!this.comunidadesMiembroUsuario.some(c => c.id === comunidad.id)) {
+        comunidadesParaMostrar.push(comunidad);
+      }
+
+    }
+    return comunidadesParaMostrar;
+  }
 
 
 
@@ -213,27 +212,36 @@ obtenerComunidadesParaMostrar(): Comunidad[] {
   }
 
   aplicarFiltroParticipantes(): void {
-    if (this.minParticipantes !== null || this.maxParticipantes !== null) {
-      this.comunidadService.filtrarParticipantes(this.minParticipantes || 0, this.maxParticipantes || Number.MAX_SAFE_INTEGER).subscribe(
+    if (this.filtroParticipantesActivo && (this.minParticipantes !== null || this.maxParticipantes !== null)) {
+      this.comunidadService.filtrarParticipantes(
+        this.minParticipantes || 0,
+        this.maxParticipantes || Number.MAX_SAFE_INTEGER
+      ).subscribe(
         async (dataPackage) => {
           if (Array.isArray(dataPackage.data)) {
             this.results = dataPackage.data;
-            this.traerMiembros(this.results); // Llamar a traerMiembros después de cargar las comunidades
+            this.traerMiembros(this.results);
             for (const comunidad of this.results) {
               if (comunidad.latitud && comunidad.longitud) {
-                comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
+                comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(
+                  comunidad.latitud,
+                  comunidad.longitud
+                );
               } else {
                 comunidad.ubicacion = 'Ubicación desconocida';
               }
             }
-          } 
+          }
         },
         (error) => {
           console.error("Error al filtrar participantes:", error);
         }
       );
+    } else if (!this.filtroParticipantesActivo) {
+      this.results = [...this.resultadosOriginales];
     }
   }
+
 
   aplicarFiltroNombre(): void {
     if (this.filtroNombreActivo && this.nombreEventoFiltro) {
@@ -244,20 +252,8 @@ obtenerComunidadesParaMostrar(): Comunidad[] {
       this.results = [...this.resultadosOriginales]; // Restaurar todos los resultados si el filtro está desactivado
     }
   }
-  
-  async aplicarFiltrosActivados(): Promise<void> {
-    this.results = [...this.resultadosOriginales]; // Comenzar con los datos originales
-  
-    if (this.filtroNombreActivo) {
-      this.aplicarFiltroNombre();
-    }
-    if (this.filtroParticipantesActivo) {
-      this.aplicarFiltroParticipantes();
-    }
-    if (this.filtroEtiquetasActivo) {
-      this.aplicarFiltroEtiquetas();
-    }
-  }
+
+
 
   eliminarEtiqueta(etiqueta: Etiqueta): void {
     this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(e => e.id !== etiqueta.id);
@@ -326,9 +322,9 @@ obtenerComunidadesParaMostrar(): Comunidad[] {
   limpiarFiltroParticipantes(): void {
     this.minParticipantes = null;
     this.maxParticipantes = null;
-    this.getComunidades(); // Recargar todos los eventos
+    this.filtroParticipantesActivo = false;
+    this.results = [...this.resultadosOriginales];
   }
-
 
 
   limpiarFiltroFecha(): void {
@@ -336,16 +332,84 @@ obtenerComunidadesParaMostrar(): Comunidad[] {
     this.fechaMaxFiltro = '';
     this.getComunidades(); // Recargar todos los eventos
   }
-
-  // Método para limpiar todos los filtros
   limpiarTodosLosFiltros(): void {
     this.limpiarFiltroNombre();
     this.limpiarFiltroParticipantes();
     this.limpiarFiltroFecha();
     this.limpiarFiltroEtiquetas();
 
+    // Reiniciar los filtros
+    this.filtroNombreActivo = false;
+    this.filtroParticipantesActivo = false;
+    this.filtroEtiquetasActivo = false;
+
+    // Restaurar todos los resultados
+    this.results = [...this.resultadosOriginales];
   }
 
 
+async aplicarTodosLosFiltros(): Promise<void> {
+  // Comenzamos con todos los resultados originales
+  let resultadosFiltrados = [...this.resultadosOriginales];
+
+  // Aplicar filtro por nombre si está activo
+  if (this.filtroNombreActivo && this.nombreEventoFiltro) {
+    resultadosFiltrados = resultadosFiltrados.filter(comunidad =>
+      comunidad.nombre.toLowerCase().includes(this.nombreEventoFiltro.toLowerCase())
+    );
+  }
+
+  // Aplicar filtro por participantes si está activo
+  if (this.filtroParticipantesActivo && (this.minParticipantes !== null || this.maxParticipantes !== null)) {
+    const min = this.minParticipantes || 0;
+    const max = this.maxParticipantes || Number.MAX_SAFE_INTEGER;
+    
+    resultadosFiltrados = resultadosFiltrados.filter(comunidad => 
+      comunidad.miembros >= min && comunidad.miembros <= max
+    );
+  }
+
+  // Aplicar filtro por etiquetas si hay etiquetas seleccionadas
+  if (this.filtroEtiquetasActivo && this.etiquetasSeleccionadas.length > 0) {
+    const etiquetasIds = this.etiquetasSeleccionadas.map(e => e.nombre);
+    
+    try {
+      const response = await this.comunidadService.filtrarEtiqueta(etiquetasIds).toPromise();
+      if (response && response.data && Array.isArray(response.data)) {
+        const comunidadesFiltradas = response.data as Comunidad[];
+        resultadosFiltrados = resultadosFiltrados.filter(comunidad =>
+          comunidadesFiltradas.some(c => c.id === comunidad.id)
+        );
+      }
+    } catch (error) {
+      console.error("Error al filtrar por etiquetas:", error);
+    }
+  }
+
+  // Actualizar los resultados filtrados
+  this.results = resultadosFiltrados;
+
+  // Actualizar información adicional para los resultados filtrados
+  await this.actualizarInformacionAdicional();
+}
+
+private async actualizarInformacionAdicional(): Promise<void> {
+  this.traerMiembros(this.results);
+  
+  for (const comunidad of this.results) {
+    if (comunidad.latitud && comunidad.longitud) {
+      try {
+        comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(
+          comunidad.latitud,
+          comunidad.longitud
+        );
+      } catch (error) {
+        comunidad.ubicacion = 'Ubicación desconocida';
+      }
+    } else {
+      comunidad.ubicacion = 'Ubicación desconocida';
+    }
+  }
+}
 
 }

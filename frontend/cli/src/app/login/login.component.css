@@ -86,7 +86,7 @@
 }
 
 .mat-mdc-raised-button:not(:disabled) {
-    background-color: #00796b; /* Color de fondo del botón */
+    background-color: #000000; /* Color de fondo del botón */
     border-radius: 4px;
     text-align: center; /* Centra el texto */
     font-size: 16px; /* Aumenta el tamaño de la fuente */
@@ -96,7 +96,7 @@
 }
 
 .mat-mdc-raised-button:not(:disabled):hover {
-    background-color: #004d40; /* Color de fondo al pasar el mouse */
+    background-color: #4d0011; /* Color de fondo al pasar el mouse */
 }
 
 mat-card-actions {

@@ -53,7 +53,7 @@ export class PublicacionDetailComponent implements OnInit {
     } else {
       this.publicacionService.darLike(this.publicacion.id).subscribe();
       this.numeroLikes++;
-     // this.cantidadLikes();
+      // this.cantidadLikes();
     }
     this.isLiked = !this.isLiked;
   }
@@ -96,7 +96,7 @@ export class PublicacionDetailComponent implements OnInit {
               descripcion: '',
               latitud: 0,
               longitud: 0,
-              fotoPerfil:''
+              fotoPerfil: ''
             }
           };
 
@@ -147,7 +147,7 @@ export class PublicacionDetailComponent implements OnInit {
       this.publicacionService.eliminar(this.publicacion.id).subscribe(
         () => {
           this.snackBar.open('Publicación eliminada con éxito', 'Cerrar', { duration: 3000 });
-          this.router.navigate(['/publicaciones']); // O a donde quieras redirigir después de eliminar
+          this.location.back()
         },
         error => {
           console.error('Error al eliminar la publicación:', error);
@@ -176,7 +176,7 @@ export class PublicacionDetailComponent implements OnInit {
           this.isLiked = <boolean><unknown>dataPackage.data;
           this.checkIfOwnPublication();
           this.cargarComentarios();
-          this.cantidadLikes(); 
+          this.cantidadLikes();
         });
       });
     }

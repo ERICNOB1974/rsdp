@@ -206,7 +206,6 @@ export class PerfilComponent implements OnInit {
     } else if (this.usuario.privacidadPerfil === 'Privada') {
       this.publicaciones = []; // No mostrar publicaciones
     } else if (this.usuario.privacidadPerfil === 'Solo amigos') {
-      console.info(this.relacion);
       if (this.relacion === 'amigos') {
         this.getPublicaciones(); // Cargar publicaciones si son amigos
       } else {
