@@ -48,6 +48,7 @@ public class ComunidadService {
         if (comunidad.getId() != null) {
             Comunidad comVieja = comunidadRepository.findById(comunidad.getId()).get();
             if (comVieja.isEsPrivada() && !comunidad.isEsPrivada()) {
+                comunidadRepository.save(comunidad);
                 cambioAPublico(comVieja.getId());
             }
         }
@@ -55,9 +56,14 @@ public class ComunidadService {
     }
 
     public void cambioAPublico(Long idComunidad) {
+        int disponibilidad = comunidadRepository.cuposDisponibles(idComunidad);
         List<Usuario> solicitudes = this.usuarioRepository.solicititudesPendientes(idComunidad);
-        solicitudes.stream().forEach(usuario -> aceptarSolicitud(usuario.getId(), idComunidad));
-        //ojo, los que quedan sin lugar quedarian con una solicitud
+        for (int i = 0; i < disponibilidad; i++) {
+            aceptarSolicitud(solicitudes.get(i).getId(), idComunidad);
+        }
+        for (int i = disponibilidad; i < solicitudes.size() - 1; i++) {
+            comunidadRepository.eliminarSolicitudIngreso(solicitudes.get(i).getId(), idComunidad);
+        }
     }
 
     public void aceptarSolicitud(Long idUsuario, Long idComunidad) {
