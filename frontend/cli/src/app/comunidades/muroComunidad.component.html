@@ -13,7 +13,8 @@
     [disabled]="!(salirValid() || !inscribirseValid())" (click)="salirValid() ? salir() : ingresar()">
     {{ salirValid() ? 'Abandonar comunidad' : (comunidad.esPrivada ? 'Solicitar ingreso' : 'Ingresar') }}
   </button>
-  <button *ngIf="esCreador || esAdministrador" class="btn btn-primary btn-block ingresar-button" (click)="gestionarComunidad()">
+  <button *ngIf="esCreador || esAdministrador" class="btn btn-primary btn-block ingresar-button"
+    (click)="gestionarComunidad()">
     Gestionar
   </button>
 
@@ -37,7 +38,7 @@
 
         <div class="publicaciones-grid">
           <div class="publicacion-item" *ngFor="let publicacion of publicaciones"
-            (click)="irADetallePublicacion(publicacion.id)">
+            (click)="esParte ? irADetallePublicacion(publicacion.id): null">
             <div class="publicacion-contenido">
               <p>{{ publicacion.texto }}</p>
               <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
@@ -105,6 +106,7 @@
     <h1>{{cantidadMiembros}}</h1>
   </div>
 </div>
+
 
 <ng-template #modalInvitarAmigos>
   <div class="modal-header">
