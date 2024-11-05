@@ -299,11 +299,9 @@ export class ComunidadesComponent implements OnInit {
   }
 
 
-
   toggleFiltroNombre(): void {
     this.filtroNombreAbierto = !this.filtroNombreAbierto;
   }
-
 
 
   limpiarFiltroNombre(): void {
