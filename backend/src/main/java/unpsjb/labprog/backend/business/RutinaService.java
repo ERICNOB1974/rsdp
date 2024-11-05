@@ -50,7 +50,31 @@ public class RutinaService {
     }
 
     public Long crearRelacionDiaFinalizado(Long diaId, Long usuarioId) throws Exception {
-        diaRepository.crearRelacionDiaFinalizado(diaId, usuarioId);
+        // Consulta si el día ya fue finalizado por el usuario y obtiene el intento actual
+        Integer intento = diaRepository.buscarMaxIntento(diaId, usuarioId);
+        System.out.println("Intento obtenido de la base de datos: " + intento);
+    
+        // Si intento es null, significa que el día no ha sido finalizado antes, entonces intento es 1
+        if (intento == null) {
+            intento = 1;
+            System.out.println("El día no ha sido finalizado antes. Se establece intento en: " + intento);
+        } else {
+            // Si el día es de orden 1, incrementa el intento
+            int numeroDia = diaRepository.buscarNumeroDia(diaId);
+            System.out.println("Número de día obtenido: " + numeroDia);
+    
+            if (numeroDia == 1) {
+                intento += 1;
+                System.out.println("Día es de orden 1. Intento incrementado a: " + intento);
+            } else {
+                System.out.println("Día no es de orden 1. Intento se mantiene en: " + intento);
+            }
+        }
+    
+        // Crea la relación DIA_FINALIZADO con el intento calculado
+        diaRepository.crearRelacionDiaFinalizado(diaId, usuarioId, intento);
+        System.out.println("Relación DIA_FINALIZADO creada con intento: " + intento);
+    
         return diaId;
     }
 

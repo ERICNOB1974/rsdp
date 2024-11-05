@@ -21,8 +21,22 @@ public interface DiaRepository extends Neo4jRepository<Dia, Long> {
 
     @Query("MATCH (d:Dia), (u:Usuario) " +
     "WHERE id(u) = $usuarioId AND id(d) = $diaId " +
-    "CREATE (u)-[rel:DIA_FINALIZADO {fechaFin: datetime()}]->(d)")
-    void crearRelacionDiaFinalizado(Long diaId, Long usuarioId);   
+    "CREATE (u)-[rel:DIA_FINALIZADO {intento: $intento,fechaFin: datetime()}]->(d)")
+void crearRelacionDiaFinalizado(Long diaId, Long usuarioId, Integer intento);
+
+    @Query("MATCH (d:Dia)-[:TIENE_DIA]-(ru:Rutina) " +
+        "WHERE id(d) = $diaId " +
+        "MATCH (ru)-[rd:TIENE_DIA]-(diaOrden1:Dia) " +
+        "WHERE rd.orden = 1 " +
+        "OPTIONAL MATCH (u:Usuario)-[rel:DIA_FINALIZADO]->(diaOrden1) " +
+        "WHERE id(u) = $usuarioId " +
+        "RETURN coalesce(max(rel.intento), 0) AS intento")
+        Integer buscarMaxIntento(Long diaId, Long usuarioId);
+
+@Query ("MATCH (d:Dia)-[r:TIENE_DIA]-(ru:Rutina) "+
+        "WHERE id(d) = $diaId "+
+        "RETURN r.orden")
+int buscarNumeroDia(Long diaId);
 
     @Query("MATCH (u:Usuario)-[rel:DIA_FINALIZADO]->(d:Dia)-[r:TIENE_DIA]-(ru:Rutina) " +
        "WHERE id(u) = $usuarioId AND id(ru) = $rutinaId AND r.orden = 1 " +
