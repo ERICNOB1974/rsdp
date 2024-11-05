@@ -248,23 +248,29 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
             "RETURN amigo")
     List<Usuario> todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad);
 
-    @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
-            "WHERE id(u) = $idUsuario AND NOT ((amigo)-[:PARTICIPA_EN|CREADO_POR]->(:Evento {id: $idEvento})) "
-            +
-            "RETURN amigo")
-    List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(Long idUsuario, Long idEvento);
-
-    @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
-            "WHERE id(u) = $idUsuario AND NOT " +
-            "((amigo)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]->(:Comunidad {id: $idComunidad})) " +
-            "RETURN amigo")
-    List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad);
-
-    @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
-            "MATCH (u)-[inv:INVITACION_EVENTO]->(amigo) " +
-            "WHERE id(u) = $idUsuario AND inv.idEvento = $idEvento " +
-            "RETURN amigo")
-    List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(Long idUsuario, Long idEvento);
+        @Query("MATCH (u:Usuario), (ev:Evento) " +
+        "WHERE id(u) = $idUsuario AND id(ev) = $idEvento " +
+        "WITH u, ev " +
+        "MATCH (u)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
+        "WHERE NOT EXISTS { MATCH (amigo)-[:PARTICIPA_EN]->(ev) } " +
+        "AND NOT EXISTS { MATCH (ev)-[:CREADO_POR]->(amigo) } " +
+        "RETURN amigo")
+        List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(Long idUsuario, Long idEvento);
+ 
+        @Query("MATCH (u:Usuario), (com:Comunidad) " +
+        "WHERE id(u) = $idUsuario AND id(com) = $idComunidad " +
+        "WITH u, com " +
+        "MATCH (u)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
+        "WHERE NOT EXISTS { MATCH (amigo)-[:MIEMBRO]->(com) } " +
+        "AND NOT EXISTS { MATCH (com)-[:ADMINISTRADA_POR|CREADA_POR]->(amigo) } " +
+        "RETURN amigo")
+        List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad);
+ 
+        @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
+                        "MATCH (u)-[inv:INVITACION_EVENTO]->(amigo) " +
+                        "WHERE id(u) = $idUsuario AND inv.idEvento = $idEvento " +
+                        "RETURN amigo")
+        List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(Long idUsuario, Long idEvento);
 
     @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
             "MATCH (u)-[inv:INVITACION_COMUNIDAD]->(amigo) " +
