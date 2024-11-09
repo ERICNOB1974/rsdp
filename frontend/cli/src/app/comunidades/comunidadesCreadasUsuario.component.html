@@ -2,19 +2,24 @@
   <h2>Comunidades Creadas por Ti</h2>
   <div class="comunidades-list">
     <div class="comunidad-card" *ngFor="let comunidad of comunidadesUsuario">
-      <div class="comunidad-header">
-        <h3>{{ comunidad.nombre }}</h3>
-        <span class="badge" [ngClass]="{'private': comunidad.esPrivada, 'public': !comunidad.esPrivada}">
-          {{ comunidad.esPrivada ? 'Privada' : 'Pública' }}
-        </span>
+      <div class="background-image" 
+           [ngStyle]="{'background-image': 'url(' + (comunidad.imagen || '../../assets/comunidad.jpg') + ')'}">
       </div>
-      <p class="descripcion">{{ comunidad.descripcion }}</p>
-      <p class="info">
-        <span><strong>{{ comunidad.participantes }}</strong> Participantes</span>
-        <span><strong>{{ comunidad.cantidadMaximaMiembros }}</strong> Máx. Miembros</span>
-      </p>
-      <p class="fecha-hora">{{ comunidad.fechaDeCreacion | date: 'dd/MM/yyyy' }}</p>
-      <button class="detalles-btn" (click)="irADetallesDeComunidad(comunidad.id)">Ver Detalles</button>
+      <div class="comunidad-card-content">
+        <div class="comunidad-header">
+          <h3>{{ comunidad.nombre }}</h3>
+          <span class="badge" [ngClass]="{'private': comunidad.esPrivada, 'public': !comunidad.esPrivada}">
+            {{ comunidad.esPrivada ? 'Privada' : 'Pública' }}
+          </span>
+        </div>
+        <p class="descripcion">{{ comunidad.descripcion }}</p>
+        <p class="info">
+          <span><strong>{{ comunidad.participantes }}</strong> Participantes</span>
+          <span><strong>{{ comunidad.cantidadMaximaMiembros }}</strong> Máx. Miembros</span>
+        </p>
+        <p class="fecha-hora">{{ comunidad.fechaDeCreacion | date: 'dd/MM/yyyy' }}</p>
+        <button class="detalles-btn" (click)="irADetallesDeComunidad(comunidad.id)">Ver Detalles</button>
+      </div>
     </div>
   </div>
 </div>
