@@ -23,4 +23,9 @@ export class NotificacionService {
   marcarLeida(idNotificacion: number): Observable<DataPackage> {
     return this.http.post<DataPackage>(`${this.notificacionesUrl}/marcar-leida/${idNotificacion}`, {});
   }
+
+  eliminarNotificacion(idNotificacion: number): Observable<DataPackage> {
+    return this.http.delete<DataPackage>(`${this.notificacionesUrl}/eliminarNotififacion/${idNotificacion}`);
+  }
+
 }
