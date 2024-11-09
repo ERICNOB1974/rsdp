@@ -43,6 +43,11 @@ export class EditarEventoComponent {
   longitud: number = 0;
   participantes: number = 0;
   maxParticipantes: number = 1; // Inicializar con 1
+  formatoValido: boolean = true;
+  archivoSeleccionado!: File; // Para almacenar la imagen o video seleccionado
+  tipoArchivo: string = ''; // Para distinguir entre imagen o video
+  vistaPreviaArchivo: string | ArrayBuffer | null = null;
+
 
 
   constructor(
@@ -100,6 +105,40 @@ export class EditarEventoComponent {
       this.ubicacionAceptada = true; // Habilitar la interacción
     }
 
+  }
+
+
+
+  onFileSelect(event: any) {
+    const file = event.target.files[0];
+    const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
+
+    if (file) {
+      // Verificar si el archivo es una imagen o un video
+      if (validImageTypes.includes(file.type)) {
+        this.formatoValido = true; // El formato es válido
+        this.archivoSeleccionado = file;
+
+        // Detecta el tipo de archivo
+        const fileType = file.type.split('/')[0];
+        this.tipoArchivo = fileType; // 'image' o 'video'
+
+        // Crea la vista previa
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.vistaPreviaArchivo = reader.result;
+          this.evento.imagen = reader.result as string; // Aquí obtenemos la cadena base64
+        };
+        reader.readAsDataURL(file);
+
+        this.evento.imagen = file;
+
+      } else {
+        this.formatoValido = false; // El formato no es válido
+        this.vistaPreviaArchivo = null; // No se muestra la vista previa
+        alert('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF).');
+      }
+    }
   }
 
   private mostrarAlertaDeUbicacionRechazada(): void {

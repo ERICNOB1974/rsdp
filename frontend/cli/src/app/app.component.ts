@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 import { NotificacionService } from './notificaciones/notificacion.service';
 import { DataPackage } from './data-package';
 import { Notificacion } from './notificaciones/notificacion';
+import { ThemeService } from './themeservice';
 //import { Notificacion } from './notificaciones/notificacion';
 
 @Component({
@@ -24,7 +25,11 @@ export class AppComponent {
   idUsuarioAutenticado!: number; // Variable para almacenar el ID del usuario autenticado
   notificacionesNoLeidasCount = 0;
 
-  constructor(private router: Router, private ubicacionService: UbicacionService, private authService: AuthService, private notificacionService: NotificacionService,) { }
+  constructor(private router: Router, 
+    private ubicacionService: UbicacionService,
+     private authService: AuthService, 
+     private notificacionService: NotificacionService,
+     private themeService: ThemeService) { }
 
   ngOnInit(): void {
     this.router.events.subscribe(event => {
@@ -37,6 +42,9 @@ export class AppComponent {
     this.actualizarUbicacion();
     this.cargarNotificaciones();
   }
+  toggleTheme(): void {
+    this.themeService.toggleTheme();
+}
 
   navigateToMiPerfil() {
     if (this.idUsuarioAutenticado) {
