@@ -122,39 +122,69 @@ export class AppComponent {
     this.router.navigate([urlDestino]);
   }
 
-  marcarLeida(idNotificacion: number): Promise<void> {
-    return new Promise((resolve, reject) => {
-      this.notificacionService.marcarLeida(idNotificacion).subscribe(
-        (dataPackage: DataPackage) => {
-          if (dataPackage.status === 200) {
-            const notificacion = this.notificaciones.find(n => n.id === idNotificacion);
-            if (notificacion) {
-              notificacion.leida = true;
-            }
-            resolve();
-          } else {
-            reject(new Error('No se pudo marcar la notificación como leída'));
-          }
-        },
-        error => {
-          reject(error);
-        }
-      );
-    });
-  }
-
   getNotificacionesNoLeidas(): Notificacion[] {
     return this.notificaciones.filter(notificacion => !notificacion.leida);
   }
 
+marcarLeida(idNotificacion: number): Promise<void> {
+  return new Promise((resolve, reject) => {
+    this.notificacionService.marcarLeida(idNotificacion).subscribe(
+      (dataPackage: DataPackage) => {
+        if (dataPackage.status === 200) {
+          // Encuentra y actualiza el estado de la notificación a "leída"
+          const notificacionIndex = this.notificaciones.findIndex(n => n.id === idNotificacion);
+          if (notificacionIndex !== -1) {
+            this.notificaciones[notificacionIndex].leida = true;
+            // Reordenar la lista para mover la notificación leída hacia abajo
+            this.actualizarOrdenNotificaciones();
+          }
+          resolve();
+        } else {
+          reject(new Error('No se pudo marcar la notificación como leída'));
+        }
+      },
+      error => {
+        reject(error);
+      }
+    );
+  });
+}
 
+eliminarNotificacion(notificacion: Notificacion): Promise<void> {
+  return new Promise((resolve, reject) => {
+    this.notificacionService.eliminarNotificacion(notificacion.id).subscribe(
+      (dataPackage: DataPackage) => {
+        if (dataPackage.status === 200) {
+          // Elimina la notificación de la lista
+          this.notificaciones = this.notificaciones.filter(n => n.id !== notificacion.id);
+          resolve();
+        } else {
+          reject(new Error('No se pudo eliminar la notificación'));
+        }
+      },
+      error => {
+        reject(error);
+      }
+    );
+  });
+}
 
-  manejarClickNotificacion(notificacion: Notificacion): void {
-    this.marcarLeida(notificacion.id).then(() => {
-      this.navegarPorNotificacion(notificacion);
-    }).catch(error => {
-      console.error('Error al manejar la notificación:', error);
-    });
+// Reordenar las notificaciones para mantener las no leídas al inicio y las más recientes primero
+private actualizarOrdenNotificaciones(): void {
+  this.notificaciones.sort((a, b) => {
+    if (a.leida === b.leida) {
+      return new Date(b.fecha).getTime() - new Date(a.fecha).getTime(); // Más recientes primero
+    }
+    return a.leida ? 1 : -1; // No leídas primero
+  });
+}
 
-  }
+manejarClickNotificacion(notificacion: Notificacion): void {
+  this.marcarLeida(notificacion.id).then(() => {
+    this.navegarPorNotificacion(notificacion);
+  }).catch(error => {
+    console.error('Error al manejar la notificación:', error);
+  });
+}
+
 }
