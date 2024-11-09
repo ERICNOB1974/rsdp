@@ -246,7 +246,7 @@ export class EventosComponent implements OnInit {
     }
   }
 
- 
+
   limpiarFiltroFecha(): void {
     this.fechaMinFiltro = '';
     this.fechaMaxFiltro = '';
@@ -430,11 +430,36 @@ export class EventosComponent implements OnInit {
       }
     }
 
+
+
+
+    if (this.filtroFechaActivo && this.fechaMinFiltro && this.fechaMaxFiltro) {
+      const minDate = new Date(this.fechaMinFiltro);
+      const maxDate = new Date(this.fechaMaxFiltro);
+
+      try {
+        const response = await this.eventoService.filtrarFecha(
+          minDate.toISOString(),
+          maxDate.toISOString()
+        ).toPromise();
+
+        if (response && response.data && Array.isArray(response.data)) {
+          const eventosFiltradosPorFecha = response.data as Evento[];
+          resultadosFiltrados = resultadosFiltrados.filter(evento =>
+            eventosFiltradosPorFecha.some(e => e.id === evento.id)
+          );
+        }
+      } catch (error) {
+        console.error("Error al filtrar por fecha:", error);
+      }
+    }
+
     // Actualizar los resultados filtrados
     this.results = resultadosFiltrados;
 
     // Actualizar información adicional para los resultados filtrados
     await this.actualizarInformacionAdicional();
+
   }
 
 
