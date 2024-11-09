@@ -58,11 +58,15 @@ public class ComunidadService {
     public void cambioAPublico(Long idComunidad) {
         int disponibilidad = comunidadRepository.cuposDisponibles(idComunidad);
         List<Usuario> solicitudes = this.usuarioRepository.solicititudesPendientes(idComunidad);
-        for (int i = 0; i < disponibilidad; i++) {
+        int minimo = Math.min(disponibilidad, solicitudes.size());
+        //ver aca que onda
+        for (int i = 0; i < minimo; i++) {
             aceptarSolicitud(solicitudes.get(i).getId(), idComunidad);
         }
-        for (int i = disponibilidad; i < solicitudes.size() - 1; i++) {
-            comunidadRepository.eliminarSolicitudIngreso(solicitudes.get(i).getId(), idComunidad);
+        if (disponibilidad < solicitudes.size()) {
+            for (int i = disponibilidad; i < solicitudes.size(); i++) {
+                comunidadRepository.eliminarSolicitudIngreso(solicitudes.get(i).getId(), idComunidad);
+            }
         }
     }
 

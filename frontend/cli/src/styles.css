@@ -410,3 +410,14 @@ margin: 0 auto;
   height: calc(100vh);
   /* Altura total menos la altura de la navbar */
 }
+
+/* Estilos para el modo oscuro */
+.dark-mode {
+  background-color: black !important; /* Cambia el fondo */
+  color: white !important; /* Cambia el color del texto */
+}
+
+/* Cambia el color de enlaces y otros elementos */
+.dark-mode a {
+  color: lightblue !important; /* Cambia el color de los enlaces */
+}
