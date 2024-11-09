@@ -9,6 +9,7 @@ import unpsjb.labprog.backend.model.Usuario;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -51,8 +52,10 @@ public class NotificacionService {
                 notificaciones.add(notificacion);
             }
         }
-        Collections.sort(notificaciones, Collections.reverseOrder());
-
+        // Paso 3: Ordenar por no leídas primero y luego por fecha (más reciente
+        // primero)
+        notificaciones.sort(Comparator.comparing(Notificacion::isLeida)
+                .thenComparing(Notificacion::getFecha, Comparator.reverseOrder()));
         return notificaciones;
     }
 
@@ -117,5 +120,9 @@ public class NotificacionService {
         return "Notificacion marcada como leida correctamente";
     }
 
+    public String deleteById(Long idNotificacion) {
+        notificacionRepository.deleteById(idNotificacion);
+        return "Notificacion marcada como leida correctamente";
+    }
     // Otros métodos para diferentes tipos de notificaciones
 }

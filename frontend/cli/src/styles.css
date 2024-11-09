@@ -12,7 +12,7 @@
 
 body {
   min-height: 100vh;
-  background: #ffffff;
+  background: #353535;
   /* Cambié el color de fondo a uno más suave */
 }
 
@@ -35,24 +35,24 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  height: 100vh;
-  width: 250px;
-  /* Ajusta según sea necesario */
+  height: 100vh; /* Asegura que ocupe toda la altura de la pantalla */
+  width: 250px; /* Ajusta el tamaño de la barra lateral */
   overflow-y: auto;
   background: #fc974e;
-  /* Cambié el color a un tono más atractivo */
   z-index: 1001;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-  /* Sombra sutil para darle profundidad */
-
 }
 
 /* Contenido principal */
 .main-content {
-  margin-left: 300px;
-  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  margin-left: 250px; /* Esto es necesario para dejar espacio a la sidebar */
+  margin-top: 60px; /* Esto es necesario para dejar espacio a la navbar */
+  height: calc(100vh - 60px); /* Asegura que el contenido principal ocupe toda la pantalla restante */
+  overflow-y: auto; /* Esto asegura que si el contenido es largo, se agregue scroll */
 }
-
 /* Estilos de la lista de la barra lateral */
 .sidebar ul {
   padding: 1;
@@ -226,14 +226,18 @@ body {
   /* Centra el texto */
 }
 
-
-
-.notificacion-item {
+.notification-item {
+  position: relative;
   padding: 10px;
-  /* Espaciado interno */
-  border-bottom: 1px solid #f1f1f1;
-  /* Separador entre notificaciones */
+  margin-bottom: 5px;
+  border-bottom: 1px solid #eee;
 }
+
+.notification-content {
+  display: flex;
+  align-items: center;
+}
+
 
 .notificacion-item:last-child {
   border-bottom: none;
@@ -247,6 +251,38 @@ body {
 }
 
 
+.notification-item p {
+  margin: 0;
+  flex: 1;
+}
+
+.delete-icon {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  cursor: pointer;
+  color: #888;
+}
+
+
+.delete-icon:hover {
+  color: #d9534f; /* Cambia a un color rojo en hover */
+}
+
+
+
+
+.new-notification-dot {
+  width: 8px;
+  height: 8px;
+  background-color: red;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+
+
+
 
 .top-navbar {
   position: fixed;
@@ -254,7 +290,7 @@ body {
   left: 250px;
   right: 0;
   height: 60px;
-  background-color: #ffffff;
+  background-color: #f39b49;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   padding: 0 20px;
