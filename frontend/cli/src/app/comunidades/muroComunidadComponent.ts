@@ -464,5 +464,14 @@ export class MuroComunidadComponent implements OnInit {
         }
     }
 
-}
+    obtenerRol(miembro: Usuario): string {
+        if (miembro.id === this.creadorComunidad.id) {
+            return 'Creador';
+        } else if (this.administradores.includes(miembro)) {
+            return 'Administrador';
+        } else {
+            return 'Miembro';
+        }
+    }
 
+}
