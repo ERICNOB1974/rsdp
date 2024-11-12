@@ -54,11 +54,15 @@ export class PaginationComponent {
   constructor(){}
 
   ngOnChanges(changes: SimpleChanges) {
+    console.info('Current Page:', this.currentPage);
+    console.info('Total Pages:', this.totalPages);
+  
     if(changes['totalPages']){
-      this.pages = Array.from(Array(this.totalPages).keys())
+      this.pages = Array.from(Array(this.totalPages).keys());
     }
     if (changes['currentPage']) {
-      if (this.currentPage == this.totalPages){
+      console.info('Updated Current Page:', this.currentPage);
+      if (this.currentPage === this.totalPages) {
         this.last = true;
       } else {
         this.last = false;
@@ -67,28 +71,21 @@ export class PaginationComponent {
   }
 
   onPageChange(pageId: number): void {
-    if (!this.currentPage){
-      this.currentPage = 1;
+    let page = this.currentPage; // Inicializa 'page' con el valor actual.
+    if (pageId === -2) {
+      page = 1; // Primera página
+    } else if (pageId === -1) {
+      page = this.currentPage > 1 ? this.currentPage - 1 : 1; // Página anterior
+    } else if (pageId === -3) {
+      page = this.currentPage < this.totalPages ? this.currentPage + 1 : this.totalPages; // Página siguiente
+    } else if (pageId === -4) {
+      page = this.totalPages; // Última página
+    } else if (pageId > 1 && pageId <= this.totalPages) {
+      page = pageId; // Páginas específicas
     }
-    let page = pageId;
-    if (pageId === -2){
-      page = 1;
-    }
-    if (pageId === -1){
-      page = this.currentPage > 1 ? this.currentPage - 1 : 1;
-    }
-    if (pageId === -3){
-      page = !this.last ? this.currentPage + 1 : this.currentPage;
-    }
-    if (pageId === -4){
-      page = this.totalPages;
-    }
-    if (pageId > 1 && this.pages.length >= pageId){
-      page = this.pages[pageId - 1] + 1;
-    }
-    page = Math.min(page, this.totalPages);
+    console.info(page+"aaaaaaaaaa");
     this.currentPage = page;
-    this.pageChangeRequested.emit(page);
+    this.pageChangeRequested.emit(page); // Emitir evento de cambio de página
   }
 }
 
