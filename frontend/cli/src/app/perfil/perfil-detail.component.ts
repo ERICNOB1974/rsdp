@@ -29,7 +29,7 @@ export class PerfilDetailComponent implements OnInit {
   nombreUsuarioValido: boolean = true;
   nombreRealValido: boolean = true;
   
-  
+
 
   constructor(
     private usuarioService: UsuarioService,
