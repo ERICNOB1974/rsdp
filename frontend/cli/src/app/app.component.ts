@@ -8,13 +8,15 @@ import { NotificacionService } from './notificaciones/notificacion.service';
 import { DataPackage } from './data-package';
 import { Notificacion } from './notificaciones/notificacion';
 import { ThemeService } from './themeservice';
+import { UsuarioService } from './usuarios/usuario.service';
+import { Usuario } from './usuarios/usuario';
 //import { Notificacion } from './notificaciones/notificacion';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, NgIf, CommonModule, RouterLink, RouterModule],
-  templateUrl:'./app.component.html',
+  templateUrl: './app.component.html',
   styleUrls: ['../styles.css']
 })
 export class AppComponent {
@@ -24,12 +26,15 @@ export class AppComponent {
   notificaciones: Notificacion[] = []; // Cambiamos el tipo a `any[]` para recibir cualquier tipo de datos de notificación
   idUsuarioAutenticado!: number; // Variable para almacenar el ID del usuario autenticado
   notificacionesNoLeidasCount = 0;
+  usuario!: Usuario;
+  fotoPerfil: string = '';
 
-  constructor(private router: Router, 
+  constructor(private router: Router,
     private ubicacionService: UbicacionService,
-     private authService: AuthService, 
-     private notificacionService: NotificacionService,
-     private themeService: ThemeService) { }
+    private usuarioService: UsuarioService,
+    private authService: AuthService,
+    private notificacionService: NotificacionService,
+    private themeService: ThemeService) { }
 
   ngOnInit(): void {
     this.router.events.subscribe(event => {
@@ -41,10 +46,20 @@ export class AppComponent {
     this.idUsuarioAutenticado = Number(usuarioId);
     this.actualizarUbicacion();
     this.cargarNotificaciones();
+    this.getUsuario();
   }
+
+
   toggleTheme(): void {
     this.themeService.toggleTheme();
-}
+  }
+
+
+  getUsuario() {
+    this.usuarioService.get(this.idUsuarioAutenticado).subscribe(dataPackage => {
+      this.usuario = dataPackage.data as Usuario;
+    })
+  }
 
   navigateToMiPerfil() {
     if (this.idUsuarioAutenticado) {
@@ -134,65 +149,65 @@ export class AppComponent {
     return this.notificaciones.filter(notificacion => !notificacion.leida);
   }
 
-marcarLeida(idNotificacion: number): Promise<void> {
-  return new Promise((resolve, reject) => {
-    this.notificacionService.marcarLeida(idNotificacion).subscribe(
-      (dataPackage: DataPackage) => {
-        if (dataPackage.status === 200) {
-          // Encuentra y actualiza el estado de la notificación a "leída"
-          const notificacionIndex = this.notificaciones.findIndex(n => n.id === idNotificacion);
-          if (notificacionIndex !== -1) {
-            this.notificaciones[notificacionIndex].leida = true;
-            // Reordenar la lista para mover la notificación leída hacia abajo
-            this.actualizarOrdenNotificaciones();
+  marcarLeida(idNotificacion: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.notificacionService.marcarLeida(idNotificacion).subscribe(
+        (dataPackage: DataPackage) => {
+          if (dataPackage.status === 200) {
+            // Encuentra y actualiza el estado de la notificación a "leída"
+            const notificacionIndex = this.notificaciones.findIndex(n => n.id === idNotificacion);
+            if (notificacionIndex !== -1) {
+              this.notificaciones[notificacionIndex].leida = true;
+              // Reordenar la lista para mover la notificación leída hacia abajo
+              this.actualizarOrdenNotificaciones();
+            }
+            resolve();
+          } else {
+            reject(new Error('No se pudo marcar la notificación como leída'));
           }
-          resolve();
-        } else {
-          reject(new Error('No se pudo marcar la notificación como leída'));
+        },
+        error => {
+          reject(error);
         }
-      },
-      error => {
-        reject(error);
-      }
-    );
-  });
-}
+      );
+    });
+  }
 
-eliminarNotificacion(notificacion: Notificacion): Promise<void> {
-  return new Promise((resolve, reject) => {
-    this.notificacionService.eliminarNotificacion(notificacion.id).subscribe(
-      (dataPackage: DataPackage) => {
-        if (dataPackage.status === 200) {
-          // Elimina la notificación de la lista
-          this.notificaciones = this.notificaciones.filter(n => n.id !== notificacion.id);
-          resolve();
-        } else {
-          reject(new Error('No se pudo eliminar la notificación'));
+  eliminarNotificacion(notificacion: Notificacion): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.notificacionService.eliminarNotificacion(notificacion.id).subscribe(
+        (dataPackage: DataPackage) => {
+          if (dataPackage.status === 200) {
+            // Elimina la notificación de la lista
+            this.notificaciones = this.notificaciones.filter(n => n.id !== notificacion.id);
+            resolve();
+          } else {
+            reject(new Error('No se pudo eliminar la notificación'));
+          }
+        },
+        error => {
+          reject(error);
         }
-      },
-      error => {
-        reject(error);
+      );
+    });
+  }
+
+  // Reordenar las notificaciones para mantener las no leídas al inicio y las más recientes primero
+  private actualizarOrdenNotificaciones(): void {
+    this.notificaciones.sort((a, b) => {
+      if (a.leida === b.leida) {
+        return new Date(b.fecha).getTime() - new Date(a.fecha).getTime(); // Más recientes primero
       }
-    );
-  });
-}
+      return a.leida ? 1 : -1; // No leídas primero
+    });
+  }
 
-// Reordenar las notificaciones para mantener las no leídas al inicio y las más recientes primero
-private actualizarOrdenNotificaciones(): void {
-  this.notificaciones.sort((a, b) => {
-    if (a.leida === b.leida) {
-      return new Date(b.fecha).getTime() - new Date(a.fecha).getTime(); // Más recientes primero
-    }
-    return a.leida ? 1 : -1; // No leídas primero
-  });
-}
-
-manejarClickNotificacion(notificacion: Notificacion): void {
-  this.marcarLeida(notificacion.id).then(() => {
-    this.navegarPorNotificacion(notificacion);
-  }).catch(error => {
-    console.error('Error al manejar la notificación:', error);
-  });
-}
+  manejarClickNotificacion(notificacion: Notificacion): void {
+    this.marcarLeida(notificacion.id).then(() => {
+      this.navegarPorNotificacion(notificacion);
+    }).catch(error => {
+      console.error('Error al manejar la notificación:', error);
+    });
+  }
 
 }

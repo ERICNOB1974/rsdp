@@ -421,3 +421,13 @@ margin: 0 auto;
 .dark-mode a {
   color: lightblue !important; /* Cambia el color de los enlaces */
 }
+
+.profile-image {
+  width: 5vw; /* Ajusta el tamaño de la imagen en relación al ancho de la ventana */
+  height: auto; /* Mantiene la proporción de la imagen */
+  max-width: 50px; /* Tamaño máximo para pantallas grandes */
+  max-height: 50px; /* Tamaño máximo para pantallas grandes */
+  border-radius: 50%; /* Para que sea circular */
+  margin-right: 5px; /* Espacio entre la imagen y el texto */
+  cursor: pointer;
+}

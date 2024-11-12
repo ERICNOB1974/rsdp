@@ -2,6 +2,7 @@
 <nav class="top-navbar" *ngIf="!esPantallaLogin">
     <div class="nav-content">
         <div class="nav-items">
+
             <a class="nav-link" style="cursor: pointer;" routerLink="/calendario">
                 <i class="fa fa-calendar"></i>
             </a>
@@ -19,14 +20,19 @@
                             <span *ngIf="!notificacion.leida" class="new-notification-dot"></span>
                             <p>{{ notificacion.mensaje }}</p>
                         </div>
-                        <i class="fa fa-trash delete-icon" 
-                           (click)="eliminarNotificacion(notificacion); $event.stopPropagation()"></i>
+                        <i class="fa fa-trash delete-icon"
+                            (click)="eliminarNotificacion(notificacion); $event.stopPropagation()"></i>
                     </div>
                     <div *ngIf="getNotificacionesNoLeidas().length === 0" class="no-notifications">
                         No hay notificaciones nuevas
                     </div>
                 </div>
             </div>
+            
+            <a (click)="navigateToMiPerfil()" style="margin-left: 10px;"> <!-- Ajuste para mover a la izquierda -->
+                <img [src]="usuario.fotoPerfil ? usuario.fotoPerfil : '../assets/usuario.png'" alt="Foto de perfil"
+                    class="profile-image" />
+            </a>
         </div>
     </div>
 </nav>
@@ -80,12 +86,14 @@
                 <span class="text">Amigos</span>
             </a>
         </li>
-        <li class="profile-link">
-            <a (click)="navigateToMiPerfil()">
-                <span class="icon"><i class="fa fa-user-circle-o"></i></span>
-                <span class="text">Mi perfil</span>
-            </a>
-        </li>
+        <!-- 
+            <li class="profile-link">
+                <a (click)="navigateToMiPerfil()">
+                    <span class="icon"><i class="fa fa-user-circle-o"></i></span>
+                    <span class="text">Mi perfil</span>
+                </a>
+            </li>
+        -->
         <li class="dropdown">
             <a class="dropdown-toggle">
                 <span class="icon"><i class="fa fa-question-circle"></i></span>
@@ -155,14 +163,14 @@
             </ul>
           </li>
         -->
-          <!-- 
+        <!-- 
           <li>
               <a>
                   <button (click)="toggleTheme()">Toggle Theme</button>
                 </a>
             </li>
             -->
-            
+
         <li>
             <a (click)="logout()" class="logout-button" href="javascript:void(0);">
                 <span class="icon"><i class="fa fa-sign-out"></i></span>
