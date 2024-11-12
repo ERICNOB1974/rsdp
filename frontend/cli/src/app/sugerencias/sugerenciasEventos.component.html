@@ -1,24 +1,24 @@
-<h1>
-  Sugerencias de Eventos
-</h1>
+<h1 class="title">Sugerencias de Eventos</h1>
 
-<section class="carousel">
-
-    <div class="carousel-container">
-      <div class="carousel-item" *ngFor="let evento of obtenerEventosParaMostrar()" class="evento-item">
-        <div class="evento-card clickable" [routerLink]="['/eventos', evento.id]">
-          <div class="evento-details">
-            <h3>{{ evento.nombre }}</h3>
-            <p>{{ evento.descripcion }}</p>
-          <div class="motivo-container" *ngIf="motivos[evento.id]">
-            <p class="motivo-text">Motivo: "{{ motivos[evento.id] }}"</p>
-          </div>
-        </div>
+<section class="event-list">
+  <div *ngFor="let evento of results" class="event-item">
+    <div class="event-card" [routerLink]="['/eventos', evento.id]">
+      <img [src]="evento.imagen ? evento.imagen : '../../assets/evento.webp'" alt="{{ evento.nombre }}" class="event-image" />
+      <div class="event-overlay">
+        <h3 class="event-name">{{ evento.nombre }}</h3>
+        <p class="event-date">Fecha: {{ evento.fechaHora | date: 'medium' }}</p>
+        <p class="event-motive" *ngIf="motivos[evento.id]">Motivo: "{{ motivos[evento.id] }}"</p>
+        <p class="event-motive" *ngIf="!motivos[evento.id]">Motivo no disponible</p>
       </div>
     </div>
   </div>
 
-  <!-- Controles del carrusel -->
-  <button class="carousel-control prev" (click)="eventoAnterior()" [disabled]="results.length === 0">‹</button>
-  <button class="carousel-control next" (click)="siguienteEvento()" [disabled]="results.length === 0">›</button>
+  <!-- Paginación con el componente de paginación -->
+  <app-pagination
+  [totalPages]="totalPages"
+  [currentPage]="page+1"
+  (pageChangeRequested)="onPageChangeRequested($event)"
+  [number]="page"
+  [hidden]="elementos < 1 || totalPages <= 1">
+</app-pagination>
 </section>
