@@ -14,6 +14,7 @@ import { Comunidad } from '../comunidades/comunidad';
 import { EventoService } from '../eventos/evento.service';
 import { ComunidadService } from '../comunidades/comunidad.service';
 import { RutinaService } from '../rutinas/rutina.service';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-perfil',
@@ -34,13 +35,14 @@ export class PerfilComponent implements OnInit {
   historicoEventos: Evento[] = [];
   historicoComunidades: Comunidad[] = [];
   tabSeleccionada: string = 'publicaciones';
+  //private usuarioCargado$ = new Subject<void>();
 
   constructor(
     private route: ActivatedRoute,
     private usuarioService: UsuarioService,
     private publicacionService: PublicacionService,
-    private eventoService: EventoService, 
-    private comunidadService: ComunidadService, 
+    private eventoService: EventoService,
+    private comunidadService: ComunidadService,
     private rutinaService: RutinaService,
     private authService: AuthService,  // Inyecta el AuthService
     private router: Router
@@ -58,11 +60,15 @@ export class PerfilComponent implements OnInit {
 
   // Cargar el perfil que se está viendo
   cargarPerfil(): void {
-    
+
     this.usuarioService.get(this.idUsuario).subscribe((dataPackage: DataPackage) => {
       if (dataPackage.status === 200) {
         this.usuario = dataPackage.data as Usuario;
         this.esMiPerfil = this.usuario.id === this.idUsuarioAutenticado;
+
+        // Notificar que el usuario se ha cargado
+        //this.usuarioCargado$.next();
+        //this.usuarioCargado$.complete();
 
         if (!this.esMiPerfil) {
           this.verificarRelacion().then(() => {
@@ -277,14 +283,14 @@ export class PerfilComponent implements OnInit {
       }
     });
   }
-  
-  
+
+
   getRutinaRealizaUsuario(): void {
     this.rutinaService.rutinasRealizaUsuario(this.idUsuario).subscribe(
       (dataPackage) => {
         const responseData = dataPackage.data;
         if (Array.isArray(responseData)) {
-          this.historicoRutinas= dataPackage.data as Rutina[]; // Agregar comunidades a la lista existente
+          this.historicoRutinas = dataPackage.data as Rutina[]; // Agregar comunidades a la lista existente
           this.traerDias(this.historicoRutinas); // Llamar a traerDias después de cargar las rutinas
           this.traerEtiquetas(this.historicoRutinas);
         }
@@ -294,15 +300,15 @@ export class PerfilComponent implements OnInit {
       }
     );
   }
-  
-  
-  
+
+
+
   traerEtiquetas(rutinas: Rutina[]): void {
     for (let rutina of rutinas) {
       this.rutinaService.obtenerEtiquetasDeRutina(rutina.id!).subscribe(
         (dataPackage) => {
           if (dataPackage && Array.isArray(dataPackage.data)) {
-            rutina.etiquetas = dataPackage.data; 
+            rutina.etiquetas = dataPackage.data;
           } else {
             rutina.etiquetas = []; // Aseguramos que etiquetas sea siempre un array
           }
@@ -314,7 +320,7 @@ export class PerfilComponent implements OnInit {
       );
     }
   }
-  
+
   traerDias(rutinas: Rutina[]): void {
     for (let rutina of rutinas) {
       console.info(rutina);
@@ -330,12 +336,12 @@ export class PerfilComponent implements OnInit {
       );
     }
   }
-  
-  
+
+
   async traerHistoricoEventos(): Promise<void> {
     if (this.usuario.privacidadEventos === 'Privada' && !this.esMiPerfil) return;
     if (this.usuario.privacidadEventos === 'Solo amigos' && this.relacion !== 'amigos' && !this.esMiPerfil) return;
-    
+
     this.eventoService.participaUsuario(this.idUsuario).subscribe(async (dataPackage) => {
       if (Array.isArray(dataPackage.data)) {
         this.historicoEventos = dataPackage.data;
@@ -352,9 +358,9 @@ export class PerfilComponent implements OnInit {
         console.error(dataPackage.message);
       }
     });
-  
+
   }
-  
+
   traerParticipantes(eventos: Evento[]): void {
     // Recorrer todos los eventos y obtener el número de participantes
     for (let evento of eventos) {
@@ -371,12 +377,12 @@ export class PerfilComponent implements OnInit {
       );
     }
   }
-  
+
   async traerHistoricoComunidades(): Promise<void> {
     if (this.usuario.privacidadComunidades === 'Privada' && !this.esMiPerfil) return;
     if (this.usuario.privacidadComunidades === 'Solo amigos' && this.relacion !== 'amigos' && !this.esMiPerfil) return;
-    
-    this.comunidadService.miembroUsuario(this.idUsuario).subscribe(async(dataPackage) => {
+
+    this.comunidadService.miembroUsuario(this.idUsuario).subscribe(async (dataPackage) => {
       if (Array.isArray(dataPackage.data)) {
         this.historicoComunidades = dataPackage.data;
         console.info(this.historicoComunidades);
@@ -393,7 +399,7 @@ export class PerfilComponent implements OnInit {
       }
     });
   }
-  
+
   traerMiembros(comunidades: Comunidad[]): void {
     for (let comunidad of comunidades) {
       this.comunidadService.cantidadMiembrosEnComunidad(comunidad.id).subscribe(
@@ -408,8 +414,8 @@ export class PerfilComponent implements OnInit {
       );
     }
   }
-  
-  
+
+
   // Método para alternar entre pestañas
   seleccionarTab(tab: string): void {
     this.tabSeleccionada = tab;
