@@ -83,31 +83,42 @@
             <div class="eventos-grid">
                 <div class="evento-item" *ngFor="let evento of historicoEventos"
                     (click)="irADetalleEvento(evento.id)">
-                    <h4>{{ evento.nombre }}</h4>
-                    <p>Descripción: {{ evento.descripcion }}</p>
-                    <p>Ubicación: {{ evento.ubicacion }}</p>
-                    <p>Fecha: {{ evento.fechaDeCreacion | date:'medium' }}</p>
-                    <p>Fecha y hora: {{ evento.fechaHora | date:'medium' }}</p>
-                    <p>Participantes: {{ evento.participantes }} / {{ evento.cantidadMaximaParticipantes }}</p>
-                    <p *ngIf="evento.esPrivadoParaLaComunidad">Evento privado</p>
+                    <div class="evento-imagen">
+                        <img [src]="evento.imagen ? evento.imagen : '../../assets/evento.webp'" 
+                             alt="Imagen de {{ evento.nombre }}" 
+                             class="evento-imagen-default">
+                    </div>
+                    <div class="evento-detalles">
+                        <h4 class="evento-nombre">{{ evento.nombre }}</h4>
+                        <p class="evento-descripcion">Descripción: {{ evento.descripcion }}</p>
+                        <p class="evento-ubicacion">📍 Ubicación: {{ evento.ubicacion }}</p>
+                        <p class="evento-fecha-hora">📅 Fecha y hora: {{ evento.fechaHora | date:'medium' }}</p>
+                        <p class="evento-participantes">👥 Participantes: {{ evento.participantes }} / {{ evento.cantidadMaximaParticipantes }}</p>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Rutinas -->
         <div *ngIf="tabSeleccionada === 'rutinas'" class="perfil-rutinas">
-            <h3>Rutinas</h3>
+            <h3><i class="fas fa-dumbbell"></i> Rutinas de Entrenamiento</h3>
             <div class="rutinas-grid">
                 <div class="rutina-item" *ngFor="let rutina of historicoRutinas" (click)="irADetalleRutina(rutina.id ?? 0)">
+                    <div class="icono-rutina">
+                        <i class="fas fa-running"></i> <!-- Ejemplo de ícono -->
+                    </div>
                     <h4>{{ rutina.nombre }}</h4>
-                    <p>Descripción: {{ rutina.descripcion }}</p>
-                    <p>Etiquetas: <span *ngFor="let etiqueta of rutina.etiquetas">{{ etiqueta.nombre }}</span></p>
-                    <div *ngIf="rutina.dias !== undefined">
-                        <p>Total de días: {{ rutina.dias }}</p>
+                    <p class="descripcion">{{ rutina.descripcion }}</p>
+                    <p class="etiquetas">
+                        <span *ngFor="let etiqueta of rutina.etiquetas" class="etiqueta">{{ etiqueta.nombre }}</span>
+                    </p>
+                    <div *ngIf="rutina.dias !== undefined" class="dias">
+                        <i class="fas fa-calendar-alt"></i> Total de días: {{ rutina.dias }}
                     </div>
                 </div>
             </div>
         </div>
+        
         
 
         <!-- Comunidades -->
@@ -116,12 +127,19 @@
             <div class="comunidades-grid">
                 <div class="comunidad-item" *ngFor="let comunidad of historicoComunidades"
                     (click)="irADetalleComunidad(comunidad.id ?? 0)">
-                    <h4>{{ comunidad.nombre }}</h4>
-                    <p>Descripción: {{ comunidad.descripcion }}</p>
-                    <p>Miembros: {{ comunidad.miembros }} / {{ comunidad.cantidadMaximaMiembros }}</p>
-                    <p>Ubicación: {{ comunidad.ubicacion }}</p>
-                    <p *ngIf="comunidad.esPrivada">Comunidad privada</p>
-                    <p>Fecha de creación: {{ comunidad.fechaDeCreacion | date:'medium' }}</p>
+                    <div class="comunidad-imagen">
+                        <img [src]="comunidad.imagen ? comunidad.imagen : '../../assets/comunidad.jpg'" 
+                             alt="Imagen de {{ comunidad.nombre }}" 
+                             class="muro-imagen">
+                    </div>
+                    <div class="comunidad-detalles">
+                        <h4 class="comunidad-nombre">{{ comunidad.nombre }}</h4>
+                        <p class="comunidad-descripcion">{{ comunidad.descripcion }}</p>
+                        <p class="comunidad-miembros">👥 {{ comunidad.miembros }} / {{ comunidad.cantidadMaximaMiembros }} miembros</p>
+                        <p class="comunidad-ubicacion">📍 {{ comunidad.ubicacion }}</p>
+                        <p class="comunidad-fecha">📅 Creada el: {{ comunidad.fechaDeCreacion | date:'medium' }}</p>
+                        <p *ngIf="comunidad.esPrivada" class="comunidad-privada">🔒 Comunidad privada</p>
+                    </div>
                 </div>
             </div>
         </div>
