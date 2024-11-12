@@ -131,9 +131,13 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
             """)
     void eliminarNotificacion(Long idReceptor, Long idEmisor, String tipo);
 
-
     @Query("MATCH ()-[n:NOTIFICACION]->() " +
             "WHERE id(n) = $idNotificacion " +
             "SET n.leida = true")
     void setearNotifacionLeida(Long idNotificacion);
+
+    @Query("MATCH ()-[n:NOTIFICACION]->() " +
+            "WHERE id(n) = $idNotificacion " +
+            "DELETE n")
+    void deleteById(Long idNotificacion);
 }
