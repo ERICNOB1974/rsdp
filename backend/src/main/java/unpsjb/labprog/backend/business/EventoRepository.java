@@ -215,25 +215,23 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
         List<Evento> participaUsuario(Long idUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(e:Evento)-[:ETIQUETADO_CON]->(et:Etiqueta) "
-                        +
-                        "MATCH (evento:Evento)-[:ETIQUETADO_CON]->(et) " +
-                        "WHERE NOT (u)-[:PARTICIPA_EN]->(evento) " +
-                        "AND NOT (u)<-[:CREADO_POR]-(evento) " +
-                        "AND NOT evento.esPrivadoParaLaComunidad " +
-                        "WITH evento, COUNT(DISTINCT et) AS etiquetasComunes, " +
-                        "point({latitude: evento.latitud, longitude: evento.longitud}) AS eventoUbicacion, " +
-                        "point({latitude: u.latitud, longitude: u.longitud}) AS usuarioUbicacion " +
-                        "WITH evento, etiquetasComunes, eventoUbicacion, usuarioUbicacion, " +
-                        "point.distance(eventoUbicacion, usuarioUbicacion) AS distancia " + // Definir distancia
-                        "WITH evento, etiquetasComunes, distancia, " +
-                        "(etiquetasComunes/(distancia+1500000)) AS score " +
-                        "OPTIONAL MATCH (evento)<-[:PARTICIPA_EN]-(participante:Usuario) " +
-                        "WITH evento, score, COUNT(DISTINCT participante) AS cantidadParticipantes " +
-                        "WHERE cantidadParticipantes < evento.cantidadMaximaParticipantes " +
-                        "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
-                        "RETURN evento, score, 'son similares porque tienen '+etiquetasCompartidas+' etiqueta/s compartida/s con comunidades en las que participas' AS motivo " +
-                        "ORDER BY score DESC, evento.fechaHora ASC " +
-                        "LIMIT 5")
+                        + "MATCH (evento:Evento)-[:ETIQUETADO_CON]->(et) "
+                        + "WHERE NOT (u)-[:PARTICIPA_EN]->(evento) "
+                        + "AND NOT (u)<-[:CREADO_POR]-(evento) "
+                        + "AND NOT evento.esPrivadoParaLaComunidad "
+                        + "WITH evento, COUNT(DISTINCT et) AS etiquetasComunes, "
+                        + "point({latitude: evento.latitud, longitude: evento.longitud}) AS eventoUbicacion, "
+                        + "point({latitude: u.latitud, longitude: u.longitud}) AS usuarioUbicacion "
+                        + "WITH evento, etiquetasComunes, eventoUbicacion, usuarioUbicacion, "
+                        + "point.distance(eventoUbicacion, usuarioUbicacion) AS distancia "
+                        + "WITH evento, etiquetasComunes, distancia, "
+                        + "(etiquetasComunes/(distancia+1500000)) AS score "
+                        + "OPTIONAL MATCH (evento)<-[:PARTICIPA_EN]-(participante:Usuario) "
+                        + "WITH evento, score, etiquetasComunes, COUNT(DISTINCT participante) AS cantidadParticipantes "
+                        + "WHERE cantidadParticipantes < evento.cantidadMaximaParticipantes "
+                        + "AND evento.fechaHora > datetime() + duration({hours: 1}) "
+                        + "RETURN evento, score, 'son similares porque tienen '+etiquetasComunes+' etiqueta/s compartida/s con comunidades en las que participas' AS motivo "
+                        + "ORDER BY score DESC, evento.fechaHora ASC")
         List<ScoreEvento> sugerenciasDeEventosBasadosEnEventos2(String nombreUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario) " +
@@ -259,9 +257,8 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "AND NOT (u)-[:PARTICIPA_EN]->(evento) " +
                         "AND NOT (u)<-[:CREADO_POR]-(evento) " +
                         "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
-                        "RETURN evento, score, 'tenes '+amigosParticipando+' amigos participando' AS motivo " +
-                        "ORDER BY score DESC, amigosParticipando DESC, evento.fechaHora ASC " +
-                        "LIMIT 3")
+                        "RETURN evento, score, 'tenes '+coincidencias+' coincidencias' AS motivo " +
+                        "ORDER BY score DESC, amigosParticipando DESC, evento.fechaHora ASC")
         List<ScoreEvento> sugerenciasDeEventosBasadosEnAmigos2(String nombreUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(com:Comunidad)-[:ETIQUETADA_CON]->(e:Etiqueta)<-[:ETIQUETADO_CON]-(evento:Evento) "
@@ -286,8 +283,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
                         "RETURN evento, score, 'son similares porque tienen '+etiquetasCompartidas+' etiqueta/s compartida/s con comunidades en las que participas' AS motivo  "
                         +
-                        "ORDER BY score DESC, evento.fechaHora ASC " +
-                        "LIMIT 3")
+                        "ORDER BY score DESC, evento.fechaHora ASC")
         List<ScoreEvento> sugerenciasDeEventosBasadosEnComunidades2(String nombreUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:REALIZA_RUTINA]->(:Rutina)-[:ETIQUETADA_CON]->(e:Etiqueta)<-[:ETIQUETADO_CON]-(evento:Evento) "
@@ -309,13 +305,12 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
                         "RETURN evento, score, 'son similares porque tienen '+etiquetasCompartidas+' etiqueta/s compartida/s con rutinas que realizas' AS motivo "
                         +
-                        "ORDER BY score DESC, evento.fechaHora ASC " +
-                        "LIMIT 3")
+                        "ORDER BY score DESC, evento.fechaHora ASC ")
         List<ScoreEvento> sugerenciasDeEventosBasadosEnRutinas2(String nombreUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN|CREADO_POR]-(e:Evento) " +
-        "WHERE e.fechaHora > datetime() " +
-        "RETURN DISTINCT e")
+                        "WHERE e.fechaHora > datetime() " +
+                        "RETURN DISTINCT e")
         List<Evento> eventosFuturosPertenecientesAUnUsuario(String nombreUsuario);
 
         @Query("""

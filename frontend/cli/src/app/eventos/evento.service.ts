@@ -50,10 +50,10 @@ export class EventoService {
     return this.http.post<DataPackage>(url, evento);
   }
 
-  sugerencias(): Observable<DataPackage> {
+  sugerencias(page:number, size:number): Observable<DataPackage> {
     const nombreUsuario = this.authService.getNombreUsuario();
 
-    return this.http.get<DataPackage>(` ${this.eventosUrl}/sugerencias-combinadas/${nombreUsuario}`);
+    return this.http.get<DataPackage>(` ${this.eventosUrl}/sugerencias-combinadas/${nombreUsuario}?page=${page}&size=${size}`);
   }
 
   etiquetar(evento: Evento, idEtiqueta: number): Observable<DataPackage> {

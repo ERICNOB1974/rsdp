@@ -2,6 +2,7 @@ package unpsjb.labprog.backend.presenter;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -57,7 +58,8 @@ public class EventoPresenter {
     }
 
     @GetMapping("/buscarCreadorDeUnEventoInterno/{comunidadId}/{eventoId}")
-    public ResponseEntity<Object> buscarCreadorDeUnEventoInterno(@PathVariable Long comunidadId, @PathVariable Long eventoId) {
+    public ResponseEntity<Object> buscarCreadorDeUnEventoInterno(@PathVariable Long comunidadId,
+            @PathVariable Long eventoId) {
         return Response.ok(usuarioService.buscarCreadorDeUnEventoInterno(comunidadId, eventoId));
     }
 
@@ -73,9 +75,11 @@ public class EventoPresenter {
     }
 
     @RequestMapping(path = "/crearParaComunidad/{nombreUsuario}/{comunidadId}", method = RequestMethod.POST)
-    public ResponseEntity<Object> crearConCreadorParaEventoInternoParaComunidad(@RequestBody Evento evento, @PathVariable String nombreUsuario, @PathVariable Long comunidadId)
+    public ResponseEntity<Object> crearConCreadorParaEventoInternoParaComunidad(@RequestBody Evento evento,
+            @PathVariable String nombreUsuario, @PathVariable Long comunidadId)
             throws MessagingException, EventoException {
-        return Response.ok(eventoService.crearConCreadorParaEventoInternoParaComunidad(evento, nombreUsuario, comunidadId));
+        return Response
+                .ok(eventoService.crearConCreadorParaEventoInternoParaComunidad(evento, nombreUsuario, comunidadId));
     }
 
     @GetMapping("/sugerencias/{nombreUsuario}")
@@ -211,15 +215,27 @@ public class EventoPresenter {
         return Response.ok(sugerenciasDeEventosBasadosEnRutinas);
     }
 
-    @GetMapping("/sugerencias-combinadas/{nombreUsuario}")
-    public ResponseEntity<Object> obtenerSugerenciasCombinadas(@PathVariable String nombreUsuario) {
-        try {
-            return Response.ok(eventoService.obtenerTodasLasSugerenciasDeEventos(nombreUsuario));
-        } catch (Exception e) {
-            // Manejo del error
-            return Response.error("", "Error al obtener las sugerencias: " + e.getMessage());
+@GetMapping("/sugerencias-combinadas/{nombreUsuario}")
+public ResponseEntity<Object> obtenerSugerenciasCombinadas(
+        @PathVariable String nombreUsuario,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "4") int size) {
+    try {
+        // Llamar al servicio que devuelve los eventos y el total de páginas
+        Map<String, Object> result = eventoService.obtenerSugerenciasEventosConTotalPaginas(nombreUsuario, page, size);
+
+        // Verificar si el resultado contiene datos y total de páginas
+        if (result.isEmpty()) {
+            return Response.error("", "No se encontraron sugerencias para los parámetros proporcionados.");
         }
+
+        // Retornar los eventos y el total de páginas en el ResponseEntity
+        return Response.ok(result);
+    } catch (Exception e) {
+        // Manejo del error
+        return Response.error("", "Error al obtener las sugerencias: " + e.getMessage());
     }
+}
 
     @GetMapping("/etiquetas/{idEvento}")
     public ResponseEntity<Object> etiquetasEvento(@PathVariable Long idEvento) {

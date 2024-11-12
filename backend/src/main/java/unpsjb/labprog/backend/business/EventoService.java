@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -323,26 +324,23 @@ public class EventoService {
         return sugerencias;
     }
 
-    public List<ScoreEvento> obtenerTodasLasSugerenciasDeEventos(String nombreUsuario) {
-        // Obtener todas las sugerencias de comunidades desde las tres consultas
+    public Map<String, Object> obtenerSugerenciasEventosConTotalPaginas(String nombreUsuario, int page, int pageSize) {
+        // Obtener todas las sugerencias de eventos (como en tu código original)
         List<ScoreEvento> sugerenciasEventos = eventoRepository.sugerenciasDeEventosBasadosEnEventos2(nombreUsuario);
         List<ScoreEvento> sugerenciasAmigos = eventoRepository.sugerenciasDeEventosBasadosEnAmigos2(nombreUsuario);
-        List<ScoreEvento> sugerenciasComunidades = eventoRepository
-                .sugerenciasDeEventosBasadosEnComunidades2(nombreUsuario);
+        List<ScoreEvento> sugerenciasComunidades = eventoRepository.sugerenciasDeEventosBasadosEnComunidades2(nombreUsuario);
         List<ScoreEvento> sugerenciasRutinas = eventoRepository.sugerenciasDeEventosBasadosEnRutinas2(nombreUsuario);
-
+    
         // Combinar todas las sugerencias en una sola lista
         List<ScoreEvento> todasLasSugerencias = new ArrayList<>();
         todasLasSugerencias.addAll(sugerenciasAmigos);
         todasLasSugerencias.addAll(sugerenciasEventos);
         todasLasSugerencias.addAll(sugerenciasComunidades);
         todasLasSugerencias.addAll(sugerenciasRutinas);
-
+    
         // Usar un Map para eliminar duplicados y sumar los scores de las comunidades
         Map<Long, ScoreEvento> mapaSugerencias = new HashMap<>();
-
         for (ScoreEvento scoreEvento : todasLasSugerencias) {
-            // Si la comunidad ya existe en el mapa, sumar los scores
             mapaSugerencias.merge(scoreEvento.getEvento().getId(),
                     new ScoreEvento(scoreEvento.getEvento(), scoreEvento.getScore(), scoreEvento.getMotivo()),
                     (existente, nuevo) -> {
@@ -350,18 +348,34 @@ public class EventoService {
                         existente.setScore(nuevoScore); // Actualizar el score sumado
                         String nuevoMotivo = existente.getMotivo() + " --- " + nuevo.getMotivo();
                         existente.setMotivo(nuevoMotivo);
-                        return existente; // Retornar el objeto existente actualizado
+                        return existente;
                     });
         }
-
-        // Obtener la lista de ScoreComunidad sin duplicados con los scores sumados
+    
+        // Obtener la lista de ScoreEvento sin duplicados con los scores sumados
         List<ScoreEvento> listaSugerenciasSinDuplicados = new ArrayList<>(mapaSugerencias.values());
-
+    
         // Ordenar la lista por score en orden descendente
-        listaSugerenciasSinDuplicados.sort((a, b) -> Double.compare(b.getScore(), a.getScore())); // Orden descendente
-
-        // Retornar la lista ordenada
-        return listaSugerenciasSinDuplicados;
+        listaSugerenciasSinDuplicados.sort((a, b) -> Double.compare(b.getScore(), a.getScore()));
+    
+        // Calcular el total de páginas
+        int totalElementos = listaSugerenciasSinDuplicados.size();
+        int totalPaginas = (int) Math.ceil((double) totalElementos / pageSize);
+    
+        // Paginar la lista
+        int start = page * pageSize;
+        int end = Math.min(start + pageSize, listaSugerenciasSinDuplicados.size());
+    
+        if (start > end) {
+            return Collections.emptyMap(); // Si la página está fuera de rango
+        }
+    
+        // Crear el mapa con los datos de eventos y el total de páginas
+        Map<String, Object> result = new HashMap<>();
+        result.put("data", listaSugerenciasSinDuplicados.subList(start, end)); // Eventos de la página
+        result.put("totalPaginas", totalPaginas); // Total de páginas
+    
+        return result;
     }
 
     public List<Evento> eventosFuturosPertenecientesAUnUsuario(String nombreUsuario) {
