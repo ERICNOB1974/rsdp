@@ -333,8 +333,8 @@ export class PerfilComponent implements OnInit {
   
   
   async traerHistoricoEventos(): Promise<void> {
-    if (this.usuario.privacidadPerfil === 'Privada' && !this.esMiPerfil) return;
-    if (this.usuario.privacidadPerfil === 'Solo amigos' && this.relacion !== 'amigos' && !this.esMiPerfil) return;
+    if (this.usuario.privacidadEventos === 'Privada' && !this.esMiPerfil) return;
+    if (this.usuario.privacidadEventos === 'Solo amigos' && this.relacion !== 'amigos' && !this.esMiPerfil) return;
     
     this.eventoService.participaUsuario(this.idUsuario).subscribe(async (dataPackage) => {
       if (Array.isArray(dataPackage.data)) {
@@ -373,8 +373,8 @@ export class PerfilComponent implements OnInit {
   }
   
   async traerHistoricoComunidades(): Promise<void> {
-    if (this.usuario.privacidadPerfil === 'Privada' && !this.esMiPerfil) return;
-    if (this.usuario.privacidadPerfil === 'Solo amigos' && this.relacion !== 'amigos' && !this.esMiPerfil) return;
+    if (this.usuario.privacidadComunidades === 'Privada' && !this.esMiPerfil) return;
+    if (this.usuario.privacidadComunidades === 'Solo amigos' && this.relacion !== 'amigos' && !this.esMiPerfil) return;
     
     this.comunidadService.miembroUsuario(this.idUsuario).subscribe(async(dataPackage) => {
       if (Array.isArray(dataPackage.data)) {

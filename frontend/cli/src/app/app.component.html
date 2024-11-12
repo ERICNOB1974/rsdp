@@ -1,13 +1,8 @@
 <!-- Nueva barra de navegación superior -->
 <nav class="top-navbar" *ngIf="!esPantallaLogin">
     <div class="nav-content">
-        <!-- 
-        <div class="nav-brand">
-          <h5 (click)="navigateTo('/')" style="cursor: pointer;">RSDP</h5>
-        </div>
-        -->
-
         <div class="nav-items">
+
             <a class="nav-link" style="cursor: pointer;" routerLink="/calendario">
                 <i class="fa fa-calendar"></i>
             </a>
@@ -19,16 +14,25 @@
                     </span>
                 </a>
                 <div class="notifications-menu">
-                    <div *ngFor="let notificacion of getNotificacionesNoLeidas()" class="notification-item"
+                    <div *ngFor="let notificacion of notificaciones" class="notification-item"
                         (click)="manejarClickNotificacion(notificacion)">
-                        <p>{{ notificacion.mensaje }}</p>
-                        <span *ngIf="!notificacion.leida" class="new-notification-dot"></span>
+                        <div class="notification-content">
+                            <span *ngIf="!notificacion.leida" class="new-notification-dot"></span>
+                            <p>{{ notificacion.mensaje }}</p>
+                        </div>
+                        <i class="fa fa-trash delete-icon"
+                            (click)="eliminarNotificacion(notificacion); $event.stopPropagation()"></i>
                     </div>
                     <div *ngIf="getNotificacionesNoLeidas().length === 0" class="no-notifications">
                         No hay notificaciones nuevas
                     </div>
                 </div>
             </div>
+            
+            <a (click)="navigateToMiPerfil()" style="margin-left: 10px;"> <!-- Ajuste para mover a la izquierda -->
+                <img [src]="usuario.fotoPerfil ? usuario.fotoPerfil : '../assets/usuario.png'" alt="Foto de perfil"
+                    class="profile-image" />
+            </a>
         </div>
     </div>
 </nav>
@@ -82,12 +86,14 @@
                 <span class="text">Amigos</span>
             </a>
         </li>
-        <li class="profile-link">
-            <a (click)="navigateToMiPerfil()">
-                <span class="icon"><i class="fa fa-user-circle-o"></i></span>
-                <span class="text">Mi perfil</span>
-            </a>
-        </li>
+        <!-- 
+            <li class="profile-link">
+                <a (click)="navigateToMiPerfil()">
+                    <span class="icon"><i class="fa fa-user-circle-o"></i></span>
+                    <span class="text">Mi perfil</span>
+                </a>
+            </li>
+        -->
         <li class="dropdown">
             <a class="dropdown-toggle">
                 <span class="icon"><i class="fa fa-question-circle"></i></span>
@@ -156,7 +162,15 @@
               </li>
             </ul>
           </li>
-          -->
+        -->
+        <!-- 
+          <li>
+              <a>
+                  <button (click)="toggleTheme()">Toggle Theme</button>
+                </a>
+            </li>
+            -->
+
         <li>
             <a (click)="logout()" class="logout-button" href="javascript:void(0);">
                 <span class="icon"><i class="fa fa-sign-out"></i></span>

@@ -4,68 +4,60 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { EventoService } from '../eventos/evento.service';
 import { Evento } from '../eventos/evento';
+import { PaginationComponent } from '../pagination/pagination.component';
+import { DataPackage } from '../data-package';
 
 @Component({
-    selector: 'app-sugerencias',
-    standalone: true,
-    imports: [CommonModule, FormsModule, RouterModule],
-    templateUrl: 'sugerenciasEventos.component.html',
-    styleUrls: ['sugerencias.component.css'] 
+  selector: 'app-sugerencias',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule, PaginationComponent],
+  templateUrl: 'sugerenciasEventos.component.html',
+  styleUrls: ['sugerenciasEventos.component.css']
 })
 export class SugerenciasEventosComponent implements OnInit {
-    currentIndex: number = 0; // Índice actual del carrusel
-    eventos: Evento[] = []; // Arreglo para almacenar los eventos que provienen del backend
-    results: any[] = [];
-    motivos: { [key: number]: String } = {}; // Para almacenar comentarios por publicación
+  currentIndex: number = 0; // Índice actual del carrusel
+  eventos: Evento[] = []; // Arreglo para almacenar los eventos que provienen del backend
+  results: any[] = [];
+  motivos: { [key: number]: String } = {}; // Para almacenar comentarios por publicación
+  page: number = 0;  // Página inicial
+  size: number = 4;  // Tamaño de la página (cantidad de elementos)
+  elementos: number = 0;
+  totalPages: number = 0;
+  constructor(private eventoService: EventoService,
+    private router: Router) { }
 
-  
-    constructor(private eventoService: EventoService,
-        private router: Router) { }
+  ngOnInit(): void {
+    this.getEventos();
+    console.info(this.results);
+  }
 
-    ngOnInit(): void {
-        this.getEventos();
-        console.info(this.results);
-    }
+  getEventos(): void {
+    this.eventoService.sugerencias(this.page, this.size).subscribe((dataPackage: DataPackage) => {
+      // Cast de tipo para acceder a la propiedad 'data' dentro del objeto 'dataPackage'
+      const data = dataPackage.data as { data: any[], totalPaginas: number };
 
-    getEventos(): void {
-      this.eventoService.sugerencias().subscribe((dataPackage) => {
-        if (Array.isArray(dataPackage.data)) {
-          this.results = dataPackage.data.map(item => item.evento); // Extrae solo los objetos 'evento'
-          console.info("Eventos recibidos: ", this.results);
-          this.motivos = {};
-          dataPackage.data.forEach(item => {
-            this.motivos[item.evento.id] = item.motivo;
-          });
-        }
-      });
-    }
+      if (Array.isArray(data.data)) {
+        this.results = data.data.map(item => item.evento);  // Extrae solo los objetos 'evento'
+        console.info("Eventos recibidos: ", this.results);
 
+        this.motivos = {};
+        data.data.forEach(item => {
+          this.motivos[item.evento.id] = item.motivo;
+        });
 
-      // Método para mover al siguiente grupo de eventos en el carrusel
-      siguienteEvento(): void {
-        this.currentIndex = (this.currentIndex + 1) % this.results.length; // Incrementa el índice
+        this.elementos = data.data.length
+        this.totalPages = data.totalPaginas; // Accede correctamente a 'totalPaginas'
+        console.info("Total de páginas:", this.totalPages);
       }
-    
-      // Método para mover al grupo anterior de eventos en el carrusel
-      eventoAnterior(): void {
-        this.currentIndex = (this.currentIndex - 1 + this.results.length) % this.results.length; // Decrementa el índice
-      }
-    
-      // Método para obtener los eventos a mostrar en el carrusel
-      obtenerEventosParaMostrar(): Evento[] {
-        const eventosParaMostrar: Evento[] = [];
-      
-        if (this.results.length === 0) {
-          return eventosParaMostrar; // Devuelve un arreglo vacío si no hay eventos
-        }
-      
-        const maxEventos = Math.min(4, this.results.length); // Calcula cuántos eventos puedes mostrar, como máximo 4 o menos
-      
-        for (let i = 0; i < maxEventos; i++) {
-          const index = (this.currentIndex + i) % this.results.length;
-          eventosParaMostrar.push(this.results[index]);
-        }
-      
-        return eventosParaMostrar;
-      }
+    });
+  }
+
+
+  // Método para manejar el cambio de página solicitado desde la paginación
+  onPageChangeRequested(newPage: number): void {
+    // Convertir la página del frontend (base 1) a base 0
+    this.page = newPage - 1; // Si el frontend usa páginas de 1, restamos 1 para enviar la página correcta al backend
+    this.getEventos();
+}
+
 }

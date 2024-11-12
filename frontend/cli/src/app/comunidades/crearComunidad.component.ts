@@ -44,7 +44,7 @@ export class CrearComunidadComponent {
   archivoSeleccionado!: File; // Para almacenar la imagen o video seleccionado
   tipoArchivo: string = ''; // Para distinguir entre imagen o video
   vistaPreviaArchivo: string | ArrayBuffer | null = null;
-  
+
   constructor(
     private route: ActivatedRoute,
     private location: Location,
@@ -81,31 +81,31 @@ export class CrearComunidadComponent {
   async saveComunidad(): Promise<void> {
     try {
       console.log(this.comunidad.latitud + " " + this.comunidad.longitud);
-      
+
       // Guardar la comunidad y obtener su ID
       const dataPackage = await firstValueFrom(this.comunidadService.save(this.comunidad));
       this.comunidad = <Comunidad>dataPackage.data;
-      
+
       this.messageToShow = '¡La comunidad se ha guardado exitosamente!';
       this.showMessage = true; // Mostrar el mensaje
       setTimeout(() => {
         this.showMessage = false;
       }, 10000);
-  
+
       // Verificar y crear etiquetas si es necesario
       for (const etiqueta of this.etiquetasSeleccionadas) {
         const existe = await this.etiquetaService.verificarExistencia(etiqueta.nombre).toPromise();
         let etiquetaFinal = etiqueta;
-  
+
         if (!existe) {
           const nuevaEtiqueta = { id: 0, nombre: etiqueta.nombre };
           etiquetaFinal = await firstValueFrom(this.etiquetaService.crearEtiqueta(nuevaEtiqueta));
         }
-  
+
         // Realizar la etiquetación con la etiqueta final
         await this.comunidadService.etiquetar(this.comunidad, etiquetaFinal.id).toPromise();
       }
-  
+
     } catch (error) {
       this.messageToShow = 'Ocurrió un error al guardar la comunidad.';
       this.showMessage = true; // Mostrar el mensaje de error
@@ -113,11 +113,11 @@ export class CrearComunidadComponent {
         this.showMessage = false;
       }, 10000);
     }
-  
+
     // Recargar la página una vez que todo esté completo
     location.reload();
   }
-  
+
 
   cancel(): void {
     this.router.navigate(['/comunidades']);
@@ -328,7 +328,7 @@ export class CrearComunidadComponent {
 
     if (file) {
       // Verificar si el archivo es una imagen o un video
-      if (validImageTypes.includes(file.type) ) {
+      if (validImageTypes.includes(file.type)) {
         this.formatoValido = true; // El formato es válido
         this.archivoSeleccionado = file;
 
@@ -349,7 +349,7 @@ export class CrearComunidadComponent {
       } else {
         this.formatoValido = false; // El formato no es válido
         this.vistaPreviaArchivo = null; // No se muestra la vista previa
-        alert('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF) o videos (MP4).');
+        alert('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF).');
       }
     }
   }
