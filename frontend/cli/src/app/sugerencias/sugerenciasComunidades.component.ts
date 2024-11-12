@@ -32,7 +32,6 @@ export class SugerenciasComunidadesComponent implements OnInit {
           if (Array.isArray(dataPackage.data)) {
             // Extrae solo los usuarios
             this.results = dataPackage.data.map(item => item.comunidad);
-      
             // Llena el objeto `motivos` con pares id: motivo
             this.motivos = {};
             dataPackage.data.forEach(item => {
@@ -68,7 +67,8 @@ export class SugerenciasComunidadesComponent implements OnInit {
           const index = (this.currentIndex + i) % this.results.length;
           comunidadesParaMostrar.push(this.results[index]);
         }
-      
+        console.info(comunidadesParaMostrar);
+
         return comunidadesParaMostrar;
       }
       
