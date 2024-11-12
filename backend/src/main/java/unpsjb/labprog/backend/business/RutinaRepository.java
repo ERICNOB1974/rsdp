@@ -267,5 +267,11 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
         "ORDER BY rel.fechaComienzo ASC")
         List<Rutina> rutinasRealizaUsuario(@Param("idUsuario") Long idUsuario);
 
+        @Query("MATCH (u:Usuario)-[rr:REALIZA_RUTINA]->(r:Rutina) " +
+       "WHERE id(r) = $rutinaId AND id(u) = $usuarioId " +
+       "RETURN CASE WHEN COUNT(rr) > 0 THEN true ELSE false END AS existeRelacion " +
+       "LIMIT 1")
+       boolean existeRelacionEntreUsuarioYRutina(@Param("rutinaId") Long rutinaId, @Param("usuarioId") Long usuarioId);
+
 
 }

@@ -356,4 +356,12 @@ public class RutinaService {
     public List<Rutina> rutinasRealizaUsuario(Long idUsuario) {
         return rutinaRepository.rutinasRealizaUsuario(idUsuario);
     }
+
+    public Long obtenerProgresoActual(Long rutinaId, Long usuarioId) {
+        if (!diaRepository.verificarRelacionDiaFinalizado(rutinaId, usuarioId) || !rutinaRepository.existeRelacionEntreUsuarioYRutina(rutinaId, usuarioId)){
+            return (long) -1;
+        }
+        return diaRepository.obtenerProgresoActual(rutinaId, usuarioId);
+    }
+
 }
