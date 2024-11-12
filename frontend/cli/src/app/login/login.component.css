@@ -1,8 +1,12 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap');
 
 :root {
-    --mdc-theme-error: #B00020;
-    --mdc-outlined-card-outline-width: 2px;
+    --primary-color: #6200ea;
+    --secondary-color: #03dac6;
+    --error-color: #b00020;
+    --background-color: #f5f5f5;
+    --card-background: #ffffff;
+    --text-color: #333;
 }
 
 .wrap-login {
@@ -12,7 +16,7 @@
     align-items: center;
     margin: 0 auto;
     position: absolute;
-    top: 65px; /* Ajustado para evitar que se superponga con la barra superior */
+    top: 40px; /* Ajustado para evitar que se superponga con la barra superior */
     left: 50%; /* Centra el contenedor */
     transform: translate(-50%, 0);
 }

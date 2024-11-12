@@ -5,7 +5,8 @@ import { Rutina } from './rutina';
 import { Dia } from './dia';
 import { Ejercicio } from './ejercicio';
 import { DataPackage } from '../data-package';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
+import { RutinaEstadoService } from './rutinaEstado.component';
 
 @Component({
     selector: 'app-ejercicios',
@@ -27,19 +28,32 @@ export class RutinasEjercicioComponent implements OnInit, OnDestroy {
     enDescanso: boolean = false;
     diaFinalizado: boolean = false;
 
-
     constructor(
         private rutinaService: RutinaService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute, 
+        private rutinaEstadoService: RutinaEstadoService,
+        private location: Location
     ) {}
 
     ngOnInit(): void {
         const idRutina = Number(this.route.snapshot.paramMap.get('id'));
         console.info('ID de la rutina obtenida:', idRutina);
-        this.obtenerRutina(idRutina);
+    
+        // Verifica si se debe reiniciar la rutina
+        if (this.rutinaEstadoService.getReiniciarRutina()) {
+            console.info('Reiniciando rutina...');
+            this.rutinaEstadoService.clearReiniciarRutina(); // Limpia el estado después de verificarlo
+            this.obtenerRutina(idRutina, -1); // Comienza desde el primer día
+        } else {
+            // Carga el progreso actual de la rutina
+            this.rutinaService.obtenerProgresoActual(idRutina).subscribe((dataPackage: DataPackage) => {
+                const diaActualId = dataPackage.data as unknown as number;
+                this.obtenerRutina(idRutina, diaActualId);
+            });
+        }
     }
-
-    obtenerRutina(idRutina: number): void {
+    
+    obtenerRutina(idRutina: number, diaActualId: number): void {
         console.info('Solicitando rutina con ID:', idRutina);
         this.rutinaService.getRutinaYejercicios(idRutina).subscribe((dataPackage: DataPackage) => {
             if (dataPackage.status === 200) {
@@ -48,60 +62,65 @@ export class RutinasEjercicioComponent implements OnInit, OnDestroy {
                 console.info('Rutina obtenida:', this.rutina);
     
                 this.dias.sort((a, b) => (a.orden || 0) - (b.orden || 0));
-
-                // Procesar cada día para crear un único array de ejercicios
-                this.dias.forEach(dia => {
-                    const ejercicios: Ejercicio[] = []; // Array para almacenar los ejercicios
     
-                    // Agregar ejercicios de repeticiones
+                this.dias.forEach(dia => {
+                    const ejercicios: Ejercicio[] = [];
                     dia.ejerciciosRepeticiones?.forEach(ejercicio => {
                         ejercicios.push({
                             nombre: ejercicio.nombre,
                             repeticiones: ejercicio.repeticiones,
                             series: ejercicio.series,
-                            tiempo: '', // No aplica
+                            tiempo: '',
                             descripcion: ejercicio.descripcion,
                             imagen: ejercicio.imagen,
-                            tipo: 'series', // Asumiendo que todos son de tipo 'series'
-                            orden: ejercicio.orden // Asegúrate de que esta propiedad esté presente
+                            tipo: 'series',
+                            orden: ejercicio.orden
                         });
                     });
-    
-                    // Agregar ejercicios de tiempo
                     dia.ejerciciosTiempo?.forEach(ejercicio => {
                         ejercicios.push({
                             nombre: ejercicio.nombre,
-                            repeticiones: null, // No aplicable
-                            series: null, // No aplicable
+                            repeticiones: null,
+                            series: null,
                             tiempo: ejercicio.tiempo,
                             descripcion: ejercicio.descripcion,
                             imagen: ejercicio.imagen,
-                            tipo: 'resistencia', // Asumiendo que todos son de tipo 'resistencia'
-                            orden: ejercicio.orden // Asegúrate de que esta propiedad esté presente
+                            tipo: 'resistencia',
+                            orden: ejercicio.orden
                         });
                     });
-    
                     dia.tipo = ejercicios.length > 0 ? 'trabajo' : 'descanso';
-                    // Ordenar ejercicios por el atributo orden
                     dia.ejercicios = ejercicios.sort((a, b) => (a.orden || 0) - (b.orden || 0));
-    
-                    console.info('Ejercicios para el día:', dia.nombre, dia.ejercicios);
                 });
     
-                if (this.dias.length > 0) {
+                // Configura el día actual según el progreso y reinicia el estado `diaFinalizado`
+                this.diaFinalizado = false;
+    
+                if (diaActualId === -1) {
+                    this.diaActualIndex = 0;
+                } else {
+                    this.diaActualIndex = this.dias.findIndex(dia => dia.id === diaActualId) + 1;
+                }
+    
+                if (this.dias.length > 0 && this.diaActualIndex < this.dias.length) {
                     this.diaActual = this.dias[this.diaActualIndex];
+                    this.ejercicioActualIndex = 0;
                     this.ejercicioActual = this.diaActual.ejercicios[this.ejercicioActualIndex] || null;
-                    console.info('Día actual:', this.diaActual);
-                    console.info('Ejercicio actual:', this.ejercicioActual);
+                    console.info('Día actual después del reinicio:', this.diaActual);
+                    console.info('Ejercicio actual después del reinicio:', this.ejercicioActual);
+                } else {
+                    this.diaActualIndex = 0;
+                    this.diaActual = this.dias[this.diaActualIndex];
+                    this.ejercicioActualIndex = 0;
+                    this.ejercicioActual = this.diaActual.ejercicios[0] || null;
                 }
             } else {
-                console.error(dataPackage.message);
+                console.error("Error al obtener la rutina:", dataPackage.message);
             }
         });
     }
-
-
-
+    
+    
     terminarEjercicio(): void {
         console.info('Terminando ejercicio...');
     
@@ -131,8 +150,6 @@ export class RutinasEjercicioComponent implements OnInit, OnDestroy {
         }
     }
 
-
-
     iniciarDescanso(): void {
         this.intervaloDescanso = setInterval(() => {
             if (this.tiempoDescanso > 0) {
@@ -144,7 +161,6 @@ export class RutinasEjercicioComponent implements OnInit, OnDestroy {
         }, 1000); // 1000 ms = 1 segundo
     }
 
-    
     siguienteDia(): void {
         if (!this.rutinaTerminada && this.diaActualIndex < this.dias.length - 1) {
             this.diaActualIndex++;
@@ -175,4 +191,9 @@ export class RutinasEjercicioComponent implements OnInit, OnDestroy {
         this.diaFinalizado = false;
         this.siguienteDia();
     }
+
+    volver(): void {
+        this.location.back(); 
+    }
+
 }

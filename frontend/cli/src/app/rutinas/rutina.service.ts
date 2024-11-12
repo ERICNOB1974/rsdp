@@ -77,12 +77,12 @@ export class RutinaService {
 
   crearRelacionRealizaRutina(rutinaId: number): Observable<DataPackage> {
     const usuarioId = this.authService.getUsuarioId();
-    return this.http.post<DataPackage>(` ${this.rutinasUrl}/crearRelacionRealizaRutina/${rutinaId}/${usuarioId}`, null );
+    return this.http.post<DataPackage>(` ${this.rutinasUrl}/crearRelacionRealizaRutina/${rutinaId}/${usuarioId}`, null);
   }
 
   crearRelacionDiaFinalizado(diaId: number): Observable<DataPackage> {
     const usuarioId = this.authService.getUsuarioId();
-    return this.http.post<DataPackage>(` ${this.rutinasUrl}/crearRelacionDiaFinalizado/${diaId}/${usuarioId}`, null );
+    return this.http.post<DataPackage>(` ${this.rutinasUrl}/crearRelacionDiaFinalizado/${diaId}/${usuarioId}`, null);
   }
 
   verificarDiaFinalizado(diaId: number): Observable<DataPackage> {
@@ -125,7 +125,7 @@ export class RutinaService {
       })
     );
   }
-  
+
   obtenerDiasEnRutina(idRutina: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.rutinasUrl}/obtenerDiasEnRutina/${idRutina}`);
   }
@@ -153,14 +153,20 @@ export class RutinaService {
   }
 
 
-rutinasCreadasPorUsuario(offset: number, limit: number): Observable<DataPackage> {
-  const userId = this.authService.getUsuarioId();
-  return this.http.get<DataPackage>(`${this.rutinasUrl}/rutinasCreadasPorUsuario/${userId}?offset=${offset}&limit=${limit}`);
-}
+  rutinasCreadasPorUsuario(offset: number, limit: number): Observable<DataPackage> {
+    const userId = this.authService.getUsuarioId();
+    return this.http.get<DataPackage>(`${this.rutinasUrl}/rutinasCreadasPorUsuario/${userId}?offset=${offset}&limit=${limit}`);
+  }
 
-rutinasRealizaUsuario(usuarioId: number): Observable<DataPackage> {
-  return this.http.get<DataPackage>(`${this.rutinasUrl}/rutinasRealizaUsuario/${usuarioId}`);
-}
+  rutinasRealizaUsuario(usuarioId: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.rutinasUrl}/rutinasRealizaUsuario/${usuarioId}`);
+  }
+
+  obtenerProgresoActual(rutinaId: number): Observable<DataPackage>{
+    const usuarioId = this.authService.getUsuarioId();
+    return this.http.get<DataPackage>(`${this.rutinasUrl}/obtenerProgresoActual/${rutinaId}/${usuarioId}`);
+  }
+
 }
 
 

@@ -241,4 +241,9 @@ public class RutinaPresenter {
         return Response.ok(rutinasRealizaUsuario);
     }
 
+    @GetMapping("/obtenerProgresoActual/{rutinaId}/{usuarioId}")
+    public ResponseEntity<Object> obtenerProgresoActual(@PathVariable Long rutinaId, @PathVariable Long usuarioId) {
+        return Response.ok(rutinaService.obtenerProgresoActual(rutinaId, usuarioId));
+    }
+
 }
