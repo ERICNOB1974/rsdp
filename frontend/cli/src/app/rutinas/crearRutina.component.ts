@@ -17,7 +17,7 @@ import { NgxMaskDirective } from 'ngx-mask';
 @Component({
   selector: 'app-crearRutina',
   templateUrl: './crearRutina.component.html',
-  styleUrls: ['./crearRutina.component.css'],
+  styleUrls: ['./crearRutina.component.css', '../css/etiquetas.css'],
   imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbTypeaheadModule, NgxMaskDirective],
   standalone: true
 })
@@ -148,11 +148,11 @@ export class CrearRutinaComponent {
       const rutina = { nombre: this.nombreRutina, descripcion: this.descripcionRutina };
       this.rutinaId = await this.rutinaService.guardarRutina(rutina);
 
-      const rutinaConId: Rutina = { 
-        id: parseInt(this.rutinaId, 10), 
-        nombre: this.nombreRutina, 
-        descripcion: this.descripcionRutina 
-    };
+      const rutinaConId: Rutina = {
+        id: parseInt(this.rutinaId, 10),
+        nombre: this.nombreRutina,
+        descripcion: this.descripcionRutina
+      };
       // Verificar y crear etiquetas si es necesario
       for (const etiqueta of this.etiquetasSeleccionadas) {
         const existe = await this.etiquetaService.verificarExistencia(etiqueta.nombre).toPromise();
@@ -203,29 +203,29 @@ export class CrearRutinaComponent {
 
 
   searchEjercicio = (text$: Observable<string>): Observable<Ejercicio[]> =>
-  text$.pipe(
-    debounceTime(300),
-    distinctUntilChanged(),
-    filter(term => term.length >= 2),
-    tap(() => (this.searching = true)),
-    switchMap((term) =>
-      this.rutinaService
-        .search(term)
-        .pipe(
-          map((response) => response.data as Ejercicio[]),
-          map((ejercicios) => 
-            ejercicios.filter((value, index, self) =>
-              index === self.findIndex((e) => e.nombre === value.nombre) 
-            )
-          ),
-          catchError(() => {
-            this.searchFailed = true;
-            return of([]);
-          })
-        )
-    ),
-    tap(() => (this.searching = false))
-  );
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      filter(term => term.length >= 2),
+      tap(() => (this.searching = true)),
+      switchMap((term) =>
+        this.rutinaService
+          .search(term)
+          .pipe(
+            map((response) => response.data as Ejercicio[]),
+            map((ejercicios) =>
+              ejercicios.filter((value, index, self) =>
+                index === self.findIndex((e) => e.nombre === value.nombre)
+              )
+            ),
+            catchError(() => {
+              this.searchFailed = true;
+              return of([]);
+            })
+          )
+      ),
+      tap(() => (this.searching = false))
+    );
 
 
   resultFormatEjercicio(value: Ejercicio) {
@@ -287,21 +287,21 @@ export class CrearRutinaComponent {
   onFileSelect(event: any, ejercicio: Ejercicio) {
     const file = event.target.files[0];
     const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
-  
+
     if (file && validImageTypes.includes(file.type)) {
       const reader = new FileReader();
-      
+
       reader.onload = () => {
         ejercicio.imagen = reader.result as string; // Almacena la cadena base64 en el ejercicio.
         this.vistaPreviaArchivo = reader.result; // Para mostrar la vista previa.
       };
-      
+
       reader.readAsDataURL(file);
     } else {
       alert('Formato no válido. Solo se permiten imágenes JPEG, PNG, o GIF.');
     }
   }
-  
+
   filtrarEntrada(event: Event, ejercicio: Ejercicio) {
     const input = (event.target as HTMLInputElement);
     let valor = input.value.replace(/[^0-9]/g, ''); // Eliminar caracteres no numéricos
@@ -310,10 +310,10 @@ export class CrearRutinaComponent {
     if (valor.length > 2) {
       valor = valor.slice(0, 2) + ':' + valor.slice(2, 4);
     }
-    
+
     input.value = valor; // Actualizar el input para reflejar el cambio
     ejercicio.tiempo = valor; // Guardar el valor formateado en la propiedad
-    
+
     this.validarTiempo(ejercicio);
   }
 
@@ -335,7 +335,7 @@ export class CrearRutinaComponent {
   }
 
 
-  
-  
+
+
 
 }

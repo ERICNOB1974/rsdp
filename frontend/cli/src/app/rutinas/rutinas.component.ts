@@ -76,7 +76,7 @@ export class RutinasComponent implements OnInit {
   }
 
   async getRutinasUsuario(): Promise<void> {
-    this.rutinaService.obtenerRutinasPorUsuario(this.idUsuarioAutenticado).subscribe(async (dataPackage) => {
+    this.rutinaService.rutinasRealizaUsuario(this.idUsuarioAutenticado).subscribe(async (dataPackage) => {
       const responseData = dataPackage.data;
       if (Array.isArray(responseData)) {
         this.rutinasUsuario = responseData;
