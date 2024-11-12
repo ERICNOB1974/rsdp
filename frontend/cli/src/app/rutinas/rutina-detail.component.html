@@ -1,35 +1,40 @@
 <div class="container mt-5" *ngIf="rutina">
+  <!-- Encabezado de la rutina -->
   <div class="text-center mb-4">
-    <h2 class="display-6">{{ rutina.nombre }}</h2>
-    <p class="lead">{{ rutina.descripcion }}</p>
+    <h2 class="display-4 text-primary">{{ rutina.nombre }}</h2>
+    <p class="lead text-muted">{{ rutina.descripcion }}</p>
   </div>
 
-  <div *ngFor="let dia of dias; let i = index" class="card shadow-sm p-4 mb-4">
-    <div class="d-flex justify-content-between align-items-center">
+  <!-- Iterar sobre los días -->
+  <div *ngFor="let dia of dias; let i = index" class="card shadow-lg rounded mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
       <h4 class="card-title mb-0">
         Día {{ i + 1 }}: {{ dia.nombre }}
       </h4>
       <div (click)="toggleDayVisibility(i)" style="cursor: pointer;">
-        <span *ngIf="!isDayVisible[i]">🔽</span>
-        <span *ngIf="isDayVisible[i]">🔼</span>
+        <span *ngIf="!isDayVisible[i]" class="text-primary">🔽</span>
+        <span *ngIf="isDayVisible[i]" class="text-primary">🔼</span>
       </div>
     </div>
 
-    <div *ngIf="isDayVisible[i]" class="mt-3">
+    <div *ngIf="isDayVisible[i]" class="card-body mt-3">
       <p>{{ dia.descripcion || 'Sin descripción' }}</p>
 
+      <!-- Ejercicios de series y repeticiones -->
       <div *ngIf="dia.ejerciciosRepeticiones.length > 0" class="mt-4">
-        <h5>Ejercicios de series y repeticiones:</h5>
+        <h5 class="text-success">Ejercicios de series y repeticiones:</h5>
         <ul class="list-group">
           <li *ngFor="let ejercicio of dia.ejerciciosRepeticiones; let j = index"
               class="list-group-item d-flex justify-content-between align-items-center">
-            <span>{{ j + 1 }}. {{ ejercicio.nombre }} - {{ ejercicio.descripcion }} ({{ ejercicio.series }} series, {{ ejercicio.repeticiones }} repeticiones)</span>
+            <span>{{ j + 1 }}. {{ ejercicio.nombre }} - {{ ejercicio.descripcion }} 
+                  ({{ ejercicio.series }} series, {{ ejercicio.repeticiones }} repeticiones)</span>
           </li>
         </ul>
       </div>
 
+      <!-- Ejercicios de resistencia -->
       <div *ngIf="dia.ejerciciosTiempo.length > 0" class="mt-4">
-        <h5>Ejercicios de resistencia:</h5>
+        <h5 class="text-warning">Ejercicios de resistencia:</h5>
         <ul class="list-group">
           <li *ngFor="let ejercicio of dia.ejerciciosTiempo; let k = index"
               class="list-group-item d-flex justify-content-between align-items-center">
@@ -38,16 +43,25 @@
         </ul>
       </div>
 
+      <!-- Mensaje si no hay ejercicios -->
       <div *ngIf="dia.ejerciciosRepeticiones.length === 0 && dia.ejerciciosTiempo.length === 0" class="mt-4">
         <p class="text-muted">Este día no tiene ejercicios asignados.</p>
       </div>
     </div>
   </div>
 
-  <!-- Botón central para iniciar la rutina -->
+  <!-- Botones centrados para iniciar o continuar -->
   <div class="text-center mt-5">
-    <button class="btn btn-success btn-lg" (click)="iniciarRutina()">
-      Iniciar rutina
+    <button class="btn btn-primary btn-lg" (click)="iniciarRutina()">
+      <span *ngIf="getBotonTexto() !== 'Continuar con día'">{{ getBotonTexto() }}</span>
+      <span *ngIf="getBotonTexto() === 'Continuar con día'">Empezar día</span>
+    </button>
+
+    <!-- Botón para reiniciar rutina, solo visible cuando se está continuando -->
+    <button *ngIf="getBotonTexto().startsWith('Continuar con día')" 
+            class="btn btn-danger btn-lg ml-3" 
+            (click)="reiniciarRutina()">
+      Reiniciar rutina
     </button>
   </div>
 </div>

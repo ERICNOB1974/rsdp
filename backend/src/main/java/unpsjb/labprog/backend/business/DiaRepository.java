@@ -36,4 +36,31 @@ public interface DiaRepository extends Neo4jRepository<Dia, Long> {
             "RETURN r.orden")
     int buscarNumeroDia(Long diaId);
 
+    @Query("MATCH (ru:Rutina)-[r1:TIENE_DIA]->(d1:Dia) " +
+    "WHERE id(ru) = $rutinaId AND r1.orden = 1 " +
+    "MATCH (u:Usuario)-[df1:DIA_FINALIZADO]->(d1) " +
+    "WHERE id(u) = $usuarioId " +
+    "WITH ru, u, MAX(df1.intento) AS maxIntento " +
+    "MATCH (ru)-[r:TIENE_DIA]->(d:Dia) " +
+    "WHERE id(ru) = $rutinaId " +
+    "WITH u, d, r.orden AS ordenDia, maxIntento " +
+    "ORDER BY ordenDia ASC " +
+    "OPTIONAL MATCH (u)-[df:DIA_FINALIZADO {intento: maxIntento}]->(d) " +
+    "WITH u, d, ordenDia, maxIntento, " +
+    "CASE WHEN df IS NULL THEN false ELSE true END AS intentoPresente " +
+    "WITH u, d, ordenDia, intentoPresente " +
+    "WHERE intentoPresente = true " +
+    "WITH u, collect(d) AS diasConIntentoMax " +
+    "WITH last(diasConIntentoMax) AS ultimoDiaConIntentoMax " +
+    "RETURN id(ultimoDiaConIntentoMax) AS diaEstancadoId")
+    Long obtenerProgresoActual(Long rutinaId, Long usuarioId);
+
+    @Query("MATCH (ru:Rutina)-[r1:TIENE_DIA]->(d1:Dia) " +
+       "WHERE id(ru) = $rutinaId AND r1.orden = 1 " +
+       "MATCH (u:Usuario)-[df:DIA_FINALIZADO]->(d1) " +
+       "WHERE id(u) = $usuarioId " +
+       "RETURN COUNT(df) > 0")
+    boolean verificarRelacionDiaFinalizado(Long rutinaId, Long usuarioId);
+
+
 }
