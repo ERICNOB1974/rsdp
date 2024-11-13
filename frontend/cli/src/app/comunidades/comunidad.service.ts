@@ -70,9 +70,10 @@ export class ComunidadService {
     }
   }
 
-  sugerencias(): Observable<DataPackage> {
+  sugerencias(page:number, size:number): Observable<DataPackage> {
     const nombreUsuario = this.authService.getNombreUsuario();
-    return this.http.get<DataPackage>(` ${this.comunidadesUrl}/sugerencias-combinadas/${nombreUsuario}`);
+
+    return this.http.get<DataPackage>(` ${this.comunidadesUrl}/sugerencias-combinadas/${nombreUsuario}?page=${page}&size=${size}`);
   }
 
   participantesEncomunidad(id: number): Observable<DataPackage> {
