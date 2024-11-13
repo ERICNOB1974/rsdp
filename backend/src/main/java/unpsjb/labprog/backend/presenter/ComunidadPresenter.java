@@ -1,6 +1,7 @@
 package unpsjb.labprog.backend.presenter;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -198,16 +199,27 @@ public class ComunidadPresenter {
         return Response.ok(sugerenciasDeComunidadesBasadasEnAmigos);
     }
 
-    @GetMapping("/sugerencias-combinadas/{nombreUsuario}")
-    public ResponseEntity<Object> obtenerSugerenciasCombinadas(@PathVariable String nombreUsuario) {
-        try {
-            return Response.ok(comunidadService.obtenerTodasLasSugerenciasDeComunidades(nombreUsuario));
-        } catch (Exception e) {
-            // Manejo del error
-            return Response.error("", "Error al obtener las sugerencias: " + e.getMessage());
-        }
-    }
+@GetMapping("/sugerencias-combinadas/{nombreUsuario}")
+public ResponseEntity<Object> obtenerSugerenciasCombinadas(
+        @PathVariable String nombreUsuario,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "4") int size) {
+    try {
+        // Llamar al servicio que devuelve los eventos y el total de páginas
+        Map<String, Object> result = comunidadService.obtenerSugerenciasComunidadesConTotalPaginas(nombreUsuario, page, size);
 
+        // Verificar si el resultado contiene datos y total de páginas
+        if (result.isEmpty()) {
+            return Response.error("", "No se encontraron sugerencias para los parámetros proporcionados.");
+        }
+
+        // Retornar los eventos y el total de páginas en el ResponseEntity
+        return Response.ok(result);
+    } catch (Exception e) {
+        // Manejo del error
+        return Response.error("", "Error al obtener las sugerencias: " + e.getMessage());
+    }
+}
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Object> delete(@PathVariable("id") Long id) {
         Comunidad aComunidad = comunidadService.findById(id);
