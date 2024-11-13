@@ -185,8 +185,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "point.distance(ubicacionComunidad, ubicacionUsuario) AS distancia " +
                         "RETURN comunidad, (etiquetasEnComun / (distancia + 1500000)) AS score, 'a tus amigos le gustan eventos de este tipo, porque tienen '+etiquetasEnComun+' etiqueta/s compartida/s con las comunidades en las que participas' AS motivo "
                         + // Cambiar aquí
-                        "ORDER BY score DESC " +
-                        "LIMIT 3")
+                        "ORDER BY score DESC ")
         List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(evento:Evento)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta), "
@@ -206,8 +205,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "(etiquetasEnComun/(distancia+1500000)) AS score " +
                         "RETURN comunidad, score, 'son similares porque tienen '+etiquetasEnComun+' etiqueta/s compartida/s con eventos en los que participas' AS motivo  "
                         +
-                        "ORDER BY score DESC " +
-                        "LIMIT 3")
+                        "ORDER BY score DESC ")
         List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnEventos2(String nombreUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(c1:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta), "
@@ -227,8 +225,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         +
                         "RETURN comunidad, score, 'son similares porque tienen '+etiquetasEnComun+' etiqueta/s compartida/s con comunidades en las que perteneces' AS motivo   "
                         +
-                        "ORDER BY score DESC " +
-                        "LIMIT 3")
+                        "ORDER BY score DESC ")
         List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnComunidades2(
                         @Param("nombreUsuario") String nombreUsuario);
 

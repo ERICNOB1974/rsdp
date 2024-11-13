@@ -28,9 +28,12 @@ export class EventosComponent implements OnInit {
   nombreEventoFiltro: string = '';
   filtroNombreActivo: boolean = true;
   resultadosOriginales: Evento[] = []; // Nueva variable para mantener los datos originales
-
-
-
+  tabSeleccionada: string = 'disponibles';
+  eventosDisponiblesAMostrar: Evento[] = [];
+  cantidadPorPagina = 3; // Cantidad de comunidades a mostrar por cada carga
+  idUsuarioAutenticado!: number;  // ID del usuario autenticado
+  eventosParticipaUsuario: Evento[] = [];
+  
   // Filtro por participantes
   filtroParticipantesAbierto: boolean = false;
   minParticipantes: number | null = null;
@@ -57,15 +60,12 @@ export class EventosComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private etiquetaService: EtiquetaService,
   ) { }
-  idUsuarioAutenticado!: number;  // ID del usuario autenticado
-  eventosParticipaUsuario: Evento[] = [];
 
 
   ngOnInit(): void {
     this.getEventos(); // Cargar los eventos al inicializar el componente
     const usuarioId = this.authService.getUsuarioId();
     this.idUsuarioAutenticado = Number(usuarioId);
-    this.ParticipaUsuario();
   }
 
   agregarEtiqueta(event: any): void {
@@ -277,9 +277,16 @@ export class EventosComponent implements OnInit {
             evento.ubicacion = 'Ubicación desconocida';
           }
         }
+        await this.ParticipaUsuario();
+        this.cargarEventosDisponibles();
+        this.cargarEventosParticipaUsuario();
+        this.cargarMasEventos();
       }
     });
   }
+
+
+
 
   async ParticipaUsuario(): Promise<void> {
     this.eventoService.participaUsuario(this.idUsuarioAutenticado).subscribe(async (dataPackage) => {
@@ -322,46 +329,34 @@ export class EventosComponent implements OnInit {
 
   // Método para mover al siguiente grupo de eventos en el carrusel
   // Métodos para el primer carrusel (eventos)
-  siguienteEvento(): void {
-    this.currentIndexEventos = (this.currentIndexEventos + 1) % this.results.length; // Incrementa el índice del primer carrusel
+ 
+  seleccionarTab(tab: string) {
+    this.tabSeleccionada = tab;
   }
 
-  eventoAnterior(): void {
-    this.currentIndexEventos = (this.currentIndexEventos - 1 + this.results.length) % this.results.length; // Decrementa el índice del primer carrusel
+
+
+  cargarEventosDisponibles() {
+    // Suponiendo que 'comunidadesDisponibles' contiene todas las comunidades
+    this.eventosDisponiblesAMostrar = this.results.slice(0, this.cantidadPorPagina);
   }
 
-  // Métodos para el segundo carrusel (eventos en los que participa el usuario)
-  siguienteEventoParticipa(): void {
-    this.currentIndexParticipa = (this.currentIndexParticipa + 1) % this.eventosParticipaUsuario.length; // Incrementa el índice del segundo carrusel
+  cargarEventosParticipaUsuario() {
+    this.eventosDisponiblesAMostrar = this.eventosDisponiblesAMostrar.slice(0, this.cantidadPorPagina);
+  }
+  
+  cargarMasEventos(): void {
+    const startIndex = this.eventosDisponiblesAMostrar.length;
+    const moreComunidades = this.results.slice(startIndex, startIndex + this.cantidadPorPagina);
+    this.eventosDisponiblesAMostrar = [...this.eventosDisponiblesAMostrar, ...moreComunidades];
   }
 
-  eventoAnteriorParticipa(): void {
-    this.currentIndexParticipa = (this.currentIndexParticipa - 1 + this.eventosParticipaUsuario.length) % this.eventosParticipaUsuario.length; // Decrementa el índice del segundo carrusel
-  }
-
-  obtenerEventosParaMostrar(): Evento[] {
-    const eventosParaMostrar: Evento[] = [];
-
-    if (this.results.length === 0) {
-      return eventosParaMostrar; // Devuelve un arreglo vacío si no hay eventos
+  onScroll(): void {
+    const container = document.querySelector('.grid-container') as HTMLElement;
+    if (container.scrollTop + container.clientHeight >= container.scrollHeight) {
+      this.cargarMasEventos();
     }
-
-    // Definir cuántos eventos mostrar, máximo 4 o el número total de eventos disponibles
-    const cantidadEventosAMostrar = Math.min(this.results.length, 4);
-
-    for (let i = 0; i < cantidadEventosAMostrar; i++) {
-      const index = (this.currentIndexEventos + i) % this.results.length;
-      const evento = this.results[index];
-
-      // Excluir eventos en los que el usuario ya participa
-      if (!this.eventosParticipaUsuario.some(e => e.id === evento.id)) {
-        eventosParaMostrar.push(evento);
-      }
-    }
-
-    return eventosParaMostrar;
   }
-
 
   irADetallesDelEvento(id: number): void {
     this.router.navigate(['/eventos', id]); // Navega a la ruta /eventos/:id
