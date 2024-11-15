@@ -1,6 +1,5 @@
 <div class="container">
-    <h1>Amigos</h1>
-    <div class="col-lg-5">
+    <h1 class="title">Amigos</h1>
         <div class="search-container">
             <input type="text" placeholder="Buscar usuarios" #searchInput (input)="buscarUsuarios(searchInput.value)"
                 class="form-control search-input">
@@ -11,51 +10,6 @@
             <button (click)="cambiarVista('solicitudes')" [class.active]="!mostrarAmigos">Solicitudes</button>
         </div>
 
-
-        <div *ngIf="mostrarAmigos">
-            <h2>Lista de Amigos</h2>
-            <ul>
-                <li *ngFor="let amigo of amigos" (click)="verPerfil(amigo)" class="clickable">
-                    <img [src]="amigo.fotoPerfil" alt="Foto de {{ amigo.nombreUsuario }}" class="avatar-circular">
-                    <span>{{ amigo.nombreUsuario }}</span>
-                </li>
-            </ul>
-        </div>
-
-        <div *ngIf="!mostrarAmigos">
-            <h2>Solicitudes de Amistad</h2>
-            <ul>
-                <li *ngFor="let solicitud of solicitudes" (click)="verPerfil(solicitud)" class="clickable">
-                    <img [src]="solicitud.fotoPerfil" alt="Foto de {{ solicitud.nombreUsuario }}"
-                        class="avatar-circular">
-                    <span>{{ solicitud.nombreUsuario }}</span>
-                    <div class="acciones-solicitud">
-                        <button (click)="gestionarSolicitud(solicitud, true); $event.stopPropagation()"
-                            class="btn-aceptar">Aceptar</button>
-                        <button (click)="gestionarSolicitud(solicitud, false);  $event.stopPropagation()"
-                            class="btn-rechazar">Rechazar</button>
-                    </div>
-                </li>
-            </ul>
-            <h2>Solicitudes de Amistad Enviadas</h2>
-            <ul>
-                <li *ngFor="let solicitudEnviada of solicitudesEnviadas" (click)="verPerfil(solicitudEnviada)"
-                    class="clickable">
-                    <img [src]="solicitudEnviada.fotoPerfil" alt="Foto de {{ solicitudEnviada.nombreUsuario }}"
-                        class="avatar-circular">
-                    <span>{{ solicitudEnviada.nombreUsuario }}</span>
-                    <div class="acciones-solicitud">
-                        <button (click)="cancelarSolicitudDeAmistad(solicitudEnviada.id);  $event.stopPropagation()"
-                            class="btn-rechazar">Cancelar</button>
-                    </div>
-                </li>
-            </ul>
-
-
-
-        </div>
-        <!-- Buscador de usuarios -->
-
         <ul class="list-group user-list">
             <li *ngFor="let usuario of usuariosBuscados" class="list-group-item user-item">
                 <img [src]="usuario.fotoPerfil" alt="Foto de {{ usuario.nombreUsuario }}" class="avatar-circular">
@@ -63,5 +17,38 @@
                 <button (click)="verPerfil(usuario)" class="btn btn-primary btn-sm">Ver perfil</button>
             </li>
         </ul>
-    </div>
+        <div *ngIf="mostrarAmigos" class="lista">
+            <h2>Lista de Amigos</h2>
+            <ul>
+                <li *ngFor="let amigo of amigos" (click)="verPerfil(amigo)" class="clickable friend-item">
+                    <img [src]="amigo.fotoPerfil" alt="Foto de {{ amigo.nombreUsuario }}" class="avatar-circular">
+                    <span>{{ amigo.nombreUsuario }}</span>
+                </li>
+            </ul>
+        </div>
+
+        <div *ngIf="!mostrarAmigos" class="lista">
+            <h2>Solicitudes de Amistad</h2>
+            <ul>
+                <li *ngFor="let solicitud of solicitudes" (click)="verPerfil(solicitud)" class="clickable request-item">
+                    <img [src]="solicitud.fotoPerfil" alt="Foto de {{ solicitud.nombreUsuario }}" class="avatar-circular">
+                    <span>{{ solicitud.nombreUsuario }}</span>
+                    <div class="acciones-solicitud">
+                        <button (click)="gestionarSolicitud(solicitud, true); $event.stopPropagation()" class="btn-aceptar">Aceptar</button>
+                        <button (click)="gestionarSolicitud(solicitud, false);  $event.stopPropagation()" class="btn-rechazar">Rechazar</button>
+                    </div>
+                </li>
+            </ul>
+            <h2>Solicitudes de Amistad Enviadas</h2>
+            <ul>
+                <li *ngFor="let solicitudEnviada of solicitudesEnviadas" (click)="verPerfil(solicitudEnviada)" class="clickable sent-request-item">
+                    <img [src]="solicitudEnviada.fotoPerfil" alt="Foto de {{ solicitudEnviada.nombreUsuario }}" class="avatar-circular">
+                    <span>{{ solicitudEnviada.nombreUsuario }}</span>
+                    <div class="acciones-solicitud">
+                        <button (click)="cancelarSolicitudDeAmistad(solicitudEnviada.id);  $event.stopPropagation()" class="btn-rechazar">Cancelar</button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
 </div>

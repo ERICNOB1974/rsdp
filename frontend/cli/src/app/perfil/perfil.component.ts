@@ -342,7 +342,7 @@ export class PerfilComponent implements OnInit {
     if (this.usuario.privacidadEventos === 'Privada' && !this.esMiPerfil) return;
     if (this.usuario.privacidadEventos === 'Solo amigos' && this.relacion !== 'amigos' && !this.esMiPerfil) return;
 
-    this.eventoService.participaUsuario(this.idUsuario).subscribe(async (dataPackage) => {
+    this.eventoService.participaUsuario(this.idUsuario,0,50).subscribe(async (dataPackage) => {
       if (Array.isArray(dataPackage.data)) {
         this.historicoEventos = dataPackage.data;
         console.info(this.historicoEventos);
@@ -382,7 +382,7 @@ export class PerfilComponent implements OnInit {
     if (this.usuario.privacidadComunidades === 'Privada' && !this.esMiPerfil) return;
     if (this.usuario.privacidadComunidades === 'Solo amigos' && this.relacion !== 'amigos' && !this.esMiPerfil) return;
 
-    this.comunidadService.miembroUsuario(this.idUsuario).subscribe(async (dataPackage) => {
+    this.comunidadService.miembroUsuario(this.idUsuario,0,50).subscribe(async (dataPackage) => {
       if (Array.isArray(dataPackage.data)) {
         this.historicoComunidades = dataPackage.data;
         console.info(this.historicoComunidades);

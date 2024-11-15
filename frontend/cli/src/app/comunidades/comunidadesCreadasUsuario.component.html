@@ -1,6 +1,6 @@
 <div class="comunidades-container" *ngIf="comunidadesUsuario.length > 0; else noComunidades">
   <h2>Comunidades Creadas por Ti</h2>
-  <div class="comunidades-list">
+  <div class="comunidades-list" (scroll)="onScroll()">
     <div class="comunidad-card" *ngFor="let comunidad of comunidadesUsuario">
       <div class="background-image" 
            [ngStyle]="{'background-image': 'url(' + (comunidad.imagen || '../../assets/comunidad.jpg') + ')'}">
