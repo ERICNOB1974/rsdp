@@ -1,6 +1,6 @@
 import { CommonModule, Location } from '@angular/common'; // Asegúrate de que está importado desde aquí
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,6 +18,7 @@ import { EtiquetaPopularidadDTO } from '../etiqueta/etiquetaPopularidadDTO';
 import { UbicacionService } from '../ubicacion.service'; // Importa tu servicio de ubicación
 import { Evento } from './evento';
 import { EventoService } from './evento.service';
+
 @Component({
   selector: 'app-crear-evento',
   templateUrl: './crearEvento.component.html',
@@ -71,40 +72,48 @@ export class CrearEventoComponent {
         nombre: ['', [Validators.required]],
         fechaHora: [
           '',
-          [Validators.required, Validators.minLength(3)],
-          [this.fechaHoraValidator.bind(this)],
+          [Validators.required],
+          [this.dateValidator()]
         ],
         cantidadMaximaParticipantes: [
           '',
-          [Validators.required, Validators.email],
+          [Validators.required],
           [this.cantidadParticipantesValidator.bind(this)],
         ],
         latitud: [
           '',
-          [
-            Validators.required,
-            Validators.minLength(8),
-            Validators.pattern(/^(?=.*[A-Z])(?=.*\d).*$/),
-          ],
+          [Validators.required]
         ],
         longitud: ['', [Validators.required]],
+
+        etiquetasSeleccionadas: [[], [this.minimoUnaEtiqueta()]], // Asegúrate de que sea un array
+
       }
     );
   }
 
-  fechaHoraValidator(control: AbstractControl): Observable<ValidationErrors | null> {
-    const fechaHoraIngresada = new Date(control.value);
-    const fechaHoraActual = new Date();
-
-    // Comparar la fecha ingresada con la actual
-    if (fechaHoraIngresada > fechaHoraActual) {
-      // La fecha es válida (es mayor a hoy)
-      return of(null);
-    } else {
-      // La fecha es inválida (es menor o igual a hoy)
-      return of({ fechaHoraInvalida: true });
-    }
+  minimoUnaEtiqueta(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const etiquetas = control.value; // Asumiendo que control.value es un array de etiquetas
+      return etiquetas && etiquetas.length > 0 ? null : { sinEtiqueta: true };
+    };
   }
+  dateValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const dateValue = control.value;
+      if (dateValue) {
+        const selectedDate = new Date(dateValue).getTime();
+        const minDate = Date.now();
+        if (selectedDate < minDate) {
+          return { invalidDate: true };
+        }
+        return { invalidDate: true };
+      }
+      return { invalidDate: true };
+      return null;
+    };
+  }
+
 
   cantidadParticipantesValidator(control: AbstractControl): Observable<ValidationErrors | null> {
     const cantidadIngresada = control.value;
