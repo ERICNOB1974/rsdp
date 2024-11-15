@@ -16,13 +16,17 @@
       <label for="imagen">Seleccionar imagen</label>
       <input type="file" id="archivo" [(ngModel)]="evento.imagen" (change)="onFileSelect($event)" name="imagen">
     </div>
-    
+
     <!-- Fecha y Hora del Evento -->
     <mat-form-field appearance="outline" class="form-group">
       <mat-label>Fecha y Hora del Evento</mat-label>
-      <input matInput type="datetime-local" id="fechaHora" [(ngModel)]="evento.fechaHora" name="fechaHora" [min]="minFechaHora" required>
+      <input matInput type="datetime-local" id="fechaHora" [(ngModel)]="evento.fechaHora" name="fechaHora"
+        [min]="minFechaHora" required>
       <mat-error *ngIf="formEvento.get('fechaHora')?.hasError('required')">
         La fecha y hora del evento son requeridas
+      </mat-error>
+      <mat-error *ngIf="formEvento.get('fechaHora')?.hasError('invalidDate')">
+        La fecha debe ser mayor a hoy
       </mat-error>
     </mat-form-field>
 
@@ -35,7 +39,8 @@
     <!-- Cantidad Máxima de Participantes -->
     <mat-form-field appearance="outline" class="form-group">
       <mat-label>Cantidad Máxima de Participantes</mat-label>
-      <input matInput type="number" min="1" [(ngModel)]="evento.cantidadMaximaParticipantes" name="cantidadMaximaParticipantes" required>
+      <input matInput type="number" min="1" [(ngModel)]="evento.cantidadMaximaParticipantes"
+        name="cantidadMaximaParticipantes" required>
       <mat-error *ngIf="formEvento.get('cantidadMaximaParticipantes')?.hasError('required')">
         La cantidad máxima de participantes es requerida y debe ser un número positivo
       </mat-error>
@@ -47,6 +52,9 @@
       <input matInput id="etiquetas" [(ngModel)]="etiquetaSeleccionada" [ngbTypeahead]="searchEtiqueta"
         [resultFormatter]="resultFormatEtiqueta" [inputFormatter]="inputFormatEtiqueta"
         (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada" placeholder="Buscar etiqueta" />
+        <mat-error *ngIf="formEvento.get('etiquetasSeleccionadas')?.hasError('sinEtiqueta') && formEvento.get('etiquetasSeleccionadas')?.touched">
+          Al menos una etiqueta es requerida
+      </mat-error>
     </mat-form-field>
 
     <div class="selected-tags">
@@ -62,7 +70,8 @@
     <div class="mapa-container">
       <mat-form-field appearance="outline" class="form-group">
         <mat-label>Ubicación del Evento</mat-label>
-        <input matInput type="text" class="form-control" placeholder="Ingresa una dirección" (input)="buscarDireccion($event)" />
+        <input matInput type="text" class="form-control" placeholder="Ingresa una dirección"
+          (input)="buscarDireccion($event)" />
         <ul *ngIf="sugerencias.length > 0" class="list-group">
           <li *ngFor="let sugerencia of sugerencias" (click)="seleccionarDireccion(sugerencia)"
             class="list-group-item list-group-item-action" style="cursor: pointer;">
@@ -79,7 +88,8 @@
 
     <!-- Botones -->
     <div class="form-buttons">
-      <button mat-raised-button color="primary" type="button" (click)="saveEvento()" [disabled]="!isFormValid()">Guardar Evento</button>
+      <button mat-raised-button color="primary" type="button" (click)="saveEvento()" [disabled]="!isFormValid()">Guardar
+        Evento</button>
       <button mat-flat-button color="accent" type="button" (click)="cancel()">Cancelar</button>
     </div>
   </form>
