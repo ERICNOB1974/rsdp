@@ -66,12 +66,10 @@ public class ComunidadPresenter {
         return Response.ok(sugerenciasDeComunidadesBasadasEnEventos);
     }
 
-    
     @GetMapping("/puedeVer/{idComunidad}/{idUsuario}")
     public ResponseEntity<Object> puedeVer(@PathVariable Long idComunidad, @PathVariable Long idUsuario) {
         return Response.ok(comunidadService.puedeVer(idComunidad, idUsuario));
     }
-
 
     @GetMapping("/findById/{id}")
     public ResponseEntity<Object> findByIdPrivacidad(@PathVariable Long id) {
@@ -168,14 +166,19 @@ public class ComunidadPresenter {
         return Response.ok(comunidadesCreadasPorUsuario);
     }
 
-    @RequestMapping(path = "/disponibles", method = RequestMethod.GET)
-    public ResponseEntity<Object> disponibles() {
-        return Response.ok(comunidadService.disponibles());
+    @GetMapping(path = "/{nombreUsuario}/disponibles")
+    public ResponseEntity<Object> obtenerComunidadesDisponibles(
+            @PathVariable String nombreUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return Response.ok(comunidadService.obtenerComunidadesDisponiblesPaginadas(nombreUsuario, page, size));
     }
 
     @RequestMapping(path = "/miembro/{idUsuario}", method = RequestMethod.GET)
-    public ResponseEntity<Object> miembroUsuario(@PathVariable Long idUsuario) {
-        return Response.ok(comunidadService.miembroUsuario(idUsuario));
+    public ResponseEntity<Object> miembroUsuario(@PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return Response.ok(comunidadService.miembroUsuario(idUsuario, page, size));
     }
 
     @GetMapping("/sugerenciasDeComunidadesBasadasEnAmigos2/{nombreUsuario}")
@@ -199,27 +202,29 @@ public class ComunidadPresenter {
         return Response.ok(sugerenciasDeComunidadesBasadasEnAmigos);
     }
 
-@GetMapping("/sugerencias-combinadas/{nombreUsuario}")
-public ResponseEntity<Object> obtenerSugerenciasCombinadas(
-        @PathVariable String nombreUsuario,
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "4") int size) {
-    try {
-        // Llamar al servicio que devuelve los eventos y el total de páginas
-        Map<String, Object> result = comunidadService.obtenerSugerenciasComunidadesConTotalPaginas(nombreUsuario, page, size);
+    @GetMapping("/sugerencias-combinadas/{nombreUsuario}")
+    public ResponseEntity<Object> obtenerSugerenciasCombinadas(
+            @PathVariable String nombreUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "4") int size) {
+        try {
+            // Llamar al servicio que devuelve los eventos y el total de páginas
+            Map<String, Object> result = comunidadService.obtenerSugerenciasComunidadesConTotalPaginas(nombreUsuario,
+                    page, size);
 
-        // Verificar si el resultado contiene datos y total de páginas
-        if (result.isEmpty()) {
-            return Response.error("", "No se encontraron sugerencias para los parámetros proporcionados.");
+            // Verificar si el resultado contiene datos y total de páginas
+            if (result.isEmpty()) {
+                return Response.error("", "No se encontraron sugerencias para los parámetros proporcionados.");
+            }
+
+            // Retornar los eventos y el total de páginas en el ResponseEntity
+            return Response.ok(result);
+        } catch (Exception e) {
+            // Manejo del error
+            return Response.error("", "Error al obtener las sugerencias: " + e.getMessage());
         }
-
-        // Retornar los eventos y el total de páginas en el ResponseEntity
-        return Response.ok(result);
-    } catch (Exception e) {
-        // Manejo del error
-        return Response.error("", "Error al obtener las sugerencias: " + e.getMessage());
     }
-}
+
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<Object> delete(@PathVariable("id") Long id) {
         Comunidad aComunidad = comunidadService.findById(id);

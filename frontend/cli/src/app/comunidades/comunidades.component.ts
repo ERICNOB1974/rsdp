@@ -19,8 +19,6 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['comunidades.component.css', '../css/filtros.css'] // Ruta relativa correcta si está en la misma carpeta
 })
 export class ComunidadesComponent implements OnInit {
-  currentIndexComunidades: number = 0; // Índice actual del carrusel
-  currentIndexMiembro: number = 0; // Índice actual del carrusel
   idUsuarioAutenticado!: number;  // ID del usuario autenticado
   comunidadesMiembroUsuario: Comunidad[] = [];
   comunidadesMiembroUsuarioAMostrar: Comunidad[] = [];
@@ -32,8 +30,14 @@ export class ComunidadesComponent implements OnInit {
   filtroNombreActivo: boolean = true;
   nombreEventoFiltro: string = '';
   tabSeleccionada: string = 'disponibles';
-  cantidadPorPagina = 3; // Cantidad de comunidades a mostrar por cada carga
-
+  cantidadPorPagina = 4; // Cantidad de comunidades a mostrar por cada carga
+  currentIndexComunidadesDisponibles = 0;
+  currentIndexComunidadesMiembro = 0;
+  noMasComunidadesDisponibles = false;
+  noMasComunidadesMiembro = false;
+  loadingDisponibles = false;
+  loadingMiembro = false;
+  
   // Filtro por participantes
   filtroParticipantesAbierto: boolean = false;
   filtroParticipantesActivo: boolean = false;
@@ -59,55 +63,71 @@ export class ComunidadesComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getComunidades(); // Cargar las comunidades al inicializar el componente
+    this.cargarComunidadesDisponibles(); // Cargar las primeras comunidades al iniciar
     const usuarioId = this.authService.getUsuarioId();
     this.idUsuarioAutenticado = Number(usuarioId);
- 
-      }
+    this.cargarComunidadesMiembro();
+
+  }
 
 
-  async getComunidades(): Promise<void> {
-    this.comunidadService.disponibles().subscribe(async (dataPackage) => {
-      const responseData = dataPackage.data;
-      if (Array.isArray(responseData)) {
-        this.resultadosOriginales = responseData; // Guardar los datos originales
-        this.results = [...responseData]; // Hacer una copia para los resultados filtrados
-        this.traerMiembros(this.results);
-        for (const comunidad of this.results) {
-          if (comunidad.latitud && comunidad.longitud) {
-            comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
-          } else {
-            comunidad.ubicacion = 'Ubicación desconocida';
+
+  /*   async getComunidades(): Promise<void> {
+      try {
+        // Espera a que se carguen los eventos disponibles
+        const dataPackage = await this.comunidadService.disponibles().toPromise();
+        
+        // Verificamos que dataPackage y su propiedad 'data' no sean undefined
+        if (dataPackage && dataPackage.data) {
+          this.results = dataPackage.data as Comunidad[];
+    
+          if (Array.isArray(this.results)) {
+            this.traerMiembros(this.results); // Llamar a traerParticipantes después de cargar los eventos
+            for (const evento of this.results) {
+              evento.ubicacion = evento.latitud && evento.longitud 
+                ? await this.comunidadService.obtenerUbicacion(evento.latitud, evento.longitud)
+                : 'Ubicación desconocida';
+            }
+    
+            await this.miembroUsuario();
+            this.cargarComunidadesDisponibles();
+            this.cargarComunidadesMiembroUsuario();
           }
-          await this.miembroUsuario();
-          this.cargarComunidadesDisponibles();
-          this.cargarComunidadesMiembroUsuario();
-          this.cargarMasComunidades();
+        } else {
+          console.error("dataPackage no contiene la propiedad 'data' o es undefined");
+        }
+      } catch (error) {
+        console.error("Error al cargar eventos:", error);
+      }
+    } */
+
+
+/*   async miembroUsuario(): Promise<void> {
+    try {
+      // Espera a que se obtenga la lista de eventos en los que participa el usuario
+      const dataPackage = await this.comunidadService.miembroUsuario(this.idUsuarioAutenticado).toPromise();
+
+      // Verificamos que dataPackage y su propiedad 'data' no sean undefined
+      if (dataPackage && dataPackage.data) {
+        const responseData = dataPackage.data;
+
+        if (Array.isArray(responseData)) {
+          this.comunidadesMiembroUsuario = responseData;
+          this.traerMiembros(this.comunidadesMiembroUsuario);  // Cargar participantes
+          for (const evento of this.comunidadesMiembroUsuario) {
+            evento.ubicacion = evento.latitud && evento.longitud
+              ? await this.comunidadService.obtenerUbicacion(evento.latitud, evento.longitud)
+              : 'Ubicación desconocida';
+          }
         }
       } else {
-        console.log("No trae nada");
+        console.error("dataPackage no contiene la propiedad 'data' o es undefined");
       }
-    });
+    } catch (error) {
+      console.error("Error al cargar comunidades de membrecia del usuario:", error);
+    }
   }
-
-  async miembroUsuario(): Promise<void> {
-    this.comunidadService.miembroUsuario(this.idUsuarioAutenticado).subscribe(async (dataPackage) => {
-      const responseData = dataPackage.data;
-      if (Array.isArray(responseData)) {
-        this.comunidadesMiembroUsuario = responseData;
-        this.traerMiembros(this.comunidadesMiembroUsuario); // Llamar a traerParticipantes después de cargar los eventos
-        for (const comunidad of this.comunidadesMiembroUsuario) {
-          if (comunidad.latitud && comunidad.longitud) {
-            comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
-          } else {
-            comunidad.ubicacion = 'Ubicación desconocida';
-          }
-        }
-      }
-    });
-  }
-
-
+ */
 
   traerMiembros(comunidades: Comunidad[]): void {
     for (let comunidad of comunidades) {
@@ -123,7 +143,6 @@ export class ComunidadesComponent implements OnInit {
       );
     }
   }
-
 
 
 
@@ -233,7 +252,7 @@ export class ComunidadesComponent implements OnInit {
 
   limpiarFiltroEtiquetas(): void {
     this.etiquetasSeleccionadas = [];
-    this.getComunidades(); // Recargar todos los eventos
+    //this.getComunidades(); // Recargar todos los eventos
   }
 
   searchEtiqueta = (text$: Observable<string>): Observable<Etiqueta[]> =>
@@ -295,7 +314,7 @@ export class ComunidadesComponent implements OnInit {
   limpiarFiltroFecha(): void {
     this.fechaMinFiltro = '';
     this.fechaMaxFiltro = '';
-    this.getComunidades(); // Recargar todos los eventos
+    //  this.getComunidades(); // Recargar todos los eventos
   }
   limpiarTodosLosFiltros(): void {
     this.limpiarFiltroNombre();
@@ -378,30 +397,104 @@ export class ComunidadesComponent implements OnInit {
   }
 
   seleccionarTab(tab: string) {
-    this.tabSeleccionada = tab;
-  }
-
-
-
-  cargarComunidadesDisponibles() {
-    // Suponiendo que 'comunidadesDisponibles' contiene todas las comunidades
-    this.comunidadesDisponiblesAMostrar = this.results.slice(0, this.cantidadPorPagina);
-  }
-
-  cargarComunidadesMiembroUsuario() {
-    this.comunidadesMiembroUsuarioAMostrar = this.comunidadesMiembroUsuario.slice(0, this.cantidadPorPagina);
-  }
-  
-  cargarMasComunidades(): void {
-    const startIndex = this.comunidadesDisponiblesAMostrar.length;
-    const moreComunidades = this.results.slice(startIndex, startIndex + this.cantidadPorPagina);
-    this.comunidadesDisponiblesAMostrar = [...this.comunidadesDisponiblesAMostrar, ...moreComunidades];
-  }
-
-  onScroll(): void {
-    const container = document.querySelector('.grid-container') as HTMLElement;
-    if (container.scrollTop + container.clientHeight >= container.scrollHeight) {
-      this.cargarMasComunidades();
+    if (this.tabSeleccionada !== tab) {
+      this.tabSeleccionada = tab;
     }
   }
+
+
+
+  // Método para cargar más comunidades disponibles
+  cargarComunidadesDisponibles(): void {
+    if (this.loadingDisponibles || this.noMasComunidadesDisponibles) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
+
+    this.loadingDisponibles = true;
+
+    // Suponiendo que tienes un método que obtiene más comunidades con paginación
+    this.comunidadService
+      .disponibles(this.currentIndexComunidadesDisponibles, this.cantidadPorPagina)
+      .subscribe(
+        async (dataPackage) => {
+          const resultados = dataPackage.data as Comunidad[]
+          if (resultados && resultados.length > 0) {
+            // Agregar las comunidades obtenidas a la lista que se muestra
+            this.traerMiembros(resultados); // Llamar a traerParticipantes después de cargar los eventos
+            
+            for (const evento of resultados) {
+              evento.ubicacion = evento.latitud && evento.longitud 
+              ? await this.comunidadService.obtenerUbicacion(evento.latitud, evento.longitud)
+              : 'Ubicación desconocida';
+            }
+            this.comunidadesDisponiblesAMostrar = [
+              ...this.comunidadesDisponiblesAMostrar,
+              ...resultados,
+            ];
+            this.currentIndexComunidadesDisponibles++; // Aumentar el índice para la siguiente carga
+            console.info("llegue");
+
+          } else {
+            this.noMasComunidadesDisponibles = true; // No hay más comunidades por cargar
+          }
+          this.loadingDisponibles = false; // Desactivar el indicador de carga
+        },
+        (error) => {
+          console.error('Error al cargar más comunidades:', error);
+          this.loadingDisponibles = false;
+        }
+      );
+  }
+
+  cargarComunidadesMiembro(): void {
+    if (this.loadingMiembro || this.noMasComunidadesMiembro) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
+
+    this.loadingMiembro = true;
+    
+    // Suponiendo que tienes un método que obtiene más comunidades con paginación
+    this.comunidadService
+    .miembroUsuario(this.idUsuarioAutenticado,this.currentIndexComunidadesMiembro, this.cantidadPorPagina)
+    .subscribe(
+      async (dataPackage) => {
+        const resultados = dataPackage.data as Comunidad[]
+        console.info("HOLAA");
+          console.info(resultados);
+          if (resultados && resultados.length > 0) {
+            // Agregar las comunidades obtenidas a la lista que se muestra
+            this.traerMiembros(resultados); // Llamar a traerParticipantes después de cargar los eventos
+            
+            for (const evento of resultados) {
+              evento.ubicacion = evento.latitud && evento.longitud 
+              ? await this.comunidadService.obtenerUbicacion(evento.latitud, evento.longitud)
+              : 'Ubicación desconocida';
+            }
+            this.comunidadesMiembroUsuarioAMostrar = [
+              ...this.comunidadesMiembroUsuarioAMostrar,
+              ...resultados,
+            ];
+            this.currentIndexComunidadesMiembro++; // Aumentar el índice para la siguiente carga
+
+          } else {
+            this.noMasComunidadesMiembro = true; // No hay más comunidades por cargar
+          }
+          this.loadingMiembro = false; // Desactivar el indicador de carga
+        },
+        (error) => {
+          console.error('Error al cargar más comunidades:', error);
+          this.loadingMiembro = false;
+        }
+      );
+  }
+
+
+
+  onScroll(): void {
+    const element = document.querySelector('.grid-container') as HTMLElement;
+    if (element.scrollTop + element.clientHeight >= element.scrollHeight) {
+      if (this.tabSeleccionada === 'disponibles') {
+        this.cargarComunidadesDisponibles();
+      } else if (this.tabSeleccionada === 'miembro') {
+        this.cargarComunidadesMiembro();
+      }
+    }
+  }
+
 }
