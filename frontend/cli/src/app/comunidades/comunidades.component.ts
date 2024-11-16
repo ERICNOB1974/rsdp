@@ -6,7 +6,7 @@ import { Comunidad } from './comunidad';
 import { ComunidadService } from './comunidad.service';
 import { AuthService } from '../autenticacion/auth.service';
 import { Etiqueta } from '../etiqueta/etiqueta';
-import { catchError, debounceTime, distinctUntilChanged, filter, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, lastValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -20,31 +20,29 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 })
 export class ComunidadesComponent implements OnInit {
   idUsuarioAutenticado!: number;  // ID del usuario autenticado
-  comunidadesMiembroUsuario: Comunidad[] = [];
   comunidadesMiembroUsuarioAMostrar: Comunidad[] = [];
-  comunidades: Comunidad[] = []; // Arreglo para almacenar las comunidades que provienen del backend
-  resultadosOriginales: Comunidad[] = []; // Nueva variable para mantener los datos originales
-  results: Comunidad[] = [];
+  resultadosFiltrados: Comunidad[] = []; // Nueva variable para mantener los datos originales
   comunidadesDisponiblesAMostrar: Comunidad[] = []; // Array que se muestra en pantalla (cargado de a poco)
   filtroNombreAbierto: boolean = false;
   filtroNombreActivo: boolean = true;
   nombreEventoFiltro: string = '';
   tabSeleccionada: string = 'disponibles';
-  cantidadPorPagina = 4; // Cantidad de comunidades a mostrar por cada carga
+  cantidadPorPagina = 2; // Cantidad de comunidades a mostrar por cada carga
   currentIndexComunidadesDisponibles = 0;
   currentIndexComunidadesMiembro = 0;
   noMasComunidadesDisponibles = false;
   noMasComunidadesMiembro = false;
   loadingDisponibles = false;
   loadingMiembro = false;
-  
+  resultadosFiltradosPaginados: Comunidad[] = [];
+  currentIndexFiltrados: number = 0;
+  noMasResultadosFiltrados: boolean = false;
+  loadingFiltrados: boolean = false;
   // Filtro por participantes
   filtroParticipantesAbierto: boolean = false;
   filtroParticipantesActivo: boolean = false;
   minParticipantes: number | null = null;
   maxParticipantes: number | null = null;
-
-
   fechaMinFiltro: string = '';
   fechaMaxFiltro: string = '';
   filtroEtiquetasAbierto: boolean = false;
@@ -53,6 +51,7 @@ export class ComunidadesComponent implements OnInit {
   searchFailed: boolean = false;
   etiquetasSeleccionadas: Etiqueta[] = [];
   etiquetaSeleccionada: Etiqueta | null = null;
+  hayResultadosFiltrados: boolean = false;
 
 
   constructor(private comunidadService: ComunidadService,
@@ -71,64 +70,6 @@ export class ComunidadesComponent implements OnInit {
   }
 
 
-
-  /*   async getComunidades(): Promise<void> {
-      try {
-        // Espera a que se carguen los eventos disponibles
-        const dataPackage = await this.comunidadService.disponibles().toPromise();
-        
-        // Verificamos que dataPackage y su propiedad 'data' no sean undefined
-        if (dataPackage && dataPackage.data) {
-          this.results = dataPackage.data as Comunidad[];
-    
-          if (Array.isArray(this.results)) {
-            this.traerMiembros(this.results); // Llamar a traerParticipantes después de cargar los eventos
-            for (const evento of this.results) {
-              evento.ubicacion = evento.latitud && evento.longitud 
-                ? await this.comunidadService.obtenerUbicacion(evento.latitud, evento.longitud)
-                : 'Ubicación desconocida';
-            }
-    
-            await this.miembroUsuario();
-            this.cargarComunidadesDisponibles();
-            this.cargarComunidadesMiembroUsuario();
-          }
-        } else {
-          console.error("dataPackage no contiene la propiedad 'data' o es undefined");
-        }
-      } catch (error) {
-        console.error("Error al cargar eventos:", error);
-      }
-    } */
-
-
-/*   async miembroUsuario(): Promise<void> {
-    try {
-      // Espera a que se obtenga la lista de eventos en los que participa el usuario
-      const dataPackage = await this.comunidadService.miembroUsuario(this.idUsuarioAutenticado).toPromise();
-
-      // Verificamos que dataPackage y su propiedad 'data' no sean undefined
-      if (dataPackage && dataPackage.data) {
-        const responseData = dataPackage.data;
-
-        if (Array.isArray(responseData)) {
-          this.comunidadesMiembroUsuario = responseData;
-          this.traerMiembros(this.comunidadesMiembroUsuario);  // Cargar participantes
-          for (const evento of this.comunidadesMiembroUsuario) {
-            evento.ubicacion = evento.latitud && evento.longitud
-              ? await this.comunidadService.obtenerUbicacion(evento.latitud, evento.longitud)
-              : 'Ubicación desconocida';
-          }
-        }
-      } else {
-        console.error("dataPackage no contiene la propiedad 'data' o es undefined");
-      }
-    } catch (error) {
-      console.error("Error al cargar comunidades de membrecia del usuario:", error);
-    }
-  }
- */
-
   traerMiembros(comunidades: Comunidad[]): void {
     for (let comunidad of comunidades) {
       this.comunidadService.cantidadMiembrosEnComunidad(comunidad.id).subscribe(
@@ -144,18 +85,9 @@ export class ComunidadesComponent implements OnInit {
     }
   }
 
-
-
-
-
-
-
-
   irADetallesDeLaComunidad(id: number): void {
     this.router.navigate(['/comunidad-muro', id]); // Navega a la ruta /comunidades/:id
   }
-
-
 
   agregarEtiqueta(event: any): void {
     const etiqueta = event.item;
@@ -171,75 +103,49 @@ export class ComunidadesComponent implements OnInit {
     this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(e => e.id !== etiqueta.id);
   }
 
-  async aplicarFiltroEtiquetas(): Promise<void> {
-    if (this.etiquetasSeleccionadas.length > 0) {
+  async aplicarFiltroEtiquetas2(): Promise<Comunidad[]> {
+    try {
       const etiquetasIds = this.etiquetasSeleccionadas.map(e => e.nombre);
-      this.comunidadService.filtrarEtiqueta(etiquetasIds).subscribe(
-        async (dataPackage) => {
-          if (Array.isArray(dataPackage.data)) {
-            this.results = <Comunidad[]>dataPackage.data;
-            this.traerMiembros(this.results); // Llamar a traerMiembros después de cargar las comunidades
-            for (const comunidad of this.results) {
-              if (comunidad.latitud && comunidad.longitud) {
-                comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
-              } else {
-                comunidad.ubicacion = 'Ubicación desconocida';
-              }
-            }
-          } else {
-            console.log("No se obtuvieron datos de eventos");
-          }
-        },
-        (error) => {
-          console.error("Error al filtrar por etiquetas:", error);
-        }
-      );
+      const dataPackage = await lastValueFrom(this.comunidadService.filtrarEtiqueta(etiquetasIds));
+      if (Array.isArray(dataPackage.data)) {
+        return dataPackage.data;
+      }
+      return []; // Devuelve lista vacía si no es un array válido
+    } catch (error) {
+      console.error("Error al filtrar etiquetas:", error);
+      return []; // Manejo de errores devolviendo una lista vacía
     }
   }
-
-  aplicarFiltroParticipantes(): void {
-    if (this.filtroParticipantesActivo && (this.minParticipantes !== null || this.maxParticipantes !== null)) {
-      this.comunidadService.filtrarParticipantes(
-        this.minParticipantes || 0,
-        this.maxParticipantes || Number.MAX_SAFE_INTEGER
-      ).subscribe(
-        async (dataPackage) => {
-          if (Array.isArray(dataPackage.data)) {
-            this.results = dataPackage.data;
-            this.traerMiembros(this.results);
-            for (const comunidad of this.results) {
-              if (comunidad.latitud && comunidad.longitud) {
-                comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(
-                  comunidad.latitud,
-                  comunidad.longitud
-                );
-              } else {
-                comunidad.ubicacion = 'Ubicación desconocida';
-              }
-            }
-          }
-        },
-        (error) => {
-          console.error("Error al filtrar participantes:", error);
-        }
+  
+  async aplicarFiltroParticipantes2(): Promise<Comunidad[]> {
+    try {
+      const dataPackage = await lastValueFrom(
+        this.comunidadService.filtrarParticipantes(
+          this.minParticipantes || 0,
+          this.maxParticipantes || Number.MAX_SAFE_INTEGER
+        )
       );
-    } else if (!this.filtroParticipantesActivo) {
-      this.results = [...this.resultadosOriginales];
+      if (Array.isArray(dataPackage.data)) {
+        return dataPackage.data;
+      }
+      return []; // Devuelve lista vacía si no es un array válido
+    } catch (error) {
+      console.error("Error al filtrar participantes:", error);
+      return []; // Manejo de errores devolviendo una lista vacía
     }
   }
 
 
-  aplicarFiltroNombre(): void {
-    if (this.filtroNombreActivo && this.nombreEventoFiltro) {
-      this.results = this.resultadosOriginales.filter(comunidad =>
-        comunidad.nombre.toLowerCase().includes(this.nombreEventoFiltro.toLowerCase())
-      );
-    } else {
-      this.results = [...this.resultadosOriginales]; // Restaurar todos los resultados si el filtro está desactivado
+  async aplicarFiltroNombre2(): Promise<Comunidad[]> {
+    try {
+      const dataPackage = await lastValueFrom(this.comunidadService.filtrarNombre(this.nombreEventoFiltro));
+      console.info("pepito");
+      return dataPackage.data as Comunidad[];
+    } catch (error) {
+      console.error('Error al cargar más comunidades:', error);
+      return []; // Devuelve una lista vacía en caso de error
     }
   }
-
-
 
   eliminarEtiqueta(etiqueta: Etiqueta): void {
     this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(e => e.id !== etiqueta.id);
@@ -252,7 +158,7 @@ export class ComunidadesComponent implements OnInit {
 
   limpiarFiltroEtiquetas(): void {
     this.etiquetasSeleccionadas = [];
-    //this.getComunidades(); // Recargar todos los eventos
+    this.aplicarTodosLosFiltros();
   }
 
   searchEtiqueta = (text$: Observable<string>): Observable<Etiqueta[]> =>
@@ -293,7 +199,7 @@ export class ComunidadesComponent implements OnInit {
   limpiarFiltroNombre(): void {
     this.nombreEventoFiltro = '';
     this.filtroNombreActivo = false;
-    this.results = [...this.resultadosOriginales];
+    this.aplicarTodosLosFiltros();
   }
 
   // Métodos para el filtro por participantes
@@ -307,80 +213,75 @@ export class ComunidadesComponent implements OnInit {
     this.minParticipantes = null;
     this.maxParticipantes = null;
     this.filtroParticipantesActivo = false;
-    this.results = [...this.resultadosOriginales];
+    this.aplicarTodosLosFiltros();
   }
 
 
   limpiarFiltroFecha(): void {
     this.fechaMinFiltro = '';
     this.fechaMaxFiltro = '';
-    //  this.getComunidades(); // Recargar todos los eventos
+    this.aplicarTodosLosFiltros();
   }
-  limpiarTodosLosFiltros(): void {
-    this.limpiarFiltroNombre();
-    this.limpiarFiltroParticipantes();
-    this.limpiarFiltroFecha();
-    this.limpiarFiltroEtiquetas();
 
-    // Reiniciar los filtros
+  limpiarTodosLosFiltros(): void {
+    this.nombreEventoFiltro = '';
     this.filtroNombreActivo = false;
+    this.minParticipantes = null;
+    this.maxParticipantes = null;
     this.filtroParticipantesActivo = false;
+    this.fechaMinFiltro = '';
+    this.fechaMaxFiltro = '';
+    this.etiquetasSeleccionadas = [];
     this.filtroEtiquetasActivo = false;
 
     // Restaurar todos los resultados
-    this.results = [...this.resultadosOriginales];
+    this.currentIndexComunidadesDisponibles = 0;
+
   }
 
 
   async aplicarTodosLosFiltros(): Promise<void> {
-    // Comenzamos con todos los resultados originales
-    let resultadosFiltrados = [...this.resultadosOriginales];
+    let lista1: Comunidad[] = [];
+    let lista2: Comunidad[] = [];
+    let lista3: Comunidad[] = [];
+    this.hayResultadosFiltrados = false; // Inicializar en false
 
-    // Aplicar filtro por nombre si está activo
     if (this.filtroNombreActivo && this.nombreEventoFiltro) {
-      resultadosFiltrados = resultadosFiltrados.filter(comunidad =>
-        comunidad.nombre.toLowerCase().includes(this.nombreEventoFiltro.toLowerCase())
-      );
-    }
-
-    // Aplicar filtro por participantes si está activo
-    if (this.filtroParticipantesActivo && (this.minParticipantes !== null || this.maxParticipantes !== null)) {
-      const min = this.minParticipantes || 0;
-      const max = this.maxParticipantes || Number.MAX_SAFE_INTEGER;
-
-      resultadosFiltrados = resultadosFiltrados.filter(comunidad =>
-        comunidad.miembros >= min && comunidad.miembros <= max
-      );
-    }
-
-    // Aplicar filtro por etiquetas si hay etiquetas seleccionadas
-    if (this.filtroEtiquetasActivo && this.etiquetasSeleccionadas.length > 0) {
-      const etiquetasIds = this.etiquetasSeleccionadas.map(e => e.nombre);
-
-      try {
-        const response = await this.comunidadService.filtrarEtiqueta(etiquetasIds).toPromise();
-        if (response && response.data && Array.isArray(response.data)) {
-          const comunidadesFiltradas = response.data as Comunidad[];
-          resultadosFiltrados = resultadosFiltrados.filter(comunidad =>
-            comunidadesFiltradas.some(c => c.id === comunidad.id)
-          );
-        }
-      } catch (error) {
-        console.error("Error al filtrar por etiquetas:", error);
+        lista1 = await this.aplicarFiltroNombre2();
+        this.hayResultadosFiltrados = true; // Entró en el if
       }
+    if (this.filtroParticipantesActivo && (this.minParticipantes !== null || this.maxParticipantes !== null)) {
+      lista2 = await this.aplicarFiltroParticipantes2();
+      this.hayResultadosFiltrados = true; // Entró en el if
     }
+    if (this.filtroEtiquetasActivo && this.etiquetasSeleccionadas.length > 0) {
+      lista3 = await this.aplicarFiltroEtiquetas2();
+      this.hayResultadosFiltrados = true; // Entró en el if
+    }
+    
+    let listasActivas = [lista1, lista2, lista3].filter(lista => lista.length > 0);
 
-    // Actualizar los resultados filtrados
-    this.results = resultadosFiltrados;
-
-    // Actualizar información adicional para los resultados filtrados
+    if (listasActivas.length > 0) {
+      // Realizamos la intersección de las listas
+      this.resultadosFiltrados = listasActivas.reduce((interseccion, listaActual) => {
+        return interseccion.filter(item => 
+          listaActual.some(actualItem => actualItem.id === item.id)
+        );
+      });
+    } else {
+      this.resultadosFiltrados = [];
+    }
+    this.currentIndexFiltrados = 0;
+    this.noMasResultadosFiltrados = false;
     await this.actualizarInformacionAdicional();
-  }
+    this.comunidadesDisponiblesAMostrar=[];
+    this.cargarMasResultadosFiltrados(); // Cargar la primera página de resultados
+}
 
   private async actualizarInformacionAdicional(): Promise<void> {
-    this.traerMiembros(this.results);
+    this.traerMiembros(this.resultadosFiltrados);
 
-    for (const comunidad of this.results) {
+    for (const comunidad of this.resultadosFiltrados) {
       if (comunidad.latitud && comunidad.longitud) {
         try {
           comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(
@@ -396,13 +297,34 @@ export class ComunidadesComponent implements OnInit {
     }
   }
 
+  cargarMasResultadosFiltrados(): void {
+    if (this.loadingFiltrados || this.noMasResultadosFiltrados) return;
+  
+    this.loadingFiltrados = true;
+    const inicio = this.currentIndexFiltrados * this.cantidadPorPagina;
+    const fin = inicio + this.cantidadPorPagina;
+  
+    const nuevosResultados = this.resultadosFiltrados.slice(inicio, fin);
+  
+    if (nuevosResultados.length > 0) {
+      this.traerMiembros(nuevosResultados); // Agregar datos adicionales como ubicación y miembros
+      this.comunidadesDisponiblesAMostrar = [
+        ...this.comunidadesDisponiblesAMostrar,
+        ...nuevosResultados
+      ];
+      this.currentIndexFiltrados++;
+    } else {
+      this.noMasResultadosFiltrados = true;
+    }
+  
+    this.loadingFiltrados = false;
+  }
+
   seleccionarTab(tab: string) {
     if (this.tabSeleccionada !== tab) {
       this.tabSeleccionada = tab;
     }
   }
-
-
 
   // Método para cargar más comunidades disponibles
   cargarComunidadesDisponibles(): void {
@@ -419,16 +341,13 @@ export class ComunidadesComponent implements OnInit {
           if (resultados && resultados.length > 0) {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerMiembros(resultados); // Llamar a traerParticipantes después de cargar los eventos
-            
+
             for (const evento of resultados) {
-              evento.ubicacion = evento.latitud && evento.longitud 
-              ? await this.comunidadService.obtenerUbicacion(evento.latitud, evento.longitud)
-              : 'Ubicación desconocida';
+              evento.ubicacion = evento.latitud && evento.longitud
+                ? await this.comunidadService.obtenerUbicacion(evento.latitud, evento.longitud)
+                : 'Ubicación desconocida';
             }
-            this.comunidadesDisponiblesAMostrar = [
-              ...this.comunidadesDisponiblesAMostrar,
-              ...resultados,
-            ];
+            this.comunidadesDisponiblesAMostrar = [...this.comunidadesDisponiblesAMostrar, ...resultados,];
             this.currentIndexComunidadesDisponibles++; // Aumentar el índice para la siguiente carga
             console.info("llegue");
 
@@ -448,23 +367,23 @@ export class ComunidadesComponent implements OnInit {
     if (this.loadingMiembro || this.noMasComunidadesMiembro) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
 
     this.loadingMiembro = true;
-    
+
     // Suponiendo que tienes un método que obtiene más comunidades con paginación
     this.comunidadService
-    .miembroUsuario(this.idUsuarioAutenticado,this.currentIndexComunidadesMiembro, this.cantidadPorPagina)
-    .subscribe(
-      async (dataPackage) => {
-        const resultados = dataPackage.data as Comunidad[]
-        console.info("HOLAA");
+      .miembroUsuario(this.idUsuarioAutenticado, this.currentIndexComunidadesMiembro, this.cantidadPorPagina)
+      .subscribe(
+        async (dataPackage) => {
+          const resultados = dataPackage.data as Comunidad[]
+          console.info("HOLAA");
           console.info(resultados);
           if (resultados && resultados.length > 0) {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerMiembros(resultados); // Llamar a traerParticipantes después de cargar los eventos
-            
+
             for (const evento of resultados) {
-              evento.ubicacion = evento.latitud && evento.longitud 
-              ? await this.comunidadService.obtenerUbicacion(evento.latitud, evento.longitud)
-              : 'Ubicación desconocida';
+              evento.ubicacion = evento.latitud && evento.longitud
+                ? await this.comunidadService.obtenerUbicacion(evento.latitud, evento.longitud)
+                : 'Ubicación desconocida';
             }
             this.comunidadesMiembroUsuarioAMostrar = [
               ...this.comunidadesMiembroUsuarioAMostrar,
@@ -489,10 +408,14 @@ export class ComunidadesComponent implements OnInit {
   onScroll(): void {
     const element = document.querySelector('.grid-container') as HTMLElement;
     if (element.scrollTop + element.clientHeight >= element.scrollHeight) {
-      if (this.tabSeleccionada === 'disponibles') {
-        this.cargarComunidadesDisponibles();
-      } else if (this.tabSeleccionada === 'miembro') {
-        this.cargarComunidadesMiembro();
+      if(this.hayResultadosFiltrados){
+        this.cargarMasResultadosFiltrados();
+      }else{
+        if (this.tabSeleccionada === 'disponibles') {
+          this.cargarComunidadesDisponibles();
+        } else if (this.tabSeleccionada === 'miembro') {
+          this.cargarComunidadesMiembro();
+        }
       }
     }
   }
