@@ -148,11 +148,7 @@ export class ComunidadService {
   }
   filtrarNombre(nombre: string): Observable<DataPackage> {
     // Agregamos los parámetros min y max a la URL
-    return this.http.get<DataPackage>(`${this.comunidadesUrl}/filtrar/nombre`, {
-      params: {
-        nombre
-      }
-    });
+    return this.http.get<DataPackage>(`${this.comunidadesUrl}/filtrar/nombre/${nombre}`);
   }
 
   filtrarEtiqueta(etiquetas: string[]): Observable<DataPackage> {
