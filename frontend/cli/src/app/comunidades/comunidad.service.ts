@@ -98,13 +98,15 @@ export class ComunidadService {
   }
 
 
-  miembroUsuario(idUsuario: number): Observable<DataPackage> {
-    return this.http.get<DataPackage>(` ${this.comunidadesUrl}/miembro/${idUsuario}`);
+  miembroUsuario(idUsuario:number, page: number, size: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.comunidadesUrl}/miembro/${idUsuario}?page=${page}&size=${size}`);
   }
 
-  disponibles(): Observable<DataPackage> {
-    return this.http.get<DataPackage>(` ${this.comunidadesUrl}/disponibles`);
+  disponibles(page: number, size: number): Observable<DataPackage> {
+    const nombreUsuario = this.authService.getNombreUsuario();
+    return this.http.get<DataPackage>(` ${this.comunidadesUrl}/${nombreUsuario}/disponibles?page=${page}&size=${size}`);
   }
+ 
 
   otorgarRolAdministrador(idCreador: number, idMiembro: number, idComunidad: number): Observable<DataPackage> {
     const body = {}
@@ -146,11 +148,7 @@ export class ComunidadService {
   }
   filtrarNombre(nombre: string): Observable<DataPackage> {
     // Agregamos los parámetros min y max a la URL
-    return this.http.get<DataPackage>(`${this.comunidadesUrl}/filtrar/nombre`, {
-      params: {
-        nombre
-      }
-    });
+    return this.http.get<DataPackage>(`${this.comunidadesUrl}/filtrar/nombre/${nombre}`);
   }
 
   filtrarEtiqueta(etiquetas: string[]): Observable<DataPackage> {
