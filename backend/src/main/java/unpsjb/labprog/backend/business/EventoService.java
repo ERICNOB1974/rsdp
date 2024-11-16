@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.mail.MessagingException;
 import unpsjb.labprog.backend.exceptions.EventoException;
+import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Etiqueta;
 import unpsjb.labprog.backend.model.Evento;
 import unpsjb.labprog.backend.model.Usuario;
@@ -288,12 +289,15 @@ public class EventoService {
         return eventoRepository.eventosCantidadParticipantes(min, max);
     }
 
-    public List<Evento> disponibles() {
-        return eventoRepository.disponibles();
+    public List<Evento> eventosDisponibles(String nombreUsuario,int page, int size) {
+        int skip = page * size;  // Cálculo de los resultados a omitir
+        return eventoRepository.disponibles(nombreUsuario,skip, size);
     }
 
-    public List<Evento> participaUsuario(Long idUsuario) {
-        return eventoRepository.participaUsuario(idUsuario);
+
+    public List<Evento> participaUsuario(Long idUsuario,int page, int size) {
+        int skip = page * size;  // Cálculo de los resultados a omitir
+        return eventoRepository.participaUsuario(idUsuario,skip,size);
     }
 
     public List<ScoreEvento> sugerenciasDeEventosBasadosEnEventos2(String nombreUsuario) {

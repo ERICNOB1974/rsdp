@@ -99,12 +99,14 @@ public class ComunidadService {
         return "Exito al salir de la comunidad";
     }
 
-    public List<Comunidad> disponibles() {
-        return comunidadRepository.disponibles();
+      // Método para obtener comunidades con paginación
+      public List<Comunidad> obtenerComunidadesDisponiblesPaginadas(String nombreUsuario,int page, int size) {
+        int skip = page * size;  // Cálculo de los resultados a omitir
+        return comunidadRepository.disponibles(nombreUsuario,skip, size);
     }
-
-    public List<Comunidad> miembroUsuario(Long idUsuario) {
-        return comunidadRepository.miembroUsuario(idUsuario);
+    public List<Comunidad> miembroUsuario(Long idUsuario,int page, int size) {
+        int skip = page * size;  // Cálculo de los resultados a omitir
+        return comunidadRepository.miembroUsuario(idUsuario,skip,size);
     }
 
     public List<ScoreComunidad> obtenerSugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario) {
