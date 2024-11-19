@@ -5,7 +5,7 @@ import { io, Socket } from 'socket.io-client';
   providedIn: 'root',
 })
 export class WebSocketService {
-  private socket: Socket;
+/*   private socket: Socket;
 
   constructor() {
     this.socket = io('http://localhost:8080'); // Cambia la URL al endpoint de tu backend
@@ -17,6 +17,6 @@ export class WebSocketService {
 
   emit(eventName: string, data: any): void {
     this.socket.emit(eventName, data);
-  }
+  } */
 
 }

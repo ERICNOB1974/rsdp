@@ -1,100 +1,153 @@
+/* Contenedor principal */
 .eventos-container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    background: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-  }
-  
-  .eventos-container h2 {
-    color: #333;
-    font-size: 1.8em;
-    margin-bottom: 20px;
-  }
-  
-  .eventos-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .evento-card {
-    padding: 15px;
-    background: #ffffff;
-    border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s;
-  }
-  
-  .evento-card h3 {
-    color: #007BFF;
-    font-size: 1.4em;
-    margin-bottom: 8px;
-  }
-  
-  .evento-card:hover {
-    transform: translateY(-5px);
-  }
-  
-  .detalles-btn {
-    padding: 8px 12px;
-    background: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  
-  .detalles-btn:hover {
-    background: #0056b3;
-  }
-  
-  .navegacion {
-    margin-top: 20px;
-  }
-  
-  .nav-btn {
-    padding: 10px 20px;
-    margin: 0 10px;
-    background: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  
-  .nav-btn:hover {
-    background: #0056b3;
-  }
-  
-  .no-eventos {
-    text-align: center;
-    font-size: 1.2em;
-    color: #666;
-    padding: 20px;
-  }
-  .fecha-hora {
-    color: #555;
-    font-size: 0.9em;
-    margin: 5px 0 10px;
-    font-style: italic;
-  }
-  .eventos-list {
-    max-height: 400px; /* Limitar la altura para permitir el scroll */
-    overflow-y: auto;  /* Habilitar el scroll vertical */
-    border: 1px solid #ddd; /* Opcional: bordes para diferenciar la sección */
-    padding: 10px; /* Espaciado interno */
-  }
-  
-  .evento-card {
-    margin-bottom: 10px; /* Espacio entre tarjetas */
-    padding: 10px; /* Espaciado interno en la tarjeta */
-    border: 1px solid #ccc; /* Borde ligero para cada tarjeta */
-    border-radius: 5px; /* Bordes redondeados */
-    background-color: #f9f9f9; /* Fondo claro */
-  }
-      
+  margin: 20px auto;
+  padding: 20px;
+  max-width: 1200px;
+  background: #e4f3e895;
+  border-radius: 15px;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Título */
+.titulo-eventos {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #006064;
+  margin-bottom: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+/* Lista de eventos con desplazamiento */
+.eventos-list {
+  max-height: 600px;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+/* Tarjetas de eventos */
+.evento-card {
+  width: 320px;
+  background: #ffffff;
+  border-radius: 15px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.evento-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Imagen */
+.imagen-container {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+}
+
+.evento-imagen {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.evento-card:hover .evento-imagen {
+  transform: scale(1.1);
+}
+
+/* Superposición en la imagen */
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+  text-align: left;
+  font-size: 1rem;
+}
+
+.ubicacion {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
+}
+
+.icon-location {
+  font-size: 1.2rem;
+  color: #fbc02d;
+}
+
+/* Detalles del evento */
+.evento-detalles {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.evento-nombre {
+  font-size: 1.5rem;
+  color: #37474f;
+  margin: 0;
+  font-weight: bold;
+}
+
+.fecha-hora {
+  font-size: 1rem;
+  color: #607d8b;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.icon-calendar {
+  font-size: 1.2rem;
+  color: #039be5;
+}
+
+/* Botón de detalles */
+.detalles-btn {
+  background: #00bcd4;
+  color: #ffffff;
+  padding: 10px 15px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  align-self: flex-start;
+}
+
+.detalles-btn:hover {
+  background: #008ba3;
+  transform: scale(1.05);
+}
+
+/* Sin eventos */
+.no-eventos {
+  text-align: center;
+  padding: 50px;
+  background: #f5f5f5;
+  border-radius: 15px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.mensaje-no-eventos {
+  font-size: 1.2rem;
+  color: #7f8c8d;
+  font-style: italic;
+}

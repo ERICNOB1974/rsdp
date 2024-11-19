@@ -9,6 +9,7 @@ import unpsjb.labprog.backend.presenter.WebSocketController;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -33,6 +34,9 @@ public class NotificacionService {
                 idEvento,
                 "Inscripción a evento",
                 LocalDateTime.now());
+
+        String mensaje = "Te has inscrito al evento: " + idEvento;
+        webSocketController.enviarNotificacion(idUsuario, mensaje);
     }
 
     public void notificarAceptacionAmistad(Long idUsuario, Long idAmigo) {
@@ -41,6 +45,9 @@ public class NotificacionService {
                 idAmigo,
                 "Aceptación de solicitud de amistad",
                 LocalDateTime.now());
+
+        String mensaje = "Tu solicitud de amistad ha sido aceptada por el usuario: " + idAmigo;
+        webSocketController.enviarNotificacion(idUsuario, mensaje);
     }
 
     public List<Notificacion> obtenerNotificacionesPorUsuario(Long usuarioId) throws Exception {

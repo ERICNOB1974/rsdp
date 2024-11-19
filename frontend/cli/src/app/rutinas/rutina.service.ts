@@ -154,9 +154,16 @@ export class RutinaService {
     return this.http.get<DataPackage>(`${this.rutinasUrl}/rutinasCreadasPorUsuario/${userId}?offset=${offset}&limit=${limit}`);
   }
 
-  rutinasRealizaUsuario(usuarioId: number): Observable<DataPackage> {
-    return this.http.get<DataPackage>(`${this.rutinasUrl}/rutinasRealizaUsuario/${usuarioId}`);
+
+  rutinasRealizaUsuario(idUsuario:number, page: number, size: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.rutinasUrl}/rutinasRealizaUsuario/${idUsuario}?page=${page}&size=${size}`);
   }
+
+  disponibles(page: number, size: number): Observable<DataPackage> {
+    const nombreUsuario = this.authService.getNombreUsuario();
+    return this.http.get<DataPackage>(` ${this.rutinasUrl}/${nombreUsuario}/disponibles?page=${page}&size=${size}`);
+  }
+ 
 
   obtenerProgresoActual(rutinaId: number): Observable<DataPackage>{
     const usuarioId = this.authService.getUsuarioId();
