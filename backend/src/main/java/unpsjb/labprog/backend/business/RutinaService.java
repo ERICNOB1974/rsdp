@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Collections;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,11 +52,13 @@ public class RutinaService {
     }
 
     public Long crearRelacionDiaFinalizado(Long diaId, Long usuarioId) throws Exception {
-        // Consulta si el día ya fue finalizado por el usuario y obtiene el intento actual
+        // Consulta si el día ya fue finalizado por el usuario y obtiene el intento
+        // actual
         Integer intento = diaRepository.buscarMaxIntento(diaId, usuarioId);
         System.out.println("Intento obtenido de la base de datos: " + intento);
-    
-        // Si intento es null, significa que el día no ha sido finalizado antes, entonces intento es 1
+
+        // Si intento es null, significa que el día no ha sido finalizado antes,
+        // entonces intento es 1
         if (intento == null) {
             intento = 1;
             System.out.println("El día no ha sido finalizado antes. Se establece intento en: " + intento);
@@ -62,7 +66,7 @@ public class RutinaService {
             // Si el día es de orden 1, incrementa el intento
             int numeroDia = diaRepository.buscarNumeroDia(diaId);
             System.out.println("Número de día obtenido: " + numeroDia);
-    
+
             if (numeroDia == 1) {
                 intento += 1;
                 System.out.println("Día es de orden 1. Intento incrementado a: " + intento);
@@ -70,11 +74,11 @@ public class RutinaService {
                 System.out.println("Día no es de orden 1. Intento se mantiene en: " + intento);
             }
         }
-    
+
         // Crea la relación DIA_FINALIZADO con el intento calculado
         diaRepository.crearRelacionDiaFinalizado(diaId, usuarioId, intento);
         System.out.println("Relación DIA_FINALIZADO creada con intento: " + intento);
-    
+
         return diaId;
     }
 
@@ -136,33 +140,35 @@ public class RutinaService {
     @Transactional
     public void guardarEjercicioResistencia(Long diaId, Ejercicio ejercicio, int orden, String tiempo, String imagen) {
         Ejercicio ejercicioExistente = ejercicioRepository.findByNombreDescripcionImagen(
-            ejercicio.getNombre(), ejercicio.getDescripcion(), ejercicio.getImagen());
-    
+                ejercicio.getNombre(), ejercicio.getDescripcion(), ejercicio.getImagen());
+
         Long ejercicioId;
         if (ejercicioExistente == null) {
-            ejercicioId = ejercicioRepository.crearEjercicio(ejercicio.getNombre(), ejercicio.getDescripcion(), ejercicio.getImagen());
+            ejercicioId = ejercicioRepository.crearEjercicio(ejercicio.getNombre(), ejercicio.getDescripcion(),
+                    ejercicio.getImagen());
         } else {
             ejercicioId = ejercicioExistente.getId();
         }
-    
+
         rutinaRepository.relacionarDiaEjercicioResistencia(diaId, ejercicioId, orden, tiempo);
     }
-    
+
     @Transactional
-    public void guardarEjercicioSeries(Long diaId, Ejercicio ejercicio, int orden, int series, int repeticiones, String imagen) {
+    public void guardarEjercicioSeries(Long diaId, Ejercicio ejercicio, int orden, int series, int repeticiones,
+            String imagen) {
         Ejercicio ejercicioExistente = ejercicioRepository.findByNombreDescripcionImagen(
-            ejercicio.getNombre(), ejercicio.getDescripcion(), ejercicio.getImagen());
-    
+                ejercicio.getNombre(), ejercicio.getDescripcion(), ejercicio.getImagen());
+
         Long ejercicioId;
         if (ejercicioExistente == null) {
-            ejercicioId = ejercicioRepository.crearEjercicio(ejercicio.getNombre(), ejercicio.getDescripcion(), ejercicio.getImagen());
+            ejercicioId = ejercicioRepository.crearEjercicio(ejercicio.getNombre(), ejercicio.getDescripcion(),
+                    ejercicio.getImagen());
         } else {
             ejercicioId = ejercicioExistente.getId();
         }
-    
+
         rutinaRepository.relacionarDiaEjercicioSeries(diaId, ejercicioId, orden, series, repeticiones);
     }
-    
 
     public List<Ejercicio> search(String term) {
         return ejercicioRepository.search(term.toUpperCase());
@@ -208,7 +214,7 @@ public class RutinaService {
         return sugerencias;
     }
 
-    public List<ScoreRutina> obtenerTodasLasSugerenciasDeRutinas(String nombreUsuario) {
+    public Map<String, Object> obtenerTodasLasSugerenciasDeRutinasPaginadas(String nombreUsuario, int page, int pageSize) {
         // Obtener todas las sugerencias de comunidades desde las tres consultas
         List<ScoreRutina> sugerenciasEventos = rutinaRepository.sugerenciasDeRutinasBasadosEnEventos2(nombreUsuario);
         List<ScoreRutina> sugerenciasAmigos = rutinaRepository.sugerenciasDeRutinasBasadosEnAmigos2(nombreUsuario);
@@ -217,7 +223,7 @@ public class RutinaService {
         List<ScoreRutina> sugerenciasRutinas = rutinaRepository.sugerenciasDeRutinasBasadasEnRutinas2(nombreUsuario);
         List<ScoreRutina> sugerenciasEventosPorEtiquetas = rutinaRepository
                 .sugerenciasDeRutinasBasadosEnEventosPorEtiqueta2(nombreUsuario);
-  
+
         // Combinar todas las sugerencias en una sola lista
         List<ScoreRutina> todasLasSugerencias = new ArrayList<>();
         todasLasSugerencias.addAll(sugerenciasAmigos);
@@ -247,10 +253,21 @@ public class RutinaService {
 
         // Ordenar la lista por score en orden descendente
         listaSugerenciasSinDuplicados.sort((a, b) -> Double.compare(b.getScore(), a.getScore())); // Orden descendente
+        int totalElementos = listaSugerenciasSinDuplicados.size();
+        int totalPaginas = (int) Math.ceil((double) totalElementos / pageSize);
+        int start = page * pageSize;
+        int end = Math.min(start + pageSize, listaSugerenciasSinDuplicados.size());
+        if (start > end) {
+            return Collections.emptyMap(); // Si la página está fuera de rango
+        }
+        // Crear el mapa con los datos de eventos y el total de páginas
+        Map<String, Object> result = new HashMap<>();
+        result.put("data", listaSugerenciasSinDuplicados.subList(start, end)); // Eventos de la página
+        result.put("totalPaginas", totalPaginas); // Total de páginas
 
-        // Retornar la lista ordenada
-        return listaSugerenciasSinDuplicados;
+        return result;
     }
+
 
     public int obtenerDiasEnRutina(Long idRutina) {
         return rutinaRepository.obtenerDiasEnRutina(idRutina);
@@ -349,16 +366,25 @@ public class RutinaService {
         return rutinaRepository.rutinasNombre(nombre);
     }
 
-      public List<Rutina> rutinasCreadasPorUsuario(Long idUsuario, int offset, int limit) {
+    public List<Rutina> rutinasCreadasPorUsuario(Long idUsuario, int offset, int limit) {
         return rutinaRepository.rutinasCreadasPorUsuario(idUsuario, offset, limit);
     }
 
-    public List<Rutina> rutinasRealizaUsuario(Long idUsuario) {
-        return rutinaRepository.rutinasRealizaUsuario(idUsuario);
+    public List<Rutina> rutinasRealizaUsuario(Long idUsuario,int page, int size) {
+        int skip = page * size;  // Cálculo de los resultados a omitir
+        return rutinaRepository.rutinasRealizaUsuario(idUsuario,skip,size);
     }
 
+   // Método para obtener comunidades con paginación
+   public List<Rutina> obtenerRutinasDisponiblesPaginadas(String nombreUsuario,int page, int size) {
+    int skip = page * size;  // Cálculo de los resultados a omitir
+    return rutinaRepository.disponibles(nombreUsuario,skip, size);
+}
+
+
     public Long obtenerProgresoActual(Long rutinaId, Long usuarioId) {
-        if (!diaRepository.verificarRelacionDiaFinalizado(rutinaId, usuarioId) || !rutinaRepository.existeRelacionEntreUsuarioYRutina(rutinaId, usuarioId)){
+        if (!diaRepository.verificarRelacionDiaFinalizado(rutinaId, usuarioId)
+                || !rutinaRepository.existeRelacionEntreUsuarioYRutina(rutinaId, usuarioId)) {
             return (long) -1;
         }
         return diaRepository.obtenerProgresoActual(rutinaId, usuarioId);
