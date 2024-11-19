@@ -27,7 +27,7 @@ export class ComunidadesComponent implements OnInit {
   filtroNombreActivo: boolean = true;
   nombreEventoFiltro: string = '';
   tabSeleccionada: string = 'disponibles';
-  cantidadPorPagina = 2; // Cantidad de comunidades a mostrar por cada carga
+  cantidadPorPagina = 4; // Cantidad de comunidades a mostrar por cada carga
   currentIndexComunidadesDisponibles = 0;
   currentIndexComunidadesMiembro = 0;
   noMasComunidadesDisponibles = false;
@@ -407,8 +407,9 @@ export class ComunidadesComponent implements OnInit {
 
   onScroll(): void {
     const element = document.querySelector('.grid-container') as HTMLElement;
-    if (element.scrollTop + element.clientHeight >= element.scrollHeight) {
+    if (element.scrollTop + element.clientHeight >= element.scrollHeight-1) {
       if(this.hayResultadosFiltrados){
+        console.info("pinchila");
         this.cargarMasResultadosFiltrados();
       }else{
         if (this.tabSeleccionada === 'disponibles') {

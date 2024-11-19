@@ -353,9 +353,17 @@ public class RutinaService {
         return rutinaRepository.rutinasCreadasPorUsuario(idUsuario, offset, limit);
     }
 
-    public List<Rutina> rutinasRealizaUsuario(Long idUsuario) {
-        return rutinaRepository.rutinasRealizaUsuario(idUsuario);
+    public List<Rutina> rutinasRealizaUsuario(Long idUsuario,int page, int size) {
+        int skip = page * size;  // Cálculo de los resultados a omitir
+        return rutinaRepository.rutinasRealizaUsuario(idUsuario,skip,size);
     }
+
+   // Método para obtener comunidades con paginación
+   public List<Rutina> obtenerRutinasDisponiblesPaginadas(String nombreUsuario,int page, int size) {
+    int skip = page * size;  // Cálculo de los resultados a omitir
+    return rutinaRepository.disponibles(nombreUsuario,skip, size);
+}
+
 
     public Long obtenerProgresoActual(Long rutinaId, Long usuarioId) {
         if (!diaRepository.verificarRelacionDiaFinalizado(rutinaId, usuarioId) || !rutinaRepository.existeRelacionEntreUsuarioYRutina(rutinaId, usuarioId)){
