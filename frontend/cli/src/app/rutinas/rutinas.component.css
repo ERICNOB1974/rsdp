@@ -1,107 +1,157 @@
-.carousel {
-    position: relative;
-    width: 100vh;
-    height: 50vh; /* Ajusta a toda la altura de la ventana */
-    overflow: hidden;
-  }
-  
-  .carousel-container {
-    display: flex;
-    justify-content: center; /* Centra los elementos cuando hay menos de 4 */
-    transition: transform 0.5s ease; /* Para animar el desplazamiento */
-    height: auto;
-  }
-  
-  .carousel-item {
-    flex: 0 0 25%; /* Cada item ocupa un cuarto del ancho si hay 4 o más */
-    height: 100%;
-    display: flex;
-    align-items: center; /* Centra el contenido verticalmente */
-    justify-content: center; /* Centra el contenido horizontalmente */
-    position: relative;
-  }
-  
-  .large-event {
-    flex: 0 0 100%; /* La primer rutina ocupa toda la pantalla */
-  }
-  
-  .mini-event {
-    flex: 0 0 25%; /* Las mini rutinas ocupan 1/4 de la pantalla */
-    height: 150px; /* Altura fija para las mini rutinas */
-  }
-  
-  .rutina-card {
-    padding: 20px;
-    margin: 10px;
-    background-color: #fff5c4; /* Color amarillento */
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
-  
-  .rutina-details {
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 20px;
-    border-radius: 8px;
-    text-align: center;
-  }
-  
-  .carousel-control {
-    position: absolute;
-    top: 40%;
-    transform: translateY(-50%);
-    background-color: rgba(255, 255, 255, 0.5);
-    border: none;
-    padding: 20px;
-    cursor: pointer;
-    z-index: 1000; /* Asegura que los botones estén por encima del contenido */
-  }
-  
-  .prev {
-    left: 10px;
-  }
-  
-  .next {
-    right: 10px;
-  }
-  
-  .indice-actual {
-    margin-top: 10px;
-    text-align: center;
-    font-weight: bold;
-  }
-  
-  .clickable {
-    cursor: pointer; /* Cambia el cursor para indicar que es clickeable */
-  }
-  
-  .carousel-item {
-    position: relative;
-    z-index: 1; /* Asegura que los elementos sean interactivos */
-  }
-  
-  .rutina-card {
-    padding: 20px;
-    background-color: #fff5c4; /* Color amarillento */
-    border-radius: 8px;
-    transition: transform 0.2s;
-  }
-  
-  .rutina-card:hover {
-    transform: scale(1.05); /* Pequeña animación para indicar que es clickeable */
-    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  }
-  
-  .etiquetas {
-    margin-top: 10px; /* Espacio encima de las etiquetas */
-  }
-  
-  .etiqueta {
-    display: inline-block; /* Para que las etiquetas estén en línea */
-    background-color: #f0f0f0; /* Color de fondo */
-    border-radius: 3px; /* Bordes redondeados */
-    padding: 5px 10px; /* Espaciado interno */
-    margin-right: 5px; /* Espaciado entre etiquetas */
-    font-size: 14px; /* Tamaño de fuente */
-    color: #333; /* Color del texto */
-  }
+/* General Styles */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to bottom right, #ff7eb3, #ff758c, #ff6b6b);
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+/* Tabs Section */
+.tabs-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  margin: 20px auto;
+  max-width: 800px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.tab-button {
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.3);
+  border: none;
+  border-radius: 25px;
+  color: #000000;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.tab-button:hover {
+  background: rgba(255, 255, 255, 0.5);
+  color: #ff6b6b;
+}
+
+.tab-button.active {
+  background: #fff;
+  color: #ff6b6b;
+  font-weight: bold;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Content Section */
+.content-container {
+  margin: auto;
+  padding: 20px;
+  max-height: 600px; /* Ajusta la altura máxima según sea necesario */
+  overflow-y: auto; /* Permite el desplazamiento vertical */
+}
+
+.section-title {
+  text-align: center;
+  color: #ff0000;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Grid Layout */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.grid-item {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  border-radius: 15px;
+  overflow: hidden;
+  height: 250px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.grid-item:hover {
+  transform: scale(0.95);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.grid-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 15px;
+  text-align: center;
+  transition: background 0.3s ease, max-height 0.3s ease;
+  max-height: 220px; /* Incrementa la altura al hover */
+  overflow: hidden; /* Oculta contenido excedente */
+  overflow-y: auto; /* Scroll para contenido adicional */
+  display: flex;
+  flex-direction: column;
+  gap: 10px; /* Espacio entre elementos */
+  justify-content: start;
+}
+
+/* Expande el contenido al pasar el mouse */
+.grid-item:hover .grid-overlay {
+  background: rgba(0, 0, 0, 0.85);
+}
+
+/* Título del overlay */
+.grid-overlay h3 {
+  font-size: 18px;
+  margin: 0;
+  line-height: 1.2;
+}
+
+/* Descripción con líneas truncadas */
+.grid-overlay p {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 5px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Limita a 2 líneas */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Etiquetas con scroll interno */
+.tags {
+  margin-top: 10px;
+  max-height: 50px; /* Más espacio para etiquetas */
+  overflow-y: auto; /* Scroll si exceden el límite */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  justify-content: center;
+}
+
+/* Estilo de las etiquetas */
+.tag {
+  display: inline-block;
+  background: #ff6b6b;
+  color: #000000;
+  font-size: 12px;
+  border-radius: 15px;
+  padding: 5px 10px;
+  transition: all 0.3s ease;
+}
+
+.tag:hover {
+  background: #b8efa9;
+  color: #000000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
