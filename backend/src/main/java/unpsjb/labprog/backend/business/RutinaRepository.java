@@ -50,8 +50,7 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                      "WHERE NOT (u)-[:REALIZA_RUTINA]->(rutina) " +
                      "WITH rutina, count(participantes) as score " +
                      "RETURN rutina, score,+score+' usuario/s de los eventos en los cuales te inscribiste, realiza/n esta rutinas' AS motivo  " +
-                     "ORDER BY score DESC, rutina.nombre ASC " +
-                     "LIMIT 3")
+                     "ORDER BY score DESC, rutina.nombre ASC")
        List<ScoreRutina> sugerenciasDeRutinasBasadosEnEventos2(String nombreUsuario);
 
        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(amigo:Usuario) " +
@@ -59,8 +58,7 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                      "WHERE NOT (u)-[:REALIZA_RUTINA]->(rutina) " +
                      "WITH rutina, COUNT(amigo) AS score " + // Contamos cuántos amigos realizan la rutina
                      "RETURN rutina, score, 'tiene '+score+' amigo/s que realiza/n esta rutinas ' AS motivo  " +
-                     "ORDER BY score DESC " + // Ordenamos por popularidad, de mayor a menor
-                     "LIMIT 3")
+                     "ORDER BY score DESC")
        List<ScoreRutina> sugerenciasDeRutinasBasadosEnAmigos2(String nombreUsuario);
 
        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[PARTICIPA_EN]->(eventos:Evento) " +
@@ -68,9 +66,8 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                      " MATCH (rutina:Rutina)-[:ETIQUETADA_CON]->(etiquetas) " +
                      " WHERE NOT (u)-[:REALIZA_RUTINA]->(rutina) " +
                      " WITH rutina, COUNT(DISTINCT etiquetas) AS score " +
-                     " RETURN rutina, score, 'son similares porque tienen '+etiquetasCompartidas+' etiqueta/s compartida/s con eventos en los que participas' AS motivo  " +
-                     " ORDER BY score DESC" +
-                     " LIMIT 3")
+                     " RETURN rutina, score, 'son similares porque tienen '+score+' etiqueta/s compartida/s con eventos en los que participas' AS motivo  " +
+                     " ORDER BY score DESC")
        List<ScoreRutina> sugerenciasDeRutinasBasadosEnEventosPorEtiqueta2(String nombreUsuario);
 
        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:REALIZA_RUTINA]->(rc:Rutina)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) "
@@ -81,9 +78,8 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                      " MATCH (u)-[:REALIZA_RUTINA]->(rutina) " +
                      "} " +
                      "WITH rutina, COUNT(DISTINCT etiqueta) AS score " +
-                     "RETURN rutina, score,'son similares porque tienen '+etiquetasCompartidas+' etiqueta/s compartida/s con rutinas que realizas' AS motivo  " +
-                     "ORDER BY score DESC " +
-                     "LIMIT 3")
+                     "RETURN rutina, score,'son similares porque tienen '+score+' etiqueta/s compartida/s con rutinas que realizas' AS motivo  " +
+                     "ORDER BY score DESC ")
        List<ScoreRutina> sugerenciasDeRutinasBasadasEnRutinas2(String nombreUsuario);
 
        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(comunidad:Comunidad) " +
@@ -93,8 +89,7 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                      "} " +
                      "WITH rutina, COUNT(DISTINCT miembro) AS score " +
                      "RETURN rutina, score, score+' usuarios de las comunidades en las que eres miembro, realizan esta rutina' AS motivo  " +
-                     "ORDER BY score DESC " +
-                     "LIMIT 3")
+                     "ORDER BY score DESC ")
        List<ScoreRutina> sugerenciasDeRutinasBasadasEnComunidades2(String nombreUsuario);
 
        @Query("MATCH (r:Rutina)-[:TIENE_DIA]->(d:Dia) " +

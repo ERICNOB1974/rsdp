@@ -90,9 +90,13 @@ export class RutinaService {
     return this.http.get<DataPackage>(`${this.rutinasUrl}/verificarDiaFinalizado/${diaId}/${usuarioId}`);
   }
 
-  sugerencias(nombreUsuario: string): Observable<DataPackage> {
-    return this.http.get<DataPackage>(` ${this.rutinasUrl}/sugerencias-combinadas/${nombreUsuario}`);
+ 
+  sugerencias(page:number, size:number): Observable<DataPackage> {
+    const nombreUsuario = this.authService.getNombreUsuario();
+
+    return this.http.get<DataPackage>(` ${this.rutinasUrl}/sugerencias-combinadas/${nombreUsuario}?page=${page}&size=${size}`);
   }
+
 
   all(): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.rutinasUrl}/findAll`);

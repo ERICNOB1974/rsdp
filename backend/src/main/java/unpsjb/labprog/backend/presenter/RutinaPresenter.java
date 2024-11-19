@@ -3,6 +3,7 @@ package unpsjb.labprog.backend.presenter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -181,10 +182,23 @@ public class RutinaPresenter {
         return Response.ok(sugerenciasDeRutinasBasadasEnComunidades);
     }
 
+
     @GetMapping("/sugerencias-combinadas/{nombreUsuario}")
-    public ResponseEntity<Object> obtenerSugerenciasCombinadas(@PathVariable String nombreUsuario) {
+    public ResponseEntity<Object> obtenerSugerenciasCombinadas(
+            @PathVariable String nombreUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "4") int size) {
         try {
-            return Response.ok(rutinaService.obtenerTodasLasSugerenciasDeRutinas(nombreUsuario));
+            // Llamar al servicio que devuelve los eventos y el total de páginas
+            Map<String, Object> result = rutinaService.obtenerTodasLasSugerenciasDeRutinasPaginadas(nombreUsuario,
+                    page, size);
+
+            // Verificar si el resultado contiene datos y total de páginas
+            if (result.isEmpty()) {
+                return Response.error("", "No se encontraron sugerencias para los parámetros proporcionados.");
+            }
+            // Retornar los eventos y el total de páginas en el ResponseEntity
+            return Response.ok(result);
         } catch (Exception e) {
             // Manejo del error
             return Response.error("", "Error al obtener las sugerencias: " + e.getMessage());

@@ -52,10 +52,10 @@ export class AppComponent {
     this.actualizarUbicacion();
     this.cargarNotificaciones();
 
-     // Escuchar notificaciones en tiempo real
+/*      // Escuchar notificaciones en tiempo real
      this.webSocketService.listen('notificacion', (data: Notificacion) => {
       this.manejarNuevaNotificacion(data);
-    });
+    }); */
   }
 
   manejarNuevaNotificacion(notificacion: Notificacion): void {
