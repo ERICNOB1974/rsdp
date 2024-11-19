@@ -1,0 +1,189 @@
+/* Botón hamburguesa */
+.hamburger {
+    display: block;
+    font-size: 1.5rem;
+    margin: 10px;
+    cursor: pointer;
+    color: aliceblue;
+}
+
+
+/* Ajustar la posición del sidebar */
+.sidebar {
+    top: 0px;
+    /* Comenzar después de la navbar */
+    height: calc(100vh);
+    /* Altura total menos la altura de la navbar */
+}
+
+
+.top-navbar {
+    position: fixed;
+    top: 0;
+    left: 250px;
+    right: 0;
+    height: 60px;
+    background-color: #15202b;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    padding: 0 20px;
+}
+
+.nav-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+
+}
+
+.nav-brand h5 {
+    margin: 0;
+    color: #333;
+}
+
+.nav-items {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    /* Esto empuja los elementos hacia la derecha */
+
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .sidebar {
+        background: #444343;
+        /* Cambiar el fondo a blanco en pantallas pequeñas */
+    }
+
+    .dropdown-menu {
+        position: static;
+        width: 100%;
+    }
+}
+
+/* color del logo */
+.sidebar ul li.logo {
+    margin-bottom: 5px;
+    color: #da7b2df8;
+
+}
+
+.sidebar ul li.logo:hover {
+    background: #fff;
+    color: #df6400f8;
+
+}
+
+.sidebar ul li.logo .icon {
+    font-size: 2em;
+    color: #df6400f8;
+
+}
+
+.sidebar ul li.logo .text {
+    font-size: 1.2em;
+    font-weight: 500;
+    color: #df6400f8;
+}
+
+
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 250px;
+    overflow-y: auto;
+    background-color: #15202b;
+    z-index: 1001;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    transition: width 0.3s ease, transform 0.3s ease; /* Añadir transición */
+}
+
+
+/* Estilos de la lista de la barra lateral */
+.sidebar ul {
+    padding: 1;
+}
+
+.sidebar ul li {
+    list-style: none;
+    transition: background 0.3s;
+    /* Transición suave para el hover */
+}
+
+.sidebar ul li:hover {
+    background: #1a1919f8;
+    /* Color de fondo más claro al pasar el mouse */
+}
+
+/*flecha de cada seccion de la sidebar*/
+.sidebar ul li a {
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    text-decoration: none;
+    height: 9dvh;
+    padding: 0 15px;
+    /* Espaciado a los lados */
+}
+
+.sidebar ul li a .icon {
+    min-width: 60px;
+    font-size: 1.5em;
+    color: #ff6f6f;
+    transition: opacity 0.3s ease; /* Añadir transición */
+}
+
+.sidebar ul li a .text {
+    font-size: 1em;
+    color: #ffffff;
+    /* Color más sutil para el texto */
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: color 0.3s;
+    /* Transición suave para el color */
+}
+
+.sidebar ul li a:hover .text {
+    color: #d08e61;
+    /* Color del texto al pasar el mouse */
+}
+
+.hamburger-icon {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: aliceblue;
+    font-size: 1.5rem;
+    margin-right: 10px;
+  }
+
+  .sidebar.hidden {
+    transform: translateX(-100%);
+    width: 70px; /* Adjust this value based on your desired width */
+  }
+  .sidebar.hidden .sidebar-icon {
+    opacity: 1; /* Mantiene la opacidad de los iconos */
+    width: 100%;
+    text-align: center;
+}
+  
+  .sidebar.hidden .sidebar-icon i {
+    font-size: 1.5rem;
+  }
+  
+  .sidebar.hidden .sidebar-text {
+    display: none;
+  }
+
+  .full-width {
+    margin-left: 0;
+  }
+
+  
