@@ -5,18 +5,24 @@ import { FormsModule } from '@angular/forms';
 import { Rutina } from '../rutinas/rutina';
 import { RutinaService } from '../rutinas/rutina.service';
 import { AuthService } from '../autenticacion/auth.service';
+import { DataPackage } from '../data-package';
+import { PaginationComponent } from '../pagination/pagination.component';
 
 @Component({
   selector: 'app-sugerencias',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, PaginationComponent],
   templateUrl: './sugerenciasRutinas.component.html',
-  styleUrls: ['sugerencias.component.css']
+  styleUrls: ['sugerenciasRutinas.component.css']
 })
 export class SugerenciasRutinasComponent implements OnInit {
   sugerencias: Rutina[] = []; // Arreglo para almacenar las rutinas sugeridas
   currentIndex: number = 0; // Índice actual del carrusel
   motivos: { [key: number]: String } = {}; // Para almacenar comentarios por publicación
+  page: number = 0;  // Página inicial
+  size: number = 4;  // Tamaño de la página (cantidad de elementos)
+  elementos: number = 0;
+  totalPages: number = 0;
 
   constructor(
     private rutinaService: RutinaService,
@@ -25,54 +31,40 @@ export class SugerenciasRutinasComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getSugerencias(); // Cargar las sugerencias al inicializar el componente
+    this.getRutinas()
   }
 
-  getSugerencias(): void {
-    const nombreUsuario = this.authService.getNombreUsuario();
-    this.rutinaService.sugerencias(<string>nombreUsuario).subscribe((dataPackage) => {
-      if (Array.isArray(dataPackage.data)) {
 
-        this.sugerencias = dataPackage.data
-          .map(item => item.rutina)
-          .filter(rutina => rutina.id !== undefined); // Filtrar rutinas sin id
+  getRutinas(): void {
+    this.rutinaService.sugerencias(this.page, this.size).subscribe((dataPackage: DataPackage) => {
+      const data = dataPackage.data as { data: any[], totalPaginas: number };
 
+      if (Array.isArray(data.data)) {
+        // Extrae solo los usuarios
+        this.sugerencias = data.data.map(item => {
+          item.rutina;  // Extrae solo los objetos 'rutina'
+          const rutina = item.rutina;
+          rutina.dias = rutina.dias || [];  // Asegura que 'dias' sea un arreglo
+          rutina.etiquetas = rutina.etiquetas || [];  // Asegura que 'etiquetas' sea un arreglo
+          return rutina;          
+        });
         this.motivos = {};
-        dataPackage.data.forEach(item => {
-
+        data.data.forEach(item => {
           this.motivos[item.rutina.id] = item.motivo;
         });
-        // Llamar a los métodos para obtener días y etiquetas
-        this.traerDias(this.sugerencias);
-        this.traerEtiquetas(this.sugerencias);
+        setTimeout(() => this.traerDias(this.sugerencias), 0);
+        setTimeout(() => this.traerEtiquetas(this.sugerencias), 0);
+        this.elementos = data.data.length
+        this.totalPages = data.totalPaginas; // Accede correctamente a 'totalPaginas'
       }
+      console.info(this.sugerencias+"masdasd");
     });
   }
 
-
-  siguienteRutina(): void {
-    this.currentIndex = (this.currentIndex + 1) % this.sugerencias.length; // Incrementa el índice
-  }
-
-  rutinaAnterior(): void {
-    this.currentIndex = (this.currentIndex - 1 + this.sugerencias.length) % this.sugerencias.length; // Decrementa el índice
-  }
-
-  obtenerRutinasParaMostrar(): Rutina[] {
-    const rutinasParaMostrar: Rutina[] = [];
-
-    if (this.sugerencias.length === 0) {
-      return rutinasParaMostrar;
-    }
-
-    const maxRutinas = Math.min(4, this.sugerencias.length);
-
-    for (let i = 0; i < maxRutinas; i++) {
-      const index = (this.currentIndex + i) % this.sugerencias.length;
-      rutinasParaMostrar.push(this.sugerencias[index]);
-    }
-
-    return rutinasParaMostrar;
+  onPageChangeRequested(newPage: number): void {
+    // Convertir la página del frontend (base 1) a base 0
+    this.page = newPage - 1; // Si el frontend usa páginas de 1, restamos 1 para enviar la página correcta al backend
+    this.getRutinas();
   }
 
   traerDias(rutinas: Rutina[]): void {

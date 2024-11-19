@@ -9,6 +9,7 @@ import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Evento;
 import unpsjb.labprog.backend.model.Usuario;
 
@@ -200,19 +201,27 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
         @Query("MATCH (e:Evento) WHERE e.cantidadMaximaParticipantes <= $max AND e.cantidadMaximaParticipantes >= $min RETURN e")
         List<Evento> eventosCantidadParticipantes(int min, int max);
 
-        @Query("MATCH (e:Evento) " +
-                        "WHERE date(e.fechaHora) > date(datetime()) " +
+        @Query("MATCH (e:Evento),(u:Usuario {nombreUsuario: $nombreUsuario}) " +
+                        "WHERE NOT (e)-[:PARTICIPA_EN|CREADO_POR]-(u) " +
+                        "AND date(e.fechaHora) > date(datetime()) " +
                         "AND NOT e.esPrivadoParaLaComunidad " +
                         "WITH e, COUNT { (e)<-[:PARTICIPA_EN]-() } AS numParticipantes " +
                         "WHERE numParticipantes < e.cantidadMaximaParticipantes " +
-                        "RETURN e ORDER BY e.fechaHora ASC")
-        List<Evento> disponibles();
+                        "RETURN e " +
+                        "ORDER BY abs(duration.between(date(), e.fechaHora).days) ASC " +
+                        "SKIP $skip " +
+                        "LIMIT $limit")
+        List<Evento> disponibles(@Param("nombreUsuario") String nombreUsuario, @Param("skip") int skip,
+                        @Param("limit") int limit);
 
         @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento) " +
                         "WHERE id(u) = $idUsuario " +
                         "RETURN e " +
-                        "ORDER BY abs(duration.between(date(), e.fechaHora).days) ASC")
-        List<Evento> participaUsuario(Long idUsuario);
+                        "ORDER BY abs(duration.between(date(), e.fechaHora).days) ASC " +
+                        "SKIP $skip " +
+                        "LIMIT $limit")
+        List<Evento> participaUsuario(@Param("idUsuario") Long idUsuario, @Param("skip") int skip,
+                        @Param("limit") int limit);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(e:Evento)-[:ETIQUETADO_CON]->(et:Etiqueta) "
                         + "MATCH (evento:Evento)-[:ETIQUETADO_CON]->(et) "
