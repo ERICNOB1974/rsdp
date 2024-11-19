@@ -201,7 +201,6 @@
   max-height: 900px;
   overflow-y: auto; /* Permite el desplazamiento vertical */
   padding: 10px;
-  border: 1px solid #000000;
 }
 
 

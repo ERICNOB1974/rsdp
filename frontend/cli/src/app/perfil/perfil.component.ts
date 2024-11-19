@@ -286,7 +286,7 @@ export class PerfilComponent implements OnInit {
 
 
   getRutinaRealizaUsuario(): void {
-    this.rutinaService.rutinasRealizaUsuario(this.idUsuario).subscribe(
+    this.rutinaService.rutinasRealizaUsuario(this.idUsuario,0,50).subscribe(
       (dataPackage) => {
         const responseData = dataPackage.data;
         if (Array.isArray(responseData)) {

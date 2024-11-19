@@ -51,8 +51,7 @@ export class ComunidadesCreadasUsuarioComponent implements OnInit {
               ...this.comunidadesUsuario,
               ...resultados,
             ];
-            this.offset++; // Aumentar el índice para la siguiente carga
-            console.info("llegue");
+            this.offset += this.limit;
 
           } else {
             this.noMasComunidades = true; // No hay más comunidades por cargar

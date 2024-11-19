@@ -14,14 +14,13 @@ import { AuthService } from '../autenticacion/auth.service';
   templateUrl: 'eventosCreadosUsuario.component.html',
   styleUrls: ['eventosCreadosUsuario.component.css']
 })
-export class EventosCreadosUsuarioComponent implements OnInit, OnDestroy {
+export class EventosCreadosUsuarioComponent implements OnInit {
   eventosUsuario: Evento[] = []; // Arreglo para almacenar los eventos creados por el usuario
-  currentIndex: number = 0;
   idUsuarioAutenticado!: number;  // ID del usuario autenticado
   offset: number = 0; // Inicializar el offset
-  limit: number = 10; // Número de eventos a cargar por solicitud
+  limit: number = 4; // Número de eventos a cargar por solicitud
   loading: boolean = false; // Para manejar el estado de carga
-
+  noMasEventos = false;
   constructor(
     private eventoService: EventoService,
     private authService: AuthService,
@@ -30,63 +29,73 @@ export class EventosCreadosUsuarioComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    const usuarioId = this.authService.getUsuarioId();
-    this.idUsuarioAutenticado = Number(usuarioId);  
-    this.getEventosUsuario(); // Cargar los eventos creados por el usuario al inicializar el componente
-    window.addEventListener('scroll', this.onScroll.bind(this));
+    this.getEventosCreadosUsuario(); // Cargar las comunidades creadas por el usuario al inicializar el componente
   }
 
-  private getEventosUsuario(): void {
-    if (this.loading) return; // Evitar cargar si ya se está cargando
-    this.loading = true; // Establecer estado de carga
-    this.eventoService.eventosCreadosPorUsuario(this.offset, this.limit).subscribe(
-      (dataPackage) => {
-        const responseData = dataPackage.data;
-        if (Array.isArray(responseData)) {
-          this.eventosUsuario.push(...responseData); // Agregar eventos a la lista existente
-          this.offset += this.limit; // Aumentar el offset
+
+
+  getEventosCreadosUsuario(): void {
+    if (this.loading || this.noMasEventos) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
+
+    this.loading = true;
+
+    // Suponiendo que tienes un método que obtiene más comunidades con paginación
+    this.eventoService
+      .eventosCreadosPorUsuario(this.offset, this.limit)
+      .subscribe(
+        async (dataPackage) => {
+          const resultados = dataPackage.data as Evento[]
+          if (resultados && resultados.length > 0) {
+            // Agregar las comunidades obtenidas a la lista que se muestra
+            this.traerParticipantes(resultados); // Llamar a traerParticipantes después de cargar los eventos
+            for (const evento of resultados) {
+              evento.ubicacion = evento.latitud && evento.longitud 
+              ? await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud)
+              : 'Ubicación desconocida';
+            }
+            this.eventosUsuario = [
+              ...this.eventosUsuario,
+              ...resultados,
+            ];
+            this.offset += this.limit;
+
+          } else {
+            this.noMasEventos = true; // No hay más comunidades por cargar
+          }
+          this.loading = false; // Desactivar el indicador de carga
+        },
+        (error) => {
+          console.error('Error al cargar más comunidades:', error);
+          this.loading = false;
         }
-        this.loading = false; // Restablecer estado de carga
-      },
-      (error) => {
-        console.error("Error al cargar los eventos del usuario:", error);
-        this.loading = false; // Restablecer estado de carga en caso de error
-      }
-    );
+      );
+  }
+
+  traerParticipantes(eventos: Evento[]): void {
+    // Recorrer todos los eventos y obtener el número de participantes
+    for (let evento of eventos) {
+      this.eventoService.participantesEnEvento(evento.id).subscribe(
+        (dataPackage) => {
+          // Asignar el número de participantes al evento
+          if (dataPackage && typeof dataPackage.data === 'number') {
+            evento.participantes = dataPackage.data; // Asignar el número de participantes
+          }
+        },
+        (error) => {
+          console.error(`Error al traer los participantes del evento ${evento.id}:`, error);
+        }
+      );
+    }
   }
 
   irADetallesDelEvento(id: number): void {
-    this.router.navigate(['/eventos', id]); // Navega a la ruta /eventos/:id
+    this.router.navigate(['/evento', id]);
   }
 
-  siguienteEvento(): void {
-    this.currentIndex = (this.currentIndex + 1) % this.eventosUsuario.length;
-  }
-
-  eventoAnterior(): void {
-    this.currentIndex = (this.currentIndex - 1 + this.eventosUsuario.length) % this.eventosUsuario.length;
-  }
-
-  obtenerEventosParaMostrar(): Evento[] {
-    const eventosParaMostrar: Evento[] = [];
-    if (this.eventosUsuario.length === 0) {
-      return eventosParaMostrar;
+  onScroll(): void {
+    const element = document.querySelector('.eventos-list') as HTMLElement;
+    if (element.scrollTop + element.clientHeight >= element.scrollHeight-1 && !this.loading) {
+      this.getEventosCreadosUsuario();
     }
-    const maxEventos = Math.min(4, this.eventosUsuario.length);
-
-    for (let i = 0; i < maxEventos; i++) {
-      const index = (this.currentIndex + i) % this.eventosUsuario.length;
-      eventosParaMostrar.push(this.eventosUsuario[index]);
-    }
-    return eventosParaMostrar;
-  }
-
-   onScroll(): void { // Sigue siendo public
-    if (window.innerHeight + window.scrollY >= document.body.offsetHeight && !this.loading) {
-      this.getEventosUsuario(); // Cargar más eventos al llegar al final de la página
-    }
-  }
-  ngOnDestroy(): void {
-    window.removeEventListener('scroll', this.onScroll.bind(this)); // Limpiar el listener
   }
 }

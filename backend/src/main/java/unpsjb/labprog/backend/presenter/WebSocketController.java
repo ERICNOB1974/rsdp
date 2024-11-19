@@ -8,15 +8,18 @@ import org.springframework.stereotype.Controller;
 public class WebSocketController {
 
     @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    private SimpMessagingTemplate simpMessagingTemplate;
 
-    // Enviar notificación a un usuario específico
-    public void enviarNotificacion(Long usuarioId, String mensaje) {
-        messagingTemplate.convertAndSendToUser(usuarioId.toString(), "/topic/notificaciones", mensaje);
-    }
+
 
     // Enviar notificación a todos los usuarios conectados
     public void enviarNotificacionGlobal(String mensaje) {
-        messagingTemplate.convertAndSend("/topic/notificaciones", mensaje);
+        simpMessagingTemplate.convertAndSend("/topic/notificaciones", mensaje);
+    }
+
+    public void enviarNotificacion(Long idUsuario, String mensaje) {
+        // El destino del mensaje es el canal al que se suscribe el usuario
+        String destino = "/topic/notificaciones/" + idUsuario;
+        simpMessagingTemplate.convertAndSend(destino, mensaje);
     }
 }
