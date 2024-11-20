@@ -89,7 +89,7 @@ export class EventosCreadosUsuarioComponent implements OnInit {
   }
 
   irADetallesDelEvento(id: number): void {
-    this.router.navigate(['/evento', id]);
+    this.router.navigate(['/eventos', id]);
   }
 
   onScroll(): void {
