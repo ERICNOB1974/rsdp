@@ -96,8 +96,21 @@ export class AuthService {
   }
   
   logout() {
-    localStorage.removeItem('token'); // Eliminamos el token al cerrar sesión
-    this.router.navigate(['/login']);
+    this.http.post(`${this.autenticacionUrl}/logout`, {}).subscribe({
+      complete: () => {
+        
+        localStorage.removeItem('token');
+        localStorage.removeItem('usuarioId');
+        localStorage.removeItem('nombreUsuario');
+        localStorage.removeItem('correoElectronico');
+        localStorage.removeItem('authToken');
+        
+        this.router.navigate(['/login']);
+      },
+      error: (error) => {
+        console.error("Error en el logout:", error);
+      }
+    });
   }
 
   getToken(): string | null {
@@ -111,6 +124,5 @@ export class AuthService {
   isAuthenticated(): boolean {
     return !!this.getToken(); // Verificar si hay un token válido
   }
-
 
 }

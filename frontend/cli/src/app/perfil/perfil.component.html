@@ -1,4 +1,4 @@
-<div class="perfil-container">
+<div class="perfil-container" *ngIf="usuario">
     <div class="perfil-header">
         <h2>{{ esMiPerfil ? 'Mi Perfil' : usuario.nombreUsuario }}</h2>
     </div>
