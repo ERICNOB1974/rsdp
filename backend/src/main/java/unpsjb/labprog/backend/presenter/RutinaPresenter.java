@@ -249,20 +249,26 @@ public class RutinaPresenter {
         return Response.ok(rutinasCreadasPorUsuario);
     }
     
-    @GetMapping("/rutinasRealizaUsuario/{idUsuario}")
+/*     @GetMapping("/rutinasRealizaUsuario/{idUsuario}")
     public ResponseEntity<Object> rutinasRealizaUsuario(@PathVariable Long idUsuario, 
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size)  {
         List<Rutina> rutinasRealizaUsuario = rutinaService.rutinasRealizaUsuario(idUsuario, page, size);
         return Response.ok(rutinasRealizaUsuario);
-    }
+    } */
     
-    @GetMapping(path = "/{nombreUsuario}/disponibles")
-    public ResponseEntity<Object> obtenerRutinasDisponibles(
-            @PathVariable String nombreUsuario,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return Response.ok(rutinaService.obtenerRutinasDisponiblesPaginadas(nombreUsuario, page, size));
+    @GetMapping("/rutinasRealizaUsuario/{idUsuario}")
+    public ResponseEntity<Object> rutinasRealizaUsuario(
+        @PathVariable Long idUsuario, 
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(required = false, defaultValue = "") String nombreRutina) {
+    
+        // Llamamos al servicio para obtener las rutinas filtradas por nombre y usuario
+        List<Rutina> rutinasRealizaUsuario = rutinaService.rutinasRealizaUsuario(idUsuario, nombreRutina, page, size);
+        
+        // Devolvemos las rutinas en formato de respuesta
+        return Response.ok(rutinasRealizaUsuario);
     }
 
     @GetMapping("/obtenerProgresoActual/{rutinaId}/{usuarioId}")

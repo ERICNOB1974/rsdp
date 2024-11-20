@@ -370,9 +370,10 @@ public class RutinaService {
         return rutinaRepository.rutinasCreadasPorUsuario(idUsuario, offset, limit);
     }
 
-    public List<Rutina> rutinasRealizaUsuario(Long idUsuario,int page, int size) {
+    public List<Rutina> rutinasRealizaUsuario(Long idUsuario, String nombreRutina, int page, int size) {
         int skip = page * size;  // Cálculo de los resultados a omitir
-        return rutinaRepository.rutinasRealizaUsuario(idUsuario,skip,size);
+        String filtroNombre = (nombreRutina == null || nombreRutina.trim().isEmpty()) ? "" : nombreRutina;
+        return rutinaRepository.rutinasRealizaUsuario(idUsuario, filtroNombre, skip, size);
     }
 
    // Método para obtener comunidades con paginación

@@ -370,7 +370,7 @@ export class ComunidadesComponent implements OnInit {
 
     // Suponiendo que tienes un método que obtiene más comunidades con paginación
     this.comunidadService
-      .miembroUsuario(this.idUsuarioAutenticado, this.currentIndexComunidadesMiembro, this.cantidadPorPagina)
+      .miembroUsuario(this.idUsuarioAutenticado,"", this.currentIndexComunidadesMiembro, this.cantidadPorPagina)
       .subscribe(
         async (dataPackage) => {
           const resultados = dataPackage.data as Comunidad[]
@@ -409,7 +409,6 @@ export class ComunidadesComponent implements OnInit {
     const element = document.querySelector('.grid-container') as HTMLElement;
     if (element.scrollTop + element.clientHeight >= element.scrollHeight-1) {
       if(this.hayResultadosFiltrados){
-        console.info("pinchila");
         this.cargarMasResultadosFiltrados();
       }else{
         if (this.tabSeleccionada === 'disponibles') {
