@@ -1,23 +1,5 @@
 /* Contenedor principal de las publicaciones */
-.publicaciones-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    padding: 20px;
-}
 
-/* Contenedor de cada publicación */
-.publicacion-container {
-    max-width: 600px;
-    width: 100%;
-    margin: 20px 0;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    overflow: hidden;
-    transition: transform 0.3s ease-in-out;
-}
 
 /* Efecto hover para las publicaciones */
 .publicacion-container:hover {
@@ -182,3 +164,29 @@
 .comment-button:hover {
     color: #8e8e8e;
 }
+
+.publicaciones-container {
+    height: 100%; /* Ajusta según tus necesidades */
+    overflow-y: auto; /* Asegúrate de usar auto aquí */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin: 10px 0;
+    max-height: 1050px;
+}
+
+
+/* Contenedor de cada publicación */
+
+  
+  .loading-indicator {
+    text-align: center;
+    margin: 10px 0;
+    color: #888;
+    font-size: 14px;
+  }
