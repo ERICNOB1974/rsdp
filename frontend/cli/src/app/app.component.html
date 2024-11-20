@@ -1,6 +1,6 @@
 <nav class="top-navbar" *ngIf="!esPantallaLogin && usuario">
     <div class="nav-content">
-        
+
         <div class="nav-items">
 
             <a class="nav-link" style="cursor: pointer; color: azure;" routerLink="/calendario">
@@ -15,7 +15,7 @@
                 </a>
                 <div class="notifications-menu">
                     <div *ngFor="let notificacion of notificaciones" class="notification-item"
-                        (click)="manejarClickNotificacion(notificacion)">
+                        [ngClass]="{'leida': notificacion.leida}" (click)="manejarClickNotificacion(notificacion)">
                         <div class="notification-content">
                             <span *ngIf="!notificacion.leida" class="new-notification-dot"></span>
                             <p>{{ notificacion.mensaje }}</p>
@@ -23,6 +23,7 @@
                         <i class="fa fa-trash delete-icon"
                             (click)="eliminarNotificacion(notificacion); $event.stopPropagation()"></i>
                     </div>
+
                     <div *ngIf="getNotificacionesNoLeidas().length === 0" class="no-notifications">
                         No hay notificaciones nuevas
                     </div>
@@ -43,7 +44,7 @@
     <div class="hamburger-icon" (click)="toggleSidebar()">
         <i class="fa fa-bars"></i>
     </div>
-    
+
     <div class="sidebar-toggle" (click)="toggleSidebar()">
         <i class="bi bi-list menu-icon"></i>
     </div>
@@ -151,7 +152,7 @@
         </li>
 
     </ul>
-    
+
 </div>
 
 
