@@ -159,9 +159,14 @@ export class RutinaService {
   }
 
 
-  rutinasRealizaUsuario(idUsuario:number, page: number, size: number): Observable<DataPackage> {
-    return this.http.get<DataPackage>(` ${this.rutinasUrl}/rutinasRealizaUsuario/${idUsuario}?page=${page}&size=${size}`);
-  }
+  rutinasRealizaUsuario(idUsuario: number, nombreRutina: string, page: number, size: number): Observable<DataPackage> {
+    // Si nombreRutina está vacío, no lo incluimos en la URL
+    const url = `${this.rutinasUrl}/rutinasRealizaUsuario/${idUsuario}?page=${page}&size=${size}` +
+                (nombreRutina ? `&nombreRutina=${nombreRutina}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+}
+
+
 
   disponibles(page: number, size: number): Observable<DataPackage> {
     const nombreUsuario = this.authService.getNombreUsuario();

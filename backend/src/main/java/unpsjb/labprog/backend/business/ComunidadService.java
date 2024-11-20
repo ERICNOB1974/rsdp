@@ -104,10 +104,12 @@ public class ComunidadService {
         int skip = page * size;  // Cálculo de los resultados a omitir
         return comunidadRepository.disponibles(nombreUsuario,skip, size);
     }
-    public List<Comunidad> miembroUsuario(Long idUsuario,int page, int size) {
+    public List<Comunidad> miembroUsuario(Long idUsuario, String nombreComunidad,int page, int size) {
         int skip = page * size;  // Cálculo de los resultados a omitir
-        return comunidadRepository.miembroUsuario(idUsuario,skip,size);
+        String filtroNombre = (nombreComunidad == null || nombreComunidad.trim().isEmpty()) ? "" : nombreComunidad;
+        return comunidadRepository.miembroUsuario(idUsuario,filtroNombre,skip,size);
     }
+
 
     public List<ScoreComunidad> obtenerSugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario) {
         List<ScoreComunidad> sugerencias = comunidadRepository.sugerenciasDeComunidadesBasadasEnAmigos2(nombreUsuario);

@@ -253,7 +253,6 @@ export class RutinasComponent implements OnInit {
   // Método para cargar más comunidades disponibles
   cargarRutinasDisponibles(): void {
     if (this.loadingDisponibles || this.noMasRutinasDisponibles) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
-    console.info("PEREEEE");
     this.loadingDisponibles = true;
 
     // Suponiendo que tienes un método que obtiene más comunidades con paginación
@@ -269,7 +268,6 @@ export class RutinasComponent implements OnInit {
            
             this.rutinasDisponibles = [...this.rutinasDisponibles, ...resultados,];
             this.currentIndexRutinasDisponibles++; // Aumentar el índice para la siguiente carga
-            console.info("llegue");
 
           } else {
             this.noMasRutinasDisponibles = true; // No hay más comunidades por cargar
@@ -290,7 +288,7 @@ export class RutinasComponent implements OnInit {
 
     // Suponiendo que tienes un método que obtiene más comunidades con paginación
     this.rutinaService
-      .rutinasRealizaUsuario(this.idUsuarioAutenticado, this.currentIndexRutinasMiembro, this.cantidadPorPagina)
+      .rutinasRealizaUsuario(this.idUsuarioAutenticado,"", this.currentIndexRutinasMiembro, this.cantidadPorPagina)
       .subscribe(
         async (dataPackage) => {
           const resultados = dataPackage.data as Rutina[]
