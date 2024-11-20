@@ -294,10 +294,10 @@ public class EventoService {
         return eventoRepository.disponibles(nombreUsuario,skip, size);
     }
 
-
-    public List<Evento> participaUsuario(Long idUsuario,int page, int size) {
+    public List<Evento> participaUsuario(Long idUsuario, String nombreEvento, int page, int size) {
         int skip = page * size;  // Cálculo de los resultados a omitir
-        return eventoRepository.participaUsuario(idUsuario,skip,size);
+        String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
+        return eventoRepository.participaUsuario(idUsuario,filtroNombre,skip,size);
     }
 
     public List<ScoreEvento> sugerenciasDeEventosBasadosEnEventos2(String nombreUsuario) {

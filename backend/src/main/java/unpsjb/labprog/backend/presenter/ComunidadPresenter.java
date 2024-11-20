@@ -175,11 +175,15 @@ public class ComunidadPresenter {
     }
 
     @RequestMapping(path = "/miembro/{idUsuario}", method = RequestMethod.GET)
-    public ResponseEntity<Object> miembroUsuario(@PathVariable Long idUsuario,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return Response.ok(comunidadService.miembroUsuario(idUsuario, page, size));
+    public ResponseEntity<Object> miembroUsuario(
+        @PathVariable Long idUsuario, 
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(required = false, defaultValue = "") String nombreComunidad) {
+        return Response.ok(comunidadService.miembroUsuario(idUsuario, nombreComunidad, page, size));
     }
+
+
 
     @GetMapping("/sugerenciasDeComunidadesBasadasEnAmigos2/{nombreUsuario}")
     public ResponseEntity<Object> sugerenciasDeComunidadesBasadasEnAmigos2(@PathVariable String nombreUsuario) {

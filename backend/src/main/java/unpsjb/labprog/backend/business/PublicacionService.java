@@ -65,8 +65,9 @@ public class PublicacionService {
         return usuarioRepository.publicadoPor(idPublicacion);
     }
 
-    public List<Publicacion> publicacionesUsuario(Long usuarioId) {
-        return publicacionRepository.publicacionesUsuario(usuarioId);
+    public List<Publicacion> publicacionesUsuario(Long usuarioId,int page, int size) {
+        int skip = page * size;  // Cálculo de los resultados a omitir
+        return publicacionRepository.publicacionesUsuario(usuarioId,skip,size);
     }
 
     public List<Publicacion> publicacionesAmigos(Long usuarioId) {
