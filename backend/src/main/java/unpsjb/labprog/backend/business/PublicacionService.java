@@ -74,11 +74,15 @@ public class PublicacionService {
         return publicacionRepository.publicacionesAmigosUsuario(usuarioId);
     }
 
-    public List<Publicacion> publicacionesHome(Long usuarioId) {
+    public List<Publicacion> publicacionesHome(Long usuarioId, int page, int size) {
         // Obtener las publicaciones del usuario y de sus amigos
-        List<Publicacion> publicaciones = publicacionRepository.publicacionesUsuarioYAmigos(usuarioId);
-        
+        int skip = page * size;  // Cálculo de los resultados a omitir
+        System.out.println(skip+"  aaa "+size );
+        List<Publicacion> publicaciones = publicacionRepository.publicacionesUsuarioYAmigos(usuarioId, skip, size);   
         // Ordenar las publicaciones por fechaDeCreacion en orden descendente
+        System.out.println("Publicaciones obtenidas antes de ordenar:");
+        publicaciones.forEach(pub -> System.out.println(pub.getId() + " - texto: " + pub.getTexto()));
+        
         publicaciones.sort(Comparator.comparing(Publicacion::getFechaDeCreacion).reversed());
         
         return publicaciones;
