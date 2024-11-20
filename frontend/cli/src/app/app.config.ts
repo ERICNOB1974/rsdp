@@ -10,15 +10,16 @@ import { routes } from './app.routes';
 import { FlatpickrModule } from 'angularx-flatpickr';
 import { FullCalendarModule } from '@fullcalendar/angular';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask'; // Importar ngx-mask
+import { ToastrModule } from 'ngx-toastr';
+
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
     importProvidersFrom(HttpClientModule),
     importProvidersFrom(BrowserAnimationsModule),
-    importProvidersFrom(
-      FullCalendarModule
-    ),
+    importProvidersFrom(ToastrModule.forRoot()), // Agregar ToastrModule
+    importProvidersFrom(FullCalendarModule),
     provideNgxMask(), // Agregar proveedor de ngx-mask
     {
       provide: HTTP_INTERCEPTORS,
@@ -28,3 +29,5 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
   ]
 };
+
+

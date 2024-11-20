@@ -20,7 +20,7 @@ import { forkJoin } from 'rxjs';
   selector: 'app-crear-comunidad',
 
   templateUrl: './crearComunidad.component.html',
-  styleUrls: ['../eventos/crearEvento.component.css'],
+  styleUrls: ['../eventos/crearEvento.component.css', '../css/etiquetas.css'],
 
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, NgbTypeaheadModule]

@@ -2,56 +2,75 @@
   <h2>Crear Nuevo Evento</h2>
   <form #form="ngForm" class="evento-form">
 
-    <div class="form-group">
-      <label for="nombre">Nombre del Evento</label>
-      <input [(ngModel)]="evento.nombre" name="nombre" required>
-    </div>
+    <!-- Nombre del Evento -->
+    <mat-form-field appearance="outline" class="form-group">
+      <mat-label>Nombre del Evento</mat-label>
+      <input matInput [(ngModel)]="evento.nombre" name="nombre" required>
+      <mat-error *ngIf="formEvento.get('nombre')?.hasError('required')">
+        El nombre del evento es requerido
+      </mat-error>
+    </mat-form-field>
 
+    <!-- Imagen -->
     <div class="form-group">
       <label for="imagen">Seleccionar imagen</label>
       <input type="file" id="archivo" [(ngModel)]="evento.imagen" (change)="onFileSelect($event)" name="imagen">
     </div>
 
-    <div class="form-group">
-      <label for="evento.fechaHora">Fecha y Hora del Evento</label>
-      <input type="datetime-local" id="fechaHora" [(ngModel)]="evento.fechaHora" name="fechaHora" [min]="minFechaHora"
-        required>
-    </div>
+    <!-- Fecha y Hora del Evento -->
+    <mat-form-field appearance="outline" class="form-group">
+      <mat-label>Fecha y Hora del Evento</mat-label>
+      <input matInput type="datetime-local" id="fechaHora" [(ngModel)]="evento.fechaHora" name="fechaHora"
+        [min]="minFechaHora" required>
+      <mat-error *ngIf="formEvento.get('fechaHora')?.hasError('required')">
+        La fecha y hora del evento son requeridas
+      </mat-error>
+      <mat-error *ngIf="formEvento.get('fechaHora')?.hasError('invalidDate')">
+        La fecha debe ser mayor a hoy
+      </mat-error>
+    </mat-form-field>
 
-    <div class="form-group">
-      <label for="descripcion">Descripción</label>
-      <input [(ngModel)]="evento.descripcion" name="descripcion">
-    </div>
+    <!-- Descripción -->
+    <mat-form-field appearance="outline" class="form-group">
+      <mat-label>Descripción</mat-label>
+      <input matInput [(ngModel)]="evento.descripcion" name="descripcion">
+    </mat-form-field>
 
-    <div class="form-group">
-      <label for="cantidadMaximaParticipantes">Cantidad Máxima de Participantes</label>
-      <input type="number" min="1" [(ngModel)]="evento.cantidadMaximaParticipantes" name="cantidadMaximaParticipantes"
-        required>
-    </div>
+    <!-- Cantidad Máxima de Participantes -->
+    <mat-form-field appearance="outline" class="form-group">
+      <mat-label>Cantidad Máxima de Participantes</mat-label>
+      <input matInput type="number" min="1" [(ngModel)]="evento.cantidadMaximaParticipantes"
+        name="cantidadMaximaParticipantes" required>
+      <mat-error *ngIf="formEvento.get('cantidadMaximaParticipantes')?.hasError('required')">
+        La cantidad máxima de participantes es requerida y debe ser un número positivo
+      </mat-error>
+    </mat-form-field>
 
-    <div class="form-group">
-      <label for="etiquetas">Buscar Etiquetas:</label>
-      <input id="etiquetas" class="form-control" [(ngModel)]="etiquetaSeleccionada" [ngbTypeahead]="searchEtiqueta"
+    <!-- Buscar Etiquetas -->
+    <mat-form-field appearance="outline" class="form-group">
+      <mat-label>Buscar Etiquetas:</mat-label>
+      <input matInput id="etiquetas" [(ngModel)]="etiquetaSeleccionada" [ngbTypeahead]="searchEtiqueta"
         [resultFormatter]="resultFormatEtiqueta" [inputFormatter]="inputFormatEtiqueta"
         (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada" placeholder="Buscar etiqueta" />
-    </div>
+        <mat-error *ngIf="formEvento.get('etiquetasSeleccionadas')?.hasError('sinEtiqueta') && formEvento.get('etiquetasSeleccionadas')?.touched">
+          Al menos una etiqueta es requerida
+      </mat-error>
+    </mat-form-field>
 
-    <div *ngIf="etiquetasSeleccionadas.length > 0" class="etiquetas-lista">
-      <h4>Etiquetas seleccionadas:</h4>
-      <ul class="list-group">
-        <li *ngFor="let etiqueta of etiquetasSeleccionadas"
-          class="list-group-item d-flex justify-content-between align-items-center">
-          {{ etiqueta.nombre }}
-          <button type="button" class="btn btn-danger btn-sm" (click)="eliminarEtiqueta(etiqueta)">Eliminar</button>
-        </li>
-      </ul>
+    <div class="selected-tags">
+      <span *ngFor="let etiqueta of etiquetasSeleccionadas" class="tag">
+        {{ etiqueta.nombre }}
+        <button (click)="eliminarEtiqueta(etiqueta)" class="remove-tag">
+          &times;
+        </button>
+      </span>
     </div>
 
     <!-- Sección de búsqueda de direcciones y mapa -->
     <div class="mapa-container">
-      <div class="input-container">
-        <label for="direccion" class="padding-top-20">Ubicación del Evento</label>
-        <input type="text" class="form-control padding-top-20" placeholder="Ingresa una dirección"
+      <mat-form-field appearance="outline" class="form-group">
+        <mat-label>Ubicación del Evento</mat-label>
+        <input matInput type="text" class="form-control" placeholder="Ingresa una dirección"
           (input)="buscarDireccion($event)" />
         <ul *ngIf="sugerencias.length > 0" class="list-group">
           <li *ngFor="let sugerencia of sugerencias" (click)="seleccionarDireccion(sugerencia)"
@@ -59,7 +78,7 @@
             {{ sugerencia.direccion }} - {{ sugerencia.altura }}, {{ sugerencia.ciudad }}, {{ sugerencia.pais }}
           </li>
         </ul>
-      </div>
+      </mat-form-field>
 
       <div class="form-group">
         <div id="map"></div>
@@ -67,10 +86,11 @@
 
     </div>
 
+    <!-- Botones -->
     <div class="form-buttons">
-      <button type="button" (click)="saveEvento()" class="btn btn-success" [disabled]="!isFormValid()">Guardar
+      <button mat-raised-button color="primary" type="button" (click)="saveEvento()" [disabled]="!isFormValid()">Guardar
         Evento</button>
-      <button type="button" (click)="cancel()" class="btn btn-secondary">Cancelar</button>
+      <button mat-flat-button color="accent" type="button" (click)="cancel()">Cancelar</button>
     </div>
   </form>
 </div>

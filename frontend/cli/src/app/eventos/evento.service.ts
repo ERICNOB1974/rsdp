@@ -135,18 +135,27 @@ export class EventoService {
     return this.http.get<DataPackage>(`${this.eventosUrl}/filtrar/etiquetas`, { params });
   }
 
-  disponibles(): Observable<DataPackage> {
-    return this.http.get<DataPackage>(` ${this.eventosUrl}/disponibles`);
-  }
 
+
+  
+  disponibles(page: number, size: number): Observable<DataPackage> {
+    const nombreUsuario = this.authService.getNombreUsuario();
+    return this.http.get<DataPackage>(` ${this.eventosUrl}/${nombreUsuario}/disponibles?page=${page}&size=${size}`);
+  }
+  
   eventosCreadosPorUsuario(offset: number, limit: number): Observable<DataPackage> {
     const userId = this.authService.getUsuarioId();
     return this.http.get<DataPackage>(`${this.eventosUrl}/eventosCreadosPorUsuario/${userId}?offset=${offset}&limit=${limit}`);
   }
+  
+ 
+  participaUsuario(idUsuario: number, nombreEvento: string, page: number, size: number): Observable<DataPackage> {
+    // Si nombreRutina está vacío, no lo incluimos en la URL
+    const url = `${this.eventosUrl}/participa/${idUsuario}?page=${page}&size=${size}` +
+                (nombreEvento ? `&nombreRutina=${nombreEvento}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+}
 
-  participaUsuario(idUsuario: number): Observable<DataPackage> {
-    return this.http.get<DataPackage>(` ${this.eventosUrl}/participa/${idUsuario}`);
-  }
 
 
   eliminar(idEvento: number): Observable<DataPackage> {

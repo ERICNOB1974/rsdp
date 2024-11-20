@@ -28,9 +28,17 @@ export class EventosComponent implements OnInit {
   nombreEventoFiltro: string = '';
   filtroNombreActivo: boolean = true;
   resultadosOriginales: Evento[] = []; // Nueva variable para mantener los datos originales
-
-
-
+  eventosDisponiblesAMostrar: Evento[] = [];
+  idUsuarioAutenticado!: number;  // ID del usuario autenticado
+  eventosParticipaUsuario: Evento[] = [];
+  tabSeleccionada: string = 'disponibles';
+  cantidadPorPagina = 4; // Cantidad de comunidades a mostrar por cada carga
+  currentIndexEventosDisponibles = 0;
+  currentIndexEventosParticipante = 0;
+  noMasEventosDisponibles = false;
+  noMasEventosParticipante = false;
+  loadingDisponibles = false;
+  loadingParticipante = false;
   // Filtro por participantes
   filtroParticipantesAbierto: boolean = false;
   minParticipantes: number | null = null;
@@ -57,15 +65,14 @@ export class EventosComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private etiquetaService: EtiquetaService,
   ) { }
-  idUsuarioAutenticado!: number;  // ID del usuario autenticado
-  eventosParticipaUsuario: Evento[] = [];
 
 
   ngOnInit(): void {
-    this.getEventos(); // Cargar los eventos al inicializar el componente
+
+    this.cargarEventosDisponibles(); // Cargar las primeras comunidades al iniciar
     const usuarioId = this.authService.getUsuarioId();
     this.idUsuarioAutenticado = Number(usuarioId);
-    this.ParticipaUsuario();
+    this.cargarEventosParticipante();
   }
 
   agregarEtiqueta(event: any): void {
@@ -119,7 +126,7 @@ export class EventosComponent implements OnInit {
 
   limpiarFiltroEtiquetas(): void {
     this.etiquetasSeleccionadas = [];
-    this.getEventos(); // Recargar todos los eventos
+   // this.getEventos(); // Recargar todos los eventos
   }
 
 
@@ -209,7 +216,7 @@ export class EventosComponent implements OnInit {
   limpiarFiltroParticipantes(): void {
     this.minParticipantes = null;
     this.maxParticipantes = null;
-    this.getEventos(); // Recargar todos los eventos
+   // this.getEventos(); // Recargar todos los eventos
   }
 
   // Métodos para el filtro por fecha
@@ -250,7 +257,7 @@ export class EventosComponent implements OnInit {
   limpiarFiltroFecha(): void {
     this.fechaMinFiltro = '';
     this.fechaMaxFiltro = '';
-    this.getEventos(); // Recargar todos los eventos
+    //this.getEventos(); // Recargar todos los eventos
   }
 
   // Método para limpiar todos los filtros
@@ -263,40 +270,63 @@ export class EventosComponent implements OnInit {
   }
 
 
-  async getEventos(): Promise<void> {
-    this.eventoService.disponibles().subscribe(async (dataPackage) => {
-      const responseData = dataPackage.data;
-      if (Array.isArray(responseData)) {
-        this.resultadosOriginales = responseData; // Guardar los datos originales
-        this.results = [...responseData];
-        this.traerParticipantes(this.results); // Llamar a traerParticipantes después de cargar los eventos
-        for (const evento of this.results) {
-          if (evento.latitud && evento.longitud) {
-            evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
-          } else {
-            evento.ubicacion = 'Ubicación desconocida';
+
+ /*  async getEventos(): Promise<void> {
+    try {
+      // Espera a que se carguen los eventos disponibles
+      const dataPackage = await this.eventoService.disponibles().toPromise();
+      
+      // Verificamos que dataPackage y su propiedad 'data' no sean undefined
+      if (dataPackage && dataPackage.data) {
+        this.results = dataPackage.data as Evento[];
+  
+        if (Array.isArray(this.results)) {
+          this.traerParticipantes(this.results); // Llamar a traerParticipantes después de cargar los eventos
+          for (const evento of this.results) {
+            evento.ubicacion = evento.latitud && evento.longitud 
+              ? await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud)
+              : 'Ubicación desconocida';
           }
+  
+          await this.ParticipaUsuario();
+          this.cargarEventosDisponibles();
+          this.cargarEventosParticipaUsuario();
         }
+      } else {
+        console.error("dataPackage no contiene la propiedad 'data' o es undefined");
       }
-    });
+    } catch (error) {
+      console.error("Error al cargar eventos:", error);
+    }
   }
 
-  async ParticipaUsuario(): Promise<void> {
-    this.eventoService.participaUsuario(this.idUsuarioAutenticado).subscribe(async (dataPackage) => {
-      const responseData = dataPackage.data;
-      if (Array.isArray(responseData)) {
-        this.eventosParticipaUsuario = responseData;
-        this.traerParticipantes(this.eventosParticipaUsuario); // Llamar a traerParticipantes después de cargar los eventos
-        for (const evento of this.results) {
-          if (evento.latitud && evento.longitud) {
-            evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
-          } else {
-            evento.ubicacion = 'Ubicación desconocida';
+
+
+  async participaUsuario(): Promise<void> {
+    try {
+      // Espera a que se obtenga la lista de eventos en los que participa el usuario
+      const dataPackage = await this.eventoService.participaUsuario(this.idUsuarioAutenticado).toPromise();
+  
+      // Verificamos que dataPackage y su propiedad 'data' no sean undefined
+      if (dataPackage && dataPackage.data) {
+        const responseData = dataPackage.data;
+  
+        if (Array.isArray(responseData)) {
+          this.eventosParticipaUsuario = responseData;
+          this.traerParticipantes(this.eventosParticipaUsuario);  // Cargar participantes
+          for (const evento of this.eventosParticipaUsuario) {
+            evento.ubicacion = evento.latitud && evento.longitud
+              ? await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud)
+              : 'Ubicación desconocida';
           }
         }
+      } else {
+        console.error("dataPackage no contiene la propiedad 'data' o es undefined");
       }
-    });
-  }
+    } catch (error) {
+      console.error("Error al cargar eventos de participación del usuario:", error);
+    }
+  } */
 
   traerParticipantes(eventos: Evento[]): void {
     // Recorrer todos los eventos y obtener el número de participantes
@@ -320,48 +350,105 @@ export class EventosComponent implements OnInit {
     }
   }
 
-  // Método para mover al siguiente grupo de eventos en el carrusel
-  // Métodos para el primer carrusel (eventos)
-  siguienteEvento(): void {
-    this.currentIndexEventos = (this.currentIndexEventos + 1) % this.results.length; // Incrementa el índice del primer carrusel
-  }
-
-  eventoAnterior(): void {
-    this.currentIndexEventos = (this.currentIndexEventos - 1 + this.results.length) % this.results.length; // Decrementa el índice del primer carrusel
-  }
-
-  // Métodos para el segundo carrusel (eventos en los que participa el usuario)
-  siguienteEventoParticipa(): void {
-    this.currentIndexParticipa = (this.currentIndexParticipa + 1) % this.eventosParticipaUsuario.length; // Incrementa el índice del segundo carrusel
-  }
-
-  eventoAnteriorParticipa(): void {
-    this.currentIndexParticipa = (this.currentIndexParticipa - 1 + this.eventosParticipaUsuario.length) % this.eventosParticipaUsuario.length; // Decrementa el índice del segundo carrusel
-  }
-
-  obtenerEventosParaMostrar(): Evento[] {
-    const eventosParaMostrar: Evento[] = [];
-
-    if (this.results.length === 0) {
-      return eventosParaMostrar; // Devuelve un arreglo vacío si no hay eventos
+  seleccionarTab(tab: string) {
+    if (this.tabSeleccionada !== tab) {
+      this.tabSeleccionada = tab;
     }
+  }
 
-    // Definir cuántos eventos mostrar, máximo 4 o el número total de eventos disponibles
-    const cantidadEventosAMostrar = Math.min(this.results.length, 4);
 
-    for (let i = 0; i < cantidadEventosAMostrar; i++) {
-      const index = (this.currentIndexEventos + i) % this.results.length;
-      const evento = this.results[index];
 
-      // Excluir eventos en los que el usuario ya participa
-      if (!this.eventosParticipaUsuario.some(e => e.id === evento.id)) {
-        eventosParaMostrar.push(evento);
+  // Método para cargar más comunidades disponibles
+  cargarEventosDisponibles(): void {
+    if (this.loadingDisponibles || this.noMasEventosDisponibles) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
+
+    this.loadingDisponibles = true;
+
+    // Suponiendo que tienes un método que obtiene más comunidades con paginación
+    this.eventoService
+      .disponibles(this.currentIndexEventosDisponibles, this.cantidadPorPagina)
+      .subscribe(
+        async (dataPackage) => {
+          const resultados = dataPackage.data as Evento[]
+          if (resultados && resultados.length > 0) {
+            // Agregar las comunidades obtenidas a la lista que se muestra
+            this.traerParticipantes(resultados); // Llamar a traerParticipantes después de cargar los eventos
+            
+            for (const evento of resultados) {
+              evento.ubicacion = evento.latitud && evento.longitud 
+              ? await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud)
+              : 'Ubicación desconocida';
+            }
+            this.eventosDisponiblesAMostrar = [
+              ...this.eventosDisponiblesAMostrar,
+              ...resultados,
+            ];
+            this.currentIndexEventosDisponibles++; // Aumentar el índice para la siguiente carga
+            console.info("llegue");
+
+          } else {
+            this.noMasEventosDisponibles = true; // No hay más comunidades por cargar
+          }
+          this.loadingDisponibles = false; // Desactivar el indicador de carga
+        },
+        (error) => {
+          console.error('Error al cargar más comunidades:', error);
+          this.loadingDisponibles = false;
+        }
+      );
+  }
+
+  cargarEventosParticipante(): void {
+    if (this.loadingParticipante || this.noMasEventosParticipante) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
+
+    this.loadingParticipante = true;
+    
+    // Suponiendo que tienes un método que obtiene más comunidades con paginación
+    this.eventoService
+    .participaUsuario(this.idUsuarioAutenticado,"",this.currentIndexEventosParticipante, this.cantidadPorPagina)
+    .subscribe(
+      async (dataPackage) => {
+        const resultados = dataPackage.data as Evento[]
+          console.info(resultados);
+          if (resultados && resultados.length > 0) {
+            // Agregar las comunidades obtenidas a la lista que se muestra
+            this.traerParticipantes(resultados); // Llamar a traerParticipantes después de cargar los eventos
+            
+            for (const evento of resultados) {
+              evento.ubicacion = evento.latitud && evento.longitud 
+              ? await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud)
+              : 'Ubicación desconocida';
+            }
+            this.eventosParticipaUsuario = [
+              ...this.eventosParticipaUsuario,
+              ...resultados,
+            ];
+            this.currentIndexEventosParticipante++; // Aumentar el índice para la siguiente carga
+
+          } else {
+            this.noMasEventosParticipante = true; // No hay más comunidades por cargar
+          }
+          this.loadingParticipante = false; // Desactivar el indicador de carga
+        },
+        (error) => {
+          console.error('Error al cargar más comunidades:', error);
+          this.loadingParticipante = false;
+        }
+      );
+  }
+
+
+
+  onScroll(): void {
+    const element = document.querySelector('.grid-container') as HTMLElement;
+    if (element.scrollTop + element.clientHeight >= element.scrollHeight) {
+      if (this.tabSeleccionada === 'disponibles') {
+        this.cargarEventosDisponibles();
+      } else if (this.tabSeleccionada === 'participante') {
+        this.cargarEventosParticipante();
       }
     }
-
-    return eventosParaMostrar;
   }
-
 
   irADetallesDelEvento(id: number): void {
     this.router.navigate(['/eventos', id]); // Navega a la ruta /eventos/:id
@@ -369,7 +456,7 @@ export class EventosComponent implements OnInit {
 
 
 
-  aplicarTodosLosFiltros2(): void {
+/*   aplicarTodosLosFiltros2(): void {
     // Reiniciar los resultados a todos los eventos
     this.getEventos().then(() => {
       // Aplicar cada filtro activo en secuencia
@@ -390,7 +477,7 @@ export class EventosComponent implements OnInit {
       }
     });
   }
-
+ */
 
   async aplicarTodosLosFiltros(): Promise<void> {
     // Comenzamos con todos los resultados originales

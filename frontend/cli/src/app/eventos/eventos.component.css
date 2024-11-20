@@ -170,130 +170,106 @@
 }
 
 
-.carousel-container {
+/* Pestañas */
+.tabs {
   display: flex;
-  transition: transform 0.5s ease; /* Para animar el desplazamiento */
-  justify-content: flex-start; /* Alinear a la izquierda */
-  height: auto; /* Asegura que la altura del contenedor sea completa */
+  gap: 20px;
+  justify-content: left;
+  margin-bottom: 20px;
 }
 
-.carousel-item {
-  flex: 0 0 25%; /* Cada item ocupa un cuarto del ancho si hay 4 o más */
-  height: 100%; /* Todos los items tendrán la misma altura */
-  display: flex;
-  align-items: center; /* Centra el contenido verticalmente */
-  justify-content: center; /* Centra el contenido horizontalmente */
-  position: relative;
-  box-sizing: border-box; /* Incluye el padding y el borde en el ancho y altura */
-}
-
-
-.large-event {
-  flex: 0 0 100%; /* El primer evento ocupa toda la pantalla */
-}
-
-.mini-event {
-  flex: 0 0 25%; /* Los mini eventos ocupan 1/4 de la pantalla */
-  height: 150px; /* Altura fija para los mini eventos */
-}
-
-/* Asegúrate de que todas las cards de evento tengan la misma altura */
-.evento-card {
-  padding: 20px;
-  margin: 10px;
-  background-color: #f8f9fa;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  height: 100%; /* Asegura que las tarjetas ocupen toda la altura del item */
-  box-sizing: border-box; /* Incluye el padding y el borde en el tamaño total */
-}
-
-.evento-details {
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-}
-
-
-
-
-
-.mini-event {
-  flex: 0 0 25%;
-  /* Los mini eventos ocupan 1/4 de la pantalla */
-  height: 150px;
-  /* Altura fija para los mini eventos */
-}
-
-evento-card {
-  min-height: 200px; /* Ajusta según tus necesidades */
-}
-
-.evento-card {
-  padding: 20px;
-  margin: 10px;
-  background-color: #f8f9fa;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-.evento-details {
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-}
-
-
-.carousel-control {
-  position: absolute;
-  top: 40%;
-  transform: translateY(-50%);
-  background-color: rgba(255, 255, 255, 0.5);
+.tab-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: #fff;
+  background-color: #007bff;
   border: none;
-  padding: 20px;
+  border-radius: 5px;
   cursor: pointer;
-  z-index: 1000;
-  /* Asegura que los botones estén por encima del contenido */
+  transition: background-color 0.3s ease;
 }
 
-.prev {
-  left: 10px;
+.tab-button:hover,
+.tab-button.active {
+  background-color: #0056b3;
 }
 
-.next {
-  right: 10px;
+.grid-container {
+  display: flex;
+  flex-direction: column;
+  height: 80%;
+  max-height: 700px;
+  overflow-y: auto; /* Permite el desplazamiento vertical */
+  padding: 10px;
 }
 
-.indice-actual {
-  margin-top: 10px;
-  text-align: center;
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Dos columnas */
+  gap: 20px; /* Espacio entre las tarjetas */
+  margin-top: 20px;
+}
+
+.grid-item {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  height: 300px;
+  max-width: 90%; /* Para que la tarjeta no ocupe toda la pantalla, ajustable */
+  margin: 10px; /* Añadido para separar las tarjetas */
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+
+/* Contenido dentro de cada evento */
+.evento-card {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fc0000;
+  border-radius: 0 0 12px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 10px;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transition: transform 0.2s;
+  border: 1px solid #ccc;
+}
+
+.evento-card h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #ffd700;
   font-weight: bold;
 }
 
-.clickable {
-  cursor: pointer;
-  /* Cambia el cursor para indicar que es clickeable */
+
+.evento-card p {
+  margin: 5px 0;
+  font-size: 14px;
+  color: #f8f9fa;
 }
 
-.carousel-item {
-  position: relative;
-  z-index: 1;
-  /* Asegura que los elementos sean interactivos */
-}
-
-.evento-card {
-  padding: 20px;
-  background-color: white;
-  border-radius: 8px;
-  transition: transform 0.2s;
-}
 
 .evento-card:hover {
-  transform: scale(1.05);
-  /* Pequeña animación para indicar que es clickeable */
+  transform: scale(1.05); /* Pequeña animación para indicar que es clickeable */
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.evento-details {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
 }

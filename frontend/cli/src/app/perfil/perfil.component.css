@@ -473,3 +473,20 @@ perfil-eventos {
 .fa-dumbbell, .fa-running, .fa-calendar-alt {
     color: #ff7f50;
 }
+
+.perfil-publicaciones .publicaciones-container {
+    max-height: 400px; /* Ajusta el tamaño según lo necesario */
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+.buscador {
+    margin-bottom: 20px;
+  }
+  
+  .buscador input {
+    padding: 10px;
+    width: 100%;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }

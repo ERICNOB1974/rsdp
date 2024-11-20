@@ -121,57 +121,51 @@
 </div>
 
 
+<div class="tabs">
+  <!-- Botones de las pestañas -->
+  <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'disponibles' }"
+    (click)="seleccionarTab('disponibles')">Eventos Disponibles</button>
+  <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'participante' }"
+    (click)="seleccionarTab('participante')">Eventos en los que estas inscripto</button>
+</div>
 
 
 
-
-<section class="carousel">
-  <div class="carousel-container">
-    <div class="carousel-item" *ngFor="let evento of obtenerEventosParaMostrar()" class="evento-item"
-      (click)="irADetallesDelEvento(evento.id)">
+<section class="grid-container" (scroll)="onScroll()">
+  <!-- Grilla de comunidades disponibles -->
+  <div class="grid-header" *ngIf="tabSeleccionada === 'disponibles'">
+    <h2>Eventos Disponibles</h2>
+  </div>
+  <div class="grid" *ngIf="tabSeleccionada === 'disponibles'">
+    <div class="grid-item" *ngFor="let evento of eventosDisponiblesAMostrar"
+      (click)="irADetallesDelEvento(evento.id)"
+      [ngStyle]="{'background-image': 'url(' + (evento.imagen || '../../assets/evento.webp') + ')'}">
       <div class="evento-card clickable">
-        <div class="evento-details">
-          <h3>{{ evento.nombre }}</h3>
-          <p>{{ evento.descripcion }}</p>
-          <p>Cantidad máxima de participantes: {{ evento.cantidadMaximaParticipantes }}</p>
-          <p>Cantidad de inscriptos: {{ evento.participantes }}</p>
-          <p>Ubicacion: {{ evento.ubicacion }}</p>
-          <span>{{ evento.fechaHora | date: 'MMM d, y, h:mm a' }}</span> <!-- Formato de fecha -->
-        </div>
+        <h3>{{ evento.nombre }}</h3>
+        <p>{{ evento.descripcion }}</p>
+        <p>Participantes: {{ evento.participantes }}/{{evento.cantidadMaximaParticipantes}}</p>
+        <p>Ubicación: {{evento.ubicacion}}</p>
       </div>
     </div>
   </div>
 
-  <!-- Controles del carrusel -->
-  <button class="carousel-control prev" (click)="eventoAnterior()" [disabled]="results.length === 0">‹</button>
-  <button class="carousel-control next" (click)="siguienteEvento()" [disabled]="results.length === 0">›</button>
-</section>
-
-<!-- Espacio entre los carruseles -->
-
-<section class="carousel">
-  <!-- Carrusel de comunidades en las que el usuario participa -->
-  <h2>eventos en los que estas inscripto</h2>
-  <div class="carousel-container">
-    <div class="carousel-item" *ngFor="let evento of eventosParticipaUsuario" class="evento-item"
-      (click)="irADetallesDelEvento(evento.id)">
+  <!-- Grilla de comunidades en las que el usuario participa -->
+  <div class="grid-header" *ngIf="tabSeleccionada === 'participante'">
+    <h2>Eventos en los que estas inscripto</h2>
+  </div>
+  <div class="grid" *ngIf="tabSeleccionada === 'participante'">
+    <div class="grid-item" *ngFor="let evento of eventosParticipaUsuario"
+      (click)="irADetallesDelEvento(evento.id)"
+      [ngStyle]="{'background-image': 'url(' + (evento.imagen || '../../assets/evento.webp') + ')'}">
       <div class="evento-card clickable">
-        <div class="evento-details">
-          <h3>{{ evento.nombre }}
-            <!-- Mostrar el candado si la comunidad es privada -->
-            <i *ngIf="evento.esPrivadoParaLaComunidad" class="fa fa-lock" aria-hidden="true"></i>
-          </h3>
-          <p>{{ evento.descripcion }}</p>
-          <p>Miembros: {{ evento.participantes }}/{{evento.cantidadMaximaParticipantes}}</p>
-          <p>Ubicación: {{evento.ubicacion}}</p>
-        </div>
+        <h3>{{ evento.nombre }}</h3>
+        <p>{{ evento.descripcion }}</p>
+        <p>Participantes: {{ evento.participantes }}/{{evento.cantidadMaximaParticipantes}}</p>
+        <p>Ubicación: {{evento.ubicacion}}</p>
+        <p>{{ evento.fechaHora | date: 'MMM d, y, h:mm a' }}</p> <!-- Formato de fecha -->
       </div>
     </div>
   </div>
-
-  <!-- Controles del carrusel -->
-  <button class="carousel-control prev" (click)="eventoAnteriorParticipa()"
-    [disabled]="eventosParticipaUsuario.length === 0">‹</button>
-  <button class="carousel-control next" (click)="siguienteEventoParticipa()"
-    [disabled]="eventosParticipaUsuario.length === 0">›</button>
 </section>
+
+

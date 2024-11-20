@@ -1,9 +1,9 @@
-<!-- Nueva barra de navegación superior -->
 <nav class="top-navbar" *ngIf="!esPantallaLogin && usuario">
     <div class="nav-content">
+        
         <div class="nav-items">
 
-            <a class="nav-link" style="cursor: pointer;" routerLink="/calendario">
+            <a class="nav-link" style="cursor: pointer; color: azure;" routerLink="/calendario">
                 <i class="fa fa-calendar"></i>
             </a>
             <div class="notifications-dropdown">
@@ -28,7 +28,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <a (click)="navigateToMiPerfil()" style="margin-left: 10px;"> <!-- Ajuste para mover a la izquierda -->
                 <img [src]="usuario.fotoPerfil ? usuario.fotoPerfil : '../assets/usuario.png'" alt="Foto de perfil"
                     class="profile-image" />
@@ -38,9 +38,17 @@
 </nav>
 
 
-<div *ngIf="!esPantallaLogin" class="sidebar">
+<div *ngIf="!esPantallaLogin" [ngClass]="{'hidden': isSidebarHidden}" class="sidebar">
+
+    <div class="hamburger-icon" (click)="toggleSidebar()">
+        <i class="fa fa-bars"></i>
+    </div>
+    
+    <div class="sidebar-toggle" (click)="toggleSidebar()">
+        <i class="bi bi-list menu-icon"></i>
+    </div>
+
     <ul>
-        <!-- ACA SE PUEDE PONER DONDE QUEREMOS EL LOGO SI EN LA SIDEBAR O EN EL NAVBAR. COMENTAR O DESCOMENTAR ESTO-->
         <li class="logo">
             <h5 (click)="navigateTo('/')" style="text-align: center; margin: 10px; cursor: pointer;">RSDP</h5>
         </li>
@@ -86,14 +94,7 @@
                 <span class="text">Amigos</span>
             </a>
         </li>
-        <!-- 
-            <li class="profile-link">
-                <a (click)="navigateToMiPerfil()">
-                    <span class="icon"><i class="fa fa-user-circle-o"></i></span>
-                    <span class="text">Mi perfil</span>
-                </a>
-            </li>
-        -->
+
         <li class="dropdown">
             <a class="dropdown-toggle">
                 <span class="icon"><i class="fa fa-question-circle"></i></span>
@@ -142,35 +143,6 @@
                 </li>
             </ul>
         </li>
-        <!-- 
-          <li class="dropdown">
-            <a class="dropdown-toggle">
-              <span class="icon" style="position: relative;">
-                <i class="fa fa-bell"></i>
-                <span *ngIf="getNotificacionesNoLeidas().length > 0" class="notificacion-count">{{ getNotificacionesNoLeidas().length }}</span>
-              </span>
-              <span class="text">Notificaciones</span>
-            </a>
-            <ul class="dropdown-menu notificaciones-menu" aria-labelledby="dropdownMenuButton">
-              <li *ngFor="let notificacion of getNotificacionesNoLeidas()">
-                <a class="dropdown-item" (click)="manejarClickNotificacion(notificacion)">
-                  <div class="notificacion-item">
-                    <p>{{ notificacion.mensaje }}</p>
-                    <span *ngIf="!notificacion.leida" class="notificacion-nueva"></span>
-                  </div>
-                </a>
-              </li>
-            </ul>
-          </li>
-        -->
-        <!-- 
-          <li>
-              <a>
-                  <button (click)="toggleTheme()">Toggle Theme</button>
-                </a>
-            </li>
-            -->
-
         <li>
             <a (click)="logout()" class="logout-button" href="javascript:void(0);">
                 <span class="icon"><i class="fa fa-sign-out"></i></span>
@@ -179,7 +151,10 @@
         </li>
 
     </ul>
+    
 </div>
-<div class="main-content">
+
+
+<div class="main-content" [ngClass]="isSidebarHidden ? 'full-width' : ''">
     <router-outlet></router-outlet>
 </div>

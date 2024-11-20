@@ -25,17 +25,19 @@
     </div>
     <div class="form-group mb-3">
 
-      <div *ngIf="etiquetasSeleccionadas.length > 0" class="etiquetas-lista">
-        <h4>Etiquetas seleccionadas:</h4>
-        <ul class="list-group">
-          <li *ngFor="let etiqueta of etiquetasSeleccionadas"
-            class="list-group-item d-flex justify-content-between align-items-center">
-            {{ etiqueta.nombre }}
-            <button type="button" class="btn btn-danger btn-sm" (click)="eliminarEtiqueta(etiqueta)">Eliminar</button>
-          </li>
-        </ul>
+
+      <div class="selected-tags">
+        <span *ngFor="let etiqueta of etiquetasSeleccionadas" class="tag">
+          {{ etiqueta.nombre }}
+          <button (click)="eliminarEtiqueta(etiqueta)" class="remove-tag">
+            &times;
+          </button>
+        </span>
       </div>
+
+
     </div>
+
     <div class="d-flex gap-2">
       <button class="btn btn-primary" (click)="agregarDiaTrabajo()">Añadir día de trabajo</button>
       <button class="btn btn-secondary" (click)="agregarDiaDescanso()" [disabled]="!esDiaDescansoHabilitado()">
@@ -103,17 +105,12 @@
             </ng-container>
 
             <ng-container *ngIf="ejercicio.tipo === 'resistencia'">
-              <div class="col-md-2 mb-2">      <label class="form-label">Tiempo (MM:SS):</label>
-      <input
-        type="text"
-        class="form-control"
-        placeholder="MM:SS"
-        [(ngModel)]="ejercicio.tiempo"
-        [ngClass]="{'is-invalid': !ejercicio.tiempoValido}"
-        maxlength="5"
-        (input)="filtrarEntrada($event, ejercicio)"
-      />
-      <small class="form-text text-muted">MM:SS</small></div>
+              <div class="col-md-2 mb-2"> <label class="form-label">Tiempo (MM:SS):</label>
+                <input type="text" class="form-control" placeholder="MM:SS" [(ngModel)]="ejercicio.tiempo"
+                  [ngClass]="{'is-invalid': !ejercicio.tiempoValido}" maxlength="5"
+                  (input)="filtrarEntrada($event, ejercicio)" />
+                <small class="form-text text-muted">MM:SS</small>
+              </div>
             </ng-container>
 
             <div class="col-md-5 mb-2">

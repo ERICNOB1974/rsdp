@@ -1,24 +1,42 @@
-<h1>
-  Sugerencias de rutinas
-</h1>
+<h1 class="title">Descubre Nuevas Rutinas</h1>
 
-<section class="carousel">
-  <div class="carousel-container">
-    <div *ngFor="let rutina of obtenerRutinasParaMostrar()" class="carousel-item evento-item">
-      <div class="evento-card clickable" [routerLink]="['/rutinas', rutina.id]">
-        <div class="evento-details">
-          <h3>{{ rutina.nombre }}</h3>
-          <p>{{ rutina.descripcion }}</p>
-          <div class="motivo-container" *ngIf="rutina.id !== undefined && motivos[rutina.id]">
-            <p class="motivo-text">Motivo: "{{ motivos[rutina.id] }}"</p>
-          </div>
-          
+<section class="event-list">
+  <div *ngFor="let rutina of sugerencias" class="event-item">
+    <div class="event-card">
+      <!-- Imagen de fondo para la tarjeta -->
+      <div 
+        class="event-image" 
+        style="background-image: url('../../assets/ejercicio2.png')">
+      </div>
+      
+      <!-- Contenido de la tarjeta -->
+      <div class="event-content">
+        <h3 class="event-name">{{ rutina.nombre }}</h3>
+        <p class="event-description">{{ rutina.descripcion }}</p>
+        <div class="event-details">
+          <p *ngIf="rutina.dias && rutina.dias.length > 0">
+            Duración: {{ rutina.dias.length }} {{ rutina.dias.length === 1 ? 'día' : 'días' }}
+          </p>
+          <p class="event-tags" *ngIf="rutina.etiquetas && rutina.etiquetas.length">
+            Etiquetas: 
+            <span *ngFor="let etiqueta of rutina.etiquetas" class="tag">
+              {{ etiqueta.nombre }}
+            </span>
+          </p>
         </div>
+        <p class="event-motive" *ngIf="rutina.id && motivos[rutina.id]?.length">
+          Motivo: "{{ motivos[rutina.id] }}"
+        </p>
+        <button (click)="irADetallesDeLaRutina(rutina.id)" class="btn-more">Ver Detalles</button>
       </div>
     </div>
   </div>
 
-  <!-- Controles del carrusel -->
-  <button class="carousel-control prev" (click)="rutinaAnterior()" [disabled]="sugerencias.length === 0">‹</button>
-  <button class="carousel-control next" (click)="siguienteRutina()" [disabled]="sugerencias.length === 0">›</button>
 </section>
+  <!-- Paginación -->
+  <app-pagination 
+    [totalPages]="totalPages" 
+    [currentPage]="page + 1" 
+    (pageChangeRequested)="onPageChangeRequested($event)"
+    [hidden]="elementos < 1 || totalPages <= 1">
+  </app-pagination>
