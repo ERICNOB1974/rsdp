@@ -148,9 +148,13 @@ export class EventoService {
     return this.http.get<DataPackage>(`${this.eventosUrl}/eventosCreadosPorUsuario/${userId}?offset=${offset}&limit=${limit}`);
   }
   
-  participaUsuario(idUsuario:number, page: number, size: number): Observable<DataPackage> {
-    return this.http.get<DataPackage>(` ${this.eventosUrl}/participa/${idUsuario}?page=${page}&size=${size}`);
-  }
+ 
+  participaUsuario(idUsuario: number, nombreEvento: string, page: number, size: number): Observable<DataPackage> {
+    // Si nombreRutina está vacío, no lo incluimos en la URL
+    const url = `${this.eventosUrl}/participa/${idUsuario}?page=${page}&size=${size}` +
+                (nombreEvento ? `&nombreRutina=${nombreEvento}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+}
 
 
 

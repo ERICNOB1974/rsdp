@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.PublicacionService;
@@ -80,9 +81,11 @@ public class PublicacionPresenter {
     }
 
     @GetMapping("/publicaciones/usuario/{idUsuario}")
-    public ResponseEntity<Object> publicacionesUsuario(@PathVariable Long idUsuario)
+    public ResponseEntity<Object> publicacionesUsuario(@PathVariable Long idUsuario, 
+        @RequestParam(defaultValue = "0") int offset,
+        @RequestParam(defaultValue = "10") int limit)
             throws Exception {
-        List<Publicacion> publicaciones = publicacionService.publicacionesUsuario(idUsuario);
+        List<Publicacion> publicaciones = publicacionService.publicacionesUsuario(idUsuario,offset, limit);
         return Response.ok(publicaciones, "OK");
     }
 

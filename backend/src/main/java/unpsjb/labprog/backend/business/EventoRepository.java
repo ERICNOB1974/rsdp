@@ -216,12 +216,15 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
 
         @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento) " +
                         "WHERE id(u) = $idUsuario " +
+                        "AND (toLower(e.nombre) CONTAINS toLower($nombreEvento) OR $nombreEvento = '') " +
                         "RETURN e " +
                         "ORDER BY abs(duration.between(date(), e.fechaHora).days) ASC " +
                         "SKIP $skip " +
                         "LIMIT $limit")
-        List<Evento> participaUsuario(@Param("idUsuario") Long idUsuario, @Param("skip") int skip,
+        List<Evento> participaUsuario(@Param("idUsuario") Long idUsuario, @Param("nombreEvento") String nombreEvento, @Param("skip") int skip,
                         @Param("limit") int limit);
+
+  
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(e:Evento)-[:ETIQUETADO_CON]->(et:Etiqueta) "
                         + "MATCH (evento:Evento)-[:ETIQUETADO_CON]->(et) "

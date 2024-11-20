@@ -65,10 +65,11 @@ public interface PublicacionRepository extends Neo4jRepository<Publicacion, Long
                         "WHERE id(u) = $usuarioId " +
                         "MATCH (u)-[:POSTEO]->(p) " +
                         "WHERE NOT (p)-[:PUBLICADO_DENTRO_DE]->() " +
-                        "RETURN p ORDER BY p.fechaDeCreacion DESC")
-        List<Publicacion> publicacionesUsuario(@Param("usuarioId") Long usuarioId);
+                        "RETURN p ORDER BY p.fechaDeCreacion DESC " +
+                        "SKIP $offset LIMIT $limit")
+        List<Publicacion> publicacionesUsuario(@Param("usuarioId") Long usuarioId, @Param("offset") int offset,
+        @Param("limit") int limit);
 
-        // sacar los que esten dentro de la comunidad
         @Query("""
                         MATCH (u:Usuario)-[:ES_AMIGO_DE]->(us:Usuario)-[:POSTEO]->(p:Publicacion)
                                WHERE id(u) = $usuarioId

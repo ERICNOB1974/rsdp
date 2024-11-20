@@ -185,11 +185,14 @@ public class EventoPresenter {
     }
 
 
+
     @RequestMapping(path = "/participa/{idUsuario}", method = RequestMethod.GET)
-    public ResponseEntity<Object> participaUsuario(@PathVariable Long idUsuario,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return Response.ok(eventoService.participaUsuario(idUsuario, page, size));
+    public ResponseEntity<Object> participaUsuario(
+        @PathVariable Long idUsuario, 
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(required = false, defaultValue = "") String nombreEvento) {
+        return Response.ok(eventoService.participaUsuario(idUsuario, nombreEvento, page, size));
     }
 
     @GetMapping("/sugerenciasDeEventosBasadosEnEventos2/{nombreUsuario}")

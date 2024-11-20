@@ -98,9 +98,12 @@ export class ComunidadService {
   }
 
 
-  miembroUsuario(idUsuario:number, page: number, size: number): Observable<DataPackage> {
-    return this.http.get<DataPackage>(` ${this.comunidadesUrl}/miembro/${idUsuario}?page=${page}&size=${size}`);
-  }
+  miembroUsuario(idUsuario: number, nombreComunidad: string, page: number, size: number): Observable<DataPackage> {
+    // Si nombreRutina está vacío, no lo incluimos en la URL
+    const url = `${this.comunidadesUrl}/miembro/${idUsuario}?page=${page}&size=${size}` +
+                (nombreComunidad ? `&nombreComunidad=${nombreComunidad}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+}
 
   disponibles(page: number, size: number): Observable<DataPackage> {
     const nombreUsuario = this.authService.getNombreUsuario();
