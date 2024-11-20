@@ -2,6 +2,7 @@ package unpsjb.labprog.backend.business;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,13 +99,17 @@ public class ComunidadService {
         return "Exito al salir de la comunidad";
     }
 
-    public List<Comunidad> disponibles() {
-        return comunidadRepository.disponibles();
+      // Método para obtener comunidades con paginación
+      public List<Comunidad> obtenerComunidadesDisponiblesPaginadas(String nombreUsuario,int page, int size) {
+        int skip = page * size;  // Cálculo de los resultados a omitir
+        return comunidadRepository.disponibles(nombreUsuario,skip, size);
+    }
+    public List<Comunidad> miembroUsuario(Long idUsuario, String nombreComunidad,int page, int size) {
+        int skip = page * size;  // Cálculo de los resultados a omitir
+        String filtroNombre = (nombreComunidad == null || nombreComunidad.trim().isEmpty()) ? "" : nombreComunidad;
+        return comunidadRepository.miembroUsuario(idUsuario,filtroNombre,skip,size);
     }
 
-    public List<Comunidad> miembroUsuario(Long idUsuario) {
-        return comunidadRepository.miembroUsuario(idUsuario);
-    }
 
     public List<ScoreComunidad> obtenerSugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario) {
         List<ScoreComunidad> sugerencias = comunidadRepository.sugerenciasDeComunidadesBasadasEnAmigos2(nombreUsuario);
@@ -128,7 +133,7 @@ public class ComunidadService {
         return sugerencias;
     }
 
-    public List<ScoreComunidad> obtenerTodasLasSugerenciasDeComunidades(String nombreUsuario) {
+    public Map<String, Object> obtenerSugerenciasComunidadesConTotalPaginas(String nombreUsuario, int page, int pageSize) {
         // Obtener todas las sugerencias de comunidades desde las tres consultas
         List<ScoreComunidad> sugerenciasAmigos = comunidadRepository
                 .sugerenciasDeComunidadesBasadasEnAmigos2(nombreUsuario);
@@ -166,8 +171,24 @@ public class ComunidadService {
         // Ordenar la lista por score en orden descendente
         listaSugerenciasSinDuplicados.sort((a, b) -> Double.compare(b.getScore(), a.getScore())); // Orden descendente
 
-        // Retornar la lista ordenada
-        return listaSugerenciasSinDuplicados;
+       // Calcular el total de páginas
+        int totalElementos = listaSugerenciasSinDuplicados.size();
+        int totalPaginas = (int) Math.ceil((double) totalElementos / pageSize);
+    
+        // Paginar la lista
+        int start = page * pageSize;
+        int end = Math.min(start + pageSize, listaSugerenciasSinDuplicados.size());
+    
+        if (start > end) {
+            return Collections.emptyMap(); // Si la página está fuera de rango
+        }
+    
+        // Crear el mapa con los datos de eventos y el total de páginas
+        Map<String, Object> result = new HashMap<>();
+        result.put("data", listaSugerenciasSinDuplicados.subList(start, end)); // Eventos de la página
+        result.put("totalPaginas", totalPaginas); // Total de páginas
+    
+        return result;
     }
 
     public List<Comunidad> comunidadesEtiquetas(List<String> etiquetas) {

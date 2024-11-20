@@ -18,16 +18,24 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['rutinas.component.css', '../css/filtros.css']
 })
 export class RutinasComponent implements OnInit {
-  rutinas: Rutina[] = []; // Arreglo para almacenar las rutinas que provienen del backend
+  rutinasDisponibles: Rutina[] = []; // Arreglo para almacenar las rutinas que provienen del backend
   currentIndex: number = 0; // Índice actual del carrusel
   results: Rutina[] = [];
-  rutinasUsuario: Rutina[] = []; // Rutinas en las que el usuario está inscrito
+  rutinasRealizaUsuario: Rutina[] = []; // Rutinas en las que el usuario está inscrito
   idUsuarioAutenticado!: number;  // ID del usuario autenticado
   diasRutina: number[] = []; // Arreglo para almacenar los días de cada rutina
   resultadosOriginales: Rutina[] = []; // Nueva variable para mantener los datos originales
-
+  tabSeleccionada: string = 'disponibles';
+  cantidadPorPagina = 4; // Cantidad de comunidades a mostrar por cada carga
+  currentIndexRutinasDisponibles = 0;
+  currentIndexRutinasMiembro = 0;
+  noMasRutinasDisponibles = false;
+  noMasRutinasRealiza = false;
+  loadingDisponibles = false;
+  loadingRealiza = false;
   filtroNombreAbierto: boolean = false;
   nombreEventoFiltro: string = '';
+  hayResultadosFiltrados: boolean = false;
 
   // Filtro por participantes
   filtroParticipantesAbierto: boolean = false;
@@ -55,38 +63,13 @@ export class RutinasComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.getRutinas(); // Cargar las rutinas al inicializar el componente
+    this.cargarRutinasDisponibles();
     const usuarioId = this.authService.getUsuarioId();
     this.idUsuarioAutenticado = Number(usuarioId);
-    this.getRutinasUsuario(); // Cargar las rutinas del usuario
+   // this.getRutinasUsuario(); // Cargar las rutinas del usuario
+   this.cargarRutinasRealizaUsuario();
   }
 
-  async getRutinas(): Promise<void> {
-    this.rutinaService.all().subscribe(async (dataPackage) => {
-      const responseData = dataPackage.data;
-      if (Array.isArray(responseData)) {
-        this.resultadosOriginales = responseData; // Guardar los datos originales
-        this.results = [...responseData];
-        this.traerDias(this.results); // Llamar a traerDias después de cargar las rutinas
-        this.traerEtiquetas(this.results); // Llamar a traerEtiquetas después de cargar las rutinas
-      } else {
-        console.log("No trae nada");
-      }
-    });
-  }
-
-  async getRutinasUsuario(): Promise<void> {
-    this.rutinaService.obtenerRutinasPorUsuario(this.idUsuarioAutenticado).subscribe(async (dataPackage) => {
-      const responseData = dataPackage.data;
-      if (Array.isArray(responseData)) {
-        this.rutinasUsuario = responseData;
-        this.traerDias(this.rutinasUsuario); // Llamar a traerDias para las rutinas del usuario
-        this.traerEtiquetas(this.results); // Llamar a traerEtiquetas después de cargar las rutinas
-      } else {
-        console.log("No trae nada");
-      }
-    });
-  }
 
   traerDias(rutinas: Rutina[]): void {
     for (let rutina of rutinas) {
@@ -117,37 +100,9 @@ export class RutinasComponent implements OnInit {
       );
     }
   }
-  // Método para mover al siguiente grupo de rutinas en el carrusel
-  siguienteRutina(): void {
-    this.currentIndex = (this.currentIndex + 1) % this.results.length; // Incrementa el índice
-  }
 
-  // Método para mover al grupo anterior de rutinas en el carrusel
-  rutinaAnterior(): void {
-    this.currentIndex = (this.currentIndex - 1 + this.results.length) % this.results.length; // Decrementa el índice
-  }
-
-  // Método para obtener las rutinas a mostrar en el carrusel
-  obtenerRutinasParaMostrar(): Rutina[] {
-    const rutinasParaMostrar: Rutina[] = [];
-
-    if (this.results.length === 0) {
-      return rutinasParaMostrar; // Devuelve un arreglo vacío si no hay rutinas
-    }
-
-    // Definir cuántas rutinas mostrar, máximo 4 o el número total de rutinas disponibles
-    const cantidadRutinasAMostrar = Math.min(this.results.length, 4);
-
-    for (let i = 0; i < cantidadRutinasAMostrar; i++) {
-      const index = (this.currentIndex + i) % this.results.length;
-      const rutina = this.results[index];
-      rutinasParaMostrar.push(rutina); // Agregar la rutina
-    }
-
-    return rutinasParaMostrar;
-  }
-
-  irADetallesDeLaRutina(id: number): void {
+  irADetallesDeLaRutina(rutinaId: number | undefined) {
+    const id = rutinaId ?? 0; // Valor predeterminado si es undefined
     this.router.navigate(['/rutinas', id]); // Navega a la ruta /rutinas/:id
   }
 
@@ -194,7 +149,7 @@ export class RutinasComponent implements OnInit {
 
   limpiarFiltroEtiquetas(): void {
     this.etiquetasSeleccionadas = [];
-    this.getRutinas(); // Recargar todos los eventos
+    //this.getRutinas(); // Recargar todos los eventos
   }
 
 
@@ -243,7 +198,7 @@ export class RutinasComponent implements OnInit {
 
   limpiarFiltroNombre(): void {
     this.nombreEventoFiltro = '';
-    this.getRutinas(); // Recargar todos los eventos
+    //this.getRutinas(); // Recargar todos los eventos
   }
   limpiarTodosLosFiltros(): void {
     this.limpiarFiltroNombre();
@@ -289,6 +244,93 @@ export class RutinasComponent implements OnInit {
     // Actualizar información adicional para los resultados filtrados
   }
 
+  seleccionarTab(tab: string) {
+    if (this.tabSeleccionada !== tab) {
+      this.tabSeleccionada = tab;
+    }
+  }
 
+  // Método para cargar más comunidades disponibles
+  cargarRutinasDisponibles(): void {
+    if (this.loadingDisponibles || this.noMasRutinasDisponibles) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
+    this.loadingDisponibles = true;
+
+    // Suponiendo que tienes un método que obtiene más comunidades con paginación
+    this.rutinaService
+      .disponibles(this.currentIndexRutinasDisponibles, this.cantidadPorPagina)
+      .subscribe(
+        async (dataPackage) => {
+          const resultados = dataPackage.data as Rutina[]
+          if (resultados && resultados.length > 0) {
+            // Agregar las comunidades obtenidas a la lista que se muestra
+            this.traerDias(resultados); // Llamar a traerDias para las rutinas del usuario
+            this.traerEtiquetas(resultados); // Llamar a traerEtiquetas después de cargar las rutinas
+           
+            this.rutinasDisponibles = [...this.rutinasDisponibles, ...resultados,];
+            this.currentIndexRutinasDisponibles++; // Aumentar el índice para la siguiente carga
+
+          } else {
+            this.noMasRutinasDisponibles = true; // No hay más comunidades por cargar
+          }
+          this.loadingDisponibles = false; // Desactivar el indicador de carga
+        },
+        (error) => {
+          console.error('Error al cargar más comunidades:', error);
+          this.loadingDisponibles = false;
+        }
+      );
+  }
+
+  cargarRutinasRealizaUsuario(): void {
+    if (this.loadingRealiza || this.noMasRutinasRealiza) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
+
+    this.loadingRealiza = true;
+
+    // Suponiendo que tienes un método que obtiene más comunidades con paginación
+    this.rutinaService
+      .rutinasRealizaUsuario(this.idUsuarioAutenticado,"", this.currentIndexRutinasMiembro, this.cantidadPorPagina)
+      .subscribe(
+        async (dataPackage) => {
+          const resultados = dataPackage.data as Rutina[]
+          if (resultados && resultados.length > 0) {
+            // Agregar las comunidades obtenidas a la lista que se muestra
+            this.traerDias(resultados); // Llamar a traerDias para las rutinas del usuario
+            this.traerEtiquetas(resultados); // Llamar a traerEtiquetas después de cargar las rutinas
+
+          
+            this.rutinasRealizaUsuario = [
+              ...this.rutinasRealizaUsuario,
+              ...resultados,
+            ];
+            this.currentIndexRutinasMiembro++; // Aumentar el índice para la siguiente carga
+
+          } else {
+            this.noMasRutinasRealiza = true; // No hay más comunidades por cargar
+          }
+          this.loadingRealiza = false; // Desactivar el indicador de carga
+        },
+        (error) => {
+          console.error('Error al cargar más comunidades:', error);
+          this.loadingRealiza = false;
+        }
+      );
+  }
+
+
+
+  onScroll(): void {
+    const element = document.querySelector('.content-container') as HTMLElement;
+    if (element.scrollTop + element.clientHeight >= element.scrollHeight) {
+      if(this.hayResultadosFiltrados){
+      }else{
+        if (this.tabSeleccionada === 'disponibles') {
+          console.info("nico");
+          this.cargarRutinasDisponibles();
+        } else if (this.tabSeleccionada === 'realizaRutina') {
+          this.cargarRutinasRealizaUsuario();
+        }
+      }
+    }
+  }
 
 }

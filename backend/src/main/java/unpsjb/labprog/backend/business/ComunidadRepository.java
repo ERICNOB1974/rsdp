@@ -160,16 +160,29 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "CREATE (u)-[:MIEMBRO {fechaIngreso: $fechaIngreso}]->(c)")
         void quitarRolAdministrador(Long idMiembro, Long idComunidad, LocalDateTime fechaIngreso);
 
-        @Query("MATCH (c:Comunidad) " +
-                        "WITH c, COUNT { (c)<-[:MIEMBRO]-() } AS numParticipantes " +
+        @Query("MATCH (c:Comunidad),(u:Usuario {nombreUsuario:$nombreUsuario})" +
+                        "WHERE NOT (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR]-(u) " +
+                        "MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR]-(h) " + // Encontramos los demás miembros de
+                                                                                  // la comunidad
+                        "WITH c, COUNT(DISTINCT h) AS numParticipantes " +
                         "WHERE numParticipantes < c.cantidadMaximaMiembros " +
-                        "RETURN c ORDER BY c.nombre ASC")
-        List<Comunidad> disponibles();
+                        "RETURN c " +
+                        "ORDER BY c.nombre ASC " +
+                        "SKIP $skip " + // Paginación: omite el número de resultados especificado
+                        "LIMIT $limit") // Paginación: limita la cantidad de resultados devueltos
+        List<Comunidad> disponibles(@Param("nombreUsuario") String nombreUsuario, @Param("skip") int skip,
+                        @Param("limit") int limit);
 
-        @Query("MATCH (u:Usuario)-[r:MIEMBRO]->(c:Comunidad) " +
-                        "WHERE id(u) = $idUsuario " +
-                        "RETURN c ORDER BY r.fechaIngreso ASC")
-        List<Comunidad> miembroUsuario(Long idUsuario);
+        @Query("MATCH (u:Usuario)-[r:MIEMBRO|ADMINISTRADA_POR]-(c:Comunidad) " +
+                        "WHERE id(u) = $idUsuario "+
+                        "AND (toLower(c.nombre) CONTAINS toLower($nombreComunidad) OR $nombreComunidad = '') " +
+                        "RETURN c ORDER BY r.fechaIngreso ASC "+
+                        "SKIP $skip "+
+                        "LIMIT $limit")
+        List<Comunidad> miembroUsuario(@Param("idUsuario") Long idUsuario,@Param("nombreComunidad") String nombreComunidad,
+                        @Param("skip") int skip,
+                        @Param("limit") int limit);
+                  
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario) " +
                         "MATCH (amigo)-[:MIEMBRO]->(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
@@ -185,8 +198,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "point.distance(ubicacionComunidad, ubicacionUsuario) AS distancia " +
                         "RETURN comunidad, (etiquetasEnComun / (distancia + 1500000)) AS score, 'a tus amigos le gustan eventos de este tipo, porque tienen '+etiquetasEnComun+' etiqueta/s compartida/s con las comunidades en las que participas' AS motivo "
                         + // Cambiar aquí
-                        "ORDER BY score DESC " +
-                        "LIMIT 3")
+                        "ORDER BY score DESC ")
         List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(evento:Evento)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta), "
@@ -206,8 +218,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "(etiquetasEnComun/(distancia+1500000)) AS score " +
                         "RETURN comunidad, score, 'son similares porque tienen '+etiquetasEnComun+' etiqueta/s compartida/s con eventos en los que participas' AS motivo  "
                         +
-                        "ORDER BY score DESC " +
-                        "LIMIT 3")
+                        "ORDER BY score DESC ")
         List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnEventos2(String nombreUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(c1:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta), "
@@ -227,8 +238,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         +
                         "RETURN comunidad, score, 'son similares porque tienen '+etiquetasEnComun+' etiqueta/s compartida/s con comunidades en las que perteneces' AS motivo   "
                         +
-                        "ORDER BY score DESC " +
-                        "LIMIT 3")
+                        "ORDER BY score DESC ")
         List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnComunidades2(
                         @Param("nombreUsuario") String nombreUsuario);
 

@@ -177,14 +177,22 @@ public class EventoPresenter {
         return Response.ok(eventoService.eventosParticipantes(min, max));
     }
 
-    @RequestMapping(path = "/disponibles", method = RequestMethod.GET)
-    public ResponseEntity<Object> disponibles() {
-        return Response.ok(eventoService.disponibles());
+    @RequestMapping(path = "/{nombreUsuario}/disponibles", method = RequestMethod.GET)
+    public ResponseEntity<Object> eventosDisponibles(@PathVariable String nombreUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return Response.ok(eventoService.eventosDisponibles(nombreUsuario, page, size));
     }
 
+
+
     @RequestMapping(path = "/participa/{idUsuario}", method = RequestMethod.GET)
-    public ResponseEntity<Object> participaUsuario(@PathVariable Long idUsuario) {
-        return Response.ok(eventoService.participaUsuario(idUsuario));
+    public ResponseEntity<Object> participaUsuario(
+        @PathVariable Long idUsuario, 
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(required = false, defaultValue = "") String nombreEvento) {
+        return Response.ok(eventoService.participaUsuario(idUsuario, nombreEvento, page, size));
     }
 
     @GetMapping("/sugerenciasDeEventosBasadosEnEventos2/{nombreUsuario}")
@@ -215,27 +223,28 @@ public class EventoPresenter {
         return Response.ok(sugerenciasDeEventosBasadosEnRutinas);
     }
 
-@GetMapping("/sugerencias-combinadas/{nombreUsuario}")
-public ResponseEntity<Object> obtenerSugerenciasCombinadas(
-        @PathVariable String nombreUsuario,
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "4") int size) {
-    try {
-        // Llamar al servicio que devuelve los eventos y el total de páginas
-        Map<String, Object> result = eventoService.obtenerSugerenciasEventosConTotalPaginas(nombreUsuario, page, size);
+    @GetMapping("/sugerencias-combinadas/{nombreUsuario}")
+    public ResponseEntity<Object> obtenerSugerenciasCombinadas(
+            @PathVariable String nombreUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "4") int size) {
+        try {
+            // Llamar al servicio que devuelve los eventos y el total de páginas
+            Map<String, Object> result = eventoService.obtenerSugerenciasEventosConTotalPaginas(nombreUsuario, page,
+                    size);
 
-        // Verificar si el resultado contiene datos y total de páginas
-        if (result.isEmpty()) {
-            return Response.error("", "No se encontraron sugerencias para los parámetros proporcionados.");
+            // Verificar si el resultado contiene datos y total de páginas
+            if (result.isEmpty()) {
+                return Response.error("", "No se encontraron sugerencias para los parámetros proporcionados.");
+            }
+
+            // Retornar los eventos y el total de páginas en el ResponseEntity
+            return Response.ok(result);
+        } catch (Exception e) {
+            // Manejo del error
+            return Response.error("", "Error al obtener las sugerencias: " + e.getMessage());
         }
-
-        // Retornar los eventos y el total de páginas en el ResponseEntity
-        return Response.ok(result);
-    } catch (Exception e) {
-        // Manejo del error
-        return Response.error("", "Error al obtener las sugerencias: " + e.getMessage());
     }
-}
 
     @GetMapping("/etiquetas/{idEvento}")
     public ResponseEntity<Object> etiquetasEvento(@PathVariable Long idEvento) {

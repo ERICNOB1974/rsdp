@@ -1,26 +1,35 @@
+import { CommonModule, Location } from '@angular/common'; // Asegúrate de que está importado desde aquí
 import { ChangeDetectorRef, Component } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EventoService } from './evento.service';
-import { Evento } from './evento';
-import { FormsModule } from '@angular/forms';
-import { catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom, forkJoin, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import axios from 'axios'; // Asegúrate de tener axios instalado
+import * as L from 'leaflet';
+import { catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { DataPackage } from '../data-package';
 import { Etiqueta } from '../etiqueta/etiqueta';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
-import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
-import { Location } from '@angular/common'; // Asegúrate de que está importado desde aquí
-import * as L from 'leaflet';
-import axios from 'axios'; // Asegúrate de tener axios instalado
-import { CommonModule } from '@angular/common';
-import { UbicacionService } from '../ubicacion.service'; // Importa tu servicio de ubicación
 import { EtiquetaPopularidadDTO } from '../etiqueta/etiquetaPopularidadDTO';
-import { DataPackage } from '../data-package';
+import { UbicacionService } from '../ubicacion.service'; // Importa tu servicio de ubicación
+import { Evento } from './evento';
+import { EventoService } from './evento.service';
 
 @Component({
   selector: 'app-crear-evento',
   templateUrl: './crearEvento.component.html',
-  styleUrls: ['./crearEvento.component.css'],
+  styleUrls: ['./crearEvento.component.css', '../css/etiquetas.css', '../css/registro.component.css'],
   standalone: true,
-  imports: [FormsModule, NgbTypeaheadModule, CommonModule]
+  imports: [FormsModule, NgbTypeaheadModule, CommonModule, MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    ReactiveFormsModule]
 })
 export class CrearEventoComponent {
 
@@ -43,20 +52,81 @@ export class CrearEventoComponent {
   archivoSeleccionado!: File; // Para almacenar la imagen o video seleccionado
   tipoArchivo: string = ''; // Para distinguir entre imagen o video
   vistaPreviaArchivo: string | ArrayBuffer | null = null;
-  
+
   comunidadId: string | null = null;
+  formEvento: FormGroup;
 
 
   constructor(
     private eventoService: EventoService,
+    private formBuilder: FormBuilder,
     private etiquetaService: EtiquetaService,
     private router: Router,
     private location: Location,
     private ubicacionService: UbicacionService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute
-  ) { }
+  ) {
+    this.formEvento = this.formBuilder.group(
+      {
+        nombre: ['', [Validators.required]],
+        fechaHora: [
+          '',
+          [Validators.required],
+          [this.dateValidator()]
+        ],
+        cantidadMaximaParticipantes: [
+          '',
+          [Validators.required],
+          [this.cantidadParticipantesValidator.bind(this)],
+        ],
+        latitud: [
+          '',
+          [Validators.required]
+        ],
+        longitud: ['', [Validators.required]],
 
+        etiquetasSeleccionadas: [[], [this.minimoUnaEtiqueta()]], // Asegúrate de que sea un array
+
+      }
+    );
+  }
+
+  minimoUnaEtiqueta(): ValidatorFn {
+    return (control: AbstractControl): { [key: string]: any } | null => {
+      const etiquetas = control.value; // Asumiendo que control.value es un array de etiquetas
+      return etiquetas && etiquetas.length > 0 ? null : { sinEtiqueta: true };
+    };
+  }
+  dateValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const dateValue = control.value;
+      if (dateValue) {
+        const selectedDate = new Date(dateValue).getTime();
+        const minDate = Date.now();
+        if (selectedDate < minDate) {
+          return { invalidDate: true };
+        }
+        return { invalidDate: true };
+      }
+      return { invalidDate: true };
+      return null;
+    };
+  }
+
+
+  cantidadParticipantesValidator(control: AbstractControl): Observable<ValidationErrors | null> {
+    const cantidadIngresada = control.value;
+
+    // Verificar si la cantidad es válida
+    if (cantidadIngresada > 0) {
+      // La cantidad es válida
+      return of(null);
+    } else {
+      // La cantidad es inválida
+      return of({ cantidadInvalida: true });
+    }
+  }
   ngOnInit(): void {
     this.evento = <Evento>{
       fechaDeCreacion: new Date(),
@@ -134,6 +204,8 @@ export class CrearEventoComponent {
     this.cursorBlocked = true;
 
   }
+
+
 
   private iniciarMapa(lat: number, lng: number): void {
     this.mapa = L.map('map').setView([lat, lng], 13);
@@ -219,9 +291,6 @@ export class CrearEventoComponent {
     const day = today.getDate().toString().padStart(2, '0');
     const hours = today.getHours().toString().padStart(2, '0');
     const minutes = today.getMinutes().toString().padStart(2, '0');
-    //const seconds = today.getSeconds().toString().padStart(2, '0');
-    //  const milliseconds = today.getMilliseconds().toString().padStart(3, '0');
-    //    this.minFechaHora=`${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}`;
     this.minFechaHora = `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
@@ -287,7 +356,7 @@ export class CrearEventoComponent {
 
       // Guardar el evento y obtener su ID
       if (this.comunidadId) {
-        const eventoGuardado = await firstValueFrom(this.eventoService.saveConCreadorComunidad(this.evento,<number><unknown>this.comunidadId));
+        const eventoGuardado = await firstValueFrom(this.eventoService.saveConCreadorComunidad(this.evento, <number><unknown>this.comunidadId));
         this.evento = <Evento>eventoGuardado.data;
       } else {
         const eventoGuardado = await firstValueFrom(this.eventoService.saveConCreador(this.evento));
@@ -307,9 +376,9 @@ export class CrearEventoComponent {
         // Realizar la etiquetación con la etiqueta final
         await this.eventoService.etiquetar(this.evento, etiquetaFinal.id).toPromise();
       }
-  
+
       alert('Evento guardado con éxito');
-      if (this.comunidadId){
+      if (this.comunidadId) {
         this.location.back();
       } else {
         window.location.reload();

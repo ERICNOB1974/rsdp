@@ -10,6 +10,9 @@ import { Notificacion } from './notificaciones/notificacion';
 import { ThemeService } from './themeservice';
 import { UsuarioService } from './usuarios/usuario.service';
 import { Usuario } from './usuarios/usuario';
+
+import { ToastrService } from 'ngx-toastr';
+import { WebSocketService } from './notificaciones/webSocket.Service';
 //import { Notificacion } from './notificaciones/notificacion';
 
 @Component({
@@ -17,7 +20,7 @@ import { Usuario } from './usuarios/usuario';
   standalone: true,
   imports: [RouterOutlet, NgIf, CommonModule, RouterLink, RouterModule],
   templateUrl: './app.component.html',
-  styleUrls: ['../styles.css']
+  styleUrls: ['../styles.css', '../barras.css']
 })
 export class AppComponent {
   esPantallaLogin = false;
@@ -27,6 +30,7 @@ export class AppComponent {
   idUsuarioAutenticado!: number; // Variable para almacenar el ID del usuario autenticado
   notificacionesNoLeidasCount = 0;
   usuario!: Usuario;
+  isSidebarHidden = false; // Estado para ocultar/mostrar la barra lateral
   fotoPerfil: string = '';
 
   constructor(private router: Router,
@@ -34,7 +38,9 @@ export class AppComponent {
     private usuarioService: UsuarioService,
     private authService: AuthService,
     private notificacionService: NotificacionService,
-    private themeService: ThemeService) { }
+    private themeService: ThemeService,
+    private toastr: ToastrService,
+    private webSocketService: WebSocketService) { }
 
   ngOnInit(): void {
     this.router.events.subscribe(event => {
@@ -44,16 +50,28 @@ export class AppComponent {
     });
     const usuarioId = this.authService.getUsuarioId();
     this.idUsuarioAutenticado = Number(usuarioId);
+    this.getUsuario();
     this.actualizarUbicacion();
     this.cargarNotificaciones();
-    this.getUsuario();
+
+/*      // Escuchar notificaciones en tiempo real
+     this.webSocketService.listen('notificacion', (data: Notificacion) => {
+      this.manejarNuevaNotificacion(data);
+    }); */
   }
 
+  manejarNuevaNotificacion(notificacion: Notificacion): void {
+    // Agregar la notificación a la lista
+    this.notificaciones.unshift(notificacion);
+    this.notificacionesNoLeidasCount++;
 
-  toggleTheme(): void {
-    this.themeService.toggleTheme();
+    // Mostrar la notificación como toast
+    this.toastr.info(notificacion.mensaje, 'Nueva notificación', {
+      timeOut: 5000, // Duración del toast
+      closeButton: true,
+      progressBar: true,
+    });
   }
-
 
   getUsuario() {
     this.usuarioService.get(this.idUsuarioAutenticado).subscribe(dataPackage => {
@@ -208,6 +226,10 @@ export class AppComponent {
     }).catch(error => {
       console.error('Error al manejar la notificación:', error);
     });
+  }
+
+  toggleSidebar(): void {
+    this.isSidebarHidden = !this.isSidebarHidden; // Cambiar el estado de la barra lateral
   }
 
 }

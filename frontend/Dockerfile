@@ -1,8 +1,6 @@
-# Laboratorio de Programación y Lenguajes
 # FI-UNPSJB-PM
 #
 # Imagen para el desarrollo del client side (angular.io)
-# Destinada para utilizar en el desarrollo del trabajo de laboratorio.
 FROM node:alpine
 
 # Agrega la linea de comando bash

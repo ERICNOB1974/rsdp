@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import unpsjb.labprog.backend.model.Evento;
 import unpsjb.labprog.backend.model.Usuario;
+import unpsjb.labprog.backend.presenter.WebSocketController;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,12 +25,18 @@ public class NotificacionService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private WebSocketController webSocketController;
+
     public void notificarInscripcionEvento(Long idUsuario, Long idEvento) {
         notificacionRepository.crearNotificacion(
                 idUsuario,
                 idEvento,
                 "Inscripción a evento",
                 LocalDateTime.now());
+
+        String mensaje = "Te has inscrito al evento: " + idEvento;
+        webSocketController.enviarNotificacion(idUsuario, mensaje);
     }
 
     public void notificarAceptacionAmistad(Long idUsuario, Long idAmigo) {
@@ -38,6 +45,9 @@ public class NotificacionService {
                 idAmigo,
                 "Aceptación de solicitud de amistad",
                 LocalDateTime.now());
+
+        String mensaje = "Tu solicitud de amistad ha sido aceptada por el usuario: " + idAmigo;
+        webSocketController.enviarNotificacion(idUsuario, mensaje);
     }
 
     public List<Notificacion> obtenerNotificacionesPorUsuario(Long usuarioId) throws Exception {
@@ -85,6 +95,8 @@ public class NotificacionService {
     public void crearNotificacion(Long idUsuario, Long idEntidad, String tipo, LocalDateTime fecha) {
         // Crea la notificación en la base de datos
         notificacionRepository.crearNotificacion(idUsuario, idEntidad, tipo, fecha);
+        webSocketController.enviarNotificacion(idUsuario, "has recibido una notificacion.");
+
     }
 
     public void crearNotificacionPublicacion(Long idUsuarioReceptor, Long idUsuarioEmisor, Long idEntidad, String tipo,
