@@ -222,11 +222,46 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
       "MERGE (r)-[:ETIQUETADA_CON]->(e)")
   void etiquetarRutina(Long rutinaId, Long etiquetaId);
 
+@Query("MATCH (r:Rutina)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
+       "WITH r, collect(etiqueta.nombre) AS etiquetasRutina " +
+       "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasRutina) " +
+       "AND NOT EXISTS { " +
+       "  MATCH (u:Usuario)-[:REALIZA_RUTINA]->(r) " +
+       "  WHERE id(u) = $usuarioId " +
+       "} " +
+       "RETURN r")
+List<Rutina> rutinasEtiquetasDisponible(@Param("usuarioId") Long usuarioId, @Param("etiquetas") List<String> etiquetas);
+
+
+@Query("MATCH (r:Rutina)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
+       "MATCH (u:Usuario)-[:REALIZA_RUTINA]->(r) " +
+       "WHERE id(u) = $usuarioId " +
+       "WITH r, collect(etiqueta.nombre) AS etiquetasRutina " +
+       "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasRutina) " +
+       "RETURN r")
+List<Rutina> rutinasEtiquetasRealizaRutina(@Param("usuarioId") Long usuarioId, @Param("etiquetas") List<String> etiquetas);
+
+
   @Query("MATCH (c:Rutina)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
       "WITH c, collect(etiqueta.nombre) AS etiquetasRutina " +
       "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasRutina) " +
       "RETURN c")
   List<Rutina> rutinasEtiquetas(@Param("etiquetas") List<String> etiquetas);
+
+@Query("MATCH (r:Rutina) " +
+       "WHERE toUpper(r.nombre) CONTAINS toUpper($nombre) " +
+       "AND NOT EXISTS { " +
+       "  MATCH (u:Usuario)-[:REALIZA_RUTINA]->(r) " +
+       "  WHERE id(u) = $usuarioId " +
+       "} " +
+       "RETURN r")
+List<Rutina> rutinasNombreDisponibles(String nombre, Long usuarioId);
+
+@Query("MATCH (r:Rutina)<-[:REALIZA_RUTINA]-(u:Usuario) " +
+       "WHERE id(u) = $usuarioId AND toUpper(r.nombre) CONTAINS toUpper($nombre) " +
+       "RETURN r")
+List<Rutina> rutinasNombreRealizaRutina(String nombre, Long usuarioId);
+
 
   @Query("MATCH (c:Rutina) WHERE toUpper(c.nombre) CONTAINS toUpper($nombre) RETURN c")
   List<Rutina> rutinasNombre(String nombre);
