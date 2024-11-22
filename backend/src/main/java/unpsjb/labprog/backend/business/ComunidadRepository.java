@@ -242,15 +242,83 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnComunidades2(
                         @Param("nombreUsuario") String nombreUsuario);
 
-        @Query("MATCH (c:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
-                        "WITH c, collect(etiqueta.nombre) AS etiquetasComunidad " +
-                        "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasComunidad) " +
-                        "RETURN c")
-        List<Comunidad> comunidadesEtiquetas(@Param("etiquetas") List<String> etiquetas);
+            @Query("MATCH (c:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
+                            "WITH c, collect(etiqueta.nombre) AS etiquetasComunidad " +
+                            "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasComunidad) " +
+                            "RETURN c")
+            List<Comunidad> comunidadesEtiquetas(@Param("etiquetas") List<String> etiquetas);
+
+                @Query("MATCH (c:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
+                    "WHERE NOT EXISTS { " +
+                    "  MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c) " +
+                    "  WHERE id(u) = $idUsuario " +
+                    "} " +
+                    "WITH c, collect(etiqueta.nombre) AS etiquetasComunidad " +
+                    "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasComunidad) " +
+                    "RETURN c")
+            List<Comunidad> comunidadesEtiquetasDisponibles(@Param("idUsuario") Long idUsuario, @Param("etiquetas") List<String> etiquetas);
+
+
+
+            @Query("MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR]-(c:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
+                "WHERE id(u) = $idUsuario "+
+                "WITH c, collect(etiqueta.nombre) AS etiquetasComunidad " +
+                "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasComunidad) " +
+                "RETURN c")
+            List<Comunidad> comunidadesEtiquetasMiembro(@Param("idUsuario") Long idUsuario, @Param("etiquetas") List<String> etiquetas);
+
 
         @Query("MATCH (c:Comunidad) WHERE toUpper(c.nombre) CONTAINS toUpper($nombre) RETURN c")
         List<Comunidad> comunidadesNombre(String nombre);
 
+        @Query("""
+                MATCH (u:Usuario)
+                WHERE id(u) = $usuarioId
+                MATCH (c:Comunidad)
+                WHERE toUpper(c.nombre) CONTAINS toUpper($nombre)
+                  AND NOT (c)<-[:MIEMBRO]-(u)
+                  AND NOT (c)-[:CREADA_POR|ADMINISTRADA_POR]->(u)
+                RETURN DISTINCT c
+            """)
+            List<Comunidad> comunidadesNombreDisponibles(String nombre, @Param("usuarioId") Long usuarioId);
+            
+            @Query("""
+                MATCH (c:Comunidad)<-[:MIEMBRO]-(u)
+                WHERE toUpper(c.nombre) CONTAINS toUpper($nombre)
+                AND id(u) = $usuarioId
+                RETURN c
+            """)
+            List<Comunidad> comunidadesNombreMiembro(String nombre, @Param("usuarioId") Long usuarioId);
+
+        
+            @Query("""
+                MATCH (c:Comunidad)
+                MATCH (us:Usuario)
+                WHERE id(us) = $usuarioId
+                OPTIONAL MATCH (u:Usuario)-[r]-(c)
+                WHERE type(r) <> 'SOLICITUD_DE_INGRESO' AND type(r) <> 'NOTIFICACION'
+                WITH c, count(DISTINCT u) AS totalUsuarios, us
+                WHERE totalUsuarios >= $min AND totalUsuarios <= $max
+                AND NOT EXISTS {
+                    MATCH (c)-[:CREADA_POR|ADMINISTRADA_POR|MIEMBRO]-(us)
+                }
+                RETURN DISTINCT c
+            """)
+            List<Comunidad> comunidadesCantidadParticipantesDisponibles(@Param("usuarioId") Long usuarioId, @Param("min") int min, @Param("max") int max);
+            
+            @Query("""
+                MATCH (c:Comunidad)
+                MATCH (us:Usuario)
+                WHERE id(us) = $usuarioId
+                OPTIONAL MATCH (u:Usuario)-[r]-(c)
+                WHERE type(r) <> 'SOLICITUD_DE_INGRESO' AND type(r) <> 'NOTIFICACION'
+                WITH c, count(DISTINCT u) AS totalUsuarios, us
+                WHERE totalUsuarios >= $min AND totalUsuarios <= $max
+                AND (c)-[:MIEMBRO|ADMINISTRADA_POR]-(us) // Verifica si el usuario es miembro de la comunidad
+                RETURN DISTINCT c
+            """)
+            List<Comunidad> comunidadesCantidadParticipantesMiembro(@Param("usuarioId") Long usuarioId, @Param("min") int min, @Param("max") int max);
+            
         @Query("MATCH (c:Comunidad) " +
                         "OPTIONAL MATCH (u:Usuario)-[r]-(c) " +
                         "WHERE type(r) <> 'SOLICITUD_DE_INGRESO' AND type(r) <> 'NOTIFICACION' " +
