@@ -6,7 +6,7 @@ import { Rutina } from './rutina';
 import { RutinaService } from './rutina.service';
 import { AuthService } from '../autenticacion/auth.service';
 import { Etiqueta } from '../etiqueta/etiqueta';
-import { catchError, debounceTime, distinctUntilChanged, filter, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, lastValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -36,6 +36,11 @@ export class RutinasComponent implements OnInit {
   filtroNombreAbierto: boolean = false;
   nombreEventoFiltro: string = '';
   hayResultadosFiltrados: boolean = false;
+  resultadosFiltradosPaginados: Rutina[] = [];
+  currentIndexFiltrados: number = 0;
+  noMasResultadosFiltrados: boolean = false;
+  loadingFiltrados: boolean = false;
+  resultadosFiltrados: Rutina[] = []; // Nueva variable para mantener los datos originales
 
   // Filtro por participantes
   filtroParticipantesAbierto: boolean = false;
@@ -66,8 +71,8 @@ export class RutinasComponent implements OnInit {
     this.cargarRutinasDisponibles();
     const usuarioId = this.authService.getUsuarioId();
     this.idUsuarioAutenticado = Number(usuarioId);
-   // this.getRutinasUsuario(); // Cargar las rutinas del usuario
-   this.cargarRutinasRealizaUsuario();
+    // this.getRutinasUsuario(); // Cargar las rutinas del usuario
+    this.cargarRutinasRealizaUsuario();
   }
 
 
@@ -120,21 +125,17 @@ export class RutinasComponent implements OnInit {
     this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(e => e.id !== etiqueta.id);
   }
 
-  aplicarFiltroEtiquetas(): void {
-    if (this.etiquetasSeleccionadas.length > 0) {
+  async aplicarFiltroEtiquetas2(): Promise<Rutina[]> {
+    try {
       const etiquetasIds = this.etiquetasSeleccionadas.map(e => e.nombre);
-      this.rutinaService.filtrarEtiqueta(etiquetasIds).subscribe(
-        (dataPackage) => {
-          if (Array.isArray(dataPackage.data)) {
-            this.results = dataPackage.data;
-          } else {
-            console.log("No se obtuvieron datos de eventos");
-          }
-        },
-        (error) => {
-          console.error("Error al filtrar por etiquetas:", error);
-        }
-      );
+      const dataPackage = await lastValueFrom(this.rutinaService.filtrarEtiqueta(etiquetasIds,this.tabSeleccionada,this.idUsuarioAutenticado));
+      if (Array.isArray(dataPackage.data)) {
+        return dataPackage.data;
+      }
+      return []; // Devuelve lista vacía si no es un array válido
+    } catch (error) {
+      console.error("Error al filtrar etiquetas:", error);
+      return []; // Manejo de errores devolviendo una lista vacía
     }
   }
 
@@ -149,7 +150,7 @@ export class RutinasComponent implements OnInit {
 
   limpiarFiltroEtiquetas(): void {
     this.etiquetasSeleccionadas = [];
-    //this.getRutinas(); // Recargar todos los eventos
+    this.aplicarTodosLosFiltros();
   }
 
 
@@ -188,65 +189,124 @@ export class RutinasComponent implements OnInit {
     this.filtroNombreAbierto = !this.filtroNombreAbierto;
   }
 
-  aplicarFiltroNombre(): void {
-    if (this.nombreEventoFiltro) {
-      this.results = this.results.filter(comunidad =>
-        comunidad.nombre.toLowerCase().includes(this.nombreEventoFiltro.toLowerCase())
+  async aplicarFiltroNombre2(): Promise<Rutina[]> {
+    try {
+      const dataPackage = await lastValueFrom(
+        this.rutinaService.filtrarNombre(this.nombreEventoFiltro, this.tabSeleccionada,this.idUsuarioAutenticado)
       );
+      return dataPackage.data as Rutina[];
+    } catch (error) {
+      console.error('Error al filtrar rutinas por nombre:', error);
+      return []; // Devuelve una lista vacía en caso de error
     }
   }
 
   limpiarFiltroNombre(): void {
     this.nombreEventoFiltro = '';
-    //this.getRutinas(); // Recargar todos los eventos
+    this.filtroNombreActivo = false;
+    this.aplicarTodosLosFiltros();
   }
   limpiarTodosLosFiltros(): void {
-    this.limpiarFiltroNombre();
-    this.limpiarFiltroEtiquetas();
-  }
+    this.nombreEventoFiltro = '';
+    this.filtroNombreActivo = false;
+    this.etiquetasSeleccionadas = [];
+    this.filtroEtiquetasActivo = false;
 
+    // Restaurar todos los resultados
+    this.currentIndexRutinasDisponibles = 0;
+    this.currentIndexRutinasMiembro=0;
+  }
 
 
 
   async aplicarTodosLosFiltros(): Promise<void> {
-    // Comenzamos con todos los resultados originales
-    let resultadosFiltrados = [...this.resultadosOriginales];
+    let lista1: Rutina[] = [];
+    let lista2: Rutina[] = [];
+    this.hayResultadosFiltrados = false; // Inicializar en false
 
-    // Aplicar filtro por nombre si está activo
     if (this.filtroNombreActivo && this.nombreEventoFiltro) {
-      resultadosFiltrados = resultadosFiltrados.filter(comunidad =>
-        comunidad.nombre.toLowerCase().includes(this.nombreEventoFiltro.toLowerCase())
-      );
-    }
-
-
-
-    // Aplicar filtro por etiquetas si hay etiquetas seleccionadas
-    if (this.filtroEtiquetasActivo && this.etiquetasSeleccionadas.length > 0) {
-      const etiquetasIds = this.etiquetasSeleccionadas.map(e => e.nombre);
-
-      try {
-        const response = await this.rutinaService.filtrarEtiqueta(etiquetasIds).toPromise();
-        if (response && response.data && Array.isArray(response.data)) {
-          const comunidadesFiltradas = response.data as Rutina[];
-          resultadosFiltrados = resultadosFiltrados.filter(comunidad =>
-            comunidadesFiltradas.some(c => c.id === comunidad.id)
-          );
-        }
-      } catch (error) {
-        console.error("Error al filtrar por etiquetas:", error);
+        lista1 = await this.aplicarFiltroNombre2();
+        this.hayResultadosFiltrados = true; // Entró en el if
       }
+
+    if (this.filtroEtiquetasActivo && this.etiquetasSeleccionadas.length > 0) {
+      lista2 = await this.aplicarFiltroEtiquetas2();
+      this.hayResultadosFiltrados = true; // Entró en el if
     }
+    this.rutinasDisponibles=[];
+    this.rutinasRealizaUsuario=[]
+    if(this.hayResultadosFiltrados){
+      
+      
+      let listasActivas = [lista1, lista2].filter(lista => lista.length > 0);
 
-    // Actualizar los resultados filtrados
-    this.results = resultadosFiltrados;
-
-    // Actualizar información adicional para los resultados filtrados
+      if (listasActivas.length > 0) {
+        // Realizamos la intersección de las listas
+        this.resultadosFiltrados = listasActivas.reduce((interseccion, listaActual) => {
+        return interseccion.filter(item => 
+          listaActual.some(actualItem => actualItem.id === item.id)
+        );
+      });
+    } else {
+      this.resultadosFiltrados = [];
+    }
+    this.currentIndexFiltrados = 0;
+    this.noMasResultadosFiltrados = false;
+    //await this.actualizarInformacionAdicional();
+    this.cargarMasResultadosFiltrados(); // Cargar la primera página de resultados
+  }else{
+    this.currentIndexRutinasDisponibles=0;
+    this.currentIndexRutinasMiembro=0;
+    if (this.tabSeleccionada === 'disponibles') {
+      this.cargarRutinasDisponibles();
+    } else if (this.tabSeleccionada === 'realizaRutina') {
+      this.cargarRutinasRealizaUsuario();
+    }
+  }
+}
+  cargarMasResultadosFiltrados(): void {
+    if (this.loadingFiltrados || this.noMasResultadosFiltrados) return;
+  
+    this.loadingFiltrados = true;
+    const inicio = this.currentIndexFiltrados * this.cantidadPorPagina;
+    const fin = inicio + this.cantidadPorPagina;
+  
+    const nuevosResultados = this.resultadosFiltrados.slice(inicio, fin);
+  
+    if (nuevosResultados.length > 0) {
+      this.traerDias(nuevosResultados); // Agregar datos adicionales como ubicación y miembros
+      this.traerEtiquetas(nuevosResultados);
+      if (this.tabSeleccionada === 'disponibles') {
+        this.rutinasDisponibles = [
+          ...this.rutinasDisponibles,
+          ...nuevosResultados
+        ];
+      } else if (this.tabSeleccionada === 'realizaRutina') {
+        this.rutinasRealizaUsuario = [
+          ...this.rutinasRealizaUsuario,
+          ...nuevosResultados
+        ];
+      }
+      this.currentIndexFiltrados++;
+    } else {
+      this.noMasResultadosFiltrados = true;
+    }
+  
+    this.loadingFiltrados = false;
   }
 
   seleccionarTab(tab: string) {
     if (this.tabSeleccionada !== tab) {
       this.tabSeleccionada = tab;
+      this.filtroEtiquetasActivo = false;
+      this.filtroNombreActivo = false
+      if (this.tabSeleccionada === 'disponibles') {
+        this.loadingDisponibles = false;
+        this.cargarRutinasDisponibles();
+      } else if (this.tabSeleccionada === 'realizaRutina') {
+        this.loadingRealiza = false;
+        this.cargarRutinasRealizaUsuario();
+      }
     }
   }
 
@@ -261,12 +321,12 @@ export class RutinasComponent implements OnInit {
       .subscribe(
         async (dataPackage) => {
           const resultados = dataPackage.data as Rutina[]
-          console.log("eric ",resultados);
+          console.log("eric ", resultados);
           if (resultados && resultados.length > 0) {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerDias(resultados); // Llamar a traerDias para las rutinas del usuario
             this.traerEtiquetas(resultados); // Llamar a traerEtiquetas después de cargar las rutinas
-           
+
             this.rutinasDisponibles = [...this.rutinasDisponibles, ...resultados,];
             this.currentIndexRutinasDisponibles++; // Aumentar el índice para la siguiente carga
 
@@ -289,7 +349,7 @@ export class RutinasComponent implements OnInit {
 
     // Suponiendo que tienes un método que obtiene más comunidades con paginación
     this.rutinaService
-      .rutinasRealizaUsuario(this.idUsuarioAutenticado,"", this.currentIndexRutinasMiembro, this.cantidadPorPagina)
+      .rutinasRealizaUsuario(this.idUsuarioAutenticado, "", this.currentIndexRutinasMiembro, this.cantidadPorPagina)
       .subscribe(
         async (dataPackage) => {
           const resultados = dataPackage.data as Rutina[]
@@ -298,7 +358,7 @@ export class RutinasComponent implements OnInit {
             this.traerDias(resultados); // Llamar a traerDias para las rutinas del usuario
             this.traerEtiquetas(resultados); // Llamar a traerEtiquetas después de cargar las rutinas
 
-          
+
             this.rutinasRealizaUsuario = [
               ...this.rutinasRealizaUsuario,
               ...resultados,
@@ -322,10 +382,10 @@ export class RutinasComponent implements OnInit {
   onScroll(): void {
     const element = document.querySelector('.content-container') as HTMLElement;
     if (element.scrollTop + element.clientHeight >= element.scrollHeight) {
-      if(this.hayResultadosFiltrados){
-      }else{
+      if (this.hayResultadosFiltrados) {
+        this.cargarMasResultadosFiltrados();
+      } else {
         if (this.tabSeleccionada === 'disponibles') {
-          console.info("nico");
           this.cargarRutinasDisponibles();
         } else if (this.tabSeleccionada === 'realizaRutina') {
           this.cargarRutinasRealizaUsuario();
