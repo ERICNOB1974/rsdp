@@ -15,7 +15,7 @@
                 </a>
                 <div class="notifications-menu">
                     <div *ngFor="let notificacion of notificaciones" class="notification-item"
-                        (click)="manejarClickNotificacion(notificacion)">
+                        [ngClass]="{'leida': notificacion.leida}" (click)="manejarClickNotificacion(notificacion)">
                         <div class="notification-content">
                             <span *ngIf="!notificacion.leida" class="new-notification-dot"></span>
                             <p>{{ notificacion.mensaje }}</p>
@@ -23,6 +23,7 @@
                         <i class="fa fa-trash delete-icon"
                             (click)="eliminarNotificacion(notificacion); $event.stopPropagation()"></i>
                     </div>
+
                     <div *ngIf="getNotificacionesNoLeidas().length === 0" class="no-notifications">
                         No hay notificaciones nuevas
                     </div>
@@ -46,6 +47,7 @@
             <span class="navbar-toggler-icon"></span>
         </button>
     </nav>
+
 
     <ul>
         <div class="logo-container">

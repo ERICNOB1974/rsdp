@@ -155,7 +155,6 @@ public class ComunidadPresenter {
     @GetMapping("/salir/{idComunidad}/{idUsuario}")
     public ResponseEntity<Object> salir(@PathVariable Long idComunidad, @PathVariable Long idUsuario) {
         return Response.ok(null, comunidadService.miembroSale(idComunidad, idUsuario));
-        // return Response.ok("ok");
     }
 
     @GetMapping("/comunidadesCreadasPorUsuario/{idUsuario}")
@@ -249,17 +248,23 @@ public class ComunidadPresenter {
     }
 
     @GetMapping("/filtrar/etiquetas")
-    public ResponseEntity<Object> eventosPorEtiquetas(@RequestParam List<String> etiquetas) {
-        return Response.ok(comunidadService.comunidadesEtiquetas(etiquetas));
+    public ResponseEntity<Object> comunidadesPorEtiquetas(@RequestParam List<String> etiquetas,@RequestParam(required = false) String tipo,
+    @RequestParam(required = false) Long usuarioId) {
+        return Response.ok(comunidadService.comunidadesEtiquetas(etiquetas,tipo, usuarioId));
     }
 
-    @GetMapping("/filtrar/nombre/{nombre}")
-    public ResponseEntity<Object> eventosPorNombre(@PathVariable String nombre) {
-        return Response.ok(comunidadService.comunidadesNombre(nombre));
+
+    @GetMapping("/filtrar/nombre")
+    public ResponseEntity<Object> comunidadesPorNombre(
+        @RequestParam String nombre,
+        @RequestParam(required = false) String tipo,
+        @RequestParam(required = false) Long usuarioId) {
+        return Response.ok(comunidadService.comunidadesPorNombreYTipo(nombre, tipo, usuarioId));
     }
 
     @GetMapping("/filtrar/participantes")
-    public ResponseEntity<Object> eventosPorParticipantes(@RequestParam int min, @RequestParam int max) {
-        return Response.ok(comunidadService.comunidadesParticipantes(min, max));
+    public ResponseEntity<Object> comunidadesPorParticipantes(@RequestParam(required = false) String tipo,@RequestParam(required = false) Long usuarioId,
+    @RequestParam int min, @RequestParam int max) {
+        return Response.ok(comunidadService.comunidadesParticipantes(tipo, usuarioId ,min, max));
     }
 }

@@ -18,10 +18,10 @@ import { Comentario } from '../publicaciones/Comentario';
 export class HomeComponent implements OnInit {
   publicaciones: Publicacion[] = [];
   usuariosPublicadores: { [key: number]: Usuario } = {};
-  page = 0;
-  pageSize = 5;
-  loading = false;
-
+  loading: boolean = false;
+  noMasPublicaciones: boolean = false;
+  cantidadPorPagina: number = 3;
+  currentIndexEventosDisponibles:number=0
   comentarios: { [key: number]: Comentario[] } = {}; // Para almacenar comentarios por publicación
   likesCount: { [key: number]: number } = {}; // Para almacenar cantidad de likes por publicación
   isLiked: { [key: number]: boolean } = {}; // Para almacenar estado del like por publicación
@@ -39,57 +39,68 @@ export class HomeComponent implements OnInit {
     this.loadPublicaciones();
   }
 
-  @HostListener('window:scroll', ['$event'])
-  onScroll() {
-    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && !this.loading) {
-      this.loadPublicaciones();
-    }
-  }
+
 
   loadPublicaciones() {
-    if (this.loading) return;
+    if (this.loading || this.noMasPublicaciones) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
     this.loading = true;
-    const userId = this.authService.getUsuarioId();
+  
+    const userId = this.authService.getUsuarioId(); // Obtener el ID del usuario autenticado
+  
     if (userId) {
-      this.publicacionService.publicacionesHome(+userId).subscribe(
-        (dataPackage) => {
-          if (dataPackage.status === 200) {
-            const newPublicaciones = dataPackage.data as Publicacion[];
-
-            // Verificamos que no haya publicaciones duplicadas
-            newPublicaciones.forEach(pub => {
-              if (!this.publicaciones.some(p => p.id === pub.id)) {
-                this.publicaciones.push(pub);
-                this.loadLikesInfo(pub.id);
-                this.loadComentarios(pub.id);
+      console.log("aaaaaa",this.currentIndexEventosDisponibles+"  "+this.cantidadPorPagina);
+      this.publicacionService
+        .publicacionesHome(+userId, this.currentIndexEventosDisponibles, this.cantidadPorPagina)
+        .subscribe(
+          (dataPackage) => {
+            if (dataPackage.status === 200) {
+              console.log("pepepee",dataPackage.data);
+              const newPublicaciones = dataPackage.data as Publicacion[];
+              if (newPublicaciones && newPublicaciones.length > 0) {
+                // Evitar duplicados en la lista
+                newPublicaciones.forEach((pub) => {
+                  if (!this.publicaciones.some((p) => p.id === pub.id)) {
+                    this.publicaciones.push(pub); // Agregar nueva publicación
+                    this.loadLikesInfo(pub.id); // Información de likes
+                    this.loadComentarios(pub.id); // Información de comentarios
+                  }
+                });
+  
+                this.loadUsuariosPublicadores(newPublicaciones); // Cargar datos de los usuarios publicadores
+                this.currentIndexEventosDisponibles++; // Incrementar índice para la siguiente carga
+              } else {
+                this.noMasPublicaciones = true; // No hay más publicaciones para cargar
               }
-            });
-
-            this.loadUsuariosPublicadores(newPublicaciones);
-            this.page++;
+            }
+            this.loading = false; // Finaliza la carga
+          },
+          (error) => {
+            console.error('Error loading publicaciones:', error);
+            this.loading = false; // Manejo de errores
           }
-          this.loading = false;
-        },
-        (error) => {
-          console.error('Error loading publicaciones:', error);
-          this.loading = false;
-        }
-      );
+        );
+    } else {
+      console.warn('No se encontró el ID del usuario autenticado.');
+      this.loading = false;
     }
   }
+  
+
+ 
+
 
   loadLikesInfo(publicacionId: number) {
     // Cargar si el usuario dio like
     this.publicacionService.estaLikeada(publicacionId).subscribe(dataPackage => {
       this.isLiked[publicacionId] = dataPackage.data as unknown as boolean;
     });
-    
+
     // Cargar cantidad de likes
     this.publicacionService.cantidadLikes(publicacionId).subscribe(dataPackage => {
       this.likesCount[publicacionId] = dataPackage.data as unknown as number;
     });
   }
-  
+
   loadComentarios(publicacionId: number) {
     this.publicacionService.comentarios(publicacionId).subscribe(dataPackage => {
       if (dataPackage.status === 200) {
@@ -150,4 +161,10 @@ export class HomeComponent implements OnInit {
     this.router.navigate(['/perfil', usuarioId]); // Ajusta la ruta según tu configuración de enrutamiento
   }
 
+  onScroll(): void {
+    const container = document.querySelector('.publicaciones-container') as HTMLElement;
+    if (container.scrollTop + container.clientHeight >= container.scrollHeight - 50) { // Margen de 100px antes del final
+      this.loadPublicaciones();
+    }
+  }
 }
