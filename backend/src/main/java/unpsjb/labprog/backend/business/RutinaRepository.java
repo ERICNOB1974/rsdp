@@ -43,7 +43,7 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                         +
                         "WHERE NOT (u)-[:REALIZA_RUTINA]->(rutina) " +
                         "WITH rutina, count(participantes) as score " +
-                        "RETURN rutina, score,+score+' usuario/s de los eventos en los cuales te inscribiste, realiza/n esta rutinas' AS motivo  "
+                        "RETURN rutina, score,+score+' usuario/s cercanos, realiza/n esta rutinas' AS motivo  "
                         +
                         "ORDER BY score DESC, rutina.nombre ASC")
         List<ScoreRutina> sugerenciasDeRutinasBasadosEnEventos2(String nombreUsuario);
@@ -52,7 +52,7 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                         "MATCH (amigo)-[:REALIZA_RUTINA]->(rutina:Rutina) " +
                         "WHERE NOT (u)-[:REALIZA_RUTINA]->(rutina) " +
                         "WITH rutina, COUNT(amigo) AS score " + // Contamos cuántos amigos realizan la rutina
-                        "RETURN rutina, score, 'tiene '+score+' amigo/s que realiza/n esta rutinas ' AS motivo  " +
+                        "RETURN rutina, score, 'tiene '+score+' amigo/s que realiza/n esta rutinas' AS motivo  " +
                         "ORDER BY score DESC")
         List<ScoreRutina> sugerenciasDeRutinasBasadosEnAmigos2(String nombreUsuario);
 
@@ -61,7 +61,7 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                         " MATCH (rutina:Rutina)-[:ETIQUETADA_CON]->(etiquetas) " +
                         " WHERE NOT (u)-[:REALIZA_RUTINA]->(rutina) " +
                         " WITH rutina, COUNT(DISTINCT etiquetas) AS score " +
-                        " RETURN rutina, score, 'son similares porque tienen '+score+' etiqueta/s compartida/s con eventos en los que participas' AS motivo  "
+                        " RETURN rutina, score, 'tienen '+score+' etiqueta/s en comun con eventos en los que participas' AS motivo  "
                         +
                         " ORDER BY score DESC")
         List<ScoreRutina> sugerenciasDeRutinasBasadosEnEventosPorEtiqueta2(String nombreUsuario);
