@@ -335,5 +335,9 @@ public class UsuarioPresenter {
     public ResponseEntity<Object> eventosPorNombre(@PathVariable String nombreUsuario, @PathVariable String term) {
         return Response.ok(usuarioService.buscarUsuarios(nombreUsuario, term));
     }
+    @GetMapping("/likesPublicacion/{idPublicacion}")
+    public ResponseEntity<Object> likesPublicacion(@PathVariable Long idPublicacion) {
+        return Response.ok(usuarioService.likesPublicacion(idPublicacion));
+    }
 
 }
