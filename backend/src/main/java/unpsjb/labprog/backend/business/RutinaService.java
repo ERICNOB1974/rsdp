@@ -1,12 +1,15 @@
 package unpsjb.labprog.backend.business;
 
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Collections;
-import java.util.Map;
+import java.util.Comparator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -214,7 +217,8 @@ public class RutinaService {
         return sugerencias;
     }
 
-    public Map<String, Object> obtenerTodasLasSugerenciasDeRutinasPaginadas(String nombreUsuario, int page, int pageSize) {
+    public Map<String, Object> obtenerTodasLasSugerenciasDeRutinasPaginadas(String nombreUsuario, int page,
+            int pageSize) {
         // Obtener todas las sugerencias de comunidades desde las tres consultas
         List<ScoreRutina> sugerenciasEventos = rutinaRepository.sugerenciasDeRutinasBasadosEnEventos2(nombreUsuario);
         List<ScoreRutina> sugerenciasAmigos = rutinaRepository.sugerenciasDeRutinasBasadosEnAmigos2(nombreUsuario);
@@ -267,7 +271,6 @@ public class RutinaService {
 
         return result;
     }
-
 
     public int obtenerDiasEnRutina(Long idRutina) {
         return rutinaRepository.obtenerDiasEnRutina(idRutina);
@@ -382,18 +385,178 @@ public class RutinaService {
         return rutinaRepository.rutinasCreadasPorUsuario(idUsuario, offset, limit);
     }
 
+    public List<RutinaDTO> rutinasRealizaUsuarioSinPaginacion(Long idUsuario) {
+        List<Rutina> rutinas = rutinaRepository.rutinasRealizaUsuarioSinPaginacion(idUsuario);
+    
+        // Filtrar rutinas que no cumplen las condiciones
+        rutinas.removeIf(rutina -> {
+            if (!diaRepository.verificarRelacionDiaFinalizado(rutina.getId(), idUsuario)) {
+                return true;
+            }
+            Long idUltimoDia = diaRepository.obtenerUltimoDiaDeRutina(rutina.getId());
+            Long idDiaActual = diaRepository.obtenerProgresoActual(rutina.getId(), idUsuario);
+            return idUltimoDia.equals(idDiaActual);
+        });
+    
+        // Convertir las rutinas filtradas en DTOs
+        List<RutinaDTO> rutinaDTOs = new ArrayList<>();
+        for (Rutina rutina : rutinas) {
+            RutinaDTO rutinaDTO = new RutinaDTO();
+            rutinaDTO.setId(rutina.getId());
+            rutinaDTO.setNombre(rutina.getNombre());
+            rutinaDTO.setDescripcion(rutina.getDescripcion());
+    
+            // Obtener el ID del día actual
+            Long idDiaActual = diaRepository.obtenerProgresoActual(rutina.getId(), idUsuario);
+    
+            // Llamar al método obtenerFechaFinRelacionMayorOrden y procesar la fecha
+            Optional<String> fechaFinOptional = rutinaRepository.obtenerFechaFinRelacionMayorOrden(idUsuario, idDiaActual);
+            boolean hizoUltimoDiaHoy = false;
+            
+            if (fechaFinOptional.isPresent()) {
+                OffsetDateTime fechaFin = OffsetDateTime.parse(fechaFinOptional.get());
+                LocalDate fechaFinLocalDate = fechaFin.toLocalDate();
+            
+                if (fechaFinLocalDate.equals(LocalDate.now())) {
+                    hizoUltimoDiaHoy = true;
+                }
+            }
+            
+            
+    
+            // Asignar el valor booleano al DTO
+            rutinaDTO.setHizoUltimoDiaHoy(hizoUltimoDiaHoy);
+    
+            // Obtener y procesar los días asociados a la rutina
+            List<Long> diaIds = rutinaRepository.findDiasByRutina(rutina.getId());
+            List<DiaDTO> diasDTO = new ArrayList<>();
+    
+            // Ordenar los días por el campo 'orden'
+            diaIds.sort(Comparator.comparingLong(diaId -> rutinaRepository.findOrdenById(diaId)));
+    
+            // Filtrar la lista de días para que contenga solo los días desde el día siguiente al día actual
+            boolean diaActualEncontrado = false;
+            for (Long diaId : diaIds) {
+                if (diaActualEncontrado) {
+                    DiaDTO diaDTO = new DiaDTO();
+                    diaDTO.setId(diaId);
+    
+                    // Obtener atributos del día
+                    String nombreDia = rutinaRepository.findNombreById(diaId);
+                    String descripcionDia = rutinaRepository.findDescripcionById(diaId);
+                    Integer ordenDia = rutinaRepository.findOrdenById(diaId);
+    
+                    diaDTO.setNombre(nombreDia);
+                    diaDTO.setDescripcion(descripcionDia);
+                    diaDTO.setOrden(ordenDia);
+    
+                    // Procesar ejercicios relacionados con el día
+                    List<Long> relacionIds = rutinaRepository.findRelacionEjercicioIdsByDia(diaId);
+                    List<EjercicioRepeticionesDTO> ejerciciosRepeticiones = new ArrayList<>();
+                    List<EjercicioTiempoDTO> ejerciciosTiempo = new ArrayList<>();
+    
+                    // Ordenar los ejercicios dentro de cada día por el campo 'orden'
+                    relacionIds.sort(Comparator.comparingLong(relacionId -> rutinaRepository.findEjercicioOrdenByRelacionId(relacionId)));
+    
+                    for (Long relacionId : relacionIds) {
+                        String ejercicioNombre = rutinaRepository.findEjercicioNombreByRelacionId(relacionId);
+                        String ejercicioDescripcion = rutinaRepository.findEjercicioDescripcionByRelacionId(relacionId);
+                        Integer ejercicioOrden = rutinaRepository.findEjercicioOrdenByRelacionId(relacionId);
+                        String imagen = rutinaRepository.findImagenByRelacionId(relacionId);
+    
+                        Integer repeticiones = rutinaRepository.findEjercicioRepeticionesByRelacionId(relacionId);
+                        Integer series = rutinaRepository.findEjercicioSeriesByRelacionId(relacionId);
+                        String tiempo = rutinaRepository.findEjercicioTiempoByRelacionId(relacionId);
+    
+                        if (repeticiones != null) {
+                            EjercicioRepeticionesDTO ejercicioRepeticionesDTO = new EjercicioRepeticionesDTO();
+                            ejercicioRepeticionesDTO.setNombre(ejercicioNombre);
+                            ejercicioRepeticionesDTO.setDescripcion(ejercicioDescripcion);
+                            ejercicioRepeticionesDTO.setOrden(ejercicioOrden);
+                            ejercicioRepeticionesDTO.setRepeticiones(repeticiones);
+                            ejercicioRepeticionesDTO.setSeries(series);
+                            ejercicioRepeticionesDTO.setImagen(imagen);
+                            ejerciciosRepeticiones.add(ejercicioRepeticionesDTO);
+                        } else if (tiempo != null) {
+                            EjercicioTiempoDTO ejercicioTiempoDTO = new EjercicioTiempoDTO();
+                            ejercicioTiempoDTO.setNombre(ejercicioNombre);
+                            ejercicioTiempoDTO.setDescripcion(ejercicioDescripcion);
+                            ejercicioTiempoDTO.setOrden(ejercicioOrden);
+                            ejercicioTiempoDTO.setTiempo(tiempo);
+                            ejercicioTiempoDTO.setImagen(imagen);
+                            ejerciciosTiempo.add(ejercicioTiempoDTO);
+                        }
+                    }
+    
+                    diaDTO.setEjerciciosRepeticiones(ejerciciosRepeticiones);
+                    diaDTO.setEjerciciosTiempo(ejerciciosTiempo);
+                    diasDTO.add(diaDTO);
+                } else if (diaId.equals(idDiaActual)) {
+                    // Saltamos el día actual y comenzamos a agregar los días siguientes
+                    diaActualEncontrado = true;
+                }
+            }
+    
+            rutinaDTO.setDias(diasDTO);
+            rutinaDTOs.add(rutinaDTO);
+        }
+    
+        return rutinaDTOs;
+    }
+    
+    
     public List<Rutina> rutinasRealizaUsuario(Long idUsuario, String nombreRutina, int page, int size) {
-        int skip = page * size;  // Cálculo de los resultados a omitir
         String filtroNombre = (nombreRutina == null || nombreRutina.trim().isEmpty()) ? "" : nombreRutina;
-        return rutinaRepository.rutinasRealizaUsuario(idUsuario, filtroNombre, skip, size);
+        List<Rutina> rutinas = rutinaRepository.rutinasRealizaUsuario(idUsuario, filtroNombre);
+
+        for (Iterator<Rutina> iterator = rutinas.iterator(); iterator.hasNext();) {
+            Rutina rutina = iterator.next();
+            if (!diaRepository.verificarRelacionDiaFinalizado(rutina.getId(), idUsuario)) {
+                iterator.remove();
+            }
+        }
+
+        for (Iterator<Rutina> iterator = rutinas.iterator(); iterator.hasNext();) {
+            Rutina rutina = iterator.next(); // Obtienes la rutina actual
+            Long idUltimoDia = diaRepository.obtenerUltimoDiaDeRutina(rutina.getId());
+            Long idDiaActual = diaRepository.obtenerProgresoActual(rutina.getId(), idUsuario);
+            if (idUltimoDia.equals(idDiaActual)) {
+                iterator.remove();
+            }
+        }
+
+        // Paginar la lista
+        int start = page * size;
+        int end = Math.min(start + size, rutinas.size());
+
+        if (start > end) {
+            return Collections.emptyList(); // Si la página está fuera de rango
+        }
+        return rutinas.subList(start, end);
     }
 
-   // Método para obtener comunidades con paginación
-   public List<Rutina> obtenerRutinasDisponiblesPaginadas(String nombreUsuario,int page, int size) {
-    int skip = page * size;  // Cálculo de los resultados a omitir
-    return rutinaRepository.disponibles(nombreUsuario,skip, size);
-}
+    public List<Rutina> obtenerRutinasDisponiblesPaginadas(Long idUsuario, int page, int size) {
+        List<Rutina> rutinas = rutinaRepository.findAll();
 
+        // Filtrar las rutinas que no cumplen las condiciones
+        rutinas.removeIf(rutina -> {
+            if (diaRepository.verificarRelacionDiaFinalizado(rutina.getId(), idUsuario)) {
+                Long idUltimoDia = diaRepository.obtenerUltimoDiaDeRutina(rutina.getId());
+                Long idDiaActual = diaRepository.obtenerProgresoActual(rutina.getId(), idUsuario);
+                return !idUltimoDia.equals(idDiaActual); // Eliminar si no coincide
+            }
+            return false; // Mantener si no cumple verificarRelacionDiaFinalizado
+        });
+
+        // Paginar la lista
+        int start = page * size;
+        int end = Math.min(start + size, rutinas.size());
+
+        if (start >= rutinas.size()) {
+            return Collections.emptyList(); // Si la página está fuera de rango
+        }
+        return rutinas.subList(start, end);
+    }
 
     public Long obtenerProgresoActual(Long rutinaId, Long usuarioId) {
         if (!diaRepository.verificarRelacionDiaFinalizado(rutinaId, usuarioId)

@@ -6,28 +6,21 @@
   text-align: left; /* Alinea el texto a la izquierda */
 }
 
-.fc-daygrid-event {
-  max-height: none; /* Permite que el evento crezca verticalmente */
-  height: auto; /* Ajusta la altura automáticamente */
-  line-height: 1.2; /* Ajusta el interlineado para mejorar la visibilidad */
-  padding: 0.2rem; /* Agrega un poco de espacio alrededor del texto */
-}
-
 /* Resalta el día actual en el calendario */
 .fc-day-today {
   background-color: rgba(255, 200, 0, 0.2); /* Cambia el color de fondo del día actual */
   border-radius: 4px; /* Redondea los bordes */
 }
 
-/* Estilos existentes ... */
-
-/* Nuevo estilo para el contenedor del calendario */
+/* Estilo para el contenedor del calendario */
 :host {
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding: 20px;
   box-sizing: border-box;
+  height: 100%;
+  width: 100%;
 }
 
 /* Estilo para el componente full-calendar */
@@ -39,9 +32,10 @@ full-calendar {
 }
 
 /* Asegúrate de que el calendario sea responsive */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   full-calendar {
     max-width: 100%;
+    margin: 0 15px; /* Ajusta los márgenes en dispositivos medianos */
   }
 }
 
@@ -63,6 +57,7 @@ full-calendar {
   border-radius: 4px; /* Redondea los bordes */
 }
 
+/* Estilos para los eventos */
 .fc-event {
   background-color: #007bff; /* Color de fondo de los eventos */
   color: white; /* Color del texto de los eventos */
@@ -71,13 +66,18 @@ full-calendar {
   margin: 2px 0; /* Espacio entre eventos */
 }
 
+/* Estilos para la barra de herramientas */
 .fc-toolbar {
   background-color: #f7f7f7; /* Fondo de la barra de herramientas */
   border: 1px solid #e0e0e0; /* Borde de la barra de herramientas */
   border-radius: 5px; /* Bordes redondeados */
   padding: 10px; /* Espacio interno */
+  display: flex;
+  justify-content: space-between; /* Alinea los botones */
+  align-items: center;
 }
 
+/* Estilos para los botones de la barra de herramientas */
 .fc-toolbar button {
   background-color: #007bff; /* Color de fondo de los botones */
   color: white; /* Color del texto de los botones */
@@ -89,4 +89,59 @@ full-calendar {
 
 .fc-toolbar button:hover {
   background-color: #0056b3; /* Color de fondo al pasar el mouse */
+}
+
+/* Ajustes para pantallas medianas (tablets, por ejemplo) */
+@media (max-width: 768px) {
+  full-calendar {
+    max-width: 100%; /* Asegura que el calendario se ajuste al tamaño de la pantalla */
+    padding: 0; /* Elimina el padding para móviles */
+    margin: 0 10px; /* Márgenes pequeños para dispositivos más pequeños */
+  }
+
+  .fc-toolbar {
+    flex-direction: column; /* Muestra los botones en una columna */
+    align-items: stretch; /* Alinea los botones para que ocupen todo el ancho */
+    padding: 8px 0; /* Menos espacio vertical */
+  }
+
+  .fc-toolbar button {
+    margin-bottom: 5px; /* Añade espacio entre los botones */
+    width: 100%; /* Los botones ocupan todo el ancho en móviles */
+  }
+}
+
+/* Ajustes para pantallas muy pequeñas (como teléfonos móviles de 4-5 pulgadas) */
+@media (max-width: 480px) {
+  .fc-toolbar button {
+    font-size: 14px; /* Tamaño de fuente más pequeño para botones */
+  }
+
+  .fc-daygrid-event .fc-event-title {
+    font-size: 14px; /* Tamaño de fuente más pequeño para los eventos */
+  }
+
+  .fc-daygrid-event {
+    font-size: 12px; /* Tamaño de fuente más pequeño para los eventos */
+  }
+
+  .fc-toolbar {
+    padding: 8px 0; /* Menos espacio vertical en pantallas pequeñas */
+  }
+
+  .fc-toolbar button {
+    padding: 8px 10px; /* Ajusta el tamaño de los botones */
+  }
+}
+
+/* Ajustes para pantallas grandes (tablets grandes, laptops) */
+@media (min-width: 1200px) {
+  full-calendar {
+    max-width: 1200px; /* Máximo ancho del calendario */
+    margin: 0 auto;
+  }
+
+  .fc-toolbar {
+    justify-content: space-between; /* Espaciado entre los botones en pantallas grandes */
+  }
 }

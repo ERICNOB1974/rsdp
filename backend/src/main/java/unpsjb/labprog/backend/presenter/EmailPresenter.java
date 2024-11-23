@@ -1,6 +1,7 @@
 package unpsjb.labprog.backend.presenter;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,9 @@ import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.EmailService;
 import unpsjb.labprog.backend.business.UsuarioService;
 import unpsjb.labprog.backend.model.Email;
+import unpsjb.labprog.backend.model.Usuario;
 import unpsjb.labprog.backend.model.VerificacionRequest;
+import unpsjb.labprog.backend.model.DTO.EnvioNotificacionRequest;
 
 @RestController
 @RequestMapping("email")
@@ -80,6 +83,25 @@ public class EmailPresenter {
     public ResponseEntity<Object> invitacionComunidad(@PathVariable Long idUsuarioEmisor, @PathVariable Long idUsuarioReceptor, @PathVariable Long idComunidad) throws MessagingException {
         emailService.invitacionComunidad(idUsuarioEmisor,idUsuarioReceptor,idComunidad);
         return Response.ok("Correo enviado exitosamente");
+    }
+
+    @PostMapping("/enviar-notificacion")
+    public ResponseEntity<Object> enviarNotificacionEvento(@RequestBody EnvioNotificacionRequest request) throws MessagingException {
+        String mensaje = request.getMensaje();
+        String asunto = request.getAsunto();
+        String nombreUsuario = request.getNombreUsuario();
+        String nombreActividad = request.getNombreActividad();
+        List<Usuario> usuarios = request.getUsuarios();
+
+        // Crear el objeto email
+        Email email = new Email();
+        email.setAsunto(asunto);
+        email.setMensaje(mensaje);
+
+        // Llamar al método del service para enviar los correos a todos los usuarios
+        emailService.enviarMailNotificacionEvento(email, nombreUsuario, usuarios, nombreActividad);
+
+        return Response.ok("Correos enviados exitosamente.");
     }
 
 }
