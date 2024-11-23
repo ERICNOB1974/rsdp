@@ -116,3 +116,18 @@
   margin: 0;
   color: #262626;
 }
+
+.likes-list-container {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.like-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.like-item i {
+  color: #007bff;
+}

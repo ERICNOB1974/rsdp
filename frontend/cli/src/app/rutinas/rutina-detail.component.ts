@@ -4,6 +4,8 @@ import { RutinaService } from './rutina.service';
 import { CommonModule } from '@angular/common';
 import { DataPackage } from '../data-package';
 import { RutinaEstadoService } from './rutinaEstado.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-rutina-detail',
@@ -17,10 +19,12 @@ export class RutinaDetailComponent implements OnInit {
   dias: any[] = [];
   isDayVisible: boolean[] = [];
   progresoActual: number = -1; // Para almacenar el progreso actual de la rutina
+  esFavorito: boolean = false;
 
   constructor(private rutinaService: RutinaService,
               private route: ActivatedRoute,
               private rutinaEstadoService: RutinaEstadoService,
+              private snackBar: MatSnackBar,
               private router: Router) { }
 
   ngOnInit(): void {
@@ -76,4 +80,17 @@ export class RutinaDetailComponent implements OnInit {
   
     return 'Continuar';
   }
+
+  async toggleFavorito() {
+    this.esFavorito = !this.esFavorito;
+    await lastValueFrom(this.rutinaService.marcarRutinaFavorita(this.rutina.id));
+    const mensaje = this.esFavorito
+        ? 'Rutina marcada como favorita'
+        : 'Rutina quitada de favoritas';
+
+    this.snackBar.open(mensaje, 'Cerrar', {
+        duration: 3000,
+    });
+    // Aquí envías la actualización al backend para registrar el cambio.
+}
 }

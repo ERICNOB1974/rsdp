@@ -3,12 +3,12 @@ package unpsjb.labprog.backend.business;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Collections;
 import java.util.Comparator;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -363,7 +363,7 @@ public class RutinaService {
 
     public List<Rutina> rutinasEtiquetas(List<String> etiquetas, String tipo, Long usuarioId) {
         if ("disponibles".equalsIgnoreCase(tipo)) {
-            return rutinaRepository.rutinasEtiquetasDisponible(usuarioId,etiquetas);
+            return rutinaRepository.rutinasEtiquetasDisponible(usuarioId, etiquetas);
         } else if ("realizaRutina".equalsIgnoreCase(tipo)) {
             return rutinaRepository.rutinasEtiquetasRealizaRutina(usuarioId, etiquetas);
         } else {
@@ -371,7 +371,7 @@ public class RutinaService {
         }
     }
 
-        public List<Rutina> rutinasNombre(String nombre, String tipo, Long usuarioId) {
+    public List<Rutina> rutinasNombre(String nombre, String tipo, Long usuarioId) {
         if ("disponibles".equalsIgnoreCase(tipo)) {
             return rutinaRepository.rutinasNombreDisponibles(nombre, usuarioId);
         } else if ("realizaRutina".equalsIgnoreCase(tipo)) {
@@ -506,6 +506,7 @@ public class RutinaService {
     
     
     public List<Rutina> rutinasRealizaUsuario(Long idUsuario, String nombreRutina, int page, int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
         String filtroNombre = (nombreRutina == null || nombreRutina.trim().isEmpty()) ? "" : nombreRutina;
         List<Rutina> rutinas = rutinaRepository.rutinasRealizaUsuario(idUsuario, filtroNombre);
 
@@ -535,6 +536,10 @@ public class RutinaService {
         return rutinas.subList(start, end);
     }
 
+    // Método para obtener comunidades con paginación
+    public List<Rutina> obtenerRutinasDisponiblesPaginadas(String nombreUsuario, int page, int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
+        return rutinaRepository.disponibles(nombreUsuario, skip, size);
     public List<Rutina> obtenerRutinasDisponiblesPaginadas(Long idUsuario, int page, int size) {
         List<Rutina> rutinas = rutinaRepository.findAll();
 
@@ -566,4 +571,21 @@ public class RutinaService {
         return diaRepository.obtenerProgresoActual(rutinaId, usuarioId);
     }
 
+    public void cambiarEstadoFavorita(Long idRutina, Long idUsuario) {
+        if (rutinaRepository.esFavorita(idRutina, idUsuario)) {
+            rutinaRepository.eliminarComoFavorita(idRutina, idUsuario);
+        } else {
+            rutinaRepository.marcarComoFavorita(idRutina, idUsuario);
+        }
+    }
+
+    public boolean esFavorita(Long idRutina, Long idUsuario) {
+        return rutinaRepository.esFavorita(idRutina, idUsuario);
+    }
+
+    public List<Rutina> rutinasFavoritas(Long idUsuario, String nombreRutina, int page, int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
+        String filtroNombre = (nombreRutina == null || nombreRutina.trim().isEmpty()) ? "" : nombreRutina;
+        return rutinaRepository.listaFavoritas(idUsuario, filtroNombre, skip, size);
+    }
 }
