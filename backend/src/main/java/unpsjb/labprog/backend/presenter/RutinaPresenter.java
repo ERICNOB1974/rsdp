@@ -277,14 +277,6 @@ public class RutinaPresenter {
         // Devolvemos las rutinas en formato de respuesta
         return Response.ok(rutinasRealizaUsuario);
     }
-
-    @GetMapping(path = "/{nombreUsuario}/disponibles")
-    public ResponseEntity<Object> obtenerRutinasDisponibles(
-            @PathVariable String nombreUsuario,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return Response.ok(rutinaService.obtenerRutinasDisponiblesPaginadas(nombreUsuario, page, size));
-    }
     
     @GetMapping("/obtenerProgresoActual/{rutinaId}/{usuarioId}")
     public ResponseEntity<Object> obtenerProgresoActual(@PathVariable Long rutinaId, @PathVariable Long usuarioId) {
