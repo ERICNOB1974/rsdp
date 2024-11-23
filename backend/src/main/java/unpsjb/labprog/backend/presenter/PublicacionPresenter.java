@@ -114,9 +114,10 @@ public class PublicacionPresenter {
 
 
     @GetMapping("/publicaciones/comunidad/{idComunidad}")
-    public ResponseEntity<Object> publicacionesComunidad(@PathVariable Long idComunidad)
+    public ResponseEntity<Object> publicacionesComunidad(@PathVariable Long idComunidad, @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size)
             throws Exception {
-        List<Publicacion> publicaciones = publicacionService.publicacionesComunidad(idComunidad);
+        List<Publicacion> publicaciones = publicacionService.publicacionesComunidad(idComunidad,page,size);
         return Response.ok(publicaciones, "OK");
     }
 
