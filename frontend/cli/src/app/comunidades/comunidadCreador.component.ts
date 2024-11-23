@@ -30,6 +30,9 @@ export class ComunidadCreadorComponent implements OnInit {
     esAdmin: boolean = false;
     motivo: string = '';
     mensaje: string = '';
+    miembrosVisibles: Usuario[] = []; // Miembros visibles actualmente
+    cargaInicial: number = 5; // Número inicial de elementos visibles
+    cargaIncremento: number = 5; // Número de elementos adicionales cargados en cada scroll
 
     constructor(
         private route: ActivatedRoute, // Para obtener el parámetro de la URL
@@ -42,10 +45,12 @@ export class ComunidadCreadorComponent implements OnInit {
         private modalService: NgbModal
     ) { }
 
-    ngOnInit(): void {
-        this.getComunidad(); // Al inicializar el componente, obtener los detalles de la comunidad
+    async ngOnInit(): Promise<void> {
+        await this.getComunidad(); // Al inicializar el componente, obtener los detalles de la comunidad
         const usuarioId = this.authService.getUsuarioId();
         this.idUsuarioAutenticado = Number(usuarioId);
+ 
+
     }
 
     getComunidad(): void {
@@ -78,7 +83,6 @@ export class ComunidadCreadorComponent implements OnInit {
     getCreadorComunidad(): void {
         this.usuarioService.usuarioCreadorComunidad(this.comunidad.id).subscribe(dataPackage => {
             this.creadorComunidad = dataPackage.data as Usuario;
-            console.log('Creador de la comunidad:', this.creadorComunidad); // Añadir log para verificar el valor
             if (this.creadorComunidad.id == this.idUsuarioAutenticado) {
                 this.esCreador = true;  // El usuario es el creador
             }
@@ -95,22 +99,22 @@ export class ComunidadCreadorComponent implements OnInit {
     traerMiembrosYAdministradores(): void {
         const miembros$ = this.usuarioService.miembrosComunidad(this.comunidad.id);
         const administradores$ = this.usuarioService.administradoresComunidad(this.comunidad.id);
-    
+        
         forkJoin([miembros$, administradores$]).subscribe(([miembrosData, administradoresData]) => {
             if (Array.isArray(miembrosData.data)) {
                 this.miembros = miembrosData.data as Usuario[];
             }
-    
+            
             if (Array.isArray(administradoresData.data)) {
                 this.administradores = administradoresData.data as Usuario[];
             }
-    
+            
             // Combina ambos arrays
             this.miembros = this.miembros.concat(this.administradores);
-    
+            
             // Verificar roles
             this.verificarRoles();
-    
+            
             // Eliminar duplicados después de verificar roles
             this.miembros = this.miembros.reduce((acc: Usuario[], user: Usuario) => {
                 if (!acc.some((existingUser: Usuario) => existingUser.id === user.id)) {
@@ -118,6 +122,7 @@ export class ComunidadCreadorComponent implements OnInit {
                 }
                 return acc;
             }, []);
+            this.miembrosVisibles = this.miembros.slice(0, this.cargaInicial);
         });
     }
 
@@ -209,36 +214,58 @@ export class ComunidadCreadorComponent implements OnInit {
 
     openModal(content: any) {
         this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
-      }
-    
-      // Método que se llama al enviar la notificación
-      enviarNotificacion() {
-        if (this.mensaje && this.motivo) {
-          const nombreActividad = "de la comunidad, " + this.comunidad.nombre;
-          this.comunidadService.enviarNotificacionComunidad(this.mensaje, this.motivo, this.miembros, nombreActividad).subscribe(
-            response => {
-              console.log('Notificación enviada con éxito', response);
-              this.motivo = '';
-              this.mensaje = '';
-              this.closeModal();
-              this.snackBar.open('Notificación enviada con éxito', 'Cerrar', {
-                duration: 3000,
-              });
-            },
-            error => {
-              this.snackBar.open('Error al enviar notificación', 'Cerrar', {
-                duration: 3000,
-              });
-            }
-          );
-        } else {
-          console.log('Ambos campos son obligatorios');
-        }
-      }
-    
-      // Método para cerrar el modal
-      closeModal() {
-        this.modalService.dismissAll();
-      }
+    }
 
+    // Método que se llama al enviar la notificación
+    enviarNotificacion() {
+        if (this.mensaje && this.motivo) {
+            const nombreActividad = "de la comunidad, " + this.comunidad.nombre;
+            this.comunidadService.enviarNotificacionComunidad(this.mensaje, this.motivo, this.miembros, nombreActividad).subscribe(
+                response => {
+                    console.log('Notificación enviada con éxito', response);
+                    this.motivo = '';
+                    this.mensaje = '';
+                    this.closeModal();
+                    this.snackBar.open('Notificación enviada con éxito', 'Cerrar', {
+                        duration: 3000,
+                    });
+                },
+                error => {
+                    this.snackBar.open('Error al enviar notificación', 'Cerrar', {
+                        duration: 3000,
+                    });
+                }
+            );
+        } else {
+            console.log('Ambos campos son obligatorios');
+        }
+    }
+
+    // Método para cerrar el modal
+    closeModal() {
+        this.modalService.dismissAll();
+    }
+
+    verPerfil(usuario: Usuario): void {
+        this.router.navigate(['/perfil', usuario.id]); // Navega al perfil del usuario
+    }
+
+    onScroll(): void {
+        const element = document.querySelector('.members-list') as HTMLElement;
+        if (element.scrollTop + element.clientHeight >= element.scrollHeight - 10) {
+            this.cargarMasMiembros();
+
+        }
+    }
+    cargarMasMiembros(): void {
+        const totalCargados = this.miembrosVisibles.length;
+        const nuevosMiembros = this.miembros.slice(totalCargados, totalCargados + this.cargaIncremento);
+    
+        if (nuevosMiembros.length > 0) {
+            this.miembrosVisibles = [...this.miembrosVisibles, ...nuevosMiembros];
+        } else {
+            console.log('No hay más miembros por cargar');
+        }
+    }
+    
 }

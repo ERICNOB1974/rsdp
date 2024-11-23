@@ -56,10 +56,7 @@ export class AppComponent {
     this.actualizarUbicacion();
     this.cargarNotificaciones();
 
-    /*      // Escuchar notificaciones en tiempo real
-         this.webSocketService.listen('notificacion', (data: Notificacion) => {
-          this.manejarNuevaNotificacion(data);
-        }); */
+
   }
 
 
@@ -85,13 +82,6 @@ export class AppComponent {
     // Agregar la notificación a la lista
     this.notificaciones.unshift(notificacion);
     this.notificacionesNoLeidasCount++;
-
-    // Mostrar la notificación como toast
-    /*   this.toastr.info(notificacion.mensaje, 'Nueva notificación', {
-        timeOut: 5000, // Duración del toast
-        closeButton: true,
-        progressBar: true,
-      }); */
   }
 
   getUsuario() {

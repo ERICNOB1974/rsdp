@@ -480,3 +480,30 @@ html, body {
   object-fit: cover;
   vertical-align: middle;
 }
+
+.miembro-item {
+  background-color: #e3f2fd;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s, box-shadow 0.2s;
+  
+  /* Propiedades de Flexbox */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.miembro-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.25);
+}
+.miembro-item h4 {
+  font-size: 1em;
+  color: #333;
+  margin: 0;
+}
+.members-list {
+  overflow-y: auto;
+  max-height: 400px;  /* Puedes ajustar este valor según el diseño */
+}

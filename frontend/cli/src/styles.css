@@ -236,11 +236,13 @@ body {
   padding: 10px 15px;
   border-bottom: 1px solid #eee;
   cursor: pointer;
+  position: relative;
+
 }
 
 .notification-item:not(.leida):hover {
   background-color: #d0f0d0; /* Verde claro para destacar no leídas */
-  transform: scale(1.02); /* Ligeramente más grande */
+  transform: scale(0.98); /* Ligeramente más grande */
 }
 
 /* Hover para leídas */
@@ -271,26 +273,33 @@ body {
 }
 
 /* Ajustar el main-content para la nueva navbar */
-.main-content {
-  margin-left: 250px;
-  margin-top: 60px;
-  /* El mismo margen que tenías para el sidebar */
-  padding: 20px;
-}
 
 /* Contenido principal */
 .main-content {
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  margin-left: 250px;
+  padding: 15px;
   /* Esto es necesario para dejar espacio a la sidebar */
-  margin-top: 60px;
+  margin-top: 40px;
   /* Esto es necesario para dejar espacio a la navbar */
-  height: calc(100vh - 60px);
   /* Asegura que el contenido principal ocupe toda la pantalla restante */
   overflow-y: auto;
+  flex-grow: 1;
   /* Esto asegura que si el contenido es largo, se agregue scroll */
+  transition: margin-left 0.3s, ease; /* Animación suave */
+  margin-left: 250px; /* Ancho de la barra lateral expandida */
+  width: calc(100% - 250px);
+}
+
+.main-content.full-width {
+  margin-left: 80px; /* Ajuste el margen cuando la barra está oculta */
+}
+.sidebar {
+  width: 250px; /* Ancho de la barra lateral cuando está visible */
+  transition: width 0.3s ease;
+}
+.sidebar.collapsed {
+  width: 80px; /* Ancho de la barra lateral cuando está oculta */
 }
 
 .profile-image {
