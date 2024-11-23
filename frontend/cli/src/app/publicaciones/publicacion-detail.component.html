@@ -15,7 +15,7 @@
     <div class="heart-container">
       <i class="heart" [ngClass]="isLiked ? 'fas fa-heart liked' : 'far fa-heart'" (click)="toggleLike()">
       </i>
-      <span class="likes-count" (click)="abrirModalLikes()">{{ numeroLikes }}</span>
+      <span class="likes-count" (click)="abrirModalLikes()">{{ numeroLikes }} Usuarios le dieron like</span>
 
       <div class="comment-icon" (click)="showCommentInput = !showCommentInput">
         <i class="fa fa-comment"></i>
@@ -79,6 +79,14 @@
     </div>
     <div *ngIf="loadingLikes" class="text-center mt-3">
       <span>Cargando...</span>
+    </div>
+
+    <div *ngIf="!loadingLikes && !noMasUsuarios" class="text-center mt-3">
+      <button class="btn btn-primary" (click)="cargarUsuariosLikes()">Cargar más</button>
+    </div>
+
+    <div *ngIf="noMasUsuarios" class="text-muted text-center mt-3">
+      No hay más likes para mostrar.
     </div>
   </div>
 
