@@ -74,18 +74,21 @@ public class PublicacionService {
         return publicacionRepository.publicacionesAmigosUsuario(usuarioId);
     }
 
-    public List<Publicacion> publicacionesHome(Long usuarioId) {
+    public List<Publicacion> publicacionesHome(Long usuarioId, int page, int size) {
         // Obtener las publicaciones del usuario y de sus amigos
-        List<Publicacion> publicaciones = publicacionRepository.publicacionesUsuarioYAmigos(usuarioId);
-        
+        int skip = page * size;  // Cálculo de los resultados a omitir
+        List<Publicacion> publicaciones = publicacionRepository.publicacionesUsuarioYAmigos(usuarioId, skip, size);   
         // Ordenar las publicaciones por fechaDeCreacion en orden descendente
+        
         publicaciones.sort(Comparator.comparing(Publicacion::getFechaDeCreacion).reversed());
         
         return publicaciones;
     }
 
-    public List<Publicacion> publicacionesComunidad(Long comunidadId) {
-        return publicacionRepository.publicacionesComunidad(comunidadId);
+    public List<Publicacion> publicacionesComunidad(Long comunidadId,int page, int size) {
+                int skip = page * size;  // Cálculo de los resultados a omitir
+
+        return publicacionRepository.publicacionesComunidad(comunidadId,skip, size);
     }
 
     public List<Comentario> obtenerComentariosPorPublicacion(Long idPublicacion) throws Exception {

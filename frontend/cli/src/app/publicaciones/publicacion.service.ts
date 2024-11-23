@@ -58,17 +58,19 @@ export class PublicacionService {
   }
 
 
-  publicacionesComunidad(idComunidad: number): Observable<DataPackage> {
-    return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicaciones/comunidad/${idComunidad}`);
+  publicacionesComunidad(idComunidad: number,page: number, size: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicaciones/comunidad/${idComunidad}?page=${page}&size=${size}`);
   }
 
   publicacionesAmigos(idUsuario: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicaciones/amigos/usuario/${idUsuario}`);
   }
 
-  publicacionesHome(idUsuario: number): Observable<DataPackage> {
-    return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicacionesHome/${idUsuario}`);
+
+  publicacionesHome(idUsuario:number, page: number, size: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicacionesHome/${idUsuario}?page=${page}&size=${size}`);
   }
+  
 
   publicadoPor(idPublicacion: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.publicacionsUrl}/usuarioPublicador/${idPublicacion}`);

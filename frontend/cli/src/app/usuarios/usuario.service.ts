@@ -71,6 +71,24 @@ export class UsuarioService {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/solicitudesAmistadEnviadas/${this.authService.getNombreUsuario()}`);
   }
 
+  obtenerAmigosPaginados(nombreUsuarioFiltrar: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.usuariosUrl}/amigoss/${this.authService.getNombreUsuario()}?page=${page}&size=${size}` +
+      (nombreUsuarioFiltrar ? `&nombreUsuarioFiltrar=${nombreUsuarioFiltrar}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+  }
+
+  obtenerSolicitudesPaginadas(nombreUsuarioFiltrar: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.usuariosUrl}/solicitudessAmistad/${this.authService.getNombreUsuario()}?page=${page}&size=${size}` +
+      (nombreUsuarioFiltrar ? `&nombreUsuarioFiltrar=${nombreUsuarioFiltrar}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+  }
+  solicitudesAmistadEnviadasPaginadas(nombreUsuarioFiltrar: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.usuariosUrl}/solicitudessAmistadEnviadas/${this.authService.getNombreUsuario()}?page=${page}&size=${size}` +
+      (nombreUsuarioFiltrar ? `&nombreUsuarioFiltrar=${nombreUsuarioFiltrar}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+  }
+ 
+
   eliminarAmigo(idAmigo: number): Observable<DataPackage> {
     const body = {};
     return this.http.post<DataPackage>(`${this.usuariosUrl}/eliminarAmigo/${this.authService.getUsuarioId()}/${idAmigo}`, body);
@@ -126,9 +144,13 @@ export class UsuarioService {
   usuarioCreadorComunidad(idComunidad: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.usuariosUrl}/creadorComunidad/${idComunidad}`);
   }
-  buscar(term: string): Observable<DataPackage> {
-    return this.http.get<DataPackage>(` ${this.usuariosUrl}/buscar/${this.authService.getNombreUsuario()}/${term}`);
+
+  buscar(term: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.usuariosUrl}/buscar/${this.authService.getNombreUsuario()}?page=${page}&size=${size}` +
+      (term ? `&term=${term}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
   }
+  
 
   enviarInvitacionEvento(idUsuarioReceptor: number, idEvento: number): Observable<DataPackage> {
     const body = {};

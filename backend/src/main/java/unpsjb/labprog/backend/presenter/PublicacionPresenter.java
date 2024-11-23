@@ -82,10 +82,10 @@ public class PublicacionPresenter {
 
     @GetMapping("/publicaciones/usuario/{idUsuario}")
     public ResponseEntity<Object> publicacionesUsuario(@PathVariable Long idUsuario, 
-        @RequestParam(defaultValue = "0") int offset,
-        @RequestParam(defaultValue = "10") int limit)
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size)
             throws Exception {
-        List<Publicacion> publicaciones = publicacionService.publicacionesUsuario(idUsuario,offset, limit);
+        List<Publicacion> publicaciones = publicacionService.publicacionesUsuario(idUsuario,page, size);
         return Response.ok(publicaciones, "OK");
     }
 
@@ -104,17 +104,20 @@ public class PublicacionPresenter {
     }
 
     @GetMapping("/publicacionesHome/{idUsuario}")
-    public ResponseEntity<Object> publicacionesHome(@PathVariable Long idUsuario)
+    public ResponseEntity<Object> publicacionesHome(@PathVariable Long idUsuario,
+    @RequestParam(defaultValue = "0") int page,
+    @RequestParam(defaultValue = "10") int size)
             throws Exception {
-        List<Publicacion> publicaciones = publicacionService.publicacionesHome(idUsuario);
+        List<Publicacion> publicaciones = publicacionService.publicacionesHome(idUsuario, page, size);
         return Response.ok(publicaciones, "OK");
     }
 
 
     @GetMapping("/publicaciones/comunidad/{idComunidad}")
-    public ResponseEntity<Object> publicacionesComunidad(@PathVariable Long idComunidad)
+    public ResponseEntity<Object> publicacionesComunidad(@PathVariable Long idComunidad, @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size)
             throws Exception {
-        List<Publicacion> publicaciones = publicacionService.publicacionesComunidad(idComunidad);
+        List<Publicacion> publicaciones = publicacionService.publicacionesComunidad(idComunidad,page,size);
         return Response.ok(publicaciones, "OK");
     }
 

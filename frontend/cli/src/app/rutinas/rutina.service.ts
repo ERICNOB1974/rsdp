@@ -138,20 +138,29 @@ export class RutinaService {
     return this.http.get<DataPackage>(` ${this.rutinasUrl}/etiquetas/${idRutina}`);
   }
 
-  filtrarNombre(nombre: string): Observable<DataPackage> {
-    // Agregamos los parámetros min y max a la URL
-    return this.http.get<DataPackage>(`${this.rutinasUrl}/filtrar/nombre`, {
-      params: {
-        nombre
-      }
-    });
+
+  filtrarNombre(nombre: string, tipoTab: string, usuarioId: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.rutinasUrl}/filtrar/nombre`, 
+      { params: {
+        nombre: nombre,
+        tipo: tipoTab,
+        usuarioId: usuarioId}  
+      });
   }
 
-  filtrarEtiqueta(etiquetas: string[]): Observable<DataPackage> {
-    const params = new HttpParams().set('etiquetas', etiquetas.join(',')); // convierte el array a una cadena separada por comas
+  filtrarEtiqueta(etiquetas: string[], tipo: string, usuarioId: number): Observable<DataPackage> {
+    let params = new HttpParams().set('etiquetas', etiquetas.join(',')); // convierte el array a una cadena separada por comas
+    
+    if (tipo) {
+      params = params.set('tipo', tipo); // agrega el tipo si está definido
+    }
+    
+    if (usuarioId) {
+      params = params.set('usuarioId', usuarioId.toString()); // agrega el idUsuario si está definido
+    }
+  
     return this.http.get<DataPackage>(`${this.rutinasUrl}/filtrar/etiquetas`, { params });
   }
-
 
   rutinasCreadasPorUsuario(offset: number, limit: number): Observable<DataPackage> {
     const userId = this.authService.getUsuarioId();
