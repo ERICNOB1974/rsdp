@@ -7,7 +7,7 @@ import { Etiqueta } from '../etiqueta/etiqueta';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
 import { Evento } from './evento';
 import { EventoService } from './evento.service';
-import { catchError, debounceTime, distinctUntilChanged, filter, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, lastValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../autenticacion/auth.service';
 
@@ -26,7 +26,7 @@ export class EventosComponent implements OnInit {
   results: Evento[] = [];
   filtroNombreAbierto: boolean = false;
   nombreEventoFiltro: string = '';
-  filtroNombreActivo: boolean = true;
+  filtroNombreActivo: boolean = false;
   resultadosOriginales: Evento[] = []; // Nueva variable para mantener los datos originales
   eventosDisponiblesAMostrar: Evento[] = [];
   idUsuarioAutenticado!: number;  // ID del usuario autenticado
@@ -39,6 +39,12 @@ export class EventosComponent implements OnInit {
   noMasEventosParticipante = false;
   loadingDisponibles = false;
   loadingParticipante = false;
+  resultadosFiltradosPaginados: Evento[] = [];
+  resultadosFiltrados: Evento[] = []; // Nueva variable para mantener los datos originales
+  currentIndexFiltrados: number = 0;
+  noMasResultadosFiltrados: boolean = false;
+  loadingFiltrados: boolean = false;
+  hayResultadosFiltrados: boolean = false;
   // Filtro por participantes
   filtroParticipantesAbierto: boolean = false;
   minParticipantes: number | null = null;
@@ -89,29 +95,17 @@ export class EventosComponent implements OnInit {
     this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(e => e.id !== etiqueta.id);
   }
 
-  aplicarFiltroEtiquetas(): void {
-    if (this.etiquetasSeleccionadas.length > 0) {
+  async aplicarFiltroEtiquetas2(): Promise<Evento[]> {
+    try {
       const etiquetasIds = this.etiquetasSeleccionadas.map(e => e.nombre);
-      this.eventoService.filtrarEtiqueta(etiquetasIds).subscribe(
-        async (dataPackage) => {
-          if (Array.isArray(dataPackage.data)) {
-            this.results = dataPackage.data;
-            this.traerParticipantes(this.results); // Llamar a traerParticipantes después de cargar los eventos
-            for (const evento of this.results) {
-              if (evento.latitud && evento.longitud) {
-                evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
-              } else {
-                evento.ubicacion = 'Ubicación desconocida';
-              }
-            }
-          } else {
-            console.log("No se obtuvieron datos de eventos");
-          }
-        },
-        (error) => {
-          console.error("Error al filtrar por etiquetas:", error);
-        }
-      );
+      const dataPackage = await lastValueFrom(this.eventoService.filtrarEtiqueta(etiquetasIds,this.tabSeleccionada,this.idUsuarioAutenticado));
+      if (Array.isArray(dataPackage.data)) {
+        return dataPackage.data;
+      }
+      return []; // Devuelve lista vacía si no es un array válido
+    } catch (error) {
+      console.error("Error al filtrar etiquetas:", error);
+      return []; // Manejo de errores devolviendo una lista vacía
     }
   }
 
@@ -126,7 +120,7 @@ export class EventosComponent implements OnInit {
 
   limpiarFiltroEtiquetas(): void {
     this.etiquetasSeleccionadas = [];
-   // this.getEventos(); // Recargar todos los eventos
+    this.aplicarTodosLosFiltros();
   }
 
 
@@ -166,90 +160,78 @@ export class EventosComponent implements OnInit {
   }
 
 
-
-  aplicarFiltroNombre(): void {
-    if (this.filtroNombreActivo && this.nombreEventoFiltro) {
-      this.results = this.resultadosOriginales.filter(evento =>
-        evento.nombre.toLowerCase().includes(this.nombreEventoFiltro.toLowerCase())
+  async aplicarFiltroNombre2(): Promise<Evento[]> {
+    try {
+      const dataPackage = await lastValueFrom(
+        this.eventoService.filtrarNombre(this.nombreEventoFiltro, this.tabSeleccionada,this.idUsuarioAutenticado)
       );
-    } else {
-      this.results = [...this.resultadosOriginales]; // Restaurar todos los resultados si el filtro está desactivado
+      return dataPackage.data as Evento[];
+    } catch (error) {
+      console.error('Error al filtrar eventos por nombre:', error);
+      return []; // Devuelve una lista vacía en caso de error
     }
   }
 
   limpiarFiltroNombre(): void {
     this.nombreEventoFiltro = '';
     this.filtroNombreActivo = false;
-    this.results = [...this.resultadosOriginales];
+    this.aplicarTodosLosFiltros();
   }
+
+  
 
   // Métodos para el filtro por participantes
   toggleFiltroParticipantes(): void {
     this.filtroParticipantesAbierto = !this.filtroParticipantesAbierto;
   }
 
-  aplicarFiltroParticipantes(): void {
-    if (this.minParticipantes !== null || this.maxParticipantes !== null) {
-      this.eventoService.filtrarParticipantes(this.minParticipantes || 0, this.maxParticipantes || Number.MAX_SAFE_INTEGER).subscribe(
-        async (dataPackage) => {
-          if (Array.isArray(dataPackage.data)) {
-            this.results = dataPackage.data;
-            this.traerParticipantes(this.results); // Llamar a traerParticipantes después de cargar los eventos
-            for (const evento of this.results) {
-              if (evento.latitud && evento.longitud) {
-                evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
-              } else {
-                evento.ubicacion = 'Ubicación desconocida';
-              }
-            }
-          } else {
-            console.log("No se obtuvieron datos de eventos");
-          }
-        },
-        (error) => {
-          console.error("Error al filtrar participantes:", error);
-        }
+
+  async aplicarFiltroParticipantes2(): Promise<Evento[]> {
+    try {
+      const dataPackage = await lastValueFrom(
+        this.eventoService.filtrarParticipantes(this.tabSeleccionada,this.idUsuarioAutenticado,
+          this.minParticipantes || 0,
+          this.maxParticipantes || Number.MAX_SAFE_INTEGER
+        )
       );
+      if (Array.isArray(dataPackage.data)) {
+        return dataPackage.data;
+      }
+      return []; // Devuelve lista vacía si no es un array válido
+    } catch (error) {
+      console.error("Error al filtrar participantes:", error);
+      return []; // Manejo de errores devolviendo una lista vacía
     }
   }
-
+ 
   limpiarFiltroParticipantes(): void {
     this.minParticipantes = null;
     this.maxParticipantes = null;
-   // this.getEventos(); // Recargar todos los eventos
+    this.filtroParticipantesActivo = false;
+    this.aplicarTodosLosFiltros();
   }
 
   // Métodos para el filtro por fecha
   toggleFiltroFecha(): void {
     this.filtroFechaAbierto = !this.filtroFechaAbierto;
   }
-  aplicarFiltroFecha(): void {
-    if (this.fechaMinFiltro && this.fechaMaxFiltro) {
-      const minDate = new Date(this.fechaMinFiltro);
-      const maxDate = new Date(this.fechaMaxFiltro);
 
-      this.eventoService.filtrarFecha(minDate.toISOString(), maxDate.toISOString()).subscribe(
-        async (dataPackage) => {
-          if (Array.isArray(dataPackage.data)) {
-            this.results = dataPackage.data;
-            //this.traerParticipantes(this.results); // Llamar a traerParticipantes después de cargar los eventos
-            for (const evento of this.results) {
-              if (evento.latitud && evento.longitud) {
-                evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
-              } else {
-                evento.ubicacion = 'Ubicación desconocida';
-              }
-            }
-          } else {
-            console.log("No se obtuvieron datos de eventos");
-          }
-        },
-        (error) => {
-          console.error("Error al filtrar fecha:", error);
-        }
+  async aplicarFiltroFecha(): Promise<Evento[]> {
+    try {
+      let minDate = new Date(this.fechaMinFiltro);
+      let maxDate = new Date(this.fechaMaxFiltro);
+
+        const dataPackage = await lastValueFrom(
+          this.eventoService.filtrarFecha(this.tabSeleccionada,this.idUsuarioAutenticado, minDate.toISOString(), maxDate.toISOString()
+        )
       );
-    } else {
-      console.warn("Por favor, asegúrate de que las fechas mínimas y máximas estén definidas.");
+      if (Array.isArray(dataPackage.data)) {
+        return dataPackage.data;
+      }
+      return []; // Devuelve lista vacía si no es un array válido
+    } catch (error) {
+      console.error("Error al filtrar participantes:", error);
+      return []; // Manejo de errores devolviendo una lista vacía
     }
   }
 
@@ -257,76 +239,25 @@ export class EventosComponent implements OnInit {
   limpiarFiltroFecha(): void {
     this.fechaMinFiltro = '';
     this.fechaMaxFiltro = '';
-    //this.getEventos(); // Recargar todos los eventos
+    this.aplicarTodosLosFiltros();
   }
 
   // Método para limpiar todos los filtros
   limpiarTodosLosFiltros(): void {
-    this.limpiarFiltroNombre();
-    this.limpiarFiltroParticipantes();
-    this.limpiarFiltroFecha();
-    this.limpiarFiltroEtiquetas();
+    this.nombreEventoFiltro = '';
+    this.filtroNombreActivo = false;
+    this.minParticipantes = null;
+    this.maxParticipantes = null;
+    this.filtroParticipantesActivo = false;
+    this.fechaMinFiltro = '';
+    this.fechaMaxFiltro = '';
+    this.etiquetasSeleccionadas = [];
+    this.filtroEtiquetasActivo = false;
 
+    // Restaurar todos los resultados
+    this.currentIndexEventosDisponibles = 0;
+    this.currentIndexEventosParticipante =0;
   }
-
-
-
- /*  async getEventos(): Promise<void> {
-    try {
-      // Espera a que se carguen los eventos disponibles
-      const dataPackage = await this.eventoService.disponibles().toPromise();
-      
-      // Verificamos que dataPackage y su propiedad 'data' no sean undefined
-      if (dataPackage && dataPackage.data) {
-        this.results = dataPackage.data as Evento[];
-  
-        if (Array.isArray(this.results)) {
-          this.traerParticipantes(this.results); // Llamar a traerParticipantes después de cargar los eventos
-          for (const evento of this.results) {
-            evento.ubicacion = evento.latitud && evento.longitud 
-              ? await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud)
-              : 'Ubicación desconocida';
-          }
-  
-          await this.ParticipaUsuario();
-          this.cargarEventosDisponibles();
-          this.cargarEventosParticipaUsuario();
-        }
-      } else {
-        console.error("dataPackage no contiene la propiedad 'data' o es undefined");
-      }
-    } catch (error) {
-      console.error("Error al cargar eventos:", error);
-    }
-  }
-
-
-
-  async participaUsuario(): Promise<void> {
-    try {
-      // Espera a que se obtenga la lista de eventos en los que participa el usuario
-      const dataPackage = await this.eventoService.participaUsuario(this.idUsuarioAutenticado).toPromise();
-  
-      // Verificamos que dataPackage y su propiedad 'data' no sean undefined
-      if (dataPackage && dataPackage.data) {
-        const responseData = dataPackage.data;
-  
-        if (Array.isArray(responseData)) {
-          this.eventosParticipaUsuario = responseData;
-          this.traerParticipantes(this.eventosParticipaUsuario);  // Cargar participantes
-          for (const evento of this.eventosParticipaUsuario) {
-            evento.ubicacion = evento.latitud && evento.longitud
-              ? await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud)
-              : 'Ubicación desconocida';
-          }
-        }
-      } else {
-        console.error("dataPackage no contiene la propiedad 'data' o es undefined");
-      }
-    } catch (error) {
-      console.error("Error al cargar eventos de participación del usuario:", error);
-    }
-  } */
 
   traerParticipantes(eventos: Evento[]): void {
     // Recorrer todos los eventos y obtener el número de participantes
@@ -353,6 +284,16 @@ export class EventosComponent implements OnInit {
   seleccionarTab(tab: string) {
     if (this.tabSeleccionada !== tab) {
       this.tabSeleccionada = tab;
+      this.filtroParticipantesActivo = false;
+      this.filtroEtiquetasActivo = false;
+      this.filtroNombreActivo =false
+      if(this.tabSeleccionada==='disponibles'){
+        this.loadingDisponibles=false;
+        this.cargarEventosDisponibles();
+      }else if (this.tabSeleccionada==='participante'){
+        this.loadingParticipante=false;
+        this.cargarEventosParticipante();
+      }
     }
   }
 
@@ -384,7 +325,6 @@ export class EventosComponent implements OnInit {
               ...resultados,
             ];
             this.currentIndexEventosDisponibles++; // Aumentar el índice para la siguiente carga
-            console.info("llegue");
 
           } else {
             this.noMasEventosDisponibles = true; // No hay más comunidades por cargar
@@ -402,7 +342,6 @@ export class EventosComponent implements OnInit {
     if (this.loadingParticipante || this.noMasEventosParticipante) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
 
     this.loadingParticipante = true;
-    
     // Suponiendo que tienes un método que obtiene más comunidades con paginación
     this.eventoService
     .participaUsuario(this.idUsuarioAutenticado,"",this.currentIndexEventosParticipante, this.cantidadPorPagina)
@@ -437,15 +376,48 @@ export class EventosComponent implements OnInit {
       );
   }
 
+  cargarMasResultadosFiltrados(): void {
+    if (this.loadingFiltrados || this.noMasResultadosFiltrados) return;
+  
+    this.loadingFiltrados = true;
+    const inicio = this.currentIndexFiltrados * this.cantidadPorPagina;
+    const fin = inicio + this.cantidadPorPagina;
+  
+    const nuevosResultados = this.resultadosFiltrados.slice(inicio, fin);
+  
+    if (nuevosResultados.length > 0) {
+      this.traerParticipantes(nuevosResultados); // Agregar datos adicionales como ubicación y miembros
+      if (this.tabSeleccionada === 'disponibles') {
+        this.eventosDisponiblesAMostrar = [
+          ...this.eventosDisponiblesAMostrar,
+          ...nuevosResultados
+        ];
+      } else if (this.tabSeleccionada === 'participante') {
+        this.eventosParticipaUsuario = [
+          ...this.eventosParticipaUsuario,
+          ...nuevosResultados
+        ];
+      }
+      this.currentIndexFiltrados++;
+    } else {
+      this.noMasResultadosFiltrados = true;
+    }
+  
+    this.loadingFiltrados = false;
+  }
 
 
   onScroll(): void {
     const element = document.querySelector('.grid-container') as HTMLElement;
     if (element.scrollTop + element.clientHeight >= element.scrollHeight) {
-      if (this.tabSeleccionada === 'disponibles') {
-        this.cargarEventosDisponibles();
-      } else if (this.tabSeleccionada === 'participante') {
-        this.cargarEventosParticipante();
+      if(this.hayResultadosFiltrados){
+        this.cargarMasResultadosFiltrados();
+      }else{
+        if (this.tabSeleccionada === 'disponibles') {
+          this.cargarEventosDisponibles();
+        } else if (this.tabSeleccionada === 'participante') {
+          this.cargarEventosParticipante();
+        }
       }
     }
   }
@@ -455,99 +427,61 @@ export class EventosComponent implements OnInit {
   }
 
 
-
-/*   aplicarTodosLosFiltros2(): void {
-    // Reiniciar los resultados a todos los eventos
-    this.getEventos().then(() => {
-      // Aplicar cada filtro activo en secuencia
-      if (this.filtroNombreActivo && this.nombreEventoFiltro) {
-        this.aplicarFiltroNombre();
-      }
-
-      if (this.filtroParticipantesActivo && (this.minParticipantes !== null || this.maxParticipantes !== null)) {
-        this.aplicarFiltroParticipantes();
-      }
-
-      if (this.filtroFechaActivo && this.fechaMinFiltro && this.fechaMaxFiltro) {
-        this.aplicarFiltroFecha();
-      }
-
-      if (this.filtroEtiquetasActivo && this.etiquetasSeleccionadas.length > 0) {
-        this.aplicarFiltroEtiquetas();
-      }
-    });
-  }
- */
-
   async aplicarTodosLosFiltros(): Promise<void> {
-    // Comenzamos con todos los resultados originales
-    let resultadosFiltrados = [...this.resultadosOriginales];
+    let lista1: Evento[] = [];
+    let lista2: Evento[] = [];
+    let lista3: Evento[] = [];
+    let lista4: Evento[] = [];
+    this.hayResultadosFiltrados = false; // Inicializar en false
 
-    // Aplicar filtro por nombre si está activo
     if (this.filtroNombreActivo && this.nombreEventoFiltro) {
-      resultadosFiltrados = resultadosFiltrados.filter(comunidad =>
-        comunidad.nombre.toLowerCase().includes(this.nombreEventoFiltro.toLowerCase())
-      );
-    }
-
-    // Aplicar filtro por participantes si está activo
+        lista1 = await this.aplicarFiltroNombre2();
+        this.hayResultadosFiltrados = true; // Entró en el if
+      }
     if (this.filtroParticipantesActivo && (this.minParticipantes !== null || this.maxParticipantes !== null)) {
-      const min = this.minParticipantes || 0;
-      const max = this.maxParticipantes || Number.MAX_SAFE_INTEGER;
-
-      resultadosFiltrados = resultadosFiltrados.filter(evento =>
-        evento.participantes >= min && evento.participantes <= max
-      );
+      lista2 = await this.aplicarFiltroParticipantes2();
+      this.hayResultadosFiltrados = true; // Entró en el if
     }
-
-    // Aplicar filtro por etiquetas si hay etiquetas seleccionadas
     if (this.filtroEtiquetasActivo && this.etiquetasSeleccionadas.length > 0) {
-      const etiquetasIds = this.etiquetasSeleccionadas.map(e => e.nombre);
-
-      try {
-        const response = await this.eventoService.filtrarEtiqueta(etiquetasIds).toPromise();
-        if (response && response.data && Array.isArray(response.data)) {
-          const comunidadesFiltradas = response.data as Evento[];
-          resultadosFiltrados = resultadosFiltrados.filter(comunidad =>
-            comunidadesFiltradas.some(c => c.id === comunidad.id)
-          );
-        }
-      } catch (error) {
-        console.error("Error al filtrar por etiquetas:", error);
-      }
+      lista3 = await this.aplicarFiltroEtiquetas2();
+      this.hayResultadosFiltrados = true; // Entró en el if
     }
-
-
-
-
-    if (this.filtroFechaActivo && this.fechaMinFiltro && this.fechaMaxFiltro) {
-      const minDate = new Date(this.fechaMinFiltro);
-      const maxDate = new Date(this.fechaMaxFiltro);
-
-      try {
-        const response = await this.eventoService.filtrarFecha(
-          minDate.toISOString(),
-          maxDate.toISOString()
-        ).toPromise();
-
-        if (response && response.data && Array.isArray(response.data)) {
-          const eventosFiltradosPorFecha = response.data as Evento[];
-          resultadosFiltrados = resultadosFiltrados.filter(evento =>
-            eventosFiltradosPorFecha.some(e => e.id === evento.id)
-          );
-        }
-      } catch (error) {
-        console.error("Error al filtrar por fecha:", error);
-      }
+    if (this.filtroEtiquetasActivo && this.etiquetasSeleccionadas.length > 0) {
+      lista4 = await this.aplicarFiltroFecha();
+      this.hayResultadosFiltrados = true; // Entró en el if
     }
+    this.eventosDisponiblesAMostrar=[];
+    this.eventosParticipaUsuario=[]
+    if(this.hayResultadosFiltrados){
+      
+      
+      let listasActivas = [lista1, lista2, lista3, lista4].filter(lista => lista.length > 0);
 
-    // Actualizar los resultados filtrados
-    this.results = resultadosFiltrados;
-
-    // Actualizar información adicional para los resultados filtrados
-    await this.actualizarInformacionAdicional();
-
+      if (listasActivas.length > 0) {
+        // Realizamos la intersección de las listas
+        this.resultadosFiltrados = listasActivas.reduce((interseccion, listaActual) => {
+        return interseccion.filter(item => 
+          listaActual.some(actualItem => actualItem.id === item.id)
+        );
+      });
+    } else {
+      this.resultadosFiltrados = [];
+    }
+    this.currentIndexFiltrados = 0;
+    this.noMasResultadosFiltrados = false;
+    //await this.actualizarInformacionAdicional();
+    this.cargarMasResultadosFiltrados(); // Cargar la primera página de resultados
+  }else{
+    this.currentIndexEventosDisponibles=0;
+    this.currentIndexEventosParticipante=0;
+    if (this.tabSeleccionada === 'disponibles') {
+      this.cargarEventosDisponibles();
+    } else if (this.tabSeleccionada === 'participante') {
+      this.cargarEventosParticipante();
+    }
   }
+}
+
 
 
   private async actualizarInformacionAdicional(): Promise<void> {
@@ -568,9 +502,5 @@ export class EventosComponent implements OnInit {
       }
     }
   }
-
-
-
-
-
 }
+

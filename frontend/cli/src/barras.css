@@ -1,11 +1,3 @@
-/* Botón hamburguesa */
-.hamburger {
-    display: block;
-    font-size: 1.5rem;
-    margin: 10px;
-    cursor: pointer;
-    color: aliceblue;
-}
 
 
 /* Ajustar la posición del sidebar */
@@ -18,24 +10,16 @@
 
 
 .top-navbar {
-    position: fixed;
-    top: 0;
-    left: 250px;
-    right: 0;
-    height: 60px;
+    height: 80%;
     background-color: #15202b;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    padding: 0 20px;
 }
 
 .nav-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 100%;
-    width: 100%;
-
 }
 
 .nav-brand h5 {
@@ -101,7 +85,8 @@
     background-color: #15202b;
     z-index: 1001;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    transition: width 0.3s ease, transform 0.3s ease; /* Añadir transición */
+    transition: width 0.3s ease, transform 0.3s ease;
+    /* Añadir transición */
 }
 
 
@@ -137,7 +122,8 @@
     min-width: 60px;
     font-size: 1.5em;
     color: #ff6f6f;
-    transition: opacity 0.3s ease; /* Añadir transición */
+    transition: opacity 0.3s ease;
+    /* Añadir transición */
 }
 
 .sidebar ul li a .text {
@@ -155,35 +141,117 @@
     /* Color del texto al pasar el mouse */
 }
 
-.hamburger-icon {
+
+.full-width {
+    margin-left: 0;
+}
+
+
+.sidebar {
+    width: 36vh;
+    height: 100vh;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: fixed;
+    transition: width 0.3s;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.sidebar.collapsed {
+    width: 9%;
+}
+
+.sidebar.collapsed .menu-text {
+    display: none;
+    /* Oculta el texto cuando está colapsado */
+}
+
+.sidebar.collapsed .menu-item {
+    justify-content: center;
+    /* Centra el icono en el menú colapsado */
+}
+
+.sidebar.collapsed~.main-content {
+    margin-left: 10%;
+}
+
+
+.sidebar:not(.collapsed) .logo {
+    /* Logo completo */
+    width: 60%;
+    /* Tamaño del logo desplegado */
+    height: 40%;
+}
+
+/*no es usado*/
+.sidebar.collapsed .logo {
+    /* Logo circular */
+    width: 10%;
+    /* Ajusta el tamaño del logo circular */
+    height: 100%;
+    margin: 0;
+    /* Centra el logo en modo colapsado */
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    /* Alinea los elementos en columnas */
+}
+
+.menu-item {
     display: flex;
     align-items: center;
+    /* Centra el icono y el texto verticalmente */
+    padding: 10px 15px;
+    /* Espaciado alrededor del elemento del menú */
+    transition: background-color 0.5s;
+    /* Suaviza el cambio de color de fondo al pasar el mouse */
     cursor: pointer;
-    color: aliceblue;
-    font-size: 1.5rem;
-    margin-right: 10px;
-  }
-
-  .sidebar.hidden {
-    transform: translateX(-100%);
-    width: 70px; /* Adjust this value based on your desired width */
-  }
-  .sidebar.hidden .sidebar-icon {
-    opacity: 1; /* Mantiene la opacidad de los iconos */
-    width: 100%;
-    text-align: center;
+    /* Cambia el cursor para indicar que es clickeable */
 }
-  
-  .sidebar.hidden .sidebar-icon i {
-    font-size: 1.5rem;
-  }
-  
-  .sidebar.hidden .sidebar-text {
-    display: none;
-  }
 
-  .full-width {
-    margin-left: 0;
-  }
+.menu-item i {
+    margin: 1dvh 1dvi;
+    /* Espaciado entre el icono y el texto */
+    font-size: 4dvh;
+    /* Ajusta el tamaño del icono */
+    transition: transform 0.2s;
+    /* Suaviza el efecto de hover */
+}
 
-  
+.menu-item:hover i {
+    transform: scale(1.2);
+    /* Aumenta el tamaño del icono al pasar el mouse */
+}
+
+/* Control de visibilidad del texto */
+.menu-text {
+    display: inline;
+    /* El texto siempre será visible */
+}
+
+.logo-container {
+    margin: 2dvh 0;
+}
+
+.logo {
+    background-size: contain;
+    background-repeat: no-repeat;
+    margin-left: 14%;
+    transition: all 0.5s ease;
+}
+
+.sidebar-toggle {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.sidebar .dropdown-arrow i {
+    font-size: 2dvb; /* Ajusta el tamaño */
+    vertical-align: middle; /* Centra la flecha verticalmente */
+}

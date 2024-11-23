@@ -1,25 +1,26 @@
 <div class="container">
-    <h1 class="title">Amigos</h1>
-        <div class="search-container">
-            <input type="text" placeholder="Buscar usuarios" #searchInput (input)="buscarUsuarios(searchInput.value)"
-                class="form-control search-input">
-            <i class="fas fa-search search-icon"></i>
-        </div>
-        <div class="tabs">
-            <button (click)="cambiarVista('amigos')" [class.active]="mostrarAmigos">Amigos</button>
-            <button (click)="cambiarVista('solicitudes')" [class.active]="!mostrarAmigos">Solicitudes</button>
-        </div>
+    <h1 class="title">Gestión de Amigos</h1>
 
-        <ul class="list-group user-list">
-            <li *ngFor="let usuario of usuariosBuscados" class="list-group-item user-item">
-                <img [src]="usuario.fotoPerfil" alt="Foto de {{ usuario.nombreUsuario }}" class="avatar-circular">
-                <span>{{ usuario.nombreUsuario }} {{ usuario.nombreReal }}</span>
-                <button (click)="verPerfil(usuario)" class="btn btn-primary btn-sm">Ver perfil</button>
-            </li>
-        </ul>
-        <div *ngIf="mostrarAmigos" class="lista">
+    <!-- Tabs -->
+    <div class="tabs">
+        <button [class.active]="estadoActual === 'amigos'" (click)="cambiarVista('amigos')">Amigos</button>
+        <button [class.active]="estadoActual === 'solicitudes'"
+            (click)="cambiarVista('solicitudes')">Solicitudes</button>
+        <button [class.active]="estadoActual === 'usuarios'" (click)="cambiarVista('usuarios')">Usuarios</button>
+    </div>
+
+    <!-- Contenido de los tabs -->
+    <div class="tab-content">
+        <!-- Tab de Amigos -->
+        <div *ngIf="estadoActual === 'amigos'" class="tab amigos-tab">
+            <div class="search-container">
+                <input type="text" [(ngModel)]="textoBuscador" placeholder="Buscar amigos" #searchInput
+                    (input)="buscarUsuarios(searchInput.value)" class="form-control search-input">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+
             <h2>Lista de Amigos</h2>
-            <ul>
+            <ul class="scrollable-list" (scroll)="onScroll('amigos')">
                 <li *ngFor="let amigo of amigos" (click)="verPerfil(amigo)" class="clickable friend-item">
                     <img [src]="amigo.fotoPerfil" alt="Foto de {{ amigo.nombreUsuario }}" class="avatar-circular">
                     <span>{{ amigo.nombreUsuario }}</span>
@@ -27,28 +28,60 @@
             </ul>
         </div>
 
-        <div *ngIf="!mostrarAmigos" class="lista">
+        <!-- Tab de Solicitudes -->
+        <div *ngIf="estadoActual === 'solicitudes'" class="tab solicitudes-tab">
+            <div class="search-container">
+                <input type="text" [(ngModel)]="textoBuscador" placeholder="Buscar en solicitudes" #searchInput
+                    (input)="buscarUsuarios(searchInput.value)" class="form-control search-input">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+
             <h2>Solicitudes de Amistad</h2>
-            <ul>
+            <ul class="scrollable-list" (scroll)="onScroll('solicitudes')">
                 <li *ngFor="let solicitud of solicitudes" (click)="verPerfil(solicitud)" class="clickable request-item">
-                    <img [src]="solicitud.fotoPerfil" alt="Foto de {{ solicitud.nombreUsuario }}" class="avatar-circular">
+                    <img [src]="solicitud.fotoPerfil" alt="Foto de {{ solicitud.nombreUsuario }}"
+                        class="avatar-circular">
                     <span>{{ solicitud.nombreUsuario }}</span>
                     <div class="acciones-solicitud">
-                        <button (click)="gestionarSolicitud(solicitud, true); $event.stopPropagation()" class="btn-aceptar">Aceptar</button>
-                        <button (click)="gestionarSolicitud(solicitud, false);  $event.stopPropagation()" class="btn-rechazar">Rechazar</button>
+                        <button (click)="gestionarSolicitud(solicitud, true); $event.stopPropagation()"
+                            class="btn-aceptar">Aceptar</button>
+                        <button (click)="gestionarSolicitud(solicitud, false); $event.stopPropagation()"
+                            class="btn-rechazar">Rechazar</button>
                     </div>
                 </li>
             </ul>
+
             <h2>Solicitudes de Amistad Enviadas</h2>
-            <ul>
-                <li *ngFor="let solicitudEnviada of solicitudesEnviadas" (click)="verPerfil(solicitudEnviada)" class="clickable sent-request-item">
-                    <img [src]="solicitudEnviada.fotoPerfil" alt="Foto de {{ solicitudEnviada.nombreUsuario }}" class="avatar-circular">
+            <ul class="scrollable-list" (scroll)="onScroll('solicitudes')">
+                <li *ngFor="let solicitudEnviada of solicitudesEnviadas" (click)="verPerfil(solicitudEnviada)"
+                    class="clickable sent-request-item">
+                    <img [src]="solicitudEnviada.fotoPerfil" alt="Foto de {{ solicitudEnviada.nombreUsuario }}"
+                        class="avatar-circular">
                     <span>{{ solicitudEnviada.nombreUsuario }}</span>
                     <div class="acciones-solicitud">
-                        <button (click)="cancelarSolicitudDeAmistad(solicitudEnviada.id);  $event.stopPropagation()" class="btn-rechazar">Cancelar</button>
+                        <button (click)="cancelarSolicitudDeAmistad(solicitudEnviada.id); $event.stopPropagation()"
+                            class="btn-rechazar">Cancelar</button>
                     </div>
                 </li>
             </ul>
         </div>
 
+        <!-- Tab de Usuarios -->
+        <div *ngIf="estadoActual === 'usuarios'" class="tab usuarios-tab">
+            <div class="search-container">
+                <input type="text" [(ngModel)]="textoBuscador" placeholder="Buscar usuarios" #searchInput
+                    (input)="buscarUsuarios(searchInput.value)" class="form-control search-input">
+                <i class="fas fa-search search-icon"></i>
+            </div>
+
+            <h2>Lista de Usuarios</h2>
+            <ul class="scrollable-list" (scroll)="onScroll('usuarios')">
+                <li *ngFor="let usuario of usuariosBuscados" class="list-group-item user-item">
+                    <img [src]="usuario.fotoPerfil" alt="Foto de {{ usuario.nombreUsuario }}" class="avatar-circular">
+                    <span>{{ usuario.nombreUsuario }} {{ usuario.nombreReal }}</span>
+                    <button (click)="verPerfil(usuario)" class="btn btn-primary btn-sm">Ver perfil</button>
+                </li>
+            </ul>
+        </div>
+    </div>
 </div>

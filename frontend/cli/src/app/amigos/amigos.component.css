@@ -204,3 +204,35 @@ li:hover {
         font-size: 14px;
     }
 }
+
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.tabs button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.tabs button.active {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+.tab-content {
+    margin-top: 20px;
+}
+
+.scrollable-list {
+    max-height: 600px; /* Define la altura máxima del área visible */
+    overflow-y: auto; /* Habilita el scroll vertical */
+    border: 1px solid #ccc; /* Opcional, para ver el área delimitada */
+    padding: 0;
+    margin: 0;
+}

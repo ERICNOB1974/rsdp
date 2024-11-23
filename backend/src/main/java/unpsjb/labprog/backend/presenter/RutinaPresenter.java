@@ -233,14 +233,19 @@ public class RutinaPresenter {
         }
     }
 
-    @GetMapping("/filtrar/etiquetas")
-    public ResponseEntity<Object> eventosPorEtiquetas(@RequestParam List<String> etiquetas) {
-        return Response.ok(rutinaService.rutinasEtiquetas(etiquetas));
+
+       @GetMapping("/filtrar/etiquetas")
+    public ResponseEntity<Object> eventosPorEtiquetas(@RequestParam List<String> etiquetas,@RequestParam(required = false) String tipo,
+    @RequestParam(required = false) Long usuarioId) {
+        return Response.ok(rutinaService.rutinasEtiquetas(etiquetas,tipo, usuarioId));
     }
 
-    @GetMapping("/filtrar/nombre/{nombre}")
-    public ResponseEntity<Object> eventosPorNombre(@PathVariable String nombre) {
-        return Response.ok(rutinaService.rutinasNombre(nombre));
+      @GetMapping("/filtrar/nombre")
+    public ResponseEntity<Object> rutinasPorNombre(
+        @RequestParam String nombre,
+        @RequestParam(required = false) String tipo,
+        @RequestParam(required = false) Long usuarioId) {
+        return Response.ok(rutinaService.rutinasNombre(nombre, tipo, usuarioId));
     }
 
     @GetMapping("/rutinasCreadasPorUsuario/{idUsuario}")
@@ -248,14 +253,6 @@ public class RutinaPresenter {
         List<Rutina> rutinasCreadasPorUsuario = rutinaService.rutinasCreadasPorUsuario(idUsuario, offset, limit);
         return Response.ok(rutinasCreadasPorUsuario);
     }
-    
-/*     @GetMapping("/rutinasRealizaUsuario/{idUsuario}")
-    public ResponseEntity<Object> rutinasRealizaUsuario(@PathVariable Long idUsuario, 
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size)  {
-        List<Rutina> rutinasRealizaUsuario = rutinaService.rutinasRealizaUsuario(idUsuario, page, size);
-        return Response.ok(rutinasRealizaUsuario);
-    } */
     
     @GetMapping("/rutinasRealizaUsuario/{idUsuario}")
     public ResponseEntity<Object> rutinasRealizaUsuario(
@@ -281,6 +278,14 @@ public class RutinaPresenter {
         return Response.ok(rutinasRealizaUsuario);
     }
 
+    @GetMapping(path = "/{nombreUsuario}/disponibles")
+    public ResponseEntity<Object> obtenerRutinasDisponibles(
+            @PathVariable String nombreUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return Response.ok(rutinaService.obtenerRutinasDisponiblesPaginadas(nombreUsuario, page, size));
+    }
+    
     @GetMapping("/obtenerProgresoActual/{rutinaId}/{usuarioId}")
     public ResponseEntity<Object> obtenerProgresoActual(@PathVariable Long rutinaId, @PathVariable Long usuarioId) {
         return Response.ok(rutinaService.obtenerProgresoActual(rutinaId, usuarioId));

@@ -183,13 +183,61 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
         void desinscribirse(Long idEvento, Long idUsuario);
 
         @Query("MATCH (e:Evento)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta) " +
+        "WITH e, collect(etiqueta.nombre) AS etiquetasEvento " +
+        "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasEvento) " +
+        "AND NOT EXISTS { " +
+        "  MATCH (u:Usuario)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
+        "  WHERE id(u) = $usuarioId " +
+        "} " +
+        "RETURN e")
+        List<Evento> eventosEtiquetasDisponibles(Long usuarioId, @Param("etiquetas") List<String> etiquetas);
+
+        @Query("MATCH (e:Evento)<-[:PARTICIPA_EN]-(u:Usuario), (e)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta) " +
+        "WHERE id(u) = $usuarioId " +
+        "WITH e, collect(etiqueta.nombre) AS etiquetasEvento " +
+        "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasEvento) " +
+        "RETURN e")
+        List<Evento> eventosEtiquetasParticipante(Long usuarioId, @Param("etiquetas") List<String> etiquetas);
+
+
+        @Query("MATCH (e:Evento)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta) " +
                         "WITH e, collect(etiqueta.nombre) AS etiquetasEvento " +
                         "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasEvento) " +
                         "RETURN e")
         List<Evento> eventosEtiquetas(@Param("etiquetas") List<String> etiquetas);
 
+        @Query("MATCH (e:Evento) " +
+        "WHERE toUpper(e.nombre) CONTAINS toUpper($nombre) " +
+        "AND NOT EXISTS { " +
+        "  MATCH (u:Usuario)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
+        "  WHERE id(u) = $usuarioId " +
+        "} " +
+        "RETURN e")
+        List<Evento> eventosNombreDisponibles(String nombre, Long usuarioId);
+
+        @Query("MATCH (e:Evento)<-[:PARTICIPA_EN]-(u:Usuario) " +
+        "WHERE id(u) = $usuarioId AND toUpper(e.nombre) CONTAINS toUpper($nombre) " +
+        "RETURN e")
+        List<Evento> eventosNombreParticipante(String nombre, Long usuarioId);
+
+
         @Query("MATCH (e:Evento) WHERE toUpper(e.nombre) CONTAINS toUpper($nombre) RETURN e")
         List<Evento> eventosNombre(String nombre);
+
+        @Query("MATCH (e:Evento) " +
+        "WHERE e.fechaHora >= $fechaInicio AND e.fechaHora <= $fechaFin " +
+        "AND NOT EXISTS { " +
+        "  MATCH (u:Usuario)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
+        "  WHERE id(u) = $usuarioId " +
+        "} " +
+        "RETURN e")
+        List<Evento> eventosFechaDisponible(Long usuarioId, @Param("fechaInicio") ZonedDateTime fechaInicio, @Param("fechaFin") ZonedDateTime fechaFin);
+
+        @Query("MATCH (e:Evento)<-[:PARTICIPA_EN]-(u:Usuario) " +
+        "WHERE id(u) = $usuarioId AND e.fechaHora >= $fechaInicio AND e.fechaHora <= $fechaFin " +
+        "RETURN e")
+        List<Evento> eventosFechaParticipante(Long usuarioId, @Param("fechaInicio") ZonedDateTime fechaInicio, @Param("fechaFin") ZonedDateTime fechaFin);
+
 
         @Query("MATCH (e:Evento) " +
                         "WHERE e.fechaHora >= $fechaInicio " +
@@ -200,6 +248,23 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
 
         @Query("MATCH (e:Evento) WHERE e.cantidadMaximaParticipantes <= $max AND e.cantidadMaximaParticipantes >= $min RETURN e")
         List<Evento> eventosCantidadParticipantes(int min, int max);
+
+@Query("MATCH (e:Evento) " +
+       "WHERE e.cantidadMaximaParticipantes <= $max AND e.cantidadMaximaParticipantes >= $min " +
+       "AND NOT EXISTS { " +
+       "  MATCH (u:Usuario)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
+       "  WHERE id(u) = $usuarioId " +
+       "} " +
+       "RETURN e")
+List<Evento> eventosCantidadParticipantesDisponible(Long usuarioId, int min, int max);
+
+@Query("MATCH (e:Evento)<-[:PARTICIPA_EN]-(u:Usuario) " +
+       "WHERE id(u) = $usuarioId " +
+       "AND e.cantidadMaximaParticipantes <= $max AND e.cantidadMaximaParticipantes >= $min " +
+       "RETURN e")
+List<Evento> eventosCantidadParticipantesParticipante(Long usuarioId, int min, int max);
+
+        
 
         @Query("MATCH (e:Evento),(u:Usuario {nombreUsuario: $nombreUsuario}) " +
                         "WHERE NOT (e)-[:PARTICIPA_EN|CREADO_POR]-(u) " +

@@ -222,16 +222,51 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
             "MERGE (r)-[:CREADA_POR]->(u)")
     void crearRelacionCreador(Long rutinaId, Long usuarioId);
 
-    @Query("MATCH (r:Rutina), (e:Etiqueta) " +
-            "WHERE id(r) = $rutinaId AND id(e) = $etiquetaId " +
-            "MERGE (r)-[:ETIQUETADA_CON]->(e)")
-    void etiquetarRutina(Long rutinaId, Long etiquetaId);
+  @Query("MATCH (r:Rutina), (e:Etiqueta) " +
+      "WHERE id(r) = $rutinaId AND id(e) = $etiquetaId " +
+      "MERGE (r)-[:ETIQUETADA_CON]->(e)")
+  void etiquetarRutina(Long rutinaId, Long etiquetaId);
 
-    @Query("MATCH (c:Rutina)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
-            "WITH c, collect(etiqueta.nombre) AS etiquetasRutina " +
-            "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasRutina) " +
-            "RETURN c")
-    List<Rutina> rutinasEtiquetas(@Param("etiquetas") List<String> etiquetas);
+@Query("MATCH (r:Rutina)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
+       "WITH r, collect(etiqueta.nombre) AS etiquetasRutina " +
+       "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasRutina) " +
+       "AND NOT EXISTS { " +
+       "  MATCH (u:Usuario)-[:REALIZA_RUTINA]->(r) " +
+       "  WHERE id(u) = $usuarioId " +
+       "} " +
+       "RETURN r")
+List<Rutina> rutinasEtiquetasDisponible(@Param("usuarioId") Long usuarioId, @Param("etiquetas") List<String> etiquetas);
+
+
+@Query("MATCH (r:Rutina)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
+       "MATCH (u:Usuario)-[:REALIZA_RUTINA]->(r) " +
+       "WHERE id(u) = $usuarioId " +
+       "WITH r, collect(etiqueta.nombre) AS etiquetasRutina " +
+       "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasRutina) " +
+       "RETURN r")
+List<Rutina> rutinasEtiquetasRealizaRutina(@Param("usuarioId") Long usuarioId, @Param("etiquetas") List<String> etiquetas);
+
+
+  @Query("MATCH (c:Rutina)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
+      "WITH c, collect(etiqueta.nombre) AS etiquetasRutina " +
+      "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasRutina) " +
+      "RETURN c")
+  List<Rutina> rutinasEtiquetas(@Param("etiquetas") List<String> etiquetas);
+
+@Query("MATCH (r:Rutina) " +
+       "WHERE toUpper(r.nombre) CONTAINS toUpper($nombre) " +
+       "AND NOT EXISTS { " +
+       "  MATCH (u:Usuario)-[:REALIZA_RUTINA]->(r) " +
+       "  WHERE id(u) = $usuarioId " +
+       "} " +
+       "RETURN r")
+List<Rutina> rutinasNombreDisponibles(String nombre, Long usuarioId);
+
+@Query("MATCH (r:Rutina)<-[:REALIZA_RUTINA]-(u:Usuario) " +
+       "WHERE id(u) = $usuarioId AND toUpper(r.nombre) CONTAINS toUpper($nombre) " +
+       "RETURN r")
+List<Rutina> rutinasNombreRealizaRutina(String nombre, Long usuarioId);
+
 
     @Query("MATCH (c:Rutina) WHERE toUpper(c.nombre) CONTAINS toUpper($nombre) RETURN c")
     List<Rutina> rutinasNombre(String nombre);
@@ -250,18 +285,7 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
     List<Rutina> rutinasCreadasPorUsuario(@Param("idUsuario") Long idUsuario, @Param("offset") int offset,
             @Param("limit") int limit);
 
-    /*
-     * @Query("MATCH (r:Rutina)-[rel:REALIZA_RUTINA]-(u:Usuario) " +
-     * "WHERE id(u) = $idUsuario " +
-     * "RETURN r " +
-     * "ORDER BY rel.fechaComienzo ASC " +
-     * "SKIP $skip " +
-     * "LIMIT $limit")
-     * List<Rutina> rutinasRealizaUsuario(@Param("idUsuario") Long
-     * idUsuario, @Param("skip") int skip,
-     * 
-     * @Param("limit") int limit);
-     */
+
 
     @Query("MATCH (r:Rutina)-[rel:REALIZA_RUTINA]-(u:Usuario) " +
             "WHERE id(u) = $idUsuario " +

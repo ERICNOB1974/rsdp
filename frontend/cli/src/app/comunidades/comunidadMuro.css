@@ -40,12 +40,6 @@
     max-width: 100%;
 }
 
-/* Estilo para las publicaciones */
-.publicaciones-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
-}
 
 .publicacion-item {
     padding: 20px;
@@ -277,7 +271,10 @@ button {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
+    overflow-y: auto;
+    max-height: 400px; /* Define la altura máxima del área visible */
 }
+
 
 .publicacion-item {
     padding: 20px;

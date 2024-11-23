@@ -4,25 +4,23 @@
   <p><strong>Texto:</strong> {{ publicacion.texto }}</p>
 
   <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
-    <p><strong>Imagen:</strong></p>
     <img [src]="publicacion.file" alt="Imagen de la publicación" style="max-width: 400px; max-height: 400px;">
   </div>
 
   <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
-    <p><strong>Video:</strong></p>
     <video [src]="publicacion.file" controls style="max-width: 400px; max-height: 400px;"></video>
   </div>
 
   <div class="interaction-container">
     <div class="heart-container">
-      <div class="heart" (click)="toggleLike()" [ngClass]="{'liked': isLiked}">
-        <i class="fa" [ngClass]="isLiked ? 'fa-heart' : 'fa-heart-o'"></i>
-      </div>
+      <i class="heart" [ngClass]="isLiked ? 'fas fa-heart liked' : 'far fa-heart'" (click)="toggleLike()">
+      </i>
       <span class="likes-count">{{ numeroLikes }}</span>
       <div class="comment-icon" (click)="showCommentInput = !showCommentInput">
         <i class="fa fa-comment"></i>
       </div>
     </div>
+
 
     <div *ngIf="showCommentInput" class="comment-input-container">
       <textarea [(ngModel)]="comment" class="form-control" placeholder="Escribe tu comentario aquí"></textarea>
@@ -35,22 +33,25 @@
       <div *ngFor="let com of comentarios" class="comment"
         style="margin-bottom: 15px; padding: 10px; background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
         <div class="comment-header" style="display: flex; align-items: center;">
-          <a [routerLink]="['/perfil', com.usuario.id]" style="text-decoration: none; display: flex; align-items: center;">
-            <img [src]="com.usuario.fotoPerfil" alt="foto de Perfil" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 8px;">
+          <a [routerLink]="['/perfil', com.usuario.id]"
+            style="text-decoration: none; display: flex; align-items: center;">
+            <img [src]="com.usuario.fotoPerfil" alt="foto de Perfil"
+              style="width: 30px; height: 30px; border-radius: 50%; margin-right: 8px;">
           </a>
           <a [routerLink]="['/perfil', com.usuario.id]" style="text-decoration: none; color: #3897f0;">
             <span class="username" style="font-size: 12px; font-weight: bold;">{{ com.usuario.nombreUsuario }}</span>
           </a>
-          <span class="date" style="font-size: 10px; color: #999; margin-left: auto;">{{ com.fecha | date:'short' }}</span>
+          <span class="date" style="font-size: 10px; color: #999; margin-left: auto;">{{ com.fecha | date:'short'
+            }}</span>
         </div>
         <p class="comment-text" style="font-size: 14px; margin: 0; color: #262626;">{{ com.texto }}</p>
       </div>
     </div>
-    
+
     <button *ngIf="isOwnPublication" (click)="deletePublicacion()" class="btn btn-danger">
       Eliminar publicación
     </button>
-    
+
   </div>
 
 </div>
