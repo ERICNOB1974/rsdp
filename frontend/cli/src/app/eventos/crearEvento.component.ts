@@ -1,4 +1,4 @@
-import { CommonModule, Location } from '@angular/common'; // Asegúrate de que está importado desde aquí
+import { CommonModule, Location, NgIf } from '@angular/common'; // Asegúrate de que está importado desde aquí
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -22,14 +22,14 @@ import { EventoService } from './evento.service';
 @Component({
   selector: 'app-crear-evento',
   templateUrl: './crearEvento.component.html',
-  styleUrls: ['./crearEvento.component.css', '../css/etiquetas.css', '../css/registro.component.css'],
+  styleUrls: ['./crearEvento.component.css', '../css/etiquetas.css', '../css/registro.component.css', '../css/crear.component.css'],
   standalone: true,
   imports: [FormsModule, NgbTypeaheadModule, CommonModule, MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
     MatCardModule,
     MatIconModule,
-    ReactiveFormsModule]
+    ReactiveFormsModule, NgIf]
 })
 export class CrearEventoComponent {
 
@@ -446,5 +446,29 @@ export class CrearEventoComponent {
     }
   }
 
+  onDragOver(event: DragEvent): void {
+    event.preventDefault(); // Prevenir el comportamiento predeterminado
+    event.stopPropagation();
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Asegurarse de que existen archivos en el evento
+    if (event.dataTransfer && event.dataTransfer.files.length > 0) {
+      const file = event.dataTransfer.files[0]; // Toma el primer archivo
+      const inputEvent = { target: { files: [file] } }; // Crea un evento similar al del input
+      this.onFileSelect(inputEvent); // Reutiliza tu lógica para manejar el archivo
+    }
+  }
+
+
+  eliminarArchivo(): void {
+    this.vistaPreviaArchivo = null;
+    this.formatoValido = false;
+    this.evento.imagen = '';
+
+  }
 
 }

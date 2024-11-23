@@ -7,7 +7,7 @@ import { catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom,
 import { Etiqueta } from '../etiqueta/etiqueta';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
-import { Location } from '@angular/common'; // Asegúrate de que está importado desde aquí
+import { Location, NgIf } from '@angular/common'; // Asegúrate de que está importado desde aquí
 import * as L from 'leaflet';
 import axios from 'axios'; // Asegúrate de tener axios instalado
 import { CommonModule } from '@angular/common';
@@ -18,9 +18,9 @@ import { DataPackage } from '../data-package';
 @Component({
   selector: 'app-crear-evento',
   templateUrl: './editarEvento.component.html',
-  styleUrls: ['./crearEvento.component.css'],
+  styleUrls: ['./crearEvento.component.css', '../css/crear.component.css'],
   standalone: true,
-  imports: [FormsModule, NgbTypeaheadModule, CommonModule]
+  imports: [FormsModule, NgbTypeaheadModule, CommonModule, NgIf]
 })
 export class EditarEventoComponent {
 
@@ -366,6 +366,31 @@ export class EditarEventoComponent {
 
   }
 
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault(); // Prevenir el comportamiento predeterminado
+    event.stopPropagation();
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Asegurarse de que existen archivos en el evento
+    if (event.dataTransfer && event.dataTransfer.files.length > 0) {
+      const file = event.dataTransfer.files[0]; // Toma el primer archivo
+      const inputEvent = { target: { files: [file] } }; // Crea un evento similar al del input
+      this.onFileSelect(inputEvent); // Reutiliza tu lógica para manejar el archivo
+    }
+  }
+
+
+  eliminarArchivo(): void {
+    this.vistaPreviaArchivo = null;
+    this.formatoValido = false;
+    this.evento.imagen = '';
+
+  }
 
 }
 
