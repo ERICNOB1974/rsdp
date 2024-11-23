@@ -42,10 +42,12 @@ export class EventoDetailComponent implements OnInit {
   amigosEnEvento: any[] = [];
   amigosYaInvitados: any[] = [];
   participantesVisibles: any[] = [];
+  participantesVisiblesPaginados: any[] = [];
   usuariosAnonimos: number = 0; // Inicializamos la variable
   idUsuarioAutenticado!: number;
   creadorEvento!: Usuario;
-
+  cargaInicial: number = 5; // Número inicial de elementos visibles
+  cargaIncremento: number = 5; // Número de elementos adicionales cargados en cada scroll
   @ViewChild('modalInvitarAmigos') modalInvitarAmigos!: TemplateRef<any>;
 
   creador: boolean = false;
@@ -314,11 +316,11 @@ export class EventoDetailComponent implements OnInit {
             this.participantesVisibles.push(miembro);
           }
         } else {
-          console.info("ocultando a"+miembro.nombreUsuario);
           this.usuariosAnonimos++; // Aumentar el conteo de anónimos si no se muestra
         }
       }
     });
+    this.participantesVisiblesPaginados = this.participantesVisibles.slice(0, this.cargaInicial);
   }
 
   openModal(content: any) {
@@ -353,6 +355,24 @@ export class EventoDetailComponent implements OnInit {
   // Método para cerrar el modal
   closeModal() {
     this.modalService.dismissAll();
+  }
+
+  onScroll(): void {
+    const element = document.querySelector('.members-list') as HTMLElement;
+    if (element.scrollTop + element.clientHeight >= element.scrollHeight - 10) {
+      this.cargarMasParticipantes();
+    }
+  }
+
+  cargarMasParticipantes(): void {
+    const totalCargados = this.participantesVisiblesPaginados.length;
+    const nuevosMiembros = this.participantesVisibles.slice(totalCargados, totalCargados + this.cargaIncremento);
+  
+    if (nuevosMiembros.length > 0) {
+      this.participantesVisiblesPaginados = [...this.participantesVisiblesPaginados, ...nuevosMiembros];
+    } else {
+      console.log('No hay más participantes por cargar');
+    }
   }
 
 }

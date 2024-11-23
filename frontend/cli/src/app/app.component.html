@@ -157,8 +157,7 @@
 </div>
 
 
-
-
-<div class="main-content" [ngClass]="isSidebarHidden ? 'full-width' : ''">
+<div class="main-content" [ngClass]="{ 'full-width': isSidebarHidden }">
     <router-outlet></router-outlet>
 </div>
+
