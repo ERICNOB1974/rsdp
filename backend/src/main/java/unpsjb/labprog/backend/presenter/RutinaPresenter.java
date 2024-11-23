@@ -2,8 +2,8 @@ package unpsjb.labprog.backend.presenter;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,17 +50,17 @@ public class RutinaPresenter {
     }
 
     @RequestMapping(path = "/crearRelacionRealizaRutina/{rutinaId}/{usuarioId}", method = RequestMethod.POST)
-    public Long crearRelacionRealizaRutina(@PathVariable Long rutinaId, @PathVariable Long usuarioId ) throws Exception{
+    public Long crearRelacionRealizaRutina(@PathVariable Long rutinaId, @PathVariable Long usuarioId) throws Exception {
         return rutinaService.crearRelacionRealizaRutina(rutinaId, usuarioId);
     }
 
     @RequestMapping(path = "/crearRelacionDiaFinalizado/{diaId}/{usuarioId}", method = RequestMethod.POST)
-    public Long crearRelacionDiaFinalizado(@PathVariable Long diaId, @PathVariable Long usuarioId ) throws Exception{
+    public Long crearRelacionDiaFinalizado(@PathVariable Long diaId, @PathVariable Long usuarioId) throws Exception {
         return rutinaService.crearRelacionDiaFinalizado(diaId, usuarioId);
     }
 
     @RequestMapping(path = "/verificarDiaFinalizado/{diaId}/{usuarioId}", method = RequestMethod.GET)
-    public boolean verificarDiaFinalizado(@PathVariable Long diaId, @PathVariable Long usuarioId ) throws Exception{
+    public boolean verificarDiaFinalizado(@PathVariable Long diaId, @PathVariable Long usuarioId) throws Exception {
         return rutinaService.verificarDiaFinalizado(diaId, usuarioId);
     }
 
@@ -182,7 +182,6 @@ public class RutinaPresenter {
         return Response.ok(sugerenciasDeRutinasBasadasEnComunidades);
     }
 
-
     @GetMapping("/sugerencias-combinadas/{nombreUsuario}")
     public ResponseEntity<Object> obtenerSugerenciasCombinadas(
             @PathVariable String nombreUsuario,
@@ -233,59 +232,83 @@ public class RutinaPresenter {
         }
     }
 
-
-       @GetMapping("/filtrar/etiquetas")
-    public ResponseEntity<Object> eventosPorEtiquetas(@RequestParam List<String> etiquetas,@RequestParam(required = false) String tipo,
-    @RequestParam(required = false) Long usuarioId) {
-        return Response.ok(rutinaService.rutinasEtiquetas(etiquetas,tipo, usuarioId));
+    @GetMapping("/filtrar/etiquetas")
+    public ResponseEntity<Object> eventosPorEtiquetas(@RequestParam List<String> etiquetas,
+            @RequestParam(required = false) String tipo,
+            @RequestParam(required = false) Long usuarioId) {
+        return Response.ok(rutinaService.rutinasEtiquetas(etiquetas, tipo, usuarioId));
     }
 
-      @GetMapping("/filtrar/nombre")
+    @GetMapping("/filtrar/nombre")
     public ResponseEntity<Object> rutinasPorNombre(
-        @RequestParam String nombre,
-        @RequestParam(required = false) String tipo,
-        @RequestParam(required = false) Long usuarioId) {
+            @RequestParam String nombre,
+            @RequestParam(required = false) String tipo,
+            @RequestParam(required = false) Long usuarioId) {
         return Response.ok(rutinaService.rutinasNombre(nombre, tipo, usuarioId));
     }
 
     @GetMapping("/rutinasCreadasPorUsuario/{idUsuario}")
-    public ResponseEntity<Object> rutinasCreadasPorUsuario(@PathVariable Long idUsuario, @RequestParam int offset, @RequestParam int limit) {
+    public ResponseEntity<Object> rutinasCreadasPorUsuario(@PathVariable Long idUsuario, @RequestParam int offset,
+            @RequestParam int limit) {
         List<Rutina> rutinasCreadasPorUsuario = rutinaService.rutinasCreadasPorUsuario(idUsuario, offset, limit);
         return Response.ok(rutinasCreadasPorUsuario);
     }
-    
+
     @GetMapping("/rutinasRealizaUsuario/{idUsuario}")
     public ResponseEntity<Object> rutinasRealizaUsuario(
-        @PathVariable Long idUsuario, 
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size,
-        @RequestParam(required = false, defaultValue = "") String nombreRutina) {
-    
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String nombreRutina) {
+
         // Llamamos al servicio para obtener las rutinas filtradas por nombre y usuario
         List<Rutina> rutinasRealizaUsuario = rutinaService.rutinasRealizaUsuario(idUsuario, nombreRutina, page, size);
-        
+
         // Devolvemos las rutinas en formato de respuesta
         return Response.ok(rutinasRealizaUsuario);
     }
 
     @GetMapping("/rutinasRealizaUsuarioSinPaginacion/{idUsuario}")
     public ResponseEntity<Object> rutinasRealizaUsuarioSinPaginacion(
-        @PathVariable Long idUsuario) {
-    
+            @PathVariable Long idUsuario) {
+
         List<RutinaDTO> rutinasRealizaUsuario = rutinaService.rutinasRealizaUsuarioSinPaginacion(idUsuario);
-        
+
         // Devolvemos las rutinas en formato de respuesta
         return Response.ok(rutinasRealizaUsuario);
     }
-    
+
     @GetMapping("/obtenerProgresoActual/{rutinaId}/{usuarioId}")
     public ResponseEntity<Object> obtenerProgresoActual(@PathVariable Long rutinaId, @PathVariable Long usuarioId) {
         return Response.ok(rutinaService.obtenerProgresoActual(rutinaId, usuarioId));
     }
 
-    @GetMapping(path="/{idUsuario}/disponibles")
-    public ResponseEntity<Object> obtenerRutinasDisponibles(@PathVariable Long idUsuario, @RequestParam(defaultValue="0") int page, @RequestParam(defaultValue = "10") int size) {
+    @GetMapping(path = "/{idUsuario}/disponibles")
+    public ResponseEntity<Object> obtenerRutinasDisponibles(@PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         return Response.ok(rutinaService.obtenerRutinasDisponiblesPaginadas(idUsuario, page, size));
+    }
+
+    @PostMapping("/cambiarFavorito/{idUsuario}/{idRutina}")
+    public ResponseEntity<Object> cabiarEstadoFavorita(@PathVariable Long idUsuario,
+            @PathVariable Long idRutina) {
+        rutinaService.cambiarEstadoFavorita(idRutina, idUsuario);
+        return Response.ok("Rutina marcada/desmarcada como favorita");
+    }
+
+    @GetMapping("/esFavorita/{idUsuario}/{idRutina}")
+    public ResponseEntity<Object> esFavorita(@PathVariable Long idUsuario,
+            @PathVariable Long idRutina) {
+        return Response.ok(rutinaService.esFavorita(idRutina, idUsuario));
+    }
+
+    @GetMapping("/rutinasFavoritas/{idUsuario}")
+    public ResponseEntity<Object> listaComunidadesFavoritas(@PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String nombreRutina) {
+        List<Rutina> rutinas = rutinaService.rutinasFavoritas(idUsuario, nombreRutina, page, size);
+        return Response.ok(rutinas);
     }
 
 }

@@ -60,7 +60,7 @@ public class ComunidadService {
         int disponibilidad = comunidadRepository.cuposDisponibles(idComunidad);
         List<Usuario> solicitudes = this.usuarioRepository.solicititudesPendientes(idComunidad);
         int minimo = Math.min(disponibilidad, solicitudes.size());
-        //ver aca que onda
+        // ver aca que onda
         for (int i = 0; i < minimo; i++) {
             aceptarSolicitud(solicitudes.get(i).getId(), idComunidad);
         }
@@ -96,20 +96,23 @@ public class ComunidadService {
             return "El usuario no pertenece a la comunidad.";
         }
         comunidadRepository.miembroSaliente(idComunidad, idUsuario);
+        if (comunidadRepository.esFavorita(idComunidad, idUsuario)) {
+            comunidadRepository.eliminarComoFavorita(idComunidad, idUsuario);
+        }
         return "Exito al salir de la comunidad";
     }
 
-      // Método para obtener comunidades con paginación
-      public List<Comunidad> obtenerComunidadesDisponiblesPaginadas(String nombreUsuario,int page, int size) {
-        int skip = page * size;  // Cálculo de los resultados a omitir
-        return comunidadRepository.disponibles(nombreUsuario,skip, size);
-    }
-    public List<Comunidad> miembroUsuario(Long idUsuario, String nombreComunidad,int page, int size) {
-        int skip = page * size;  // Cálculo de los resultados a omitir
-        String filtroNombre = (nombreComunidad == null || nombreComunidad.trim().isEmpty()) ? "" : nombreComunidad;
-        return comunidadRepository.miembroUsuario(idUsuario,filtroNombre,skip,size);
+    // Método para obtener comunidades con paginación
+    public List<Comunidad> obtenerComunidadesDisponiblesPaginadas(String nombreUsuario, int page, int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
+        return comunidadRepository.disponibles(nombreUsuario, skip, size);
     }
 
+    public List<Comunidad> miembroUsuario(Long idUsuario, String nombreComunidad, int page, int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
+        String filtroNombre = (nombreComunidad == null || nombreComunidad.trim().isEmpty()) ? "" : nombreComunidad;
+        return comunidadRepository.miembroUsuario(idUsuario, filtroNombre, skip, size);
+    }
 
     public List<ScoreComunidad> obtenerSugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario) {
         List<ScoreComunidad> sugerencias = comunidadRepository.sugerenciasDeComunidadesBasadasEnAmigos2(nombreUsuario);
@@ -133,7 +136,8 @@ public class ComunidadService {
         return sugerencias;
     }
 
-    public Map<String, Object> obtenerSugerenciasComunidadesConTotalPaginas(String nombreUsuario, int page, int pageSize) {
+    public Map<String, Object> obtenerSugerenciasComunidadesConTotalPaginas(String nombreUsuario, int page,
+            int pageSize) {
         // Obtener todas las sugerencias de comunidades desde las tres consultas
         List<ScoreComunidad> sugerenciasAmigos = comunidadRepository
                 .sugerenciasDeComunidadesBasadasEnAmigos2(nombreUsuario);
@@ -171,30 +175,29 @@ public class ComunidadService {
         // Ordenar la lista por score en orden descendente
         listaSugerenciasSinDuplicados.sort((a, b) -> Double.compare(b.getScore(), a.getScore())); // Orden descendente
 
-       // Calcular el total de páginas
+        // Calcular el total de páginas
         int totalElementos = listaSugerenciasSinDuplicados.size();
         int totalPaginas = (int) Math.ceil((double) totalElementos / pageSize);
-    
+
         // Paginar la lista
         int start = page * pageSize;
         int end = Math.min(start + pageSize, listaSugerenciasSinDuplicados.size());
-    
+
         if (start > end) {
             return Collections.emptyMap(); // Si la página está fuera de rango
         }
-    
+
         // Crear el mapa con los datos de eventos y el total de páginas
         Map<String, Object> result = new HashMap<>();
         result.put("data", listaSugerenciasSinDuplicados.subList(start, end)); // Eventos de la página
         result.put("totalPaginas", totalPaginas); // Total de páginas
-    
+
         return result;
     }
 
-   
     public List<Comunidad> comunidadesEtiquetas(List<String> etiquetas, String tipo, Long usuarioId) {
         if ("disponibles".equalsIgnoreCase(tipo)) {
-            return comunidadRepository.comunidadesEtiquetasDisponibles(usuarioId,etiquetas);
+            return comunidadRepository.comunidadesEtiquetasDisponibles(usuarioId, etiquetas);
         } else if ("miembro".equalsIgnoreCase(tipo)) {
             return comunidadRepository.comunidadesEtiquetasMiembro(usuarioId, etiquetas);
         } else {
@@ -212,7 +215,7 @@ public class ComunidadService {
         }
     }
 
-    public List<Comunidad> comunidadesParticipantes(String tipo, Long usuarioId,int min, int max) {
+    public List<Comunidad> comunidadesParticipantes(String tipo, Long usuarioId, int min, int max) {
         if ("disponibles".equalsIgnoreCase(tipo)) {
             return comunidadRepository.comunidadesCantidadParticipantesDisponibles(usuarioId, min, max);
         } else if ("miembro".equalsIgnoreCase(tipo)) {
@@ -239,4 +242,23 @@ public class ComunidadService {
         }
         return false;
     }
+
+    public void cambiarEstadoFavorita(Long idComunidad, Long idUsuario) {
+        if (comunidadRepository.esFavorita(idComunidad, idUsuario)) {
+            comunidadRepository.eliminarComoFavorita(idComunidad, idUsuario);
+        } else {
+            comunidadRepository.marcarComoFavorita(idComunidad, idUsuario);
+        }
+    }
+
+    public boolean esFavorita(Long idComunidad, Long idUsuario) {
+        return comunidadRepository.esFavorita(idComunidad, idUsuario);
+    }
+
+    public List<Comunidad> comunidadesFavoritas(Long idUsuario, String nombreComunidad, int page, int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
+        String filtroNombre = (nombreComunidad == null || nombreComunidad.trim().isEmpty()) ? "" : nombreComunidad;
+        return comunidadRepository.listaFavoritas(idUsuario, filtroNombre, skip, size);
+    }
+
 }

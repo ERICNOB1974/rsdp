@@ -147,7 +147,7 @@ export class ComunidadService {
     // Agregamos los parámetros min y max a la URL
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/filtrar/participantes`, {
       params: {
-        tipo:tipoTab,
+        tipo: tipoTab,
         usuarioId: usuarioId,
         min: min.toString(),  // Convertimos a string porque los parámetros de URL deben ser strings
         max: max.toString()
@@ -156,35 +156,54 @@ export class ComunidadService {
   }
 
   filtrarNombre(nombre: string, tipoTab: string, usuarioId: number): Observable<DataPackage> {
-    return this.http.get<DataPackage>(`${this.comunidadesUrl}/filtrar/nombre`, 
-      { params: {
-        nombre: nombre,
-        tipo: tipoTab,
-        usuarioId: usuarioId}  
+    return this.http.get<DataPackage>(`${this.comunidadesUrl}/filtrar/nombre`,
+      {
+        params: {
+          nombre: nombre,
+          tipo: tipoTab,
+          usuarioId: usuarioId
+        }
       });
   }
 
 
   filtrarEtiqueta(etiquetas: string[], tipo: string, usuarioId: number): Observable<DataPackage> {
     let params = new HttpParams().set('etiquetas', etiquetas.join(',')); // convierte el array a una cadena separada por comas
-    
+
     if (tipo) {
       params = params.set('tipo', tipo); // agrega el tipo si está definido
     }
-    
+
     if (usuarioId) {
       params = params.set('usuarioId', usuarioId.toString()); // agrega el idUsuario si está definido
     }
-  
+
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/filtrar/etiquetas`, { params });
   }
-  
+
 
   comunidadesCreadasPorUsuario(offset: number, limit: number): Observable<DataPackage> {
     const userId = this.authService.getUsuarioId();
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/comunidadesCreadasPorUsuario/${userId}?offset=${offset}&limit=${limit}`);
   }
 
+
+  marcarComunidadFavorita(idComunidad: number) {
+    const userId = this.authService.getUsuarioId();
+    return this.http.post(`${this.comunidadesUrl}/cambiarFavorito/${userId}/${idComunidad}`, null);
+  }
+
+  esFavorita(idComunidad: number) {
+    const userId = this.authService.getUsuarioId();
+    return this.http.get<DataPackage>(`${this.comunidadesUrl}/esFavorita/${userId}/${idComunidad}`);
+  }
+
+
+  comunidadesFavoritas(idUsuario: number, nombreComunidad: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.comunidadesUrl}/comunidadesFavoritas/${idUsuario}?page=${page}&size=${size}` +
+      (nombreComunidad ? `&nombreComunidad=${nombreComunidad}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+  }
   enviarNotificacionComunidad(mensaje: string, asunto: string, usuarios: Usuario[], nombreActividad:string): Observable<DataPackage> {
 
     const nombreUsuario = this.authService.getNombreUsuario();

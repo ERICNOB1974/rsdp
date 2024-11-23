@@ -9,7 +9,6 @@ import { CrearComunidadComponent } from './comunidades/crearComunidad.component'
 import { SugerenciasAmigosComponent } from './sugerencias/sugerenciasAmigos.component';
 import { SugerenciasEventosComponent } from './sugerencias/sugerenciasEventos.component';
 import { SugerenciasComunidadesComponent } from './sugerencias/sugerenciasComunidades.component';
-import { ComunidadDetailComponent } from './comunidades/comunidades-detail.component';
 import { LoginComponent } from './login/login.component';
 import { AuthGuard } from './autenticacion/auth.guard';
 import { RegistroComponent } from './registro/registro.component';
@@ -48,7 +47,6 @@ export const routes: Routes = [
   { path: 'comunidades', component: ComunidadesComponent, canActivate: [AuthGuard] },
   { path: 'comunidadesUsuario', component: ComunidadesCreadasUsuarioComponent, canActivate: [AuthGuard] },
   { path: 'comunidades/crearComunidad', component: CrearComunidadComponent, canActivate: [AuthGuard] },
-  { path: 'comunidades/:id', component: ComunidadDetailComponent, canActivate: [AuthGuard] },
   { path: 'comunidades/:comunidadId/eventos/crearEvento', component: CrearEventoComponent, canActivate: [AuthGuard] },
   { path: 'creadorComunidad/:id', component: ComunidadCreadorComponent,  canActivate: [AuthGuard] },
   { path: 'editarComunidad/:id', component: EditarComunidadComponent,  canActivate: [AuthGuard] },
