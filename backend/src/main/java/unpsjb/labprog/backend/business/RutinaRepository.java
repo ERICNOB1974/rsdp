@@ -339,7 +339,7 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
             MATCH (r:Rutina)
             MATCH (u)-[:RUTINA_FAVORITA]->(r)
             WHERE (toLower(r.nombre) CONTAINS toLower($nombreRutina) OR $nombreRutina = '')
-            RETURN r
+            RETURN r ORDER BY r.nombre
             SKIP $skip
             LIMIT $limit
             """)

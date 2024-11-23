@@ -21,7 +21,7 @@ import { EventoService } from '../eventos/evento.service';
     standalone: true,
     imports: [CommonModule, FormsModule, NgIf],
     templateUrl: './muroComunidad.component.html',
-    styleUrls: ['./comunidadMuro.css', '../css/estrella.css']
+    styleUrls: ['./comunidadMuro.css']
 })
 export class MuroComunidadComponent implements OnInit {
     comunidad!: Comunidad;

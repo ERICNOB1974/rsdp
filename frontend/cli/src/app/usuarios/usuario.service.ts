@@ -193,8 +193,8 @@ export class UsuarioService {
   invitacionComunidad(idUsuarioReceptor: number, idComunidad: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.emailUrl}/invitacionComunidad/${this.idUsuarioAutenticado}/${idUsuarioReceptor}/${idComunidad}`);
   }
-  usuariosLikePublicacion(idPublicacion: number): Observable<DataPackage> {
-    return this.http.get<DataPackage>(` ${this.usuariosUrl}/likesPublicacion/${idPublicacion}`);
+  usuariosLikePublicacion(idPublicacion: number,page: number, size: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.usuariosUrl}/likesPublicacion/${idPublicacion}?page=${page}&size=${size}`);
   }
 
 }
