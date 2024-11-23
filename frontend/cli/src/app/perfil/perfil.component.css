@@ -490,3 +490,35 @@ perfil-eventos {
     border: 1px solid #ccc;
     border-radius: 4px;
   }
+
+
+
+  .sub-tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.sub-tabs button {
+    padding: 8px 16px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    color: #333;
+    cursor: pointer;
+    font-size: 14px;
+    margin: 0 8px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.sub-tabs button:hover {
+    background-color: #eaeaea;
+}
+
+.sub-tabs button.active {
+    background-color: #007bff; /* Color de fondo del tab activo */
+    color: white; /* Color de texto del tab activo */
+    border-color: #007bff;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Efecto de sombra */
+}

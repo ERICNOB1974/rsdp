@@ -42,12 +42,14 @@ export class MuroComunidadComponent implements OnInit {
     esAdministrador: boolean = false;
     currentIndexPublicaciones: number = 0;
     cantidadPorPagina: number = 6;
-    noMasPublicaciones: boolean =false;
+    noMasPublicaciones: boolean = false;
     loandingPublicaciones: boolean = false;
     amigosNoEnComunidad: any[] = [];
     amigosEnComunidad: any[] = [];
     amigosYaInvitados: any[] = [];
     cantidadMiembros: number = 0;
+    esFavorito: boolean = false;
+
 
     @ViewChild('modalInvitarAmigos') modalInvitarAmigos!: TemplateRef<any>;
 
@@ -75,6 +77,12 @@ export class MuroComunidadComponent implements OnInit {
                 this.getPublicaciones();
                 this.traerMiembros();
                 this.obtenerEventosDeLaComunidad();
+            }
+
+            if (this.esParte) {
+                this.comunidadService.esFavorita(this.comunidad.id).subscribe(dataPackage => {
+                    this.esFavorito = dataPackage.data as unknown as boolean;
+                });
             }
             this.cargarAmigos();
         });
@@ -176,25 +184,25 @@ export class MuroComunidadComponent implements OnInit {
         this.loandingPublicaciones = true;
         // Suponiendo que tienes un método que obtiene más comunidades con paginación
         this.publicacionService
-        .publicacionesComunidad(this.idComunidad,this.currentIndexPublicaciones, this.cantidadPorPagina)
-        .subscribe(
-          async (dataPackage) => {
-            const resultados = dataPackage.data as Publicacion[]
-            if (resultados && resultados.length > 0) {
-                this.publicaciones = [...this.publicaciones, ...resultados,];
-                this.currentIndexPublicaciones++; // Aumentar el índice para la siguiente carga
-    
-              } else {
-                this.noMasPublicaciones = true; // No hay más comunidades por cargar
-              }
-              this.loandingPublicaciones = false; // Desactivar el indicador de carga
-            },
-            (error) => {
-              console.error('Error al cargar las publicaciones:', error);
-              this.loandingPublicaciones = false;
-            }
-          );
-      }
+            .publicacionesComunidad(this.idComunidad, this.currentIndexPublicaciones, this.cantidadPorPagina)
+            .subscribe(
+                async (dataPackage) => {
+                    const resultados = dataPackage.data as Publicacion[]
+                    if (resultados && resultados.length > 0) {
+                        this.publicaciones = [...this.publicaciones, ...resultados,];
+                        this.currentIndexPublicaciones++; // Aumentar el índice para la siguiente carga
+
+                    } else {
+                        this.noMasPublicaciones = true; // No hay más comunidades por cargar
+                    }
+                    this.loandingPublicaciones = false; // Desactivar el indicador de carga
+                },
+                (error) => {
+                    console.error('Error al cargar las publicaciones:', error);
+                    this.loandingPublicaciones = false;
+                }
+            );
+    }
 
     async traerMiembros(): Promise<void> {
         this.usuarioService.miembrosComunidad(this.comunidad.id).subscribe(async dataPackage => {
@@ -365,7 +373,7 @@ export class MuroComunidadComponent implements OnInit {
 
             // Iterar sobre los miembros y añadir solo aquellos que sean visibles
             this.miembros.forEach(miembro => {
- 
+
 
                 if (miembro.id === this.idUsuarioAutenticado) {
                     // Siempre mostrar el usuario que está viendo la lista
@@ -481,15 +489,15 @@ export class MuroComunidadComponent implements OnInit {
 
     onScroll(tabName: string): void {
         const element = document.querySelector('.publicaciones-list') as HTMLElement; //si se quiere hacer scroll en otros lados. llamar a todos con el mismo class en el div
-    
+
         if (element) {
             // Detecta si se ha alcanzado el final del scroll
             const isAtBottom = element.scrollTop + element.clientHeight >= element.scrollHeight - 1;
-    
+
             if (isAtBottom) {
                 switch (tabName) {
                     case 'publicaciones':
-                        this.getPublicaciones(); 
+                        this.getPublicaciones();
                         break;
                     default:
                         console.error('Vista no reconocida:', tabName);
@@ -498,5 +506,18 @@ export class MuroComunidadComponent implements OnInit {
         } else {
             console.error('.scrollable-list no encontrado.');
         }
+    }
+
+    async toggleFavorito() {
+        this.esFavorito = !this.esFavorito;
+        await lastValueFrom(this.comunidadService.marcarComunidadFavorita(this.comunidad.id));
+        const mensaje = this.esFavorito
+            ? 'Comunidad marcada como favorita'
+            : 'Comunidad quitada de favoritas';
+
+        this.snackBar.open(mensaje, 'Cerrar', {
+            duration: 3000,
+        });
+        // Aquí envías la actualización al backend para registrar el cambio.
     }
 }

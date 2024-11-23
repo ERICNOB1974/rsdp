@@ -307,12 +307,15 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
         List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(Long idUsuario, Long idComunidad);
 
         @Query("""
-                                               MATCH (p:Publicacion)
-                        WHERE id(p) = 10908
+                        MATCH (p:Publicacion)
+                        WHERE id(p) = $publicacionId
                         MATCH (u:Usuario)-[:LIKE]-(p)
-                        RETURN u
+                        RETURN u ORDER BY u.nombreUsuario DESC
+                        SKIP $skip
+                        LIMIT $limit
                         """)
-        List<Usuario> likesPublicacion(@Param("publicacionId") Long publicacionId);
+        List<Usuario> likesPublicacion(@Param("publicacionId") Long publicacionId, @Param("skip") int skip,
+        @Param("limit") int limit);
   
     @Query("""
             MATCH (u:Usuario {nombreUsuario: $nombreUsuario}) // Usuario que hace la consulta

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Location } from '@angular/common';
 import { CommonModule } from '@angular/common'; // Para permitir navegar de vuelta
@@ -11,6 +11,7 @@ import { Comentario } from './Comentario';
 import { AuthService } from '../autenticacion/auth.service';
 import { Usuario } from '../usuarios/usuario';
 import { UsuarioService } from '../usuarios/usuario.service';
+import { MatDialog } from '@angular/material/dialog';
 
 
 
@@ -27,15 +28,20 @@ export class PublicacionDetailComponent implements OnInit {
   isActive: boolean = false;
   usuarioId!: number;
   numeroLikes!: number;
+  usuariosLikes: any[] = []; // Lista de usuarios que dieron like
+  loadingLikes: boolean = false; // Estado de carga
+  currentPageLikes: number = 0; // Página actual para paginación
+  @ViewChild('modalLikes') modalLikes!: TemplateRef<any>;
+
 
   constructor(
     private route: ActivatedRoute,
-    private publicacionService: PublicacionService, 
-    private usuarioService: UsuarioService, 
-    private location: Location, 
+    private publicacionService: PublicacionService,
+    private usuarioService: UsuarioService,
+    private location: Location,
     private router: Router,
     private snackBar: MatSnackBar,
-    private el: ElementRef,
+    private dialog: MatDialog,
     private authService: AuthService
   ) { }
 
@@ -48,6 +54,8 @@ export class PublicacionDetailComponent implements OnInit {
   displayedComments: Comentario[] = [];
   commentsToShow: number = 4; // Número de comentarios a mostrar inicialmente
   isOwnPublication: boolean = false;
+  cantidadPorPagina: number = 2;
+  noMasUsuarios = false;
 
   toggleLike() {
     if (this.isLiked) {
@@ -62,10 +70,65 @@ export class PublicacionDetailComponent implements OnInit {
   }
 
 
-  usuariosQueLikearon(){
-    this.usuarioService.usuariosLikePublicacion(this.publicacion.id).subscribe(dataPackage=>{
-      this.usuariosLike = dataPackage.data as Usuario[];
-    })
+
+  abrirModalLikes(): void {
+    this.currentPageLikes = 0;
+    this.usuariosLikes = [];
+    this.cargarUsuariosLikes();
+
+    this.dialog.open(this.modalLikes, {
+      width: '500px',
+      height: '400px', // Limita la altura del modal
+      data: {
+        usuariosLikes: this.usuariosLikes,
+        cargarUsuariosLikes: this.cargarUsuariosLikes.bind(this),
+      },
+    });
+  }
+
+  cargarUsuariosLikes(): void {
+    if (this.loadingLikes || this.noMasUsuarios) {
+      return; // Evita duplicar peticiones si ya está cargando o no hay más usuarios
+    }
+  
+    this.loadingLikes = true;
+    this.usuarioService.usuariosLikePublicacion(this.publicacion.id, this.currentPageLikes, this.cantidadPorPagina).subscribe(
+      (response) => {
+        const usuarios = response.data as Usuario[]; // Aquí "data" es el array esperado
+        if (Array.isArray(usuarios) && usuarios.length > 0) {
+
+          this.usuariosLikes = [...this.usuariosLikes, ...usuarios];
+          this.currentPageLikes++;
+          this.loadingLikes = false;
+          if (usuarios.length < this.cantidadPorPagina) {
+            this.noMasUsuarios = true;
+          }
+        } else {
+          this.noMasUsuarios = true;  // No hay más resultados
+        }
+        this.loadingLikes = false;  // Desactivamos el indicador de carga
+      },
+      (error) => {
+        console.error('Error al cargar todas las rutinas:', error);
+        this.loadingLikes = false;
+      }
+      ,);
+  }
+
+
+  onScroll(event: any): void {
+    const element = event.target as HTMLElement;
+  
+    // Detectar si está cerca del final del scroll
+    const nearBottom = element.scrollHeight - element.scrollTop <= element.clientHeight + 50;
+  
+    if (nearBottom && !this.loadingLikes && !this.noMasUsuarios) {
+      this.cargarUsuariosLikes();
+    }
+  }
+  
+  cerrarModal(): void {
+    this.dialog.closeAll();
   }
 
   checkIfOwnPublication(): void {

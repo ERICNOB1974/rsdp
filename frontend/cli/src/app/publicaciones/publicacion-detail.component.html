@@ -15,7 +15,8 @@
     <div class="heart-container">
       <i class="heart" [ngClass]="isLiked ? 'fas fa-heart liked' : 'far fa-heart'" (click)="toggleLike()">
       </i>
-      <span class="likes-count">{{ numeroLikes }}</span>
+      <span class="likes-count" (click)="abrirModalLikes()">{{ numeroLikes }}</span>
+
       <div class="comment-icon" (click)="showCommentInput = !showCommentInput">
         <i class="fa fa-comment"></i>
       </div>
@@ -55,3 +56,38 @@
   </div>
 
 </div>
+
+
+<ng-template #modalLikes>
+  <div class="modal-header">
+    <h5 class="modal-title">Usuarios que dieron like</h5>
+    <button type="button" class="close btn-close" (click)="cerrarModal()" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body likes-list-container" (scroll)="onScroll($event)">
+    <div *ngFor="let usuario of usuariosLikes" class="like-item d-flex align-items-center p-2 border-bottom">
+      <a [routerLink]="['/perfil', usuario.id]" style="text-decoration: none; display: flex; align-items: center;"
+        (click)="cerrarModal()">
+        >
+        <img [src]="usuario.fotoPerfil" alt="foto de Perfil"
+          style="width: 30px; height: 30px; border-radius: 50%; margin-right: 8px;">
+      </a>
+      <a [routerLink]="['/perfil', usuario.id]" style="text-decoration: none; color: #000000;" (click)="cerrarModal()">
+        >
+        <span class="username" style="font-size: 12px; font-weight: bold;">{{ usuario.nombreUsuario }}</span>
+      </a>
+    </div>
+    <div *ngIf="loadingLikes" class="text-center mt-3">
+      <span>Cargando...</span>
+    </div>
+  </div>
+
+
+
+  <div *ngIf="usuariosLikes.length === 0 && !loadingLikes" class="text-muted text-center mt-3">
+    No hay likes en esta publicación.
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
+  </div>
+</ng-template>

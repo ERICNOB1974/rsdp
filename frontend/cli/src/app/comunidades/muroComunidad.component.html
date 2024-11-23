@@ -6,7 +6,16 @@
     <img src="../../assets/comunidad.jpg" class="muro-imagen">
   </div>
 
-  <h1>{{ comunidad.nombre }}</h1>
+  <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+    <h1 style="text-align: center; margin: 0;">{{ comunidad.nombre }}</h1>
+    <i class="bi" [ngClass]="{'bi-star-fill': esFavorito, 'bi-star': !esFavorito}"
+      [ngStyle]="{'color': esFavorito ? 'gold' : 'gray', 'font-size': '8dvh', 'cursor': 'pointer'}"
+     (click)="toggleFavorito()">
+    </i>
+  </div>
+
+
+
 
   <button *ngIf="!esCreador" class="btn btn-primary btn-block ingresar-button"
     [disabled]="!(salirValid() || !inscribirseValid())" (click)="salirValid() ? salir() : ingresar()">
@@ -64,7 +73,8 @@
         <div class="eventos-grid">
           <div class="evento-item" *ngFor="let evento of eventos" (click)="irADetalleEvento(evento.id)">
             <!-- Imagen del evento como fondo -->
-            <div class="evento-imagen" [style.backgroundImage]="'url(' +  (evento.imagen || '../../assets/evento.webp') + ')'"></div>
+            <div class="evento-imagen"
+              [style.backgroundImage]="'url(' +  (evento.imagen || '../../assets/evento.webp') + ')'"></div>
 
             <!-- Contenido principal (visible siempre) -->
             <div class="evento-contenido">
