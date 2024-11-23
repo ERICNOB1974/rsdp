@@ -1,3 +1,5 @@
+
+
 /* Asegura que el texto del evento envuelva en lugar de cortarse */
 .fc-daygrid-event .fc-event-title {
   white-space: normal; /* Permite que el texto se envuelva */
