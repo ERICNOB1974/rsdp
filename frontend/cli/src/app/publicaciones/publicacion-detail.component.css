@@ -35,7 +35,7 @@
 .heart {
   font-size: 4dvh;
   cursor: pointer;
-  color: rgb(17, 1, 1); 
+  color: rgb(17, 1, 1);
 }
 
 .heart.liked {
@@ -103,7 +103,7 @@
 
 .likes-count {
   font-size: 14px;
-  color: #666;
+  color: #422222;
 }
 
 .date {

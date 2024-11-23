@@ -39,30 +39,37 @@ public class UsuarioService {
         return usuarioRepository.amigos(nombreUsuario);
     }
 
-   public List<Usuario> amigosPaginados(String nombreUsuario, String nombreUsuarioFiltrar,int page, int size) {
-        int skip = page * size;  // Cálculo de los resultados a omitir
+    public List<Usuario> amigosPaginados(String nombreUsuario, String nombreUsuarioFiltrar, int page, int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
 
-        String filtroNombre = (nombreUsuarioFiltrar == null || nombreUsuarioFiltrar.trim().isEmpty()) ? "" : nombreUsuarioFiltrar;
-        return usuarioRepository.amigosPaginados(nombreUsuario,filtroNombre,skip,size);
+        String filtroNombre = (nombreUsuarioFiltrar == null || nombreUsuarioFiltrar.trim().isEmpty()) ? ""
+                : nombreUsuarioFiltrar;
+        return usuarioRepository.amigosPaginados(nombreUsuario, filtroNombre, skip, size);
     }
+
     public List<Usuario> solicitudes(String nombreUsuario) {
         return usuarioRepository.solicitudesDeAmistad(nombreUsuario);
     }
-      public List<Usuario> solicitudesPaginadas(String nombreUsuario, String nombreUsuarioFiltrar,int page, int size) {
-        int skip = page * size;  // Cálculo de los resultados a omitir
-        String filtroNombre = (nombreUsuarioFiltrar == null || nombreUsuarioFiltrar.trim().isEmpty()) ? "" : nombreUsuarioFiltrar;
-        return usuarioRepository.solicitudesPaginadas(nombreUsuario,filtroNombre,skip,size);
+
+    public List<Usuario> solicitudesPaginadas(String nombreUsuario, String nombreUsuarioFiltrar, int page, int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
+        String filtroNombre = (nombreUsuarioFiltrar == null || nombreUsuarioFiltrar.trim().isEmpty()) ? ""
+                : nombreUsuarioFiltrar;
+        return usuarioRepository.solicitudesPaginadas(nombreUsuario, filtroNombre, skip, size);
     }
 
     public List<Usuario> solicitudesEnviadas(String nombreUsuario) {
         return usuarioRepository.solicitudesDeAmistadEnviadas(nombreUsuario);
     }
 
-  public List<Usuario> solicitudesEnviadasPaginadas(String nombreUsuario, String nombreUsuarioFiltrar,int page, int size) {
-        int skip = page * size;  // Cálculo de los resultados a omitir
-        String filtroNombre = (nombreUsuarioFiltrar == null || nombreUsuarioFiltrar.trim().isEmpty()) ? "" : nombreUsuarioFiltrar;
-        return usuarioRepository.solicitudesEnviadasPaginadas(nombreUsuario,filtroNombre,skip,size);
+    public List<Usuario> solicitudesEnviadasPaginadas(String nombreUsuario, String nombreUsuarioFiltrar, int page,
+            int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
+        String filtroNombre = (nombreUsuarioFiltrar == null || nombreUsuarioFiltrar.trim().isEmpty()) ? ""
+                : nombreUsuarioFiltrar;
+        return usuarioRepository.solicitudesEnviadasPaginadas(nombreUsuario, filtroNombre, skip, size);
     }
+
     public List<Usuario> amigosDeAmigos(String nombreUsuario) {
         return usuarioRepository.amigosDeAmigos(nombreUsuario);
     }
@@ -127,10 +134,10 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
 
-    public List<Usuario> buscarUsuarios(String nombreUsuario, String term,int page, int size) {
-        int skip = page * size;  // Cálculo de los resultados a omitir
+    public List<Usuario> buscarUsuarios(String nombreUsuario, String term, int page, int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
         String filtroNombre = (term == null || term.trim().isEmpty()) ? "" : term;
-        return usuarioRepository.buscarUsuarios(nombreUsuario, filtroNombre,skip,size);
+        return usuarioRepository.buscarUsuarios(nombreUsuario, filtroNombre, skip, size);
     }
 
     public boolean sonAmigos(Long idEmisor, Long idReceptor) {
@@ -174,22 +181,16 @@ public class UsuarioService {
 
     public List<ScoreAmigo> sugerenciaDeAmigosBasadaEnAmigos2(String nombreUsuario) {
         List<ScoreAmigo> sugerencias = usuarioRepository.sugerenciaDeAmigosBasadaEnAmigos2(nombreUsuario);
-        sugerencias
-                .forEach(s -> System.out.println("Comunidad: " + s.getUsuario().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
     public List<ScoreAmigo> sugerenciasDeAmigosBasadosEnEventos2(String nombreUsuario) {
         List<ScoreAmigo> sugerencias = usuarioRepository.sugerenciasDeAmigosBasadosEnEventos2(nombreUsuario);
-        sugerencias
-                .forEach(s -> System.out.println("Comunidad: " + s.getUsuario().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
     public List<ScoreAmigo> sugerenciasDeAmigosBasadosEnComunidades2(String nombreUsuario) {
         List<ScoreAmigo> sugerencias = usuarioRepository.sugerenciasDeAmigosBasadosEnComunidades2(nombreUsuario);
-        sugerencias
-                .forEach(s -> System.out.println("Comunidad: " + s.getUsuario().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
@@ -287,8 +288,10 @@ public class UsuarioService {
         return usuarioRepository.buscarCreadorDeUnEventoInterno(comunidadId, eventoId);
     }
 
-    public List<Usuario> likesPublicacion(Long idPublicacion, int skip,
-                         int limit) {
-        return usuarioRepository.likesPublicacion(idPublicacion, skip, limit);
+    public List<Usuario> likesPublicacion(Long idPublicacion, int page,
+            int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
+
+        return usuarioRepository.likesPublicacion(idPublicacion, skip, size);
     }
 }

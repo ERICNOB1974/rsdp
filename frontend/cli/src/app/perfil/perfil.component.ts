@@ -355,8 +355,8 @@ export class PerfilComponent implements OnInit {
 
     const serviceCall =
       this.subTabRutinasSeleccionada === 'todas'
-        ? this.rutinaService.rutinasRealizaUsuario(this.idUsuario, "", this.currentIndexComunidades, this.cantidadPorPagina)
-        : this.rutinaService.rutinasFavoritas(this.idUsuario, "", this.currentIndexComunidades, this.cantidadPorPagina);
+        ? this.rutinaService.rutinasRealizaUsuario(this.idUsuario, "", this.currentIndexRutinas, this.cantidadPorPagina)
+        : this.rutinaService.rutinasFavoritas(this.idUsuario, "", this.currentIndexRutinas, this.cantidadPorPagina);
 
 
     serviceCall.subscribe(

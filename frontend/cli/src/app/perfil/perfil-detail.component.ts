@@ -13,7 +13,7 @@ import { NgIf } from '@angular/common';
   standalone: true,
   imports: [FormsModule, NgIf],
   templateUrl: './perfil-detail.component.html',
-  styleUrls: ['./perfil-detail.component.css']
+  styleUrls: ['./perfil-detail.component.css', '../css/crear.component.css']
 })
 export class PerfilDetailComponent implements OnInit {
   usuario!: Usuario;
@@ -132,6 +132,32 @@ export class PerfilDetailComponent implements OnInit {
   
   irACambiarCorreo(): void {
     this.router.navigate(['/cambiar-correo']);
+  }
+
+
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault(); // Prevenir el comportamiento predeterminado
+    event.stopPropagation();
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Asegurarse de que existen archivos en el evento
+    if (event.dataTransfer && event.dataTransfer.files.length > 0) {
+      const file = event.dataTransfer.files[0]; // Toma el primer archivo
+      const inputEvent = { target: { files: [file] } }; // Crea un evento similar al del input
+      this.onFileSelect(inputEvent); // Reutiliza tu lógica para manejar el archivo
+    }
+  }
+
+
+  eliminarArchivo(): void {
+    this.vistaPreviaArchivo = null;
+    this.formatoValido = false;
+    this.usuario.fotoPerfil = '';
   }
 
 }
