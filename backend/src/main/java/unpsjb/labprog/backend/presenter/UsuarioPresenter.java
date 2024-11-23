@@ -363,5 +363,9 @@ public class UsuarioPresenter {
         @RequestParam(defaultValue = "10") int size) {
         return Response.ok(usuarioService.buscarUsuarios(nombreUsuario, term,page,size));
     }
+    @GetMapping("/likesPublicacion/{idPublicacion}")
+    public ResponseEntity<Object> likesPublicacion(@PathVariable Long idPublicacion) {
+        return Response.ok(usuarioService.likesPublicacion(idPublicacion));
+    }
 
 }
