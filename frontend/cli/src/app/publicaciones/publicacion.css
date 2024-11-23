@@ -128,3 +128,8 @@ p {
   margin: 0;
   color: #262626;
 }
+
+.custom-dialog .likes-list-container {
+  max-height: 300px; /* Ajusta según lo necesites */
+  overflow-y: auto; /* Habilita desplazamiento vertical */
+}
