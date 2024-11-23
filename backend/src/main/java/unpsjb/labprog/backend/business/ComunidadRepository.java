@@ -370,7 +370,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
             MATCH (c:Comunidad)
             MATCH (u)-[:COMUNIDAD_FAVORITA]->(c)
             WHERE (toLower(c.nombre) CONTAINS toLower($nombreComunidad) OR $nombreComunidad = '')
-            RETURN c
+            RETURN c ORDER BY c.nombre DESC
             SKIP $skip
             LIMIT $limit
             """)

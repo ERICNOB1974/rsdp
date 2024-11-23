@@ -350,14 +350,14 @@ export class PerfilComponent implements OnInit {
 
   // Método para cargar todas las rutinas (sin filtro)
   cargarRutinas(): void {
+    if (this.loadingRutinas || this.noMasRutinas) return;  // Si ya estamos cargando o no hay más resultados, no hacemos nada
+    this.loadingRutinas = true;
+
     const serviceCall =
       this.subTabRutinasSeleccionada === 'todas'
         ? this.rutinaService.rutinasRealizaUsuario(this.idUsuario, "", this.currentIndexComunidades, this.cantidadPorPagina)
         : this.rutinaService.rutinasFavoritas(this.idUsuario, "", this.currentIndexComunidades, this.cantidadPorPagina);
 
-    if (this.loadingRutinas || this.noMasRutinas) return;  // Si ya estamos cargando o no hay más resultados, no hacemos nada
-
-    this.loadingRutinas = true;
 
     serviceCall.subscribe(
       (dataPackage) => {
@@ -387,22 +387,27 @@ export class PerfilComponent implements OnInit {
 
     this.loadingRutinas = true;
 
-    this.rutinaService.rutinasRealizaUsuario(this.idUsuario, nombre, this.currentIndexRutinas, this.cantidadPorPagina).subscribe(
-      (dataPackage) => {
-        const responseData = dataPackage.data;
-        if (Array.isArray(responseData) && responseData.length > 0) {
-          this.traerDias(responseData);
-          this.traerEtiquetas(responseData);
-          this.historicoRutinas = [...this.historicoRutinas, ...responseData];  // Agregamos las nuevas rutinas
-          this.currentIndexRutinas++;  // Incrementamos el índice para la siguiente carga
-          if (responseData.length < this.cantidadPorPagina) {
-            this.noMasRutinas = true;
-          }
-        } else {
-          this.noMasRutinas = true;  // No hay más resultados
+    const serviceCall =
+      this.subTabRutinasSeleccionada === 'todas'
+        ? this.rutinaService.rutinasRealizaUsuario(this.idUsuario, nombre, this.currentIndexComunidades, this.cantidadPorPagina)
+        : this.rutinaService.rutinasFavoritas(this.idUsuario, nombre, this.currentIndexComunidades, this.cantidadPorPagina);
+
+
+    serviceCall.subscribe((dataPackage) => {
+      const responseData = dataPackage.data;
+      if (Array.isArray(responseData) && responseData.length > 0) {
+        this.traerDias(responseData);
+        this.traerEtiquetas(responseData);
+        this.historicoRutinas = [...this.historicoRutinas, ...responseData];  // Agregamos las nuevas rutinas
+        this.currentIndexRutinas++;  // Incrementamos el índice para la siguiente carga
+        if (responseData.length < this.cantidadPorPagina) {
+          this.noMasRutinas = true;
         }
-        this.loadingRutinas = false;  // Desactivamos el indicador de carga
-      },
+      } else {
+        this.noMasRutinas = true;  // No hay más resultados
+      }
+      this.loadingRutinas = false;  // Desactivamos el indicador de carga
+    },
       (error) => {
         console.error('Error al cargar rutinas filtradas:', error);
         this.loadingRutinas = false;
@@ -617,8 +622,12 @@ export class PerfilComponent implements OnInit {
 
     this.loadingComunidades = true;
 
+    const serviceCall =
+      this.subTabSeleccionada === 'todas'
+        ? this.comunidadService.miembroUsuario(this.idUsuario, nombre, this.currentIndexComunidades, this.cantidadPorPagina)
+        : this.comunidadService.comunidadesFavoritas(this.idUsuario, nombre, this.currentIndexComunidades, this.cantidadPorPagina);
 
-    this.comunidadService.miembroUsuario(this.idUsuario, nombre, this.currentIndexComunidades, this.cantidadPorPagina).subscribe(
+    serviceCall.subscribe(
       async (dataPackage) => {
         const responseData = dataPackage.data;
         if (Array.isArray(responseData) && responseData.length > 0) {
