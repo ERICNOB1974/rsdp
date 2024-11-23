@@ -125,11 +125,11 @@ body {
   
   /* Subtítulos */
   h2 {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     color: #333;
-    margin-bottom: 15px;
-    border-bottom: 2px solid #4a90e2;
+    border-bottom: 2px solid #1da1f2;
     padding-bottom: 10px;
+    margin-bottom: 15px;
   }
   
   /* Botones */
@@ -163,6 +163,58 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+  }
+  .miembro-item .actions, .solicitud-item .actions {
+    display: flex;
+    gap: 5px;
+  }
+
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f7f9fc;
+    margin: 0;
+    padding: 20px;
+  }
+  
+  .comunidad-admin {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .comunidad-titulo {
+    font-size: 2rem;
+    color: #1da1f2;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .botones-principales {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .members-list, .solicitudes-list {
+    list-style: none;
+    padding: 0;
+    overflow-y: auto;
+    max-height: 400px;
+  }
+  
+  .miembro-item, .solicitud-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #e3e6eb;
+    border-radius: 5px;
+    background-color: #f9fbfd;
+    margin-bottom: 10px;
   }
   
   .members-list li .name {
@@ -226,23 +278,22 @@ body {
     background-color: #d32f2f;
   }
   
-  /* Botón de eliminar comunidad */
   .delete-button {
-    background-color: #ff5252;
+    background-color: #ff6f61;
+    color: #fff;
     border: none;
     border-radius: 5px;
-    color: #fff;
     padding: 10px 20px;
     font-size: 1rem;
     cursor: pointer;
-    margin-top: 20px;
     display: block;
-    width: 100%;
+    margin: 20px auto 0;
     text-align: center;
+    width: 100%;
   }
   
   .delete-button:hover {
-    background-color: #d32f2f;
+    background-color: #e53935;
   }
   
   /* Responsivo */
@@ -265,3 +316,12 @@ body {
     }
   }
   
+  .avatar-circular {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    vertical-align: middle;
+    margin-right: 15px;
+    object-fit: cover;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
