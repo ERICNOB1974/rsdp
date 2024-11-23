@@ -287,7 +287,8 @@ public class UsuarioService {
         return usuarioRepository.buscarCreadorDeUnEventoInterno(comunidadId, eventoId);
     }
 
-    public List<Usuario> likesPublicacion(Long idPublicacion) {
-        return usuarioRepository.likesPublicacion(idPublicacion);
+    public List<Usuario> likesPublicacion(Long idPublicacion, int skip,
+                         int limit) {
+        return usuarioRepository.likesPublicacion(idPublicacion, skip, limit);
     }
 }

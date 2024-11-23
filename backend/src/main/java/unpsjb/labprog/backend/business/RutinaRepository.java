@@ -286,14 +286,15 @@ List<Rutina> rutinasNombreRealizaRutina(String nombre, Long usuarioId);
             @Param("limit") int limit);
 
 
-
     @Query("MATCH (r:Rutina)-[rel:REALIZA_RUTINA]-(u:Usuario) " +
             "WHERE id(u) = $idUsuario " +
             "AND (toLower(r.nombre) CONTAINS toLower($nombreRutina) OR $nombreRutina = '') " +
             "RETURN r " +
-            "ORDER BY rel.fechaComienzo ASC")
+
+            "ORDER BY rel.fechaComienzo ASC " +
+            "SKIP $skip " +
+            "LIMIT $limit")
     List<Rutina> rutinasRealizaUsuario(@Param("idUsuario") Long idUsuario,
-            @Param("nombreRutina") String nombreRutina);
 
     @Query("MATCH (r:Rutina)-[rel:REALIZA_RUTINA]-(u:Usuario) " +
             "WHERE id(u) = $idUsuario " +
@@ -315,6 +316,43 @@ List<Rutina> rutinasNombreRealizaRutina(String nombre, Long usuarioId);
             "LIMIT 1")
     boolean existeRelacionEntreUsuarioYRutina(@Param("rutinaId") Long rutinaId, @Param("usuarioId") Long usuarioId);
 
+
+
+    @Query("""
+            MATCH (u:Usuario) WHERE id(u)=$idUsuario
+            MATCH (r:Rutina) WHERE id(r) = $idRutina
+            CREATE (u)-[:RUTINA_FAVORITA]->(r)
+            """)
+    void marcarComoFavorita(Long idRutina, Long idUsuario);
+
+    @Query("""
+            MATCH (u:Usuario) WHERE id(u)=$idUsuario
+            MATCH (r:Rutina) WHERE id(r) = $idRutina
+            MATCH (u)-[p:RUTINA_FAVORITA]->(r)
+            DETACH DELETE p
+            """)
+    void eliminarComoFavorita(Long idRutina, Long idUsuario);
+
+    @Query("""
+            MATCH (u:Usuario) WHERE id(u)=$idUsuario
+            MATCH (r:Rutina) WHERE id(r) = $idRutina
+            MATCH (u)-[p:RUTINA_FAVORITA]->(r)
+            return COUNT(p)>0
+            """)
+    boolean esFavorita(Long idRutina, Long idUsuario);
+
+    @Query("""
+            MATCH (u:Usuario) WHERE id(u)=$idUsuario
+            MATCH (r:Rutina)
+            MATCH (u)-[:RUTINA_FAVORITA]->(r)
+            WHERE (toLower(r.nombre) CONTAINS toLower($nombreRutina) OR $nombreRutina = '')
+            RETURN r ORDER BY r.nombre
+            SKIP $skip
+            LIMIT $limit
+            """)
+    List<Rutina> listaFavoritas(Long idUsuario, @Param("nombreRutina") String nombreRutina,
+            @Param("skip") int skip,
+            @Param("limit") int limit);
     @Query("MATCH (u:Usuario)-[rel:DIA_FINALIZADO]->(d:Dia) " +
     "WHERE ID(u) = $usuarioId AND ID(d) = $diaId " +
     "WITH rel " +

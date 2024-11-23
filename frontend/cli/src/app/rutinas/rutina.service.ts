@@ -195,6 +195,24 @@ export class RutinaService {
     return this.http.get<DataPackage>(`${this.rutinasUrl}/obtenerProgresoActual/${rutinaId}/${usuarioId}`);
   }
 
+
+
+  marcarRutinaFavorita(idRutina: number) {
+    const userId = this.authService.getUsuarioId();
+    return this.http.post(`${this.rutinasUrl}/cambiarFavorito/${userId}/${idRutina}`, null);
+  }
+
+  esFavorita(idRutina: number) {
+    const userId = this.authService.getUsuarioId();
+    return this.http.get<DataPackage>(`${this.rutinasUrl}/esFavorita/${userId}/${idRutina}`);
+  }
+
+
+  rutinasFavoritas(idUsuario: number, nombreRutina: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.rutinasUrl}/rutinasFavoritas/${idUsuario}?page=${page}&size=${size}` +
+      (nombreRutina ? `&nombreComunidad=${nombreRutina}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+  }
 }
 
 
