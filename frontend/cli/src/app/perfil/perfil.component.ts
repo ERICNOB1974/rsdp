@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { UsuarioService } from '../usuarios/usuario.service';
@@ -18,7 +18,7 @@ import { RutinaService } from '../rutinas/rutina.service';
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, NgIf],
   templateUrl: 'perfil.component.html',
   styleUrls: ['perfil.component.css']
 })

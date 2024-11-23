@@ -62,5 +62,13 @@ public interface DiaRepository extends Neo4jRepository<Dia, Long> {
        "RETURN COUNT(df) > 0")
     boolean verificarRelacionDiaFinalizado(Long rutinaId, Long usuarioId);
 
+    @Query("MATCH (ru:Rutina)-[r:TIENE_DIA]->(d:Dia) " +
+    "WHERE id(ru) = $rutinaId " +
+    "WITH d, r.orden AS ordenDia " +
+    "ORDER BY ordenDia DESC " +
+    "RETURN id(d) AS ultimoDiaId " +
+    "LIMIT 1")
+    Long obtenerUltimoDiaDeRutina(Long rutinaId);
+
 
 }

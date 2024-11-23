@@ -13,15 +13,15 @@ import { ViewChild, TemplateRef } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
 import { AuthService } from '../autenticacion/auth.service';
-
-
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule, NgForm } from '@angular/forms';
 
 @Component({
   selector: 'app-evento-detail',
   templateUrl: './eventos-detail.component.html',
   styleUrls: ['./eventos-detail.component.css'],
   imports: [MatProgressSpinnerModule,
-    CommonModule],
+    CommonModule,FormsModule],
   standalone: true
 })
 export class EventoDetailComponent implements OnInit {
@@ -33,6 +33,8 @@ export class EventoDetailComponent implements OnInit {
     });
   }
 
+  motivo: string = '';
+  mensaje: string = '';
   evento!: Evento; // Evento específico que se va a mostrar
   isLoading: boolean = false;
   participa: boolean = false;
@@ -59,7 +61,8 @@ export class EventoDetailComponent implements OnInit {
     private usuarioService: UsuarioService,
     private authService: AuthService,
     private dialog: MatDialog,
-    private cdr: ChangeDetectorRef // Inyección de ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private modalService: NgbModal 
   ) { }
 
   ngOnInit(): void {
@@ -317,4 +320,39 @@ export class EventoDetailComponent implements OnInit {
       }
     });
   }
+
+  openModal(content: any) {
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
+  }
+
+  // Método que se llama al enviar la notificación
+  enviarNotificacion() {
+    if (this.mensaje && this.motivo) {
+      const nombreActividad = "del evento, " + this.evento.nombre;
+      this.eventoService.enviarNotificacionEvento(this.mensaje, this.motivo, this.miembros, nombreActividad).subscribe(
+        response => {
+          console.log('Notificación enviada con éxito', response);
+          this.motivo = '';
+          this.mensaje = '';
+          this.closeModal();
+          this.snackBar.open('Notificación enviada con éxito', 'Cerrar', {
+            duration: 3000,
+          });
+        },
+        error => {
+          this.snackBar.open('Error al enviar notificación', 'Cerrar', {
+            duration: 3000,
+          });
+        }
+      );
+    } else {
+      console.log('Ambos campos son obligatorios');
+    }
+  }
+
+  // Método para cerrar el modal
+  closeModal() {
+    this.modalService.dismissAll();
+  }
+
 }

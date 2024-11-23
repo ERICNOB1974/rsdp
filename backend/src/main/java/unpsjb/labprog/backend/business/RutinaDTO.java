@@ -9,14 +9,17 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class RutinaDTO {
+
     private Long id;
     private String nombre;
     private String descripcion;
     private List<DiaDTO> dias;
+    private boolean hizoUltimoDiaHoy;
 
-        public RutinaDTO(String nombre, String descripcion, List<DiaDTO> dias) {
+    public RutinaDTO(String nombre, String descripcion, List<DiaDTO> dias) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.dias = dias;
     }
+
 }
