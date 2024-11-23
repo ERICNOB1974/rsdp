@@ -375,6 +375,7 @@ export class RutinasComponent implements OnInit {
           this.loadingRealiza = false;
         }
       );
+
   }
 
 

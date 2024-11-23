@@ -1,4 +1,103 @@
 /* Estilos generales */
+
+/* Elimina bordes y establece el fondo oscuro en todos los niveles del modal */
+#notificacionModal {
+  display: block !important; /* Para asegurar que se muestre correctamente */
+  background-color: rgba(0, 0, 0, 0.8); /* Fondo oscuro con transparencia */
+  border: none; /* Sin bordes */
+  box-shadow: none; /* Elimina sombras adicionales */
+}
+
+/* Asegúrate de que el modal-content no tenga bordes o sombras */
+.modal-content {
+  border: none;
+  box-shadow: none;
+  background-color: #15202b; /* Color uniforme oscuro */
+}
+
+/* Opcional: Si la línea blanca es parte del "fade" */
+.modal.fade.show {
+  background-color: transparent !important; /* Asegura que el fondo no sea blanco */
+}
+
+.modal-dialog {
+  margin-top: 0; /* Asegura que no haya separación entre el modal y la pantalla */
+}
+
+/* Fondo general del modal */
+.bg-dark-custom {
+  background-color: #15202b; /* Color base oscuro */
+  color: #e1e8ed; /* Texto claro */
+}
+
+/* Fondo de los inputs */
+.bg-dark-input {
+  background-color: #192734; /* Más oscuro que el fondo principal */
+  color: #e1e8ed; /* Texto claro */
+}
+
+/* Resaltar el título */
+.text-highlight {
+  color: #1da1f2; /* Azul vibrante para destacar */
+}
+
+/* Botón cancelar */
+.btn-cancel {
+  background-color: #657786; /* Gris oscuro */
+  color: #e1e8ed;
+  border: 1px solid #657786;
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+}
+
+.btn-cancel:hover {
+  background-color: #57606a; /* Más oscuro al pasar el cursor */
+  color: #ffffff;
+}
+
+/* Botón enviar */
+.btn-highlight {
+  background-color: #1da1f2; /* Azul brillante */
+  color: #ffffff;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+}
+
+.btn-highlight:hover {
+  background-color: #0d95e8; /* Más brillante al pasar el cursor */
+}
+
+/* Bordes de sección del modal */
+.modal-header, .modal-footer {
+  border-color: #39444d; /* Gris oscuro */
+}
+
+
+.modal-header .btn-close {
+  position: absolute;
+  top: 0.5rem; /* Ajusta la distancia desde la parte superior */
+  right: 0.5rem; /* Ajusta la distancia desde la derecha */
+  z-index: 1; /* Asegura que siempre esté encima */
+}
+
+.btn-cancel {
+  background-color: #f8f9fa; /* Fondo similar a btn-secondary */
+  color: #212529; /* Texto oscuro */
+  border: 1px solid #ced4da; /* Borde claro */
+  padding: 0.5rem 1rem; /* Ajustar el relleno */
+  border-radius: 0.25rem; /* Bordes redondeados */
+}
+
+.btn-cancel:hover {
+  background-color: #e2e6ea; /* Fondo más oscuro al pasar el cursor */
+  color: #212529;
+}
+
+.modal-footer {
+  justify-content: flex-start; /* Alinear contenido a la izquierda */
+}
+
 body {
     font-family: 'Arial', sans-serif;
     margin: 0;

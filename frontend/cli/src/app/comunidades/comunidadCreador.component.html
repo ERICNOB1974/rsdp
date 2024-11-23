@@ -4,6 +4,10 @@
   <!-- Solo los creadores pueden editar la comunidad -->
   <button *ngIf="esCreador" (click)="editarComunidad()">Editar Información de la Comunidad</button>
 
+  <button *ngIf="esCreador" (click)="openModal(modalNotificacion)">
+    Notificar a todos los miembros
+  </button>
+
   <!-- Sección de miembros (visible para creadores, administradores y miembros) -->
   <h3>Miembros</h3>
   <ul>
@@ -48,3 +52,65 @@
   <!-- Botón para regresar a la página anterior (visible para todos) -->
   <button (click)="goBack()">Regresar</button>
 </div>
+
+<ng-template #modalNotificacion>
+    <div class="modal" 
+         id="notificacionModal" 
+         tabindex="-1" 
+         aria-labelledby="notificacionModalLabel" 
+         aria-hidden="true" 
+         role="dialog">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content bg-dark-custom text-light">
+          <div class="modal-header border-bottom border-secondary">
+            <h5 class="modal-title text-highlight" id="notificacionModalLabel">Enviar notificación a los miembros de la comunidad</h5>
+            <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="closeModal()"></button>
+          </div>
+          <div class="modal-body">
+            <form #notificacionForm="ngForm" class="p-3">
+              <div class="mb-3">
+                <label for="motivo" class="form-label text-light">Motivo de la notificación</label>
+                <input 
+                  type="text" 
+                  class="form-control border-secondary bg-dark-input text-light" 
+                  id="motivo" 
+                  [(ngModel)]="motivo" 
+                  name="motivo" 
+                  placeholder="Escribe el motivo"
+                  required>
+                <div *ngIf="!motivo && notificacionForm.submitted" class="text-danger mt-1">
+                  El motivo es obligatorio.
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="mensaje" class="form-label text-light">Mensaje</label>
+                <textarea 
+                  class="form-control border-secondary bg-dark-input text-light" 
+                  id="mensaje" 
+                  [(ngModel)]="mensaje" 
+                  name="mensaje" 
+                  rows="4" 
+                  placeholder="Escribe el mensaje"
+                  required>
+                </textarea>
+                <div *ngIf="!mensaje && notificacionForm.submitted" class="text-danger mt-1">
+                  El mensaje es obligatorio.
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer border-top border-secondary d-flex justify-content-between">
+            <button 
+              type="button" 
+              class="btn btn-cancel" 
+              (click)="closeModal()">Cancelar</button>
+            <button 
+              type="button" 
+              class="btn btn-primary btn-highlight" 
+              [disabled]="!motivo || !mensaje" 
+              (click)="enviarNotificacion()">Enviar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>

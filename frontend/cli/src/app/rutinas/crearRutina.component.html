@@ -121,7 +121,7 @@
 
             <div class="col-md-5 mb-2">
               <label for="archivo">Seleccionar imagen o video</label>
-              <input type="file" id="archivo" (change)="onFileSelect($event, ejercicio)">
+              <input type="file" id="archivo" class="form-control" (change)="onFileSelect($event, ejercicio)" accept="image/*, video/*">
             </div>
 
             <div>
