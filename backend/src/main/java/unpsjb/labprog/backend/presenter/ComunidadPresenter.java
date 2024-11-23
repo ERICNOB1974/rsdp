@@ -175,14 +175,12 @@ public class ComunidadPresenter {
 
     @RequestMapping(path = "/miembro/{idUsuario}", method = RequestMethod.GET)
     public ResponseEntity<Object> miembroUsuario(
-        @PathVariable Long idUsuario, 
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size,
-        @RequestParam(required = false, defaultValue = "") String nombreComunidad) {
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String nombreComunidad) {
         return Response.ok(comunidadService.miembroUsuario(idUsuario, nombreComunidad, page, size));
     }
-
-
 
     @GetMapping("/sugerenciasDeComunidadesBasadasEnAmigos2/{nombreUsuario}")
     public ResponseEntity<Object> sugerenciasDeComunidadesBasadasEnAmigos2(@PathVariable String nombreUsuario) {
@@ -248,23 +246,47 @@ public class ComunidadPresenter {
     }
 
     @GetMapping("/filtrar/etiquetas")
-    public ResponseEntity<Object> comunidadesPorEtiquetas(@RequestParam List<String> etiquetas,@RequestParam(required = false) String tipo,
-    @RequestParam(required = false) Long usuarioId) {
-        return Response.ok(comunidadService.comunidadesEtiquetas(etiquetas,tipo, usuarioId));
+    public ResponseEntity<Object> comunidadesPorEtiquetas(@RequestParam List<String> etiquetas,
+            @RequestParam(required = false) String tipo,
+            @RequestParam(required = false) Long usuarioId) {
+        return Response.ok(comunidadService.comunidadesEtiquetas(etiquetas, tipo, usuarioId));
     }
-
 
     @GetMapping("/filtrar/nombre")
     public ResponseEntity<Object> comunidadesPorNombre(
-        @RequestParam String nombre,
-        @RequestParam(required = false) String tipo,
-        @RequestParam(required = false) Long usuarioId) {
+            @RequestParam String nombre,
+            @RequestParam(required = false) String tipo,
+            @RequestParam(required = false) Long usuarioId) {
         return Response.ok(comunidadService.comunidadesPorNombreYTipo(nombre, tipo, usuarioId));
     }
 
     @GetMapping("/filtrar/participantes")
-    public ResponseEntity<Object> comunidadesPorParticipantes(@RequestParam(required = false) String tipo,@RequestParam(required = false) Long usuarioId,
-    @RequestParam int min, @RequestParam int max) {
-        return Response.ok(comunidadService.comunidadesParticipantes(tipo, usuarioId ,min, max));
+    public ResponseEntity<Object> comunidadesPorParticipantes(@RequestParam(required = false) String tipo,
+            @RequestParam(required = false) Long usuarioId,
+            @RequestParam int min, @RequestParam int max) {
+        return Response.ok(comunidadService.comunidadesParticipantes(tipo, usuarioId, min, max));
     }
+
+    @PostMapping("/cambiarFavorito/{idUsuario}/{idComunidad}")
+    public ResponseEntity<Object> marcarComunidadFavorita(@PathVariable Long idUsuario,
+            @PathVariable Long idComunidad) {
+        comunidadService.cambiarEstadoFavorita(idComunidad, idUsuario);
+        return Response.ok("Comunidad marcada como favorita");
+    }
+
+    @GetMapping("/esFavorita/{idUsuario}/{idComunidad}")
+    public ResponseEntity<Object> esFavorita(@PathVariable Long idUsuario,
+            @PathVariable Long idComunidad) {
+        return Response.ok(comunidadService.esFavorita(idComunidad, idUsuario));
+    }
+
+    @GetMapping("/comunidadesFavoritas/{idUsuario}")
+    public ResponseEntity<Object> listaComunidadesFavoritas(@PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String nombreComunidad) {
+        List<Comunidad> comunidades = comunidadService.comunidadesFavoritas(idUsuario, nombreComunidad, page, size);
+        return Response.ok(comunidades);
+    }
+
 }

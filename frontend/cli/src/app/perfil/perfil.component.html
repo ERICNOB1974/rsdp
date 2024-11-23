@@ -6,8 +6,8 @@
     <div class="perfil-info">
         <div class="perfil-avatar">
 
-            <img *ngIf="usuario.fotoPerfil"  [src]="usuario.fotoPerfil" alt="Foto de perfil" class="avatar" />
-            <img *ngIf="!usuario.fotoPerfil"  src="../../assets/usuario.png" alt="Foto de perfil" class="avatar" />
+            <img *ngIf="usuario.fotoPerfil" [src]="usuario.fotoPerfil" alt="Foto de perfil" class="avatar" />
+            <img *ngIf="!usuario.fotoPerfil" src="../../assets/usuario.png" alt="Foto de perfil" class="avatar" />
         </div>
         <div class="perfil-details">
             <h2>{{ usuario.nombreUsuario }}</h2>
@@ -59,9 +59,8 @@
             <h3>Publicaciones</h3>
             <div class="publicaciones-container">
                 <div class="publicaciones-grid">
-                    <div class="publicacion-item" 
-                         *ngFor="let publicacion of publicaciones" 
-                         (click)="irADetallePublicacion(publicacion.id)">
+                    <div class="publicacion-item" *ngFor="let publicacion of publicaciones"
+                        (click)="irADetallePublicacion(publicacion.id)">
                         <div class="publicacion-contenido">
                             <p>{{ publicacion.texto }}</p>
                             <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
@@ -81,63 +80,65 @@
             </div>
             <button *ngIf="!noMasPublicaciones" (click)="getPublicacionesPaginadas()">Ver más</button>
         </div>
-    
+
         <!-- Eventos -->
         <div *ngIf="tabSeleccionada === 'eventos'" class="perfil-eventos">
             <h3><i class="fas fa-dumbbell"></i> Eventos</h3>
-             <!-- Campo de búsqueda -->
-             <div class="search-container">
-                <input
-                    type="text"
-                    placeholder="Buscar evento por nombre"
-                    #searchInput
-                    (input)="buscarEventos(searchInput.value)"
-                    class="form-control search-input"
-                    [(ngModel)]="searchText" 
-                    />
-                    <i class="fas fa-search search-icon"></i>
+            <!-- Campo de búsqueda -->
+            <div class="search-container">
+                <input type="text" placeholder="Buscar evento por nombre" #searchInput
+                    (input)="buscarEventos(searchInput.value)" class="form-control search-input"
+                    [(ngModel)]="searchText" />
+                <i class="fas fa-search search-icon"></i>
             </div>
             <div class="eventos-grid">
-                <div class="evento-item" *ngFor="let evento of historicoEventos"
-                    (click)="irADetalleEvento(evento.id)">
+                <div class="evento-item" *ngFor="let evento of historicoEventos" (click)="irADetalleEvento(evento.id)">
                     <div class="evento-imagen">
-                        <img [src]="evento.imagen ? evento.imagen : '../../assets/evento.webp'" 
-                             alt="Imagen de {{ evento.nombre }}" 
-                             class="evento-imagen-default">
+                        <img [src]="evento.imagen ? evento.imagen : '../../assets/evento.webp'"
+                            alt="Imagen de {{ evento.nombre }}" class="evento-imagen-default">
                     </div>
                     <div class="evento-detalles">
                         <h4 class="evento-nombre">{{ evento.nombre }}</h4>
                         <p class="evento-descripcion">Descripción: {{ evento.descripcion }}</p>
                         <p class="evento-ubicacion">📍 Ubicación: {{ evento.ubicacion }}</p>
                         <p class="evento-fecha-hora">📅 Fecha y hora: {{ evento.fechaHora | date:'medium' }}</p>
-                        <p class="evento-participantes">👥 Participantes: {{ evento.participantes }} / {{ evento.cantidadMaximaParticipantes }}</p>
+                        <p class="evento-participantes">👥 Participantes: {{ evento.participantes }} / {{
+                            evento.cantidadMaximaParticipantes }}</p>
                     </div>
                 </div>
             </div>
             <button (click)="cargarMasEventos()" [disabled]="loadingEventos || noMasEventos">
                 {{ loadingEventos ? 'Cargando...' : noMasEventos ? 'No hay más eventos' : 'Cargar más' }}
-              </button>
+            </button>
         </div>
 
         <!-- Rutinas -->
         <div *ngIf="tabSeleccionada === 'rutinas'" class="perfil-rutinas">
             <h3><i class="fas fa-dumbbell"></i> Rutinas de Entrenamiento</h3>
-        
+
+            <!-- Sub-tabs -->
+            <div class="sub-tabs">
+                <button [class.active]="subTabRutinasSeleccionada === 'todas'" (click)="cambiarSubTabRutinas('todas')">
+                    Todas
+                </button>
+                <button [class.active]="subTabRutinasSeleccionada === 'favoritas'"
+                    (click)="cambiarSubTabRutinas('favoritas')">
+                    Favoritas
+                </button>
+            </div>
+
             <!-- Campo de búsqueda -->
             <div class="search-container">
-                <input
-                    type="text"
-                    placeholder="Buscar rutina por nombre"
-                    #searchInput
-                    (input)="buscarRutinas(searchInput.value)"
-                    class="form-control search-input"
-                    [(ngModel)]="searchText" 
-                />
+                <input type="text" placeholder="Buscar rutina por nombre" #searchInput
+                    (input)="buscarRutinas(searchInput.value)" class="form-control search-input"
+                    [(ngModel)]="searchText" />
                 <i class="fas fa-search search-icon"></i>
             </div>
-        
+
+            <!-- Lista de rutinas -->
             <div class="rutinas-grid">
-                <div class="rutina-item" *ngFor="let rutina of historicoRutinas" (click)="irADetalleRutina(rutina.id ?? 0)">
+                <div class="rutina-item" *ngFor="let rutina of historicoRutinas"
+                    (click)="irADetalleRutina(rutina.id ?? 0)">
                     <div class="icono-rutina">
                         <i class="fas fa-running"></i>
                     </div>
@@ -151,48 +152,63 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Botón de cargar más -->
             <button (click)="cargarMasRutinas()" [disabled]="loadingRutinas || noMasRutinas">
                 {{ loadingRutinas ? 'Cargando...' : noMasRutinas ? 'No hay más rutinas' : 'Cargar más' }}
-              </button>
+            </button>
         </div>
-        
-        
+
+
 
         <!-- Comunidades -->
         <div *ngIf="tabSeleccionada === 'comunidades'" class="perfil-comunidades">
             <h3><i class="fas fa-dumbbell"></i>Comunidades</h3>
-            <div class="search-container">
-                <input
-                    type="text"
-                    placeholder="Buscar evento por nombre"
-                    #searchInput
-                    (input)="buscarComunidades(searchInput.value)"
-                    class="form-control search-input"
-                    [(ngModel)]="searchText" 
-                    />
-                    <i class="fas fa-search search-icon"></i>
+
+            <div class="sub-tabs">
+                <button [class.active]="subTabSeleccionada === 'todas'" (click)="cambiarSubTab('todas')">
+                    Todas
+                </button>
+                <button [class.active]="subTabSeleccionada === 'favoritas'" (click)="cambiarSubTab('favoritas')">
+                    Favoritas
+                </button>
             </div>
+
+
+            <!-- Search bar -->
+
+            <div class="search-container">
+                <input type="text" placeholder="Buscar comunidad por nombre" #searchInput
+                    (input)="buscarComunidades(searchInput.value)" class="form-control search-input"
+                    [(ngModel)]="searchText" />
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <!-- Contenido de comunidades según el tab seleccionado -->
             <div class="comunidades-grid">
                 <div class="comunidad-item" *ngFor="let comunidad of historicoComunidades"
                     (click)="irADetalleComunidad(comunidad.id ?? 0)">
                     <div class="comunidad-imagen">
-                        <img [src]="comunidad.imagen ? comunidad.imagen : '../../assets/comunidad.jpg'" 
-                             alt="Imagen de {{ comunidad.nombre }}" 
-                             class="muro-imagen">
+                        <img [src]="comunidad.imagen ? comunidad.imagen : '../../assets/comunidad.jpg'"
+                            alt="Imagen de {{ comunidad.nombre }}" class="muro-imagen">
                     </div>
                     <div class="comunidad-detalles">
                         <h4 class="comunidad-nombre">{{ comunidad.nombre }}</h4>
                         <p class="comunidad-descripcion">{{ comunidad.descripcion }}</p>
-                        <p class="comunidad-miembros">👥 {{ comunidad.miembros }} / {{ comunidad.cantidadMaximaMiembros }} miembros</p>
+                        <p class="comunidad-miembros">👥 {{ comunidad.miembros }} / {{ comunidad.cantidadMaximaMiembros
+                            }} miembros</p>
                         <p class="comunidad-ubicacion">📍 {{ comunidad.ubicacion }}</p>
                         <p class="comunidad-fecha">📅 Creada el: {{ comunidad.fechaDeCreacion | date:'medium' }}</p>
                         <p *ngIf="comunidad.esPrivada" class="comunidad-privada">🔒 Comunidad privada</p>
                     </div>
                 </div>
             </div>
+
+
+
+            <!-- Botón de carga -->
             <button (click)="cargarMasComunidades()" [disabled]="loadingComunidades || noMasComunidades">
                 {{ loadingComunidades ? 'Cargando...' : noMasComunidades ? 'No hay más comunidades' : 'Cargar más' }}
-              </button>
+            </button>
         </div>
+
     </div>
-</div>
