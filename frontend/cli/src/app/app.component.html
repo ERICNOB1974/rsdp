@@ -30,10 +30,18 @@
                 </div>
             </div>
 
-            <a (click)="navigateToMiPerfil()" style="margin-left: 10px;">
-                <img [src]="usuario.fotoPerfil ? usuario.fotoPerfil : '../assets/usuario.png'" alt="Foto de perfil"
-                    class="profile-image" />
-            </a>
+            <div class="perfil-contenedor">
+                <a (click)="navigateToMiPerfil()" class="imagen-perfil">
+                    <img [src]="usuario.fotoPerfil ? usuario.fotoPerfil : '../assets/usuario.png'"
+                        alt="Foto de perfil" />
+                </a>
+                <a (click)="navigateToMiPerfil()" class="nombre-usuario">
+                    {{ usuario.nombreUsuario }}
+                </a>
+            </div>
+            
+
+
         </div>
     </div>
 </nav>
@@ -58,7 +66,8 @@
 
         <nav class="menu">
             <!-- Dropdown: Eventos -->
-            <li class="menu-item dropdown" [class.open]="isDropdownOpen['eventos']" (mouseleave)="closeDropdown('eventos')">
+            <li class="menu-item dropdown" [class.open]="isDropdownOpen['eventos']"
+                (mouseleave)="closeDropdown('eventos')">
                 <a (click)="toggleDropdown('eventos')">
                     <span class="icon"><i class="fa fa-calendar"></i></span>
                     <span class="menu-text" *ngIf="!isSidebarHidden">Eventos</span>
@@ -74,7 +83,8 @@
             </li>
 
             <!-- Dropdown: Comunidades -->
-            <li class="menu-item dropdown" [class.open]="isDropdownOpen['comunidades']" (mouseleave)="closeDropdown('comunidades')">
+            <li class="menu-item dropdown" [class.open]="isDropdownOpen['comunidades']"
+                (mouseleave)="closeDropdown('comunidades')">
                 <a (click)="toggleDropdown('comunidades')">
                     <span class="icon"><i class="fa fa-users"></i></span>
                     <span class="menu-text" *ngIf="!isSidebarHidden">Comunidades</span>
@@ -98,7 +108,8 @@
             </li>
 
             <!-- Dropdown: Sugerencias -->
-            <li class="menu-item dropdown" [class.open]="isDropdownOpen['sugerencias']" (mouseleave)="closeDropdown('sugerencias')">
+            <li class="menu-item dropdown" [class.open]="isDropdownOpen['sugerencias']"
+                (mouseleave)="closeDropdown('sugerencias')">
                 <a (click)="toggleDropdown('sugerencias')">
                     <span class="icon"><i class="fa fa-question-circle"></i></span>
                     <span class="menu-text" *ngIf="!isSidebarHidden">Sugerencias</span>
@@ -115,7 +126,8 @@
             </li>
 
             <!-- Dropdown: Publicación -->
-            <li class="menu-item dropdown" [class.open]="isDropdownOpen['publicacion']" (mouseleave)="closeDropdown('publicacion')">
+            <li class="menu-item dropdown" [class.open]="isDropdownOpen['publicacion']"
+                (mouseleave)="closeDropdown('publicacion')">
                 <a (click)="toggleDropdown('publicacion')">
                     <span class="icon"><i class="fa fa-thumbs-o-up"></i></span>
                     <span class="menu-text" *ngIf="!isSidebarHidden">Publicación</span>
@@ -129,7 +141,8 @@
             </li>
 
             <!-- Dropdown: Rutinas -->
-            <li class="menu-item dropdown" [class.open]="isDropdownOpen['rutinas']" (mouseleave)="closeDropdown('rutinas')">
+            <li class="menu-item dropdown" [class.open]="isDropdownOpen['rutinas']"
+                (mouseleave)="closeDropdown('rutinas')">
                 <a (click)="toggleDropdown('rutinas')">
                     <span class="icon"><i class="fa fa-soccer-ball-o"></i></span>
                     <span class="menu-text" *ngIf="!isSidebarHidden">Rutinas</span>

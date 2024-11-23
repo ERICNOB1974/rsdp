@@ -54,7 +54,7 @@ export class PublicacionDetailComponent implements OnInit {
   displayedComments: Comentario[] = [];
   commentsToShow: number = 4; // Número de comentarios a mostrar inicialmente
   isOwnPublication: boolean = false;
-  cantidadPorPagina: number = 2;
+  cantidadPorPagina: number = 10;
   noMasUsuarios = false;
 
   toggleLike() {
@@ -74,6 +74,7 @@ export class PublicacionDetailComponent implements OnInit {
   abrirModalLikes(): void {
     this.currentPageLikes = 0;
     this.usuariosLikes = [];
+    this.noMasUsuarios=false;
     this.cargarUsuariosLikes();
 
     this.dialog.open(this.modalLikes, {
@@ -129,6 +130,7 @@ export class PublicacionDetailComponent implements OnInit {
   
   cerrarModal(): void {
     this.dialog.closeAll();
+
   }
 
   checkIfOwnPublication(): void {
