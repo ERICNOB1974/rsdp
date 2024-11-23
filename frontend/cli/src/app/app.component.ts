@@ -33,13 +33,14 @@ export class AppComponent {
   isSidebarHidden = false; // Estado para ocultar/mostrar la barra lateral
   fotoPerfil: string = '';
 
+
+
   constructor(private router: Router,
     private ubicacionService: UbicacionService,
     private usuarioService: UsuarioService,
     private authService: AuthService,
     private notificacionService: NotificacionService,
-    private themeService: ThemeService,
-   // private toastr: ToastrService,
+    // private toastr: ToastrService,
     private webSocketService: WebSocketService) { }
 
   ngOnInit(): void {
@@ -54,10 +55,29 @@ export class AppComponent {
     this.actualizarUbicacion();
     this.cargarNotificaciones();
 
-/*      // Escuchar notificaciones en tiempo real
-     this.webSocketService.listen('notificacion', (data: Notificacion) => {
-      this.manejarNuevaNotificacion(data);
-    }); */
+    /*      // Escuchar notificaciones en tiempo real
+         this.webSocketService.listen('notificacion', (data: Notificacion) => {
+          this.manejarNuevaNotificacion(data);
+        }); */
+  }
+
+
+  isDropdownOpen: { [key: string]: boolean } = {
+    eventos: false,
+    comunidades: false,
+    sugerencias: false,
+    publicacion: false,
+    rutinas: false,
+  };
+
+
+
+  toggleDropdown(menu: string) {
+    this.isDropdownOpen[menu] = !this.isDropdownOpen[menu];
+  }
+
+  closeDropdown(menu: string) {
+    this.isDropdownOpen[menu] = false;
   }
 
   manejarNuevaNotificacion(notificacion: Notificacion): void {
@@ -66,11 +86,11 @@ export class AppComponent {
     this.notificacionesNoLeidasCount++;
 
     // Mostrar la notificación como toast
-  /*   this.toastr.info(notificacion.mensaje, 'Nueva notificación', {
-      timeOut: 5000, // Duración del toast
-      closeButton: true,
-      progressBar: true,
-    }); */
+    /*   this.toastr.info(notificacion.mensaje, 'Nueva notificación', {
+        timeOut: 5000, // Duración del toast
+        closeButton: true,
+        progressBar: true,
+      }); */
   }
 
   getUsuario() {
