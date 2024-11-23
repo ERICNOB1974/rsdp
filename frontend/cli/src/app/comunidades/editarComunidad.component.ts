@@ -4,13 +4,14 @@ import { FormsModule } from '@angular/forms'; // Importa FormsModule
 import { ComunidadService } from './comunidad.service';
 import { Comunidad } from './comunidad';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-editar-comunidad',
   standalone: true,
-  imports: [FormsModule], // Agrega FormsModule aquí
+  imports: [FormsModule, NgIf], // Agrega FormsModule aquí
   templateUrl: './editarComunidad.component.html',
-  styleUrls: ['./editarComunidad.component.css']
+  styleUrls: ['./editarComunidad.component.css', '../css/crear.component.css']
 })
 export class EditarComunidadComponent implements OnInit {
   comunidad!: Comunidad; // Comunidad que se va a editar
@@ -19,14 +20,14 @@ export class EditarComunidadComponent implements OnInit {
   archivoSeleccionado!: File; // Para almacenar la imagen o video seleccionado
   tipoArchivo: string = ''; // Para distinguir entre imagen o video
   vistaPreviaArchivo: string | ArrayBuffer | null = null;
-  
+
 
   constructor(
     private route: ActivatedRoute,
     private comunidadService: ComunidadService,
     private router: Router,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.idComunidad = Number(this.route.snapshot.paramMap.get('id'));
@@ -69,7 +70,7 @@ export class EditarComunidadComponent implements OnInit {
 
     if (file) {
       // Verificar si el archivo es una imagen o un video
-      if (validImageTypes.includes(file.type) ) {
+      if (validImageTypes.includes(file.type)) {
         this.formatoValido = true; // El formato es válido
         this.archivoSeleccionado = file;
 
@@ -93,5 +94,31 @@ export class EditarComunidadComponent implements OnInit {
         alert('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF).');
       }
     }
+  }
+
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault(); // Prevenir el comportamiento predeterminado
+    event.stopPropagation();
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Asegurarse de que existen archivos en el evento
+    if (event.dataTransfer && event.dataTransfer.files.length > 0) {
+      const file = event.dataTransfer.files[0]; // Toma el primer archivo
+      const inputEvent = { target: { files: [file] } }; // Crea un evento similar al del input
+      this.onFileSelect(inputEvent); // Reutiliza tu lógica para manejar el archivo
+    }
+  }
+
+
+  eliminarArchivo(): void {
+    this.vistaPreviaArchivo = null;
+    this.formatoValido = false;
+    this.comunidad.imagen = '';
+
   }
 }
