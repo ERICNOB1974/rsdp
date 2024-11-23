@@ -86,12 +86,11 @@
         </mat-card-content>
 
         <mat-card-actions>
-          <button mat-raised-button color="primary" type="submit" class="btn-left" [disabled]="!registroForm.valid">
-            Registrar
+          <button mat-flat-button color="accent" class="btn-left" (click)="goBack()">Atrás</button>
+          <button mat-raised-button color="primary" type="submit" class="btn-right" [disabled]="!registroForm.valid">
+              Registrar
           </button>
-          <button mat-flat-button color="accent" class="btn-right" (click)="goBack()">Atrás</button>
-
-        </mat-card-actions>
+      </mat-card-actions>
       </mat-card>
     </form>
   </div>

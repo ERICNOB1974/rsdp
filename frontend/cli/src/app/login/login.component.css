@@ -10,25 +10,43 @@
 }
 
 .wrap-login {
-    height: calc(100vh - 65px);
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 0 auto;
     position: absolute;
-    top: 40px; /* Ajustado para evitar que se superponga con la barra superior */
-    left: 50%; /* Centra el contenedor */
-    transform: translate(-50%, 0);
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 40px; /* Ajusta para asegurar espacio desde la parte superior */
 }
 
 .container {
     background: #FFFFFF;
-    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1); /* Sombra más suave */
-    border-radius: 12px; /* Bordes más redondeados */
-    max-width: 400px; /* Ancho máximo ajustado */
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.29);
+    border-radius: 4px;
     width: 100%;
-    padding: 30px; /* Espaciado interno aumentado */
-    animation: fadeIn 0.5s; /* Animación al entrar */
+    max-width: 400px; /* Tamaño máximo para pantallas grandes */
+    padding: 20px;
+    box-sizing: border-box;
+    animation: fadeIn 0.5s;
+}
+
+@media(max-width:768px) {
+    .container {
+        padding: 22px;
+        width: 100%; /* Asegúrate de que ocupe el 100% en pantallas más pequeñas */
+        max-width: 100%; /* Asegúrate de que no haya un ancho máximo */
+    }
+}
+
+@media(max-width:430px) {
+    .container {
+        padding: 15px; /* Reducido padding para pantallas muy pequeñas */
+        width: 100%; /* Asegúrate de que ocupe el 100% en pantallas muy pequeñas */
+    }
 }
 
 @keyframes fadeIn {
@@ -44,8 +62,11 @@
 
 .login-box {
     display: flex;
-    flex-direction: column; /* Organiza los elementos en columna */
     justify-content: center;
+    align-items: center;  /* Asegura que los elementos dentro estén centrados verticalmente */
+    width: 100%;
+    max-width: 400px; /* Controla el tamaño máximo del formulario */
+    margin: 0 auto; /* Centra el div horizontalmente */
 }
 
 .login-box mat-card-header {
@@ -118,31 +139,6 @@ mat-card-actions button {
 
 mat-card-actions button:hover {
     text-decoration: underline; /* Subraya el texto al pasar el mouse */
-}
-
-@media(max-width:768px) {
-    .wrap-login {
-        background: #EFEFEF;
-        padding: 0 30px;
-    }
-
-    .container {
-        padding: 22px 21px;
-        width: auto;
-        max-width: inherit;
-    }
-}
-
-@media(max-width:430px) {
-    .container {
-        display: block;
-        justify-content: inherit;
-        align-items: inherit;
-    }
-
-    .login-box {
-        width: 100%;
-    }
 }
 
 .login-box mat-form-field:last-of-type {

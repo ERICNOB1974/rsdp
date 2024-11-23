@@ -31,7 +31,7 @@ export class CalendarioEventosComponent implements OnInit {
   ) {
     this.calendarOptions = {
       plugins: [dayGridPlugin, interactionPlugin],
-      initialView: 'dayGridMonth',
+      initialView: this.getInitialView(),
       locales: [esLocale],
       locale: 'es',
       headerToolbar: {
@@ -53,6 +53,12 @@ export class CalendarioEventosComponent implements OnInit {
                 ${arg.event.extendedProps['type'] === 'rutina' ? 'Rutina' : 
                   arg.event.extendedProps['type'] === 'evento' ? 'Evento' : 
                   arg.event.extendedProps['type'] === 'recomendado' ? 'Evento Recomendado' : 'Evento Desconocido'}
+                ${arg.event.extendedProps['type'] === 'recomendado' ? 
+                  `<span style="cursor: pointer; margin-left: 5px; display: inline-block; width: 25px; height: 25px; border-radius: 50%; background-color: #007bff; color: white; text-align: center; line-height: 25px; font-weight: bold;" onclick="(function(event) { event.stopPropagation(); showMotivo('${arg.event.extendedProps['motivo']}'); })(event)">
+                  ?
+                </span>
+                ` : 
+                  ''}
               </div>
               <div class="custom-event-name" style="font-size: 16px; color: #555; font-weight: bold; margin-bottom: 5px; width: 100%; white-space: normal; overflow: hidden; text-overflow: ellipsis; cursor: pointer; word-wrap: break-word; word-break: break-word; line-height: 1.4;">
                 ${arg.event.title} 
@@ -65,15 +71,19 @@ export class CalendarioEventosComponent implements OnInit {
               }
             </div>`
         };
-      },            
+      },     
       nextDayThreshold: '00:00:00',
       displayEventEnd: true,
       fixedWeekCount: false,
-      showNonCurrentDates: true
+      showNonCurrentDates: true,
+      longPressDelay: 0,
+      height: 'auto', // Adapta automáticamente la altura del calendario
+      contentHeight: 'auto', // Ajusta el contenido dinámicamente
     };
   }
 
   ngOnInit() {
+    window.addEventListener('resize', this.updateView.bind(this)); // Detectar cambios en tamaño de pantalla
     const colors = ['#FFA500', '#1E90FF', '#32CD32', '#FF6347', '#9370DB']; // Paleta de colores
     const calendarEvents: any[] = [];
   
@@ -121,6 +131,27 @@ export class CalendarioEventosComponent implements OnInit {
     );
   }
   
+  showMotivo(motivo: string) {
+    alert(motivo);
+  }
+
+  ngOnDestroy() {
+    window.removeEventListener('resize', this.updateView.bind(this)); // Limpiar el evento
+  }
+
+  getInitialView(): string {
+    return window.innerWidth < 600 ? 'dayGridDay' : 'dayGridMonth'; // Vista inicial según el tamaño
+  }
+
+  updateView() {
+    const newView = this.getInitialView();
+    const calendarApi = this.fullcalendar?.getApi();
+    if (calendarApi && calendarApi.view.type !== newView) {
+      calendarApi.changeView(newView); // Cambiar la vista dinámicamente
+    }
+  }
+
+
   loadEventos(calendarEvents: any[]) {
     // Cargar eventos deportivos
     this.eventosService.eventosFuturosPertenecientesAUnUsuario().subscribe(
@@ -168,7 +199,8 @@ export class CalendarioEventosComponent implements OnInit {
               allDay: true,
               extendedProps: {
                 type: 'recomendado',
-                id: evento.id
+                id: evento.id,
+                motivo: evento.motivo
               }
             });            
           });
