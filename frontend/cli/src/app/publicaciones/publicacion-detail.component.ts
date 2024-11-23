@@ -10,6 +10,7 @@ import { DataPackage } from '../data-package';
 import { Comentario } from './Comentario';
 import { AuthService } from '../autenticacion/auth.service';
 import { Usuario } from '../usuarios/usuario';
+import { UsuarioService } from '../usuarios/usuario.service';
 
 
 
@@ -28,9 +29,10 @@ export class PublicacionDetailComponent implements OnInit {
   numeroLikes!: number;
 
   constructor(
-    private route: ActivatedRoute, // Para obtener el parámetro de la URL
-    private publicacionService: PublicacionService, // Servicio para obtener el evento por ID
-    private location: Location, // Para manejar la navegación
+    private route: ActivatedRoute,
+    private publicacionService: PublicacionService, 
+    private usuarioService: UsuarioService, 
+    private location: Location, 
     private router: Router,
     private snackBar: MatSnackBar,
     private el: ElementRef,
@@ -42,6 +44,7 @@ export class PublicacionDetailComponent implements OnInit {
   comment: string = '';
   comments: string[] = [];
   comentarios: Comentario[] = [];
+  usuariosLike: Usuario[] = [];
   displayedComments: Comentario[] = [];
   commentsToShow: number = 4; // Número de comentarios a mostrar inicialmente
   isOwnPublication: boolean = false;
@@ -56,6 +59,13 @@ export class PublicacionDetailComponent implements OnInit {
       // this.cantidadLikes();
     }
     this.isLiked = !this.isLiked;
+  }
+
+
+  usuariosQueLikearon(){
+    this.usuarioService.usuariosLikePublicacion(this.publicacion.id).subscribe(dataPackage=>{
+      this.usuariosLike = dataPackage.data as Usuario[];
+    })
   }
 
   checkIfOwnPublication(): void {

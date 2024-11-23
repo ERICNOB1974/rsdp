@@ -15,13 +15,13 @@ import { PublicacionService } from './publicacion.service';
 export class CrearPublicacionComponent implements OnInit {
 
   publicacion!: Publicacion;
-  formatoValido: boolean = true;
+  formatoValido: boolean = false;
   archivoSeleccionado!: File; // Para almacenar la imagen o video seleccionado
   tipoArchivo: string = ''; // Para distinguir entre imagen o video
   vistaPreviaArchivo: string | ArrayBuffer | null = null; // Para mostrar la vista previa de la imagen o video
   tipo!: 'comunidad' | 'publicacion'; // Tipo de flujo (registro o recuperación)
   idComunidad: number | null = null;
-  
+
   constructor(private router: Router,
     private publicacionService: PublicacionService,
     private route: ActivatedRoute,
@@ -49,20 +49,20 @@ export class CrearPublicacionComponent implements OnInit {
   cancel(): void {
     this.location.back()
   }
-  
+
   savePublicacion(): void {
     this.publicacion.fechaDeCreacion = new Date().toISOString();
     console.log(this.tipo)
     if (this.tipo === 'comunidad' && this.idComunidad) {
-        this.publicacionService.publicarEnComunidad(this.publicacion, this.idComunidad).subscribe(() => {
-            this.location.back()
-        });
+      this.publicacionService.publicarEnComunidad(this.publicacion, this.idComunidad).subscribe(() => {
+        this.location.back()
+      });
     } else {
-        this.publicacionService.saveConCreador(this.publicacion).subscribe(() => {
-            this.location.back()
-        });
+      this.publicacionService.saveConCreador(this.publicacion).subscribe(() => {
+        this.location.back()
+      });
     }
-}
+  }
 
   onFileSelect(event: any) {
     const file = event.target.files[0];
@@ -97,8 +97,34 @@ export class CrearPublicacionComponent implements OnInit {
     }
   }
 
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault(); // Prevenir el comportamiento predeterminado
+    event.stopPropagation();
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Asegurarse de que existen archivos en el evento
+    if (event.dataTransfer && event.dataTransfer.files.length > 0) {
+      const file = event.dataTransfer.files[0]; // Toma el primer archivo
+      const inputEvent = { target: { files: [file] } }; // Crea un evento similar al del input
+      this.onFileSelect(inputEvent); // Reutiliza tu lógica para manejar el archivo
+    }
+  }
+
+
   publicacionValida(): boolean {
     return !(!this.publicacion.texto && !this.publicacion.file || !this.formatoValido);
+  }
+
+  eliminarArchivo(): void {
+    this.vistaPreviaArchivo = null;
+    this.tipoArchivo = '';
+    this.formatoValido = false;
+    this.publicacion.file = '';
   }
 }
 
