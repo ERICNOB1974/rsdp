@@ -191,16 +191,35 @@ public class ComunidadService {
         return result;
     }
 
-    public List<Comunidad> comunidadesEtiquetas(List<String> etiquetas) {
-        return comunidadRepository.comunidadesEtiquetas(etiquetas);
+   
+    public List<Comunidad> comunidadesEtiquetas(List<String> etiquetas, String tipo, Long usuarioId) {
+        if ("disponibles".equalsIgnoreCase(tipo)) {
+            return comunidadRepository.comunidadesEtiquetasDisponibles(usuarioId,etiquetas);
+        } else if ("miembro".equalsIgnoreCase(tipo)) {
+            return comunidadRepository.comunidadesEtiquetasMiembro(usuarioId, etiquetas);
+        } else {
+            return comunidadRepository.comunidadesEtiquetas(etiquetas);
+        }
     }
 
-    public List<Comunidad> comunidadesNombre(String nombre) {
-        return comunidadRepository.comunidadesNombre(nombre);
+    public List<Comunidad> comunidadesPorNombreYTipo(String nombre, String tipo, Long usuarioId) {
+        if ("disponibles".equalsIgnoreCase(tipo)) {
+            return comunidadRepository.comunidadesNombreDisponibles(nombre, usuarioId);
+        } else if ("miembro".equalsIgnoreCase(tipo)) {
+            return comunidadRepository.comunidadesNombreMiembro(nombre, usuarioId);
+        } else {
+            return comunidadRepository.comunidadesNombre(nombre);
+        }
     }
 
-    public List<Comunidad> comunidadesParticipantes(int min, int max) {
-        return comunidadRepository.comunidadesCantidadParticipantes(min, max);
+    public List<Comunidad> comunidadesParticipantes(String tipo, Long usuarioId,int min, int max) {
+        if ("disponibles".equalsIgnoreCase(tipo)) {
+            return comunidadRepository.comunidadesCantidadParticipantesDisponibles(usuarioId, min, max);
+        } else if ("miembro".equalsIgnoreCase(tipo)) {
+            return comunidadRepository.comunidadesCantidadParticipantesMiembro(usuarioId, min, max);
+        } else {
+            return comunidadRepository.comunidadesCantidadParticipantes(min, max);
+        }
     }
 
     public List<Comunidad> comunidadesCreadasPorUsuario(Long idUsuario, int offset, int limit) {

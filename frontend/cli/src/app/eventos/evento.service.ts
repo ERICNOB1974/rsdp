@@ -107,38 +107,54 @@ export class EventoService {
     const idUsuario = this.authService.getUsuarioId();
     return this.http.get<DataPackage>(`${this.eventosUrl}/desinscribirse/${idEvento}/${idUsuario}`);
   }
-  filtrarParticipantes(min: number, max: number): Observable<DataPackage> {
+
+  filtrarParticipantes(tipoTab: string, usuarioId: number, min: number, max: number): Observable<DataPackage> {
     // Agregamos los parámetros min y max a la URL
     return this.http.get<DataPackage>(`${this.eventosUrl}/filtrar/participantes`, {
       params: {
+        tipo:tipoTab,
+        usuarioId: usuarioId,
         min: min.toString(),  // Convertimos a string porque los parámetros de URL deben ser strings
         max: max.toString()
       }
     });
   }
-  filtrarNombre(nombre: string): Observable<DataPackage> {
-    // Agregamos los parámetros min y max a la URL
-    return this.http.get<DataPackage>(`${this.eventosUrl}/filtrar/nombre`, {
-      params: {
-        nombre
-      }
-    });
+  filtrarNombre(nombre: string, tipoTab: string, usuarioId: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.eventosUrl}/filtrar/nombre`, 
+      { params: {
+        nombre: nombre,
+        tipo: tipoTab,
+        usuarioId: usuarioId}  
+      });
   }
-  filtrarFecha(min: string, max: string): Observable<DataPackage> {
+
+  filtrarFecha(tipo: string, usuarioId: number,min: string, max: string): Observable<DataPackage> {
     // Agregamos los parámetros min y max a la URL
     return this.http.get<DataPackage>(`${this.eventosUrl}/filtrar/fecha`, {
       params: {
+        tipo: tipo,
+        usuarioId: usuarioId,
         min: min,
         max: max
       }
     });
   }
-  filtrarEtiqueta(etiquetas: string[]): Observable<DataPackage> {
-    const params = new HttpParams().set('etiquetas', etiquetas.join(',')); // convierte el array a una cadena separada por comas
+
+
+  filtrarEtiqueta(etiquetas: string[], tipo: string, usuarioId: number): Observable<DataPackage> {
+    let params = new HttpParams().set('etiquetas', etiquetas.join(',')); // convierte el array a una cadena separada por comas
+    
+    if (tipo) {
+      params = params.set('tipo', tipo); // agrega el tipo si está definido
+    }
+    
+    if (usuarioId) {
+      params = params.set('usuarioId', usuarioId.toString()); // agrega el idUsuario si está definido
+    }
+  
     return this.http.get<DataPackage>(`${this.eventosUrl}/filtrar/etiquetas`, { params });
   }
-
-
+  
 
   
   disponibles(page: number, size: number): Observable<DataPackage> {

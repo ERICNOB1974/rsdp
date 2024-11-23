@@ -273,20 +273,45 @@ public class EventoService {
         return "Exito al desinscribirse del evento";
     }
 
-    public List<Evento> eventosEtiquetas(List<String> etiquetas) {
-        return eventoRepository.eventosEtiquetas(etiquetas);
+
+  public List<Evento> eventosEtiquetas(List<String> etiquetas, String tipo, Long usuarioId) {
+        if ("disponibles".equalsIgnoreCase(tipo)) {
+            return eventoRepository.eventosEtiquetasDisponibles(usuarioId,etiquetas);
+        } else if ("participante".equalsIgnoreCase(tipo)) {
+            return eventoRepository.eventosEtiquetasParticipante(usuarioId, etiquetas);
+        } else {
+            return eventoRepository.eventosEtiquetas(etiquetas);
+        }
     }
 
-    public List<Evento> eventosNombre(String nombre) {
-        return eventoRepository.eventosNombre(nombre);
+       public List<Evento> eventosNombre(String nombre, String tipo, Long usuarioId) {
+        if ("disponibles".equalsIgnoreCase(tipo)) {
+            return eventoRepository.eventosNombreDisponibles(nombre, usuarioId);
+        } else if ("participante".equalsIgnoreCase(tipo)) {
+            return eventoRepository.eventosNombreParticipante(nombre, usuarioId);
+        } else {
+            return eventoRepository.eventosNombre(nombre);
+        }
+    }
+ 
+    public List<Evento> eventosFecha(String tipo, Long usuarioId,ZonedDateTime min, ZonedDateTime max) {
+        if ("disponibles".equalsIgnoreCase(tipo)) {
+            return eventoRepository.eventosFechaDisponible(usuarioId, min, max);
+        } else if ("participante".equalsIgnoreCase(tipo)) {
+            return eventoRepository.eventosFechaParticipante(usuarioId, min, max);
+        } else {
+            return eventoRepository.eventosFecha(min, max);
+        }
     }
 
-    public List<Evento> eventosFecha(ZonedDateTime min, ZonedDateTime max) {
-        return eventoRepository.eventosFecha(min, max);
-    }
-
-    public List<Evento> eventosParticipantes(int min, int max) {
-        return eventoRepository.eventosCantidadParticipantes(min, max);
+        public List<Evento> eventosParticipantes(String tipo, Long usuarioId,int min, int max) {
+        if ("disponibles".equalsIgnoreCase(tipo)) {
+            return eventoRepository.eventosCantidadParticipantesDisponible(usuarioId, min, max);
+        } else if ("participante".equalsIgnoreCase(tipo)) {
+            return eventoRepository.eventosCantidadParticipantesParticipante(usuarioId, min, max);
+        } else {
+            return eventoRepository.eventosCantidadParticipantes(min, max);
+        }
     }
 
     public List<Evento> eventosDisponibles(String nombreUsuario,int page, int size) {

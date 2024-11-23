@@ -48,18 +48,45 @@ public class UsuarioPresenter {
         List<Usuario> amigosDeAmigos = usuarioService.amigos(nombreUsuario);
         return Response.ok(amigosDeAmigos);
     }
+        @RequestMapping(path = "/amigoss/{nombreUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> obtenerAmigosPaginados(
+        @PathVariable String nombreUsuario, 
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(required = false, defaultValue = "") String nombreUsuarioFiltrar) {
+        return Response.ok(usuarioService.amigosPaginados(nombreUsuario, nombreUsuarioFiltrar, page, size));
+    }
+
+
 
     @GetMapping("/solicitudesAmistad/{nombreUsuario}")
     public ResponseEntity<Object> obtenerSolicitudes(@PathVariable String nombreUsuario) {
         List<Usuario> solicitudes = usuarioService.solicitudes(nombreUsuario);
         return Response.ok(solicitudes);
     }
+            @RequestMapping(path = "/solicitudessAmistad/{nombreUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> obtenerSolicitudesPaginadas(
+        @PathVariable String nombreUsuario, 
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(required = false, defaultValue = "") String nombreUsuarioFiltrar) {
+        return Response.ok(usuarioService.solicitudesPaginadas(nombreUsuario, nombreUsuarioFiltrar, page, size));
+    }
+
     @GetMapping("/solicitudesAmistadEnviadas/{nombreUsuario}")
     public ResponseEntity<Object> obtenerSolicitudesEnviadas(@PathVariable String nombreUsuario) {
         List<Usuario> solicitudes = usuarioService.solicitudesEnviadas(nombreUsuario);
         return Response.ok(solicitudes);
     }
 
+            @RequestMapping(path = "/solicitudessAmistadEnviadas/{nombreUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> obtenerSolicitudesEnviadasPaginadas(
+        @PathVariable String nombreUsuario, 
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(required = false, defaultValue = "") String nombreUsuarioFiltrar) {
+        return Response.ok(usuarioService.solicitudesEnviadasPaginadas(nombreUsuario, nombreUsuarioFiltrar, page, size));
+    }
     @GetMapping("/amigosDeAmigos/{nombreUsuario}")
     public ResponseEntity<Object> obtenerAmigosDeAmigos(@PathVariable String nombreUsuario) {
         List<Usuario> amigosDeAmigos = usuarioService.amigosDeAmigos(nombreUsuario);
@@ -331,9 +358,14 @@ public class UsuarioPresenter {
         return Response.ok(usuarioService.todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(idUsuario, idComunidad));
     }
 
-    @GetMapping("/buscar/{nombreUsuario}/{term}")
-    public ResponseEntity<Object> eventosPorNombre(@PathVariable String nombreUsuario, @PathVariable String term) {
-        return Response.ok(usuarioService.buscarUsuarios(nombreUsuario, term));
+    @GetMapping("/buscar/{nombreUsuario}")
+    public ResponseEntity<Object> eventosPorNombre(@PathVariable String nombreUsuario, @RequestParam String term,@RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size) {
+        return Response.ok(usuarioService.buscarUsuarios(nombreUsuario, term,page,size));
+    }
+    @GetMapping("/likesPublicacion/{idPublicacion}")
+    public ResponseEntity<Object> likesPublicacion(@PathVariable Long idPublicacion) {
+        return Response.ok(usuarioService.likesPublicacion(idPublicacion));
     }
 
 }

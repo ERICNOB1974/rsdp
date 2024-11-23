@@ -15,9 +15,18 @@ import unpsjb.labprog.backend.model.Usuario;
 @Repository
 public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
 
-    @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(amigos)"
-            + "RETURN amigos")
+    @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(amigos) "+
+            "RETURN amigos")
     List<Usuario> amigos(String nombreUsuario);
+
+     @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(a:Usuario)" +
+                        "WHERE (toLower(a.nombreUsuario) CONTAINS toLower($nombreUsuarioFiltrar) OR $nombreUsuarioFiltrar = '') " +
+                        "RETURN a "+
+                        "SKIP $skip "+
+                        "LIMIT $limit")
+        List<Usuario> amigosPaginados(@Param("nombreUsuario") String nombreUsuario,@Param("nombreUsuarioFiltrar") String nombreUsuarioFiltrar,
+                        @Param("skip") int skip,
+                        @Param("limit") int limit);
 
     @Query("""
                 MATCH (u:Usuario {nombreUsuario: $nombreUsuario})
@@ -27,6 +36,17 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
             """)
     List<Usuario> solicitudesDeAmistad(String nombreUsuario);
 
+         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario}) " +
+                "OPTIONAL MATCH (solicitante:Usuario)-[r:SOLICITUD_DE_AMISTAD]->(u) "+
+                "WHERE solicitante IS NOT NULL "+
+                        "AND (toLower(solicitante.nombreUsuario) CONTAINS toLower($nombreUsuarioFiltrar) OR $nombreUsuarioFiltrar = '') " +
+                        "RETURN solicitante as usuario "+
+                        "SKIP $skip "+
+                        "LIMIT $limit")
+        List<Usuario> solicitudesPaginadas(@Param("nombreUsuario") String nombreUsuario,@Param("nombreUsuarioFiltrar") String nombreUsuarioFiltrar,
+                        @Param("skip") int skip,
+                        @Param("limit") int limit);
+
     @Query("""
                 MATCH (u:Usuario {nombreUsuario: $nombreUsuario})
                 OPTIONAL MATCH (u)-[r:SOLICITUD_DE_AMISTAD]->(solicitado:Usuario)
@@ -34,6 +54,17 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
                 RETURN solicitado AS usuario
             """)
     List<Usuario> solicitudesDeAmistadEnviadas(String nombreUsuario);
+
+         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario}) " +
+                "OPTIONAL MATCH (u)-[r:SOLICITUD_DE_AMISTAD]->(solicitado:Usuario) "+
+                "WHERE solicitado IS NOT NULL "+
+                        "AND (toLower(solicitado.nombreUsuario) CONTAINS toLower($nombreUsuarioFiltrar) OR $nombreUsuarioFiltrar = '') " +
+                        "RETURN solicitado as usuario "+
+                        "SKIP $skip "+
+                        "LIMIT $limit")
+        List<Usuario> solicitudesEnviadasPaginadas(@Param("nombreUsuario") String nombreUsuario,@Param("nombreUsuarioFiltrar") String nombreUsuarioFiltrar,
+                        @Param("skip") int skip,
+                        @Param("limit") int limit);
 
     @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(amigo)-[:ES_AMIGO_DE]->(amigosDeAmigos) "
             + "WHERE amigosDeAmigos <> u AND NOT (u)-[:ES_AMIGO_DE]-(amigosDeAmigos) "
@@ -246,35 +277,43 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
     List<Usuario> todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad);
 
         @Query("MATCH (u:Usuario), (ev:Evento) " +
-        "WHERE id(u) = $idUsuario AND id(ev) = $idEvento " +
-        "WITH u, ev " +
-        "MATCH (u)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
-        "WHERE NOT EXISTS { MATCH (amigo)-[:PARTICIPA_EN]->(ev) } " +
-        "AND NOT EXISTS { MATCH (ev)-[:CREADO_POR]->(amigo) } " +
-        "RETURN amigo")
+                        "WHERE id(u) = $idUsuario AND id(ev) = $idEvento " +
+                        "WITH u, ev " +
+                        "MATCH (u)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
+                        "WHERE NOT EXISTS { MATCH (amigo)-[:PARTICIPA_EN]->(ev) } " +
+                        "AND NOT EXISTS { MATCH (ev)-[:CREADO_POR]->(amigo) } " +
+                        "RETURN amigo")
         List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(Long idUsuario, Long idEvento);
- 
+
         @Query("MATCH (u:Usuario), (com:Comunidad) " +
-        "WHERE id(u) = $idUsuario AND id(com) = $idComunidad " +
-        "WITH u, com " +
-        "MATCH (u)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
-        "WHERE NOT EXISTS { MATCH (amigo)-[:MIEMBRO]->(com) } " +
-        "AND NOT EXISTS { MATCH (com)-[:ADMINISTRADA_POR|CREADA_POR]->(amigo) } " +
-        "RETURN amigo")
+                        "WHERE id(u) = $idUsuario AND id(com) = $idComunidad " +
+                        "WITH u, com " +
+                        "MATCH (u)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
+                        "WHERE NOT EXISTS { MATCH (amigo)-[:MIEMBRO]->(com) } " +
+                        "AND NOT EXISTS { MATCH (com)-[:ADMINISTRADA_POR|CREADA_POR]->(amigo) } " +
+                        "RETURN amigo")
         List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad);
- 
+
         @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
                         "MATCH (u)-[inv:INVITACION_EVENTO]->(amigo) " +
                         "WHERE id(u) = $idUsuario AND inv.idEvento = $idEvento " +
                         "RETURN amigo")
         List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(Long idUsuario, Long idEvento);
 
-    @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
-            "MATCH (u)-[inv:INVITACION_COMUNIDAD]->(amigo) " +
-            "WHERE id(u) = $idUsuario AND inv.idComunidad = $idComunidad " +
-            "RETURN amigo")
-    List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(Long idUsuario, Long idComunidad);
+        @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
+                        "MATCH (u)-[inv:INVITACION_COMUNIDAD]->(amigo) " +
+                        "WHERE id(u) = $idUsuario AND inv.idComunidad = $idComunidad " +
+                        "RETURN amigo")
+        List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(Long idUsuario, Long idComunidad);
 
+        @Query("""
+                                               MATCH (p:Publicacion)
+                        WHERE id(p) = 10908
+                        MATCH (u:Usuario)-[:LIKE]-(p)
+                        RETURN u
+                        """)
+        List<Usuario> likesPublicacion(@Param("publicacionId") Long publicacionId);
+  
     @Query("""
             MATCH (u:Usuario {nombreUsuario: $nombreUsuario}) // Usuario que hace la consulta
             MATCH (otros:Usuario)
@@ -290,8 +329,11 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
             // Devuelve solo aquellos usuarios que coinciden con el término
             RETURN otros
             ORDER BY amigosEnComun DESC
+            SKIP $skip
+            LIMIT $limit
             """)
-    List<Usuario> buscarUsuarios(String nombreUsuario, String term);
+    List<Usuario> buscarUsuarios(String nombreUsuario, String term, @Param("skip") int skip,
+                        @Param("limit") int limit);
 
     @Query("""
 

@@ -157,24 +157,34 @@ public class EventoPresenter {
         return Response.ok(null, eventoService.desinscribirse(idEvento, idUsuario));
     }
 
-    @GetMapping("/filtrar/etiquetas")
-    public ResponseEntity<Object> eventosPorEtiquetas(@RequestParam List<String> etiquetas) {
-        return Response.ok(eventoService.eventosEtiquetas(etiquetas));
+
+        @GetMapping("/filtrar/etiquetas")
+    public ResponseEntity<Object> eventosPorEtiquetas(@RequestParam List<String> etiquetas,@RequestParam(required = false) String tipo,
+    @RequestParam(required = false) Long usuarioId) {
+        return Response.ok(eventoService.eventosEtiquetas(etiquetas,tipo, usuarioId));
     }
 
-    @GetMapping("/filtrar/nombre/{nombre}")
-    public ResponseEntity<Object> eventosPorNombre(@PathVariable String nombre) {
-        return Response.ok(eventoService.eventosNombre(nombre));
+
+      @GetMapping("/filtrar/nombre")
+    public ResponseEntity<Object> eventosPorNombre(
+        @RequestParam String nombre,
+        @RequestParam(required = false) String tipo,
+        @RequestParam(required = false) Long usuarioId) {
+        return Response.ok(eventoService.eventosNombre(nombre, tipo, usuarioId));
     }
+
 
     @GetMapping("/filtrar/fecha")
-    public ResponseEntity<Object> eventosPorFecha(@RequestParam ZonedDateTime min, @RequestParam ZonedDateTime max) {
-        return Response.ok(eventoService.eventosFecha(min, max));
+    public ResponseEntity<Object> eventosPorFecha(@RequestParam(required = false) String tipo,
+        @RequestParam(required = false) Long usuarioId,@RequestParam ZonedDateTime min, @RequestParam ZonedDateTime max) {
+        return Response.ok(eventoService.eventosFecha(tipo, usuarioId,min, max));
     }
 
-    @GetMapping("/filtrar/participantes")
-    public ResponseEntity<Object> eventosPorParticipantes(@RequestParam int min, @RequestParam int max) {
-        return Response.ok(eventoService.eventosParticipantes(min, max));
+
+      @GetMapping("/filtrar/participantes")
+    public ResponseEntity<Object> eventosPorParticipantes(@RequestParam(required = false) String tipo,@RequestParam(required = false) Long usuarioId,
+    @RequestParam int min, @RequestParam int max) {
+        return Response.ok(eventoService.eventosParticipantes(tipo, usuarioId ,min, max));
     }
 
     @RequestMapping(path = "/{nombreUsuario}/disponibles", method = RequestMethod.GET)

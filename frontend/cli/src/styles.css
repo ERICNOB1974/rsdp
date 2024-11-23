@@ -2,7 +2,8 @@
 @import 'bootstrap/dist/css/bootstrap.min.css';
 @import "font-awesome/css/font-awesome.css";
 @import url('https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap');
-
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+  
 * {
   margin: 0;
   padding: 0;
@@ -114,10 +115,15 @@ body {
 }
 
 .notification-item {
-  position: relative;
+  background-color: #f5f5f5; /* Fondo claro para no leídas */
   padding: 10px;
-  margin-bottom: 5px;
-  border-bottom: 1px solid #eee;
+  margin: 5px 0;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
 }
 
 .notification-content {
@@ -178,7 +184,9 @@ body {
   color: white;
 
 }
-
+.notification-item.leida {
+  background-color: #e0e0e0; /* Fondo gris más oscuro para leídas */
+}
 
 .notification-badge {
   position: absolute;
@@ -230,8 +238,15 @@ body {
   cursor: pointer;
 }
 
-.notification-item:hover {
-  background-color: #f5f5f5;
+.notification-item:not(.leida):hover {
+  background-color: #d0f0d0; /* Verde claro para destacar no leídas */
+  transform: scale(1.02); /* Ligeramente más grande */
+}
+
+/* Hover para leídas */
+.notification-item.leida:hover {
+  background-color: #c0c0c0; /* Gris más claro para leídas */
+  transform: scale(1.01); /* Ligeramente más grande */
 }
 
 .new-notification-dot {

@@ -82,6 +82,7 @@ export class PerfilComponent implements OnInit {
         this.esMiPerfil = this.usuario.id === this.idUsuarioAutenticado;
         if (!this.esMiPerfil) {
           this.verificarRelacion().then(() => {
+            console.info(this.relacion);
             this.traerPublicacionesSegunPrivacidad();
 
           }).catch((error) => {

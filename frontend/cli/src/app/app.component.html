@@ -1,6 +1,6 @@
-<nav class="top-navbar" *ngIf="!esPantallaLogin && usuario">
+<nav class="top-navbar" *ngIf="!esPantallaLogin ">
     <div class="nav-content">
-        
+
         <div class="nav-items">
 
             <a class="nav-link" style="cursor: pointer; color: azure;" routerLink="/calendario">
@@ -15,7 +15,7 @@
                 </a>
                 <div class="notifications-menu">
                     <div *ngFor="let notificacion of notificaciones" class="notification-item"
-                        (click)="manejarClickNotificacion(notificacion)">
+                        [ngClass]="{'leida': notificacion.leida}" (click)="manejarClickNotificacion(notificacion)">
                         <div class="notification-content">
                             <span *ngIf="!notificacion.leida" class="new-notification-dot"></span>
                             <p>{{ notificacion.mensaje }}</p>
@@ -23,13 +23,14 @@
                         <i class="fa fa-trash delete-icon"
                             (click)="eliminarNotificacion(notificacion); $event.stopPropagation()"></i>
                     </div>
+
                     <div *ngIf="getNotificacionesNoLeidas().length === 0" class="no-notifications">
                         No hay notificaciones nuevas
                     </div>
                 </div>
             </div>
 
-            <a (click)="navigateToMiPerfil()" style="margin-left: 10px;"> <!-- Ajuste para mover a la izquierda -->
+            <a (click)="navigateToMiPerfil()" style="margin-left: 10px;">
                 <img [src]="usuario.fotoPerfil ? usuario.fotoPerfil : '../assets/usuario.png'" alt="Foto de perfil"
                     class="profile-image" />
             </a>
@@ -37,122 +38,125 @@
     </div>
 </nav>
 
+<div *ngIf="!esPantallaLogin" [class.collapsed]="isSidebarHidden" class="sidebar">
 
-<div *ngIf="!esPantallaLogin" [ngClass]="{'hidden': isSidebarHidden}" class="sidebar">
+    <nav class="navbar navbar-dark bg-dark">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent"
+            aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation"
+            (click)="toggleSidebar()">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </nav>
 
-    <div class="hamburger-icon" (click)="toggleSidebar()">
-        <i class="fa fa-bars"></i>
-    </div>
-    
-    <div class="sidebar-toggle" (click)="toggleSidebar()">
-        <i class="bi bi-list menu-icon"></i>
-    </div>
 
     <ul>
-        <li class="logo">
-            <h5 (click)="navigateTo('/')" style="text-align: center; margin: 10px; cursor: pointer;">RSDP</h5>
-        </li>
+        <div class="logo-container">
+            <li class="logo">
+                <h5 (click)="navigateTo('/')" style="text-align: center; margin: 10px; cursor: pointer;">RSDP</h5>
+            </li>
+        </div>
 
+        <nav class="menu">
+            <!-- Dropdown: Eventos -->
+            <li class="menu-item dropdown" [class.open]="isDropdownOpen['eventos']" (mouseleave)="closeDropdown('eventos')">
+                <a (click)="toggleDropdown('eventos')">
+                    <span class="icon"><i class="fa fa-calendar"></i></span>
+                    <span class="menu-text" *ngIf="!isSidebarHidden">Eventos</span>
+                    <span class="dropdown-arrow" *ngIf="!isSidebarHidden">
+                        <i [class]="isDropdownOpen['eventos'] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
+                    </span>
+                </a>
+                <ul class="dropdown-menu" *ngIf="isDropdownOpen['eventos']">
+                    <li><a [routerLink]="['/eventos']">Listar eventos</a></li>
+                    <li><a [routerLink]="['/eventos/crearEvento']">Crear evento</a></li>
+                    <li><a [routerLink]="['/eventosUsuario']">Mis Eventos</a></li>
+                </ul>
+            </li>
 
-        <li class="dropdown">
-            <a class="dropdown-toggle">
-                <span class="icon"><i class="fa fa-calendar"></i></span>
-                <span class="text">Eventos</span>
-            </a>
-            <ul class="dropdown-menu">
-                <li>
-                    <a href="/eventos">Listar eventos</a>
-                </li>
-                <li>
-                    <a href="/eventos/crearEvento">Crear evento</a>
-                </li>
-                <li>
-                    <a href="/eventosUsuario">Mis Eventos</a>
-                </li>
-            </ul>
-        </li>
-        <li class="dropdown">
-            <a class="dropdown-toggle">
-                <span class="icon"><i class="fa fa-users"></i></span>
-                <span class="text">Comunidades</span>
-            </a>
-            <ul class="dropdown-menu">
-                <li>
-                    <a href="/comunidades">Listar comunidades</a>
-                </li>
-                <li>
-                    <a href="/comunidades/crearComunidad">Crear comunidad</a>
-                </li>
-                <li>
-                    <a href="/comunidadesUsuario">Mis Comunidades</a>
-                </li>
-            </ul>
-        </li>
-        <li class="friends-link">
-            <a [routerLink]="['/amigos']">
-                <span class="icon"><i class="fa fa-user"></i></span>
-                <span class="text">Amigos</span>
-            </a>
-        </li>
+            <!-- Dropdown: Comunidades -->
+            <li class="menu-item dropdown" [class.open]="isDropdownOpen['comunidades']" (mouseleave)="closeDropdown('comunidades')">
+                <a (click)="toggleDropdown('comunidades')">
+                    <span class="icon"><i class="fa fa-users"></i></span>
+                    <span class="menu-text" *ngIf="!isSidebarHidden">Comunidades</span>
+                    <span class="dropdown-arrow" *ngIf="!isSidebarHidden">
+                        <i [class]="isDropdownOpen['comunidades'] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
+                    </span>
+                </a>
+                <ul class="dropdown-menu" *ngIf="isDropdownOpen['comunidades']">
+                    <li><a [routerLink]="['/comunidades']">Listar comunidades</a></li>
+                    <li><a [routerLink]="['/comunidades/crearComunidad']">Crear comunidad</a></li>
+                    <li><a [routerLink]="['/comunidadesUsuario']">Mis Comunidades</a></li>
+                </ul>
+            </li>
 
-        <li class="dropdown">
-            <a class="dropdown-toggle">
-                <span class="icon"><i class="fa fa-question-circle"></i></span>
-                <span class="text">Sugerencias</span>
-            </a>
-            <ul class="dropdown-menu">
-                <li>
-                    <a href="/sugerencias/amigos">De amigos</a>
-                </li>
-                <li>
-                    <a href="/sugerencias/eventos">De eventos</a>
-                </li>
-                <li>
-                    <a href="/sugerencias/comunidades">De comunidades</a>
-                </li>
-                <li>
-                    <a href="/sugerencias/rutinas">De rutinas</a>
-                </li>
-            </ul>
-        </li>
-        <li class="dropdown">
-            <a class="dropdown-toggle">
-                <span class="icon"><i class="fa fa-thumbs-o-up"></i></span>
-                <span class="text">Publicación</span>
-            </a>
-            <ul class="dropdown-menu">
-                <li>
-                    <a href="/publicacion">Nueva</a>
-                </li>
-            </ul>
-        </li>
-        <li class="dropdown">
-            <a class="dropdown-toggle">
-                <span class="icon"><i class="fa fa-soccer-ball-o"></i></span>
-                <span class="text">Rutinas</span>
-            </a>
-            <ul class="dropdown-menu">
-                <li>
-                    <a href="/rutinas">Listar Rutinas</a>
-                </li>
-                <li>
-                    <a href="/rutinas/crearRutina">Nueva Rutina</a>
-                </li>
-                <li>
-                    <a href="/rutinasUsuario">Mis Rutinas Creadas</a>
-                </li>
-            </ul>
-        </li>
-        <li>
-            <a (click)="logout()" class="logout-button" href="javascript:void(0);">
-                <span class="icon"><i class="fa fa-sign-out"></i></span>
-                <span class="text">Cerrar sesión</span>
-            </a>
-        </li>
+            <!-- Simple: Amigos -->
+            <li class="menu-item friends-link">
+                <a [routerLink]="['/amigos']">
+                    <span class="icon"><i class="fa fa-user"></i></span>
+                    <span class="menu-text" *ngIf="!isSidebarHidden">Amigos</span>
+                </a>
+            </li>
 
+            <!-- Dropdown: Sugerencias -->
+            <li class="menu-item dropdown" [class.open]="isDropdownOpen['sugerencias']" (mouseleave)="closeDropdown('sugerencias')">
+                <a (click)="toggleDropdown('sugerencias')">
+                    <span class="icon"><i class="fa fa-question-circle"></i></span>
+                    <span class="menu-text" *ngIf="!isSidebarHidden">Sugerencias</span>
+                    <span class="dropdown-arrow" *ngIf="!isSidebarHidden">
+                        <i [class]="isDropdownOpen['sugerencias'] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
+                    </span>
+                </a>
+                <ul class="dropdown-menu" *ngIf="isDropdownOpen['sugerencias']">
+                    <li><a [routerLink]="['/sugerencias/amigos']">De amigos</a></li>
+                    <li><a [routerLink]="['/sugerencias/eventos']">De eventos</a></li>
+                    <li><a [routerLink]="['/sugerencias/comunidades']">De comunidades</a></li>
+                    <li><a [routerLink]="['/sugerencias/rutinas']">De rutinas</a></li>
+                </ul>
+            </li>
+
+            <!-- Dropdown: Publicación -->
+            <li class="menu-item dropdown" [class.open]="isDropdownOpen['publicacion']" (mouseleave)="closeDropdown('publicacion')">
+                <a (click)="toggleDropdown('publicacion')">
+                    <span class="icon"><i class="fa fa-thumbs-o-up"></i></span>
+                    <span class="menu-text" *ngIf="!isSidebarHidden">Publicación</span>
+                    <span class="dropdown-arrow" *ngIf="!isSidebarHidden">
+                        <i [class]="isDropdownOpen['publicacion'] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
+                    </span>
+                </a>
+                <ul class="dropdown-menu" *ngIf="isDropdownOpen['publicacion']">
+                    <li><a [routerLink]="['/publicacion']">Nueva</a></li>
+                </ul>
+            </li>
+
+            <!-- Dropdown: Rutinas -->
+            <li class="menu-item dropdown" [class.open]="isDropdownOpen['rutinas']" (mouseleave)="closeDropdown('rutinas')">
+                <a (click)="toggleDropdown('rutinas')">
+                    <span class="icon"><i class="fa fa-soccer-ball-o"></i></span>
+                    <span class="menu-text" *ngIf="!isSidebarHidden">Rutinas</span>
+                    <span class="dropdown-arrow" *ngIf="!isSidebarHidden">
+                        <i [class]="isDropdownOpen['rutinas'] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
+                    </span>
+                </a>
+                <ul class="dropdown-menu" *ngIf="isDropdownOpen['rutinas']">
+                    <li><a [routerLink]="['/rutinas']">Listar Rutinas</a></li>
+                    <li><a [routerLink]="['/rutinas/crearRutina']">Nueva Rutina</a></li>
+                    <li><a [routerLink]="['/rutinasUsuario']">Mis Rutinas Creadas</a></li>
+                </ul>
+            </li>
+
+            <!-- Simple: Cerrar sesión -->
+            <li class="menu-item">
+                <a (click)="logout()" class="logout-button">
+                    <span class="icon"><i class="bi bi-box-arrow-right"></i></span>
+                    <span class="menu-text" *ngIf="!isSidebarHidden">Cerrar sesión</span>
+                </a>
+            </li>
+        </nav>
     </ul>
-    
+
 </div>
+
+
 
 
 <div class="main-content" [ngClass]="isSidebarHidden ? 'full-width' : ''">

@@ -361,12 +361,24 @@ public class RutinaService {
         }
     }
 
-    public List<Rutina> rutinasEtiquetas(List<String> etiquetas) {
-        return rutinaRepository.rutinasEtiquetas(etiquetas);
+    public List<Rutina> rutinasEtiquetas(List<String> etiquetas, String tipo, Long usuarioId) {
+        if ("disponibles".equalsIgnoreCase(tipo)) {
+            return rutinaRepository.rutinasEtiquetasDisponible(usuarioId,etiquetas);
+        } else if ("realizaRutina".equalsIgnoreCase(tipo)) {
+            return rutinaRepository.rutinasEtiquetasRealizaRutina(usuarioId, etiquetas);
+        } else {
+            return rutinaRepository.rutinasEtiquetas(etiquetas);
+        }
     }
 
-    public List<Rutina> rutinasNombre(String nombre) {
-        return rutinaRepository.rutinasNombre(nombre);
+        public List<Rutina> rutinasNombre(String nombre, String tipo, Long usuarioId) {
+        if ("disponibles".equalsIgnoreCase(tipo)) {
+            return rutinaRepository.rutinasNombreDisponibles(nombre, usuarioId);
+        } else if ("realizaRutina".equalsIgnoreCase(tipo)) {
+            return rutinaRepository.rutinasNombreRealizaRutina(nombre, usuarioId);
+        } else {
+            return rutinaRepository.rutinasNombre(nombre);
+        }
     }
 
     public List<Rutina> rutinasCreadasPorUsuario(Long idUsuario, int offset, int limit) {

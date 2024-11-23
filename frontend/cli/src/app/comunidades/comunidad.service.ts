@@ -73,7 +73,7 @@ export class ComunidadService {
     }
   }
 
-  sugerencias(page:number, size:number): Observable<DataPackage> {
+  sugerencias(page: number, size: number): Observable<DataPackage> {
     const nombreUsuario = this.authService.getNombreUsuario();
 
     return this.http.get<DataPackage>(` ${this.comunidadesUrl}/sugerencias-combinadas/${nombreUsuario}?page=${page}&size=${size}`);
@@ -104,15 +104,15 @@ export class ComunidadService {
   miembroUsuario(idUsuario: number, nombreComunidad: string, page: number, size: number): Observable<DataPackage> {
     // Si nombreRutina está vacío, no lo incluimos en la URL
     const url = `${this.comunidadesUrl}/miembro/${idUsuario}?page=${page}&size=${size}` +
-                (nombreComunidad ? `&nombreComunidad=${nombreComunidad}` : '');  // Agregar solo si no está vacío
+      (nombreComunidad ? `&nombreComunidad=${nombreComunidad}` : '');  // Agregar solo si no está vacío
     return this.http.get<DataPackage>(url);
-}
+  }
 
   disponibles(page: number, size: number): Observable<DataPackage> {
     const nombreUsuario = this.authService.getNombreUsuario();
     return this.http.get<DataPackage>(` ${this.comunidadesUrl}/${nombreUsuario}/disponibles?page=${page}&size=${size}`);
   }
- 
+
 
   otorgarRolAdministrador(idCreador: number, idMiembro: number, idComunidad: number): Observable<DataPackage> {
     const body = {}
@@ -143,24 +143,42 @@ export class ComunidadService {
     return this.http.delete<DataPackage>(`${this.comunidadesUrl}/${id}`)
   }
 
-  filtrarParticipantes(min: number, max: number): Observable<DataPackage> {
+  filtrarParticipantes(tipoTab: string, usuarioId: number, min: number, max: number): Observable<DataPackage> {
     // Agregamos los parámetros min y max a la URL
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/filtrar/participantes`, {
       params: {
+        tipo:tipoTab,
+        usuarioId: usuarioId,
         min: min.toString(),  // Convertimos a string porque los parámetros de URL deben ser strings
         max: max.toString()
       }
     });
   }
-  filtrarNombre(nombre: string): Observable<DataPackage> {
-    // Agregamos los parámetros min y max a la URL
-    return this.http.get<DataPackage>(`${this.comunidadesUrl}/filtrar/nombre/${nombre}`);
+
+  filtrarNombre(nombre: string, tipoTab: string, usuarioId: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.comunidadesUrl}/filtrar/nombre`, 
+      { params: {
+        nombre: nombre,
+        tipo: tipoTab,
+        usuarioId: usuarioId}  
+      });
   }
 
-  filtrarEtiqueta(etiquetas: string[]): Observable<DataPackage> {
-    const params = new HttpParams().set('etiquetas', etiquetas.join(',')); // convierte el array a una cadena separada por comas
+
+  filtrarEtiqueta(etiquetas: string[], tipo: string, usuarioId: number): Observable<DataPackage> {
+    let params = new HttpParams().set('etiquetas', etiquetas.join(',')); // convierte el array a una cadena separada por comas
+    
+    if (tipo) {
+      params = params.set('tipo', tipo); // agrega el tipo si está definido
+    }
+    
+    if (usuarioId) {
+      params = params.set('usuarioId', usuarioId.toString()); // agrega el idUsuario si está definido
+    }
+  
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/filtrar/etiquetas`, { params });
   }
+  
 
   comunidadesCreadasPorUsuario(offset: number, limit: number): Observable<DataPackage> {
     const userId = this.authService.getUsuarioId();
