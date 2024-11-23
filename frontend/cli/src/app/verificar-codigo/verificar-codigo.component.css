@@ -1,37 +1,63 @@
-.codigo-container {
-    text-align: center;
-    margin-top: 50px;
-  }
-  
-  .codigo-inputs {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin: 15px 0;
-  }
-  
-  .codigo-inputs input {
-    width: 40px;
-    height: 40px;
-    text-align: center;
-    font-size: 18px;
-  }
-  .mat-mdc-raised-button:not(:disabled){
-    background-color: #217d94;
-    box-shadow: 0px 3px 6px #00000029;
-    border-radius: 4px;
-    width: 98px;
-    text-align: left;
-    font-family: Roboto, Medium;
-    letter-spacing: 1.25px;
-    color: #FFFFFF;
-    text-transform: uppercase;
-    font-size: 14px;
-    font-weight: 400;
-  }
-  
-  mat-card-actions {
-    display: flex;
-    justify-content: space-between;
+.wrap-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  min-height: 100vh;
+  padding-top: 40px;
 }
 
+.container {
+  background: #ffffff;
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.29);
+  border-radius: 4px;
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.login-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.codigo-container {
+  text-align: center;
+}
+
+.codigo-inputs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.codigo-inputs .form-control {
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  font-size: 18px;
+  padding: 0;
+  border-radius: 4px;
+}
+
+button.btn-primary {
+  background-color: #217d94;
+  border: none;
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.29);
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-family: Roboto, Medium;
+  font-size: 14px;
+  letter-spacing: 1.25px;
+  font-weight: 400;
+  color: #ffffff;
+}

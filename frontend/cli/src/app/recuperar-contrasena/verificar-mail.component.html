@@ -27,25 +27,14 @@
           </mat-form-field>
         </mat-card-content>
 
-        <mat-card-actions>
-          <button
-            mat-raised-button
-            color="primary"
-            type="submit"
-            class="btn-left"
-            [disabled]="!recoverForm.valid"
-          >
-            Enviar código
+        <mat-card-actions class="action-buttons">
+          <button mat-flat-button color="accent" (click)="router.navigate(['/login'])">
+              Atrás
           </button>
-          <button
-            mat-flat-button
-            color="accent"
-            class="btn-right"
-            (click)="router.navigate(['/login'])"
-          >
-            Volver al login
+          <button mat-raised-button color="primary" type="submit" [disabled]="!recoverForm.valid">
+              Enviar Código
           </button>
-        </mat-card-actions>
+      </mat-card-actions>
       </mat-card>
     </form>
   </div>
