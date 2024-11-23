@@ -24,7 +24,7 @@
     box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.29);
     border-radius: 4px;
     width: 100%;
-    max-width: 768px; /* Tamaño máximo para pantallas grandes */
+    max-width: 400px; /* Tamaño máximo para pantallas grandes */
     padding: 20px;
     box-sizing: border-box;
 }
@@ -124,7 +124,24 @@
 
 mat-card-actions {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Espacia los botones a los extremos */
+    width: 100%; /* Asegura que ocupen todo el ancho disponible */
+    align-items: center; /* Alinea los botones verticalmente al centro */
+}
+
+.btn-left, .btn-right {
+    flex: 1; /* Hace que ambos botones ocupen el mismo espacio */
+    margin: 0 5px; /* Espacio entre los botones */
+    min-width: 100px; /* Ancho mínimo para los botones */
+    height: 40px; /* Asegura que ambos botones tengan la misma altura */
+}
+
+.btn-left {
+    text-align: left; /* Alinea el texto del botón a la izquierda */
+}
+
+.btn-right {
+    text-align: right; /* Alinea el texto del botón a la derecha */
 }
 
 @media(max-width: 768px) {
@@ -133,26 +150,23 @@ mat-card-actions {
     }
 
     .container {
-        padding: 20px;
+        padding: 10px; /* Reduce el padding en pantallas pequeñas */
     }
 
     .registro-box {
-        max-width: 100%;
+        max-width: 100%; /* Asegura que el formulario ocupe el 100% del ancho */
         padding: 0 10px;
+    }
+
+    mat-card-actions {
+        flex-direction: row; /* Asegura que los botones se alineen en fila */
+        justify-content: space-between; /* Espacia los botones a los extremos */
     }
 }
 
-@media(max-width: 430px) {
-    .container {
-        box-shadow: none;
-        display: block;
-        justify-content: center;
-        align-items: center;
-        padding: 15px;
-    }
-
-    .registro-box {
-        width: 100%;
-        max-width: 100%;
+@media(max-width: 425px) {
+    .btn-left, .btn-right {
+        flex: 1; /* Asegura que ambos botones ocupen el mismo espacio */
+        height: 40px; /* Asegura que ambos botones tengan la misma altura */
     }
 }
