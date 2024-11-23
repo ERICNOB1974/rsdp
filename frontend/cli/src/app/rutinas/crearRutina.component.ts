@@ -17,7 +17,7 @@ import { NgxMaskDirective } from 'ngx-mask';
 @Component({
   selector: 'app-crearRutina',
   templateUrl: './crearRutina.component.html',
-  styleUrls: ['./crearRutina.component.css', '../css/etiquetas.css'],
+  styleUrls: ['./crearRutina.component.css', '../css/etiquetas.css', '../css/crear.component.css'],
   imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbTypeaheadModule, NgxMaskDirective],
   standalone: true
 })
@@ -334,6 +334,31 @@ export class CrearRutinaComponent {
     }
   }
 
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault(); // Prevenir el comportamiento predeterminado
+    event.stopPropagation();
+  }
+
+  onDrop(event: DragEvent, ejercicio: Ejercicio): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Asegurarse de que existen archivos en el evento
+    if (event.dataTransfer && event.dataTransfer.files.length > 0) {
+      const file = event.dataTransfer.files[0]; // Toma el primer archivo
+      const inputEvent = { target: { files: [file] } }; // Crea un evento similar al del input
+      this.onFileSelect(inputEvent, ejercicio); // Reutiliza tu lógica para manejar el archivo
+    }
+  }
+
+
+  eliminarArchivo(ejercicio: Ejercicio): void {
+    this.vistaPreviaArchivo = null;
+    this.formatoValido = false;
+    ejercicio.imagen = '';
+
+  }
 
 
 

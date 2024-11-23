@@ -11,11 +11,18 @@
       </mat-error>
     </mat-form-field>
 
-    <!-- Imagen -->
-    <div class="form-group">
-      <label for="imagen">Seleccionar imagen</label>
-      <input type="file" id="archivo" [(ngModel)]="evento.imagen" (change)="onFileSelect($event)" name="imagen">
+    <div *ngIf="evento.imagen==='' || evento.imagen==null" class="drag-drop-area" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+      <p>Arrastra y suelta una imagen o video aquí, o selecciona uno desde tus archivos.</p>
+      <input type="file" id="archivo" (change)="onFileSelect($event)" hidden #fileInput>
+      <button type="button" (click)="fileInput.click()">Seleccionar archivo</button>
     </div>
+    <div *ngIf="formatoValido && evento.imagen!='' && evento.imagen!=null" class="vista-previa-contenedor">
+      <img [src]="evento.imagen" alt="Vista previa de la imagen" class="vista-previa-imagen">
+      <button type="button" (click)="eliminarArchivo()" class="btn btn-danger mt-2">Eliminar archivo</button>
+    </div>
+
+
+
 
     <!-- Fecha y Hora del Evento -->
     <mat-form-field appearance="outline" class="form-group">
@@ -52,8 +59,9 @@
       <input matInput id="etiquetas" [(ngModel)]="etiquetaSeleccionada" [ngbTypeahead]="searchEtiqueta"
         [resultFormatter]="resultFormatEtiqueta" [inputFormatter]="inputFormatEtiqueta"
         (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada" placeholder="Buscar etiqueta" />
-        <mat-error *ngIf="formEvento.get('etiquetasSeleccionadas')?.hasError('sinEtiqueta') && formEvento.get('etiquetasSeleccionadas')?.touched">
-          Al menos una etiqueta es requerida
+      <mat-error
+        *ngIf="formEvento.get('etiquetasSeleccionadas')?.hasError('sinEtiqueta') && formEvento.get('etiquetasSeleccionadas')?.touched">
+        Al menos una etiqueta es requerida
       </mat-error>
     </mat-form-field>
 
