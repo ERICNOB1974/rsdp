@@ -29,6 +29,10 @@
           Invitar amigos
         </button>
 
+        <button *ngIf="creador" class="btn btn-warning btn-block mx-auto mt-3" (click)="openModal(modalNotificacion)">
+          Notificar a todos los usuarios
+        </button>
+
 
         <h3>Miembros</h3>
         <div *ngFor="let miembro of participantesVisibles">
@@ -84,54 +88,64 @@
 
 
 
-<ng-template #modalInvitarAmigos>
-  <div class="modal-header">
-    <h5 class="modal-title">Invitar amigos al evento</h5>
-    <button type="button" class="close btn-close" aria-label="Close" (click)="cerrarModal()"></button>
-  </div>
-  <div class="modal-body">
-    <!-- Amigos no en evento -->
-    <h6 class="text-primary">Amigos que aún no están en el evento</h6>
-    <div *ngIf="amigosNoEnEvento.length > 0; else sinAmigosNoEnEvento">
-      <div *ngFor="let amigo of amigosNoEnEvento"
-        class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
-        <span>{{ amigo.nombreUsuario }}</span>
-        <button (click)="invitarAmigo(amigo.id)" class="btn btn-outline-primary btn-sm ml-2 animate-btn">
-          Invitar al evento
-        </button>
+<ng-template #modalNotificacion>
+  <div class="modal" 
+       id="notificacionModal" 
+       tabindex="-1" 
+       aria-labelledby="notificacionModalLabel" 
+       aria-hidden="true" 
+       role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content bg-dark-custom text-light">
+        <div class="modal-header border-bottom border-secondary">
+          <h5 class="modal-title text-highlight" id="notificacionModalLabel">Enviar notificación a los miembros del evento</h5>
+          <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+          <form #notificacionForm="ngForm" class="p-3">
+            <div class="mb-3">
+              <label for="motivo" class="form-label text-light">Motivo de la notificación</label>
+              <input 
+                type="text" 
+                class="form-control border-secondary bg-dark-input text-light" 
+                id="motivo" 
+                [(ngModel)]="motivo" 
+                name="motivo" 
+                placeholder="Escribe el motivo"
+                required>
+              <div *ngIf="!motivo && notificacionForm.submitted" class="text-danger mt-1">
+                El motivo es obligatorio.
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="mensaje" class="form-label text-light">Mensaje</label>
+              <textarea 
+                class="form-control border-secondary bg-dark-input text-light" 
+                id="mensaje" 
+                [(ngModel)]="mensaje" 
+                name="mensaje" 
+                rows="4" 
+                placeholder="Escribe el mensaje"
+                required>
+              </textarea>
+              <div *ngIf="!mensaje && notificacionForm.submitted" class="text-danger mt-1">
+                El mensaje es obligatorio.
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer border-top border-secondary d-flex justify-content-between">
+          <button 
+            type="button" 
+            class="btn btn-cancel" 
+            (click)="closeModal()">Cancelar</button>
+          <button 
+            type="button" 
+            class="btn btn-primary btn-highlight" 
+            [disabled]="!motivo || !mensaje" 
+            (click)="enviarNotificacion()">Enviar</button>
+        </div>
       </div>
     </div>
-    <ng-template #sinAmigosNoEnEvento>
-      <p class="text-muted">No tienes amigos disponibles para invitar.</p>
-    </ng-template>
-
-    <!-- Amigos en evento -->
-    <h6 class="text-success mt-4">Amigos ya en el evento</h6>
-    <div *ngIf="amigosEnEvento.length > 0; else sinAmigosEnEvento">
-      <div *ngFor="let amigo of amigosEnEvento"
-        class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
-        <span>{{ amigo.nombreUsuario }}</span>
-        <span class="badge bg-success text-white">En el evento</span>
-      </div>
-    </div>
-    <ng-template #sinAmigosEnEvento>
-      <p class="text-muted">No tienes amigos en el evento.</p>
-    </ng-template>
-
-    <!-- Amigos ya invitados -->
-    <h6 class="text-warning mt-4">Amigos ya invitados</h6>
-    <div *ngIf="amigosYaInvitados.length > 0; else sinAmigosYaInvitados">
-      <div *ngFor="let amigo of amigosYaInvitados"
-        class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
-        <span>{{ amigo.nombreUsuario }}</span>
-        <span class="badge bg-warning text-dark">Ya invitado</span>
-      </div>
-    </div>
-    <ng-template #sinAmigosYaInvitados>
-      <p class="text-muted">No tienes amigos ya invitados.</p>
-    </ng-template>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
   </div>
 </ng-template>

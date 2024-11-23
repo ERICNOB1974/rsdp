@@ -8,7 +8,8 @@ import { Evento } from '../eventos/evento';
 import { DataPackage } from '../data-package';
 import { Router } from '@angular/router';
 import esLocale from '@fullcalendar/core/locales/es'; 
-
+import { RutinaService } from '../rutinas/rutina.service';
+import { Rutina } from '../rutinas/rutina';
 
 @Component({
   selector: 'app-calendario',
@@ -23,12 +24,16 @@ export class CalendarioEventosComponent implements OnInit {
 
   @ViewChild('fullcalendar') fullcalendar?: FullCalendarComponent;
 
-  constructor(private eventosService: EventoService, private router: Router) {
+  constructor(
+    private eventosService: EventoService,
+    private router: Router,
+    private rutinaService: RutinaService
+  ) {
     this.calendarOptions = {
       plugins: [dayGridPlugin, interactionPlugin],
       initialView: 'dayGridMonth',
-      locales: [esLocale], // Agrega el idioma aquí
-      locale: 'es', // Establece el idioma como español
+      locales: [esLocale],
+      locale: 'es',
       headerToolbar: {
         left: 'prev,next today',
         center: 'title',
@@ -42,45 +47,142 @@ export class CalendarioEventosComponent implements OnInit {
       eventClick: this.handleEventClick.bind(this),
       eventContent: (arg) => {
         return {
-          html: `<div class="fc-event-title" style="white-space: normal; overflow: hidden; text-overflow: ellipsis; cursor: pointer">${arg.event.title}</div>`
+          html: `
+            <div class="custom-event" style="display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 10px; background-color: rgba(0, 123, 255, 0.1); border: 1px solid #007bff; color: #007bff; text-align: center; font-family: 'Arial', sans-serif; font-size: 14px; width: 100%; box-sizing: border-box; cursor: pointer; overflow: hidden;">
+              <div class="custom-event-title" style="font-size: 18px; color: #111; font-weight: bold; margin-bottom: 5px; width: 100%; white-space: normal; overflow: hidden; text-overflow: ellipsis; cursor: pointer; word-wrap: break-word; word-break: break-word; line-height: 1.4; text-transform: uppercase;">
+                ${arg.event.extendedProps['type'] === 'rutina' ? 'Rutina' : 
+                  arg.event.extendedProps['type'] === 'evento' ? 'Evento' : 
+                  arg.event.extendedProps['type'] === 'recomendado' ? 'Evento Recomendado' : 'Evento Desconocido'}
+              </div>
+              <div class="custom-event-name" style="font-size: 16px; color: #555; font-weight: bold; margin-bottom: 5px; width: 100%; white-space: normal; overflow: hidden; text-overflow: ellipsis; cursor: pointer; word-wrap: break-word; word-break: break-word; line-height: 1.4;">
+                ${arg.event.title} 
+              </div>
+              ${arg.event.extendedProps['type'] === 'rutina' ? 
+                `<div class="custom-event-description" style="font-size: 14px; color: #555; margin-top: 5px; width: 100%; text-align: left; white-space: normal; overflow: hidden; text-overflow: ellipsis; word-wrap: break-word; word-break: break-word; line-height: 1.4;">
+                  <strong>Día:</strong> ${arg.event.extendedProps['description']}
+                </div>` 
+                : ''
+              }
+            </div>`
         };
-      },
+      },            
       nextDayThreshold: '00:00:00',
       displayEventEnd: true,
       fixedWeekCount: false,
-      showNonCurrentDates: true // Habilita la visualización de días no actuales
+      showNonCurrentDates: true
     };
   }
 
   ngOnInit() {
-    this.eventosService.eventosFuturosPertenecientesAUnUsuario().subscribe((dataPackage: DataPackage) => {
-      this.eventos = dataPackage.data as Evento[];
+    const colors = ['#FFA500', '#1E90FF', '#32CD32', '#FF6347', '#9370DB']; // Paleta de colores
+    const calendarEvents: any[] = [];
   
-      console.log('Eventos recibidos del backend:', this.eventos); // Agrega esta línea
+    // Cargar rutinas
+    this.rutinaService.rutinasRealizaUsuarioSinPaginacion().subscribe(
+      (dataPackage: DataPackage[]) => {
+        const rutinas = dataPackage as unknown as Rutina[];
+        console.log('Rutinas recibidas y procesadas:', rutinas);
   
-      this.calendarOptions.events = this.eventos.map(evento => {
-        const startDate = new Date(evento.fechaHora);
-        startDate.setHours(0, 0, 0, 0); // Asegura que la fecha de inicio sea a las 00:00:00
+        rutinas.forEach((rutina, rutinaIndex) => {
+          const color = colors[rutinaIndex % colors.length];
+          let baseDate = new Date();
+          baseDate.setHours(0, 0, 0, 0);
   
-        const endDate = new Date(startDate);
-        endDate.setDate(endDate.getDate() + 1); // Añade un día
-        endDate.setMilliseconds(endDate.getMilliseconds() - 1); // Resta 1 milisegundo para que termine justo antes de la medianoche
-  
-        const calendarEvent = {
-          title: evento.nombre,
-          start: startDate.toISOString(),
-          end: endDate.toISOString(),
-          allDay: true,
-          extendedProps: {
-            id: evento.id
+          if (rutina.hizoUltimoDiaHoy) {
+            baseDate.setDate(baseDate.getDate() + 1); // Comenzar desde el día siguiente
           }
-        };
   
-        console.log('Evento procesado:', calendarEvent); // Agrega esta línea
+          if (rutina.dias && rutina.dias.length > 0) {
+            rutina.dias.forEach((dia, diaIndex) => {
+              const eventDate = new Date(baseDate);
+              eventDate.setDate(baseDate.getDate() + diaIndex);
   
-        return calendarEvent;
-      });
-    });
+              calendarEvents.push({
+                title: `${rutina.nombre}`,
+                start: eventDate.toISOString(),
+                end: eventDate.toISOString(),
+                allDay: true,
+                backgroundColor: color,
+                extendedProps: {
+                  type: 'rutina',
+                  rutinaId: rutina.id ?? 0,
+                  diaId: dia.id ?? 0,
+                  description: `${dia.nombre}`
+                }
+              });
+            });
+          }
+        });
+  
+        console.log('Eventos de rutinas generados:', calendarEvents);
+        this.loadEventos(calendarEvents);
+      },
+      (error) => console.error('Error al cargar rutinas:', error)
+    );
+  }
+  
+  loadEventos(calendarEvents: any[]) {
+    // Cargar eventos deportivos
+    this.eventosService.eventosFuturosPertenecientesAUnUsuario().subscribe(
+      (dataPackage: DataPackage) => {
+        const eventos = dataPackage.data as Evento[];
+        console.log('Eventos recibidos del backend:', eventos);
+
+        eventos.forEach(evento => {
+          const startDate = new Date(evento.fechaHora);
+          startDate.setHours(0, 0, 0, 0);
+          const endDate = new Date(startDate);
+          endDate.setDate(endDate.getDate() + 1);
+          endDate.setMilliseconds(endDate.getMilliseconds() - 1);
+
+          calendarEvents.push({
+            title: evento.nombre,
+            start: startDate.toISOString(),
+            end: endDate.toISOString(),
+            allDay: true,
+            extendedProps: {
+              type: 'evento',
+              id: evento.id
+            }
+          });
+        });
+
+        console.log('Eventos deportivos generados:', calendarEvents);
+        this.calendarOptions.events = calendarEvents;
+
+        // Cargar eventos recomendados
+        this.eventosService.sugerencias(0, 1000).subscribe((dataPackage: DataPackage) => {
+          const data = dataPackage.data as { data: any[], totalPaginas: number };
+          data.data.forEach(item => {
+            const evento = item.evento;
+            const startDate = new Date(evento.fechaHora);
+            startDate.setHours(0, 0, 0, 0);
+            const endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + 1);
+            endDate.setMilliseconds(endDate.getMilliseconds() - 1);
+
+            calendarEvents.push({
+              title: evento.nombre, 
+              start: startDate.toISOString(),
+              end: endDate.toISOString(),
+              allDay: true,
+              extendedProps: {
+                type: 'recomendado',
+                id: evento.id
+              }
+            });            
+          });
+
+          console.log('Eventos recomendados generados:', calendarEvents);
+
+          setTimeout(() => {
+            this.calendarOptions.events = [...calendarEvents];
+          }, 0);
+
+        }, (error) => console.error('Error al cargar eventos recomendados:', error));
+      },
+      (error) => console.error('Error al cargar eventos:', error)
+    );
   }
 
   handleDateClick(arg: DateClickArg) {
@@ -88,7 +190,12 @@ export class CalendarioEventosComponent implements OnInit {
   }
 
   handleEventClick(arg: EventClickArg) {
-    const eventoId = arg.event.extendedProps['id'];
-    this.router.navigate([`eventos/${eventoId}`]);
+    const { type, rutinaId, id } = arg.event.extendedProps;
+
+    if (type === 'rutina') {
+      this.router.navigate([`/rutinas/${rutinaId}`]);
+    } else if (type === 'evento' || type === 'recomendado') {
+      this.router.navigate([`/eventos/${id}`]);
+    }
   }
 }
