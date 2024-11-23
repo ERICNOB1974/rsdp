@@ -196,7 +196,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
             "point({latitude: u.latitud, longitude: u.longitud}) AS ubicacionUsuario " +
             "WITH comunidad, etiquetasEnComun, " +
             "point.distance(ubicacionComunidad, ubicacionUsuario) AS distancia " +
-            "RETURN comunidad, (etiquetasEnComun / (distancia + 1500000)) AS score, 'a tus amigos le gustan eventos de este tipo, porque tienen '+etiquetasEnComun+' etiqueta/s compartida/s con las comunidades en las que participas' AS motivo "
+            "RETURN comunidad, (etiquetasEnComun / (distancia + 1500000)) AS score, 'a tus amigos le gustan eventos de este tipo, porque tienen '+etiquetasEnComun+' etiqueta/s en comun con las comunidades en las que participas' AS motivo "
             + // Cambiar aquí
             "ORDER BY score DESC ")
     List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario);
@@ -216,7 +216,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
             "point.distance(ubicacionComunidad, ubicacionUsuario) AS distancia " +
             "WITH comunidad, etiquetasEnComun, distancia, " +
             "(etiquetasEnComun/(distancia+1500000)) AS score " +
-            "RETURN comunidad, score, 'son similares porque tienen '+etiquetasEnComun+' etiqueta/s compartida/s con eventos en los que participas' AS motivo  "
+            "RETURN comunidad, score, 'tienen '+etiquetasEnComun+' etiqueta/s en comun con eventos en los que participas' AS motivo  "
             +
             "ORDER BY score DESC ")
     List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnEventos2(String nombreUsuario);
@@ -236,7 +236,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
             +
             "WITH comunidad, etiquetasEnComun, distancia, (etiquetasEnComun/(distancia+1500000)) AS score "
             +
-            "RETURN comunidad, score, 'son similares porque tienen '+etiquetasEnComun+' etiqueta/s compartida/s con comunidades en las que perteneces' AS motivo   "
+            "RETURN comunidad, score, 'tienen '+etiquetasEnComun+' etiqueta/s en comun con comunidades en las que perteneces' AS motivo   "
             +
             "ORDER BY score DESC ")
     List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnComunidades2(

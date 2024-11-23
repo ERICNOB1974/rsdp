@@ -2,7 +2,7 @@
 
 <section class="event-list">
   <div *ngFor="let comunidad of results" class="event-item">
-    <div class="event-card" [routerLink]="['/comunidades', comunidad.id]">
+    <div class="event-card" [routerLink]="['/comunidad-muro', comunidad.id]">
       <img [src]="comunidad.imagen ? comunidad.imagen : '../../assets/comunidad.jpg'" alt="{{ comunidad.nombre }}"
         class="event-image" />
       <div class="event-overlay">
