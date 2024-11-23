@@ -5,6 +5,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Evento } from './evento';
 import axios from 'axios';
 import { AuthService } from '../autenticacion/auth.service';
+import { Usuario } from '../usuarios/usuario';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ import { AuthService } from '../autenticacion/auth.service';
 export class EventoService {
 
   private eventosUrl = 'rest/eventos';
+  private emailUrl = 'rest/email';
 
   constructor(
     private http: HttpClient,
@@ -100,6 +102,7 @@ export class EventoService {
       return 'Ubicación no disponible';
     }
   }
+  
   salir(idEvento: number): Observable<DataPackage> {
     const idUsuario = this.authService.getUsuarioId();
     return this.http.get<DataPackage>(`${this.eventosUrl}/desinscribirse/${idEvento}/${idUsuario}`);
@@ -176,6 +179,21 @@ export class EventoService {
 
   buscarCreadorDeUnEventoInterno(comunidadId: number, eventoId: number){
     return this.http.get<DataPackage>(`${this.eventosUrl}/buscarCreadorDeUnEventoInterno/${comunidadId}/${eventoId}`);
+  }
+
+  enviarNotificacionEvento(mensaje: string, asunto: string, usuarios: Usuario[], nombreActividad:string): Observable<DataPackage> {
+
+    const nombreUsuario = this.authService.getNombreUsuario();
+
+    const requestBody = {
+      mensaje: mensaje,
+      asunto: asunto,
+      nombreUsuario: nombreUsuario,
+      usuarios: usuarios,
+      nombreActividad: nombreActividad
+    };
+
+    return this.http.post<DataPackage>(`${this.emailUrl}/enviar-notificacion`, requestBody);
   }
 
 }

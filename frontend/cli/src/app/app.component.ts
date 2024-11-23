@@ -11,8 +11,6 @@ import { ThemeService } from './themeservice';
 import { UsuarioService } from './usuarios/usuario.service';
 import { Usuario } from './usuarios/usuario';
 
-import { ToastrService } from 'ngx-toastr';
-import { WebSocketService } from './notificaciones/webSocket.Service';
 //import { Notificacion } from './notificaciones/notificacion';
 
 @Component({
@@ -38,9 +36,7 @@ export class AppComponent {
     private usuarioService: UsuarioService,
     private authService: AuthService,
     private notificacionService: NotificacionService,
-    private themeService: ThemeService,
-    private toastr: ToastrService,
-    private webSocketService: WebSocketService) { }
+    private themeService: ThemeService) { }
 
   ngOnInit(): void {
     this.router.events.subscribe(event => {
@@ -66,11 +62,7 @@ export class AppComponent {
     this.notificacionesNoLeidasCount++;
 
     // Mostrar la notificación como toast
-    this.toastr.info(notificacion.mensaje, 'Nueva notificación', {
-      timeOut: 5000, // Duración del toast
-      closeButton: true,
-      progressBar: true,
-    });
+
   }
 
   getUsuario() {

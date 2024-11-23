@@ -90,10 +90,9 @@ export class RutinaService {
     return this.http.get<DataPackage>(`${this.rutinasUrl}/verificarDiaFinalizado/${diaId}/${usuarioId}`);
   }
 
- 
-  sugerencias(page:number, size:number): Observable<DataPackage> {
-    const nombreUsuario = this.authService.getNombreUsuario();
 
+  sugerencias(page: number, size: number): Observable<DataPackage> {
+    const nombreUsuario = this.authService.getNombreUsuario();
     return this.http.get<DataPackage>(` ${this.rutinasUrl}/sugerencias-combinadas/${nombreUsuario}?page=${page}&size=${size}`);
   }
 
@@ -130,6 +129,18 @@ export class RutinaService {
     );
   }
 
+  rutinasRealizaUsuarioSinPaginacion(): Observable<DataPackage[]> {
+    const idUsuario = this.authService.getUsuarioId();
+    return this.http.get<DataPackage>(`${this.rutinasUrl}/rutinasRealizaUsuarioSinPaginacion/${idUsuario}`).pipe(
+      map((response: DataPackage) => {
+        let rutinas = response.data as any[];
+  
+        // No es necesario ordenar los días ni ejercicios, ya se hace en el backend
+        return rutinas;
+      })
+    );
+  }
+  
   obtenerDiasEnRutina(idRutina: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.rutinasUrl}/obtenerDiasEnRutina/${idRutina}`);
   }
@@ -152,29 +163,24 @@ export class RutinaService {
     return this.http.get<DataPackage>(`${this.rutinasUrl}/filtrar/etiquetas`, { params });
   }
 
-
   rutinasCreadasPorUsuario(offset: number, limit: number): Observable<DataPackage> {
     const userId = this.authService.getUsuarioId();
     return this.http.get<DataPackage>(`${this.rutinasUrl}/rutinasCreadasPorUsuario/${userId}?offset=${offset}&limit=${limit}`);
   }
 
-
   rutinasRealizaUsuario(idUsuario: number, nombreRutina: string, page: number, size: number): Observable<DataPackage> {
     // Si nombreRutina está vacío, no lo incluimos en la URL
     const url = `${this.rutinasUrl}/rutinasRealizaUsuario/${idUsuario}?page=${page}&size=${size}` +
-                (nombreRutina ? `&nombreRutina=${nombreRutina}` : '');  // Agregar solo si no está vacío
+      (nombreRutina ? `&nombreRutina=${nombreRutina}` : '');  // Agregar solo si no está vacío
     return this.http.get<DataPackage>(url);
-}
-
-
+  }
 
   disponibles(page: number, size: number): Observable<DataPackage> {
-    const nombreUsuario = this.authService.getNombreUsuario();
-    return this.http.get<DataPackage>(` ${this.rutinasUrl}/${nombreUsuario}/disponibles?page=${page}&size=${size}`);
+    const idUsuario = this.authService.getUsuarioId();
+    return this.http.get<DataPackage>(` ${this.rutinasUrl}/${idUsuario}/disponibles?page=${page}&size=${size}`);
   }
- 
 
-  obtenerProgresoActual(rutinaId: number): Observable<DataPackage>{
+  obtenerProgresoActual(rutinaId: number): Observable<DataPackage> {
     const usuarioId = this.authService.getUsuarioId();
     return this.http.get<DataPackage>(`${this.rutinasUrl}/obtenerProgresoActual/${rutinaId}/${usuarioId}`);
   }

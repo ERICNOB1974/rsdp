@@ -8,12 +8,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { forkJoin } from 'rxjs';
 import { AuthService } from '../autenticacion/auth.service';
 import { Usuario } from '../usuarios/usuario';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-comunidad-admin',
     templateUrl: './comunidadCreador.component.html',
     styleUrls: ['./comunidadCreador.component.css'],
-    imports: [CommonModule],
+    imports: [CommonModule, FormsModule],
     standalone: true
 })
 export class ComunidadCreadorComponent implements OnInit {
@@ -26,6 +28,8 @@ export class ComunidadCreadorComponent implements OnInit {
     creadorComunidad!: Usuario;
     esCreador: boolean = false;
     esAdmin: boolean = false;
+    motivo: string = '';
+    mensaje: string = '';
 
     constructor(
         private route: ActivatedRoute, // Para obtener el parámetro de la URL
@@ -34,7 +38,8 @@ export class ComunidadCreadorComponent implements OnInit {
         private location: Location, // Para manejar la navegación
         private router: Router,
         private authService: AuthService,  // Inyecta el AuthService
-        private snackBar: MatSnackBar // Para mostrar notificaciones
+        private snackBar: MatSnackBar, // Para mostrar notificaciones
+        private modalService: NgbModal
     ) { }
 
     ngOnInit(): void {
@@ -42,7 +47,6 @@ export class ComunidadCreadorComponent implements OnInit {
         const usuarioId = this.authService.getUsuarioId();
         this.idUsuarioAutenticado = Number(usuarioId);
     }
-
 
     getComunidad(): void {
         const id = this.route.snapshot.paramMap.get('id');
@@ -202,5 +206,39 @@ export class ComunidadCreadorComponent implements OnInit {
             this.traerMiembrosYAdministradores(); // Actualiza la lista de miembros
         });
     }
+
+    openModal(content: any) {
+        this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
+      }
+    
+      // Método que se llama al enviar la notificación
+      enviarNotificacion() {
+        if (this.mensaje && this.motivo) {
+          const nombreActividad = "de la comunidad, " + this.comunidad.nombre;
+          this.comunidadService.enviarNotificacionComunidad(this.mensaje, this.motivo, this.miembros, nombreActividad).subscribe(
+            response => {
+              console.log('Notificación enviada con éxito', response);
+              this.motivo = '';
+              this.mensaje = '';
+              this.closeModal();
+              this.snackBar.open('Notificación enviada con éxito', 'Cerrar', {
+                duration: 3000,
+              });
+            },
+            error => {
+              this.snackBar.open('Error al enviar notificación', 'Cerrar', {
+                duration: 3000,
+              });
+            }
+          );
+        } else {
+          console.log('Ambos campos son obligatorios');
+        }
+      }
+    
+      // Método para cerrar el modal
+      closeModal() {
+        this.modalService.dismissAll();
+      }
 
 }

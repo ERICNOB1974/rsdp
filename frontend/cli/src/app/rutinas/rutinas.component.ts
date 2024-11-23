@@ -66,8 +66,9 @@ export class RutinasComponent implements OnInit {
     this.cargarRutinasDisponibles();
     const usuarioId = this.authService.getUsuarioId();
     this.idUsuarioAutenticado = Number(usuarioId);
-   // this.getRutinasUsuario(); // Cargar las rutinas del usuario
-   this.cargarRutinasRealizaUsuario();
+    // this.getRutinasUsuario(); // Cargar las rutinas del usuario
+    this.cargarRutinasRealizaUsuario();
+    
   }
 
 
@@ -314,6 +315,7 @@ export class RutinasComponent implements OnInit {
           this.loadingRealiza = false;
         }
       );
+
   }
 
 

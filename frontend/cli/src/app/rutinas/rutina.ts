@@ -8,4 +8,5 @@ export interface Rutina {
     descripcion: string;
     etiquetas?: Etiqueta[]
     dias?: Dia[];
+    hizoUltimoDiaHoy?: boolean;
 }
