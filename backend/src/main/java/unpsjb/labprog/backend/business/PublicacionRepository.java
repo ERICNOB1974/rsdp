@@ -115,7 +115,10 @@ public interface PublicacionRepository extends Neo4jRepository<Publicacion, Long
         @Query("MATCH (c:Comunidad), (p:Publicacion) " +
                         "WHERE id(c) = $comunidadId " +
                         "MATCH (p)-[:PUBLICADO_DENTRO_DE]->(c) " +
-                        "RETURN p ORDER BY p.fechaDeCreacion DESC")
-        List<Publicacion> publicacionesComunidad(@Param("comunidadId") Long comunidadId);
+                        "RETURN p ORDER BY p.fechaDeCreacion DESC "+
+                        "SKIP $skip "+
+                        "LIMIT $limit")
+        List<Publicacion> publicacionesComunidad(@Param("comunidadId") Long comunidadId,  @Param("skip") int skip,
+                @Param("limit") int limit);
 
 }

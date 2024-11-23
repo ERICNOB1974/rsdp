@@ -37,7 +37,7 @@
           Publicar
         </button>
 
-        <div class="publicaciones-grid">
+        <div class="publicaciones-grid" (scroll)="onScroll('publicaciones')">
           <div class="publicacion-item" *ngFor="let publicacion of publicaciones"
             (click)="esParte ? irADetallePublicacion(publicacion.id): null">
             <div class="publicacion-contenido">
@@ -109,7 +109,7 @@
     </div>
   </div>
 
-  <div *ngIf="tabSeleccionada === 'miembros' && !visible" class="perfil-miembros">
+  <div *ngIf="tabSeleccionada === 'miembros' && !visible" class="miembro-item">
     <h3>Creador</h3>
     <img [src]="creadorComunidad.fotoPerfil" alt="{{ creadorComunidad.nombreUsuario }}" class="perfil-imagen">
     <span>{{ creadorComunidad.nombreUsuario }}</span>
