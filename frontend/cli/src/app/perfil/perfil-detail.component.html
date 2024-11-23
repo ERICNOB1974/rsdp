@@ -5,7 +5,8 @@
     </div>
     <div class="card-body">
       <form (ngSubmit)="guardarCambios()" #perfilForm="ngForm">
-        <div *ngIf="!formatoValido" class="drag-drop-area" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+
+        <div *ngIf="!formatoValido " class="drag-drop-area" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
           <p>Arrastra y suelta una imagen o video aquí, o selecciona uno desde tus archivos.</p>
           <input type="file" id="archivo" (change)="onFileSelect($event)" hidden #fileInput>
           <button type="button" (click)="fileInput.click()">Seleccionar archivo</button>

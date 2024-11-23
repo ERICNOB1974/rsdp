@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ComunidadService } from './comunidad.service';
@@ -20,10 +20,10 @@ import { forkJoin } from 'rxjs';
   selector: 'app-crear-comunidad',
 
   templateUrl: './crearComunidad.component.html',
-  styleUrls: ['../eventos/crearEvento.component.css', '../css/etiquetas.css'],
+  styleUrls: ['../eventos/crearEvento.component.css', '../css/etiquetas.css', '../css/crear.component.css'],
 
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, NgbTypeaheadModule]
+  imports: [CommonModule, FormsModule, RouterModule, NgbTypeaheadModule, NgIf]
 })
 export class CrearComunidadComponent {
   comunidad!: Comunidad;
@@ -80,7 +80,6 @@ export class CrearComunidadComponent {
 
   async saveComunidad(): Promise<void> {
     try {
-      console.log(this.comunidad.latitud + " " + this.comunidad.longitud);
 
       // Guardar la comunidad y obtener su ID
       const dataPackage = await firstValueFrom(this.comunidadService.save(this.comunidad));
@@ -321,7 +320,6 @@ export class CrearComunidadComponent {
       !!(this.etiquetasSeleccionadas.length <= 15)
   }
 
-
   onFileSelect(event: any) {
     const file = event.target.files[0];
     const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
@@ -354,4 +352,29 @@ export class CrearComunidadComponent {
     }
   }
 
+
+  onDragOver(event: DragEvent): void {
+    event.preventDefault(); // Prevenir el comportamiento predeterminado
+    event.stopPropagation();
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+
+    // Asegurarse de que existen archivos en el evento
+    if (event.dataTransfer && event.dataTransfer.files.length > 0) {
+      const file = event.dataTransfer.files[0]; // Toma el primer archivo
+      const inputEvent = { target: { files: [file] } }; // Crea un evento similar al del input
+      this.onFileSelect(inputEvent); // Reutiliza tu lógica para manejar el archivo
+    }
+  }
+
+
+  eliminarArchivo(): void {
+    this.vistaPreviaArchivo = null;
+    this.formatoValido = false;
+    this.comunidad.imagen = '';
+  
+  }
 }
