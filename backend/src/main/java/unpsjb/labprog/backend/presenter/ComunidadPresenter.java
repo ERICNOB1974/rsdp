@@ -155,7 +155,6 @@ public class ComunidadPresenter {
     @GetMapping("/salir/{idComunidad}/{idUsuario}")
     public ResponseEntity<Object> salir(@PathVariable Long idComunidad, @PathVariable Long idUsuario) {
         return Response.ok(null, comunidadService.miembroSale(idComunidad, idUsuario));
-        // return Response.ok("ok");
     }
 
     @GetMapping("/comunidadesCreadasPorUsuario/{idUsuario}")

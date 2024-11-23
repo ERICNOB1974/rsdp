@@ -37,10 +37,13 @@ export class MuroComunidadComponent implements OnInit {
     idUsuarioAutenticado!: number;
     usuariosAnonimos: number = 0; // Inicializamos la variable
     miembrosVisibles: any[] = []; // Almacena los usuarios visibles en la interfaz
-    publicaciones!: Publicacion[];
+    publicaciones: Publicacion[] = [];
     visible: boolean = false;
     esAdministrador: boolean = false;
-
+    currentIndexPublicaciones: number = 0;
+    cantidadPorPagina: number = 6;
+    noMasPublicaciones: boolean =false;
+    loandingPublicaciones: boolean = false;
     amigosNoEnComunidad: any[] = [];
     amigosEnComunidad: any[] = [];
     amigosYaInvitados: any[] = [];
@@ -62,11 +65,7 @@ export class MuroComunidadComponent implements OnInit {
         private dialog: MatDialog,
         private eventoService: EventoService
     ) { }
-    /*
-    salirValid(): boolean {
-        return this.esParte;
-    }
-    */
+
 
     ngOnInit(): void {
         this.idUsuarioAutenticado = Number(this.authService.getUsuarioId());
@@ -171,22 +170,31 @@ export class MuroComunidadComponent implements OnInit {
         });
     }
 
+
     getPublicaciones(): void {
-        this.publicacionService.publicacionesComunidad(this.idComunidad).subscribe({
-            next: (dataPackage) => {
-                if (dataPackage.status === 200 && Array.isArray(dataPackage.data)) {
-                    this.publicaciones = dataPackage.data;
-                } else {
-                    console.error('Error al obtener las publicaciones:', dataPackage.message);
-                    this.publicaciones = []; // Asigna un array vacío en caso de error
-                }
+        if (this.loandingPublicaciones || this.noMasPublicaciones) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
+        this.loandingPublicaciones = true;
+        // Suponiendo que tienes un método que obtiene más comunidades con paginación
+        this.publicacionService
+        .publicacionesComunidad(this.idComunidad,this.currentIndexPublicaciones, this.cantidadPorPagina)
+        .subscribe(
+          async (dataPackage) => {
+            const resultados = dataPackage.data as Publicacion[]
+            if (resultados && resultados.length > 0) {
+                this.publicaciones = [...this.publicaciones, ...resultados,];
+                this.currentIndexPublicaciones++; // Aumentar el índice para la siguiente carga
+    
+              } else {
+                this.noMasPublicaciones = true; // No hay más comunidades por cargar
+              }
+              this.loandingPublicaciones = false; // Desactivar el indicador de carga
             },
-            error: (error) => {
-                console.error('Error al obtener las publicaciones:', error);
-                this.publicaciones = []; // Asigna un array vacío en caso de error
+            (error) => {
+              console.error('Error al cargar las publicaciones:', error);
+              this.loandingPublicaciones = false;
             }
-        });
-    }
+          );
+      }
 
     async traerMiembros(): Promise<void> {
         this.usuarioService.miembrosComunidad(this.comunidad.id).subscribe(async dataPackage => {
@@ -205,7 +213,6 @@ export class MuroComunidadComponent implements OnInit {
                 next: (dataPackage: DataPackage) => {
                     if (dataPackage.status === 200) {
                         this.amigos = dataPackage.data as Usuario[];
-                        console.info(this.amigos);
                         resolve(); // Resuelve la promesa
                     } else {
                         console.error(dataPackage.message);
@@ -316,7 +323,6 @@ export class MuroComunidadComponent implements OnInit {
                 next: (dataPackage: DataPackage) => {
                     if (dataPackage.status === 200) {
                         this.administradores = dataPackage.data as Usuario[];
-                        console.info(this.amigos);
                         resolve(); // Resuelve la promesa
                     } else {
                         console.error(dataPackage.message);
@@ -359,8 +365,7 @@ export class MuroComunidadComponent implements OnInit {
 
             // Iterar sobre los miembros y añadir solo aquellos que sean visibles
             this.miembros.forEach(miembro => {
-                console.info(this.idUsuarioAutenticado + "A");
-                console.info(miembro.nombreUsuario + "B");
+ 
 
                 if (miembro.id === this.idUsuarioAutenticado) {
                     // Siempre mostrar el usuario que está viendo la lista
@@ -474,4 +479,24 @@ export class MuroComunidadComponent implements OnInit {
         }
     }
 
+    onScroll(tabName: string): void {
+        const element = document.querySelector('.publicaciones-list') as HTMLElement; //si se quiere hacer scroll en otros lados. llamar a todos con el mismo class en el div
+    
+        if (element) {
+            // Detecta si se ha alcanzado el final del scroll
+            const isAtBottom = element.scrollTop + element.clientHeight >= element.scrollHeight - 1;
+    
+            if (isAtBottom) {
+                switch (tabName) {
+                    case 'publicaciones':
+                        this.getPublicaciones(); 
+                        break;
+                    default:
+                        console.error('Vista no reconocida:', tabName);
+                }
+            }
+        } else {
+            console.error('.scrollable-list no encontrado.');
+        }
+    }
 }
