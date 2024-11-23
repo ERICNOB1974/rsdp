@@ -268,12 +268,14 @@ public class RutinaPresenter {
         return Response.ok(rutinasRealizaUsuario);
     }
 
-    @GetMapping(path = "/{nombreUsuario}/disponibles")
-    public ResponseEntity<Object> obtenerRutinasDisponibles(
-            @PathVariable String nombreUsuario,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        return Response.ok(rutinaService.obtenerRutinasDisponiblesPaginadas(nombreUsuario, page, size));
+    @GetMapping("/rutinasRealizaUsuarioSinPaginacion/{idUsuario}")
+    public ResponseEntity<Object> rutinasRealizaUsuarioSinPaginacion(
+        @PathVariable Long idUsuario) {
+    
+        List<RutinaDTO> rutinasRealizaUsuario = rutinaService.rutinasRealizaUsuarioSinPaginacion(idUsuario);
+        
+        // Devolvemos las rutinas en formato de respuesta
+        return Response.ok(rutinasRealizaUsuario);
     }
 
     @GetMapping("/obtenerProgresoActual/{rutinaId}/{usuarioId}")
@@ -301,6 +303,9 @@ public class RutinaPresenter {
             @RequestParam(required = false, defaultValue = "") String nombreRutina) {
         List<Rutina> rutinas = rutinaService.rutinasFavoritas(idUsuario, nombreRutina, page, size);
         return Response.ok(rutinas);
+    @GetMapping(path="/{idUsuario}/disponibles")
+    public ResponseEntity<Object> obtenerRutinasDisponibles(@PathVariable Long idUsuario, @RequestParam(defaultValue="0") int page, @RequestParam(defaultValue = "10") int size) {
+        return Response.ok(rutinaService.obtenerRutinasDisponiblesPaginadas(idUsuario, page, size));
     }
 
 }

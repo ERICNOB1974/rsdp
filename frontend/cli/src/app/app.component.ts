@@ -12,7 +12,7 @@ import { UsuarioService } from './usuarios/usuario.service';
 import { Usuario } from './usuarios/usuario';
 
 //import { ToastrService } from 'ngx-toastr';
-import { WebSocketService } from './notificaciones/webSocket.Service';
+//import { WebSocketService } from './notificaciones/webSocket.Service';
 //import { Notificacion } from './notificaciones/notificacion';
 
 @Component({
@@ -41,7 +41,8 @@ export class AppComponent {
     private authService: AuthService,
     private notificacionService: NotificacionService,
     // private toastr: ToastrService,
-    private webSocketService: WebSocketService) { }
+    //private webSocketService: WebSocketService
+    ) { }
 
   ngOnInit(): void {
     this.router.events.subscribe(event => {

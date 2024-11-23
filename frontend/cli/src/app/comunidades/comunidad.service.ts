@@ -5,12 +5,15 @@ import { Comunidad } from './comunidad';
 import axios from 'axios';
 import { DataPackage } from '../data-package';
 import { AuthService } from '../autenticacion/auth.service';
+import { Usuario } from '../usuarios/usuario';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ComunidadService {
   private comunidadesUrl = 'rest/comunidades';
+  private emailUrl = 'rest/email';
+
   idUsuario = this.authService.getUsuarioId();
 
   constructor(private http: HttpClient, private authService: AuthService) { }
@@ -201,4 +204,19 @@ export class ComunidadService {
       (nombreComunidad ? `&nombreComunidad=${nombreComunidad}` : '');  // Agregar solo si no está vacío
     return this.http.get<DataPackage>(url);
   }
+  enviarNotificacionComunidad(mensaje: string, asunto: string, usuarios: Usuario[], nombreActividad:string): Observable<DataPackage> {
+
+    const nombreUsuario = this.authService.getNombreUsuario();
+
+    const requestBody = {
+      mensaje: mensaje,
+      asunto: asunto,
+      nombreUsuario: nombreUsuario,
+      usuarios: usuarios,
+      nombreActividad: nombreActividad
+    };
+
+    return this.http.post<DataPackage>(`${this.emailUrl}/enviar-notificacion`, requestBody);
+  }
+
 }

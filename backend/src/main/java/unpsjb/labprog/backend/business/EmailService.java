@@ -201,4 +201,19 @@ public class EmailService {
             throw new RuntimeException("Error al enviar el correo: " + e.getMessage());
         }
     }
+
+    public void enviarMailNotificacionEvento(Email email, String nombreUsuario, List<Usuario> usuarios, String nombreActividad) throws MessagingException {
+        String mensajeConCreador = "El creador, "  + nombreUsuario + ", " + nombreActividad + ", ha notificado:\n\n" + email.getMensaje();
+
+        for (Usuario usuario : usuarios) {
+            String mensajeFinal = "Hola " + usuario.getNombreReal() + ".\n\n" + mensajeConCreador;
+
+            email.setMensaje(mensajeFinal);
+            email.setDestinatario(usuario.getCorreoElectronico());
+            email.setAsunto(email.getAsunto()); 
+
+            enviarMailGenerico(email);
+        }
+    }
+    
 }
