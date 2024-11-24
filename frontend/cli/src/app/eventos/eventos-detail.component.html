@@ -54,35 +54,33 @@
               <div *ngFor="let miembro of participantesVisiblesPaginados" class="col-md-3 col-sm-6 col-12 mb-4">
                 <div class="miembro-item" [routerLink]="['/perfil', miembro.id]">
                   <!-- Mostrar foto y nombre del miembro -->
-                  <img [src]="miembro.fotoPerfil" 
-                       alt="{{ miembro.nombreUsuario }}" 
-                       class="perfil-imagen rounded-circle mb-2" 
-                       style="width: 80px; height: 80px;">
+                  <img [src]="miembro.fotoPerfil" alt="{{ miembro.nombreUsuario }}"
+                    class="perfil-imagen rounded-circle mb-2" style="width: 80px; height: 80px;">
                   <span class="text-center">{{ miembro.nombreUsuario }}</span>
-        
-                  <!-- Mostrar botón de eliminar solo si eres el creador y no es el usuario autenticado -->
-                  <button *ngIf="creador && miembro.id !== idUsuarioAutenticado" 
-                          class="btn btn-danger btn-sm mt-2" 
-                          (click)="eliminarMiembro(miembro.id)">
+                  <!-- Botón para abrir el modal -->
+                  <button *ngIf="creador && miembro.id !== idUsuarioAutenticado" class="btn btn-danger btn-sm mt-2"
+                    (click)="abrirModalExpulsion(miembro)">
                     Eliminar
                   </button>
+
                 </div>
               </div>
-        
+
               <!-- Mostrar la cantidad de usuarios anónimos como un ítem adicional en la grilla -->
             </div>
-              <div *ngIf="usuariosAnonimos > 0" class="col-md-3 col-sm-6 col-12 mb-4">
-                <div class="miembro-item">
-                  <img src="../../assets/usuario.png" alt="Usuario anónimo" class="perfil-imagen" />
-                  <h4 class="text-center">
-                    {{ usuariosAnonimos }} Usuario{{ usuariosAnonimos > 1 ? 's' : '' }} anónimo{{ usuariosAnonimos > 1 ? 's' : '' }}
-                  </h4>
-                </div>
+            <div *ngIf="usuariosAnonimos > 0" class="col-md-3 col-sm-6 col-12 mb-4">
+              <div class="miembro-item">
+                <img src="../../assets/usuario.png" alt="Usuario anónimo" class="perfil-imagen" />
+                <h4 class="text-center">
+                  {{ usuariosAnonimos }} Usuario{{ usuariosAnonimos > 1 ? 's' : '' }} anónimo{{ usuariosAnonimos > 1 ?
+                  's' : '' }}
+                </h4>
               </div>
+            </div>
           </div>
         </div>
-        
-        
+
+
 
         <div class="d-flex justify-content-center mt-3">
           <button *ngIf="creador" class="btn btn-primary btn-lg mx-2" (click)="editarEvento()">Editar</button>
@@ -103,44 +101,29 @@
 
 
 <ng-template #modalNotificacion>
-  <div class="modal" 
-       id="notificacionModal" 
-       tabindex="-1" 
-       aria-labelledby="notificacionModalLabel" 
-       aria-hidden="true" 
-       role="dialog">
+  <div class="modal" id="notificacionModal" tabindex="-1" aria-labelledby="notificacionModalLabel" aria-hidden="true"
+    role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content bg-dark-custom text-light">
         <div class="modal-header border-bottom border-secondary">
-          <h5 class="modal-title text-highlight" id="notificacionModalLabel">Enviar notificación a los miembros del evento</h5>
+          <h5 class="modal-title text-highlight" id="notificacionModalLabel">Enviar notificación a los miembros del
+            evento</h5>
           <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="closeModal()"></button>
         </div>
         <div class="modal-body">
           <form #notificacionForm="ngForm" class="p-3">
             <div class="mb-3">
               <label for="motivo" class="form-label text-light">Motivo de la notificación</label>
-              <input 
-                type="text" 
-                class="form-control border-secondary bg-dark-input text-light" 
-                id="motivo" 
-                [(ngModel)]="motivo" 
-                name="motivo" 
-                placeholder="Escribe el motivo"
-                required>
+              <input type="text" class="form-control border-secondary bg-dark-input text-light" id="motivo"
+                [(ngModel)]="motivo" name="motivo" placeholder="Escribe el motivo" required>
               <div *ngIf="!motivo && notificacionForm.submitted" class="text-danger mt-1">
                 El motivo es obligatorio.
               </div>
             </div>
             <div class="mb-3">
               <label for="mensaje" class="form-label text-light">Mensaje</label>
-              <textarea 
-                class="form-control border-secondary bg-dark-input text-light" 
-                id="mensaje" 
-                [(ngModel)]="mensaje" 
-                name="mensaje" 
-                rows="4" 
-                placeholder="Escribe el mensaje"
-                required>
+              <textarea class="form-control border-secondary bg-dark-input text-light" id="mensaje"
+                [(ngModel)]="mensaje" name="mensaje" rows="4" placeholder="Escribe el mensaje" required>
               </textarea>
               <div *ngIf="!mensaje && notificacionForm.submitted" class="text-danger mt-1">
                 El mensaje es obligatorio.
@@ -149,17 +132,32 @@
           </form>
         </div>
         <div class="modal-footer border-top border-secondary d-flex justify-content-between">
-          <button 
-            type="button" 
-            class="btn btn-cancel" 
-            (click)="closeModal()">Cancelar</button>
-          <button 
-            type="button" 
-            class="btn btn-primary btn-highlight" 
-            [disabled]="!motivo || !mensaje" 
+          <button type="button" class="btn btn-cancel" (click)="closeModal()">Cancelar</button>
+          <button type="button" class="btn btn-primary btn-highlight" [disabled]="!motivo || !mensaje"
             (click)="enviarNotificacion()">Enviar</button>
         </div>
       </div>
     </div>
+  </div>
+</ng-template>
+
+
+<!-- Plantilla del modal -->
+<ng-template #modalExpulsion let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Motivo de expulsión</h5>
+    <button type="button" class="btn-close" aria-label="Cerrar" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <p>Por favor, ingresa el motivo por el que estás expulsando a {{ usuarioEliminar.nombreUsuario }}.</p>
+    <textarea [(ngModel)]="motivoExpulsion" 
+              class="form-control" 
+              placeholder="Escribe aquí el motivo"></textarea>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancelar</button>
+    <button type="button" class="btn btn-danger" (click)="confirmarExpulsion(); modal.close()">
+      Eliminar usuario
+    </button>
   </div>
 </ng-template>

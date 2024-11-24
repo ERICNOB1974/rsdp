@@ -26,12 +26,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 })
 export class EventoDetailComponent implements OnInit {
 
-  eliminarMiembro(idUsuario: number) {
-    this.eventoService.eliminarMiembro(this.evento.id, idUsuario).subscribe(dataPackage => {
-
-      this.traerMiembros();
-    });
-  }
+  
 
   motivo: string = '';
   mensaje: string = '';
@@ -49,9 +44,12 @@ export class EventoDetailComponent implements OnInit {
   cargaInicial: number = 5; // Número inicial de elementos visibles
   cargaIncremento: number = 5; // Número de elementos adicionales cargados en cada scroll
   @ViewChild('modalInvitarAmigos') modalInvitarAmigos!: TemplateRef<any>;
+  @ViewChild('modalExpulsion') modalExpulsion!: TemplateRef<any>; // Referencia al modal
 
   creador: boolean = false;
   miembros: Usuario[] = []; // Lista de miembros de la comunidad
+  motivoExpulsion: string = '';
+  usuarioEliminar: any;
 
 
   constructor(
@@ -70,6 +68,11 @@ export class EventoDetailComponent implements OnInit {
   ngOnInit(): void {
     this.idUsuarioAutenticado = Number(this.authService.getUsuarioId());
     this.getEvento();
+  }
+
+
+  seleccionarUsuario(usuario: any): void {
+    this.usuarioEliminar = usuario;
   }
 
   getEvento(): void {
@@ -373,5 +376,37 @@ export class EventoDetailComponent implements OnInit {
       console.log('No hay más participantes por cargar');
     }
   }
+
+
+  abrirModalExpulsion(usuario: any): void {
+    this.usuarioEliminar = usuario; // Asigna el usuario al abrir el modal
+    this.modalService.open(this.modalExpulsion, {
+      centered: true, // Centra el modal
+      backdrop: 'static', // Impide cerrar al hacer clic fuera
+      keyboard: false, // Desactiva el cierre con teclado
+    });
+  }
+  eliminarMiembro(idUsuario: number, motivo:string) {
+    this.eventoService.eliminarMiembro(this.evento.id, idUsuario, motivo).subscribe(dataPackage => {
+
+      this.traerMiembros();
+    });
+  }
+
+
+  confirmarExpulsion(): void {
+    if (!this.motivoExpulsion.trim()) {
+      alert('Por favor, ingresa un motivo válido.');
+      return;
+    }
+
+   
+    this.eliminarMiembro(this.usuarioEliminar.id, this.motivoExpulsion);
+
+    // Limpia los datos
+    this.motivoExpulsion = '';
+    this.usuarioEliminar = null;
+  }
+
 
 }

@@ -117,7 +117,7 @@
             <h3><i class="fas fa-dumbbell"></i> Rutinas de Entrenamiento</h3>
 
             <!-- Sub-tabs -->
-            <div class="sub-tabs">
+            <div *ngIf="esMiPerfil" class="sub-tabs">
                 <button [class.active]="subTabRutinasSeleccionada === 'todas'" (click)="cambiarSubTabRutinas('todas')">
                     Todas
                 </button>
@@ -130,7 +130,8 @@
             <!-- Campo de búsqueda -->
             <div class="search-container">
                 <input type="text" placeholder="Buscar rutina por nombre" #searchInput
-                    (input)="buscarRutinas(searchInput.value)" class="form-control search-input"
+                (input)="onSearchInput(searchInput.value)"
+                class="form-control search-input"
                     [(ngModel)]="searchText" />
                 <i class="fas fa-search search-icon"></i>
             </div>
@@ -165,7 +166,7 @@
         <div *ngIf="tabSeleccionada === 'comunidades'" class="perfil-comunidades">
             <h3><i class="fas fa-dumbbell"></i>Comunidades</h3>
 
-            <div class="sub-tabs">
+            <div *ngIf="esMiPerfil" class="sub-tabs">
                 <button [class.active]="subTabSeleccionada === 'todas'" (click)="cambiarSubTab('todas')">
                     Todas
                 </button>
@@ -179,7 +180,8 @@
 
             <div class="search-container">
                 <input type="text" placeholder="Buscar comunidad por nombre" #searchInput
-                    (input)="buscarComunidades(searchInput.value)" class="form-control search-input"
+                (input)="onSearchInputComunidades(searchInput.value)"
+                    class="form-control search-input"
                     [(ngModel)]="searchText" />
                 <i class="fas fa-search search-icon"></i>
             </div>

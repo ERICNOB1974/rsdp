@@ -118,6 +118,7 @@ export class EventosComponent implements OnInit {
   }
 
 
+
   limpiarFiltroEtiquetas(): void {
     this.etiquetasSeleccionadas = [];
     this.aplicarTodosLosFiltros();
