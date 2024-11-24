@@ -10,11 +10,11 @@
               <!-- Foto de la comunidad (redirige a la comunidad) -->
               <div *ngIf="publicacion.comunidad" class="foto-comunidad"
                 (click)="goToComunidad(publicacion.comunidad.id); $event.stopPropagation()">
-                <img [src]="publicacion.comunidad.imagen" alt="Foto de la comunidad" />
+                <img [src]="publicacion.comunidad.imagen ? publicacion.comunidad.imagen : '../../assets/comunidad.jpg' " >
               </div>
               <!-- Foto del usuario (redirige al perfil del usuario) -->
               <div class="foto-usuario" (click)="goToPerfil(publicacion.creador.id); $event.stopPropagation()">
-                <img [src]="publicacion.creador.fotoPerfil" alt="Foto del usuario" />
+                <img [src]="publicacion.creador.fotoPerfil ? publicacion.creador.fotoPerfil : '../../assets/usuario.png' " >
               </div>
             </div>
             <div class="nombres-container">

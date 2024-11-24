@@ -52,7 +52,6 @@ export class CrearPublicacionComponent implements OnInit {
 
   savePublicacion(): void {
     this.publicacion.fechaDeCreacion = new Date().toISOString();
-    console.log(this.tipo)
     if (this.tipo === 'comunidad' && this.idComunidad) {
       this.publicacionService.publicarEnComunidad(this.publicacion, this.idComunidad).subscribe(() => {
         this.location.back()
@@ -117,7 +116,11 @@ export class CrearPublicacionComponent implements OnInit {
 
 
   publicacionValida(): boolean {
-    return !(!this.publicacion.texto && !this.publicacion.file || !this.formatoValido);
+    if (this.publicacion.texto)
+      return true
+    if (this.publicacion.file && this.formatoValido)
+      return true
+    return false
   }
 
   eliminarArchivo(): void {
