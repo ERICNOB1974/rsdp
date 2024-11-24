@@ -81,23 +81,30 @@ public interface PublicacionRepository extends Neo4jRepository<Publicacion, Long
 
     List<Publicacion> publicacionesAmigosUsuario(@Param("usuarioId") Long usuarioId);
 
-    @Query("CALL { " +
+@Query("CALL { " +
             "    MATCH (u:Usuario)-[:POSTEO]->(p:Publicacion) " +
             "    WHERE id(u) = $usuarioId " +
             "    RETURN p " +
             "    UNION " +
-            "    MATCH (u:Usuario)-[:ES_AMIGO_DE]->(us:Usuario)-[:POSTEO]->(p:Publicacion) " +
-            "    WHERE id(u) = $usuarioId AND us.privacidadPerfil <> 'Privada' " +
+            "    MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario)-[:POSTEO]->(p:Publicacion) " +
+            "    WHERE id(u) = $usuarioId AND amigo.privacidadPerfil <> 'Privada' " +
+            "      AND NOT EXISTS { MATCH (p)-[:PUBLICADO_DENTRO_DE]->(:Comunidad) } " +
+            "    RETURN p " +
+            "    UNION " +
+            "    MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario)-[:POSTEO]->(p:Publicacion)-[:PUBLICADO_DENTRO_DE]->(c:Comunidad) " +
+            "    WHERE id(u) = $usuarioId " +
+            "      AND (u)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c) " +
             "    RETURN p " +
             "} " +
             "RETURN p " +
             "ORDER BY p.fechaDeCreacion DESC " +
             "SKIP $skip " +
             "LIMIT $limit")
-    List<Publicacion> publicacionesUsuarioYAmigos(
-            @Param("usuarioId") Long usuarioId,
-            @Param("skip") int skip,
-            @Param("limit") int limit);
+List<Publicacion> publicacionesUsuarioYAmigos(
+        @Param("usuarioId") Long usuarioId,
+        @Param("skip") int skip,
+        @Param("limit") int limit);
+
 
 
     @Query("""

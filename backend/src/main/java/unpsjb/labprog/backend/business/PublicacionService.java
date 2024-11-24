@@ -115,10 +115,6 @@ public class PublicacionService {
         String texto = publicacionRepository.findTextoById(id);
         ZonedDateTime fecha = publicacionRepository.findFechaById(id);
         Usuario usuario = usuarioRepository.findUsuarioById(id);
-        /// Usuario u = usuarioRepository.findById(usuario).get();
-        System.out.println("TEXTO: " + texto + "\n");
-        System.out.println("FECHA: " + fecha + "\n");
-        System.out.println("USUARIO: " + usuario.getNombreReal() + "\n");
         if (texto == null || fecha == null || usuario == null) {
             throw new Exception("Comentario no encontrado con ID: " + id);
         }
