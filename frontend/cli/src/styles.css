@@ -282,14 +282,18 @@ body {
   /* Esto es necesario para dejar espacio a la sidebar */
   margin-top: 40px;
   /* Esto es necesario para dejar espacio a la navbar */
+  margin-left: 250px;
   /* Asegura que el contenido principal ocupe toda la pantalla restante */
-  overflow-y: auto;
-  flex-grow: 1;
   /* Esto asegura que si el contenido es largo, se agregue scroll */
-  transition: margin-left 0.3s, ease; /* Animación suave */
+  overflow-y: auto;
   margin-left: 250px; /* Ancho de la barra lateral expandida */
+  height: calc(100vh - 60px);
   width: calc(100% - 250px);
+  transition: margin-left 0.3s, ease; 
+   flex-grow: 1;
 }
+
+
 
 .main-content.full-width {
   margin-left: 80px; /* Ajuste el margen cuando la barra está oculta */
