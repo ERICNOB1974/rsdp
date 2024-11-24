@@ -110,7 +110,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "LIMIT 3")
         List<Evento> sugerenciasDeEventosBasadosEnComunidades(String nombreUsuario);
 
-        @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento)" +
+        @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]-(e:Evento)" +
                         "WHERE id(e) = $idEvento " +
                         "RETURN COUNT(DISTINCT u) AS totalParticipaciones")
         int participantesDeEvento(Long idEvento);

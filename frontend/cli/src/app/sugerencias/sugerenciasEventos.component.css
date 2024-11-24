@@ -1,7 +1,7 @@
 /* Estilo general */
 body {
   font-family: 'Poppins', sans-serif;
-  background-color: #f9f9f9;
+  background-color: #f9f9f9fa;
   margin: 0;
   padding: 0;
   display: flex;
@@ -34,7 +34,6 @@ body {
   flex-wrap: wrap;
   justify-content: center; /* Centra las tarjetas */
   gap: 30px;
-  padding: 20px;
   width: 100%;
   margin-bottom: 50px;
 }
@@ -64,9 +63,11 @@ body {
 }
 
 
-.event-card:hover {
+
+.event-card:hover .event-content {
   transform: scale(1.05);
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.8);
 }
 
 .event-image {
@@ -102,18 +103,28 @@ body {
 
 
 
+
 .event-name {
-  font-size: 1.8rem;
-  font-weight: bold;
+  font-size: 1.6rem;
   margin: 0.5rem 0;
   color: #fff;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.event-date,
+.event-date, 
 .event-motive {
-  font-size: 1.1rem;
   margin: 0.3rem 0;
   opacity: 0.9;
+  font-size: 1rem;
+  line-height: 1.4;
+  max-height: 3rem; /* Limitar la altura para motivos largos */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* Mantener en una sola línea */
+  margin-top: 5px;
 }
 
 /* Controles de paginación */
@@ -218,4 +229,77 @@ body {
   .page-indicator {
       font-size: 0.9rem;
   }
+}
+
+.event-content {
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.6); /* Fondo oscuro semitransparente */
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+  position: relative;
+  animation: fadeIn 0.3s ease;
+}
+
+.close-btn {
+  background: #ff5722;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 15px;
+}
+
+.close-btn:hover {
+  background: #ff8a50;
+}
+
+/* Animación */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.event-icon:hover {
+  transform: scale(1.2);
+  color: #ff8a50;
+}
+
+.event-icon {
+  margin-left: 10px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #fff;
+  transition: transform 0.2s;
 }
