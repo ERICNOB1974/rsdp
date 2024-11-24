@@ -23,6 +23,8 @@ export class SugerenciasComunidadesComponent implements OnInit {
     size: number = 4;  // Tamaño de la página (cantidad de elementos)
     elementos: number = 0;
     totalPages: number = 0;
+    isModalOpen: boolean = false; // Controla si el modal está abierto
+    comunidadSeleccionada: any = null; // Almacena la comunidad seleccionada
     constructor(
         private comunidadService: ComunidadService,
         private router: Router) { }
@@ -57,4 +59,14 @@ export class SugerenciasComunidadesComponent implements OnInit {
         this.getComunidades();
     }
       
+    openMotivoModal(id: number): void {
+      this.isModalOpen = true;
+      this.comunidadSeleccionada = this.results.find((comunidad) => comunidad.id === id);
+    }
+  
+    // Método para cerrar el modal
+    closeMotivoModal(): void {
+      this.isModalOpen = false;
+      this.comunidadSeleccionada = null;
+    }
 }

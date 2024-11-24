@@ -23,6 +23,8 @@ export class SugerenciasEventosComponent implements OnInit {
   size: number = 4;  // Tamaño de la página (cantidad de elementos)
   elementos: number = 0;
   totalPages: number = 0;
+  isModalOpen: boolean = false; // Controla si el modal está abierto
+  eventoSeleccionado: any = null; // Almacena la comunidad seleccionada
   constructor(private eventoService: EventoService,
     private router: Router) { }
 
@@ -58,6 +60,17 @@ export class SugerenciasEventosComponent implements OnInit {
     // Convertir la página del frontend (base 1) a base 0
     this.page = newPage - 1; // Si el frontend usa páginas de 1, restamos 1 para enviar la página correcta al backend
     this.getEventos();
+}
+
+openMotivoModal(id: number): void {
+  this.isModalOpen = true;
+  this.eventoSeleccionado = this.results.find((evento) => evento.id === id);
+}
+
+// Método para cerrar el modal
+closeMotivoModal(): void {
+  this.isModalOpen = false;
+  this.eventoSeleccionado = null;
 }
 
 }
