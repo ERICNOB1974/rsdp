@@ -9,7 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { ReactiveFormsModule } from '@angular/forms';
-import { NgIf } from '@angular/common';
+import { Location, NgIf } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from '../autenticacion/auth.interceptor';
 import { UbicacionService } from '../ubicacion.service';
@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
     private ubicacionService: UbicacionService,
     private authService: AuthService,
     private router: Router
-  ) {
+    ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(8)]]
@@ -48,8 +48,14 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.loadLogo();
+    const shouldReload = localStorage.getItem('reloadLogin');
+  
+    if (shouldReload) {
+      localStorage.removeItem('reloadLogin'); 
+      location.reload();
+    }
   }
+  
 
   // loadLogo() {
   //   const logoUrl = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmQCLsVPsXkhhqWwZA4MvbrTsuoRzUmUU2UA&s';
@@ -88,5 +94,11 @@ export class LoginComponent implements OnInit {
   goToRegister(): void {
     this.router.navigate(['/registro']); 
   }
-  
+
+  convertToLower(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    input.value = input.value.toLowerCase();
+    this.loginForm.get('nombreUsuario')?.setValue(input.value);
+  }
+
 }

@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.mail.MessagingException;
 import unpsjb.labprog.backend.exceptions.EventoException;
-import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Etiqueta;
 import unpsjb.labprog.backend.model.Evento;
 import unpsjb.labprog.backend.model.Usuario;
@@ -65,6 +64,11 @@ public class EventoService {
 
     @Transactional
     public Evento crear(Evento evento) throws MessagingException, EventoException {
+
+        String ubicacion = locationService.getDisplayName(evento.getLatitud(), evento.getLongitud());
+
+        evento.setUbicacion(ubicacion);
+
         // Validar fecha y hora del evento
         if (evento.getFechaHora().isBefore(ZonedDateTime.now()) || evento.getFechaHora().isEqual(ZonedDateTime.now())) {
             throw new EventoException("El evento no puede tener una fecha anterior a ahora");
@@ -96,6 +100,11 @@ public class EventoService {
 
     @Transactional
     public Evento crearConCreador(Evento evento, String nombreUsuario) throws MessagingException, EventoException {
+
+        String ubicacion = locationService.getDisplayName(evento.getLatitud(), evento.getLongitud());
+
+        evento.setUbicacion(ubicacion);
+
         // suponiendo que se crea ahora mismo
         if (evento.getFechaHora().isBefore(ZonedDateTime.now()) ||
                 evento.getFechaHora().isEqual(ZonedDateTime.now())) {
@@ -113,6 +122,11 @@ public class EventoService {
     @Transactional
     public Evento crearConCreadorParaEventoInternoParaComunidad(Evento evento, String nombreUsuario, Long comunidadId)
             throws MessagingException, EventoException {
+
+        String ubicacion = locationService.getDisplayName(evento.getLatitud(), evento.getLongitud());
+
+        evento.setUbicacion(ubicacion);
+
         if (evento.getFechaHora().isBefore(ZonedDateTime.now()) ||
                 evento.getFechaHora().isEqual(ZonedDateTime.now())) {
             throw new EventoException("El evento no puede tener una fecha anterior a ahora");

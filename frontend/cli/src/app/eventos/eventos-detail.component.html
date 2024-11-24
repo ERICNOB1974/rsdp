@@ -22,9 +22,13 @@
         </div>
         <p><strong>Fecha de creación:</strong> {{ evento.fechaDeCreacion | date:'dd-MM-yyyy' : '+00:00'}}</p>
         <p><strong>Fecha y hora:</strong> {{ evento.fechaHora | date:'short' }}</p>
-        <p><strong>Ubicación:</strong> {{ evento.ubicacion }}</p>
         <p><strong>Descripción:</strong> {{ evento.descripcion }}</p>
         <p><strong>Cantidad máxima de participantes:</strong> {{ evento.cantidadMaximaParticipantes }}</p>
+        <p><strong>Ubicación:</strong> {{ evento.ubicacion }}</p>
+        <div class="map-container padding-top-20 padding-bottom-20">
+          <div id="map"></div>
+        </div>
+        
         <!-- Botón Inscribirse o Desinscribirse centrado -->
         <button class="btn btn-primary btn-block ingresar-button mx-auto"
           [disabled]="!(inscribirseValid() || salirValid()) || isLoading"
@@ -138,6 +142,58 @@
         </div>
       </div>
     </div>
+  </div>
+</ng-template>
+
+<ng-template #modalInvitarAmigos>
+  <div class="modal-header">
+    <h5 class="modal-title">Invitar amigos al evento</h5>
+    <button type="button" class="close btn-close" aria-label="Close" (click)="cerrarModal()"></button>
+  </div>
+  <div class="modal-body">
+    <!-- Amigos no en evento -->
+    <h6 class="text-primary">Amigos que aún no están en el evento</h6>
+    <div *ngIf="amigosNoEnEvento.length > 0; else sinAmigosNoEnEvento">
+      <div *ngFor="let amigo of amigosNoEnEvento"
+        class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
+        <span>{{ amigo.nombreUsuario }}</span>
+        <button (click)="invitarAmigo(amigo.id)" class="btn btn-outline-primary btn-sm ml-2 animate-btn">
+          Invitar al evento
+        </button>
+      </div>
+    </div>
+    <ng-template #sinAmigosNoEnEvento>
+      <p class="text-muted">No tienes amigos disponibles para invitar.</p>
+    </ng-template>
+
+    <!-- Amigos en evento -->
+    <h6 class="text-success mt-4">Amigos ya en el evento</h6>
+    <div *ngIf="amigosEnEvento.length > 0; else sinAmigosEnEvento">
+      <div *ngFor="let amigo of amigosEnEvento"
+        class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
+        <span>{{ amigo.nombreUsuario }}</span>
+        <span class="badge bg-success text-white">En el evento</span>
+      </div>
+    </div>
+    <ng-template #sinAmigosEnEvento>
+      <p class="text-muted">No tienes amigos en el evento.</p>
+    </ng-template>
+
+    <!-- Amigos ya invitados -->
+    <h6 class="text-warning mt-4">Amigos ya invitados</h6>
+    <div *ngIf="amigosYaInvitados.length > 0; else sinAmigosYaInvitados">
+      <div *ngFor="let amigo of amigosYaInvitados"
+        class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
+        <span>{{ amigo.nombreUsuario }}</span>
+        <span class="badge bg-warning text-dark">Ya invitado</span>
+      </div>
+    </div>
+    <ng-template #sinAmigosYaInvitados>
+      <p class="text-muted">No tienes amigos ya invitados.</p>
+    </ng-template>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
   </div>
 </ng-template>
 

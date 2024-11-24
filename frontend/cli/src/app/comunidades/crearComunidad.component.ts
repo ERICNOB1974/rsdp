@@ -84,7 +84,6 @@ export class CrearComunidadComponent {
       // Guardar la comunidad y obtener su ID
       const dataPackage = await firstValueFrom(this.comunidadService.save(this.comunidad));
       this.comunidad = <Comunidad>dataPackage.data;
-
       this.messageToShow = '¡La comunidad se ha guardado exitosamente!';
       this.showMessage = true; // Mostrar el mensaje
       setTimeout(() => {

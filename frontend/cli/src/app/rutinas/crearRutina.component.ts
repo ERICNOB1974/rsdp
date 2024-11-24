@@ -200,8 +200,6 @@ export class CrearRutinaComponent {
     }
   }
 
-
-
   searchEjercicio = (text$: Observable<string>): Observable<Ejercicio[]> =>
     text$.pipe(
       debounceTime(300),
