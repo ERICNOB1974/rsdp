@@ -315,11 +315,11 @@ export class EventosComponent implements OnInit {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerParticipantes(resultados); // Llamar a traerParticipantes después de cargar los eventos
             
-            for (const evento of resultados) {
-              evento.ubicacion = evento.latitud && evento.longitud 
-              ? await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud)
-              : 'Ubicación desconocida';
-            }
+            // for (const evento of resultados) {
+            //   evento.ubicacion = evento.latitud && evento.longitud 
+            //   ? await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud)
+            //   : 'Ubicación desconocida';
+            // }
             this.eventosDisponiblesAMostrar = [
               ...this.eventosDisponiblesAMostrar,
               ...resultados,
@@ -353,11 +353,11 @@ export class EventosComponent implements OnInit {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerParticipantes(resultados); // Llamar a traerParticipantes después de cargar los eventos
             
-            for (const evento of resultados) {
-              evento.ubicacion = evento.latitud && evento.longitud 
-              ? await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud)
-              : 'Ubicación desconocida';
-            }
+            // for (const evento of resultados) {
+            //   evento.ubicacion = evento.latitud && evento.longitud 
+            //   ? await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud)
+            //   : 'Ubicación desconocida';
+            // }
             this.eventosParticipaUsuario = [
               ...this.eventosParticipaUsuario,
               ...resultados,
@@ -484,23 +484,23 @@ export class EventosComponent implements OnInit {
 
 
 
-  private async actualizarInformacionAdicional(): Promise<void> {
-    this.traerParticipantes(this.results); // Llamar a traerParticipantes después de cargar los eventos
+  // private async actualizarInformacionAdicional(): Promise<void> {
+  //   this.traerParticipantes(this.results); // Llamar a traerParticipantes después de cargar los eventos
 
-    for (const comunidad of this.results) {
-      if (comunidad.latitud && comunidad.longitud) {
-        try {
-          comunidad.ubicacion = await this.eventoService.obtenerUbicacion(
-            comunidad.latitud,
-            comunidad.longitud
-          );
-        } catch (error) {
-          comunidad.ubicacion = 'Ubicación desconocida';
-        }
-      } else {
-        comunidad.ubicacion = 'Ubicación desconocida';
-      }
-    }
-  }
+  //   for (const comunidad of this.results) {
+  //     if (comunidad.latitud && comunidad.longitud) {
+  //       try {
+  //         comunidad.ubicacion = await this.eventoService.obtenerUbicacion(
+  //           comunidad.latitud,
+  //           comunidad.longitud
+  //         );
+  //       } catch (error) {
+  //         comunidad.ubicacion = 'Ubicación desconocida';
+  //       }
+  //     } else {
+  //       comunidad.ubicacion = 'Ubicación desconocida';
+  //     }
+  //   }
+  // }
 }
 

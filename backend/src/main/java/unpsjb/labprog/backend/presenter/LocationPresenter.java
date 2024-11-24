@@ -21,4 +21,11 @@ public class LocationPresenter {
         String displayName = locationService.getDisplayName(lat, lon);
         return ResponseEntity.ok(displayName);  // Devuelve el display_name
     }
+
+    @GetMapping("/reverseAddress/{lat}/{lon}")
+    public ResponseEntity<String> reverseAddressGeocode(@PathVariable double lat, @PathVariable double lon) {
+        String displayName = locationService.getCityAndCountry(lat, lon);
+        return ResponseEntity.ok(displayName);  // Devuelve el display_name
+    }
+
 }

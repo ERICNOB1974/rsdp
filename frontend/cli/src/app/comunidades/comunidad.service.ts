@@ -18,38 +18,38 @@ export class ComunidadService {
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
-  async obtenerUbicacion(latitud: number, longitud: number): Promise<string> {
-    try {
-      const response = await axios.get('https://nominatim.openstreetmap.org/reverse', {
-        params: {
-          lat: latitud,
-          lon: longitud,
-          format: 'json',
-        },
-      });
+  // async obtenerUbicacion(latitud: number, longitud: number): Promise<string> {
+  //   try {
+  //     const response = await axios.get('https://nominatim.openstreetmap.org/reverse', {
+  //       params: {
+  //         lat: latitud,
+  //         lon: longitud,
+  //         format: 'json',
+  //       },
+  //     });
 
-      const { address } = response.data;
+  //     const { address } = response.data;
 
-      if (!address) {
-        return 'Dirección no disponible';
-      }
+  //     if (!address) {
+  //       return 'Dirección no disponible';
+  //     }
 
-      const ciudad = address.city || address.town || address.village;
-      const pais = address.country;
+  //     const ciudad = address.city || address.town || address.village;
+  //     const pais = address.country;
 
-      // Si la ciudad o el país no están disponibles, enviamos otro mensaje
-      if (!ciudad && !pais) {
-        return 'Ubicación indefinida';
-      }
+  //     // Si la ciudad o el país no están disponibles, enviamos otro mensaje
+  //     if (!ciudad && !pais) {
+  //       return 'Ubicación indefinida';
+  //     }
 
-      // Retorna la ciudad y el país si están disponibles
-      return `${ciudad || 'Ciudad desconocida'}, ${pais || 'País desconocido'}`;
+  //     // Retorna la ciudad y el país si están disponibles
+  //     return `${ciudad || 'Ciudad desconocida'}, ${pais || 'País desconocido'}`;
 
-    } catch (error) {
-      console.error('Error obteniendo la ubicación:', error);
-      return 'Ubicación no disponible';
-    }
-  }
+  //   } catch (error) {
+  //     console.error('Error obteniendo la ubicación:', error);
+  //     return 'Ubicación no disponible';
+  //   }
+  // }
 
 
   all(): Observable<DataPackage> {

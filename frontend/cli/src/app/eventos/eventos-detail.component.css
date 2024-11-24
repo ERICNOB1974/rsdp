@@ -231,3 +231,38 @@ html, body {
   overflow-y: auto;
   max-height: 400px;  /* Puedes ajustar este valor según el diseño */
 }
+
+.mapa-container {
+  position: relative;
+  padding: 0px; /* Agrega espacio alrededor del contenedor */
+}
+
+.input-container {
+  margin-bottom: 20px; /* Espacio entre el campo de texto y el mapa */
+}
+
+#map {
+  height: 400px; /* Ajusta la altura según tus necesidades */
+  width: 100%;   /* El mapa ocupará todo el ancho del contenedor */
+  max-width: 100%; /* Asegura que no se salga del contenedor */
+  border: 1px solid #ccc;
+  box-sizing: border-box; /* Incluye el borde en el tamaño total */
+  border-radius: 8px; /* Opcional: agrega bordes redondeados */
+}
+
+.list-group {
+  position: relative;
+  z-index: 1000;
+  background-color: white;
+  width: 100%;
+  max-height: 200px;
+  border: 1px solid #ccc;
+}
+
+.padding-top-20 {
+  padding-top: 20px;
+}
+
+.padding-bottom-20 {
+  padding-bottom: 20px;
+}

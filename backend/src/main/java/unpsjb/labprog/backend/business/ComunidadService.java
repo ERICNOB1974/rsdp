@@ -48,6 +48,7 @@ public class ComunidadService {
 
     @Transactional
     public Comunidad save(Comunidad comunidad) {
+        
         String ubicacion = locationService.getCityAndCountry(comunidad.getLatitud(), comunidad.getLongitud());
 
         comunidad.setUbicacion(ubicacion);

@@ -1,12 +1,8 @@
 package unpsjb.labprog.backend.business;
 
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import unpsjb.labprog.backend.model.NominatimResponse;
 
@@ -18,42 +14,35 @@ public class LocationService {
 
     public String getDisplayName(double latitude, double longitude) {
         String url = String.format("https://nominatim.openstreetmap.org/reverse?lat=%s&lon=%s&format=json", latitude, longitude);
-        
-        // Realizar la solicitud
-        NominatimResponse response = restTemplate.getForObject(url, NominatimResponse.class);
-
-        // Verificar si la respuesta es nula y manejar el caso
-        if (response != null) {
-            return response.getDisplay_name();  // Retorna el display_name del JSON
-        } else {
-            throw new RuntimeException("No se pudo obtener la ubicación");
+    
+        try {
+            NominatimResponse response = restTemplate.getForObject(url, NominatimResponse.class);
+            if (response != null && response.getDisplay_name() != null) {
+                return response.getDisplay_name();
+            } else {
+                throw new RuntimeException("La respuesta de Nominatim no contiene el campo 'display_name'");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener la ubicación: " + e.getMessage(), e);
         }
     }
-
+    
     public String getCityAndCountry(double latitude, double longitude) {
         String url = String.format("https://nominatim.openstreetmap.org/reverse?lat=%s&lon=%s&format=json", latitude, longitude);
-        
-        // Realizar la solicitud
-        NominatimResponse response = restTemplate.getForObject(url, NominatimResponse.class);
-
-        if (response != null && response.getAddress() != null) {
-            // Usar ObjectMapper para convertir el string address a un Map
-            ObjectMapper mapper = new ObjectMapper();
-            try {
-                Map<String, String> addressMap = mapper.readValue(response.getAddress(), Map.class);
-
-                // Extraer ciudad y país del mapa
-                String city = addressMap.getOrDefault("city","Ciudad desconocida");
-
-                String country = addressMap.getOrDefault("country", "País desconocido");
-
-                return String.format("%s, %s", city, country);
-            } catch (Exception e) {
-                throw new RuntimeException("Error al procesar la dirección", e);
+    
+        try {
+            // Llamada al servicio
+            NominatimResponse response = restTemplate.getForObject(url, NominatimResponse.class);
+    
+            if (response != null && response.getCityAndCountry() != null) {
+                // Obtener "city, country"
+                return response.getCityAndCountry();
+            } else {
+                throw new RuntimeException("No se obtuvo una respuesta válida de Nominatim.");
             }
-        } else {
-            throw new RuntimeException("No se pudo obtener la ubicación");
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener la ubicación: " + e.getMessage(), e);
         }
     }
-
+    
 }
