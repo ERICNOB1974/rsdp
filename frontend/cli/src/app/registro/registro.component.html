@@ -17,7 +17,7 @@
 
           <mat-form-field appearance="outline">
             <mat-label>Nombre de usuario</mat-label>
-            <input matInput formControlName="nombreUsuario" required />
+            <input matInput formControlName="nombreUsuario" required (input)="convertToLower($event)" />
             <mat-error *ngIf="registroForm.get('nombreUsuario')?.hasError('required')">
               El nombre de usuario es requerido
             </mat-error>

@@ -94,11 +94,11 @@ export class MuroComunidadComponent implements OnInit {
             this.eventos.forEach(async (evento) => {
                 this.obtenerCreadorDelEvento(this.comunidad.id, evento.id); // Obtener el creador del evento
                 // Setear la ubicación solo si tiene latitud y longitud
-                if (evento.latitud && evento.longitud) {
-                    evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
-                } else {
-                    evento.ubicacion = 'Ubicación desconocida';
-                }
+                // if (evento.latitud && evento.longitud) {
+                //     evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
+                // } else {
+                //     evento.ubicacion = 'Ubicación desconocida';
+                // }
             });
             this.traerParticipantes(this.eventos); // Obtener los participantes
         });
