@@ -23,6 +23,9 @@ public class UsuarioComunidadService {
     @Autowired
     private NotificacionService notificacionService;
 
+    @Autowired
+    private LocationService locationService;
+
     public String solicitarIngreso(Long idUsuario, Long idComunidad) throws Exception {
         Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
         if (comunidadOpt.isEmpty()) {
@@ -135,6 +138,10 @@ public class UsuarioComunidadService {
     }
 
     public Comunidad guardarComunidadYCreador(Comunidad comunidad, Long idUsuario) throws Exception {
+        String ubicacion = locationService.getCityAndCountry(comunidad.getLatitud(), comunidad.getLongitud());
+
+        comunidad.setUbicacion(ubicacion);
+
         Optional<Usuario> miembroOpt = usuarioRepository.findById(idUsuario);
         if (miembroOpt.isEmpty()) {
             throw new Exception("El usuario no existe.");
@@ -142,7 +149,7 @@ public class UsuarioComunidadService {
         comunidad.setFechaDeCreacion(LocalDate.now()); // Establece la fecha aquí
         return comunidadRepository.guardarComunidadYCreador(comunidad.getNombre(), comunidad.getDescripcion(),
                 comunidad.getCantidadMaximaMiembros(), comunidad.isEsPrivada(), idUsuario,
-                comunidad.getFechaDeCreacion(), comunidad.getLatitud(), comunidad.getLongitud(), comunidad.getImagen());
+                comunidad.getFechaDeCreacion(), comunidad.getLatitud(), comunidad.getLongitud(), comunidad.getImagen(), comunidad.getUbicacion());
     }
 
     public String gestionarSolicitudes(Long idSuperUsuario, Long idUsuario, Long idComunidad, boolean aceptar)

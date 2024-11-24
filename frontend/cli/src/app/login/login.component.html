@@ -9,7 +9,7 @@
         <mat-card-content>
           <mat-form-field appearance="outline">
             <mat-label>Email o nombre de usuario</mat-label>
-            <input matInput type="email" placeholder="Ingrese su email o nombre de usuario" formControlName="email" required>
+            <input matInput type="email" placeholder="Ingrese su email o nombre de usuario" formControlName="email" required (input)="convertToLower($event)">
             <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
               Este campo es obligatorio
             </mat-error>

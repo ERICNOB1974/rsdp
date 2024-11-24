@@ -11,10 +11,13 @@
         </div>
         <p><strong>Fecha de creación:</strong> {{ evento.fechaDeCreacion | date:'dd-MM-yyyy' : '+00:00'}}</p>
         <p><strong>Fecha y hora:</strong> {{ evento.fechaHora | date:'short' }}</p>
-        <p><strong>Ubicación:</strong> {{ evento.ubicacion }}</p>
         <p><strong>Descripción:</strong> {{ evento.descripcion }}</p>
         <p><strong>Cantidad máxima de participantes:</strong> {{ evento.cantidadMaximaParticipantes }}</p>
-
+        <p><strong>Ubicación:</strong> {{ evento.ubicacion }}</p>
+        <div class="map-container padding-top-20 padding-bottom-20">
+          <div id="map"></div>
+        </div>
+        
         <!-- Botón Inscribirse o Desinscribirse centrado -->
         <button class="btn btn-primary btn-block ingresar-button mx-auto"
           [disabled]="!(inscribirseValid() || salirValid()) || isLoading"

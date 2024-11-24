@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.mail.MessagingException;
 import unpsjb.labprog.backend.exceptions.EventoException;
-import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Etiqueta;
 import unpsjb.labprog.backend.model.Evento;
 import unpsjb.labprog.backend.model.Usuario;

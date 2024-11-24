@@ -126,5 +126,10 @@ export class RegistroComponent implements OnInit {
     }
   }
   
+  convertToLower(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    input.value = input.value.toLowerCase();
+    this.registroForm.get('nombreUsuario')?.setValue(input.value);
+  }
   
 }

@@ -98,20 +98,24 @@ export class AuthService {
   logout() {
     this.http.post(`${this.autenticacionUrl}/logout`, {}).subscribe({
       complete: () => {
-        
+        // Limpia el localStorage
         localStorage.removeItem('token');
         localStorage.removeItem('usuarioId');
         localStorage.removeItem('nombreUsuario');
         localStorage.removeItem('correoElectronico');
         localStorage.removeItem('authToken');
         
+        // Configura una bandera para recargar la página del login
+        localStorage.setItem('reloadLogin', 'true');
+  
+        // Redirige al login
         this.router.navigate(['/login']);
       },
       error: (error) => {
         console.error("Error en el logout:", error);
       }
     });
-  }
+  }  
 
   getToken(): string | null {
     return localStorage.getItem('token'); // Obtenemos el token si existe
