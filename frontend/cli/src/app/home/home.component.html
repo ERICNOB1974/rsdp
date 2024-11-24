@@ -36,7 +36,8 @@
             <div class="likes-section">
               <button class="like-button" (click)="toggleLike(publicacion.id, $event)"
                 [class.liked]="isLiked[publicacion.id]">
-                <i class="fa" [ngClass]="isLiked[publicacion.id] ? 'fa-heart' : 'fa-heart-o'"></i>
+                <i class="heart" [ngClass]="isLiked[publicacion.id] ? 'fas fa-heart liked' : 'far fa-heart'">
+                </i>
               </button>
               <span class="likes-count">{{ likesCount[publicacion.id] || 0 }} likes</span>
             </div>
@@ -45,35 +46,28 @@
             <div class="comments-section">
               <div *ngIf="comentarios[publicacion.id] && comentarios[publicacion.id].length > 0">
                 <div class="comment" *ngFor="let comment of (comentarios[publicacion.id] | slice:0:3)">
-                  <a class="usuario-publicador" 
-                     (click)="goToPerfil(comment.usuario.id); $event.stopPropagation();">
+                  <a class="usuario-publicador" (click)="goToPerfil(comment.usuario.id); $event.stopPropagation();">
                     {{ comment.usuario.nombreUsuario }}
                   </a>
                   <span class="publicacion-texto">{{ comment.texto }}</span>
                 </div>
-                <div *ngIf="comentarios[publicacion.id].length > 3" 
-                     class="publicacion-texto" 
-                     style="color: #8e8e8e; cursor: pointer;">
+                <div *ngIf="comentarios[publicacion.id].length > 3" class="publicacion-texto"
+                  style="color: #8e8e8e; cursor: pointer;">
                   Ver los {{ comentarios[publicacion.id].length }} comentarios
                 </div>
               </div>
 
               <!-- Input de comentarios -->
               <div class="comment-input-section">
-                <button class="comment-button" 
-                        (click)="showCommentInput[publicacion.id] = !showCommentInput[publicacion.id]; $event.stopPropagation()">
+                <button class="comment-button"
+                  (click)="showCommentInput[publicacion.id] = !showCommentInput[publicacion.id]; $event.stopPropagation()">
                   <i class="fa fa-comment-o"></i>
                 </button>
-                <div *ngIf="showCommentInput[publicacion.id]" 
-                     class="comment-input-container" 
-                     (click)="$event.stopPropagation()">
-                  <input type="text" 
-                         [(ngModel)]="newComments[publicacion.id]" 
-                         placeholder="Escribe un comentario..."
-                         (keyup.enter)="submitComment(publicacion.id, $event)"
-                         class="publicacion-input">
-                  <button (click)="submitComment(publicacion.id, $event)" 
-                          class="publicacion-button">
+                <div *ngIf="showCommentInput[publicacion.id]" class="comment-input-container"
+                  (click)="$event.stopPropagation()">
+                  <input type="text" [(ngModel)]="newComments[publicacion.id]" placeholder="Escribe un comentario..."
+                    (keyup.enter)="submitComment(publicacion.id, $event)" class="publicacion-input">
+                  <button (click)="submitComment(publicacion.id, $event)" class="publicacion-button">
                     Enviar
                   </button>
                 </div>

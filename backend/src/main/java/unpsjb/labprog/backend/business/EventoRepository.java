@@ -307,7 +307,7 @@ List<Evento> eventosCantidadParticipantesParticipante(Long usuarioId, int min, i
                         + "WITH evento, score, etiquetasComunes, COUNT(DISTINCT participante) AS cantidadParticipantes "
                         + "WHERE cantidadParticipantes < evento.cantidadMaximaParticipantes "
                         + "AND evento.fechaHora > datetime() + duration({hours: 1}) "
-                        + "RETURN evento, score, 'son similares porque tienen '+etiquetasComunes+' etiqueta/s compartida/s con comunidades en las que participas' AS motivo "
+                        + "RETURN evento, score, 'tienen '+etiquetasComunes+' etiqueta/s en comun con comunidades en las que participas' AS motivo "
                         + "ORDER BY score DESC, evento.fechaHora ASC")
         List<ScoreEvento> sugerenciasDeEventosBasadosEnEventos2(String nombreUsuario);
 
@@ -358,7 +358,7 @@ List<Evento> eventosCantidadParticipantesParticipante(Long usuarioId, int min, i
                                                                                               // cupos
                                                                                               // disponibles
                         "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
-                        "RETURN evento, score, 'son similares porque tienen '+etiquetasCompartidas+' etiqueta/s compartida/s con comunidades en las que participas' AS motivo  "
+                        "RETURN evento, score, 'tienen '+etiquetasCompartidas+' etiqueta/s en comun con comunidades en las que participas' AS motivo  "
                         +
                         "ORDER BY score DESC, evento.fechaHora ASC")
         List<ScoreEvento> sugerenciasDeEventosBasadosEnComunidades2(String nombreUsuario);
@@ -380,7 +380,7 @@ List<Evento> eventosCantidadParticipantesParticipante(Long usuarioId, int min, i
                         +
                         "WHERE cantidadParticipantes < evento.cantidadMaximaParticipantes " +
                         "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
-                        "RETURN evento, score, 'son similares porque tienen '+etiquetasCompartidas+' etiqueta/s compartida/s con rutinas que realizas' AS motivo "
+                        "RETURN evento, score, 'tienen '+etiquetasCompartidas+' etiqueta/s en comun con rutinas que realizas' AS motivo "
                         +
                         "ORDER BY score DESC, evento.fechaHora ASC ")
         List<ScoreEvento> sugerenciasDeEventosBasadosEnRutinas2(String nombreUsuario);

@@ -53,8 +53,8 @@ export class PublicacionService {
   comentarios(idPublicacion: number) {
     return this.http.get<DataPackage>(` ${this.publicacionsUrl}/comentarios/${idPublicacion}`);
   }
-  publicacionesPaginadas(idUsuario: number,offset: number, limit: number): Observable<DataPackage> {
-    return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicaciones/usuario/${idUsuario}?offset=${offset}&limit=${limit}`);
+  publicacionesPaginadas(idUsuario: number,page: number, size: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicaciones/usuario/${idUsuario}?page=${page}&size=${size}`);
   }
 
 

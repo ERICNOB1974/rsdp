@@ -49,8 +49,7 @@
   <div *ngFor="let dia of dias; let i = index" class="card shadow-sm p-4 mb-4">
     <div class="d-flex justify-content-between align-items-center">
       <h4 class="card-title mb-0">
-        {{ dia.tipo === 'descanso' ? 'Día ' + (i + 1) + ': Descanso' : 'Día ' + (i + 1) + ': ' + (dia.nombre || 'Sin
-        nombre') }}
+        {{ dia.tipo === 'descanso' ? 'Día ' + (i + 1) + ': Descanso' : 'Día ' + (i + 1) + ': ' + (dia.nombre || 'Sin nombre') }}
       </h4>
       <button class="btn btn-danger btn-sm" (click)="borrarDia(i)">✖</button>
     </div>
@@ -119,11 +118,23 @@
                 placeholder="Descripción del ejercicio"></textarea>
             </div>
 
-            <div class="col-md-5 mb-2">
-              <label for="archivo">Seleccionar imagen o video</label>
-              <input type="file" id="archivo" class="form-control" (change)="onFileSelect($event, ejercicio)" accept="image/*, video/*">
-            </div>
+            <!-- 
+              <div class="col-md-5 mb-2">
+                <label for="archivo">Seleccionar imagen o video</label>
+                <input type="file" id="archivo" class="form-control" (change)="onFileSelect($event, ejercicio)" accept="image/*, video/*">
+              </div>
+              -->
 
+
+            <div *ngIf="ejercicio.imagen==='' || ejercicio.imagen==null" class="drag-drop-area" (dragover)="onDragOver($event)" (drop)="onDrop($event, ejercicio)">
+              <p>Arrastra y suelta una imagen o video aquí, o selecciona uno desde tus archivos.</p>
+              <input type="file" id="archivo" (change)="onFileSelect($event, ejercicio)" hidden #fileInput>
+              <button type="button" (click)="fileInput.click()">Seleccionar archivo</button>
+            </div>
+            <div *ngIf="formatoValido && ejercicio.imagen!='' && ejercicio.imagen!=null" class="vista-previa-contenedor">
+              <img [src]="ejercicio.imagen" alt="Vista previa de la imagen" class="vista-previa-imagen">
+              <button type="button" (click)="eliminarArchivo(ejercicio)" class="btn btn-danger mt-2">Eliminar archivo</button>
+            </div>
             <div>
               <img *ngIf="tipoArchivo === 'image'" [src]="vistaPreviaArchivo" alt="Vista previa de la imagen"
                 style="max-width: 100%; height: auto;">
