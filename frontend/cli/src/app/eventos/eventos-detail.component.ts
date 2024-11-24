@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { EventoService } from './evento.service';
 import { Evento } from './evento';
 import { Location } from '@angular/common';
@@ -21,7 +21,7 @@ import { FormsModule, NgForm } from '@angular/forms';
   templateUrl: './eventos-detail.component.html',
   styleUrls: ['./eventos-detail.component.css'],
   imports: [MatProgressSpinnerModule,
-    CommonModule,FormsModule],
+    CommonModule,FormsModule,RouterModule],
   standalone: true
 })
 export class EventoDetailComponent implements OnInit {
@@ -115,8 +115,7 @@ export class EventoDetailComponent implements OnInit {
     return new Promise((resolve) => {
         this.usuarioService.usuarioCreadorEvento(this.evento.id).subscribe(dataPackage => {
             this.creadorEvento = dataPackage.data as Usuario;
-            console.log('Creador del evento:', this.creadorEvento); // Añadir log para verificar el valor
-            if (this.creadorEvento.id == this.idUsuarioAutenticado) {
+                 if (this.creadorEvento.id == this.idUsuarioAutenticado) {
                 this.creador = true;  // El usuario es el creador
             }
             resolve(); // Resuelve la promesa después de procesar el estado
@@ -288,7 +287,7 @@ export class EventoDetailComponent implements OnInit {
     this.participantesVisibles = []; // Reiniciamos la lista de miembros visibles
     this.usuariosAnonimos = 0; // Reiniciamos el conteo de usuarios anónimos
 
-   
+
     // Iterar sobre los miembros y añadir solo aquellos que sean visibles
     this.miembros.forEach(miembro => {
       if (miembro.id === this.idUsuarioAutenticado) {
@@ -320,6 +319,7 @@ export class EventoDetailComponent implements OnInit {
         }
       }
     });
+    console.log(this.participantesVisibles);
     this.participantesVisiblesPaginados = this.participantesVisibles.slice(0, this.cargaInicial);
   }
 
@@ -333,7 +333,6 @@ export class EventoDetailComponent implements OnInit {
       const nombreActividad = "del evento, " + this.evento.nombre;
       this.eventoService.enviarNotificacionEvento(this.mensaje, this.motivo, this.miembros, nombreActividad).subscribe(
         response => {
-          console.log('Notificación enviada con éxito', response);
           this.motivo = '';
           this.mensaje = '';
           this.closeModal();

@@ -95,7 +95,7 @@
       </div>
 
       <div *ngIf="tabSeleccionada === 'miembros'" class="perfil-miembros">
-        <div *ngFor="let miembro of miembrosVisibles" class="miembro-item">
+        <div *ngFor="let miembro of miembrosVisibles" class="miembro-item" [routerLink]="['/perfil', miembro.id]">
           <div>
             <img [src]="(miembro.anonimos || !miembro.fotoPerfil) ? '../../assets/usuario.png' : miembro.fotoPerfil"
               alt="{{ miembro.nombreUsuario }}" class="perfil-imagen">
@@ -124,7 +124,7 @@
     <img [src]="creadorComunidad.fotoPerfil" alt="{{ creadorComunidad.nombreUsuario }}" class="perfil-imagen">
     <span>{{ creadorComunidad.nombreUsuario }}</span>
     <h3>Cantidad de miembros</h3>
-    <h1>{{cantidadMiembros}}</h1>
+    <h1>{{ usuariosAnonimos }}</h1>
   </div>
 </div>
 
