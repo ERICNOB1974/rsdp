@@ -4,19 +4,24 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Comparator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Publicacion;
 import unpsjb.labprog.backend.model.Usuario;
+import unpsjb.labprog.backend.model.DTO.PublicacionesDTO;
 
 @Service
 public class PublicacionService {
     @Autowired
     PublicacionRepository publicacionRepository;
+    @Autowired
+    ComunidadRepository comunidadRepository;
     @Autowired
     UsuarioRepository usuarioRepository;
     @Autowired
@@ -65,9 +70,9 @@ public class PublicacionService {
         return usuarioRepository.publicadoPor(idPublicacion);
     }
 
-    public List<Publicacion> publicacionesUsuario(Long usuarioId,int page, int size) {
-        int skip = page * size;  // Cálculo de los resultados a omitir
-        return publicacionRepository.publicacionesUsuario(usuarioId,skip,size);
+    public List<Publicacion> publicacionesUsuario(Long usuarioId, int page, int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
+        return publicacionRepository.publicacionesUsuario(usuarioId, skip, size);
     }
 
     public List<Publicacion> publicacionesAmigos(Long usuarioId) {
@@ -76,19 +81,19 @@ public class PublicacionService {
 
     public List<Publicacion> publicacionesHome(Long usuarioId, int page, int size) {
         // Obtener las publicaciones del usuario y de sus amigos
-        int skip = page * size;  // Cálculo de los resultados a omitir
-        List<Publicacion> publicaciones = publicacionRepository.publicacionesUsuarioYAmigos(usuarioId, skip, size);   
+        int skip = page * size; // Cálculo de los resultados a omitir
+        List<Publicacion> publicaciones = publicacionRepository.publicacionesUsuarioYAmigos(usuarioId, skip, size);
         // Ordenar las publicaciones por fechaDeCreacion en orden descendente
-        
+
         publicaciones.sort(Comparator.comparing(Publicacion::getFechaDeCreacion).reversed());
-        
+
         return publicaciones;
     }
 
-    public List<Publicacion> publicacionesComunidad(Long comunidadId,int page, int size) {
-                int skip = page * size;  // Cálculo de los resultados a omitir
+    public List<Publicacion> publicacionesComunidad(Long comunidadId, int page, int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
 
-        return publicacionRepository.publicacionesComunidad(comunidadId,skip, size);
+        return publicacionRepository.publicacionesComunidad(comunidadId, skip, size);
     }
 
     public List<Comentario> obtenerComentariosPorPublicacion(Long idPublicacion) throws Exception {
@@ -110,10 +115,6 @@ public class PublicacionService {
         String texto = publicacionRepository.findTextoById(id);
         ZonedDateTime fecha = publicacionRepository.findFechaById(id);
         Usuario usuario = usuarioRepository.findUsuarioById(id);
-        /// Usuario u = usuarioRepository.findById(usuario).get();
-        System.out.println("TEXTO: " + texto + "\n");
-        System.out.println("FECHA: " + fecha + "\n");
-        System.out.println("USUARIO: " + usuario.getNombreReal() + "\n");
         if (texto == null || fecha == null || usuario == null) {
             throw new Exception("Comentario no encontrado con ID: " + id);
         }
@@ -132,8 +133,35 @@ public class PublicacionService {
 
     public void publicarEnComunidad(Long idComunidad, Long idUsuario, Publicacion publicacion) {
         this.save(publicacion, idUsuario);
-        System.out.println(publicacion.getId());
-        publicacionRepository.publicarEnComunidad( publicacion.getId(), idComunidad);
+        publicacionRepository.publicarEnComunidad(publicacion.getId(), idComunidad);
+    }
+
+    public List<PublicacionesDTO> obtenerTodasLasPublicaciones(Long idUsuario, int page, int size) {
+
+        int skip = page * size; // Cálculo de los resultados a omitir
+        List<Publicacion> publicaciones = publicacionRepository.publicacionesUsuarioYAmigos(idUsuario, skip, size);
+        
+        return publicaciones.stream()
+                .sorted(Comparator.comparing(Publicacion::getFechaDeCreacion).reversed())
+                .map(publicacion -> {
+                    Long idPublicacion = publicacion.getId();
+
+                    // Obtener datos adicionales para construir el DTO
+                    Usuario creador = usuarioRepository.publicadoPor(idPublicacion);
+                    Long likes = publicacionRepository.cantidadLikes(idPublicacion);
+                    boolean estaLikeada = publicacionRepository.estaLikeada(idUsuario, idPublicacion);
+                    Comunidad esEnComunidad = comunidadRepository.comunidadDePublicacion(idPublicacion).orElse(null);
+                    // Construir el DTO
+                    PublicacionesDTO dto = new PublicacionesDTO();
+                    dto.setPublicacion(publicacion);
+                    dto.setCreador(creador);
+                    dto.setLikes(likes);
+                    dto.setEstaLikeada(estaLikeada);
+                    dto.setComunidad(esEnComunidad);
+
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
 }

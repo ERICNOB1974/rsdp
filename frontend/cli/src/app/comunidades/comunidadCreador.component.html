@@ -11,9 +11,9 @@
   <section class="miembros-section">
     <h2>Miembros</h2>
     <ul class="members-list" (scroll)="onScroll()">
-      <li *ngFor="let miembro of miembrosVisibles" class="miembro-item" (click)="verPerfil(miembro)">
-        <img [src]="miembro.fotoPerfil" alt="Foto de {{ miembro.nombreUsuario }}" class="avatar-circular">
-        <span class="name">{{ miembro.nombreUsuario }}</span>
+      <li *ngFor="let miembro of miembrosVisibles" class="miembro-item" >
+        <img [src]="miembro.fotoPerfil" alt="Foto de {{ miembro.nombreUsuario }}" class="avatar-circular" (click)="verPerfil(miembro)">
+        <span class="name" (click)="verPerfil(miembro)">{{ miembro.nombreUsuario }}</span>
         <div class="actions">
           <button 
             *ngIf="esCreador && miembro.id !== idUsuarioAutenticado && esAdministrador(miembro.id)" 

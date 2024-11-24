@@ -13,112 +13,115 @@ import unpsjb.labprog.backend.model.Publicacion;
 @Repository
 public interface PublicacionRepository extends Neo4jRepository<Publicacion, Long> {
 
-        @Query("MATCH (u:Usuario), (p:Publicacion) " +
-                        "WHERE id(u) = $usuarioId AND id(p) = $publicacionId " +
-                        "CREATE (u)-[:POSTEO]->(p)")
-        void establecerCreador(@Param("usuarioId") Long usuarioId, @Param("publicacionId") Long publicacionId);
+    @Query("MATCH (u:Usuario), (p:Publicacion) " +
+            "WHERE id(u) = $usuarioId AND id(p) = $publicacionId " +
+            "CREATE (u)-[:POSTEO]->(p)")
+    void establecerCreador(@Param("usuarioId") Long usuarioId, @Param("publicacionId") Long publicacionId);
 
-        @Query("MATCH (u:Usuario), (p:Publicacion) " +
-                        "WHERE id(u) = $usuarioId AND id(p) = $publicacionId " +
-                        "CREATE (u)-[:LIKE]->(p)")
-        void likear(@Param("usuarioId") Long usuarioId, @Param("publicacionId") Long publicacionId);
+    @Query("MATCH (u:Usuario), (p:Publicacion) " +
+            "WHERE id(u) = $usuarioId AND id(p) = $publicacionId " +
+            "CREATE (u)-[:LIKE]->(p)")
+    void likear(@Param("usuarioId") Long usuarioId, @Param("publicacionId") Long publicacionId);
 
-        @Query("MATCH (u:Usuario)-[rel:LIKE]->(p:Publicacion) " +
+    @Query("MATCH (u:Usuario)-[rel:LIKE]->(p:Publicacion) " +
 
-                        "WHERE id(u) = $usuarioId AND id(p) = $publicacionId " +
-                        "DELETE rel")
-        void sacarLike(@Param("usuarioId") Long usuarioId, @Param("publicacionId") Long publicacionId);
+            "WHERE id(u) = $usuarioId AND id(p) = $publicacionId " +
+            "DELETE rel")
+    void sacarLike(@Param("usuarioId") Long usuarioId, @Param("publicacionId") Long publicacionId);
 
-        @Query("MATCH (u:Usuario), (p:Publicacion) " +
-                        "WHERE id(u) = $usuarioId AND id(p) = $publicacionId " +
-                        "MATCH (u)-[l:LIKE]->(p) " +
-                        "RETURN COUNT (l)>0")
-        boolean estaLikeada(@Param("usuarioId") Long usuarioId, @Param("publicacionId") Long publicacionId);
+    @Query("MATCH (u:Usuario), (p:Publicacion) " +
+            "WHERE id(u) = $usuarioId AND id(p) = $publicacionId " +
+            "MATCH (u)-[l:LIKE]->(p) " +
+            "RETURN COUNT (l)>0")
+    boolean estaLikeada(@Param("usuarioId") Long usuarioId, @Param("publicacionId") Long publicacionId);
 
-        @Query("MATCH (u:Usuario), (p:Publicacion) " +
-                        "WHERE id(p) = $publicacionId " +
-                        "MATCH (u)-[l:LIKE]->(p) " +
-                        "RETURN COUNT (l)")
-        Long cantidadLikes(@Param("publicacionId") Long publicacionId);
+    @Query("MATCH (u:Usuario), (p:Publicacion) " +
+            "WHERE id(p) = $publicacionId " +
+            "MATCH (u)-[l:LIKE]->(p) " +
+            "RETURN COUNT (l)")
+    Long cantidadLikes(@Param("publicacionId") Long publicacionId);
 
-        @Query("MATCH (u:Usuario), (p:Publicacion) " +
-                        "WHERE id(u) = $usuarioId AND id(p) = $publicacionId " +
-                        "CREATE (u)-[:COMENTA {fechaComentario:$fechaComentario, comentario: $comentario}]->(p)")
-        void comentar(@Param("usuarioId") Long usuarioId, @Param("publicacionId") Long publicacionId, String comentario,
-                        ZonedDateTime fechaComentario);
+    @Query("MATCH (u:Usuario), (p:Publicacion) " +
+            "WHERE id(u) = $usuarioId AND id(p) = $publicacionId " +
+            "CREATE (u)-[:COMENTA {fechaComentario:$fechaComentario, comentario: $comentario}]->(p)")
+    void comentar(@Param("usuarioId") Long usuarioId, @Param("publicacionId") Long publicacionId, String comentario,
+            ZonedDateTime fechaComentario);
 
-        @Query("MATCH (u:Usuario)-[:POSTEO]->(p:Publicacion) " +
-                        "WHERE id(p) = $publicacionId " +
-                        "RETURN id(u)")
-        Long obtenerCreadorPublicacion(@Param("publicacionId") Long publicacionId);
+    @Query("MATCH (u:Usuario)-[:POSTEO]->(p:Publicacion) " +
+            "WHERE id(p) = $publicacionId " +
+            "RETURN id(u)")
+    Long obtenerCreadorPublicacion(@Param("publicacionId") Long publicacionId);
 
-        @Query("MATCH (p:Publicacion)<-[c:COMENTA]-(Comentario) WHERE id(p) = $publicacionId RETURN id(c) AS comentarioId")
-        List<Long> idComentarios(@Param("publicacionId") Long publicacionId);
+    @Query("MATCH (p:Publicacion)<-[c:COMENTA]-(Comentario) WHERE id(p) = $publicacionId RETURN id(c) AS comentarioId")
+    List<Long> idComentarios(@Param("publicacionId") Long publicacionId);
 
-        @Query("MATCH ()-[n:COMENTA]->() WHERE id(n) = $id RETURN n.comentario AS texto")
-        String findTextoById(@Param("id") Long id);
+    @Query("MATCH ()-[n:COMENTA]->() WHERE id(n) = $id RETURN n.comentario AS texto")
+    String findTextoById(@Param("id") Long id);
 
-        @Query("MATCH ()-[n:COMENTA]->() WHERE id(n) = $id RETURN n.fechaComentario AS fecha")
-        ZonedDateTime findFechaById(@Param("id") Long id);
+    @Query("MATCH ()-[n:COMENTA]->() WHERE id(n) = $id RETURN n.fechaComentario AS fecha")
+    ZonedDateTime findFechaById(@Param("id") Long id);
 
-        @Query("MATCH (u:Usuario), (p:Publicacion) " +
-                        "WHERE id(u) = $usuarioId " +
-                        "MATCH (u)-[:POSTEO]->(p) " +
-                        "WHERE NOT (p)-[:PUBLICADO_DENTRO_DE]->() " +
-                        "RETURN p ORDER BY p.fechaDeCreacion DESC " +
-                        "SKIP $offset LIMIT $limit")
-        List<Publicacion> publicacionesUsuario(@Param("usuarioId") Long usuarioId, @Param("offset") int offset,
+    @Query("MATCH (u:Usuario), (p:Publicacion) " +
+            "WHERE id(u) = $usuarioId " +
+            "MATCH (u)-[:POSTEO]->(p) " +
+            "WHERE NOT (p)-[:PUBLICADO_DENTRO_DE]->() " +
+            "RETURN p ORDER BY p.fechaDeCreacion DESC " +
+            "SKIP $offset LIMIT $limit")
+    List<Publicacion> publicacionesUsuario(@Param("usuarioId") Long usuarioId, @Param("offset") int offset,
+            @Param("limit") int limit);
+
+    @Query("""
+            MATCH (u:Usuario)-[:ES_AMIGO_DE]->(us:Usuario)-[:POSTEO]->(p:Publicacion)
+                   WHERE id(u) = $usuarioId
+                   AND us.privacidadPerfil <> 'Privada'
+                   AND NOT (p)-[:PUBLICADO_DENTRO_DE]->()
+                   RETURN p
+                   ORDER BY p.fechaDeCreacion DESC
+                   """)
+
+    List<Publicacion> publicacionesAmigosUsuario(@Param("usuarioId") Long usuarioId);
+
+@Query("CALL { " +
+            "    MATCH (u:Usuario)-[:POSTEO]->(p:Publicacion) " +
+            "    WHERE id(u) = $usuarioId " +
+            "    RETURN p " +
+            "    UNION " +
+            "    MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario)-[:POSTEO]->(p:Publicacion) " +
+            "    WHERE id(u) = $usuarioId AND amigo.privacidadPerfil <> 'Privada' " +
+            "      AND NOT EXISTS { MATCH (p)-[:PUBLICADO_DENTRO_DE]->(:Comunidad) } " +
+            "    RETURN p " +
+            "    UNION " +
+            "    MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario)-[:POSTEO]->(p:Publicacion)-[:PUBLICADO_DENTRO_DE]->(c:Comunidad) " +
+            "    WHERE id(u) = $usuarioId " +
+            "      AND (u)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c) " +
+            "    RETURN p " +
+            "} " +
+            "RETURN p " +
+            "ORDER BY p.fechaDeCreacion DESC " +
+            "SKIP $skip " +
+            "LIMIT $limit")
+List<Publicacion> publicacionesUsuarioYAmigos(
+        @Param("usuarioId") Long usuarioId,
+        @Param("skip") int skip,
         @Param("limit") int limit);
 
-        @Query("""
-                        MATCH (u:Usuario)-[:ES_AMIGO_DE]->(us:Usuario)-[:POSTEO]->(p:Publicacion)
-                               WHERE id(u) = $usuarioId
-                               AND us.privacidadPerfil <> 'Privada'
-                               AND NOT (p)-[:PUBLICADO_DENTRO_DE]->()
-                               RETURN p
-                               ORDER BY p.fechaDeCreacion DESC
-                               """)
 
-        List<Publicacion> publicacionesAmigosUsuario(@Param("usuarioId") Long usuarioId);
 
-        @Query(
-                "CALL { " +
-                "    MATCH (u:Usuario)-[:POSTEO]->(p:Publicacion) " +
-                "    WHERE id(u) = $usuarioId " +
-                "    AND NOT (p)-[:PUBLICADO_DENTRO_DE]->() " +
-                "    RETURN p " +
-                "    UNION " +
-                "    MATCH (u:Usuario)-[:ES_AMIGO_DE]->(us:Usuario)-[:POSTEO]->(p:Publicacion) " +
-                "    WHERE id(u) = $usuarioId AND us.privacidadPerfil <> 'Privada' " +
-                "    AND NOT (p)-[:PUBLICADO_DENTRO_DE]->() " +
-                "    RETURN p " +
-                "} " +
-                "RETURN p " +
-                "ORDER BY p.fechaDeCreacion DESC " +
-                "SKIP $skip " +
-                "LIMIT $limit"
-            )
-            List<Publicacion> publicacionesUsuarioYAmigos(
-                @Param("usuarioId") Long usuarioId,
-                @Param("skip") int skip,
-                @Param("limit") int limit
-            );
+    @Query("""
+            MATCH (p:Publicacion) WHERE  id(p) = $publicacionId
+            MATCH (c:Comunidad) WHERE  id(c) = $comunidadId
+            CREATE (p)-[:PUBLICADO_DENTRO_DE]->(c)
 
-        @Query("""
-                        MATCH (p:Publicacion) WHERE  id(p) = $publicacionId
-                        MATCH (c:Comunidad) WHERE  id(c) = $comunidadId
-                        CREATE (p)-[:PUBLICADO_DENTRO_DE]->(c)
+                    """)
+    void publicarEnComunidad(Long publicacionId, Long comunidadId);
 
-                                """)
-        void publicarEnComunidad(Long publicacionId, Long comunidadId);
-
-        @Query("MATCH (c:Comunidad), (p:Publicacion) " +
-                        "WHERE id(c) = $comunidadId " +
-                        "MATCH (p)-[:PUBLICADO_DENTRO_DE]->(c) " +
-                        "RETURN p ORDER BY p.fechaDeCreacion DESC "+
-                        "SKIP $skip "+
-                        "LIMIT $limit")
-        List<Publicacion> publicacionesComunidad(@Param("comunidadId") Long comunidadId,  @Param("skip") int skip,
-                @Param("limit") int limit);
+    @Query("MATCH (c:Comunidad), (p:Publicacion) " +
+            "WHERE id(c) = $comunidadId " +
+            "MATCH (p)-[:PUBLICADO_DENTRO_DE]->(c) " +
+            "RETURN p ORDER BY p.fechaDeCreacion DESC " +
+            "SKIP $skip " +
+            "LIMIT $limit")
+    List<Publicacion> publicacionesComunidad(@Param("comunidadId") Long comunidadId, @Param("skip") int skip,
+            @Param("limit") int limit);
 
 }

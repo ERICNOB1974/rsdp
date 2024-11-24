@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ComunidadService } from './comunidad.service';
 import { Comunidad } from './comunidad';
@@ -19,7 +19,7 @@ import { EventoService } from '../eventos/evento.service';
 @Component({
     selector: 'app-editar-comunidad',
     standalone: true,
-    imports: [CommonModule, FormsModule, NgIf],
+    imports: [CommonModule, FormsModule, NgIf, RouterModule],
     templateUrl: './muroComunidad.component.html',
     styleUrls: ['./comunidadMuro.css']
 })
@@ -370,10 +370,8 @@ export class MuroComunidadComponent implements OnInit {
         // Verificamos si la comunidad es privada
         if ((!this.comunidad.esPrivada) || ((this.comunidad.esPrivada) && (this.esParte))) {
             // Solo se mostrará el creador y los miembros si el usuario es parte
-
             // Iterar sobre los miembros y añadir solo aquellos que sean visibles
             this.miembros.forEach(miembro => {
-
 
                 if (miembro.id === this.idUsuarioAutenticado) {
                     // Siempre mostrar el usuario que está viendo la lista
@@ -400,13 +398,15 @@ export class MuroComunidadComponent implements OnInit {
                             this.miembrosVisibles.push(miembro);
                         }
                     } else {
-                        this.usuariosAnonimos++; // Aumentar el conteo de anónimos si no se muestra
+                        if(!this.administradores.some(admin => admin.id === miembro.id)){
+                            this.usuariosAnonimos++; // Aumentar el conteo de anónimos si no se muestra
+                        }
                     }
                 }
             });
         } else if (!this.esParte && this.comunidad.esPrivada) {
             {
-                this.usuariosAnonimos = this.miembros.length - this.miembrosVisibles.length;
+                this.usuariosAnonimos = this.miembros.length - 1;
             }
         }
     }
@@ -423,8 +423,6 @@ export class MuroComunidadComponent implements OnInit {
 
 
     ingresar(): void {
-        //const idComunidad = this.route.snapshot.paramMap.get('id')!;
-        //let mensaje = 'Solicitud enviada con exito';
         this.usuarioService.solicitarIngresoAComunidad(this.comunidad.id).subscribe(dataPackage => {
             let mensaje = dataPackage.message;
             this.procesarEstado();
