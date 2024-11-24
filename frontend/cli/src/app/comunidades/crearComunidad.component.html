@@ -2,30 +2,43 @@
     <h2>Crear Nueva Comunidad</h2>
 
     <form #form="ngForm">
-        <div class="form-group">
-            <label for="nombre">Nombre de la Comunidad</label>
-            <input id="nombre" [(ngModel)]="comunidad.nombre" name="nombre" required>
-        </div>
-        <div *ngIf="comunidad.imagen==='' || comunidad.imagen==null" class="drag-drop-area" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+
+        <mat-form-field appearance="outline" class="form-group">
+            <mat-label>Nombre de la comunidad</mat-label>
+            <input matInput [(ngModel)]="comunidad.nombre" name="nombre" required>
+            <mat-error *ngIf="formComunidad.get('nombre')?.hasError('required')">
+                El nombre de la comunidad es requerido
+            </mat-error>
+        </mat-form-field>
+
+
+        <div *ngIf="comunidad.imagen==='' || comunidad.imagen==null" class="drag-drop-area"
+            (dragover)="onDragOver($event)" (drop)="onDrop($event)">
             <p>Arrastra y suelta una imagen o video aquí, o selecciona uno desde tus archivos.</p>
             <input type="file" id="archivo" (change)="onFileSelect($event)" hidden #fileInput>
             <button type="button" (click)="fileInput.click()">Seleccionar archivo</button>
-          </div>
-          <div *ngIf="formatoValido && comunidad.imagen!='' && comunidad.imagen!=null" class="vista-previa-contenedor">
+        </div>
+        <div *ngIf="formatoValido && comunidad.imagen!='' && comunidad.imagen!=null" class="vista-previa-contenedor">
             <img [src]="comunidad.imagen" alt="Vista previa de la imagen" class="vista-previa-imagen">
             <button type="button" (click)="eliminarArchivo()" class="btn btn-danger mt-2">Eliminar archivo</button>
-          </div>
-      
+        </div>
+
         <div class="form-group">
             <label for="descripcion">Descripción</label>
             <textarea id="descripcion" [(ngModel)]="comunidad.descripcion" name="descripcion"></textarea>
         </div>
 
-        <div class="form-group">
-            <label for="cantidadMaximaMeimbros">Cantidad Máxima de miembros</label>
-            <input type="number" min="1" id="cantidadMaximaMeimbros" [(ngModel)]="comunidad.cantidadMaximaMiembros"
-                name="cantidadMaximaMiembros" required>
-        </div>
+    
+
+        <!-- Cantidad Máxima de Participantes -->
+        <mat-form-field appearance="outline" class="form-group">
+            <mat-label>Cantidad Máxima de Participantes</mat-label>
+            <input matInput type="number" min="1" [(ngModel)]="comunidad.cantidadMaximaMiembros"
+                name="cantidadMaximaParticipantes" required>
+            <mat-error *ngIf="formComunidad.get('cantidadMaximaParticipantes')?.hasError('required')">
+                La cantidad máxima de participantes es requerida y debe ser un número positivo
+            </mat-error>
+        </mat-form-field>
 
         <div class="form-group">
             <label for="etiquetas">Buscar Etiquetas:</label>
