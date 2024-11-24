@@ -91,9 +91,10 @@ public class ComunidadService {
         comunidadRepository.etiquetarComunidad(comunidad.getId(), etiqueta);
     }
 
-
-public String miembroSale(Long idComunidad, Long idUsuario) {
-        if (!usuarioRepository.esMiembro(idUsuario, idComunidad) && !usuarioRepository.esAdministrador(idUsuario, idComunidad) && !usuarioRepository.esCreador(idUsuario, idComunidad)) {
+    public String miembroSale(Long idComunidad, Long idUsuario) {
+        if (!usuarioRepository.esMiembro(idUsuario, idComunidad)
+                && !usuarioRepository.esAdministrador(idUsuario, idComunidad)
+                && !usuarioRepository.esCreador(idUsuario, idComunidad)) {
             return "El usuario no pertenece a la comunidad.";
         }
         comunidadRepository.miembroSaliente(idComunidad, idUsuario);
@@ -238,7 +239,9 @@ public String miembroSale(Long idComunidad, Long idUsuario) {
         if (!c.isEsPrivada()) {
             return true;
         }
-        if (c.isEsPrivada() && comunidadRepository.esMiembro(idComunidad, idUsuario)) {
+        if (c.isEsPrivada() && (comunidadRepository.esMiembro(idComunidad, idUsuario)
+                || usuarioRepository.esAdministrador(idUsuario, idComunidad)
+                || usuarioRepository.esCreador(idUsuario, idComunidad))) {
             return true;
         }
         return false;
