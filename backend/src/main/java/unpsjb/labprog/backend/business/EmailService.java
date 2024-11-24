@@ -37,9 +37,6 @@ public class EmailService {
     @Autowired
     private ComunidadRepository comunidadRepository;
 
-    @Autowired
-    private LocationService locationService;
-
     @Lazy
     @Autowired
     private EventoService eventoService;
@@ -104,7 +101,7 @@ public class EmailService {
 
         StringBuilder mensajeParte2 = new StringBuilder();
 
-        String ubicacion = locationService.getDisplayName(evento.getLatitud(), evento.getLongitud());
+        String ubicacion = evento.getUbicacion();
         if (cambioFecha && cambioUbicacion) {
             mensajeParte2.append("la fecha y la ubicación.");
             mensajeParte2.append("\nNueva fecha: ").append(evento.getFechaHora());

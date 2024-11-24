@@ -43,10 +43,7 @@
   margin-left: 5px;
 }
 
-.filtro-nombre {
-  width: 250px;
-  /* Aumentamos el ancho del contenedor del filtro de nombre */
-}
+
 
 .filtro-toggle {
   width: 100%;

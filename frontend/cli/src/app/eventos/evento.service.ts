@@ -12,6 +12,7 @@ import { Usuario } from '../usuarios/usuario';
 })
 export class EventoService {
 
+
   private eventosUrl = 'rest/eventos';
   private emailUrl = 'rest/email';
 
@@ -212,4 +213,7 @@ export class EventoService {
     return this.http.post<DataPackage>(`${this.emailUrl}/enviar-notificacion`, requestBody);
   }
 
+  verificarExpulsion(idUsuarioAutenticado: number, idEvento: number) {
+    return this.http.get<DataPackage>(`${this.eventosUrl}/estaExpulsado/${idUsuarioAutenticado}/${idEvento}`);
+  }
 }

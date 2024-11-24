@@ -165,8 +165,7 @@ public class EventoService {
         Optional<Evento> eventoViejo = eventoRepository.findById(evento.getId());
         if (!eventoViejo.isEmpty()) {
             boolean cambioFecha = evento.getFechaHora() != eventoViejo.get().getFechaHora();
-            boolean cambioUbicacion = (evento.getLatitud() != eventoViejo.get().getLatitud())
-                    || (evento.getLongitud() != eventoViejo.get().getLongitud());
+            boolean cambioUbicacion = eventoViejo.get().getUbicacion() != evento.getUbicacion();
             emailService.enviarMailCambio(cambioFecha, cambioUbicacion, evento);
         }
         if (eventoViejo.isEmpty() && evento.isEsPrivadoParaLaComunidad()) {
@@ -179,8 +178,7 @@ public class EventoService {
         if (!eventoViejo.isEmpty()) {
             boolean cambioDescripcion = evento.getDescripcion() != eventoViejo.get().getDescripcion();
             boolean cambioFecha = evento.getFechaHora() != eventoViejo.get().getFechaHora();
-            boolean cambioUbicacion = (evento.getLatitud() != eventoViejo.get().getLatitud())
-                    || (evento.getLongitud() != eventoViejo.get().getLongitud());
+            boolean cambioUbicacion = eventoViejo.get().getUbicacion() != evento.getUbicacion();
             if (cambioDescripcion || cambioFecha || cambioUbicacion) {
                 String mensaje = crearMensaje(evento, cambioFecha, cambioUbicacion, cambioDescripcion);
                 notificacionService.notificarCambioEvento(mensaje, evento);
@@ -443,7 +441,13 @@ public class EventoService {
 
     public void eliminarUsuario(String mensaje, Long idEvento, Long idUsuario) {
         this.notificacionService.notificarExpulsionEvento(mensaje, idEvento, idUsuario);
-        this.eventoRepository.eliminarUsuario(idEvento, idUsuario);
+        this.eventoRepository.eliminarUsuario(idEvento, idUsuario, mensaje);
     }
 
+    public boolean estaExpulsado(Long idUsuario, Long idEvento){
+        return this.eventoRepository.estaExpulsado(idUsuario ,idEvento);
+    }
+    public String motivoExpulsion(Long idUsuario, Long idEvento){
+        return this.eventoRepository.motivoExpulsion(idUsuario ,idEvento);
+    }
 }

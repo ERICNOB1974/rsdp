@@ -238,17 +238,17 @@ public class UsuarioComunidadService {
     }
 
     public String verEstado(Long idComunidad, Long idUsuario) {
-        if (usuarioRepository.esMiembro(idUsuario, idComunidad)) {
-            return "Miembro";
-        }
-        if (usuarioRepository.solicitudIngresoExiste(idUsuario, idComunidad)) {
-            return "Pendiente";
-        }
         if (usuarioRepository.esCreador(idUsuario, idComunidad)) {
             return "Creador";
         }
         if (usuarioRepository.esAdministrador(idUsuario, idComunidad)) {
             return "Administrador";
+        }
+        if (usuarioRepository.esMiembro(idUsuario, idComunidad)) {
+            return "Miembro";
+        }
+        if (usuarioRepository.solicitudIngresoExiste(idUsuario, idComunidad)) {
+            return "Pendiente";
         }
         return "Vacio";
     }

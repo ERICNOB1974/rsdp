@@ -1,11 +1,8 @@
 /* Ajustar la posición del sidebar */
 .sidebar {
-    top: 0px;
-    /* Comenzar después de la navbar */
     height: calc(100vh);
     /* Altura total menos la altura de la navbar */
 }
-
 
 .top-navbar {
     height: 80%;
@@ -41,7 +38,6 @@
     }
 
     .dropdown-menu {
-        position: static;
         width: 100%;
     }
 }
@@ -78,7 +74,7 @@
     top: 0;
     left: 0;
     height: 100vh;
-    width: 250px;
+    width: 40vw;
     overflow-y: auto;
     background-color: #15202b;
     z-index: 1001;
