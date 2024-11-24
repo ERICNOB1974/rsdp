@@ -28,4 +28,5 @@ public class Comunidad {
     private double latitud;
     private double longitud;
     private String imagen;
+    private String ubicacion;
 }

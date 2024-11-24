@@ -51,7 +51,6 @@ export class EventoDetailComponent implements OnInit {
   creador: boolean = false;
   miembros: Usuario[] = []; // Lista de miembros de la comunidad
 
-
   constructor(
     private route: ActivatedRoute,
     private eventoService: EventoService,
@@ -84,7 +83,6 @@ export class EventoDetailComponent implements OnInit {
         } else {
           this.evento.ubicacion = 'Ubicación desconocida';
         }
-
         if (this.evento) {
           this.evento.fechaDeCreacion = new Date(this.evento.fechaDeCreacion);
           this.evento.fechaHora = new Date(this.evento.fechaHora);
@@ -207,10 +205,7 @@ export class EventoDetailComponent implements OnInit {
       }
     });
   }
-
-
-
-
+  
   abrirModalInvitarAmigos(): void {
     // Cargar listas de amigos antes de abrir el modal
     this.cargarAmigos();
@@ -223,17 +218,7 @@ export class EventoDetailComponent implements OnInit {
 
   cargarAmigos(): void {
     const idEvento = this.evento.id;
-
-    this.usuarioService.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(idEvento).subscribe((dataPackage) => {
-      this.amigosNoEnEvento = dataPackage.data as Evento[];
-
-      // Filtrar amigos ya invitados y ya en evento de la lista de no pertenecientes
-      this.amigosNoEnEvento = this.amigosNoEnEvento.filter(
-        amigoNoEnEvento => !this.amigosEnEvento.some(amigoEnEvento => amigoEnEvento.id === amigoNoEnEvento.id) &&
-          !this.amigosYaInvitados.some(amigoYaInvitado => amigoYaInvitado.id === amigoNoEnEvento.id)
-      );
-    });
-
+    
     this.usuarioService.todosLosAmigosDeUnUsuarioPertenecientesAUnEvento(idEvento).subscribe((dataPackage) => {
       this.amigosEnEvento = dataPackage.data as Evento[];
     });
@@ -241,6 +226,33 @@ export class EventoDetailComponent implements OnInit {
     this.usuarioService.todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(idEvento).subscribe((dataPackage) => {
       this.amigosYaInvitados = dataPackage.data as Evento[];
     });
+
+    if (!this.evento.esPrivadoParaLaComunidad){
+      this.usuarioService.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(idEvento).subscribe((dataPackage) => {
+        this.amigosNoEnEvento = dataPackage.data as Evento[];
+  
+        // Filtrar amigos ya invitados y ya en evento de la lista de no pertenecientes
+        this.amigosNoEnEvento = this.amigosNoEnEvento.filter(
+          amigoNoEnEvento => !this.amigosEnEvento.some(amigoEnEvento => amigoEnEvento.id === amigoNoEnEvento.id) &&
+            !this.amigosYaInvitados.some(amigoYaInvitado => amigoYaInvitado.id === amigoNoEnEvento.id)
+        );
+      });
+    } else {
+      this.usuarioService.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEventoPrivadoPeroSiALaComunidad(idEvento).subscribe((dataPackage) => {
+        this.amigosNoEnEvento = dataPackage.data as Evento[];
+  
+        // Filtrar amigos ya invitados y ya en evento de la lista de no pertenecientes
+        this.amigosNoEnEvento = this.amigosNoEnEvento.filter(
+          amigoNoEnEvento => !this.amigosEnEvento.some(amigoEnEvento => amigoEnEvento.id === amigoNoEnEvento.id) &&
+            !this.amigosYaInvitados.some(amigoYaInvitado => amigoYaInvitado.id === amigoNoEnEvento.id)
+        );
+
+        console.log(this.amigosNoEnEvento);
+
+      });
+
+    }
+  
   }
 
   invitarAmigo(idUsuarioReceptor: number): void {

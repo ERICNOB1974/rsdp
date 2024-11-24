@@ -352,6 +352,12 @@ public class UsuarioPresenter {
         return Response.ok(usuarioService.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(idUsuario, idEvento));
     }
 
+    @GetMapping("/todosLosAmigosDeUnUsuarioNoPertenecientesAUnEventoPrivadoPeroSiALaComunidad/{idUsuario}/{idEvento}")
+    public ResponseEntity<Object> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEventoPrivadoPeroSiALaComunidad(@PathVariable Long idUsuario,
+            @PathVariable Long idEvento) {
+        return Response.ok(usuarioService.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEventoPrivadoPeroSiALaComunidad(idUsuario, idEvento));
+    }    
+
     @GetMapping("/todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad/{idUsuario}/{idComunidad}")
     public ResponseEntity<Object> todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(@PathVariable Long idUsuario,
             @PathVariable Long idComunidad) {
