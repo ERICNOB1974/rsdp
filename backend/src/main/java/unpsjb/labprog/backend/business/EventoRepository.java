@@ -396,4 +396,5 @@ List<Evento> eventosCantidadParticipantesParticipante(Long usuarioId, int min, i
                         MATCH (u)-[r:PARTICIPA_EN]->(e) DELETE r
                                    """)
         void eliminarUsuario(Long idEvento, Long idUsuario);
+
 }
