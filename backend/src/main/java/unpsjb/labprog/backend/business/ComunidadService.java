@@ -91,8 +91,8 @@ public class ComunidadService {
         comunidadRepository.etiquetarComunidad(comunidad.getId(), etiqueta);
     }
 
-    public String miembroSale(Long idComunidad, Long idUsuario) {
-        if (!usuarioRepository.esMiembro(idUsuario, idComunidad)) {
+public String miembroSale(Long idComunidad, Long idUsuario) {
+        if (!usuarioRepository.esMiembro(idUsuario, idComunidad) && !usuarioRepository.esAdministrador(idUsuario, idComunidad) && !usuarioRepository.esCreador(idUsuario, idComunidad)) {
             return "El usuario no pertenece a la comunidad.";
         }
         comunidadRepository.miembroSaliente(idComunidad, idUsuario);

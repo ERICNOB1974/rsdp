@@ -2,18 +2,28 @@
 
 <section class="event-list">
   <div *ngFor="let comunidad of results" class="event-item">
-    <div class="event-card" [routerLink]="['/comunidad-muro', comunidad.id]">
+    <div class="event-card">
       <img [src]="comunidad.imagen ? comunidad.imagen : '../../assets/comunidad.jpg'" alt="{{ comunidad.nombre }}"
-        class="event-image" />
-      <div class="event-overlay">
+        class="event-image"[routerLink]="['/comunidad-muro', comunidad.id]" />
+      <div class="event-content">
         <h3 class="event-name">{{ comunidad.nombre }}</h3>
-        <p class="event-motive" *ngIf="motivos[comunidad.id]">Motivo: "{{ motivos[comunidad.id] }}"</p>
+        <p class="event-motive" *ngIf="motivos[comunidad.id]">
+          <i class="fa fa-search event-icon" (click)="openMotivoModal(comunidad.id)"></i>
+          Motivo: "{{ motivos[comunidad.id]?.toString() }}"
+        </p>
         <p class="event-motive" *ngIf="!motivos[comunidad.id]">Motivo no disponible</p>
       </div>
     </div>
   </div>
-
 </section>
+
+<div *ngIf="isModalOpen" class="modal-overlay" (click)="closeMotivoModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h3>Motivo de {{ comunidadSeleccionada?.nombre }}</h3>
+    <p>{{ motivos[comunidadSeleccionada?.id]?.toString() }}</p>
+    <button class="close-btn" (click)="closeMotivoModal()">Cerrar</button>
+  </div>
+</div>
   <!-- Paginación con el componente de paginación -->
   <app-pagination 
   [totalPages]="totalPages" 

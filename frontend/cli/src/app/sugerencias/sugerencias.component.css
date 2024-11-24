@@ -5,40 +5,43 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 500%; /* Asegura que ocupe el espacio disponible */
+  height: 100%; /* Asegura que ocupe el espacio disponible */
   overflow: hidden;
   border-radius: 15px;
-  margin: 0 auto;
+  text-align: center;
+  margin: 20px auto;
   padding: 20px; /* Añade algo de espacio alrededor */
+  flex-direction: column;
 }
+
 
 
 /* Estilo del carrusel */
 .carousel {
-  position: relative;
   display: flex;
   flex-direction: row;
   justify-content: center; /* Centra las tarjetas en el carrusel */
-  width: 100%;
-  height: 70%; /* Ocupa toda la altura disponible */
+  height: 50vh; /* Ocupa toda la altura disponible */
   overflow: hidden;
   padding-top: 20px; /* Deja un espacio en la parte superior (ajustable) */
-
+  width: 100%;
+  position: relative;
+  
 }
+
 
 
 
 /* Contenedor del carrusel */
 .carousel-container {
   display: flex;
-  gap: 15px;
+  gap: 20px;
   transition: transform 0.5s ease;
   width: 100%; /* Asegura que ocupe el 100% del ancho */
   justify-content: center;
-  
+  overflow: hidden;
 }
 
-/* Tarjetas de usuario */
 
 
 .card {
@@ -81,20 +84,14 @@
 
 /* Controles del carrusel */
 .carousel-control {
-  position: absolute;
-  top: 50%;
-  background-color: rgba(0, 0, 0, 0.3);
+  background-color: #007bff;
   color: white;
   border: none;
-  font-size: 2rem;
+  padding: 10px 20px;
   cursor: pointer;
-  width: 40px;
-  height: 40px;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
 }
 
 .carousel-control.prev {
@@ -108,4 +105,10 @@
 .carousel-control:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+.carousel-controls {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }

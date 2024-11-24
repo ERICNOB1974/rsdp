@@ -328,13 +328,10 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
             "RETURN c")
     List<Comunidad> comunidadesCantidadParticipantes(int min, int max);
 
-    @Query("""
-            MATCH (u:Usuario)   WHERE id(u)=$idUsuario
-            MATCH (c:Comunidad) WHERE id(c) = $idComunidad
-            MATCH (u)-[r: MIEMBRO | ADMINISTRADA_POR | CREADA_POR]-(c)
-            RETURN COUNT(r)>0
-            """)
-    boolean esMiembro(Long idComunidad, Long idUsuario);
+@Query("MATCH (u:Usuario)-[:MIEMBRO]-(c:Comunidad) "
+            + "WHERE id(u) = $idUsuario AND id(c) = $idComunidad "
+            + "RETURN COUNT(c) > 0")
+    boolean esMiembro(Long idUsuario, Long idComunidad);
 
     @Query("MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c:Comunidad)" +
             "WHERE id(c) = $idComunidad " +
