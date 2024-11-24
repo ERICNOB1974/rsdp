@@ -9,12 +9,10 @@
         <div *ngIf="!evento.imagen" class="align-items-center">
           <img src="../../assets/evento.webp" style="max-width: 400px; max-height: 400px; ">
         </div>
-        <div class="creador-evento d-flex align-items-center mt-4 p-3" style="background-color: #f0ecec; border-radius: 10px;">
-          <img 
-          [src]="creadorEvento.fotoPerfil || '../../assets/default-user.png'" 
-          alt="Foto del creador" 
-          class="rounded-circle" 
-          style="width: 70px; height: 70px; object-fit: cover; margin-right: 15px;">
+        <div class="creador-evento d-flex align-items-center mt-4 p-3"
+          style="background-color: #f0ecec; border-radius: 10px;">
+          <img [src]="creadorEvento.fotoPerfil || '../../assets/default-user.png'" alt="Foto del creador"
+            class="rounded-circle" style="width: 70px; height: 70px; object-fit: cover; margin-right: 15px;">
           <div>
             <p class="mb-0"><strong>Creador del evento:</strong></p>
             <h4 class="mb-0 text-primary">{{ creadorEvento.nombreUsuario }}</h4>
@@ -28,13 +26,25 @@
         <div class="map-container padding-top-20 padding-bottom-20">
           <div id="map"></div>
         </div>
-        
+
         <!-- Botón Inscribirse o Desinscribirse centrado -->
-        <button class="btn btn-primary btn-block ingresar-button mx-auto"
+        <!-- Modificación para el botón de inscribirse -->
+        <button *ngIf="!expulsado" class="btn btn-primary btn-block ingresar-button mx-auto"
           [disabled]="!(inscribirseValid() || salirValid()) || isLoading"
           (click)="salirValid() ? salir() : inscribirse()">
           {{ salirValid() ? 'Desinscribirse' : 'Inscribirse' }}
         </button>
+
+        <!-- Mensaje de expulsión -->
+        <div *ngIf="expulsado" class="alert alert-warning mt-4">
+          <p>Has sido expulsado del evento.</p>
+          <button class="btn btn-info" (click)="toggleMotivo()">
+            ¿Por qué? <span [class]="mostrarMotivo ? 'arrow-up' : 'arrow-down'"></span>
+          </button>
+          <div *ngIf="mostrarMotivo" class="mt-2">
+            <strong>Motivo de expulsión:</strong> {{ motivoExpulsion }}
+          </div>
+        </div>
 
         <!-- Botón de regresar centrado -->
 
@@ -206,9 +216,7 @@
   </div>
   <div class="modal-body">
     <p>Por favor, ingresa el motivo por el que estás expulsando a {{ usuarioEliminar.nombreUsuario }}.</p>
-    <textarea [(ngModel)]="motivoExpulsion" 
-              class="form-control" 
-              placeholder="Escribe aquí el motivo"></textarea>
+    <textarea [(ngModel)]="motivoExpulsion" class="form-control" placeholder="Escribe aquí el motivo"></textarea>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancelar</button>

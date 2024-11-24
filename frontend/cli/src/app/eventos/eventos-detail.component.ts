@@ -22,12 +22,12 @@ import * as L from 'leaflet';
   templateUrl: './eventos-detail.component.html',
   styleUrls: ['./eventos-detail.component.css'],
   imports: [MatProgressSpinnerModule,
-    CommonModule,FormsModule,RouterModule],
+    CommonModule, FormsModule, RouterModule],
   standalone: true
 })
 export class EventoDetailComponent implements OnInit {
 
-  
+
 
   motivo: string = '';
   mensaje: string = '';
@@ -50,8 +50,12 @@ export class EventoDetailComponent implements OnInit {
 
   creador: boolean = false;
   miembros: Usuario[] = []; // Lista de miembros de la comunidad
-  mapa!: L.Map;  motivoExpulsion: string = '';
+  mapa!: L.Map; 
+  motivoExpulsion: string = '';
   usuarioEliminar: any;
+  mostrarMotivo: boolean = false;
+  expulsado: boolean = false; // Indica si el usuario fue expulsado
+
 
 
   constructor(
@@ -71,7 +75,20 @@ export class EventoDetailComponent implements OnInit {
     this.idUsuarioAutenticado = Number(this.authService.getUsuarioId());
     this.getEvento();
   }
+  toggleMotivo() {
+    this.mostrarMotivo = !this.mostrarMotivo;
+  }
 
+
+  checkExpulsion() {
+    // Lógica para llamar al backend y verificar si el usuario fue expulsado
+    // Suponiendo que tienes un servicio que te permite hacer esto
+    this.eventoService.verificarExpulsion(this.idUsuarioAutenticado, this.evento.id)
+     .subscribe(response => {
+      this.expulsado = response.data as unknown as boolean;
+     this.motivoExpulsion = response.message; // Asumiendo que el backend devuelve el motivo
+    });
+  }
   private iniciarMapa(): void {
     if (this.evento.latitud !== null && this.evento.longitud !== null) {
       this.colocarCoordenadas(this.evento.latitud, this.evento.longitud); // Inicia el mapa con las coordenadas del usuario
@@ -82,17 +99,17 @@ export class EventoDetailComponent implements OnInit {
 
   private colocarCoordenadas(lat: number, lng: number): void {
     this.mapa = L.map('map').setView([lat, lng], 13);
-  
+
     // Cambiamos a un mapa satelital usando Esri World Imagery
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
     }).addTo(this.mapa);
-  
+
     // Colocar el marcador en la ubicación del evento
     this.marcador = L.marker([lat, lng]).addTo(this.mapa)
       .bindPopup(`Ubicación: ${this.evento.ubicacion}`) // Cambiado para mostrar this.evento.ubicacion
       .openPopup();
-    
+
     // Deshabilitar el evento de clic en el mapa
     this.mapa.off('click');
   }
@@ -122,6 +139,7 @@ export class EventoDetailComponent implements OnInit {
         await this.getCreadorEvento();
         this.traerParticipantes();
         this.checkParticipacion();
+        this.checkExpulsion();    
         this.traerMiembros();
         this.cargarAmigos();
         this.iniciarMapa();
@@ -142,13 +160,13 @@ export class EventoDetailComponent implements OnInit {
 
   async getCreadorEvento(): Promise<void> {
     return new Promise((resolve) => {
-        this.usuarioService.usuarioCreadorEvento(this.evento.id).subscribe(dataPackage => {
-            this.creadorEvento = dataPackage.data as Usuario;
-                 if (this.creadorEvento.id == this.idUsuarioAutenticado) {
-                this.creador = true;  // El usuario es el creador
-            }
-            resolve(); // Resuelve la promesa después de procesar el estado
-        });
+      this.usuarioService.usuarioCreadorEvento(this.evento.id).subscribe(dataPackage => {
+        this.creadorEvento = dataPackage.data as Usuario;
+        if (this.creadorEvento.id == this.idUsuarioAutenticado) {
+          this.creador = true;  // El usuario es el creador
+        }
+        resolve(); // Resuelve la promesa después de procesar el estado
+      });
       this.usuarioService.usuarioCreadorEvento(this.evento.id).subscribe(dataPackage => {
         this.creadorEvento = dataPackage.data as Usuario;
         console.log('Creador del evento:', this.creadorEvento); // Añadir log para verificar el valor
@@ -435,7 +453,7 @@ export class EventoDetailComponent implements OnInit {
       keyboard: false, // Desactiva el cierre con teclado
     });
   }
-  eliminarMiembro(idUsuario: number, motivo:string) {
+  eliminarMiembro(idUsuario: number, motivo: string) {
     this.eventoService.eliminarMiembro(this.evento.id, idUsuario, motivo).subscribe(dataPackage => {
 
       this.traerMiembros();
@@ -449,7 +467,7 @@ export class EventoDetailComponent implements OnInit {
       return;
     }
 
-   
+
     this.eliminarMiembro(this.usuarioEliminar.id, this.motivoExpulsion);
 
     // Limpia los datos

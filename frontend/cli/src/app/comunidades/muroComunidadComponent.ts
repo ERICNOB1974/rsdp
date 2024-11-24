@@ -441,6 +441,7 @@ export class MuroComunidadComponent implements OnInit {
                 duration: 3000, // Duración del snackbar en milisegundos
             });
         });
+        this.esFavorito=false;
     }
 
     salirValid(): boolean {
