@@ -441,7 +441,8 @@ public class EventoService {
         return usuarioService.inscriptosEvento(idEvento);
     }
 
-    public void eliminarUsuario(Long idEvento, Long idUsuario) {
+    public void eliminarUsuario(String mensaje, Long idEvento, Long idUsuario) {
+        this.notificacionService.notificarExpulsionEvento(mensaje, idEvento, idUsuario);
         this.eventoRepository.eliminarUsuario(idEvento, idUsuario);
     }
 

@@ -14,6 +14,7 @@ import { Comunidad } from '../comunidades/comunidad';
 import { EventoService } from '../eventos/evento.service';
 import { ComunidadService } from '../comunidades/comunidad.service';
 import { RutinaService } from '../rutinas/rutina.service';
+import { debounceTime, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-perfil',
@@ -53,6 +54,9 @@ export class PerfilComponent implements OnInit {
   subTabSeleccionada: string = 'todas'; // 'todas' o 'favoritas'
   subTabRutinasSeleccionada: string = 'todas';
 
+  searchSubjectRutinas: Subject<string> = new Subject<string>();
+  searchSubjectComunidades: Subject<string> = new Subject<string>();
+
 
   constructor(
     private route: ActivatedRoute,
@@ -70,7 +74,26 @@ export class PerfilComponent implements OnInit {
     this.idUsuarioAutenticado = Number(usuarioId);
     this.idUsuario = Number(this.route.snapshot.paramMap.get('id'));
     this.cargarPerfil();  // Cargar la información del perfil
+    this.searchSubjectRutinas
+      .pipe(debounceTime(500)) // Espera 1 segundo
+      .subscribe((nombre: string) => {
+        this.buscarRutinas(nombre);
+      });
+
+    this.searchSubjectComunidades
+      .pipe(debounceTime(500)) // Espera 0,5 segundo
+      .subscribe((nombre: string) => {
+        this.buscarComunidades(nombre);
+      });
   }
+  onSearchInput(nombre: string): void {
+    this.searchSubjectRutinas.next(nombre); // Emite el texto ingresado
+  }
+
+  onSearchInputComunidades(nombre: string): void {
+    this.searchSubjectComunidades.next(nombre); // Emite el texto ingresado
+  }
+
 
   // Obtén el usuario autenticado desde el AuthService
 

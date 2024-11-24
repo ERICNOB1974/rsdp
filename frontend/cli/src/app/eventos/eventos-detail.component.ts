@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { EventoService } from './evento.service';
 import { Evento } from './evento';
 import { Location } from '@angular/common';
@@ -22,17 +22,12 @@ import * as L from 'leaflet';
   templateUrl: './eventos-detail.component.html',
   styleUrls: ['./eventos-detail.component.css'],
   imports: [MatProgressSpinnerModule,
-    CommonModule, FormsModule],
+    CommonModule,FormsModule,RouterModule],
   standalone: true
 })
 export class EventoDetailComponent implements OnInit {
 
-  eliminarMiembro(idUsuario: number) {
-    this.eventoService.eliminarMiembro(this.evento.id, idUsuario).subscribe(dataPackage => {
-
-      this.traerMiembros();
-    });
-  }
+  
 
   motivo: string = '';
   mensaje: string = '';
@@ -51,10 +46,13 @@ export class EventoDetailComponent implements OnInit {
   cargaIncremento: number = 5; // Número de elementos adicionales cargados en cada scroll
   @ViewChild('modalInvitarAmigos') modalInvitarAmigos!: TemplateRef<any>;
   marcador!: L.Marker; // Agregar una propiedad para el marcador
+  @ViewChild('modalExpulsion') modalExpulsion!: TemplateRef<any>; // Referencia al modal
 
   creador: boolean = false;
   miembros: Usuario[] = []; // Lista de miembros de la comunidad
-  mapa!: L.Map;
+  mapa!: L.Map;  motivoExpulsion: string = '';
+  usuarioEliminar: any;
+
 
   constructor(
     private route: ActivatedRoute,
@@ -99,6 +97,10 @@ export class EventoDetailComponent implements OnInit {
     this.mapa.off('click');
   }
 
+  seleccionarUsuario(usuario: any): void {
+    this.usuarioEliminar = usuario;
+  }
+
   getEvento(): void {
     const id = this.route.snapshot.paramMap.get('id')!;
     if (!id || isNaN(parseInt(id, 10)) || id === 'new') {
@@ -140,6 +142,13 @@ export class EventoDetailComponent implements OnInit {
 
   async getCreadorEvento(): Promise<void> {
     return new Promise((resolve) => {
+        this.usuarioService.usuarioCreadorEvento(this.evento.id).subscribe(dataPackage => {
+            this.creadorEvento = dataPackage.data as Usuario;
+                 if (this.creadorEvento.id == this.idUsuarioAutenticado) {
+                this.creador = true;  // El usuario es el creador
+            }
+            resolve(); // Resuelve la promesa después de procesar el estado
+        });
       this.usuarioService.usuarioCreadorEvento(this.evento.id).subscribe(dataPackage => {
         this.creadorEvento = dataPackage.data as Usuario;
         console.log('Creador del evento:', this.creadorEvento); // Añadir log para verificar el valor
@@ -330,6 +339,7 @@ export class EventoDetailComponent implements OnInit {
     this.usuariosAnonimos = 0; // Reiniciamos el conteo de usuarios anónimos
 
 
+
     // Iterar sobre los miembros y añadir solo aquellos que sean visibles
     this.miembros.forEach(miembro => {
       if (miembro.id === this.idUsuarioAutenticado) {
@@ -361,6 +371,7 @@ export class EventoDetailComponent implements OnInit {
         }
       }
     });
+    console.log(this.participantesVisibles);
     this.participantesVisiblesPaginados = this.participantesVisibles.slice(0, this.cargaInicial);
   }
 
@@ -374,7 +385,6 @@ export class EventoDetailComponent implements OnInit {
       const nombreActividad = "del evento, " + this.evento.nombre;
       this.eventoService.enviarNotificacionEvento(this.mensaje, this.motivo, this.miembros, nombreActividad).subscribe(
         response => {
-          console.log('Notificación enviada con éxito', response);
           this.motivo = '';
           this.mensaje = '';
           this.closeModal();
@@ -415,5 +425,37 @@ export class EventoDetailComponent implements OnInit {
       console.log('No hay más participantes por cargar');
     }
   }
+
+
+  abrirModalExpulsion(usuario: any): void {
+    this.usuarioEliminar = usuario; // Asigna el usuario al abrir el modal
+    this.modalService.open(this.modalExpulsion, {
+      centered: true, // Centra el modal
+      backdrop: 'static', // Impide cerrar al hacer clic fuera
+      keyboard: false, // Desactiva el cierre con teclado
+    });
+  }
+  eliminarMiembro(idUsuario: number, motivo:string) {
+    this.eventoService.eliminarMiembro(this.evento.id, idUsuario, motivo).subscribe(dataPackage => {
+
+      this.traerMiembros();
+    });
+  }
+
+
+  confirmarExpulsion(): void {
+    if (!this.motivoExpulsion.trim()) {
+      alert('Por favor, ingresa un motivo válido.');
+      return;
+    }
+
+   
+    this.eliminarMiembro(this.usuarioEliminar.id, this.motivoExpulsion);
+
+    // Limpia los datos
+    this.motivoExpulsion = '';
+    this.usuarioEliminar = null;
+  }
+
 
 }

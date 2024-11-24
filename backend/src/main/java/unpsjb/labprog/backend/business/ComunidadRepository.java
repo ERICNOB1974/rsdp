@@ -3,6 +3,7 @@ package unpsjb.labprog.backend.business;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
@@ -328,13 +329,10 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "RETURN c")
         List<Comunidad> comunidadesCantidadParticipantes(int min, int max);
 
-        @Query("""
-                        MATCH (u:Usuario)   WHERE id(u)=$idUsuario
-                        MATCH (c:Comunidad) WHERE id(c) = $idComunidad
-                        MATCH (u)-[r: MIEMBRO | ADMINISTRADA_POR | CREADA_POR]-(c)
-                        RETURN COUNT(r)>0
-                        """)
-        boolean esMiembro(Long idComunidad, Long idUsuario);
+@Query("MATCH (u:Usuario)-[:MIEMBRO]-(c:Comunidad) "
+            + "WHERE id(u) = $idUsuario AND id(c) = $idComunidad "
+            + "RETURN COUNT(c) > 0")
+    boolean esMiembro(Long idUsuario, Long idComunidad);
 
         @Query("MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c:Comunidad)" +
                         "WHERE id(c) = $idComunidad " +
@@ -382,5 +380,14 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "WHERE id(e) = $idEvento " +
                         "RETURN c")
         Comunidad buscarComunidadPorEventoInterno(@Param("idEvento") Long idEvento);
+
+
+        @Query("""
+                        MATCH (p:Publicacion)-[:PUBLICADO_DENTRO_DE]-(c:Comunidad) 
+                        WHERE id(p)=$idPublicacion
+                        return c
+                        """)
+        Optional<Comunidad> comunidadDePublicacion(Long idPublicacion);
+        
 
 }

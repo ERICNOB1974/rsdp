@@ -2,31 +2,46 @@
   <div class="perfil-publicaciones">
     <div class="publicaciones-grid">
       <div class="publicacion-item" *ngFor="let publicacion of publicaciones"
-        (click)="goToPublicacionDetail(publicacion.id)">
+        (click)="goToPublicacionDetail(publicacion.publicacion.id)">
         <div class="publicacion-container">
-          <!-- Header existente -->
+          <!-- Cabecera de la publicación -->
           <div class="publicacion-header">
-            <p *ngIf="usuariosPublicadores[publicacion.id]" class="usuario-publicador">
-              Publicado por:
-              <a (click)="goToPerfil(usuariosPublicadores[publicacion.id].id); $event.stopPropagation();"
-                class="publicacion-usuario">
-                {{ usuariosPublicadores[publicacion.id].nombreUsuario }}
-              </a>
-            </p>
+            <div class="perfil-container">
+              <!-- Foto de la comunidad (redirige a la comunidad) -->
+              <div *ngIf="publicacion.comunidad" class="foto-comunidad"
+                (click)="goToComunidad(publicacion.comunidad.id); $event.stopPropagation()">
+                <img [src]="publicacion.comunidad.imagen ? publicacion.comunidad.imagen : '../../assets/comunidad.jpg' " >
+              </div>
+              <!-- Foto del usuario (redirige al perfil del usuario) -->
+              <div class="foto-usuario" (click)="goToPerfil(publicacion.creador.id); $event.stopPropagation()">
+                <img [src]="publicacion.creador.fotoPerfil ? publicacion.creador.fotoPerfil : '../../assets/usuario.png' " >
+              </div>
+            </div>
+            <div class="nombres-container">
+              <!-- Nombre de la comunidad (redirige a la comunidad) -->
+              <p *ngIf="publicacion.comunidad" class="nombre-comunidad"
+                (click)="goToComunidad(publicacion.comunidad.id); $event.stopPropagation()">
+                {{ publicacion.comunidad.nombre }}
+              </p>
+              <!-- Nombre del usuario (redirige al perfil del usuario) -->
+              <p class="nombre-usuario" (click)="goToPerfil(publicacion.creador.id); $event.stopPropagation()">
+                {{ publicacion.creador.nombreUsuario }}
+              </p>
+            </div>
             <div class="publicacion-fecha">
-              {{ publicacion.fechaDeCreacion | date:'medium' }}
+              {{ publicacion.publicacion.fechaDeCreacion | date:'medium' }}
             </div>
           </div>
 
           <!-- Contenido existente -->
           <div class="publicacion-content">
-            <p class="publicacion-texto">{{ publicacion.texto }}</p>
-            <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')"
+            <p class="publicacion-texto">{{ publicacion.publicacion.texto }}</p>
+            <div *ngIf="publicacion.publicacion.file && publicacion.publicacion.file.startsWith('data:image')"
               class="publicacion-imagen-container">
-              <img [src]="publicacion.file" alt="Imagen de la publicación" class="publicacion-imagen">
+              <img [src]="publicacion.publicacion.file" alt="Imagen de la publicación" class="publicacion-imagen">
             </div>
-            <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
-              <video [src]="publicacion.file" controls class="publicacion-video"></video>
+            <div *ngIf="publicacion.publicacion.file && publicacion.publicacion.file.startsWith('data:video')">
+              <video [src]="publicacion.publicacion.file" controls class="publicacion-video"></video>
             </div>
           </div>
 
@@ -34,40 +49,43 @@
           <div class="publicacion-interactions">
             <!-- Sección de likes -->
             <div class="likes-section">
-              <button class="like-button" (click)="toggleLike(publicacion.id, $event)"
-                [class.liked]="isLiked[publicacion.id]">
-                <i class="heart" [ngClass]="isLiked[publicacion.id] ? 'fas fa-heart liked' : 'far fa-heart'">
+              <button class="like-button" (click)="toggleLike(publicacion, $event)"
+                [class.liked]="publicacion.estaLikeada">
+                <i class="heart"
+                  [ngClass]="publicacion.estaLikeada ? 'fas fa-heart liked' : 'far fa-heart'">
                 </i>
               </button>
-              <span class="likes-count">{{ likesCount[publicacion.id] || 0 }} likes</span>
+              <span class="likes-count">{{ publicacion.likes || 0 }} likes</span>
             </div>
 
             <!-- Sección de comentarios -->
             <div class="comments-section">
-              <div *ngIf="comentarios[publicacion.id] && comentarios[publicacion.id].length > 0">
-                <div class="comment" *ngFor="let comment of (comentarios[publicacion.id] | slice:0:3)">
+              <div
+                *ngIf="comentarios[publicacion.publicacion.id] && comentarios[publicacion.publicacion.id].length > 0">
+                <div class="comment" *ngFor="let comment of (comentarios[publicacion.publicacion.id] | slice:0:3)">
                   <a class="usuario-publicador" (click)="goToPerfil(comment.usuario.id); $event.stopPropagation();">
                     {{ comment.usuario.nombreUsuario }}
                   </a>
                   <span class="publicacion-texto">{{ comment.texto }}</span>
                 </div>
-                <div *ngIf="comentarios[publicacion.id].length > 3" class="publicacion-texto"
+                <div *ngIf="comentarios[publicacion.publicacion.id].length > 3" class="publicacion-texto"
                   style="color: #8e8e8e; cursor: pointer;">
-                  Ver los {{ comentarios[publicacion.id].length }} comentarios
+                  Ver los {{ comentarios[publicacion.publicacion.id].length }} comentarios
                 </div>
               </div>
 
               <!-- Input de comentarios -->
               <div class="comment-input-section">
                 <button class="comment-button"
-                  (click)="showCommentInput[publicacion.id] = !showCommentInput[publicacion.id]; $event.stopPropagation()">
+                  (click)="showCommentInput[publicacion.publicacion.id] = !showCommentInput[publicacion.publicacion.id]; $event.stopPropagation()">
                   <i class="fa fa-comment-o"></i>
                 </button>
-                <div *ngIf="showCommentInput[publicacion.id]" class="comment-input-container"
+                <div *ngIf="showCommentInput[publicacion.publicacion.id]" class="comment-input-container"
                   (click)="$event.stopPropagation()">
-                  <input type="text" [(ngModel)]="newComments[publicacion.id]" placeholder="Escribe un comentario..."
-                    (keyup.enter)="submitComment(publicacion.id, $event)" class="publicacion-input">
-                  <button (click)="submitComment(publicacion.id, $event)" class="publicacion-button">
+                  <input type="text" [(ngModel)]="newComments[publicacion.publicacion.id]"
+                    placeholder="Escribe un comentario..."
+                    (keyup.enter)="submitComment(publicacion.publicacion.id, $event)" class="publicacion-input">
+                  <button (click)="submitComment(publicacion.publicacion.id, $event)" class="publicacion-button">
                     Enviar
                   </button>
                 </div>
