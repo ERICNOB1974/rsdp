@@ -273,10 +273,9 @@ public class EventoService {
         return "Exito al desinscribirse del evento";
     }
 
-
-  public List<Evento> eventosEtiquetas(List<String> etiquetas, String tipo, Long usuarioId) {
+    public List<Evento> eventosEtiquetas(List<String> etiquetas, String tipo, Long usuarioId) {
         if ("disponibles".equalsIgnoreCase(tipo)) {
-            return eventoRepository.eventosEtiquetasDisponibles(usuarioId,etiquetas);
+            return eventoRepository.eventosEtiquetasDisponibles(usuarioId, etiquetas);
         } else if ("participante".equalsIgnoreCase(tipo)) {
             return eventoRepository.eventosEtiquetasParticipante(usuarioId, etiquetas);
         } else {
@@ -284,7 +283,7 @@ public class EventoService {
         }
     }
 
-       public List<Evento> eventosNombre(String nombre, String tipo, Long usuarioId) {
+    public List<Evento> eventosNombre(String nombre, String tipo, Long usuarioId) {
         if ("disponibles".equalsIgnoreCase(tipo)) {
             return eventoRepository.eventosNombreDisponibles(nombre, usuarioId);
         } else if ("participante".equalsIgnoreCase(tipo)) {
@@ -293,8 +292,8 @@ public class EventoService {
             return eventoRepository.eventosNombre(nombre);
         }
     }
- 
-    public List<Evento> eventosFecha(String tipo, Long usuarioId,ZonedDateTime min, ZonedDateTime max) {
+
+    public List<Evento> eventosFecha(String tipo, Long usuarioId, ZonedDateTime min, ZonedDateTime max) {
         if ("disponibles".equalsIgnoreCase(tipo)) {
             return eventoRepository.eventosFechaDisponible(usuarioId, min, max);
         } else if ("participante".equalsIgnoreCase(tipo)) {
@@ -304,7 +303,7 @@ public class EventoService {
         }
     }
 
-        public List<Evento> eventosParticipantes(String tipo, Long usuarioId,int min, int max) {
+    public List<Evento> eventosParticipantes(String tipo, Long usuarioId, int min, int max) {
         if ("disponibles".equalsIgnoreCase(tipo)) {
             return eventoRepository.eventosCantidadParticipantesDisponible(usuarioId, min, max);
         } else if ("participante".equalsIgnoreCase(tipo)) {
@@ -314,15 +313,15 @@ public class EventoService {
         }
     }
 
-    public List<Evento> eventosDisponibles(String nombreUsuario,int page, int size) {
-        int skip = page * size;  // Cálculo de los resultados a omitir
-        return eventoRepository.disponibles(nombreUsuario,skip, size);
+    public List<Evento> eventosDisponibles(String nombreUsuario, int page, int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
+        return eventoRepository.disponibles(nombreUsuario, skip, size);
     }
 
     public List<Evento> participaUsuario(Long idUsuario, String nombreEvento, int page, int size) {
-        int skip = page * size;  // Cálculo de los resultados a omitir
+        int skip = page * size; // Cálculo de los resultados a omitir
         String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
-        return eventoRepository.participaUsuario(idUsuario,filtroNombre,skip,size);
+        return eventoRepository.participaUsuario(idUsuario, filtroNombre, skip, size);
     }
 
     public List<ScoreEvento> sugerenciasDeEventosBasadosEnEventos2(String nombreUsuario) {
@@ -357,16 +356,17 @@ public class EventoService {
         // Obtener todas las sugerencias de eventos (como en tu código original)
         List<ScoreEvento> sugerenciasEventos = eventoRepository.sugerenciasDeEventosBasadosEnEventos2(nombreUsuario);
         List<ScoreEvento> sugerenciasAmigos = eventoRepository.sugerenciasDeEventosBasadosEnAmigos2(nombreUsuario);
-        List<ScoreEvento> sugerenciasComunidades = eventoRepository.sugerenciasDeEventosBasadosEnComunidades2(nombreUsuario);
+        List<ScoreEvento> sugerenciasComunidades = eventoRepository
+                .sugerenciasDeEventosBasadosEnComunidades2(nombreUsuario);
         List<ScoreEvento> sugerenciasRutinas = eventoRepository.sugerenciasDeEventosBasadosEnRutinas2(nombreUsuario);
-    
+
         // Combinar todas las sugerencias en una sola lista
         List<ScoreEvento> todasLasSugerencias = new ArrayList<>();
         todasLasSugerencias.addAll(sugerenciasAmigos);
         todasLasSugerencias.addAll(sugerenciasEventos);
         todasLasSugerencias.addAll(sugerenciasComunidades);
         todasLasSugerencias.addAll(sugerenciasRutinas);
-    
+
         // Usar un Map para eliminar duplicados y sumar los scores de las comunidades
         Map<Long, ScoreEvento> mapaSugerencias = new HashMap<>();
         for (ScoreEvento scoreEvento : todasLasSugerencias) {
@@ -380,30 +380,30 @@ public class EventoService {
                         return existente;
                     });
         }
-    
+
         // Obtener la lista de ScoreEvento sin duplicados con los scores sumados
         List<ScoreEvento> listaSugerenciasSinDuplicados = new ArrayList<>(mapaSugerencias.values());
-    
+
         // Ordenar la lista por score en orden descendente
         listaSugerenciasSinDuplicados.sort((a, b) -> Double.compare(b.getScore(), a.getScore()));
-    
+
         // Calcular el total de páginas
         int totalElementos = listaSugerenciasSinDuplicados.size();
         int totalPaginas = (int) Math.ceil((double) totalElementos / pageSize);
-    
+
         // Paginar la lista
         int start = page * pageSize;
         int end = Math.min(start + pageSize, listaSugerenciasSinDuplicados.size());
-    
+
         if (start > end) {
             return Collections.emptyMap(); // Si la página está fuera de rango
         }
-    
+
         // Crear el mapa con los datos de eventos y el total de páginas
         Map<String, Object> result = new HashMap<>();
         result.put("data", listaSugerenciasSinDuplicados.subList(start, end)); // Eventos de la página
         result.put("totalPaginas", totalPaginas); // Total de páginas
-    
+
         return result;
     }
 
@@ -427,7 +427,8 @@ public class EventoService {
         return usuarioService.inscriptosEvento(idEvento);
     }
 
-    public void eliminarUsuario(Long idEvento, Long idUsuario) {
+    public void eliminarUsuario(String mensaje, Long idEvento, Long idUsuario) {
+        this.notificacionService.notificarExpulsionEvento(mensaje, idEvento, idUsuario);
         this.eventoRepository.eliminarUsuario(idEvento, idUsuario);
     }
 
