@@ -3,7 +3,7 @@
 @import "font-awesome/css/font-awesome.css";
 @import url('https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap');
 @import 'bootstrap-icons/font/bootstrap-icons.css';
-  
+
 * {
   margin: 0;
   padding: 0;
@@ -115,7 +115,8 @@ body {
 }
 
 .notification-item {
-  background-color: #f5f5f5; /* Fondo claro para no leídas */
+  background-color: #f5f5f5;
+  /* Fondo claro para no leídas */
   padding: 10px;
   margin: 5px 0;
   border-radius: 5px;
@@ -184,8 +185,10 @@ body {
   color: white;
 
 }
+
 .notification-item.leida {
-  background-color: #e0e0e0; /* Fondo gris más oscuro para leídas */
+  background-color: #e0e0e0;
+  /* Fondo gris más oscuro para leídas */
 }
 
 .notification-badge {
@@ -241,14 +244,18 @@ body {
 }
 
 .notification-item:not(.leida):hover {
-  background-color: #d0f0d0; /* Verde claro para destacar no leídas */
-  transform: scale(0.98); /* Ligeramente más grande */
+  background-color: #d0f0d0;
+  /* Verde claro para destacar no leídas */
+  transform: scale(0.98);
+  /* Ligeramente más grande */
 }
 
 /* Hover para leídas */
 .notification-item.leida:hover {
-  background-color: #c0c0c0; /* Gris más claro para leídas */
-  transform: scale(1.01); /* Ligeramente más grande */
+  background-color: #c0c0c0;
+  /* Gris más claro para leídas */
+  transform: scale(1.01);
+  /* Ligeramente más grande */
 }
 
 .new-notification-dot {
@@ -278,33 +285,28 @@ body {
 .main-content {
   display: flex;
   flex-direction: column;
-  padding: 15px;
+  padding: 2dvh;
   /* Esto es necesario para dejar espacio a la sidebar */
-  margin-top: 40px;
+  margin-top: 5vw;
   /* Esto es necesario para dejar espacio a la navbar */
-  margin-left: 250px;
+  margin-left: 20vw;
   /* Asegura que el contenido principal ocupe toda la pantalla restante */
   /* Esto asegura que si el contenido es largo, se agregue scroll */
   overflow-y: auto;
-  margin-left: 250px; /* Ancho de la barra lateral expandida */
   height: calc(100vh - 60px);
   width: calc(100% - 250px);
-  transition: margin-left 0.3s, ease; 
-   flex-grow: 1;
+  transition: margin-left 0.3s, ease;
+  flex-grow: 1;
 }
 
 
 
 .main-content.full-width {
-  margin-left: 80px; /* Ajuste el margen cuando la barra está oculta */
+  margin-left: 20vw;
+  /* Ajuste el margen cuando la barra está oculta */
 }
-.sidebar {
-  width: 250px; /* Ancho de la barra lateral cuando está visible */
-  transition: width 0.3s ease;
-}
-.sidebar.collapsed {
-  width: 80px; /* Ancho de la barra lateral cuando está oculta */
-}
+
+
 
 .profile-image {
   width: 5vw;
