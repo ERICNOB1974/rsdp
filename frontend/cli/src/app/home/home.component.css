@@ -190,3 +190,58 @@
     color: #888;
     font-size: 14px;
   }
+
+
+
+
+
+
+
+
+
+
+  .perfil-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+  }
+  
+  .foto-comunidad img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    opacity: 0.8;
+  }
+  
+  .foto-usuario img {
+    position: absolute;
+    top: 20%;
+    left: 20%;
+    width: 60%;
+    height: 60%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid white;
+    z-index: 1;
+  }
+  
+  .nombres-container {
+    text-align: center;
+    margin-top: 10px;
+  }
+  
+  .nombre-comunidad {
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .nombre-usuario {
+    margin: 0;
+    color: gray;
+  }
+  
