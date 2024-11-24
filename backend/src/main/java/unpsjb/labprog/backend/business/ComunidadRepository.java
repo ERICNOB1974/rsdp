@@ -3,6 +3,7 @@ package unpsjb.labprog.backend.business;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
@@ -377,5 +378,14 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
     List<Comunidad> listaFavoritas(Long idUsuario, @Param("nombreComunidad") String nombreComunidad,
             @Param("skip") int skip,
             @Param("limit") int limit);
+
+
+        @Query("""
+                        MATCH (p:Publicacion)-[:PUBLICADO_DENTRO_DE]-(c:Comunidad) 
+                        WHERE id(p)=$idPublicacion
+                        return c
+                        """)
+        Optional<Comunidad> comunidadDePublicacion(Long idPublicacion);
+        
 
 }

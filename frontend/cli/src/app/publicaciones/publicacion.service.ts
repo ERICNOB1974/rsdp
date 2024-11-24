@@ -35,7 +35,7 @@ export class PublicacionService {
   publicarEnComunidad(publicacion: Publicacion, idComunidad: number): Observable<DataPackage> {
     const idUsuario = this.authService.getUsuarioId();
     return this.http.post<DataPackage>(`${this.publicacionsUrl}/crear/${idUsuario}/${idComunidad}`, publicacion);
-}
+  }
   estaLikeada(idPublicacion: number) {
     return this.http.get<DataPackage>(` ${this.publicacionsUrl}/isLikeada/${this.authService.getUsuarioId()}/${idPublicacion}`);
   }
@@ -53,12 +53,12 @@ export class PublicacionService {
   comentarios(idPublicacion: number) {
     return this.http.get<DataPackage>(` ${this.publicacionsUrl}/comentarios/${idPublicacion}`);
   }
-  publicacionesPaginadas(idUsuario: number,page: number, size: number): Observable<DataPackage> {
+  publicacionesPaginadas(idUsuario: number, page: number, size: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicaciones/usuario/${idUsuario}?page=${page}&size=${size}`);
   }
 
 
-  publicacionesComunidad(idComunidad: number,page: number, size: number): Observable<DataPackage> {
+  publicacionesComunidad(idComunidad: number, page: number, size: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicaciones/comunidad/${idComunidad}?page=${page}&size=${size}`);
   }
 
@@ -67,15 +67,15 @@ export class PublicacionService {
   }
 
 
-  publicacionesHome(idUsuario:number, page: number, size: number): Observable<DataPackage> {
+  publicacionesHome(idUsuario: number, page: number, size: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicacionesHome/${idUsuario}?page=${page}&size=${size}`);
   }
-  
+
 
   publicadoPor(idPublicacion: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.publicacionsUrl}/usuarioPublicador/${idPublicacion}`);
   }
-  
+
   cantidadLikes(idPublicacion: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.publicacionsUrl}/cantidadLikes/${idPublicacion}`);
   }
@@ -86,6 +86,11 @@ export class PublicacionService {
 
   publicacionesAmigos2(userId: number, page: number = 0, pageSize: number = 5): Observable<any> {
     return this.http.get(`${this.publicacionsUrl}/publicaciones/amigos/usuario/${userId}?page=${page}&size=${pageSize}`);
+  }
+
+  todasLasPublicaciones(page: number = 0, pageSize: number = 5): Observable<any> {
+    const idUsuario = Number(this.authService.getUsuarioId());
+    return this.http.get(`${this.publicacionsUrl}/todasPublicaciones/${idUsuario}?page=${page}&size=${pageSize}`);
   }
 
 
