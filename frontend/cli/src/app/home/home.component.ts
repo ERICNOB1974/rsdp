@@ -21,7 +21,7 @@ export class HomeComponent implements OnInit {
   usuariosPublicadores: { [key: number]: Usuario } = {};
   loading: boolean = false;
   noMasPublicaciones: boolean = false;
-  cantidadPorPagina: number = 3;
+  cantidadPorPagina: number = 6;
   currentIndexPublicacionesHome: number = 0
   comentarios: { [key: number]: Comentario[] } = {}; // Para almacenar comentarios por publicación
   likesCount: { [key: number]: number } = {}; // Para almacenar cantidad de likes por publicación
