@@ -101,4 +101,24 @@ button.btn-secondary {
 
 
 
+.drag-drop-area {
+    max-width: 100%; /* Para que no sobresalga del contenedor */
+    max-height: 400px; /* Altura máxima ajustada */
+    overflow: hidden; /* Oculta contenido que sobresalga */
+    border: 2px dashed #ccc; /* Borde decorativo */
+    border-radius: 8px;
+    text-align: center; /* Centrar contenido */
+    padding: 20px; /* Espaciado interno */
+    box-sizing: border-box; /* Incluye padding y border en el tamaño total */
+    background-color: #f9f9f9; /* Fondo ligero */
+    position: relative;
+}
+.drag-drop-area img,
+.drag-drop-area video {
+    max-width: 100%; /* Ajusta al ancho disponible */
+    max-height: 100%; /* Ajusta al alto disponible */
+    object-fit: contain; /* Ajusta el contenido sin recortar ni distorsionar */
+    margin: auto; /* Centra el contenido */
+    display: block; /* Evita problemas con márgenes colapsados */
+}
 

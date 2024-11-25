@@ -327,3 +327,11 @@
       width: 85%; /* Ajusta el tamaño de la white-island */
     }
   }
+  .hamburger-icon {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    color: aliceblue;
+    font-size: 1.5rem;
+    margin-right: 10px;
+  }
