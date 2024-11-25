@@ -42,7 +42,7 @@
     <!-- Descripción -->
     <mat-form-field appearance="outline" class="form-group">
       <mat-label>Descripción</mat-label>
-      <input matInput [(ngModel)]="evento.descripcion" name="descripcion">
+      <input matInput [(ngModel)]="evento.descripcion" formControlName="descripcion" name="descripcion">
     </mat-form-field>
 
     <!-- Cantidad Máxima de Participantes -->
@@ -99,10 +99,10 @@
 
     <!-- Botones -->
     <div class="form-buttons">
-      <button mat-raised-button color="primary" type="button" (click)="saveEvento()" [disabled]="!isFormValid()">Guardar
+      <button class="btn btn-success" type="button" (click)="saveEvento()" [disabled]="!isFormValid()">Guardar
         Evento</button>
       <button mat-flat-button color="accent" type="button" (click)="cancel()">Cancelar</button>
     </div>
-    
+
   </form>
 </div>

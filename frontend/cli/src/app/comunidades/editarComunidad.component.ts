@@ -1,17 +1,34 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms'; // Importa FormsModule
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'; // Importa FormsModule
 import { ComunidadService } from './comunidad.service';
 import { Comunidad } from './comunidad';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { NgIf } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { cantidadParticipantesValidator } from '../eventos/validacionesEvento';
+import { Etiqueta } from '../etiqueta/etiqueta';
+import { catchError, debounceTime, distinctUntilChanged, filter, map, Observable, of, switchMap, tap } from 'rxjs';
+import { EtiquetaPopularidadDTO } from '../etiqueta/etiquetaPopularidadDTO';
+import { DataPackage } from '../data-package';
+import { EtiquetaService } from '../etiqueta/etiqueta.service';
 
 @Component({
   selector: 'app-editar-comunidad',
   standalone: true,
-  imports: [FormsModule, NgIf], // Agrega FormsModule aquí
+  imports: [CommonModule, FormsModule, RouterModule, NgbTypeaheadModule, MatInputModule,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatFormFieldModule, ReactiveFormsModule,
+    NgIf],
   templateUrl: './editarComunidad.component.html',
-  styleUrls: ['./editarComunidad.component.css', '../css/crear.component.css']
+  styleUrls: ['./editarComunidad.component.css', '../css/crear.component.css', '../css/registro.component.css']
 })
 export class EditarComunidadComponent implements OnInit {
   comunidad!: Comunidad; // Comunidad que se va a editar
@@ -20,18 +37,47 @@ export class EditarComunidadComponent implements OnInit {
   archivoSeleccionado!: File; // Para almacenar la imagen o video seleccionado
   tipoArchivo: string = ''; // Para distinguir entre imagen o video
   vistaPreviaArchivo: string | ArrayBuffer | null = null;
+  formComunidad: FormGroup;
+  searching: boolean = false;
+  searchFailed: boolean = false;
+  etiquetasSeleccionadas: Etiqueta[] = [];
+  etiquetaSeleccionada: Etiqueta | null = null;
 
 
   constructor(
     private route: ActivatedRoute,
+    private formBuilder: FormBuilder,
     private comunidadService: ComunidadService,
     private router: Router,
+    private cdr: ChangeDetectorRef,
+    private etiquetaService: EtiquetaService,
     private snackBar: MatSnackBar
-  ) { }
+  ) {
+    this.formComunidad = this.formBuilder.group(
+      {
+        nombre: ['', [Validators.required]],
+
+        cantidadMaximaMiembros: [
+          '',
+          [Validators.required],
+          [cantidadParticipantesValidator.bind(this)],
+        ],
+        latitud: [
+          '',
+          [Validators.required]
+        ],
+        longitud: ['', [Validators.required]],
+        descripcion: [''] // Esta línea ahora no tiene validación
+      }
+
+    );
+  }
 
   ngOnInit(): void {
     this.idComunidad = Number(this.route.snapshot.paramMap.get('id'));
     this.cargarComunidad();
+    this.formComunidad.markAllAsTouched();
+
   }
 
   cargarComunidad(): void {
@@ -122,5 +168,55 @@ export class EditarComunidadComponent implements OnInit {
     this.formatoValido = false;
     this.comunidad.imagen = '';
 
+  }
+
+  agregarEtiqueta(event: any): void {
+    const etiqueta: Etiqueta = event.item;
+
+    // Verificar por nombre en lugar de por ID para evitar duplicados
+    if (!this.etiquetasSeleccionadas.some(e => e.nombre === etiqueta.nombre)) {
+      this.etiquetasSeleccionadas.push(etiqueta);
+    }
+
+    // Restablecer la etiqueta seleccionada
+    this.etiquetaSeleccionada = null;
+
+    // Forzar actualización visual del input
+    this.cdr.detectChanges();
+  }
+
+
+
+  searchEtiqueta = (text$: Observable<string>): Observable<EtiquetaPopularidadDTO[]> =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      filter(term => term.length >= 2),
+      tap(() => (this.searching = true)),
+      switchMap(term =>
+        this.etiquetaService.search(term).pipe(
+          map((response: DataPackage) => response.data as EtiquetaPopularidadDTO[]),
+          catchError(() => {
+            this.searchFailed = true;
+            return of([]);
+          })
+        )
+      ),
+      tap(() => (this.searching = false))
+    );
+
+  eliminarEtiqueta(etiqueta: Etiqueta): void {
+    this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(
+      e => e.nombre !== etiqueta.nombre
+    );
+  }
+
+
+  resultFormatEtiqueta(value: EtiquetaPopularidadDTO): string {
+    return `${value.nombre} (${value.popularidad})`;
+  }
+
+  inputFormatEtiqueta(value: Etiqueta): string {
+    return value ? value.nombre : '';
   }
 }

@@ -329,6 +329,8 @@ export class MuroComunidadComponent implements OnInit {
     async getCantidadMiembros() {
         this.comunidadService.cantidadMiembrosEnComunidad(this.comunidad.id).subscribe(dataPackage => {
             this.cantidadMiembros = <number><unknown>dataPackage.data;
+            this.comunidad.miembros=<number><unknown>dataPackage.data;
+            this.comunidad.participantes=this.cantidadMiembros;
         });
     }
     async getCreadorOAdministradorComunidad(): Promise<void> {
@@ -535,14 +537,14 @@ export class MuroComunidadComponent implements OnInit {
     }
 
     inscribirseValid(): boolean {
-        if (this.comunidad.miembros < this.comunidad.cantidadMaximaMiembros) {
+        if (this.cantidadMiembros < this.comunidad.cantidadMaximaMiembros) {
             if (!this.esParte
                 && !this.pendiente
                 && !this.esCreador)
                 return true;
-            return false
+            return false;
         }
-        return false
+        return false;
     }
 
 

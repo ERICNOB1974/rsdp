@@ -16,9 +16,8 @@
 
 
 
-
-  <button *ngIf="!esCreador && !expulsado" class="btn btn-primary btn-block ingresar-button"
-    [disabled]="!(salirValid() || !inscribirseValid())" (click)="salirValid() ? salir() : ingresar()">
+  <button *ngIf="!esCreador && !expulsado && !(comunidad.cantidadMaximaMiembros<=comunidad.miembros)" class="btn btn-primary btn-block ingresar-button"
+    [disabled]="!(salirValid() || inscribirseValid())" (click)="salirValid() ? salir() : ingresar()">
     {{ salirValid() ? 'Abandonar comunidad' : (comunidad.esPrivada ? 'Solicitar ingreso' : 'Ingresar') }}
   </button>
 
@@ -30,6 +29,11 @@
     <div *ngIf="mostrarMotivo" class="mt-2">
       <strong>Motivo de expulsión:</strong> {{ motivoExpulsion }}
     </div>
+  </div>
+  <div *ngIf="comunidad.cantidadMaximaMiembros<=comunidad.miembros" class="alert alert-warning mt-4">
+    <p>No hay mas espacio en la comunidad.</p>
+  
+    
   </div>
   <button *ngIf="salirValid()" (click)="abrirModalInvitarAmigos()" class="btn btn-success btn-block">
     Invitar amigos
@@ -81,7 +85,8 @@
         </button>
 
         <div class="eventos-grid">
-          <div class="evento-item" *ngFor="let evento of eventos" (click)="irADetalleEvento(evento.id)">
+          <div class="evento-item" *ngFor="let evento of eventos" [class.clickeable]="esParte"
+            (click)="esParte && irADetalleEvento(evento.id)">
             <!-- Imagen del evento como fondo -->
             <div class="evento-imagen"
               [style.backgroundImage]="'url(' +  (evento.imagen || '../../assets/evento.webp') + ')'"></div>

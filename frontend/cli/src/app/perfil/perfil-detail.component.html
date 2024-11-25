@@ -8,12 +8,12 @@
 
         <div *ngIf="!formatoValido " class="drag-drop-area" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
           <p>Arrastra y suelta una imagen o video aquí, o selecciona uno desde tus archivos.</p>
-          <input type="file" id="archivo" (change)="onFileSelect($event)" hidden #fileInput>
+          <input type="file" id="archivo" (change)="onFileSelect($event); onFieldChange()" hidden #fileInput>
           <button type="button" (click)="fileInput.click()">Seleccionar archivo</button>
         </div>
         <div *ngIf="formatoValido" class="vista-previa-contenedor">
           <img [src]="usuario.fotoPerfil" alt="Vista previa de la imagen" class="vista-previa-imagen">
-          <button type="button" (click)="eliminarArchivo()" class="btn btn-danger mt-2">Eliminar archivo</button>
+          <button type="button" (click)="eliminarArchivo(); onFieldChange()" class="btn btn-danger mt-2">Eliminar archivo</button>
         </div>
 
 

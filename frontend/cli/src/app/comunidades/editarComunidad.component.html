@@ -1,10 +1,14 @@
 <div class="form-container">
   <h2>Editar Comunidad</h2>
-  <form (ngSubmit)="guardarCambios()">
-    <div class="form-group">
-      <label for="nombre">Nombre:</label>
-      <input type="text" id="nombre" [(ngModel)]="comunidad.nombre" name="nombre" required>
-    </div>
+  <form [formGroup]="formComunidad" (ngSubmit)="guardarCambios()">
+
+    <mat-form-field appearance="outline" class="form-group">
+      <mat-label>Nombre de la comunidad</mat-label>
+      <input matInput name="nombre" formControlName="nombre" required [(ngModel)]="comunidad.nombre">
+      <mat-error *ngIf="formComunidad.get('nombre')?.hasError('required')">
+        El nombre de la comunidad es requerido
+      </mat-error>
+    </mat-form-field>
 
     <div *ngIf="comunidad.imagen==='' || comunidad.imagen==null" class="drag-drop-area" (dragover)="onDragOver($event)"
       (drop)="onDrop($event)">
@@ -17,15 +21,39 @@
       <button type="button" (click)="eliminarArchivo()" class="btn btn-danger mt-2">Eliminar archivo</button>
     </div>
 
-    <div class="form-group">
-      <label for="descripcion">Descripción:</label>
-      <textarea id="descripcion" [(ngModel)]="comunidad.descripcion" name="descripcion" required></textarea>
-    </div>
+    <mat-form-field appearance="outline" class="form-group">
+      <mat-label>Descripción</mat-label>
+      <input matInput [(ngModel)]="comunidad.descripcion" name="descripcion">
+    </mat-form-field>
 
-    <div class="form-group">
-      <label for="cantidadMaximaMiembros">Cantidad Máxima de Miembros:</label>
-      <input type="number" id="cantidadMaximaMiembros" [(ngModel)]="comunidad.cantidadMaximaMiembros"
-        name="cantidadMaximaMiembros" min="1" required>
+    <mat-form-field appearance="outline" class="form-group">
+      <mat-label>Cantidad Máxima de Participantes</mat-label>
+      <input matInput type="number" min="1" name="cantidadMaximaMiembros" required
+        formControlName="cantidadMaximaMiembros" [(ngModel)]="comunidad.cantidadMaximaMiembros">
+      <mat-error *ngIf="formComunidad.get('cantidadMaximaMiembros')?.hasError('required')">
+        La cantidad máxima de participantes es requerida y debe ser un número positivo
+      </mat-error>
+    </mat-form-field>
+
+
+    <mat-form-field appearance="outline" class="form-group">
+      <mat-label>Buscar Etiquetas:</mat-label>
+      <input matInput id="etiquetas" [ngbTypeahead]="searchEtiqueta" [resultFormatter]="resultFormatEtiqueta"
+        [inputFormatter]="inputFormatEtiqueta" (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada"
+        placeholder="Buscar etiqueta" [(ngModel)]="etiquetaSeleccionada" />
+      <footer *ngIf="etiquetasSeleccionadas.length==0" class="mat-error-custom">
+        Al menos una etiqueta es requerida
+      </footer>
+    </mat-form-field>
+
+
+    <div class="selected-tags">
+      <span *ngFor="let etiqueta of etiquetasSeleccionadas" class="tag">
+        {{ etiqueta.nombre }}
+        <button (click)="eliminarEtiqueta(etiqueta)" class="remove-tag">
+          &times;
+        </button>
+      </span>
     </div>
 
     <div class="form-group checkbox-group">
@@ -37,5 +65,6 @@
       <button type="submit" class="btn btn-primary">Actualizar Comunidad</button>
       <button type="button" class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
     </div>
+
   </form>
 </div>

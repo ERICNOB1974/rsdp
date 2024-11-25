@@ -90,7 +90,9 @@ export class CrearEventoComponent {
           '',
           [Validators.required]
         ],
-        longitud: ['', [Validators.required]]
+        longitud: ['', [Validators.required]],
+        descripcion: [''] // Esta línea ahora no tiene validación
+
       }
     );
   }
