@@ -121,7 +121,7 @@
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content bg-dark-custom text-light">
         <div class="modal-header border-bottom border-secondary">
-          <h5 class="modal-title text-highlight" id="notificacionModalLabel">Enviar notificación a los miembros del
+          <h5 class="modal-title text-highlight" id="notificacionModalLabel">Enviar notificación a los inscriptos al
             evento</h5>
           <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="closeModal()"></button>
         </div>
@@ -148,8 +148,12 @@
         </div>
         <div class="modal-footer border-top border-secondary d-flex justify-content-between">
           <button type="button" class="btn btn-cancel" (click)="closeModal()">Cancelar</button>
-          <button type="button" class="btn btn-primary btn-highlight" [disabled]="!motivo || !mensaje"
-            (click)="enviarNotificacion()">Enviar</button>
+          <button type="button" class="btn btn-primary btn-highlight d-flex align-items-center"
+            [disabled]="!motivo || !mensaje || isLoading" (click)="enviarNotificacion()">
+            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"
+              aria-hidden="true"></span>
+            Enviar
+          </button>
         </div>
       </div>
     </div>
