@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -67,7 +67,8 @@ export class PerfilComponent implements OnInit {
     private rutinaService: RutinaService,
     private authService: AuthService,  // Inyecta el AuthService
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -214,8 +215,12 @@ export class PerfilComponent implements OnInit {
     this.usuarioService.enviarSolicitudAmistad(this.idUsuarioAutenticado, this.usuario.id).subscribe({
       next: (dataPackage: DataPackage) => {
         if (dataPackage.status === 200) {
-          alert('Solicitud de amistad enviada exitosamente.');
-          window.location.reload(); // Recargar la página
+          this.relacion = 'solicitudEnviada';
+          this.cargarPerfil();
+          this.cdr.detectChanges();
+          this.snackBar.open('Solicitud de amistad enviada exitosamente.', 'Cerrar', {
+            duration: 3000,
+          });
         } else {
           this.snackBar.open('Error: ' + dataPackage.message, 'Cerrar', {
             duration: 3000,
@@ -235,8 +240,12 @@ export class PerfilComponent implements OnInit {
     this.usuarioService.eliminarAmigo(this.usuario.id).subscribe({
       next: (dataPackage: DataPackage) => {
         if (dataPackage.status === 200) {
-          alert('Amigo eliminado exitosamente.');
-          window.location.reload(); // Recargar la página
+          this.relacion = '';
+          this.cargarPerfil();
+          this.cdr.detectChanges();
+          this.snackBar.open('Amigo eliminado exitosamente.', 'Cerrar', {
+            duration: 3000,
+          });
         } else {
           this.snackBar.open('Error: ' + dataPackage.message, 'Cerrar', {
             duration: 3000,
@@ -255,8 +264,12 @@ export class PerfilComponent implements OnInit {
     this.usuarioService.cancelarSolicitudAmistad(this.usuario.id).subscribe({
       next: (dataPackage: DataPackage) => {
         if (dataPackage.status === 200) {
-          alert('Solicitud canceladda exitosamente.');
-          window.location.reload(); // Recargar la página
+          this.relacion = '';
+          this.cargarPerfil();
+          this.cdr.detectChanges();
+          this.snackBar.open('Solicitud cancelada exitosamente.', 'Cerrar', {
+            duration: 3000,
+          });
         } else {
           this.snackBar.open('Error: ' + dataPackage.message, 'Cerrar', {
             duration: 3000,
@@ -325,8 +338,21 @@ export class PerfilComponent implements OnInit {
       next: (dataPackage: DataPackage) => {
         if (dataPackage.status === 200) {
           const mensaje = aceptar ? 'Solicitud de amistad aceptada exitosamente.' : 'Solicitud de amistad rechazada exitosamente.';
-          alert(mensaje);
-          window.location.reload(); // Recargar la página
+          if (aceptar){
+            this.relacion = 'amigos';
+            this.cargarPerfil();
+            this.cdr.detectChanges();
+            this.snackBar.open(mensaje, 'Cerrar', {
+              duration: 3000,
+            });           
+          } else {
+            this.relacion = '';
+            this.cargarPerfil();
+            this.cdr.detectChanges();
+            this.snackBar.open(mensaje, 'Cerrar', {
+              duration: 3000,
+            });           
+          }
         } else {
           this.snackBar.open('Error: ' + dataPackage.message, 'Cerrar', {
             duration: 3000,

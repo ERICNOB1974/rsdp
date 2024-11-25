@@ -264,8 +264,16 @@ export class AmigosComponent implements OnInit {
     this.usuarioService.cancelarSolicitudAmistad(idUsuarioCancelar).subscribe({
       next: (dataPackage: DataPackage) => {
         if (dataPackage.status === 200) {
-          alert('Solicitud cancelada exitosamente.');
-          window.location.reload(); // Recargar la página
+          // Verificar si la solicitud pertenece a las solicitudes enviadas
+          this.solicitudesEnviadas = this.solicitudesEnviadas.filter(solicitud => solicitud.id !== idUsuarioCancelar);
+          
+          // Mostrar mensaje de éxito
+          this.snackBar.open('Solicitud cancelada exitosamente.', 'Cerrar', {
+            duration: 3000,
+          });
+  
+          // Forzar detección de cambios si es necesario
+          this.cdr.detectChanges();
         } else {
           this.snackBar.open('Error: ' + dataPackage.message, 'Cerrar', {
             duration: 3000,
@@ -279,7 +287,6 @@ export class AmigosComponent implements OnInit {
       }
     });
   }
-
 
   onScroll(tabName: string): void {
     const element = document.querySelector('.scrollable-list') as HTMLElement;

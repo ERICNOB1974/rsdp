@@ -28,6 +28,12 @@ export class RutinaDetailComponent implements OnInit {
               private router: Router) { }
 
   ngOnInit(): void {
+    const state = window.history.state;
+    if (state && state.mensajeSnackBar) {
+      this.snackBar.open(state.mensajeSnackBar, 'Cerrar', {
+        duration: 3000,
+      });
+    }
     const id = (this.route.snapshot.paramMap.get('id')!);
 
     // Obtiene la rutina ordenada

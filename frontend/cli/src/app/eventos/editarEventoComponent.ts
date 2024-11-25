@@ -346,8 +346,8 @@ export class EditarEventoComponent {
         await this.eventoService.etiquetar(this.evento, etiquetaFinal.id).toPromise();
       }
 
-      alert('Evento guardado con éxito');
-      window.location.reload();
+      this.router.navigate([`eventos/${this.evento.id}`]);
+
     } catch (error) {
       console.error('Error al guardar el evento:', error);
       this.snackBar.open('Error al guardar el evento.', 'Cerrar', {
