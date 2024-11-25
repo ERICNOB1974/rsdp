@@ -20,6 +20,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { cantidadParticipantesValidator } from '../eventos/validacionesEvento';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-crear-comunidad',
@@ -64,7 +65,8 @@ export class CrearComunidadComponent {
     private etiquetaService: EtiquetaService,
     private router: Router,
     private ubicacionService: UbicacionService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private snackBar: MatSnackBar
   ) {
     this.formComunidad = this.formBuilder.group(
       {
@@ -404,7 +406,9 @@ export class CrearComunidadComponent {
       } else {
         this.formatoValido = false; // El formato no es válido
         this.vistaPreviaArchivo = null; // No se muestra la vista previa
-        alert('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF).');
+        this.snackBar.open('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF).', 'Cerrar', {
+          duration: 3000,
+        });
       }
     }
   }

@@ -144,10 +144,6 @@ export class CalendarioEventosComponent implements OnInit {
     );
   }
 
-  showMotivo(motivo: string) {
-    alert(motivo);
-  }
-
   ngOnDestroy() {
     window.removeEventListener('resize', this.updateView.bind(this)); // Limpiar el evento
   }
