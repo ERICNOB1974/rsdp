@@ -30,7 +30,7 @@ export class AppComponent {
   notificaciones: Notificacion[] = []; // Cambiamos el tipo a `any[]` para recibir cualquier tipo de datos de notificación
   idUsuarioAutenticado!: number; // Variable para almacenar el ID del usuario autenticado
   notificacionesNoLeidasCount = 0;
-  usuario!: Usuario;
+  usuario: Usuario | null = null;
   isSidebarHidden = false; // Estado para ocultar/mostrar la barra lateral
   fotoPerfil: string = '';
 
@@ -88,9 +88,11 @@ export class AppComponent {
   getUsuario() {
     this.usuarioService.get(this.idUsuarioAutenticado).subscribe(dataPackage => {
       this.usuario = dataPackage.data as Usuario;
-    })
+    }, error => {
+      console.error('Error al cargar el usuario:', error);
+      this.usuario = null; // Para manejar el estado de error
+    });
   }
-
   navigateToMiPerfil() {
     if (this.idUsuarioAutenticado) {
       this.router.navigate(['/perfil', this.idUsuarioAutenticado]); // Navega al perfil del usuario autenticado
@@ -104,7 +106,6 @@ export class AppComponent {
         if (dataPackage.status === 200) {
           this.notificaciones = dataPackage.data as Notificacion[];
           this.notificacionesNoLeidasCount = this.getNotificacionesNoLeidas().length; // Contar las no leídas
-          console.log('Notificaciones cargadas:', this.notificaciones);
         } else {
           console.error('Error al cargar las notificaciones:', dataPackage.message);
         }
