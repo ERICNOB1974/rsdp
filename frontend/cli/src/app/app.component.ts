@@ -21,7 +21,24 @@ import { Usuario } from './usuarios/usuario';
   standalone: true,
   imports: [RouterOutlet, NgIf, CommonModule, RouterLink, RouterModule],
   templateUrl: './app.component.html',
-  styleUrls: ['../styles.css', '../barras.css']
+  styleUrls: ['../styles.css', '../barras.css'],
+  styles: [`
+    .loading-overlay {
+      position: fixed;
+      top: 0; 
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+    .loading .header, .loading .container.white-div {
+      pointer-events: none;
+    }
+    `],
 })
 export class AppComponent {
   esPantallaLogin = false;
@@ -33,8 +50,8 @@ export class AppComponent {
   usuario: Usuario | null = null;
   isSidebarHidden = false; // Estado para ocultar/mostrar la barra lateral
   fotoPerfil: string = '';
-
-
+  isCollapsed: boolean = false; // Estado por defecto
+  loading: boolean = false;
 
   constructor(private router: Router,
     private ubicacionService: UbicacionService,
@@ -45,7 +62,15 @@ export class AppComponent {
     //private webSocketService: WebSocketService
   ) { }
 
+  setLoading(isLoading: boolean) {
+    this.loading = isLoading;
+  }
+  
   ngOnInit(): void {
+    const storedState = localStorage.getItem('sidebarState');
+    if (storedState) {
+      this.isCollapsed = storedState === 'true'; // Convierte el valor guardado a booleano
+    }
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
         this.esPantallaLogin = this.rutasSinSidebar.includes(event.urlAfterRedirects);
@@ -242,8 +267,10 @@ export class AppComponent {
     });
   }
 
-  toggleSidebar(): void {
-    this.isSidebarHidden = !this.isSidebarHidden; // Cambiar el estado de la barra lateral
+  toggleSidebar() {
+    this.isCollapsed = !this.isCollapsed;
+    // Guardar el nuevo estado en localStorage
+    localStorage.setItem('sidebarState', String(this.isCollapsed));
   }
 
 }
