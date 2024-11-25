@@ -32,11 +32,10 @@
 
             <div class="perfil-contenedor">
                 <a (click)="navigateToMiPerfil()" class="imagen-perfil">
-                    <img [src]="usuario.fotoPerfil ? usuario.fotoPerfil : '../assets/usuario.png'"
-                        alt="Foto de perfil" />
+                    <img [src]="usuario?.fotoPerfil || '../assets/usuario.png'" alt="Foto de perfil" />
                 </a>
                 <a (click)="navigateToMiPerfil()" class="nombre-usuario">
-                    {{ usuario.nombreUsuario }}
+                    {{ usuario?.nombreUsuario || 'Cargando...' }}
                 </a>
             </div>
             

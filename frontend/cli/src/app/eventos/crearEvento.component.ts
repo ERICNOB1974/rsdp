@@ -287,7 +287,6 @@ export class CrearEventoComponent {
     this.marcador = L.marker(latlng).addTo(this.mapa)
       .bindPopup(`Ubicación: ${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`)
       .openPopup();
-
     this.mapa.setView(latlng, 16);
   }
 

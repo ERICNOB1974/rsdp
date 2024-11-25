@@ -81,9 +81,6 @@ export class AmigosComponent implements OnInit {
     obtenerSolicitudes(): void {
         if (this.loadingSolicitudesRecibidas || this.noMasSolicitudesRecibidas) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
         this.loadingSolicitudesRecibidas = true;
-        console.log("textoBUscador: ",this.textoBuscador);
-        console.log("index: ",this.currentIndexAmigos);
-        console.log("cantidad: ",this.cantidadPorPagina);
         // Suponiendo que tienes un método que obtiene más comunidades con paginación
         this.usuarioService
         .obtenerSolicitudesPaginadas(this.textoBuscador,this.currentIndexSolicitudesRecibidas, this.cantidadPorPagina)
@@ -91,7 +88,6 @@ export class AmigosComponent implements OnInit {
           async (dataPackage) => {
             const resultados = dataPackage.data as Usuario[]
             if (resultados && resultados.length > 0) {
-              console.log(resultados);
 
                 this.solicitudes = [...this.solicitudes, ...resultados,];
                 this.currentIndexSolicitudesRecibidas++; // Aumentar el índice para la siguiente carga
