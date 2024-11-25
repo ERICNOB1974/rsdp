@@ -412,20 +412,23 @@ export class EventoDetailComponent implements OnInit {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
   }
 
-  // Método que se llama al enviar la notificación
   enviarNotificacion() {
     if (this.mensaje && this.motivo) {
+      this.isLoading = true; // Activa el estado de carga
       const nombreActividad = "del evento, " + this.evento.nombre;
+  
       this.eventoService.enviarNotificacionEvento(this.mensaje, this.motivo, this.miembros, nombreActividad).subscribe(
-        response => {
+        () => {
+          this.isLoading = false; // Desactiva el estado de carga
           this.motivo = '';
           this.mensaje = '';
-          this.closeModal();
           this.snackBar.open('Notificación enviada con éxito', 'Cerrar', {
             duration: 3000,
           });
+          this.closeModal();
         },
-        error => {
+        () => {
+          this.isLoading = false; // Desactiva el estado de carga
           this.snackBar.open('Error al enviar notificación', 'Cerrar', {
             duration: 3000,
           });
@@ -435,6 +438,7 @@ export class EventoDetailComponent implements OnInit {
       console.log('Ambos campos son obligatorios');
     }
   }
+  
 
   // Método para cerrar el modal
   closeModal() {
