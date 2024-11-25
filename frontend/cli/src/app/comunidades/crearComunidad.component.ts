@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { AbstractControl, FormBuilder, FormGroup, FormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ComunidadService } from './comunidad.service';
 import { Comunidad } from './comunidad';
 import { Location } from '@angular/common'; // Asegúrate de que está importado desde aquí
@@ -14,13 +14,12 @@ import { catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom,
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { EtiquetaPopularidadDTO } from '../etiqueta/etiquetaPopularidadDTO';
 import { DataPackage } from '../data-package';
-import { forkJoin } from 'rxjs';
-import { minimoUnaEtiqueta } from '../eventos/minimoEtiqueta';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { cantidadParticipantesValidator } from '../eventos/validacionesEvento';
 
 @Component({
   selector: 'app-crear-comunidad',
@@ -32,7 +31,9 @@ import { MatInputModule } from '@angular/material/input';
   imports: [CommonModule, FormsModule, RouterModule, NgbTypeaheadModule, MatInputModule,
     MatButtonModule,
     MatCardModule,
-    MatIconModule, NgIf]
+    MatIconModule,
+    MatFormFieldModule, ReactiveFormsModule,
+    NgIf]
 })
 export class CrearComunidadComponent {
   comunidad!: Comunidad;
@@ -69,20 +70,18 @@ export class CrearComunidadComponent {
       {
         nombre: ['', [Validators.required]],
 
-        cantidadMaximaParticipantes: [
+        cantidadMaximaMiembros: [
           '',
           [Validators.required],
-          [this.cantidadParticipantesValidator.bind(this)],
+          [cantidadParticipantesValidator.bind(this)],
         ],
         latitud: [
           '',
           [Validators.required]
         ],
-        longitud: ['', [Validators.required]],
-
-        etiquetasSeleccionadas: [[], [minimoUnaEtiqueta()]], // Inicializa como un array vacío
-
+        longitud: ['', [Validators.required]]
       }
+
     );
   }
 
@@ -114,6 +113,7 @@ export class CrearComunidadComponent {
   ngOnInit() {
     this.comunidad = <Comunidad>{};
     this.obtenerUbicacionYIniciarMapa();
+    this.formComunidad.markAllAsTouched();
 
     // Suscribirse al Subject para realizar la búsqueda con debounce
     this.buscarDireccionSubject.pipe(debounceTime(300)).subscribe((query: string) => {
@@ -354,14 +354,29 @@ export class CrearComunidadComponent {
   }
 
   isFormValid(): boolean {
-    return this.ubicacionAceptada && !!this.comunidad.nombre &&
-      !!this.comunidad.cantidadMaximaMiembros &&
+    console.log('Ubicación aceptada:', this.ubicacionAceptada);
+    console.log('Nombre de la comunidad:', this.comunidad.nombre);
+    console.log('Cantidad máxima de participantes:', this.comunidad.cantidadMaximaMiembros);
+    console.log('Latitud:', this.comunidad.latitud);
+    console.log('Longitud:', this.comunidad.longitud);
+    console.log('Etiquetas seleccionadas:', this.etiquetasSeleccionadas.length);
+
+    return (this.ubicacionAceptada && !!this.comunidad.nombre &&
+      this.comunidad.cantidadMaximaMiembros > 0 &&
       !!this.comunidad.latitud &&
       !!this.comunidad.longitud &&
       !!(this.etiquetasSeleccionadas.length > 0) &&
-      !!(this.etiquetasSeleccionadas.length <= 15)
-  }
+      !!(this.etiquetasSeleccionadas.length <= 15));
+}
 
+
+  onSubmit(): void {
+    if (this.formComunidad.valid) {
+      const formData = this.formComunidad.value;
+
+      this.saveComunidad();
+    }
+  }
   onFileSelect(event: any) {
     const file = event.target.files[0];
     const validImageTypes = ['image/jpeg', 'image/png', 'image/gif'];
