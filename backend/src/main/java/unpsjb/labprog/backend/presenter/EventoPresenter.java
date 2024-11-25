@@ -284,6 +284,12 @@ public class EventoPresenter {
         return Response.ok(eventosDeRutinas);
     }
 
+    @PostMapping("/actualizarUbicaciones")
+    public ResponseEntity<Object> actualizarUbicaciones() {
+        eventoService.agregarUbicacionAEventosSinUbicacion();
+        return Response.ok("Ubicaciones actualizadas correctamente.");
+    }
+
     @GetMapping("/estaExpulsado/{idUsuario}/{idEvento}")
     public ResponseEntity<Object> eventosFuturosPertenecientesAUnUsuario(@PathVariable Long idUsuario,
             @PathVariable Long idEvento) {

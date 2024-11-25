@@ -56,7 +56,16 @@ export class EventoDetailComponent implements OnInit {
   mostrarMotivo: boolean = false;
   expulsado: boolean = false; // Indica si el usuario fue expulsado
 
-
+  buscador: string = '';
+  amigosNoEnEventoFiltrados: any[] = [];
+  amigosEnEventoFiltrados: any[] = [];
+  amigosYaInvitadosFiltrados: any[] = [];
+  mostrarAmigosNoEnEvento: boolean = true;
+  mostrarAmigosEnEvento: boolean = true;
+  mostrarAmigosYaInvitados: boolean = true;
+  mostrarMasAmigosNoEnEvento: number = 4;
+  mostrarMasAmigosEnEvento: number = 4;
+  mostrarMasAmigosYaInvitados: number = 4;
 
   constructor(
     private route: ActivatedRoute,
@@ -227,8 +236,6 @@ export class EventoDetailComponent implements OnInit {
     );
   }
 
-
-
   checkParticipacion(): void {
     this.eventoService.participa(this.evento.id).subscribe((dataPackage) => {
       this.participa = <boolean><unknown>dataPackage.data;
@@ -243,7 +250,7 @@ export class EventoDetailComponent implements OnInit {
   }
 
   botonInvitar(): boolean {
-    return this.participa && !this.evento.esPrivadoParaLaComunidad;
+    return this.participa;
   }
 
   inscribirseValid(): boolean {
@@ -265,53 +272,58 @@ export class EventoDetailComponent implements OnInit {
   }
 
   abrirModalInvitarAmigos(): void {
-    // Cargar listas de amigos antes de abrir el modal
     this.cargarAmigos();
     this.dialog.open(this.modalInvitarAmigos);
   }
 
   cerrarModal(): void {
+    this.buscador = '';
     this.dialog.closeAll();
   }
 
   cargarAmigos(): void {
     const idEvento = this.evento.id;
-
+  
+    // Cargar amigos que ya están en el evento
     this.usuarioService.todosLosAmigosDeUnUsuarioPertenecientesAUnEvento(idEvento).subscribe((dataPackage) => {
       this.amigosEnEvento = dataPackage.data as Evento[];
+      this.amigosEnEventoFiltrados = [...this.amigosEnEvento]; // Sincronizar
+      this.mostrarCategorias();
     });
-
+  
+    // Cargar amigos ya invitados al evento
     this.usuarioService.todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(idEvento).subscribe((dataPackage) => {
       this.amigosYaInvitados = dataPackage.data as Evento[];
+      this.amigosYaInvitadosFiltrados = [...this.amigosYaInvitados]; // Sincronizar
+      this.mostrarCategorias();
     });
-
+  
+    // Cargar amigos que no están en el evento
     if (!this.evento.esPrivadoParaLaComunidad) {
       this.usuarioService.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(idEvento).subscribe((dataPackage) => {
         this.amigosNoEnEvento = dataPackage.data as Evento[];
-
-        // Filtrar amigos ya invitados y ya en evento de la lista de no pertenecientes
         this.amigosNoEnEvento = this.amigosNoEnEvento.filter(
-          amigoNoEnEvento => !this.amigosEnEvento.some(amigoEnEvento => amigoEnEvento.id === amigoNoEnEvento.id) &&
+          amigoNoEnEvento =>
+            !this.amigosEnEvento.some(amigoEnEvento => amigoEnEvento.id === amigoNoEnEvento.id) &&
             !this.amigosYaInvitados.some(amigoYaInvitado => amigoYaInvitado.id === amigoNoEnEvento.id)
         );
+        this.amigosNoEnEventoFiltrados = [...this.amigosNoEnEvento]; // Sincronizar
+        this.mostrarCategorias();
       });
     } else {
       this.usuarioService.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEventoPrivadoPeroSiALaComunidad(idEvento).subscribe((dataPackage) => {
         this.amigosNoEnEvento = dataPackage.data as Evento[];
-
-        // Filtrar amigos ya invitados y ya en evento de la lista de no pertenecientes
         this.amigosNoEnEvento = this.amigosNoEnEvento.filter(
-          amigoNoEnEvento => !this.amigosEnEvento.some(amigoEnEvento => amigoEnEvento.id === amigoNoEnEvento.id) &&
+          amigoNoEnEvento =>
+            !this.amigosEnEvento.some(amigoEnEvento => amigoEnEvento.id === amigoNoEnEvento.id) &&
             !this.amigosYaInvitados.some(amigoYaInvitado => amigoYaInvitado.id === amigoNoEnEvento.id)
         );
-
-        console.log(this.amigosNoEnEvento);
-
+        this.amigosNoEnEventoFiltrados = [...this.amigosNoEnEvento]; // Sincronizar
+        this.mostrarCategorias();
       });
-
     }
-
   }
+  
 
   invitarAmigo(idUsuarioReceptor: number): void {
     const idEvento = this.evento.id;
@@ -333,7 +345,6 @@ export class EventoDetailComponent implements OnInit {
       console.error('Error al enviar el email de invitación:', error);
     });
   }
-
 
   eliminarEvento(): void {
     this.eventoService.eliminar(this.evento.id).subscribe(dataPackage => {
@@ -475,5 +486,47 @@ export class EventoDetailComponent implements OnInit {
     this.usuarioEliminar = null;
   }
 
+  filtrarAmigos(): void {
+    const textoBusqueda = this.buscador.trim().toLowerCase();
+
+    if (textoBusqueda) {
+        this.amigosNoEnEventoFiltrados = this.amigosNoEnEvento.filter(amigo =>
+            amigo.nombreUsuario.toLowerCase().includes(textoBusqueda)
+        );
+        this.amigosEnEventoFiltrados = this.amigosEnEvento.filter(amigo =>
+            amigo.nombreUsuario.toLowerCase().includes(textoBusqueda)
+        );
+        this.amigosYaInvitadosFiltrados = this.amigosYaInvitados.filter(amigo =>
+            amigo.nombreUsuario.toLowerCase().includes(textoBusqueda)
+        );
+    } else {
+        this.amigosNoEnEventoFiltrados = [...this.amigosNoEnEvento];
+        this.amigosEnEventoFiltrados = [...this.amigosEnEvento];
+        this.amigosYaInvitadosFiltrados = [...this.amigosYaInvitados];
+    }
+
+    this.mostrarCategorias(); // Siempre actualizar visibilidad
+  }
+
+  
+  mostrarCategorias(): void {
+    this.mostrarAmigosNoEnEvento = this.amigosNoEnEventoFiltrados.length > 0;
+    this.mostrarAmigosEnEvento = this.amigosEnEventoFiltrados.length > 0;
+    this.mostrarAmigosYaInvitados = this.amigosYaInvitadosFiltrados.length > 0;
+  }
+  
+  verMasAmigos(categoria: string): void {
+    switch (categoria) {
+      case 'noEnEvento':
+        this.mostrarMasAmigosNoEnEvento += 4;
+        break;
+      case 'enEvento':
+        this.mostrarMasAmigosEnEvento += 4;
+        break;
+      case 'yaInvitados':
+        this.mostrarMasAmigosYaInvitados += 4;
+        break;
+    }
+  }
 
 }
