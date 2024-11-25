@@ -1,7 +1,7 @@
 <div class="form-container">
   <h2>Detalles de la publicación</h2>
 
-  <p><strong>Texto:</strong> {{ publicacion.texto }}</p>
+  <p><strong></strong> {{ publicacion.texto }}</p>
 
   <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
     <img [src]="publicacion.file" alt="Imagen de la publicación" style="max-width: 400px; max-height: 400px;">

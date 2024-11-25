@@ -1,3 +1,14 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body, html {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 .comunidades-container {
   max-width: 1300px;
   margin: 0 auto;
@@ -18,10 +29,13 @@
 
 .comunidades-list {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);  /* 2 columnas, cada una con un ancho flexible */
-  gap: 20px;  /* Espacio de 20px entre las tarjetas */
+  grid-template-columns: repeat(auto-fit, minmax(375px, 1fr));  /* 2 columnas, cada una con un ancho flexible */
+  grid-gap: 4rem;  /* Espacio de 20px entre las tarjetas */
   height: 80%;
+  width: 100%;
+  max-width: 1300px;
   max-height: 500px;
+  margin: 0 auto;
   overflow-y: auto; /* Permite el desplazamiento vertical */
   flex-direction: column;
 }
@@ -152,3 +166,27 @@
   border: 1px solid #ffeeba;
   border-radius: 8px;
 }
+
+@media (max-width: 28.75em) {
+  html {
+    font-size: 55%;
+    }
+  }
+
+ @media (max-width: 61.25em) {
+  html {
+    font-size: 58%;
+    }
+  }
+
+@media (max-width: 75em) {
+  html {
+    font-size: 60%;
+    }
+  }
+
+  @media (max-width: 30.625em) {
+    .comunidades-orne {
+      padding: 6rem 1rem;
+      }
+    }

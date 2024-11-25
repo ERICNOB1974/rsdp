@@ -1,16 +1,13 @@
-/* Contenedor principal de las publicaciones */
-
-
 /* Efecto hover para las publicaciones */
 .publicacion-container:hover {
     transform: translateY(-5px);
 }
-
 /* Cabecera de la publicación */
 .publicacion-header {
     padding: 12px;
     display: flex;
-    justify-content: space-between; /* Distribuir espacio entre usuario y fecha */
+    justify-content: space-between;
+    /* Distribuir espacio entre usuario y fecha */
     align-items: center;
     border-bottom: 1px solid #efefef;
     background-color: #f9f9f9;
@@ -19,12 +16,15 @@
 /* Estilo del usuario publicador */
 .usuario-publicador {
     font-weight: bold;
-    color: #0095f6; /* Color de enlace */
-    text-decoration: none; /* Sin subrayado */
+    color: #0095f6;
+    /* Color de enlace */
+    text-decoration: none;
+    /* Sin subrayado */
 }
 
 .usuario-publicador:hover {
-    text-decoration: underline; /* Subrayado al pasar el mouse */
+    text-decoration: underline;
+    /* Subrayado al pasar el mouse */
 }
 
 /* Contenido de la publicación */
@@ -40,11 +40,15 @@
 }
 
 /* Imágenes y videos en la publicación */
-.publicacion-imagen, .publicacion-video {
-    width: 100%;
-    max-height: 300px;
-    object-fit: cover;
-    border-radius: 6px;
+
+
+.publicacion-imagen,
+.publicacion-video {
+    width: 100%; /* La imagen ocupará todo el ancho del contenedor */
+    height: 100%; /* La imagen ocupará todo el alto del contenedor */
+    object-fit: contain; /* Evita el recorte y asegura que la imagen mantenga sus proporciones */
+    object-position: center; /* Centra la imagen si hay espacio sobrante */
+    border-radius: 5px; /* Esquinas redondeadas opcionales */
 }
 
 /* Estilo del texto de la fecha */
@@ -60,13 +64,23 @@
 
 .publicaciones-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: 1fr;
+    /* Una columna por defecto */
     gap: 20px;
+    /* Espaciado entre publicaciones */
+    width: 100%;
+    /* Asegura que ocupe todo el ancho de su contenedor */
 }
 
 /* Efecto hover para los ítems de publicación */
 .publicacion-item {
-    cursor: pointer; /* Añadir cursor tipo pointer */
+    height: auto; /* Permite ajustar al contenido */
+    overflow: hidden; /* Evita contenido desbordante */
+    padding: 10px; /* Ajusta el espaciado interno */
+    margin: 10px 0; /* Espaciado entre publicaciones */
+    box-sizing: border-box; /* Incluye padding y border en el cálculo del tamaño */
+    transition: all 0.2s ease-in-out; /* Suaviza los cambios */
+    background-color: #e6e5e5;
 }
 
 .publicacion-item:hover {
@@ -89,7 +103,8 @@
         margin: 10px 0;
     }
 
-    .publicacion-imagen, .publicacion-video {
+    .publicacion-imagen,
+    .publicacion-video {
         max-height: 200px;
     }
 
@@ -97,6 +112,7 @@
         font-size: 0.75rem;
     }
 }
+
 .publicacion-interactions {
     padding: 12px;
     border-top: 1px solid #efefef;
@@ -166,48 +182,48 @@
 }
 
 .publicaciones-container {
-    height: 100%; /* Ajusta según tus necesidades */
-    overflow-y: auto; /* Asegúrate de usar auto aquí */
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-height: 1050px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    /* Centra horizontalmente */
     width: 100%;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    margin: 10px 0;
-    max-height: 1050px;
+    /* Asegura que ocupa el ancho completo del contenedor padre */
+    max-width: 80vw;
+    /* Ancho máximo para restringirlo */
+    margin: 0 auto;
+    /* Centra dentro de su contenedor padre */
+    padding: 10px;
+    /* Espaciado interno */
+    overflow-y: auto;
+    /* Habilita scroll interno si es necesario */
+    
 }
 
-
-/* Contenedor de cada publicación */
-
-  
-  .loading-indicator {
+.loading-indicator {
     text-align: center;
     margin: 10px 0;
     color: #888;
     font-size: 14px;
-  }
+}
 
-
-
-
-
-
-
-
-
-
-  .perfil-container {
+.perfil-container {
     position: relative;
     width: 100px;
     height: 100px;
     margin: 0 auto;
-  }
-  
-  .foto-comunidad img {
+    overflow: hidden; /* Evita que el contenido desbordante lo agrande */
+    box-sizing: border-box; /* Incluye padding y border en el tamaño total */
+    max-width: 100px; /* Ancho máximo para evitar cambios */
+    max-height: 100px; /* Altura máxima para evitar cambios */
+}
+
+
+.foto-comunidad img {
     position: absolute;
     top: 0;
     left: 0;
@@ -216,9 +232,9 @@
     object-fit: cover;
     border-radius: 50%;
     opacity: 0.8;
-  }
-  
-  .foto-usuario img {
+}
+
+.foto-usuario img {
     position: absolute;
     top: 20%;
     left: 20%;
@@ -228,20 +244,42 @@
     border-radius: 50%;
     border: 2px solid white;
     z-index: 1;
-  }
-  
-  .nombres-container {
+}
+
+.nombres-container {
     text-align: center;
     margin-top: 10px;
-  }
-  
-  .nombre-comunidad {
+}
+
+.nombre-comunidad {
     font-weight: bold;
     margin: 0;
-  }
-  
-  .nombre-usuario {
+}
+
+.nombre-usuario {
     margin: 0;
     color: gray;
+}
+
+@media (min-width: 600px) {
+    .publicaciones-grid {
+        grid-template-columns: repeat(1, 1fr);
+        /* Cambia a 2 columnas en pantallas más grandes */
+    }
+}
+
+@media (min-width: 900px) {
+    .publicaciones-grid {
+        grid-template-columns: repeat(1, 1fr);
+        /* Cambia a 3 columnas en pantallas aún más grandes */
+    }
+}
+
+.publicacion-imagen-container {
+    width: 100%; /* O un tamaño fijo como '300px' */
+    height: 300px; /* Ajusta según lo que desees */
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
-  
