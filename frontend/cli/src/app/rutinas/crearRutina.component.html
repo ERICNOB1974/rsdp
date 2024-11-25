@@ -5,10 +5,20 @@
   </div>
 
   <div class="card p-4 shadow mb-4">
+    <!--
+      <div class="form-group mb-3">
+        <label for="nombreRutina" class="form-label">Nombre de la rutina:</label>
+        <input type="text" class="form-control" [(ngModel)]="nombreRutina" placeholder="Ingrese el nombre de la rutina"
+        required />
+      </div>
+      -->
     <div class="form-group mb-3">
       <label for="nombreRutina" class="form-label">Nombre de la rutina:</label>
       <input type="text" class="form-control" [(ngModel)]="nombreRutina" placeholder="Ingrese el nombre de la rutina"
-        required />
+        required [ngClass]="{'is-invalid': !nombreRutinaValid}" />
+      <div *ngIf="!nombreRutinaValid" class="invalid-feedback">
+        El nombre de la rutina es obligatorio.
+      </div>
     </div>
 
     <div class="form-group mb-3">
@@ -17,12 +27,17 @@
         placeholder="Ingrese una descripción"></textarea>
     </div>
 
-    <div class="form-group mb-3">
-      <label for="etiquetas">Buscar Etiquetas:</label>
-      <input id="etiquetas" class="form-control" [(ngModel)]="etiquetaSeleccionada" [ngbTypeahead]="searchEtiqueta"
-        [resultFormatter]="resultFormatEtiqueta" [inputFormatter]="inputFormatEtiqueta"
-        (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada" placeholder="Buscar etiqueta" />
-    </div>
+    <mat-form-field appearance="outline" class="form-group">
+      <mat-label>Buscar Etiquetas:</mat-label>
+      <input matInput id="etiquetas" [ngbTypeahead]="searchEtiqueta" [resultFormatter]="resultFormatEtiqueta"
+        [inputFormatter]="inputFormatEtiqueta" (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada"
+        placeholder="Buscar etiqueta" [(ngModel)]="etiquetaSeleccionada" />
+
+      <footer *ngIf="etiquetasSeleccionadas.length==0" class="mat-error-custom">
+        Al menos una etiqueta es requerida
+      </footer>
+    </mat-form-field>
+
     <div class="form-group mb-3">
 
 
@@ -49,16 +64,25 @@
   <div *ngFor="let dia of dias; let i = index" class="card shadow-sm p-4 mb-4">
     <div class="d-flex justify-content-between align-items-center">
       <h4 class="card-title mb-0">
-        {{ dia.tipo === 'descanso' ? 'Día ' + (i + 1) + ': Descanso' : 'Día ' + (i + 1) + ': ' + (dia.nombre || 'Sin nombre') }}
+        {{ dia.tipo === 'descanso' ? 'Día ' + (i + 1) + ': Descanso' : 'Día ' + (i + 1) + ': ' + (dia.nombre || 'Sin
+        nombre') }}
       </h4>
       <button class="btn btn-danger btn-sm" (click)="borrarDia(i)">✖</button>
     </div>
 
     <ng-container *ngIf="dia.tipo === 'trabajo'">
+
       <div class="form-group mt-3">
         <label class="form-label">Nombre del día:</label>
-        <input type="text" class="form-control" [(ngModel)]="dia.nombre" placeholder="Nombre del día" required />
+        <input type="text" class="form-control" [(ngModel)]="dia.nombre" placeholder="Nombre del día" required
+          [ngClass]="{'is-invalid': !dia.nombre}" />
+
+        <div *ngIf="!dia.nombre" class="invalid-feedback">
+          El nombre del dia es obligatorio.
+        </div>
       </div>
+
+
 
       <div class="form-group mt-2">
         <label class="form-label">Descripción del día:</label>
@@ -75,6 +99,10 @@
         </button>
       </div>
 
+      <div *ngIf="dia.ejercicios.length === 0" class="text-danger mt-2">
+        Debe haber al menos un ejercicio en este día.
+      </div>
+
       <div *ngFor="let ejercicio of dia.ejercicios; let j = index" class="card mt-3">
         <div class="card-body">
           <div class="d-flex justify-content-between align-items-center mb-3">
@@ -87,19 +115,33 @@
               <label class="form-label">Nombre:</label>
               <input type="text" class="form-control" [(ngModel)]="ejercicio.nombre" [ngbTypeahead]="searchEjercicio"
                 [resultFormatter]="resultFormatEjercicio" [inputFormatter]="inputFormatEjercicio"
-                placeholder="Nombre del ejercicio" />
+                placeholder="Nombre del ejercicio" [ngClass]="{'is-invalid': !ejercicio.nombre}" />
+              <div *ngIf="!ejercicio.nombre" class="invalid-feedback">
+                El nombre del ejercicio es obligatorio.
+              </div>
             </div>
+
+
+
 
             <ng-container *ngIf="ejercicio.tipo === 'series'">
               <div class="col-md-2 mb-2">
                 <label class="form-label">Series:</label>
                 <input type="number" class="form-control" [(ngModel)]="ejercicio.series" min="1" placeholder="Series"
-                  (input)="validarNumerico(ejercicio, 'series')" required />
+                  (input)="validarNumerico(ejercicio, 'series')" required
+                  [ngClass]="{'is-invalid': !validarSerieORepeticion(ejercicio.series)}" />
+                <div *ngIf="!validarSerieORepeticion(ejercicio.series)" class="invalid-feedback">
+                  El nombre del ejercicio es obligatorio.
+                </div>
               </div>
               <div class="col-md-2 mb-2">
                 <label class="form-label">Repeticiones:</label>
                 <input type="number" class="form-control" [(ngModel)]="ejercicio.repeticiones" min="1"
-                  placeholder="Repeticiones" (input)="validarNumerico(ejercicio, 'repeticiones')" required />
+                  placeholder="Repeticiones" (input)="validarNumerico(ejercicio, 'repeticiones')" required
+                  [ngClass]="{'is-invalid': !validarSerieORepeticion(ejercicio.repeticiones)}" />
+                <div *ngIf="!validarSerieORepeticion(ejercicio.repeticiones)" class="invalid-feedback">
+                  El nombre del ejercicio es obligatorio.
+                </div>
               </div>
             </ng-container>
 
@@ -118,22 +160,18 @@
                 placeholder="Descripción del ejercicio"></textarea>
             </div>
 
-            <!-- 
-              <div class="col-md-5 mb-2">
-                <label for="archivo">Seleccionar imagen o video</label>
-                <input type="file" id="archivo" class="form-control" (change)="onFileSelect($event, ejercicio)" accept="image/*, video/*">
-              </div>
-              -->
 
-
-            <div *ngIf="ejercicio.imagen==='' || ejercicio.imagen==null" class="drag-drop-area" (dragover)="onDragOver($event)" (drop)="onDrop($event, ejercicio)">
+            <div *ngIf="ejercicio.imagen==='' || ejercicio.imagen==null" class="drag-drop-area"
+              (dragover)="onDragOver($event)" (drop)="onDrop($event, ejercicio)">
               <p>Arrastra y suelta una imagen o video aquí, o selecciona uno desde tus archivos.</p>
               <input type="file" id="archivo" (change)="onFileSelect($event, ejercicio)" hidden #fileInput>
               <button type="button" (click)="fileInput.click()">Seleccionar archivo</button>
             </div>
-            <div *ngIf="formatoValido && ejercicio.imagen!='' && ejercicio.imagen!=null" class="vista-previa-contenedor">
+            <div *ngIf="formatoValido && ejercicio.imagen!='' && ejercicio.imagen!=null"
+              class="vista-previa-contenedor">
               <img [src]="ejercicio.imagen" alt="Vista previa de la imagen" class="vista-previa-imagen">
-              <button type="button" (click)="eliminarArchivo(ejercicio)" class="btn btn-danger mt-2">Eliminar archivo</button>
+              <button type="button" (click)="eliminarArchivo(ejercicio)" class="btn btn-danger mt-2">Eliminar
+                archivo</button>
             </div>
             <div>
               <img *ngIf="tipoArchivo === 'image'" [src]="vistaPreviaArchivo" alt="Vista previa de la imagen"
@@ -149,6 +187,10 @@
     </ng-container>
   </div>
 
+ 
+  <footer *ngIf="dias.length==0">
+    Al menos un dia de trabajo es requerido
+  </footer>
   <button class="btn btn-success w-100 mt-4" (click)="guardarRutinaOptimizada()" [disabled]="!esFormularioValido()">
     Guardar rutina
   </button>
