@@ -346,12 +346,11 @@ export class CrearEventoComponent {
         await this.eventoService.etiquetar(this.evento, etiquetaFinal.id).toPromise();
       }
 
-      alert('Evento guardado con éxito');
-      if (this.comunidadId) {
-        this.location.back();
-      } else {
-        window.location.reload();
-      }
+      this.router.navigate([`eventos/${this.evento.id}`], {
+        state: { mensajeSnackBar: 'Evento creado correctamente.' }
+      });
+      
+
     } catch (error) {
       console.error('Error al guardar el evento:', error);
       this.snackBar.open('Error al guardar el evento.', 'Cerrar', {

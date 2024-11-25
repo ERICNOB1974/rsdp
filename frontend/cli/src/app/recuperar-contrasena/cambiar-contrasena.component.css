@@ -6,124 +6,169 @@
 }
 
 .wrap-registro {
-    height: calc(100vh - 65px); /* Altura total menos la altura de la barra superior */
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 0 auto;
     position: absolute;
-    top: 40px;
-    left: 50%; /* Centro horizontal */
+    top: 0;
+    left: 50%;
     transform: translateX(-50%);
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 40px; /* Ajusta para asegurar espacio desde la parte superior */
 }
 
 .container {
     background: #FFFFFF;
-    box-shadow: 0px 3px 6px #00000029;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.29);
     border-radius: 4px;
-    max-width: 768px;
     width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    max-width: 400px; /* Tamaño máximo para pantallas grandes */
     padding: 20px;
+    box-sizing: border-box;
 }
 
 .registro-box {
     display: flex;
-    flex-direction: column;
     justify-content: center;
-    width: 328px;
-    border-color: inherit;
-    box-shadow: inherit;
+    align-items: center;  /* Asegura que los elementos dentro estén centrados verticalmente */
+    width: 100%;
+    max-width: 400px; /* Controla el tamaño máximo del formulario */
+    margin: 0 auto; /* Centra el div horizontalmente */
 }
 
 .registro-box mat-card-header {
-    width: 128px;
-    height: 128px;
+    width: 100%;
+    max-width: 128px;
+    height: auto;
     padding: 0;
-    margin: 16px auto;
+    margin: 0 auto 16px;
     display: block;
 }
 
 .registro-box mat-card-header img {
-    width: 128px;
-    height: 128px;
-    border-radius: 50%;
+    width: 100%;
+    max-width: 128px;
+    height: auto;
+    border-radius: inherit;
 }
 
 .mat-mdc-card-content {
     padding: 0;
 }
 
-mat-form-field {
+.registro-box mat-form-field {
     width: 100%;
-    margin-top: 60px;
-    margin-bottom: 10px; /* Espacio entre campos */
-}
-
-mat-form-field .mat-mdc-form-field-flex {
-    align-items: center;
+    margin-bottom: 20px;
+    border-color: rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+    padding-top: 20px;
+    padding-bottom: 25px;
 }
 
 .mdc-text-field--invalid .mdc-text-field__input,
-.mdc-text-field .mdc-text-field__input {
+.mdc-text-field .mdc-text-field__input,
+.form-field {
     caret-color: #B00020 !important;
 }
 
+.form-field {
+    font-size: 1rem;
+    letter-spacing: 0.15px;
+    color: #000000BC !important;
+}
+
 .mat-mdc-form-field-error-wrapper {
-    display: block;
-    min-height: 18px; /* Altura mínima para evitar superposición */
-    margin-top: 4px;
+    height: 18px;
 }
 
 .registro-box mat-label,
 .mat-mdc-form-field-error {
     color: #B00020 !important;
-    font-size: 14px;
 }
 
-.mat-form-field-outline {
-    border-radius: 4px;
+.mdc-text-field--invalid .mdc-floating-label {
+    color: #B00020;
+    text-align: left;
+    font-family: 'Roboto';
+    letter-spacing: 0.15px;
+    border: 2px solid #B00020;
 }
 
 .mdc-text-field--focused {
     border: 2px solid #B00020;
 }
 
+.registro-box .mat-form-field-invalid .mat-form-field-outline {
+    border-color: #B00020 !important;
+}
+
+.mdc-card__actions {
+    padding: 0;
+    min-height: 36px;
+}
+
+.mat-mdc-raised-button:not(:disabled) {
+    background-color: #217d94;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.29);
+    border-radius: 4px;
+    width: auto;
+    min-width: 120px;
+    text-align: center;
+    font-family: Roboto, Medium;
+    letter-spacing: 1.25px;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    font-weight: 400;
+}
+
 mat-card-actions {
     display: flex;
-    justify-content: space-between;
-    margin-top: 16px;
+    justify-content: space-between; /* Espacia los botones a los extremos */
+    width: 100%; /* Asegura que ocupen todo el ancho disponible */
+    align-items: center; /* Alinea los botones verticalmente al centro */
 }
 
-button {
-    min-width: 120px;
+.btn-left, .btn-right {
+    flex: 1; /* Hace que ambos botones ocupen el mismo espacio */
+    margin: 0 5px; /* Espacio entre los botones */
+    min-width: 100px; /* Ancho mínimo para los botones */
+    height: 40px; /* Asegura que ambos botones tengan la misma altura */
 }
 
-@media (max-width: 768px) {
+.btn-left {
+    text-align: left; /* Alinea el texto del botón a la izquierda */
+}
+
+.btn-right {
+    text-align: right; /* Alinea el texto del botón a la derecha */
+}
+
+@media(max-width: 768px) {
     .wrap-registro {
-        background: #EFEFEF;
-        padding: 0 30px;
+        padding: 0 20px;
     }
 
     .container {
-        height: auto;
-        padding: 22px 21px;
-        width: auto;
-        max-width: inherit;
-    }
-}
-
-@media (max-width: 430px) {
-    .container {
-        box-shadow: none;
-        display: block;
-        justify-content: inherit;
-        align-items: inherit;
+        padding: 10px; /* Reduce el padding en pantallas pequeñas */
     }
 
     .registro-box {
-        width: 100%;
+        max-width: 100%; /* Asegura que el formulario ocupe el 100% del ancho */
+        padding: 0 10px;
+    }
+
+    mat-card-actions {
+        flex-direction: row; /* Asegura que los botones se alineen en fila */
+        justify-content: space-between; /* Espacia los botones a los extremos */
+    }
+}
+
+@media(max-width: 425px) {
+    .btn-left, .btn-right {
+        flex: 1; /* Asegura que ambos botones ocupen el mismo espacio */
+        height: 40px; /* Asegura que ambos botones tengan la misma altura */
     }
 }

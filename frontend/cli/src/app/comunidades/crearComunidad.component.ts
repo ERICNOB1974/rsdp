@@ -158,8 +158,10 @@ export class CrearComunidadComponent {
       }, 10000);
     }
 
-    // Recargar la página una vez que todo esté completo
-    location.reload();
+    this.router.navigate([`comunidad-muro/${this.comunidad.id}`], {
+      state: { mensajeSnackBar: 'Comunidad creada correctamente.' }
+    });
+
   }
 
 
