@@ -45,15 +45,13 @@
     </div>
 </nav>
 
-<div *ngIf="!esPantallaLogin" [class.collapsed]="isSidebarHidden" class="sidebar">
+<div *ngIf="!esPantallaLogin" class="sidebar" [class.collapsed]="isCollapsed">
 
-    <nav class="navbar navbar-dark bg-dark">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent"
-            aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation"
-            (click)="toggleSidebar()">
-            <span class="navbar-toggler-icon"></span>
+    <div class="sidebar-toggle">
+        <button class="toggle-btn" (click)="toggleSidebar()">
+            <i class="fa-solid fa-bars"></i>
         </button>
-    </nav>
+    </div>
 
 
     <ul>
@@ -169,7 +167,13 @@
 </div>
 
 
-<div class="main-content" [ngClass]="{ 'full-width': isSidebarHidden }">
-    <router-outlet></router-outlet>
-</div>
-
+ <div class="main-content">
+        <div class="white-island">
+            <div *ngIf="loading" class="loading-overlay">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+            <router-outlet></router-outlet>
+        </div>
+    </div>
