@@ -37,7 +37,6 @@ export class RutinasEjercicioComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         const idRutina = Number(this.route.snapshot.paramMap.get('id'));
-        console.info('ID de la rutina obtenida:', idRutina);
     
         // Verifica si se debe reiniciar la rutina
         if (this.rutinaEstadoService.getReiniciarRutina()) {

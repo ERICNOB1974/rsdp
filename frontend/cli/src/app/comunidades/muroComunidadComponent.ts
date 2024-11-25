@@ -49,6 +49,9 @@ export class MuroComunidadComponent implements OnInit {
     amigosYaInvitados: any[] = [];
     cantidadMiembros: number = 0;
     esFavorito: boolean = false;
+    cargaInicial: number = 5; // Número inicial de elementos visibles
+    cargaIncremento: number = 5; // Número de elementos adicionales cargados en cada scroll
+    miembrosVisiblesPaginados: any[] = []; // Almacena los usuarios visibles en la interfaz
 
     buscador: string = '';
     amigosNoEnComunidadFiltrados: any[] = [];
@@ -480,6 +483,7 @@ export class MuroComunidadComponent implements OnInit {
                 this.usuariosAnonimos = this.miembros.length - 1;
             }
         }
+        this.miembrosVisiblesPaginados = this.miembrosVisibles.slice(0, this.cargaInicial);
     }
 
     ingresar(): void {
@@ -566,6 +570,24 @@ export class MuroComunidadComponent implements OnInit {
             console.error('.scrollable-list no encontrado.');
         }
     }
+
+    onScrollMiembros(): void {
+        const element = document.querySelector('.perfil-miembros') as HTMLElement;
+        if (element.scrollTop + element.clientHeight >= element.scrollHeight - 10) {
+          this.cargarMasMiembros();
+        }
+      }
+    
+      cargarMasMiembros(): void {
+        const totalCargados = this.miembrosVisiblesPaginados.length;
+        const nuevosMiembros = this.miembros.slice(totalCargados, totalCargados + this.cargaIncremento);
+      
+        if (nuevosMiembros.length > 0) {
+          this.miembrosVisiblesPaginados = [...this.miembrosVisiblesPaginados, ...nuevosMiembros];
+        } else {
+          console.log('No hay más participantes por cargar');
+        }
+      }
 
     async toggleFavorito() {
         this.esFavorito = !this.esFavorito;
