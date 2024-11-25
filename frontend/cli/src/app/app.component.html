@@ -38,7 +38,7 @@
                     {{ usuario?.nombreUsuario || 'Cargando...' }}
                 </a>
             </div>
-            
+
 
 
         </div>
@@ -166,13 +166,6 @@
 </div>
 
 
- <div class="main-content">
-        <div class="white-island">
-            <div *ngIf="loading" class="loading-overlay">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
-            </div>
-            <router-outlet></router-outlet>
-        </div>
-    </div>
+<div class="main-content" [ngClass]="{ 'full-width': isSidebarHidden }">
+    <router-outlet></router-outlet>
+</div>

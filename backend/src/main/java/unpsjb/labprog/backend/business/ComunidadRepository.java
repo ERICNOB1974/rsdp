@@ -166,9 +166,9 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "WHERE NOT (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR]-(u) " +
                         "MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR]-(h) " + // Encontramos los demás miembros de
                                                                                   // la comunidad
-                        "WITH c, COUNT(DISTINCT h) AS numParticipantes " +
+                        "WITH c, COUNT(DISTINCT h) AS numParticipantes, u " +
                         "WHERE numParticipantes < c.cantidadMaximaMiembros " +
-                        "AND NOT (u)-[r:EXPULSADO_COMUNIDAD]-(c) " +
+                        "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c) " +
 
                         "RETURN c " +
                         "ORDER BY c.nombre ASC " +
@@ -202,7 +202,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "point({latitude: u.latitud, longitude: u.longitud}) AS ubicacionUsuario " +
                         "WITH comunidad, etiquetasEnComun, " +
                         "point.distance(ubicacionComunidad, ubicacionUsuario) AS distancia " +
-                        "RETURN comunidad, (etiquetasEnComun / (distancia + 1500000)) AS score, 'a tus amigos le gustan eventos de este tipo, porque tienen '+etiquetasEnComun+' etiqueta/s en comun con las comunidades en las que participas' AS motivo "
+                        "RETURN comunidad, (etiquetasEnComun / (distancia + 1500000)) AS score, 'A tus amigos le gustan eventos de este tipo' AS motivo "
                         + // Cambiar aquí
                         "ORDER BY score DESC ")
         List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario);
@@ -223,7 +223,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "point.distance(ubicacionComunidad, ubicacionUsuario) AS distancia " +
                         "WITH comunidad, etiquetasEnComun, distancia, " +
                         "(etiquetasEnComun/(distancia+1500000)) AS score " +
-                        "RETURN comunidad, score, 'tienen '+etiquetasEnComun+' etiqueta/s en comun con eventos en los que participas' AS motivo  "
+                        "RETURN comunidad, score, 'Es similar a los eventos en los que participas' AS motivo  "
                         +
                         "ORDER BY score DESC ")
         List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnEventos2(String nombreUsuario);
@@ -244,7 +244,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         +
                         "WITH comunidad, etiquetasEnComun, distancia, (etiquetasEnComun/(distancia+1500000)) AS score "
                         +
-                        "RETURN comunidad, score, 'tienen '+etiquetasEnComun+' etiqueta/s en comun con comunidades en las que perteneces' AS motivo   "
+                        "RETURN comunidad, score, 'Es similar a las comunidades a las que perteneces' AS motivo   "
                         +
                         "ORDER BY score DESC ")
         List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnComunidades2(
@@ -405,8 +405,8 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         @Query("""
                         MATCH (u:Usuario) WHERE id(u)=$idUsuario
                         MATCH (c:Comunidad) WHERE id(c)=$idComunidad
-                        MATCH (u)-[r:PARTICIPA_EN]->(c) DELETE r
-                        CREATE (u)-[:EXPULSADO_COMUNIDAD{motivoExpulsion: $motivoExpulsion}]->(e)
+                        MATCH (u)-[r:MIEMBRO|ADMINISTRADA_POR]->(c) DELETE r
+                        CREATE (u)-[:EXPULSADO_COMUNIDAD {motivoExpulsion: $motivoExpulsion}]->(c)
                                    """)
         void eliminarUsuario(Long idComunidad, Long idUsuario, String motivoExpulsion);
 
