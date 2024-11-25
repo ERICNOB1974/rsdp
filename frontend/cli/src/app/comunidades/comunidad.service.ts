@@ -51,7 +51,6 @@ export class ComunidadService {
   //   }
   // }
 
-
   all(): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/findAll`);
   }
