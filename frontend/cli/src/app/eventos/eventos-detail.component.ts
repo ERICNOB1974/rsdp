@@ -67,18 +67,6 @@ export class EventoDetailComponent implements OnInit {
   mostrarMasAmigosEnEvento: number = 4;
   mostrarMasAmigosYaInvitados: number = 4;
 
-  buscador: string = '';
-  amigosNoEnEventoFiltrados: any[] = [];
-  amigosEnEventoFiltrados: any[] = [];
-  amigosYaInvitadosFiltrados: any[] = [];
-  mostrarAmigosNoEnEvento: boolean = true;
-  mostrarAmigosEnEvento: boolean = true;
-  mostrarAmigosYaInvitados: boolean = true;
-  mostrarMasAmigosNoEnEvento: number = 4;
-  mostrarMasAmigosEnEvento: number = 4;
-  mostrarMasAmigosYaInvitados: number = 4;
-
-
   constructor(
     private route: ActivatedRoute,
     private eventoService: EventoService,
