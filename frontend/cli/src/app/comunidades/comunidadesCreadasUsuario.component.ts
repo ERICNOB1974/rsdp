@@ -12,7 +12,7 @@ import { AuthService } from '../autenticacion/auth.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, HttpClientModule],
   templateUrl: 'comunidadesCreadasUsuario.component.html',
-  styleUrls: ['comunidadesCreadasUsuario.component.css']
+  styleUrls: ['comunidadesCreadasUsuarioOrne.css']
 })
 export class ComunidadesCreadasUsuarioComponent implements OnInit {
   comunidadesUsuario: Comunidad[] = []; // Arreglo para almacenar las comunidades creadas por el usuario
@@ -27,6 +27,7 @@ export class ComunidadesCreadasUsuarioComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    console.info("pepepepepe");
     this.getComunidadesUsuario(); // Cargar las comunidades creadas por el usuario al inicializar el componente
   }
 
@@ -52,7 +53,7 @@ export class ComunidadesCreadasUsuarioComponent implements OnInit {
               ...resultados,
             ];
             this.offset += this.limit;
-
+            console.info(this.comunidadesUsuario);
           } else {
             this.noMasComunidades = true; // No hay más comunidades por cargar
           }
@@ -88,7 +89,7 @@ export class ComunidadesCreadasUsuarioComponent implements OnInit {
 
   onScroll(): void {
     const element = document.querySelector('.comunidades-list') as HTMLElement;
-    if (element.scrollTop + element.clientHeight >= element.scrollHeight-1 && !this.loading) {
+    if (element.scrollTop + element.clientHeight >= element.scrollHeight-10 && !this.loading) {
       this.getComunidadesUsuario();
     }
   }
