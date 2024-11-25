@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import axios from 'axios'; // Asegúrate de tener axios instalado
 import * as L from 'leaflet';
-import { catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom, map, min, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { DataPackage } from '../data-package';
 import { Etiqueta } from '../etiqueta/etiqueta';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
@@ -18,8 +18,10 @@ import { EtiquetaPopularidadDTO } from '../etiqueta/etiquetaPopularidadDTO';
 import { UbicacionService } from '../ubicacion.service'; // Importa tu servicio de ubicación
 import { Evento } from './evento';
 import { EventoService } from './evento.service';
-import { dateValidator } from '../registro/date-validator';
-import { minimoUnaEtiqueta } from './minimoEtiqueta';
+import { cantidadParticipantesValidator, dateValidator, minimoUnaEtiqueta } from './validacionesEvento';
+import { MatChipsModule } from '@angular/material/chips';
+
+
 
 @Component({
   selector: 'app-crear-evento',
@@ -31,7 +33,9 @@ import { minimoUnaEtiqueta } from './minimoEtiqueta';
     MatButtonModule,
     MatCardModule,
     MatIconModule,
-    ReactiveFormsModule, NgIf]
+    ReactiveFormsModule,
+    MatChipsModule, MatIconModule, // Asegúrate de que este módulo está aquí
+    NgIf]
 })
 export class CrearEventoComponent {
 
@@ -59,6 +63,7 @@ export class CrearEventoComponent {
   formEvento: FormGroup;
 
 
+
   constructor(
     private eventoService: EventoService,
     private formBuilder: FormBuilder,
@@ -72,72 +77,27 @@ export class CrearEventoComponent {
     this.formEvento = this.formBuilder.group(
       {
         nombre: ['', [Validators.required]],
-        fechaHora: ['', [Validators.required, this.dateValidator2()]],
+        fechaHora: ['', [Validators.required, dateValidator()]],
 
         cantidadMaximaParticipantes: [
           '',
           [Validators.required],
-          [this.cantidadParticipantesValidator.bind(this)],
+          [cantidadParticipantesValidator.bind(this)],
         ],
         latitud: [
           '',
           [Validators.required]
         ],
-        longitud: ['', [Validators.required]],
-
-        etiquetasSeleccionadas: [[], [minimoUnaEtiqueta()]], // Inicializa como un array vacío
-
+        longitud: ['', [Validators.required]]
       }
     );
   }
 
 
-  minimoUnaEtiqueta(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const etiquetas = control.value;
-      if (Array.isArray(etiquetas) && etiquetas.length > 0) {
-        return null; // Válido
-      }
-      return { sinEtiqueta: true }; // Inválido si no hay etiquetas
-    };
-  }
-  
-  dateValidator2(): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      const dateValue = control.value;
-      const selectedDate = new Date(dateValue).getTime(); // Fecha seleccionada en milisegundos
-      const minDate = Date.now(); // Fecha y hora actuales en milisegundos
-      console.log("Fecha seleccionada: " + selectedDate);
-      console.log("Fecha mínima: " + minDate);
-
-      if (selectedDate < minDate) {
-        console.log("La fecha es menor a la actual.");
-        return { invalidDate: true }; // Fecha inválida
-      }
-
-      console.log("La fecha es válida.");
-      return null; // Fecha válida
 
 
-      console.log("No hay valor en el control.");
-      return { invalidDate: true }; // Si no hay valor, es inválido
-    };
-  }
-
-
-  cantidadParticipantesValidator(control: AbstractControl): Observable<ValidationErrors | null> {
-    const cantidadIngresada = control.value;
-
-    // Verificar si la cantidad es válida
-    if (cantidadIngresada > 0) {
-      // La cantidad es válida
-      return of(null);
-    } else {
-      // La cantidad es inválida
-      return of({ cantidadInvalida: true });
-    }
-  }
   ngOnInit(): void {
+    this.formEvento.markAllAsTouched();
     this.evento = <Evento>{
       fechaDeCreacion: new Date(),
       nombre: "",
@@ -274,6 +234,9 @@ export class CrearEventoComponent {
     this.evento.longitud = lng;
     // Limpiar las sugerencias y el campo de texto
     this.sugerencias = [];
+    console.log(this.evento);
+    console.log("etiquetas ", this.etiquetasSeleccionadas);
+
     (document.querySelector('input[type="text"]') as HTMLInputElement).value = '';
   }
 
@@ -287,7 +250,6 @@ export class CrearEventoComponent {
     this.marcador = L.marker(latlng).addTo(this.mapa)
       .bindPopup(`Ubicación: ${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`)
       .openPopup();
-
     this.mapa.setView(latlng, 16);
   }
 
@@ -321,17 +283,15 @@ export class CrearEventoComponent {
       tap(() => (this.searching = false))
     );
 
-
   agregarEtiqueta(event: any): void {
     const etiqueta: Etiqueta = event.item;
-      if (event.item) {
-        this.etiquetasSeleccionadas.push(event.item);
-        this.etiquetaSeleccionada = null; // Limpiar el campo de entrada
-    
-        this.cdr.detectChanges();
+    if (event.item) {
+      this.etiquetasSeleccionadas.push(event.item);
+      this.etiquetaSeleccionada = null; // Limpiar el campo de entrada
+
+      this.cdr.detectChanges();
     }
   }
-
 
   eliminarEtiqueta(etiqueta: Etiqueta): void {
     this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(
@@ -394,7 +354,13 @@ export class CrearEventoComponent {
     }
   }
 
+  onSubmit(): void {
+    if (this.formEvento.valid) {
+      const formData = this.formEvento.value;
 
+      this.saveEvento();
+    }
+  }
   formatFechaHora(fechaHora: string): string {
     const fecha = new Date(fechaHora);
     const year = fecha.getFullYear();
@@ -418,6 +384,7 @@ export class CrearEventoComponent {
       !!this.evento.cantidadMaximaParticipantes &&
       !!this.evento.latitud &&
       !!this.evento.longitud
+    // return this.formEvento.valid
   }
 
 

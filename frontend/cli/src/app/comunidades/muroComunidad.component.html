@@ -94,8 +94,8 @@
         </div>
       </div>
 
-      <div *ngIf="tabSeleccionada === 'miembros'" class="perfil-miembros">
-        <div *ngFor="let miembro of miembrosVisibles" class="miembro-item" [routerLink]="['/perfil', miembro.id]">
+      <div *ngIf="tabSeleccionada === 'miembros'" class="perfil-miembros" (scroll)="onScrollMiembros()">
+        <div *ngFor="let miembro of miembrosVisiblesPaginados" class="miembro-item" [routerLink]="['/perfil', miembro.id]">
           <div>
             <img [src]="(miembro.anonimos || !miembro.fotoPerfil) ? '../../assets/usuario.png' : miembro.fotoPerfil"
               alt="{{ miembro.nombreUsuario }}" class="perfil-imagen">

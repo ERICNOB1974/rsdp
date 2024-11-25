@@ -48,7 +48,7 @@ public class ComunidadService {
 
     @Transactional
     public Comunidad save(Comunidad comunidad) {
-        
+
         String ubicacion = locationService.getCityAndCountry(comunidad.getLatitud(), comunidad.getLongitud());
 
         comunidad.setUbicacion(ubicacion);
@@ -272,13 +272,28 @@ public class ComunidadService {
         return comunidadRepository.listaFavoritas(idUsuario, filtroNombre, skip, size);
     }
 
-    public Comunidad buscarComunidadPorEventoInterno(Long idEvento){
+    public Comunidad buscarComunidadPorEventoInterno(Long idEvento) {
         return comunidadRepository.buscarComunidadPorEventoInterno(idEvento);
+    }
+
+    public void eliminarUsuario(String mensaje, Long idComunidad, Long idUsuario) {
+        Comunidad c = comunidadRepository.findById(idComunidad).get();
+        String notificacion = "Has sido eliminado de la comunidad " + c.getNombre();
+        this.notificacionService.notificarExpulsionEvento(notificacion, idComunidad, idUsuario);
+        this.comunidadRepository.eliminarUsuario(idComunidad, idUsuario, mensaje);
+    }
+
+    public boolean estaExpulsado(Long idUsuario, Long idComunidad) {
+        return this.comunidadRepository.estaExpulsado(idUsuario, idComunidad);
+    }
+
+    public String motivoExpulsion(Long idUsuario, Long idComunidad) {
+        return this.comunidadRepository.motivoExpulsion(idUsuario, idComunidad);
     }
 
     @Transactional
     public void agregarUbicacionAComunidadesSinUbicacion() {
-        List<Comunidad> comunidades = comunidadRepository.findAll(); 
+        List<Comunidad> comunidades = comunidadRepository.findAll();
 
         for (Comunidad comunidad : comunidades) {
             if (comunidad.getUbicacion() == null || comunidad.getUbicacion().isEmpty()) {
@@ -296,10 +311,11 @@ public class ComunidadService {
                     }
                 } catch (Exception e) {
                     System.err
-                            .println("Error al procesar la comunidad con ID: " + comunidad.getId() + " - " + e.getMessage());
+                            .println("Error al procesar la comunidad con ID: " + comunidad.getId() + " - "
+                                    + e.getMessage());
                 }
             }
         }
-    }
 
+    }
 }

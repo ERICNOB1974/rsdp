@@ -26,7 +26,7 @@ export class PublicacionDetailComponent implements OnInit {
 
   publicacion!: Publicacion;
   isActive: boolean = false;
-  usuarioId!: number;
+  publicadoPor!: Usuario;
   numeroLikes!: number;
   usuariosLikes: any[] = []; // Lista de usuarios que dieron like
   loadingLikes: boolean = false; // Estado de carga
@@ -138,8 +138,8 @@ export class PublicacionDetailComponent implements OnInit {
     this.publicacionService.publicadoPor(this.publicacion.id).subscribe(
       (dataPackage: DataPackage) => {
         const usuario = <Usuario><unknown>dataPackage.data;
-        this.usuarioId = usuario.id;
-        this.isOwnPublication = (this.usuarioId === Number(currentUserId));
+        this.publicadoPor = usuario;
+        this.isOwnPublication = (this.publicadoPor.id === Number(currentUserId));
       });
 
   }

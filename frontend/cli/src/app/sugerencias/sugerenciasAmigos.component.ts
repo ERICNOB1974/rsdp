@@ -26,7 +26,6 @@ export class SugerenciasAmigosComponent implements OnInit {
 
   ngOnInit(): void {
     this.getUsuarios()
-    console.info(this.results);
   }
 
   getUsuarios(): void {

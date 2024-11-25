@@ -57,7 +57,6 @@ export class SugerenciasRutinasComponent implements OnInit {
         this.elementos = data.data.length
         this.totalPages = data.totalPaginas; // Accede correctamente a 'totalPaginas'
       }
-      console.info(this.sugerencias+"masdasd");
     });
   }
 
