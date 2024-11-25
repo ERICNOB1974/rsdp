@@ -286,4 +286,10 @@ public class EventoPresenter {
         return Response.ok(eventosDeRutinas);
     }
 
+    @PostMapping("/actualizarUbicaciones")
+    public ResponseEntity<Object> actualizarUbicaciones() {
+        eventoService.agregarUbicacionAEventosSinUbicacion();
+        return Response.ok("Ubicaciones actualizadas correctamente.");
+    }
+
 }
