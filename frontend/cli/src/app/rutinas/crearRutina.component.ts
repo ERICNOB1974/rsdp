@@ -47,26 +47,18 @@ export class CrearRutinaComponent implements OnInit {
   tipoArchivo: string = ''; // Para distinguir entre imagen o video
   vistaPreviaArchivo: string | ArrayBuffer | null = null; // Para mostrar la vista previa de la imagen o video
   formatoValido: boolean = true;
-  formRutina: FormGroup;
-
 
   constructor(
     private rutinaService: RutinaService,
     private etiquetaService: EtiquetaService,
     private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef
-        private snackBar: MatSnackBar
+    private cdr: ChangeDetectorRef,
+    private snackBar: MatSnackBar
 
   ) {
-    this.formRutina = this.formBuilder.group(
-      {
-        nombreRutina: ['', [Validators.required]],
 
-      }
-    );
   }
   ngOnInit(): void {
-    this.formRutina.markAllAsTouched();
   }
 
   get nombreRutinaValid() {
@@ -78,7 +70,7 @@ export class CrearRutinaComponent implements OnInit {
   todosLosDiasTienenEjercicios(): boolean {
     return this.dias.every(dia => dia.ejercicios && dia.ejercicios.length > 0);
   }
-  ) { }
+
 
   agregarDiaTrabajo() {
     const nuevoDia: Dia = {
@@ -250,19 +242,14 @@ export class CrearRutinaComponent implements OnInit {
     const ejercicio = dia.ejercicios[dia.ejercicios.length - 1]; // Obtener el último ejercicio agregado
     ejercicio.nombre = ejercicioSeleccionado.nombre; // Asignar solo el nombre
 
-}
-
-async guardarRutinaOptimizada() {
-  if (!this.esFormularioValido()) {
-    this.snackBar.open('Complete todos los campos obligatorios y añada al menos un ejercicio por día de trabajo.', 'Cerrar', {
-      duration: 3000,
-    });
-    return;
   }
+
 
   async guardarRutinaOptimizada() {
     if (!this.esFormularioValido()) {
-      alert('Complete todos los campos obligatorios y añada al menos un ejercicio por día de trabajo.');
+      this.snackBar.open('Complete todos los campos obligatorios y añada al menos un ejercicio por día de trabajo.', 'Cerrar', {
+        duration: 3000,
+      });
       return;
     }
 
@@ -296,18 +283,18 @@ async guardarRutinaOptimizada() {
       };
 
 
-    const response = await firstValueFrom(this.rutinaService.guardarRutinaOptimizada(rutinaCompleta));
-    alert('Rutina guardada con éxito');
-    window.location.reload();
-  } catch (error) {
-    console.error('Error al guardar la rutina optimizada:', error);
-    this.snackBar.open('Error al guardar la rutina.', 'Cerrar', {
-      duration: 3000,
-    });
+      const response = await firstValueFrom(this.rutinaService.guardarRutinaOptimizada(rutinaCompleta));
+      alert('Rutina guardada con éxito');
+      window.location.reload();
+    } catch (error) {
+      console.error('Error al guardar la rutina optimizada:', error);
+      this.snackBar.open('Error al guardar la rutina.', 'Cerrar', {
+        duration: 3000,
+      });
+    }
+
+
   }
-
-
-
   searchEjercicio = (text$: Observable<string>): Observable<Ejercicio[]> =>
     text$.pipe(
       debounceTime(300),
