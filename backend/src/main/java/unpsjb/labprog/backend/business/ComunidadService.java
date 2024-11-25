@@ -23,6 +23,8 @@ public class ComunidadService {
     UsuarioRepository usuarioRepository;
     @Autowired
     private NotificacionService notificacionService;
+    @Autowired
+    private LocationService locationService;
 
     public List<Comunidad> findAll() {
         return comunidadRepository.findAll();
@@ -46,6 +48,11 @@ public class ComunidadService {
 
     @Transactional
     public Comunidad save(Comunidad comunidad) {
+        
+        String ubicacion = locationService.getCityAndCountry(comunidad.getLatitud(), comunidad.getLongitud());
+
+        comunidad.setUbicacion(ubicacion);
+
         if (comunidad.getId() != null) {
             Comunidad comVieja = comunidadRepository.findById(comunidad.getId()).get();
             if (comVieja.isEsPrivada() && !comunidad.isEsPrivada()) {
@@ -263,6 +270,36 @@ public class ComunidadService {
         int skip = page * size; // Cálculo de los resultados a omitir
         String filtroNombre = (nombreComunidad == null || nombreComunidad.trim().isEmpty()) ? "" : nombreComunidad;
         return comunidadRepository.listaFavoritas(idUsuario, filtroNombre, skip, size);
+    }
+
+    public Comunidad buscarComunidadPorEventoInterno(Long idEvento){
+        return comunidadRepository.buscarComunidadPorEventoInterno(idEvento);
+    }
+
+    @Transactional
+    public void agregarUbicacionAComunidadesSinUbicacion() {
+        List<Comunidad> comunidades = comunidadRepository.findAll(); 
+
+        for (Comunidad comunidad : comunidades) {
+            if (comunidad.getUbicacion() == null || comunidad.getUbicacion().isEmpty()) {
+                try {
+                    // Obtener latitud y longitud del evento
+                    Double latitud = comunidad.getLatitud();
+                    Double longitud = comunidad.getLongitud();
+
+                    if (latitud != null && longitud != null) {
+                        String ubicacion = locationService.getCityAndCountry(latitud, longitud);
+
+                        comunidad.setUbicacion(ubicacion);
+
+                        comunidadRepository.save(comunidad);
+                    }
+                } catch (Exception e) {
+                    System.err
+                            .println("Error al procesar la comunidad con ID: " + comunidad.getId() + " - " + e.getMessage());
+                }
+            }
+        }
     }
 
 }

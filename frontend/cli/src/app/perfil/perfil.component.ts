@@ -497,13 +497,13 @@ export class PerfilComponent implements OnInit {
         const responseData = dataPackage.data;
         if (Array.isArray(responseData) && responseData.length > 0) {
           this.traerParticipantes(responseData);
-          for (const evento of this.historicoEventos) {
-            if (evento.latitud && evento.longitud) {
-              evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
-            } else {
-              evento.ubicacion = 'Ubicación desconocida';
-            }
-          }
+          // for (const evento of this.historicoEventos) {
+          //   if (evento.latitud && evento.longitud) {
+          //     evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
+          //   } else {
+          //     evento.ubicacion = 'Ubicación desconocida';
+          //   }
+          // }
           this.historicoEventos = [...this.historicoEventos, ...responseData];  // Agregamos las nuevas rutinas
           this.currentIndexEventos++;  // Incrementamos el índice para la siguiente carga
           if (responseData.length < this.cantidadPorPagina) {
@@ -532,13 +532,13 @@ export class PerfilComponent implements OnInit {
         const responseData = dataPackage.data;
         if (Array.isArray(responseData) && responseData.length > 0) {
           this.traerParticipantes(responseData);
-          for (const evento of this.historicoEventos) {
-            if (evento.latitud && evento.longitud) {
-              evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
-            } else {
-              evento.ubicacion = 'Ubicación desconocida';
-            }
-          }
+          // for (const evento of this.historicoEventos) {
+          //   if (evento.latitud && evento.longitud) {
+          //     evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
+          //   } else {
+          //     evento.ubicacion = 'Ubicación desconocida';
+          //   }
+          // }
           this.historicoEventos = [...this.historicoEventos, ...responseData];  // Agregamos las nuevas rutinas
           this.currentIndexEventos++;  // Incrementamos el índice para la siguiente carga
           if (responseData.length < this.cantidadPorPagina) {
@@ -612,13 +612,13 @@ export class PerfilComponent implements OnInit {
         if (Array.isArray(responseData) && responseData.length > 0) {
           this.traerMiembros(responseData); // Llamar a traerParticipantes después de cargar los eventos
 
-          for (const comunidad of responseData) {
-            if (comunidad.latitud && comunidad.longitud) {
-              comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
-            } else {
-              comunidad.ubicacion = 'Ubicación desconocida';
-            }
-          }
+          // for (const comunidad of responseData) {
+          //   if (comunidad.latitud && comunidad.longitud) {
+          //     comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
+          //   } else {
+          //     comunidad.ubicacion = 'Ubicación desconocida';
+          //   }
+          // }
           this.historicoComunidades = [...this.historicoComunidades, ...responseData];  // Agregamos las nuevas rutinas
           this.currentIndexComunidades++;  // Incrementamos el índice para la siguiente carga
           if (responseData.length < this.cantidadPorPagina) {
@@ -652,13 +652,13 @@ export class PerfilComponent implements OnInit {
         if (Array.isArray(responseData) && responseData.length > 0) {
 
           this.traerMiembros(responseData); // Llamar a traerParticipantes después de cargar los eventos
-          for (const comunidad of responseData) {
-            if (comunidad.latitud && comunidad.longitud) {
-              comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
-            } else {
-              comunidad.ubicacion = 'Ubicación desconocida';
-            }
-          }
+          // for (const comunidad of responseData) {
+          //   if (comunidad.latitud && comunidad.longitud) {
+          //     comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
+          //   } else {
+          //     comunidad.ubicacion = 'Ubicación desconocida';
+          //   }
+          // }
           this.historicoComunidades = [...this.historicoComunidades, ...responseData];  // Agregamos las nuevas rutinas
           this.currentIndexComunidades++;  // Incrementamos el índice para la siguiente carga
           if (responseData.length < this.cantidadPorPagina) {

@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.mail.MessagingException;
 import unpsjb.labprog.backend.exceptions.EventoException;
-import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Etiqueta;
 import unpsjb.labprog.backend.model.Evento;
 import unpsjb.labprog.backend.model.Usuario;
@@ -65,6 +64,11 @@ public class EventoService {
 
     @Transactional
     public Evento crear(Evento evento) throws MessagingException, EventoException {
+
+        String ubicacion = locationService.getDisplayName(evento.getLatitud(), evento.getLongitud());
+
+        evento.setUbicacion(ubicacion);
+
         // Validar fecha y hora del evento
         if (evento.getFechaHora().isBefore(ZonedDateTime.now()) || evento.getFechaHora().isEqual(ZonedDateTime.now())) {
             throw new EventoException("El evento no puede tener una fecha anterior a ahora");
@@ -96,6 +100,11 @@ public class EventoService {
 
     @Transactional
     public Evento crearConCreador(Evento evento, String nombreUsuario) throws MessagingException, EventoException {
+
+        String ubicacion = locationService.getDisplayName(evento.getLatitud(), evento.getLongitud());
+
+        evento.setUbicacion(ubicacion);
+
         // suponiendo que se crea ahora mismo
         if (evento.getFechaHora().isBefore(ZonedDateTime.now()) ||
                 evento.getFechaHora().isEqual(ZonedDateTime.now())) {
@@ -113,6 +122,11 @@ public class EventoService {
     @Transactional
     public Evento crearConCreadorParaEventoInternoParaComunidad(Evento evento, String nombreUsuario, Long comunidadId)
             throws MessagingException, EventoException {
+
+        String ubicacion = locationService.getDisplayName(evento.getLatitud(), evento.getLongitud());
+
+        evento.setUbicacion(ubicacion);
+
         if (evento.getFechaHora().isBefore(ZonedDateTime.now()) ||
                 evento.getFechaHora().isEqual(ZonedDateTime.now())) {
             throw new EventoException("El evento no puede tener una fecha anterior a ahora");
@@ -151,8 +165,7 @@ public class EventoService {
         Optional<Evento> eventoViejo = eventoRepository.findById(evento.getId());
         if (!eventoViejo.isEmpty()) {
             boolean cambioFecha = evento.getFechaHora() != eventoViejo.get().getFechaHora();
-            boolean cambioUbicacion = (evento.getLatitud() != eventoViejo.get().getLatitud())
-                    || (evento.getLongitud() != eventoViejo.get().getLongitud());
+            boolean cambioUbicacion = eventoViejo.get().getUbicacion() != evento.getUbicacion();
             emailService.enviarMailCambio(cambioFecha, cambioUbicacion, evento);
         }
         if (eventoViejo.isEmpty() && evento.isEsPrivadoParaLaComunidad()) {
@@ -165,8 +178,7 @@ public class EventoService {
         if (!eventoViejo.isEmpty()) {
             boolean cambioDescripcion = evento.getDescripcion() != eventoViejo.get().getDescripcion();
             boolean cambioFecha = evento.getFechaHora() != eventoViejo.get().getFechaHora();
-            boolean cambioUbicacion = (evento.getLatitud() != eventoViejo.get().getLatitud())
-                    || (evento.getLongitud() != eventoViejo.get().getLongitud());
+            boolean cambioUbicacion = eventoViejo.get().getUbicacion() != evento.getUbicacion();
             if (cambioDescripcion || cambioFecha || cambioUbicacion) {
                 String mensaje = crearMensaje(evento, cambioFecha, cambioUbicacion, cambioDescripcion);
                 notificacionService.notificarCambioEvento(mensaje, evento);
@@ -429,7 +441,44 @@ public class EventoService {
 
     public void eliminarUsuario(String mensaje, Long idEvento, Long idUsuario) {
         this.notificacionService.notificarExpulsionEvento(mensaje, idEvento, idUsuario);
-        this.eventoRepository.eliminarUsuario(idEvento, idUsuario);
+        this.eventoRepository.eliminarUsuario(idEvento, idUsuario, mensaje);
     }
 
+    @Transactional
+    public void agregarUbicacionAEventosSinUbicacion() {
+        List<Evento> eventos = eventoRepository.findAll(); // Obtener todos los eventos
+
+        for (Evento evento : eventos) {
+            // Verificar si el evento ya tiene el atributo 'ubicacion'
+            if (evento.getUbicacion() == null || evento.getUbicacion().isEmpty()) {
+                try {
+                    // Obtener latitud y longitud del evento
+                    Double latitud = evento.getLatitud();
+                    Double longitud = evento.getLongitud();
+
+                    if (latitud != null && longitud != null) {
+                        // Llamar al servicio para obtener el nombre de la ubicación
+                        String ubicacion = locationService.getDisplayName(latitud, longitud);
+
+                        // Actualizar el atributo 'ubicacion' del evento
+                        evento.setUbicacion(ubicacion);
+
+                        // Guardar los cambios en la base de datos
+                        eventoRepository.save(evento);
+                    }
+                } catch (Exception e) {
+                    // Manejo de errores al obtener la ubicación
+                    System.err
+                            .println("Error al procesar el evento con ID: " + evento.getId() + " - " + e.getMessage());
+                }
+            }
+        }
+    }
+
+    public boolean estaExpulsado(Long idUsuario, Long idEvento){
+        return this.eventoRepository.estaExpulsado(idUsuario ,idEvento);
+    }
+    public String motivoExpulsion(Long idUsuario, Long idEvento){
+        return this.eventoRepository.motivoExpulsion(idUsuario ,idEvento);
+    }
 }

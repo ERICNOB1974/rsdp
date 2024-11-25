@@ -158,34 +158,33 @@ public class EventoPresenter {
         return Response.ok(null, eventoService.desinscribirse(idEvento, idUsuario));
     }
 
-
-        @GetMapping("/filtrar/etiquetas")
-    public ResponseEntity<Object> eventosPorEtiquetas(@RequestParam List<String> etiquetas,@RequestParam(required = false) String tipo,
-    @RequestParam(required = false) Long usuarioId) {
-        return Response.ok(eventoService.eventosEtiquetas(etiquetas,tipo, usuarioId));
+    @GetMapping("/filtrar/etiquetas")
+    public ResponseEntity<Object> eventosPorEtiquetas(@RequestParam List<String> etiquetas,
+            @RequestParam(required = false) String tipo,
+            @RequestParam(required = false) Long usuarioId) {
+        return Response.ok(eventoService.eventosEtiquetas(etiquetas, tipo, usuarioId));
     }
 
-
-      @GetMapping("/filtrar/nombre")
+    @GetMapping("/filtrar/nombre")
     public ResponseEntity<Object> eventosPorNombre(
-        @RequestParam String nombre,
-        @RequestParam(required = false) String tipo,
-        @RequestParam(required = false) Long usuarioId) {
+            @RequestParam String nombre,
+            @RequestParam(required = false) String tipo,
+            @RequestParam(required = false) Long usuarioId) {
         return Response.ok(eventoService.eventosNombre(nombre, tipo, usuarioId));
     }
 
-
     @GetMapping("/filtrar/fecha")
     public ResponseEntity<Object> eventosPorFecha(@RequestParam(required = false) String tipo,
-        @RequestParam(required = false) Long usuarioId,@RequestParam ZonedDateTime min, @RequestParam ZonedDateTime max) {
-        return Response.ok(eventoService.eventosFecha(tipo, usuarioId,min, max));
+            @RequestParam(required = false) Long usuarioId, @RequestParam ZonedDateTime min,
+            @RequestParam ZonedDateTime max) {
+        return Response.ok(eventoService.eventosFecha(tipo, usuarioId, min, max));
     }
 
-
-      @GetMapping("/filtrar/participantes")
-    public ResponseEntity<Object> eventosPorParticipantes(@RequestParam(required = false) String tipo,@RequestParam(required = false) Long usuarioId,
-    @RequestParam int min, @RequestParam int max) {
-        return Response.ok(eventoService.eventosParticipantes(tipo, usuarioId ,min, max));
+    @GetMapping("/filtrar/participantes")
+    public ResponseEntity<Object> eventosPorParticipantes(@RequestParam(required = false) String tipo,
+            @RequestParam(required = false) Long usuarioId,
+            @RequestParam int min, @RequestParam int max) {
+        return Response.ok(eventoService.eventosParticipantes(tipo, usuarioId, min, max));
     }
 
     @RequestMapping(path = "/{nombreUsuario}/disponibles", method = RequestMethod.GET)
@@ -195,14 +194,12 @@ public class EventoPresenter {
         return Response.ok(eventoService.eventosDisponibles(nombreUsuario, page, size));
     }
 
-
-
     @RequestMapping(path = "/participa/{idUsuario}", method = RequestMethod.GET)
     public ResponseEntity<Object> participaUsuario(
-        @PathVariable Long idUsuario, 
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size,
-        @RequestParam(required = false, defaultValue = "") String nombreEvento) {
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String nombreEvento) {
         return Response.ok(eventoService.participaUsuario(idUsuario, nombreEvento, page, size));
     }
 
@@ -270,7 +267,8 @@ public class EventoPresenter {
     }
 
     @PutMapping("/eliminarParticipante/{idEvento}/{idUsuario}")
-    public ResponseEntity<Object> eliminarParticipante(@PathVariable Long idEvento, @PathVariable Long idUsuario, @RequestBody String motivo) {
+    public ResponseEntity<Object> eliminarParticipante(@PathVariable Long idEvento, @PathVariable Long idUsuario,
+            @RequestBody String motivo) {
         eventoService.eliminarUsuario(motivo, idEvento, idUsuario);
         return Response.ok("OK");
     }
@@ -284,6 +282,21 @@ public class EventoPresenter {
     public ResponseEntity<Object> eventosFuturosPertenecientesAUnUsuario(@PathVariable String nombreUsuario) {
         List<Evento> eventosDeRutinas = eventoService.eventosFuturosPertenecientesAUnUsuario(nombreUsuario);
         return Response.ok(eventosDeRutinas);
+    }
+
+    @PostMapping("/actualizarUbicaciones")
+    public ResponseEntity<Object> actualizarUbicaciones() {
+        eventoService.agregarUbicacionAEventosSinUbicacion();
+        return Response.ok("Ubicaciones actualizadas correctamente.");
+    }
+
+    @GetMapping("/estaExpulsado/{idUsuario}/{idEvento}")
+    public ResponseEntity<Object> eventosFuturosPertenecientesAUnUsuario(@PathVariable Long idUsuario,
+            @PathVariable Long idEvento) {
+        boolean estado = eventoService.estaExpulsado(idUsuario, idEvento);
+        String mensaje = eventoService.motivoExpulsion(idUsuario, idEvento);
+
+        return Response.ok(estado, mensaje);
     }
 
 }

@@ -19,6 +19,10 @@ import unpsjb.labprog.backend.model.Dia;
 import unpsjb.labprog.backend.model.Ejercicio;
 import unpsjb.labprog.backend.model.Etiqueta;
 import unpsjb.labprog.backend.model.Rutina;
+import unpsjb.labprog.backend.model.DTO.EjercicioDTO;
+import unpsjb.labprog.backend.model.DTO.EtiquetaDTO;
+import unpsjb.labprog.backend.model.DTO.GuardarRutinaDiaDTO;
+import unpsjb.labprog.backend.model.DTO.RutinaCompletaDTO;
 
 @Service
 public class RutinaService {
@@ -134,6 +138,46 @@ public class RutinaService {
     }
 
     @Transactional
+    public void guardarRutinaCompleta(RutinaCompletaDTO rutinaCompletaDTO, Long usuarioId) throws Exception {
+        Rutina rutina = new Rutina();
+        rutina.setNombre(rutinaCompletaDTO.getNombre());
+        rutina.setDescripcion(rutinaCompletaDTO.getDescripcion());
+        Long rutinaId = this.saveConCreador(rutina, usuarioId);
+
+        for (EtiquetaDTO etiquetaDTO : rutinaCompletaDTO.getEtiquetas()) {
+            Etiqueta etiqueta = etiquetaRepository.findByNombre(etiquetaDTO.getNombre()).orElse(null);
+            if (etiqueta == null) {
+                Etiqueta nuevaEtiqueta = new Etiqueta();
+                nuevaEtiqueta.setNombre(etiquetaDTO.getNombre());
+                etiqueta = etiquetaRepository.save(nuevaEtiqueta);
+            }
+            rutinaRepository.etiquetarRutina(rutinaId, etiqueta.getId());
+        }
+
+        for (GuardarRutinaDiaDTO diaDTO : rutinaCompletaDTO.getDias()) {
+            Long diaId = diaRepository.crearDia(diaDTO.getNombre(), diaDTO.getDescripcion());
+            rutinaRepository.relacionarRutinaDia(rutinaId, diaId, diaDTO.getOrden());
+
+            for (EjercicioDTO ejercicioDTO : diaDTO.getEjercicios()) {
+
+                if ("resistencia".equalsIgnoreCase(ejercicioDTO.getTipo())) {
+                    Ejercicio ejercicio = new Ejercicio();
+                    ejercicio.setNombre(ejercicioDTO.getNombre());
+                    ejercicio.setImagen(ejercicioDTO.getImagen());
+                    ejercicio.setDescripcion(ejercicioDTO.getDescripcion());
+                    this.guardarEjercicioResistencia(diaId, ejercicio, ejercicioDTO.getOrden(), ejercicioDTO.getTiempo());
+                } else {
+                    Ejercicio ejercicio = new Ejercicio();
+                    ejercicio.setNombre(ejercicioDTO.getNombre());
+                    ejercicio.setImagen(ejercicioDTO.getImagen());
+                    ejercicio.setDescripcion(ejercicioDTO.getDescripcion());
+                    this.guardarEjercicioSeries(diaId, ejercicio, ejercicioDTO.getOrden(), ejercicioDTO.getSeries(), ejercicioDTO.getRepeticiones());
+                }
+            }
+        }
+    }
+
+    @Transactional
     public Long guardarDia(Long rutinaId, Dia dia, int orden) {
         Long diaId = diaRepository.crearDia(dia.getNombre(), dia.getDescripcion());
         rutinaRepository.relacionarRutinaDia(rutinaId, diaId, orden);
@@ -141,7 +185,7 @@ public class RutinaService {
     }
 
     @Transactional
-    public void guardarEjercicioResistencia(Long diaId, Ejercicio ejercicio, int orden, String tiempo, String imagen) {
+    public void guardarEjercicioResistencia(Long diaId, Ejercicio ejercicio, int orden, String tiempo) {
         Ejercicio ejercicioExistente = ejercicioRepository.findByNombreDescripcionImagen(
                 ejercicio.getNombre(), ejercicio.getDescripcion(), ejercicio.getImagen());
 
@@ -157,8 +201,7 @@ public class RutinaService {
     }
 
     @Transactional
-    public void guardarEjercicioSeries(Long diaId, Ejercicio ejercicio, int orden, int series, int repeticiones,
-            String imagen) {
+    public void guardarEjercicioSeries(Long diaId, Ejercicio ejercicio, int orden, int series, int repeticiones) {
         Ejercicio ejercicioExistente = ejercicioRepository.findByNombreDescripcionImagen(
                 ejercicio.getNombre(), ejercicio.getDescripcion(), ejercicio.getImagen());
 

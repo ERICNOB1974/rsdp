@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import axios from 'axios'; // Asegúrate de tener axios instalado
 import * as L from 'leaflet';
-import { catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom, map, min, Observable, of, Subject, switchMap, tap } from 'rxjs';
 import { DataPackage } from '../data-package';
 import { Etiqueta } from '../etiqueta/etiqueta';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
@@ -18,6 +18,8 @@ import { EtiquetaPopularidadDTO } from '../etiqueta/etiquetaPopularidadDTO';
 import { UbicacionService } from '../ubicacion.service'; // Importa tu servicio de ubicación
 import { Evento } from './evento';
 import { EventoService } from './evento.service';
+import { dateValidator } from '../registro/date-validator';
+import { minimoUnaEtiqueta } from './minimoEtiqueta';
 
 @Component({
   selector: 'app-crear-evento',
@@ -70,11 +72,8 @@ export class CrearEventoComponent {
     this.formEvento = this.formBuilder.group(
       {
         nombre: ['', [Validators.required]],
-        fechaHora: [
-          '',
-          [Validators.required],
-          [this.dateValidator()]
-        ],
+        fechaHora: ['', [Validators.required, this.dateValidator2()]],
+
         cantidadMaximaParticipantes: [
           '',
           [Validators.required],
@@ -86,31 +85,42 @@ export class CrearEventoComponent {
         ],
         longitud: ['', [Validators.required]],
 
-        etiquetasSeleccionadas: [[], [this.minimoUnaEtiqueta()]], // Asegúrate de que sea un array
+        etiquetasSeleccionadas: [[], [minimoUnaEtiqueta()]], // Inicializa como un array vacío
 
       }
     );
   }
 
+
   minimoUnaEtiqueta(): ValidatorFn {
-    return (control: AbstractControl): { [key: string]: any } | null => {
-      const etiquetas = control.value; // Asumiendo que control.value es un array de etiquetas
-      return etiquetas && etiquetas.length > 0 ? null : { sinEtiqueta: true };
+    return (control: AbstractControl): ValidationErrors | null => {
+      const etiquetas = control.value;
+      if (Array.isArray(etiquetas) && etiquetas.length > 0) {
+        return null; // Válido
+      }
+      return { sinEtiqueta: true }; // Inválido si no hay etiquetas
     };
   }
-  dateValidator(): ValidatorFn {
+  
+  dateValidator2(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const dateValue = control.value;
-      if (dateValue) {
-        const selectedDate = new Date(dateValue).getTime();
-        const minDate = Date.now();
-        if (selectedDate < minDate) {
-          return { invalidDate: true };
-        }
-        return { invalidDate: true };
+      const selectedDate = new Date(dateValue).getTime(); // Fecha seleccionada en milisegundos
+      const minDate = Date.now(); // Fecha y hora actuales en milisegundos
+      console.log("Fecha seleccionada: " + selectedDate);
+      console.log("Fecha mínima: " + minDate);
+
+      if (selectedDate < minDate) {
+        console.log("La fecha es menor a la actual.");
+        return { invalidDate: true }; // Fecha inválida
       }
-      return { invalidDate: true };
-      return null;
+
+      console.log("La fecha es válida.");
+      return null; // Fecha válida
+
+
+      console.log("No hay valor en el control.");
+      return { invalidDate: true }; // Si no hay valor, es inválido
     };
   }
 
@@ -287,7 +297,9 @@ export class CrearEventoComponent {
     const day = today.getDate().toString().padStart(2, '0');
     const hours = today.getHours().toString().padStart(2, '0');
     const minutes = today.getMinutes().toString().padStart(2, '0');
-    this.minFechaHora = `${year}-${month}-${day}T${hours}:${minutes}`;
+    this.minFechaHora = new Date().toISOString().slice(0, 16); // Fecha y hora mínima en formato ISO
+
+    //this.minFechaHora = `${year}-${month}-${day}T${hours}:${minutes}`;
   }
 
   searchEtiqueta = (text$: Observable<string>): Observable<EtiquetaPopularidadDTO[]> =>
@@ -311,17 +323,12 @@ export class CrearEventoComponent {
 
   agregarEtiqueta(event: any): void {
     const etiqueta: Etiqueta = event.item;
-
-    // Verificar por nombre en lugar de por ID para evitar duplicados
-    if (!this.etiquetasSeleccionadas.some(e => e.nombre === etiqueta.nombre)) {
-      this.etiquetasSeleccionadas.push(etiqueta);
+      if (event.item) {
+        this.etiquetasSeleccionadas.push(event.item);
+        this.etiquetaSeleccionada = null; // Limpiar el campo de entrada
+    
+        this.cdr.detectChanges();
     }
-
-    // Restablecer la etiqueta seleccionada
-    this.etiquetaSeleccionada = null;
-
-    // Forzar actualización visual del input
-    this.cdr.detectChanges();
   }
 
 
@@ -329,6 +336,7 @@ export class CrearEventoComponent {
     this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(
       e => e.nombre !== etiqueta.nombre
     );
+
   }
 
 
