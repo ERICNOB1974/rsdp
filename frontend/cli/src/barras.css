@@ -25,6 +25,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     transition: width 0.3s ease; /* Suave transición al cambiar el ancho */
+    z-index: 5000;
   }
   
   .sidebar.collapsed {
@@ -35,7 +36,7 @@
     height: 80%;
     background-color: #15202b;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
+    z-index: 6000;
 }
 
 .nav-content {
