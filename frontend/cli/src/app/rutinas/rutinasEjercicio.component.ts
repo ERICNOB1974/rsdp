@@ -27,6 +27,8 @@ export class RutinasEjercicioComponent implements OnInit, OnDestroy {
     intervaloDescanso: any; // Variable para almacenar el intervalo del descanso
     enDescanso: boolean = false;
     diaFinalizado: boolean = false;
+    tiempoRestante: string | null = null; // Mantener el tiempo restante del cronómetro
+    intervalId: any;
 
     constructor(
         private rutinaService: RutinaService,
@@ -194,5 +196,30 @@ export class RutinasEjercicioComponent implements OnInit, OnDestroy {
     volver(): void {
         this.location.back(); 
     }
+
+    iniciarCronometro(tiempo: string): void {
+        // Si ya hay un cronómetro corriendo, lo detenemos
+        if (this.intervalId) {
+          clearInterval(this.intervalId);
+        }
+    
+        // Convierte el tiempo (formato "mm:ss") a segundos
+        let [minutos, segundos] = tiempo.split(':').map(Number);
+        let tiempoEnSegundos = minutos * 60 + segundos;
+    
+        this.tiempoRestante = tiempo; // Inicializa el tiempo restante
+    
+        this.intervalId = setInterval(() => {
+          if (tiempoEnSegundos <= 0) {
+            clearInterval(this.intervalId);
+            this.tiempoRestante = 'Tiempo finalizado';
+          } else {
+            tiempoEnSegundos--;
+            const min = Math.floor(tiempoEnSegundos / 60).toString().padStart(2, '0');
+            const sec = (tiempoEnSegundos % 60).toString().padStart(2, '0');
+            this.tiempoRestante = `${min}:${sec}`;
+          }
+        }, 1000); // Decrementar cada segundo
+      }
 
 }

@@ -13,6 +13,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from '../autenticacion/auth.interceptor';
 import { Observable, catchError, map, of } from 'rxjs';
 import { UsuarioService } from '../usuarios/usuario.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 @Component({
@@ -36,7 +37,8 @@ export class CambiarContrasenaComponent {
     constructor(
         private formBuilder: FormBuilder,
         private router: Router,
-        private authService: AuthService
+        private authService: AuthService,
+        private snackBar: MatSnackBar
     ) {
         this.contrasenaForm = this.formBuilder.group(
             {
@@ -86,12 +88,16 @@ export class CambiarContrasenaComponent {
                             localStorage.removeItem('correoElectronico'); // Eliminar el correo del localStorage
                             this.router.navigate(['/login']);
                         } else {
-                            alert(dataPackage.message);
+                            this.snackBar.open(dataPackage.message, 'Cerrar', {
+                                duration: 3000,
+                              });
                         }
                     }
                 );
             } else {
-                alert('No se encontró el correo electrónico. Vuelve a intentarlo.');
+                this.snackBar.open('No se encontró el correo electrónico. Vuelve a intentarlo.', 'Cerrar', {
+                    duration: 3000,
+                });
             }
         }
     }

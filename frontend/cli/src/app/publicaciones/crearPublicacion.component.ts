@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Publicacion } from './publicacion';
 import { PublicacionService } from './publicacion.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-publicaciones',
@@ -26,6 +27,7 @@ export class CrearPublicacionComponent implements OnInit {
     private publicacionService: PublicacionService,
     private route: ActivatedRoute,
     private location: Location,
+    private snackBar: MatSnackBar
   ) {
     const tipoParam = this.route.snapshot.queryParamMap.get('tipo') as 'comunidad' | 'publicacion';
     this.tipo = tipoParam;
@@ -91,7 +93,9 @@ export class CrearPublicacionComponent implements OnInit {
       } else {
         this.formatoValido = false; // El formato no es válido
         this.vistaPreviaArchivo = null; // No se muestra la vista previa
-        alert('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF) o videos (MP4).');
+        this.snackBar.open('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF) o videos (MP4).', 'Cerrar', {
+          duration: 3000,
+        });
       }
     }
   }

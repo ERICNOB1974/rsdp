@@ -11,6 +11,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-verificar-codigo',
@@ -37,7 +38,8 @@ export class VerificarCodigoComponent {
     private router: Router,
     private route: ActivatedRoute,
     private authService: AuthService,
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    private snackBar: MatSnackBar
   ) {
     const tipoParam = this.route.snapshot.queryParamMap.get('tipo') as 'registro' | 'recuperacion' | 'cambio-correo';
 
@@ -145,19 +147,27 @@ export class VerificarCodigoComponent {
                   this.authService.logout(); // Cerramos la sesión actual
                   this.router.navigate(['/login']); // Redirigimos al login
                 } else {
-                  alert('Error al actualizar el correo electrónico: ' + response.message);
+                  this.snackBar.open('Error al actualizar el correo electrónico: ' + response.message, 'Cerrar', {
+                    duration: 3000,
+                  });
                 }
               },
               () => {
-                alert('Error en el servidor al actualizar el correo electrónico');
+                this.snackBar.open('Error en el servidor al actualizar el correo electrónico', 'Cerrar', {
+                  duration: 3000,
+                });
               }
             );
           } else {
-            alert('No se encontró el nuevo correo electrónico');
+            this.snackBar.open('No se encontró el nuevo correo electrónico', 'Cerrar', {
+              duration: 3000,
+            });
           }
         }
       } else {
-        alert(dataPackage.message);
+        this.snackBar.open(dataPackage.message, 'Cerrar', {
+          duration: 3000,
+        });
       }
     });
   }
@@ -189,7 +199,9 @@ export class VerificarCodigoComponent {
         },
         (error) => {
           const errorMessage = error.error.message || 'Error al crear el usuario.';
-          alert(errorMessage);
+          this.snackBar.open(errorMessage, 'Cerrar', {
+            duration: 3000,
+          });
         }
       );
   }
