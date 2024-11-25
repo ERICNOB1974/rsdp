@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Usuario;
 
 @Service
@@ -20,6 +21,9 @@ public class UsuarioService {
 
     @Autowired
     UsuarioRepository usuarioRepository;
+
+    @Autowired
+    EventoRepository eventoRepository;
 
     @Autowired
     NotificacionRepository notificacionRepository;
@@ -30,6 +34,9 @@ public class UsuarioService {
 
     @Autowired
     NotificacionService notificacionService;
+
+    @Autowired
+    ComunidadService comunidadService;
 
     public List<Usuario> findAll() {
         return usuarioRepository.findAll();
@@ -269,6 +276,11 @@ public class UsuarioService {
 
     public List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(Long idUsuario, Long idEvento) {
         return usuarioRepository.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(idUsuario, idEvento);
+    }
+
+    public List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEventoPrivadoPeroSiALaComunidad(Long idUsuario, Long idEvento) {
+        Comunidad comunidad = comunidadService.buscarComunidadPorEventoInterno(idEvento);
+        return usuarioRepository.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEventoPrivadoPeroSiALaComunidad(idUsuario, idEvento, comunidad.getId());
     }
 
     public List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad) {

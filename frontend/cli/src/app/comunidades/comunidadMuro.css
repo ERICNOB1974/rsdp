@@ -22,17 +22,6 @@
     margin-bottom: 20px;
 }
 
-.tab-button {
-    padding: 10px 20px;
-    cursor: pointer;
-    border: none;
-    font-weight: bold;
-}
-
-.tab-button.active {
-    border-bottom: 2px solid #007bff;
-    color: #007bff;
-}
 
 .tab-content {
     margin: 0 auto;
@@ -71,28 +60,7 @@
     margin-top: 8px;
 }
 
-/* Ajustes del botón */
-/* Base button styles */
-.btn {
-    border: none;
-    color: white;
-    padding: 12px 24px;
-    cursor: pointer;
-    border-radius: 5px;
-    display: inline-flex;
-    align-items: center;
-    /* Center vertically */
-    justify-content: center;
-    /* Center horizontally */
-    font-size: 18px;
-    /* Text size */
-    font-weight: bold;
-    /* Bold text */
-    background-color: #007bff;
-    /* Primary color */
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    /* Smooth transitions */
-}
+
 
 /* Icon styles */
 .btn img.icono-boton {
@@ -195,7 +163,32 @@
     margin-bottom: 15px;
 }
 
-/* Botones de acciones en el perfil */
+.btn {
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    cursor: pointer;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: #007bff;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.tab-button {
+    padding: 10px 20px;
+    cursor: pointer;
+    border: none;
+    font-weight: bold;
+}
+.tab-button.active {
+    border-bottom: 2px solid #007bff;
+    color: #007bff;
+}
+
 button {
     padding: 10px 20px;
     margin-top: 10px;
@@ -691,4 +684,65 @@ perfil-eventos {
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-}
+
+  }
+
+
+/* Elimina bordes y establece el fondo oscuro en todos los niveles del modal */
+#notificacionModal {
+    display: block !important; /* Para asegurar que se muestre correctamente */
+    background-color: rgba(0, 0, 0, 0.8); /* Fondo oscuro con transparencia */
+    border: none; /* Sin bordes */
+    box-shadow: none; /* Elimina sombras adicionales */
+  }
+  
+  /* Asegúrate de que el modal-content no tenga bordes o sombras */
+  .modal-content {
+    border: none;
+    box-shadow: none;
+    background-color: #15202b; /* Color uniforme oscuro */
+  }
+  
+  /* Opcional: Si la línea blanca es parte del "fade" */
+  .modal.fade.show {
+    background-color: transparent !important; /* Asegura que el fondo no sea blanco */
+  }
+  
+  .modal-dialog {
+    margin-top: 0; /* Asegura que no haya separación entre el modal y la pantalla */
+  }
+
+
+/* Bordes de sección del modal */
+.modal-header, .modal-footer {
+    border-color: #39444d; /* Gris oscuro */
+  }
+  
+  
+  .modal-header .btn-close {
+    position: absolute;
+    top: 0.5rem; /* Ajusta la distancia desde la parte superior */
+    right: 0.5rem; /* Ajusta la distancia desde la derecha */
+    z-index: 1; /* Asegura que siempre esté encima */
+  }
+
+
+.modal-footer {
+    justify-content: flex-start; /* Alinear contenido a la izquierda */
+  }
+
+  .modal-header {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  .modal-title {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #007bff;
+  }

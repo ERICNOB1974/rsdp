@@ -12,6 +12,7 @@ import { Usuario } from '../usuarios/usuario';
 })
 export class EventoService {
 
+
   private eventosUrl = 'rest/eventos';
   private emailUrl = 'rest/email';
 
@@ -86,22 +87,22 @@ export class EventoService {
     return this.http.get<DataPackage>(`${this.eventosUrl}/esCreadoPor/${idUsuario}/${idEvento}`);
   }
 
-  async obtenerUbicacion(latitud: number, longitud: number): Promise<string> {
-    try {
-      const response = await axios.get(`https://nominatim.openstreetmap.org/reverse`, {
-        params: {
-          lat: latitud,
-          lon: longitud,
-          format: 'json',
-        }
-      });
+  // async obtenerUbicacion(latitud: number, longitud: number): Promise<string> {
+  //   try {
+  //     const response = await axios.get(`https://nominatim.openstreetmap.org/reverse`, {
+  //       params: {
+  //         lat: latitud,
+  //         lon: longitud,
+  //         format: 'json',
+  //       }
+  //     });
 
-      return `${response.data.display_name}`;
-    } catch (error) {
-      console.error('Error obteniendo la ubicación:', error);
-      return 'Ubicación no disponible';
-    }
-  }
+  //     return `${response.data.display_name}`;
+  //   } catch (error) {
+  //     console.error('Error obteniendo la ubicación:', error);
+  //     return 'Ubicación no disponible';
+  //   }
+  // }
   
   salir(idEvento: number): Observable<DataPackage> {
     const idUsuario = this.authService.getUsuarioId();
@@ -212,4 +213,7 @@ export class EventoService {
     return this.http.post<DataPackage>(`${this.emailUrl}/enviar-notificacion`, requestBody);
   }
 
+  verificarExpulsion(idUsuarioAutenticado: number, idEvento: number) {
+    return this.http.get<DataPackage>(`${this.eventosUrl}/estaExpulsado/${idUsuarioAutenticado}/${idEvento}`);
+  }
 }

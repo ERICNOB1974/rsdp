@@ -9,7 +9,6 @@ import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Evento;
 import unpsjb.labprog.backend.model.Usuario;
 
@@ -212,6 +211,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
         "  MATCH (u:Usuario)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
         "  WHERE id(u) = $usuarioId " +
         "} " +
+        "AND NOT (u)-[:EXPULSADO_EVENTO]-(e) "+
         "RETURN e")
         List<Evento> eventosNombreDisponibles(String nombre, Long usuarioId);
 
@@ -267,7 +267,8 @@ List<Evento> eventosCantidadParticipantesParticipante(Long usuarioId, int min, i
         
 
         @Query("MATCH (e:Evento),(u:Usuario {nombreUsuario: $nombreUsuario}) " +
-                        "WHERE NOT (e)-[:PARTICIPA_EN|CREADO_POR]-(u) " +
+                        "WHERE NOT (e)-[:PARTICIPA_EN]-(u) " +
+                        "AND NOT (u)-[:EXPULSADO_EVENTO]-(e) "+
                         "AND date(e.fechaHora) > date(datetime()) " +
                         "AND NOT e.esPrivadoParaLaComunidad " +
                         "WITH e, COUNT { (e)<-[:PARTICIPA_EN]-() } AS numParticipantes " +
@@ -294,7 +295,8 @@ List<Evento> eventosCantidadParticipantesParticipante(Long usuarioId, int min, i
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(e:Evento)-[:ETIQUETADO_CON]->(et:Etiqueta) "
                         + "MATCH (evento:Evento)-[:ETIQUETADO_CON]->(et) "
                         + "WHERE NOT (u)-[:PARTICIPA_EN]->(evento) "
-                        + "AND NOT (u)<-[:CREADO_POR]-(evento) "
+                        + "AND NOT (u)<-[:CREADO_POR]-(evento) "+
+                        "AND NOT (u)-[:EXPULSADO_EVENTO]-(evento) "
                         + "AND NOT evento.esPrivadoParaLaComunidad "
                         + "WITH evento, COUNT(DISTINCT et) AS etiquetasComunes, "
                         + "point({latitude: evento.latitud, longitude: evento.longitud}) AS eventoUbicacion, "
@@ -333,6 +335,7 @@ List<Evento> eventosCantidadParticipantesParticipante(Long usuarioId, int min, i
                         "WHERE cantidadParticipantes < evento.cantidadMaximaParticipantes " +
                         "AND NOT (u)-[:PARTICIPA_EN]->(evento) " +
                         "AND NOT (u)<-[:CREADO_POR]-(evento) " +
+                        "AND NOT (u)-[:EXPULSADO_EVENTO]-(evento) "+
                         "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
                         "RETURN evento, score, 'tenes '+coincidencias+' coincidencias' AS motivo " +
                         "ORDER BY score DESC, amigosParticipando DESC, evento.fechaHora ASC")
@@ -342,6 +345,7 @@ List<Evento> eventosCantidadParticipantesParticipante(Long usuarioId, int min, i
                         +
                         "WHERE NOT (u)-[:PARTICIPA_EN]->(evento) " +
                         "AND NOT (u)<-[:CREADO_POR]-(evento) " +
+                        "AND NOT (u)-[:EXPULSADO_EVENTO]-(evento) "+
                         "AND NOT evento.esPrivadoParaLaComunidad " +
                         "WITH evento, COUNT(DISTINCT e) AS etiquetasCompartidas, " +
                         "point({latitude: evento.latitud, longitude: evento.longitud}) AS eventoUbicacion, " +
@@ -367,6 +371,7 @@ List<Evento> eventosCantidadParticipantesParticipante(Long usuarioId, int min, i
                         +
                         "WHERE NOT (u)-[:PARTICIPA_EN]->(evento) " +
                         "AND NOT (u)<-[:CREADO_POR]-(evento) " +
+                        "AND NOT (u)-[:EXPULSADO_EVENTO]-(evento) "+
                         "AND NOT evento.esPrivadoParaLaComunidad " +
                         "WITH evento, COUNT(DISTINCT e) AS etiquetasCompartidas, " +
                         "point({latitude: evento.latitud, longitude: evento.longitud}) AS eventoUbicacion, " +
@@ -394,6 +399,23 @@ List<Evento> eventosCantidadParticipantesParticipante(Long usuarioId, int min, i
                         MATCH (u:Usuario) WHERE id(u)=$idUsuario
                         MATCH (e:Evento) WHERE id(e)=$idEvento
                         MATCH (u)-[r:PARTICIPA_EN]->(e) DELETE r
+                        CREATE (u)-[:EXPULSADO_EVENTO {motivoExpulsion: $motivoExpulsion}]->(e)
                                    """)
-        void eliminarUsuario(Long idEvento, Long idUsuario);
+        void eliminarUsuario(Long idEvento, Long idUsuario, String motivoExpulsion);
+
+        @Query("""
+                MATCH (u:Usuario) WHERE id(u)=$idUsuario
+                MATCH (e:Evento) WHERE id(e)=$idEvento
+                MATCH (u)-[r:EXPULSADO_EVENTO]-(e)
+                RETURN COUNT(r)>0
+                """)
+        boolean estaExpulsado (Long idUsuario, Long idEvento);
+
+        @Query("""
+                MATCH (u:Usuario) WHERE id(u)=$idUsuario
+                MATCH (e:Evento) WHERE id(e)=$idEvento
+                MATCH (u)-[r:EXPULSADO_EVENTO]-(e)
+                RETURN r.motivoExpulsion
+                """)
+        String motivoExpulsion (Long idUsuario, Long idEvento);
 }

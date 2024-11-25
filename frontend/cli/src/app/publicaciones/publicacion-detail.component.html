@@ -36,7 +36,9 @@
         <div class="comment-header" style="display: flex; align-items: center;">
           <a [routerLink]="['/perfil', com.usuario.id]"
             style="text-decoration: none; display: flex; align-items: center;">
-            <img [src]="com.usuario.fotoPerfil" alt="foto de Perfil"
+            <img *ngIf="com.usuario.fotoPerfil" [src]="com.usuario.fotoPerfil" alt="foto de Perfil"
+              style="width: 30px; height: 30px; border-radius: 50%; margin-right: 8px;">
+            <img *ngIf="!com.usuario.fotoPerfil" src="../../assets/usuario.png" alt="foto de Perfil"
               style="width: 30px; height: 30px; border-radius: 50%; margin-right: 8px;">
           </a>
           <a [routerLink]="['/perfil', com.usuario.id]" style="text-decoration: none; color: #3897f0;">
@@ -69,7 +71,9 @@
       <a [routerLink]="['/perfil', usuario.id]" style="text-decoration: none; display: flex; align-items: center;"
         (click)="cerrarModal()">
         >
-        <img [src]="usuario.fotoPerfil" alt="foto de Perfil"
+        <img *ngIf="usuario.fotoPerfil" [src]="usuario.fotoPerfil" alt="foto de Perfil"
+          style="width: 30px; height: 30px; border-radius: 50%; margin-right: 8px;">
+        <img *ngIf="!usuario.fotoPerfil" src="../../assets/usuario.png" alt="foto de Perfil"
           style="width: 30px; height: 30px; border-radius: 50%; margin-right: 8px;">
       </a>
       <a [routerLink]="['/perfil', usuario.id]" style="text-decoration: none; color: #000000;" (click)="cerrarModal()">

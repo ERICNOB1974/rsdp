@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavigationEnd, Router, RouterModule, RouterLink, RouterOutlet } from '@angular/router';
 import { UbicacionService } from './ubicacion.service';
-import { NgIf } from '@angular/common';
+import { Location, NgIf } from '@angular/common';
 import { AuthService } from './autenticacion/auth.service';
 import { CommonModule } from '@angular/common';
 import { NotificacionService } from './notificaciones/notificacion.service';
@@ -10,6 +10,7 @@ import { Notificacion } from './notificaciones/notificacion';
 import { ThemeService } from './themeservice';
 import { UsuarioService } from './usuarios/usuario.service';
 import { Usuario } from './usuarios/usuario';
+
 
 //import { ToastrService } from 'ngx-toastr';
 //import { WebSocketService } from './notificaciones/webSocket.Service';
@@ -39,10 +40,10 @@ export class AppComponent {
     private ubicacionService: UbicacionService,
     private usuarioService: UsuarioService,
     private authService: AuthService,
-    private notificacionService: NotificacionService,
+    private notificacionService: NotificacionService
     // private toastr: ToastrService,
     //private webSocketService: WebSocketService
-    ) { }
+  ) { }
 
   ngOnInit(): void {
     this.router.events.subscribe(event => {
@@ -150,6 +151,7 @@ export class AppComponent {
       case 'RECORDATORIO_EVENTO_PROXIMO':
       case 'MODIFICACION_EVENTO':
       case 'INVITACION_EVENTO':
+      case 'EXPULSION_EVENTO':
         // Notificaciones relacionadas con eventos
         urlDestino = `/eventos/${notificacion.entidadId}`;
         break;
