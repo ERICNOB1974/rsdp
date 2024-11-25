@@ -96,6 +96,10 @@ export class EventoDetailComponent implements OnInit {
      this.motivoExpulsion = response.message; // Asumiendo que el backend devuelve el motivo
     });
   }
+  seleccionarUsuario(usuario: any): void {
+    this.usuarioEliminar = usuario;
+  }
+  
   private iniciarMapa(): void {
     if (this.evento.latitud !== null && this.evento.longitud !== null) {
       this.colocarCoordenadas(this.evento.latitud, this.evento.longitud); // Inicia el mapa con las coordenadas del usuario
@@ -121,9 +125,7 @@ export class EventoDetailComponent implements OnInit {
     this.mapa.off('click');
   }
 
-  seleccionarUsuario(usuario: any): void {
-    this.usuarioEliminar = usuario;
-  }
+ 
 
   getEvento(): void {
     const id = this.route.snapshot.paramMap.get('id')!;

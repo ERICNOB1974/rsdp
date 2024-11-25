@@ -129,6 +129,14 @@ export class ComunidadService {
     return this.http.post<DataPackage>(` ${this.comunidadesUrl}/eliminarUsuario/${idSuperUsuario}/${idMiembro}/${idComunidad}`, body);
   }
 
+  eliminarMiembroConMotivo(motivo: String, idMiembro: number, idComunidad: number): Observable<DataPackage> {
+    return this.http.put<DataPackage>(` ${this.comunidadesUrl}/eliminarParticipante/${idComunidad}/${idMiembro}`, motivo);
+  }
+  
+  verificarExpulsion(idUsuarioAutenticado: number, idComunidad: number) {
+    return this.http.get<DataPackage>(`${this.comunidadesUrl}/estaExpulsado/${idUsuarioAutenticado}/${idComunidad}`);
+  }
+
   gestionarSolicitudIngreso(idSuperUsuario: number, idMiembro: number, idComunidad: number, aceptada: boolean): Observable<DataPackage> {
     const body = {}
     return this.http.post<DataPackage>(` ${this.comunidadesUrl}/gestionarSolicitudIngreso/${idSuperUsuario}/${idMiembro}/${idComunidad}?aceptada=${aceptada}`, body);
@@ -204,7 +212,7 @@ export class ComunidadService {
       (nombreComunidad ? `&nombreComunidad=${nombreComunidad}` : '');  // Agregar solo si no está vacío
     return this.http.get<DataPackage>(url);
   }
-  enviarNotificacionComunidad(mensaje: string, asunto: string, usuarios: Usuario[], nombreActividad:string): Observable<DataPackage> {
+  enviarNotificacionComunidad(mensaje: string, asunto: string, usuarios: Usuario[], nombreActividad: string): Observable<DataPackage> {
 
     const nombreUsuario = this.authService.getNombreUsuario();
 

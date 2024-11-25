@@ -279,7 +279,7 @@ public class ComunidadService {
     public void eliminarUsuario(String mensaje, Long idComunidad, Long idUsuario) {
         Comunidad c = comunidadRepository.findById(idComunidad).get();
         String notificacion = "Has sido eliminado de la comunidad " + c.getNombre();
-        this.notificacionService.notificarExpulsionEvento(notificacion, idComunidad, idUsuario);
+        this.notificacionService.notificarExpulsionComunidad(notificacion, idComunidad, idUsuario);
         this.comunidadRepository.eliminarUsuario(idComunidad, idUsuario, mensaje);
     }
 
