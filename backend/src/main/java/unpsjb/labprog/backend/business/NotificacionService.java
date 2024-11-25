@@ -140,4 +140,7 @@ public class NotificacionService {
     public void notificarExpulsionEvento(String mensaje, Long idEvento, Long idUsuario){
         this.notificacionRepository.crearNotificacionMotivoExpulsion(idUsuario, idEvento, "EXPULSION_EVENTO", LocalDateTime.now(), mensaje);
     }
+    public void notificarExpulsionComunidad(String mensaje, Long idComunidad, Long idUsuario){
+        this.notificacionRepository.crearNotificacionMotivoExpulsion(idUsuario, idComunidad, "EXPULSION_COMUNIDAD", LocalDateTime.now(), mensaje);
+    }
 }

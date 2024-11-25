@@ -69,7 +69,7 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
             """)
     void crearNotificacionCambioEvento(Long idUsuario, Long idEntidad, String tipo, LocalDateTime fecha,
             String mensaje);
-            
+
     @Query("""
             MATCH (u:Usuario) WHERE id(u) = $idUsuario
             MATCH (entidad) WHERE id(entidad) = $idEntidad
@@ -77,6 +77,7 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
             """)
     void crearNotificacionMotivoExpulsion(Long idUsuario, Long idEntidad, String tipo, LocalDateTime fecha,
             String mensaje);
+
 
     @Query("""
                 MATCH (u:Usuario) WHERE id(u)=$idUsuarioReceptor
