@@ -36,7 +36,7 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    // private imageLoader: ImageLoaderService,
+    private imageLoader: ImageLoaderService,
     private ubicacionService: UbicacionService,
     private authService: AuthService,
     private router: Router
@@ -48,21 +48,15 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const shouldReload = localStorage.getItem('reloadLogin');
-  
-    if (shouldReload) {
-      localStorage.removeItem('reloadLogin'); 
-      location.reload();
-    }
+    // this.loadLogo();
   }
-  
 
-  // loadLogo() {
-  //   const logoUrl = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmQCLsVPsXkhhqWwZA4MvbrTsuoRzUmUU2UA&s';
-  //   this.imageLoader.loadImage(logoUrl).subscribe((blob: Blob) => {
-  //     this.logoUrl = URL.createObjectURL(blob);
-  //   });
-  // }
+  loadLogo() {
+    const logoUrl = 'https://imgur.com/OUCRENo';
+    this.imageLoader.loadImage(logoUrl).subscribe((blob: Blob) => {
+      this.logoUrl = URL.createObjectURL(blob);
+    });
+  }
 
   onSubmit(): void {
     if (this.loginForm.valid) {
@@ -79,7 +73,8 @@ export class LoginComponent implements OnInit {
         if (dataPackage.status == 200){
           this.authService.saveToken(<any>dataPackage.data);
           this.ubicacionService.setearUbicacionDeUsuario(); 
-          this.router.navigate(['/']); 
+          localStorage.setItem('shouldReloadHome', 'true');
+          window.location.href = '/';
         } else {
           alert(dataPackage.message);
         }
