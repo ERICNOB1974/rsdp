@@ -1,32 +1,33 @@
 <div class="comunidad-admin">
-  <h1 class="comunidad-titulo">Administración de la Comunidad: {{ comunidad?.nombre }}</h1>
+  <h1 class="comunidad-titulo">Administración de la Comunidad: {{ comunidad.nombre }}</h1>
 
   <!-- Botones principales -->
   <div class="botones-principales">
     <button *ngIf="esCreador" class="btn btn-primary" (click)="editarComunidad()">Editar Información</button>
-    <button *ngIf="esCreador" class="btn btn-secondary" (click)="openModal(modalNotificacion)">Notificar a los Miembros</button>
+    <button *ngIf="esCreador" class="btn btn-secondary" (click)="openModal(modalNotificacion)">Notificar a los
+      Miembros</button>
   </div>
 
   <!-- Miembros -->
   <section class="miembros-section">
     <h2>Miembros</h2>
     <ul class="members-list" (scroll)="onScroll()">
-      <li *ngFor="let miembro of miembrosVisibles" class="miembro-item" >
-        <img [src]="miembro.fotoPerfil" alt="Foto de {{ miembro.nombreUsuario }}" class="avatar-circular" (click)="verPerfil(miembro)">
+      <li *ngFor="let miembro of miembrosVisibles" class="miembro-item">
+        <img [src]="miembro.fotoPerfil" alt="Foto de {{ miembro.nombreUsuario }}" class="avatar-circular"
+          (click)="verPerfil(miembro)">
         <span class="name" (click)="verPerfil(miembro)">{{ miembro.nombreUsuario }}</span>
         <div class="actions">
-          <button 
-            *ngIf="esCreador && miembro.id !== idUsuarioAutenticado && esAdministrador(miembro.id)" 
-            class="btn btn-warning btn-sm" 
-            (click)="quitarRolOrganizador(miembro.id)">Quitar Rol de Admin</button>
-          <button 
-            *ngIf="esCreador && miembro.id !== idUsuarioAutenticado && !esAdministrador(miembro.id)" 
-            class="btn btn-success btn-sm" 
-            (click)="otorgarRolOrganizador(miembro.id)">Hacer Admin</button>
-          <button 
-            *ngIf="esCreador || (esAdmin && !esAdministrador(miembro.id) && miembro.id !== creadorComunidad.id) && miembro.id !== idUsuarioAutenticado" 
-            class="btn btn-danger btn-sm" 
-            (click)="eliminarMiembro(miembro)">Eliminar</button>
+          <button *ngIf="esCreador && miembro.id !== idUsuarioAutenticado && esAdministrador(miembro.id)"
+            class="btn btn-warning btn-sm" (click)="quitarRolOrganizador(miembro.id)">Quitar Rol de Admin</button>
+          <button *ngIf="esCreador && miembro.id !== idUsuarioAutenticado && !esAdministrador(miembro.id)"
+            class="btn btn-success btn-sm" (click)="otorgarRolOrganizador(miembro.id)">Hacer Admin</button>
+
+          <button
+            *ngIf="esCreador || (esAdmin && !esAdministrador(miembro.id) && miembro.id !== creadorComunidad.id) && miembro.id !== idUsuarioAutenticado"
+            class="btn btn-danger btn-sm mt-2" (click)="abrirModalExpulsion(miembro)">
+            Eliminar
+          </button>
+
         </div>
       </li>
     </ul>
@@ -52,64 +53,65 @@
   <!-- Regresar -->
   <button class="btn btn-light" (click)="goBack()">Regresar</button>
 </div>
+
+
 <ng-template #modalNotificacion>
-    <div class="modal" 
-         id="notificacionModal" 
-         tabindex="-1" 
-         aria-labelledby="notificacionModalLabel" 
-         aria-hidden="true" 
-         role="dialog">
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content bg-dark-custom text-light">
-          <div class="modal-header border-bottom border-secondary">
-            <h5 class="modal-title text-highlight" id="notificacionModalLabel">Enviar notificación a los miembros de la comunidad</h5>
-            <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="closeModal()"></button>
-          </div>
-          <div class="modal-body">
-            <form #notificacionForm="ngForm" class="p-3">
-              <div class="mb-3">
-                <label for="motivo" class="form-label text-light">Motivo de la notificación</label>
-                <input 
-                  type="text" 
-                  class="form-control border-secondary bg-dark-input text-light" 
-                  id="motivo" 
-                  [(ngModel)]="motivo" 
-                  name="motivo" 
-                  placeholder="Escribe el motivo"
-                  required>
-                <div *ngIf="!motivo && notificacionForm.submitted" class="text-danger mt-1">
-                  El motivo es obligatorio.
-                </div>
+  <div class="modal" id="notificacionModal" tabindex="-1" aria-labelledby="notificacionModalLabel" aria-hidden="true"
+    role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content bg-dark-custom text-light">
+        <div class="modal-header border-bottom border-secondary">
+          <h5 class="modal-title text-highlight" id="notificacionModalLabel">Enviar notificación a los miembros de la
+            comunidad</h5>
+          <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+          <form #notificacionForm="ngForm" class="p-3">
+            <div class="mb-3">
+              <label for="motivo" class="form-label text-light">Motivo de la notificación</label>
+              <input type="text" class="form-control border-secondary bg-dark-input text-light" id="motivo"
+                [(ngModel)]="motivo" name="motivo" placeholder="Escribe el motivo" required>
+              <div *ngIf="!motivo && notificacionForm.submitted" class="text-danger mt-1">
+                El motivo es obligatorio.
               </div>
-              <div class="mb-3">
-                <label for="mensaje" class="form-label text-light">Mensaje</label>
-                <textarea 
-                  class="form-control border-secondary bg-dark-input text-light" 
-                  id="mensaje" 
-                  [(ngModel)]="mensaje" 
-                  name="mensaje" 
-                  rows="4" 
-                  placeholder="Escribe el mensaje"
-                  required>
+            </div>
+            <div class="mb-3">
+              <label for="mensaje" class="form-label text-light">Mensaje</label>
+              <textarea class="form-control border-secondary bg-dark-input text-light" id="mensaje"
+                [(ngModel)]="mensaje" name="mensaje" rows="4" placeholder="Escribe el mensaje" required>
                 </textarea>
-                <div *ngIf="!mensaje && notificacionForm.submitted" class="text-danger mt-1">
-                  El mensaje es obligatorio.
-                </div>
+              <div *ngIf="!mensaje && notificacionForm.submitted" class="text-danger mt-1">
+                El mensaje es obligatorio.
               </div>
-            </form>
-          </div>
-          <div class="modal-footer border-top border-secondary d-flex justify-content-between">
-            <button 
-              type="button" 
-              class="btn btn-cancel" 
-              (click)="closeModal()">Cancelar</button>
-            <button 
-              type="button" 
-              class="btn btn-primary btn-highlight" 
-              [disabled]="!motivo || !mensaje" 
-              (click)="enviarNotificacion()">Enviar</button>
-          </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer border-top border-secondary d-flex justify-content-between">
+          <button type="button" class="btn btn-cancel" (click)="closeModal()">Cancelar</button>
+          <button type="button" class="btn btn-primary btn-highlight" [disabled]="!motivo || !mensaje"
+            (click)="enviarNotificacion()">Enviar</button>
         </div>
       </div>
     </div>
-  </ng-template>
+  </div>
+</ng-template>
+
+
+
+<!-- Plantilla del modal -->
+<ng-template #modalExpulsion let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Motivo de expulsión</h5>
+    <button type="button" class="btn-close" aria-label="Cerrar" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <p>Por favor, ingresa el motivo por el que estás expulsando a {{ usuarioEliminar.nombreUsuario }}.</p>
+    <textarea [(ngModel)]="motivoExpulsion" class="form-control" placeholder="Escribe aquí el motivo"></textarea>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancelar</button>
+    <button type="button" class="btn btn-danger" (click)="confirmarExpulsion(); modal.close()">
+      Eliminar usuario
+    </button>
+  </div>
+</ng-template>
