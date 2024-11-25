@@ -440,14 +440,17 @@ public class EventoService {
     }
 
     public void eliminarUsuario(String mensaje, Long idEvento, Long idUsuario) {
-        this.notificacionService.notificarExpulsionEvento(mensaje, idEvento, idUsuario);
+        Evento e = eventoRepository.findById(idEvento).get();
+        String notificacion = "Has sido eliminado del evento " + e.getNombre();
+        this.notificacionService.notificarExpulsionEvento(notificacion, idEvento, idUsuario);
         this.eventoRepository.eliminarUsuario(idEvento, idUsuario, mensaje);
     }
 
-    public boolean estaExpulsado(Long idUsuario, Long idEvento){
-        return this.eventoRepository.estaExpulsado(idUsuario ,idEvento);
+    public boolean estaExpulsado(Long idUsuario, Long idEvento) {
+        return this.eventoRepository.estaExpulsado(idUsuario, idEvento);
     }
-    public String motivoExpulsion(Long idUsuario, Long idEvento){
-        return this.eventoRepository.motivoExpulsion(idUsuario ,idEvento);
+
+    public String motivoExpulsion(Long idUsuario, Long idEvento) {
+        return this.eventoRepository.motivoExpulsion(idUsuario, idEvento);
     }
 }
