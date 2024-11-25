@@ -30,7 +30,6 @@ export class SugerenciasEventosComponent implements OnInit {
 
   ngOnInit(): void {
     this.getEventos();
-    console.info(this.results);
   }
 
   getEventos(): void {
@@ -40,7 +39,6 @@ export class SugerenciasEventosComponent implements OnInit {
 
       if (Array.isArray(data.data)) {
         this.results = data.data.map(item => item.evento);  // Extrae solo los objetos 'evento'
-        console.info("Eventos recibidos: ", this.results);
 
         this.motivos = {};
         data.data.forEach(item => {
@@ -49,7 +47,6 @@ export class SugerenciasEventosComponent implements OnInit {
 
         this.elementos = data.data.length
         this.totalPages = data.totalPaginas; // Accede correctamente a 'totalPaginas'
-        console.info("Total de páginas:", this.totalPages);
       }
     });
   }

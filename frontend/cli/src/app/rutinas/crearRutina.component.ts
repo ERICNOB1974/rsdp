@@ -138,67 +138,119 @@ export class CrearRutinaComponent {
     return true;
   }
 
-  async guardarRutina() {
-    if (!this.esFormularioValido()) {
-      alert('Complete todos los campos obligatorios y añada al menos un ejercicio por día de trabajo.');
-      return;
-    }
+  // async guardarRutina() {
+  //   if (!this.esFormularioValido()) {
+  //     alert('Complete todos los campos obligatorios y añada al menos un ejercicio por día de trabajo.');
+  //     return;
+  //   }
 
-    try {
-      const rutina = { nombre: this.nombreRutina, descripcion: this.descripcionRutina };
-      this.rutinaId = await this.rutinaService.guardarRutina(rutina);
+  //   try {
+  //     const rutina = { nombre: this.nombreRutina, descripcion: this.descripcionRutina };
+  //     this.rutinaId = await this.rutinaService.guardarRutina(rutina);
 
-      const rutinaConId: Rutina = {
-        id: parseInt(this.rutinaId, 10),
-        nombre: this.nombreRutina,
-        descripcion: this.descripcionRutina
-      };
-      // Verificar y crear etiquetas si es necesario
-      for (const etiqueta of this.etiquetasSeleccionadas) {
-        const existe = await this.etiquetaService.verificarExistencia(etiqueta.nombre).toPromise();
-        let etiquetaFinal = etiqueta;
+  //     const rutinaConId: Rutina = {
+  //       id: parseInt(this.rutinaId, 10),
+  //       nombre: this.nombreRutina,
+  //       descripcion: this.descripcionRutina
+  //     };
+  //     // Verificar y crear etiquetas si es necesario
+  //     for (const etiqueta of this.etiquetasSeleccionadas) {
+  //       const existe = await this.etiquetaService.verificarExistencia(etiqueta.nombre).toPromise();
+  //       let etiquetaFinal = etiqueta;
 
-        if (!existe) {
-          const nuevaEtiqueta = { id: 0, nombre: etiqueta.nombre }; // Asegura que tenga un 'id'
-          etiquetaFinal = await firstValueFrom(this.etiquetaService.crearEtiqueta(nuevaEtiqueta));
-        } else {
-          etiquetaFinal = etiqueta;
-        }
-        // Realizar la etiquetación con la etiqueta final
-        await this.rutinaService.etiquetar(rutinaConId, etiquetaFinal.id).toPromise();
-      }
+  //       if (!existe) {
+  //         const nuevaEtiqueta = { id: 0, nombre: etiqueta.nombre }; // Asegura que tenga un 'id'
+  //         etiquetaFinal = await firstValueFrom(this.etiquetaService.crearEtiqueta(nuevaEtiqueta));
+  //       } else {
+  //         etiquetaFinal = etiqueta;
+  //       }
+  //       // Realizar la etiquetación con la etiqueta final
+  //       await this.rutinaService.etiquetar(rutinaConId, etiquetaFinal.id).toPromise();
+  //     }
 
-      // Guardar los días y ejercicios
-      for (let i = 0; i < this.dias.length; i++) {
-        const diaId = await this.rutinaService.guardarDia(this.dias[i], this.rutinaId, i + 1);
+  //     // Guardar los días y ejercicios
+  //     for (let i = 0; i < this.dias.length; i++) {
+  //       const diaId = await this.rutinaService.guardarDia(this.dias[i], this.rutinaId, i + 1);
 
-        for (let j = 0; j < this.dias[i].ejercicios.length; j++) {
-          const ejercicio = this.dias[i].ejercicios[j];
-          const ejercicioData = {
-            nombre: ejercicio.nombre,
-            repeticiones: ejercicio.repeticiones,
-            series: ejercicio.series,
-            tiempo: ejercicio.tiempo,
+  //       for (let j = 0; j < this.dias[i].ejercicios.length; j++) {
+  //         const ejercicio = this.dias[i].ejercicios[j];
+  //         const ejercicioData = {
+  //           nombre: ejercicio.nombre,
+  //           repeticiones: ejercicio.repeticiones,
+  //           series: ejercicio.series,
+  //           tiempo: ejercicio.tiempo,
+  //           descripcion: ejercicio.descripcion,
+  //           imagen: ejercicio.imagen,
+  //           tipo: ejercicio.tipo
+  //         };
+
+  //         if (ejercicio.tipo === 'resistencia') {
+  //           await this.rutinaService.guardarEjercicioResistencia(ejercicioData, diaId, j + 1, ejercicioData.tiempo);
+  //         } else {
+  //           await this.rutinaService.guardarEjercicioSeries(ejercicioData, diaId, j + 1, <number>ejercicio.series, <number>ejercicio.repeticiones);
+  //         }
+  //       }
+  //     }
+
+  //     alert('Rutina guardada con éxito');
+  //     window.location.reload();
+  //   } catch (error) {
+  //     console.error('Error al guardar la rutina:', error);
+  //     alert('Error al guardar la rutina.');
+  //   }
+  // }
+
+  onSelectEjercicio(ejercicioSeleccionado: Ejercicio, dia: Dia) {
+    const ejercicio = dia.ejercicios[dia.ejercicios.length - 1]; // Obtener el último ejercicio agregado
+    ejercicio.nombre = ejercicioSeleccionado.nombre; // Asignar solo el nombre
+}
+
+async guardarRutinaOptimizada() {
+  if (!this.esFormularioValido()) {
+    alert('Complete todos los campos obligatorios y añada al menos un ejercicio por día de trabajo.');
+    return;
+  }
+
+  try {
+    const rutinaCompleta = {
+      nombre: this.nombreRutina,
+      descripcion: this.descripcionRutina,
+      etiquetas: this.etiquetasSeleccionadas.map(etiqueta => ({ nombre: etiqueta.nombre })),
+      dias: this.dias.map((dia, index) => ({
+        nombre: dia.nombre,
+        descripcion: dia.descripcion,
+        orden: index + 1,
+        ejercicios: dia.ejercicios.map((ejercicio, j) => {
+          // Verificar si 'ejercicio.nombre' es un objeto, y si es así, tomar 'ejercicio.nombre.nombre'
+          const nombreEjercicio = typeof ejercicio.nombre === 'object' && ejercicio.nombre !== null 
+            ? ejercicio.nombre.nombre 
+            : ejercicio.nombre;
+          
+          return {
+            nombre: nombreEjercicio,
             descripcion: ejercicio.descripcion,
             imagen: ejercicio.imagen,
-            tipo: ejercicio.tipo
+            tipo: ejercicio.tipo,
+            orden: j + 1,
+            tiempo: ejercicio.tiempo || null,
+            series: ejercicio.series || null,
+            repeticiones: ejercicio.repeticiones || null,
           };
+        })
+      }))
+    };
 
-          if (ejercicio.tipo === 'resistencia') {
-            await this.rutinaService.guardarEjercicioResistencia(ejercicioData, diaId, j + 1, ejercicioData.tiempo);
-          } else {
-            await this.rutinaService.guardarEjercicioSeries(ejercicioData, diaId, j + 1, <number>ejercicio.series, <number>ejercicio.repeticiones);
-          }
-        }
-      }
-
-      alert('Rutina guardada con éxito');
-      window.location.reload();
-    } catch (error) {
-      console.error('Error al guardar la rutina:', error);
-      alert('Error al guardar la rutina.');
-    }
+    console.info("A VER QUÉ DEVUELVE", rutinaCompleta);
+    const response = await firstValueFrom(this.rutinaService.guardarRutinaOptimizada(rutinaCompleta));
+    alert('Rutina guardada con éxito');
+    window.location.reload();
+  } catch (error) {
+    console.error('Error al guardar la rutina optimizada:', error);
+    alert('Error al guardar la rutina.');
   }
+}
+
+
 
   searchEjercicio = (text$: Observable<string>): Observable<Ejercicio[]> =>
     text$.pipe(

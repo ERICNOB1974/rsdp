@@ -22,17 +22,6 @@
     margin-bottom: 20px;
 }
 
-.tab-button {
-    padding: 10px 20px;
-    cursor: pointer;
-    border: none;
-    font-weight: bold;
-}
-
-.tab-button.active {
-    border-bottom: 2px solid #007bff;
-    color: #007bff;
-}
 
 .tab-content {
     margin: 0 auto;
@@ -71,28 +60,7 @@
     margin-top: 8px;
 }
 
-/* Ajustes del botón */
-/* Base button styles */
-.btn {
-    border: none;
-    color: white;
-    padding: 12px 24px;
-    cursor: pointer;
-    border-radius: 5px;
-    display: inline-flex;
-    align-items: center;
-    /* Center vertically */
-    justify-content: center;
-    /* Center horizontally */
-    font-size: 18px;
-    /* Text size */
-    font-weight: bold;
-    /* Bold text */
-    background-color: #007bff;
-    /* Primary color */
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    /* Smooth transitions */
-}
+
 
 /* Icon styles */
 .btn img.icono-boton {
@@ -195,7 +163,32 @@
     margin-bottom: 15px;
 }
 
-/* Botones de acciones en el perfil */
+.btn {
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    cursor: pointer;
+    border-radius: 5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: bold;
+    background-color: #007bff;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.tab-button {
+    padding: 10px 20px;
+    cursor: pointer;
+    border: none;
+    font-weight: bold;
+}
+.tab-button.active {
+    border-bottom: 2px solid #007bff;
+    color: #007bff;
+}
+
 button {
     padding: 10px 20px;
     margin-top: 10px;
@@ -250,12 +243,14 @@ button {
     border-bottom: 2px solid #ddd;
     margin-bottom: 20px;
 }
+
 .tab-button {
     padding: 10px 20px;
     cursor: pointer;
     border: none;
     font-weight: bold;
 }
+
 .tab-button.active {
     border-bottom: 2px solid #007bff;
     color: #007bff;
@@ -266,13 +261,15 @@ button {
     padding: 15px;
     max-width: 100%;
 }
+
 /* Estilo para las publicaciones */
 .publicaciones-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 20px;
     overflow-y: auto;
-    max-height: 400px; /* Define la altura máxima del área visible */
+    max-height: 400px;
+    /* Define la altura máxima del área visible */
 }
 
 
@@ -323,47 +320,71 @@ button {
 }
 
 /* Rutinas, Eventos y Comunidades */
-.eventos-grid, .rutinas-grid, .comunidades-grid {
+.eventos-grid,
+.rutinas-grid,
+.comunidades-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
 }
 
-.evento-item, .rutina-item, .comunidad-item {
+.evento-item,
+.rutina-item,
+.comunidad-item {
     border: 1px solid #ddd;
     border-radius: 8px;
     padding: 20px;
     text-align: left;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    cursor: pointer; /* Cambia el cursor a pointer */
+    cursor: pointer;
+    /* Cambia el cursor a pointer */
 }
 
-.evento-item:hover, .rutina-item:hover, .comunidad-item:hover {
-    transform: translateY(-2px); /* Levantar un poco el elemento */
-    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2); /* Sombra más intensa */
-    background-color: #ffb806; /* Cambia el color de fondo al hacer hover */
+.evento-item:hover,
+.rutina-item:hover,
+.comunidad-item:hover {
+    transform: translateY(-2px);
+    /* Levantar un poco el elemento */
+    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.2);
+    /* Sombra más intensa */
+    background-color: #ffb806;
+    /* Cambia el color de fondo al hacer hover */
 }
 
-.evento-item h4, .rutina-item h4, .comunidad-item h4 {
+.evento-item h4,
+.rutina-item h4,
+.comunidad-item h4 {
     color: #000000;
     font-size: 1.25em;
     margin-bottom: 10px;
-    transition: color 0.3s ease; /* Transición de color de texto */
+    transition: color 0.3s ease;
+    /* Transición de color de texto */
 }
 
-evento-item:hover, .rutina-item:hover, .comunidad-item:hover {
-    transform: translateY(-2px); /* Levantar un poco el elemento */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra más intensa */
-    background-color: #f1b157; /* Cambia el color de fondo al hacer hover */
+evento-item:hover,
+.rutina-item:hover,
+.comunidad-item:hover {
+    transform: translateY(-2px);
+    /* Levantar un poco el elemento */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    /* Sombra más intensa */
+    background-color: #f1b157;
+    /* Cambia el color de fondo al hacer hover */
 }
 
-.evento-item:hover h4, .rutina-item:hover h4, .comunidad-item:hover h4 {
-    color: #000000; /* Cambia el color del texto al hacer hover */
+.evento-item:hover h4,
+.rutina-item:hover h4,
+.comunidad-item:hover h4 {
+    color: #000000;
+    /* Cambia el color del texto al hacer hover */
 }
 
-.evento-item p strong, .rutina-item p strong, .comunidad-item p strong {
+.evento-item p strong,
+.rutina-item p strong,
+.comunidad-item p strong {
     color: #f10000;
 }
+
 perfil-eventos {
     max-width: 100%;
     overflow-x: auto;
@@ -378,7 +399,8 @@ perfil-eventos {
 }
 
 /* Ajusta el tamaño y margenes de los textos internos */
-.evento-item p, .evento-item h4 {
+.evento-item p,
+.evento-item h4 {
     margin: 5px 0;
     font-size: 0.9em;
 }
@@ -461,6 +483,11 @@ perfil-eventos {
     padding: 20px;
     background-color: #ffffff;
     border-radius: 15px;
+    overflow-y: auto;
+    max-height: 200px;
+    /* Puedes ajustar este valor según el diseño */
+
+
 }
 
 .miembro-item {
@@ -495,7 +522,8 @@ perfil-eventos {
 
 /* Estilo de los anónimos */
 .anonimos-item {
-    grid-column: span 2; /* O ajusta según necesites */
+    grid-column: span 2;
+    /* O ajusta según necesites */
     text-align: center;
     font-size: 0.9em;
     color: #777;
@@ -511,29 +539,38 @@ perfil-eventos {
 }
 
 .rol.creador {
-    color: #ff5722; /* Color para el creador */
+    color: #ff5722;
+    /* Color para el creador */
 }
 
 .rol.administrador {
-    color: #3f51b5; /* Color para el administrador */
+    color: #3f51b5;
+    /* Color para el administrador */
 }
 
 .rol.miembro {
-    color: #757575; /* Color para el miembro */
+    color: #757575;
+    /* Color para el miembro */
 }
+
 .avatar-anonimo {
-    width: 20px;  /* Ajusta el tamaño de la imagen */
+    width: 20px;
+    /* Ajusta el tamaño de la imagen */
     height: 20px;
-    margin-right: 8px;  /* Espaciado entre la imagen y el texto */
+    margin-right: 8px;
+    /* Espaciado entre la imagen y el texto */
 }
+
 .muro-imagen {
     width: 100%;
     height: 80%;
-    object-fit: cover;  /* Asegura que la imagen se ajuste al contenedor sin distorsionarse */
-    object-position: center; /* Centra la imagen */
-  }
+    object-fit: cover;
+    /* Asegura que la imagen se ajuste al contenedor sin distorsionarse */
+    object-position: center;
+    /* Centra la imagen */
+}
 
-  .evento-detalles {
+.evento-detalles {
     position: absolute;
     top: 0;
     left: 0;
@@ -550,86 +587,96 @@ perfil-eventos {
     text-align: center;
     transition: opacity 0.3s ease, color 0.3s ease;
 }
+
 .evento-item:hover .evento-detalles {
     opacity: 1;
     z-index: 2;
     margin-bottom: 8px;
     line-height: 1.4;
-    color: #000000; /* Color naranja brillante */
+    color: #000000;
+    /* Color naranja brillante */
     font-size: 1.25em;
-    transform: scale(1.05); /* Aumento de tamaño */
-    text-shadow: 0 0 10px rgba(238, 238, 238, 0.8); /* Sombra naranja brillante */
-    transition: color 0.3s ease, transform 0.3s ease, text-shadow 0.3s ease; /* Transiciones suaves */
+    transform: scale(1.05);
+    /* Aumento de tamaño */
+    text-shadow: 0 0 10px rgba(238, 238, 238, 0.8);
+    /* Sombra naranja brillante */
+    transition: color 0.3s ease, transform 0.3s ease, text-shadow 0.3s ease;
+    /* Transiciones suaves */
 }
-  
+
 .evento-item:hover {
-    transform: translateY(-10px) scale(1.05); /* Movimiento hacia arriba y escalado */
-    box-shadow: 0 12px 30px rgba(255, 106, 0, 0.5); /* Sombra más intensa */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Transiciones */
+    transform: translateY(-10px) scale(1.05);
+    /* Movimiento hacia arriba y escalado */
+    box-shadow: 0 12px 30px rgba(255, 106, 0, 0.5);
+    /* Sombra más intensa */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Transiciones */
 }
 
 .evento-contenido {
     padding: 15px;
     background-color: white;
     text-align: center;
-  }
-  
-  .evento-nombre {
+}
+
+.evento-nombre {
     font-size: 18px;
     font-weight: bold;
     color: #333;
     margin-bottom: 8px;
-  }
-  
-  .evento-fecha, .evento-ubicacion {
+}
+
+.evento-fecha,
+.evento-ubicacion {
     font-size: 14px;
     margin: 4px 0;
-  }
-  .evento-item:hover {
+}
+
+.evento-item:hover {
     transform: translateY(-5px);
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-  }
-  
-  .evento-imagen {
+}
+
+.evento-imagen {
     width: 100%;
     height: 180px;
     background-size: cover;
     background-position: center;
     transition: opacity 0.3s ease;
-  }
+}
 
-  .btn-crear-evento:hover {
+.btn-crear-evento:hover {
     background-color: #0056b3;
-  }
-  
-  .eventos-grid {
+}
+
+.eventos-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
-  }
-  
-  .evento-item {
+}
+
+.evento-item {
     position: relative;
     border-radius: 12px;
     overflow: hidden;
     cursor: pointer;
     box-shadow: 0 4px 10px rgba(209, 208, 208, 0.801);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
+}
 
-  .perfil-eventos {
+
+.perfil-eventos {
     padding: 20px;
     background-color: #f9f9f9;
-  }
-  
-  .titulo-eventos {
+}
+
+.titulo-eventos {
     font-size: 24px;
     color: #333;
     margin-bottom: 20px;
-  }
-  
-  .btn-crear-evento {
+}
+
+.btn-crear-evento {
     background-color: #007bff;
     color: white;
     margin-bottom: 20px;
@@ -637,4 +684,65 @@ perfil-eventos {
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+
+  }
+
+
+/* Elimina bordes y establece el fondo oscuro en todos los niveles del modal */
+#notificacionModal {
+    display: block !important; /* Para asegurar que se muestre correctamente */
+    background-color: rgba(0, 0, 0, 0.8); /* Fondo oscuro con transparencia */
+    border: none; /* Sin bordes */
+    box-shadow: none; /* Elimina sombras adicionales */
+  }
+  
+  /* Asegúrate de que el modal-content no tenga bordes o sombras */
+  .modal-content {
+    border: none;
+    box-shadow: none;
+    background-color: #15202b; /* Color uniforme oscuro */
+  }
+  
+  /* Opcional: Si la línea blanca es parte del "fade" */
+  .modal.fade.show {
+    background-color: transparent !important; /* Asegura que el fondo no sea blanco */
+  }
+  
+  .modal-dialog {
+    margin-top: 0; /* Asegura que no haya separación entre el modal y la pantalla */
+  }
+
+
+/* Bordes de sección del modal */
+.modal-header, .modal-footer {
+    border-color: #39444d; /* Gris oscuro */
+  }
+  
+  
+  .modal-header .btn-close {
+    position: absolute;
+    top: 0.5rem; /* Ajusta la distancia desde la parte superior */
+    right: 0.5rem; /* Ajusta la distancia desde la derecha */
+    z-index: 1; /* Asegura que siempre esté encima */
+  }
+
+
+.modal-footer {
+    justify-content: flex-start; /* Alinear contenido a la izquierda */
+  }
+
+  .modal-header {
+    position: relative;
+    display: flex;
+    justify-content: center;
+  }
+
+  .modal-body {
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+  .modal-title {
+    font-weight: bold;
+    font-size: 1.5rem;
+    color: #007bff;
   }

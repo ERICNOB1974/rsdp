@@ -49,6 +49,20 @@ export class MuroComunidadComponent implements OnInit {
     amigosYaInvitados: any[] = [];
     cantidadMiembros: number = 0;
     esFavorito: boolean = false;
+    cargaInicial: number = 5; // Número inicial de elementos visibles
+    cargaIncremento: number = 5; // Número de elementos adicionales cargados en cada scroll
+    miembrosVisiblesPaginados: any[] = []; // Almacena los usuarios visibles en la interfaz
+
+    buscador: string = '';
+    amigosNoEnComunidadFiltrados: any[] = [];
+    amigosEnComunidadFiltrados: any[] = [];
+    amigosYaInvitadosFiltrados: any[] = [];
+    mostrarAmigosNoEnComunidad: boolean = true;
+    mostrarAmigosEnComunidad: boolean = true;
+    mostrarAmigosYaInvitados: boolean = true;
+    mostrarMasAmigosNoEnComunidad: number = 4;
+    mostrarMasAmigosEnComunidad: number = 4;
+    mostrarMasAmigosYaInvitados: number = 4;
 
 
     @ViewChild('modalInvitarAmigos') modalInvitarAmigos!: TemplateRef<any>;
@@ -134,50 +148,110 @@ export class MuroComunidadComponent implements OnInit {
         this.router.navigate([`eventos/${eventoId}`]);
     }
 
-    cargarAmigos(): void {
+    abrirModalInvitarAmigos(): void {
+        this.cargarAmigos();
+        this.dialog.open(this.modalInvitarAmigos);
+      }
+    
+      cerrarModal(): void {
+        this.buscador = '';
+        this.dialog.closeAll();
+      }
+    
+      cargarAmigos(): void {
         const idComunidad = this.comunidad.id;
-
-        this.usuarioService.todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(idComunidad).subscribe((dataPackage) => {
-            this.amigosNoEnComunidad = dataPackage.data as Comunidad[];
-
-            // Filtrar amigos ya invitados y ya en Comunidad de la lista de no pertenecientes
-            this.amigosNoEnComunidad = this.amigosNoEnComunidad.filter(
-                amigoNoEnComunidad => !this.amigosEnComunidad.some(amigoEnComunidad => amigoEnComunidad.id === amigoNoEnComunidad.id) &&
-                    !this.amigosYaInvitados.some(amigoYaInvitado => amigoYaInvitado.id === amigoNoEnComunidad.id)
-            );
-        });
-
+      
+        // Cargar amigos que ya están en la comunidad
         this.usuarioService.todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(idComunidad).subscribe((dataPackage) => {
-            this.amigosEnComunidad = dataPackage.data as Comunidad[];
+          this.amigosEnComunidad = dataPackage.data as Comunidad[];
+          this.amigosEnComunidadFiltrados = [...this.amigosEnComunidad]; // Sincronizar
+          this.mostrarCategorias();
         });
-
+      
+        // Cargar amigos ya invitados a la comunidad
         this.usuarioService.todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(idComunidad).subscribe((dataPackage) => {
-            this.amigosYaInvitados = dataPackage.data as Comunidad[];
+          this.amigosYaInvitados = dataPackage.data as Comunidad[];
+          this.amigosYaInvitadosFiltrados = [...this.amigosYaInvitados]; // Sincronizar
+          this.mostrarCategorias();
         });
-    }
-
-    invitarAmigo(idUsuarioReceptor: number): void {
+        
+        // Cargar amigos que no están en la comunidad
+        this.usuarioService.todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(idComunidad).subscribe((dataPackage) => {
+        this.amigosNoEnComunidad = dataPackage.data as Comunidad[];
+        this.amigosNoEnComunidad = this.amigosNoEnComunidad.filter(
+            amigoNoEnComunidad =>
+            !this.amigosEnComunidad.some(amigoEnComunidad => amigoEnComunidad.id === amigoNoEnComunidad.id) &&
+            !this.amigosYaInvitados.some(amigoYaInvitado => amigoYaInvitado.id === amigoNoEnComunidad.id)
+        );
+        this.amigosNoEnComunidadFiltrados = [...this.amigosNoEnComunidad]; // Sincronizar
+        this.mostrarCategorias();
+        });
+      }
+      
+    
+      invitarAmigo(idUsuarioReceptor: number): void {
         const idComunidad = this.comunidad.id;
         this.usuarioService.enviarInvitacionComunidad(idUsuarioReceptor, idComunidad).subscribe(() => {
-            this.cargarAmigos();
-            this.cargarAmigos();
-            this.cdr.detectChanges(); // Fuerza la actualización del modal
-            this.snackBar.open('Invitación enviada con éxito', 'Cerrar', {
-                duration: 3000,
-            });
+          this.cargarAmigos();
+          this.cdr.detectChanges(); // Fuerza la actualización del modal
+          this.snackBar.open('Invitación enviada con éxito', 'Cerrar', {
+            duration: 3000,
+          });
         },
-            error => {
-                console.error('Error al invitar al amigo:', error);
-                this.snackBar.open('Error al enviar la invitación', 'Cerrar', {
-                    duration: 3000,
-                });
+          error => {
+            console.error('Error al invitar al amigo:', error);
+            this.snackBar.open('Error al enviar la invitación', 'Cerrar', {
+              duration: 3000,
             });
-
+          });
+    
         lastValueFrom(this.usuarioService.invitacionComunidad(idUsuarioReceptor, idComunidad)).catch(error => {
-            console.error('Error al enviar el email de invitación:', error);
+          console.error('Error al enviar el email de invitación:', error);
         });
-    }
+      }
 
+      filtrarAmigos(): void {
+        const textoBusqueda = this.buscador.trim().toLowerCase();
+    
+        if (textoBusqueda) {
+            this.amigosNoEnComunidadFiltrados = this.amigosNoEnComunidad.filter(amigo =>
+                amigo.nombreUsuario.toLowerCase().includes(textoBusqueda)
+            );
+            this.amigosEnComunidadFiltrados = this.amigosEnComunidad.filter(amigo =>
+                amigo.nombreUsuario.toLowerCase().includes(textoBusqueda)
+            );
+            this.amigosYaInvitadosFiltrados = this.amigosYaInvitados.filter(amigo =>
+                amigo.nombreUsuario.toLowerCase().includes(textoBusqueda)
+            );
+        } else {
+            this.amigosNoEnComunidadFiltrados = [...this.amigosNoEnComunidad];
+            this.amigosEnComunidadFiltrados = [...this.amigosEnComunidad];
+            this.amigosYaInvitadosFiltrados = [...this.amigosYaInvitados];
+        }
+    
+        this.mostrarCategorias(); // Siempre actualizar visibilidad
+      }
+    
+      
+      mostrarCategorias(): void {
+        this.mostrarAmigosNoEnComunidad = this.amigosNoEnComunidadFiltrados.length > 0;
+        this.mostrarAmigosEnComunidad = this.amigosEnComunidadFiltrados.length > 0;
+        this.mostrarAmigosYaInvitados = this.amigosYaInvitadosFiltrados.length > 0;
+      }
+      
+      verMasAmigos(categoria: string): void {
+        switch (categoria) {
+          case 'noEnComunidad':
+            this.mostrarMasAmigosNoEnComunidad += 4;
+            break;
+          case 'enComunidad':
+            this.mostrarMasAmigosEnComunidad += 4;
+            break;
+          case 'yaInvitados':
+            this.mostrarMasAmigosYaInvitados += 4;
+            break;
+        }
+      }
 
     getPublicaciones(): void {
         if (this.loandingPublicaciones || this.noMasPublicaciones) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
@@ -409,18 +483,8 @@ export class MuroComunidadComponent implements OnInit {
                 this.usuariosAnonimos = this.miembros.length - 1;
             }
         }
+        this.miembrosVisiblesPaginados = this.miembrosVisibles.slice(0, this.cargaInicial);
     }
-
-    cerrarModal(): void {
-        this.dialog.closeAll();
-    }
-
-    abrirModalInvitarAmigos(): void {
-        // Cargar listas de amigos antes de abrir el modal
-        this.cargarAmigos();
-        this.dialog.open(this.modalInvitarAmigos);
-    }
-
 
     ingresar(): void {
         this.usuarioService.solicitarIngresoAComunidad(this.comunidad.id).subscribe(dataPackage => {
@@ -506,6 +570,24 @@ export class MuroComunidadComponent implements OnInit {
             console.error('.scrollable-list no encontrado.');
         }
     }
+
+    onScrollMiembros(): void {
+        const element = document.querySelector('.perfil-miembros') as HTMLElement;
+        if (element.scrollTop + element.clientHeight >= element.scrollHeight - 10) {
+          this.cargarMasMiembros();
+        }
+      }
+    
+      cargarMasMiembros(): void {
+        const totalCargados = this.miembrosVisiblesPaginados.length;
+        const nuevosMiembros = this.miembros.slice(totalCargados, totalCargados + this.cargaIncremento);
+      
+        if (nuevosMiembros.length > 0) {
+          this.miembrosVisiblesPaginados = [...this.miembrosVisiblesPaginados, ...nuevosMiembros];
+        } else {
+          console.log('No hay más participantes por cargar');
+        }
+      }
 
     async toggleFavorito() {
         this.esFavorito = !this.esFavorito;

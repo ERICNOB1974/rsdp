@@ -85,7 +85,6 @@ export class EditarEventoComponent {
             this.maxParticipantes = Math.max(1, this.participantes); // Actualizar el máximo permitido
 
           })
-          console.log(this.participantes);
         }
       });
 
