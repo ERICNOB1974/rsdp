@@ -17,6 +17,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { NgxMaskDirective } from 'ngx-mask';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-crearRutina',
@@ -53,6 +55,8 @@ export class CrearRutinaComponent implements OnInit {
     private etiquetaService: EtiquetaService,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef
+        private snackBar: MatSnackBar
+
   ) {
     this.formRutina = this.formBuilder.group(
       {
@@ -74,6 +78,7 @@ export class CrearRutinaComponent implements OnInit {
   todosLosDiasTienenEjercicios(): boolean {
     return this.dias.every(dia => dia.ejercicios && dia.ejercicios.length > 0);
   }
+  ) { }
 
   agregarDiaTrabajo() {
     const nuevoDia: Dia = {
@@ -244,6 +249,15 @@ export class CrearRutinaComponent implements OnInit {
   onSelectEjercicio(ejercicioSeleccionado: Ejercicio, dia: Dia) {
     const ejercicio = dia.ejercicios[dia.ejercicios.length - 1]; // Obtener el último ejercicio agregado
     ejercicio.nombre = ejercicioSeleccionado.nombre; // Asignar solo el nombre
+
+}
+
+async guardarRutinaOptimizada() {
+  if (!this.esFormularioValido()) {
+    this.snackBar.open('Complete todos los campos obligatorios y añada al menos un ejercicio por día de trabajo.', 'Cerrar', {
+      duration: 3000,
+    });
+    return;
   }
 
   async guardarRutinaOptimizada() {
@@ -281,12 +295,15 @@ export class CrearRutinaComponent implements OnInit {
         }))
       };
 
-      const response = await firstValueFrom(this.rutinaService.guardarRutinaOptimizada(rutinaCompleta));
-      alert('Rutina guardada con éxito');
-      window.location.reload();
-    } catch (error) {
-      alert('Error al guardar la rutina.');
-    }
+
+    const response = await firstValueFrom(this.rutinaService.guardarRutinaOptimizada(rutinaCompleta));
+    alert('Rutina guardada con éxito');
+    window.location.reload();
+  } catch (error) {
+    console.error('Error al guardar la rutina optimizada:', error);
+    this.snackBar.open('Error al guardar la rutina.', 'Cerrar', {
+      duration: 3000,
+    });
   }
 
 
@@ -387,7 +404,9 @@ export class CrearRutinaComponent implements OnInit {
 
       reader.readAsDataURL(file);
     } else {
-      alert('Formato no válido. Solo se permiten imágenes JPEG, PNG, o GIF.');
+      this.snackBar.open('Formato no válido. Solo se permiten imágenes JPEG, PNG, o GIF.', 'Cerrar', {
+        duration: 3000,
+      });
     }
   }
 

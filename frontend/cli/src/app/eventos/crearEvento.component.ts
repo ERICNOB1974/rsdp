@@ -20,6 +20,7 @@ import { Evento } from './evento';
 import { EventoService } from './evento.service';
 import { cantidadParticipantesValidator, dateValidator, minimoUnaEtiqueta } from './validacionesEvento';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 
 
@@ -72,7 +73,8 @@ export class CrearEventoComponent {
     private location: Location,
     private ubicacionService: UbicacionService,
     private cdr: ChangeDetectorRef,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar
   ) {
     this.formEvento = this.formBuilder.group(
       {
@@ -350,7 +352,9 @@ export class CrearEventoComponent {
       }
     } catch (error) {
       console.error('Error al guardar el evento:', error);
-      alert('Error al guardar el evento.');
+      this.snackBar.open('Error al guardar el evento.', 'Cerrar', {
+        duration: 3000,
+      });
     }
   }
 
@@ -416,7 +420,9 @@ export class CrearEventoComponent {
       } else {
         this.formatoValido = false; // El formato no es válido
         this.vistaPreviaArchivo = null; // No se muestra la vista previa
-        alert('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF).');
+        this.snackBar.open('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF).', 'Cerrar', {
+          duration: 3000,
+        });
       }
     }
   }

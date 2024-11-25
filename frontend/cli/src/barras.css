@@ -13,7 +13,7 @@
 
 
 .sidebar {
-    width: 28vh; /* Tamaño fijo en vista de escritorio */
+    width: 20%; /* Tamaño fijo en vista de escritorio */
     height: 100vh;
     background-color: #15202b;
     color: white;
@@ -24,6 +24,7 @@
     transition: width 0.3s;
     overflow-y: auto;
     overflow-x: hidden;
+    transition: width 0.3s ease; /* Suave transición al cambiar el ancho */
   }
   
   .sidebar.collapsed {
@@ -97,9 +98,10 @@
 
 
 
-/* Estilos de la lista de la barra lateral */
 .sidebar ul {
-    padding: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0; /* Elimina padding innecesario */
 }
 
 .sidebar ul li {
@@ -126,11 +128,8 @@
 }
 
 .sidebar ul li a .icon {
-    min-width: 60px;
     font-size: 1.5em;
-    color: #ff6f6f;
-    transition: opacity 0.3s ease;
-    /* Añadir transición */
+    color: #ff6f6f;/
 }
 
 .sidebar ul li a .text {
@@ -173,6 +172,9 @@
     margin-left: 10%;
 }
 
+.sidebar.collapsed .icon {
+    justify-content: center; /* Centra los iconos */
+}
 
 .sidebar:not(.collapsed) .logo {
     /* Logo completo */
@@ -200,6 +202,7 @@
 .menu-item {
     display: flex;
     align-items: center;
+    justify-content: flex-start; /* Asegúrate de que los elementos estén alineados a la izquierda */
     /* Centra el icono y el texto verticalmente */
     padding: 10px 15px;
     /* Espaciado alrededor del elemento del menú */
@@ -228,22 +231,45 @@
     display: inline;
     /* El texto siempre será visible */
 }
-
 .logo-container {
-    margin: 2dvh 0;
+    display: flex; /* Usar Flexbox para el logo */
+    align-items: center; /* Centra verticalmente el logo */
+    margin-right: 20px; /* Espaciado a la derecha del logo */
 }
 
-.logo {
-    background-size: contain;
-    background-repeat: no-repeat;
-    margin-left: 14%;
-    transition: all 0.5s ease;
+.logo-text {
+    color: #da7b2df8; /* Color del texto */
+    font-size: 1.5em; /* Tamaño de fuente */
+    font-weight: bold; /* Negrita */
+    cursor: pointer; /* Cambia el cursor al pasar el mouse */
+    transition: color 0.3s; /* Transición suave para el color */
+}
+
+.logo-text:hover {
+    color: #df6400f8; /* Color al pasar el mouse */
 }
 
 .sidebar-toggle {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
+    display: flex; /* Usar Flexbox para centrar */
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente */
+    height: 100%; /* Asegúrate de que ocupe todo el alto */
+}
+
+.toggle-btn {
+    background: none; /* Sin fondo */
+    border: none; /* Sin borde */
+    cursor: pointer; /* Cambia el cursor al pasar */
+    padding: 0; /* Elimina padding */
+    outline: none; /* Sin contorno al hacer clic */
+    font-size: 24px; /* Ajusta el tamaño del ícono */
+    color: white; /* Color del ícono */
+    transition: color 0.3s ease; /* Transición suave para el color */
+}
+
+/* Cambiar el color al pasar el mouse */
+.toggle-btn:hover {
+    color: #ff6f6f; /* Cambia el color al pasar el mouse */
 }
 
 .sidebar .dropdown-arrow i {
@@ -286,32 +312,30 @@
   }
   
   /* Media Query para pantallas pequeñas (por ejemplo, móviles) */
+/* Responsividad */
 @media (max-width: 768px) {
-
-    /* Sidebar en pantallas pequeñas */
     .sidebar {
-      width: 60vw; /* Hacemos el sidebar más pequeño en dispositivos móviles */
-      height: auto;
-      transition: width 0.3s ease-in-out;
+        width: 60vw; /* Ancho más pequeño en dispositivos móviles */
+        height: auto; /* Altura automática */
+        background-color: #15202b; /* Mantener el color de fondo */
     }
-  
-    /* Main content en pantallas pequeñas */
-    .main-content {
-      margin-left: 0; /* El main-content toma el 100% del ancho */
-      padding: 10px; /* Menos padding para aprovechar mejor el espacio */
+
+    .sidebar.collapsed {
+        width: 15%; /* Ancho en modo colapsado para móviles */
     }
-  
-    /* White Island en pantallas pequeñas */
-    .white-island {
-      width: 90%; /* Se ajusta a un mayor porcentaje en dispositivos pequeños */
-      padding: 4%; /* Aumenta el padding si es necesario */
+
+    .sidebar ul li a .icon {
+        font-size: 1.2em; /* Tamaño de ícono más pequeño */
     }
-  
-    /* Opcional: puedes ajustar el tamaño de fuente u otros elementos */
-    .sidebar, .white-island {
-      font-size: 14px; /* Ajusta el tamaño de fuente si es necesario */
+
+    .sidebar ul li a .text {
+        font-size: 0.8em; /* Tamaño de texto más pequeño */
     }
-  }
+
+    .sidebar ul li {
+        padding: 10px; /* Espaciado interno más pequeño */
+    }
+}
   
   /* Media Query para pantallas más grandes (por ejemplo, tablets) */
   @media (max-width: 1024px) {

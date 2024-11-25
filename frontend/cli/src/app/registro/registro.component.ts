@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
 import { dateValidator } from './date-validator';
 import { Observable, catchError, map, of } from 'rxjs';
 import { UsuarioService } from '../usuarios/usuario.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-registro',
@@ -34,7 +35,8 @@ export class RegistroComponent implements OnInit {
     private formBuilder: FormBuilder,
     private router: Router,
     private authService: AuthService,
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    private snackBar: MatSnackBar
   ) {
     this.registroForm = this.formBuilder.group(
       {
@@ -111,14 +113,15 @@ export class RegistroComponent implements OnInit {
       this.authService.enviarCodigo(formData.correoElectronico).subscribe(
         () => {
           alert('Código de verificación enviado. Revisa tu correo.');
-          
           this.router.navigate(['/verificar-codigo'], {
             queryParams: { tipo: 'registro' },
           });
         },
         (error) => {
           console.error('Error al enviar el código de verificación:', error);
-          alert('Error al enviar el código de verificación.');
+          this.snackBar.open('Error al enviar el código de verificación.', 'Cerrar', {
+            duration: 3000,
+          });
         }
       );
     } else {
