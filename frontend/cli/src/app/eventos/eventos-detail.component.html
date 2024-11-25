@@ -52,9 +52,12 @@
           </div>
         </div>
 
-        <!-- Botón Invitar Amigos -->
-        <button *ngIf="botonInvitar() || creador" class="btn btn-success btn-block mx-auto mt-3" 
-          (click)="abrirModalInvitarAmigos()">
+
+        <!-- Botón de regresar centrado -->
+
+        <!-- Botón Invitar Amigos centrado, visible solo si el usuario ya está inscrito -->
+        <button *ngIf="botonInvitar() || creador" (click)="abrirModalInvitarAmigos()"[disabled]="isLoading"
+          class="btn btn-success btn-block mx-auto mt-3">
           Invitar amigos
         </button>
 
