@@ -13,6 +13,7 @@ import { EtiquetaPopularidadDTO } from '../etiqueta/etiquetaPopularidadDTO';
 import { Dia } from './dia';
 import { TipoEjercicio } from './tipoEjercicio';
 import { NgxMaskDirective } from 'ngx-mask';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-crearRutina',
@@ -38,7 +39,8 @@ export class CrearRutinaComponent {
   constructor(
     private rutinaService: RutinaService,
     private etiquetaService: EtiquetaService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private snackBar: MatSnackBar
   ) { }
 
   agregarDiaTrabajo() {
@@ -207,7 +209,9 @@ export class CrearRutinaComponent {
 
 async guardarRutinaOptimizada() {
   if (!this.esFormularioValido()) {
-    alert('Complete todos los campos obligatorios y añada al menos un ejercicio por día de trabajo.');
+    this.snackBar.open('Complete todos los campos obligatorios y añada al menos un ejercicio por día de trabajo.', 'Cerrar', {
+      duration: 3000,
+    });
     return;
   }
 
@@ -246,7 +250,9 @@ async guardarRutinaOptimizada() {
     window.location.reload();
   } catch (error) {
     console.error('Error al guardar la rutina optimizada:', error);
-    alert('Error al guardar la rutina.');
+    this.snackBar.open('Error al guardar la rutina.', 'Cerrar', {
+      duration: 3000,
+    });
   }
 }
 
@@ -348,7 +354,9 @@ async guardarRutinaOptimizada() {
 
       reader.readAsDataURL(file);
     } else {
-      alert('Formato no válido. Solo se permiten imágenes JPEG, PNG, o GIF.');
+      this.snackBar.open('Formato no válido. Solo se permiten imágenes JPEG, PNG, o GIF.', 'Cerrar', {
+        duration: 3000,
+      });
     }
   }
 

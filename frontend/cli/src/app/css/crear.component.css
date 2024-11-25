@@ -7,6 +7,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     position: auto;
 }
+
 .form-container {
     max-width: 600px;
     margin: 0 auto;
@@ -14,12 +15,14 @@
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    position: relative; /* Para que el contenedor de etiquetas sea relativo a esto */
+    position: relative;
+    /* Para que el contenedor de etiquetas sea relativo a esto */
 }
 
 .form-group {
     margin-bottom: 15px;
 }
+
 textarea {
     resize: vertical;
 }
@@ -155,4 +158,12 @@ button.btn-secondary {
 
 .drag-drop-area.dragover {
     background-color: #e0e0e0;
+}
+
+.mat-error-custom {
+    color: #cc2f24;
+    font-size: 2dvh;
+    margin-top: -2dvh;
+    margin-bottom: 2dvh;
+    display: block;
 }

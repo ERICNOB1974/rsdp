@@ -10,18 +10,30 @@
     <h1 style="text-align: center; margin: 0;">{{ comunidad.nombre }}</h1>
     <i *ngIf="esParte" class="bi" [ngClass]="{'bi-star-fill': esFavorito, 'bi-star': !esFavorito}"
       [ngStyle]="{'color': esFavorito ? 'gold' : 'gray', 'font-size': '8dvh', 'cursor': 'pointer'}"
-     (click)="toggleFavorito()">
+      (click)="toggleFavorito()">
     </i>
   </div>
 
 
 
 
-  <button *ngIf="!esCreador" class="btn2 btn2-primary btn2-block ingresar-button"
+  <button *ngIf="!esCreador && !expulsado" class="btn2 btn2-primary btn2-block ingresar-button"
     [disabled]="!(salirValid() || !inscribirseValid())" (click)="salirValid() ? salir() : ingresar()">
     {{ salirValid() ? 'Abandonar comunidad' : (comunidad.esPrivada ? 'Solicitar ingreso' : 'Ingresar') }}
   </button>
+ 
+
+  <div *ngIf="expulsado" class="alert alert-warning mt-4">
+    <p>Has sido expulsado de la comunidad.</p>
+    <button class="btn btn-info" (click)="toggleMotivo()">
+      ¿Por qué? <span [class]="mostrarMotivo ? 'arrow-up' : 'arrow-down'"></span>
+    </button>
+    <div *ngIf="mostrarMotivo" class="mt-2">
+      <strong>Motivo de expulsión:</strong> {{ motivoExpulsion }}
+    </div>
+  </div>
   <button *ngIf="salirValid()" (click)="abrirModalInvitarAmigos()" class="btn2 btn2-success btn2-block">
+
     Invitar amigos
   </button>
   <button *ngIf="esCreador || esAdministrador" class="btn2 btn2-primary btn2-block ingresar-button"
@@ -59,7 +71,7 @@
               </div>
               <div class="publicacion-fecha">{{ publicacion.fechaDeCreacion | date:'medium' }}</div>
             </div>
-          </div>  
+          </div>
         </div>
       </div>
 
@@ -95,7 +107,8 @@
       </div>
 
       <div *ngIf="tabSeleccionada === 'miembros'" class="perfil-miembros" (scroll)="onScrollMiembros()">
-        <div *ngFor="let miembro of miembrosVisiblesPaginados" class="miembro-item" [routerLink]="['/perfil', miembro.id]">
+        <div *ngFor="let miembro of miembrosVisiblesPaginados" class="miembro-item"
+          [routerLink]="['/perfil', miembro.id]">
           <div>
             <img [src]="(miembro.anonimos || !miembro.fotoPerfil) ? '../../assets/usuario.png' : miembro.fotoPerfil"
               alt="{{ miembro.nombreUsuario }}" class="perfil-imagen">
@@ -137,13 +150,8 @@
   <div class="modal-body">
     <!-- Buscador -->
     <div class="input-group mb-3">
-      <input
-        type="text"
-        class="form-control"
-        placeholder="Buscar amigos..."
-        [(ngModel)]="buscador"
-        (input)="filtrarAmigos()"
-      />
+      <input type="text" class="form-control" placeholder="Buscar amigos..." [(ngModel)]="buscador"
+        (input)="filtrarAmigos()" />
       <span class="input-group-text"><i class="bi bi-search"></i></span>
     </div>
 
@@ -151,23 +159,15 @@
     <div *ngIf="mostrarAmigosNoEnComunidad">
       <h6 class="text-primary">Amigos que aún no están en la comunidad</h6>
       <div *ngIf="amigosNoEnComunidadFiltrados.length > 0">
-        <div
-          *ngFor="let amigo of amigosNoEnComunidadFiltrados | slice:0:mostrarMasAmigosNoEnComunidad"
-          class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom"
-        >
+        <div *ngFor="let amigo of amigosNoEnComunidadFiltrados | slice:0:mostrarMasAmigosNoEnComunidad"
+          class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
           <span>{{ amigo.nombreUsuario }}</span>
-          <button
-            class="btn btn-outline-primary btn-sm"
-            (click)="invitarAmigo(amigo.id)"
-          >
+          <button class="btn btn-outline-primary btn-sm" (click)="invitarAmigo(amigo.id)">
             Invitar a la comunidad
           </button>
         </div>
-        <button
-          *ngIf="amigosNoEnComunidadFiltrados.length > mostrarMasAmigosNoEnComunidad"
-          class="btn btn-link text-primary"
-          (click)="verMasAmigos('noEnComunidad')"
-        >
+        <button *ngIf="amigosNoEnComunidadFiltrados.length > mostrarMasAmigosNoEnComunidad"
+          class="btn btn-link text-primary" (click)="verMasAmigos('noEnComunidad')">
           Ver más
         </button>
       </div>
@@ -180,18 +180,13 @@
     <div *ngIf="mostrarAmigosEnComunidad" class="mt-4">
       <h6 class="text-success">Amigos ya en la comunidad</h6>
       <div *ngIf="amigosEnComunidadFiltrados.length > 0">
-        <div
-          *ngFor="let amigo of amigosEnComunidadFiltrados | slice:0:mostrarMasAmigosEnComunidad"
-          class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom"
-        >
+        <div *ngFor="let amigo of amigosEnComunidadFiltrados | slice:0:mostrarMasAmigosEnComunidad"
+          class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
           <span>{{ amigo.nombreUsuario }}</span>
           <span class="badge bg-success">En la comunidad</span>
         </div>
-        <button
-          *ngIf="amigosEnComunidadFiltrados.length > mostrarMasAmigosEnComunidad"
-          class="btn btn-link text-success"
-          (click)="verMasAmigos('enComunidad')"
-        >
+        <button *ngIf="amigosEnComunidadFiltrados.length > mostrarMasAmigosEnComunidad"
+          class="btn btn-link text-success" (click)="verMasAmigos('enComunidad')">
           Ver más
         </button>
       </div>
@@ -204,18 +199,13 @@
     <div *ngIf="mostrarAmigosYaInvitados" class="mt-4">
       <h6 class="text-warning">Amigos ya invitados</h6>
       <div *ngIf="amigosYaInvitadosFiltrados.length > 0">
-        <div
-          *ngFor="let amigo of amigosYaInvitadosFiltrados | slice:0:mostrarMasAmigosYaInvitados"
-          class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom"
-        >
+        <div *ngFor="let amigo of amigosYaInvitadosFiltrados | slice:0:mostrarMasAmigosYaInvitados"
+          class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
           <span>{{ amigo.nombreUsuario }}</span>
           <span class="badge bg-warning">Ya invitado</span>
         </div>
-        <button
-          *ngIf="amigosYaInvitadosFiltrados.length > mostrarMasAmigosYaInvitados"
-          class="btn btn-link text-warning"
-          (click)="verMasAmigos('yaInvitados')"
-        >
+        <button *ngIf="amigosYaInvitadosFiltrados.length > mostrarMasAmigosYaInvitados"
+          class="btn btn-link text-warning" (click)="verMasAmigos('yaInvitados')">
           Ver más
         </button>
       </div>

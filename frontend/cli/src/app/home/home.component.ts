@@ -39,7 +39,6 @@ export class HomeComponent implements OnInit {
     this.loadPublicaciones();
   }
 
-
   loadPublicaciones() {
     if (this.loading || this.noMasPublicaciones) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
     this.loading = true;
