@@ -290,9 +290,10 @@ public class ComunidadService {
     public String motivoExpulsion(Long idUsuario, Long idComunidad) {
         return this.comunidadRepository.motivoExpulsion(idUsuario, idComunidad);
     }
-  @Transactional
+
+    @Transactional
     public void agregarUbicacionAComunidadesSinUbicacion() {
-        List<Comunidad> comunidades = comunidadRepository.findAll(); 
+        List<Comunidad> comunidades = comunidadRepository.findAll();
 
         for (Comunidad comunidad : comunidades) {
             if (comunidad.getUbicacion() == null || comunidad.getUbicacion().isEmpty()) {
@@ -310,10 +311,11 @@ public class ComunidadService {
                     }
                 } catch (Exception e) {
                     System.err
-                            .println("Error al procesar la comunidad con ID: " + comunidad.getId() + " - " + e.getMessage());
+                            .println("Error al procesar la comunidad con ID: " + comunidad.getId() + " - "
+                                    + e.getMessage());
                 }
             }
         }
-    
 
+    }
 }
