@@ -3,14 +3,17 @@
     <div class="card shadow-sm mt-4">
       <div class="card-body">
         <h2 class="card-title text-center mb-4">{{ evento.nombre }}</h2>
+        
+        <!-- Imagen del evento -->
         <div *ngIf="evento.imagen && evento.imagen.startsWith('data:image')">
-          <img [src]="evento.imagen" style="max-width: 400px; max-height: 400px;">
+          <img [src]="evento.imagen" class="img-fluid" style="max-width: 400px; max-height: 400px;">
         </div>
-        <div *ngIf="!evento.imagen" class="align-items-center">
-          <img src="../../assets/evento.webp" style="max-width: 400px; max-height: 400px; ">
+        <div *ngIf="!evento.imagen" class="d-flex justify-content-center">
+          <img src="../../assets/evento.webp" class="img-fluid" style="max-width: 400px; max-height: 400px;">
         </div>
-        <div class="creador-evento d-flex align-items-center mt-4 p-3"
-          style="background-color: #f0ecec; border-radius: 10px;">
+
+        <!-- Creador del evento -->
+        <div class="creador-evento d-flex align-items-center mt-4 p-3" style="background-color: #f0ecec; border-radius: 10px;">
           <img [src]="creadorEvento.fotoPerfil || '../../assets/default-user.png'" alt="Foto del creador"
             class="rounded-circle" style="width: 70px; height: 70px; object-fit: cover; margin-right: 15px;">
           <div>
@@ -18,19 +21,22 @@
             <h4 class="mb-0 text-primary">{{ creadorEvento.nombreUsuario }}</h4>
           </div>
         </div>
+
+        <!-- Detalles del evento -->
         <p><strong>Fecha de creación:</strong> {{ evento.fechaDeCreacion | date:'dd-MM-yyyy' : '+00:00'}}</p>
         <p><strong>Fecha y hora:</strong> {{ evento.fechaHora | date:'short' }}</p>
         <p><strong>Descripción:</strong> {{ evento.descripcion }}</p>
         <p><strong>Cantidad máxima de participantes:</strong> {{ evento.cantidadMaximaParticipantes }}</p>
         <p><strong>Ubicación:</strong> {{ evento.ubicacion }}</p>
-        <div class="map-container padding-top-20 padding-bottom-20">
+
+        <!-- Mapa -->
+        <div class="map-container py-3">
           <div id="map"></div>
         </div>
 
-        <!-- Botón Inscribirse o Desinscribirse centrado -->
-        <!-- Modificación para el botón de inscribirse -->
-        <button *ngIf="!expulsado" class="btn btn-primary btn-block ingresar-button mx-auto"
-          [disabled]="!(inscribirseValid() || salirValid()) || isLoading"
+        <!-- Botón Inscribirse o Desinscribirse -->
+        <button *ngIf="!expulsado" class="btn btn-primary btn-block mx-auto" 
+          [disabled]="!(inscribirseValid() || salirValid()) || isLoading" 
           (click)="salirValid() ? salir() : inscribirse()">
           {{ salirValid() ? 'Desinscribirse' : 'Inscribirse' }}
         </button>
@@ -46,6 +52,7 @@
           </div>
         </div>
 
+
         <!-- Botón de regresar centrado -->
 
         <!-- Botón Invitar Amigos centrado, visible solo si el usuario ya está inscrito -->
@@ -58,51 +65,46 @@
           Notificar a todos los usuarios
         </button>
 
-
+        <!-- Participantes -->
         <div class="mt-4">
           <h3 class="text-center">Participantes {{evento.participantes}} / {{evento.cantidadMaximaParticipantes}}</h3>
-          <!-- Contenedor scrolleable -->
-          <div class="members-list" (scroll)="onScroll()">
+          <div class="members-list overflow-auto">
             <div class="row">
-              <!-- Iteramos sobre los participantes y los colocamos en columnas -->
               <div *ngFor="let miembro of participantesVisiblesPaginados" class="col-md-3 col-sm-6 col-12 mb-4">
                 <div class="miembro-item" [routerLink]="['/perfil', miembro.id]">
-                  <!-- Mostrar foto y nombre del miembro -->
                   <img [src]="miembro.fotoPerfil" alt="{{ miembro.nombreUsuario }}"
                     class="perfil-imagen rounded-circle mb-2" style="width: 80px; height: 80px;">
                   <span class="text-center">{{ miembro.nombreUsuario }}</span>
-                  <!-- Botón para abrir el modal -->
                   <button *ngIf="creador && miembro.id !== idUsuarioAutenticado" class="btn btn-danger btn-sm mt-2"
                     (click)="abrirModalExpulsion(miembro)">
                     Eliminar
                   </button>
-
                 </div>
               </div>
-
-              <!-- Mostrar la cantidad de usuarios anónimos como un ítem adicional en la grilla -->
             </div>
+
+            <!-- Usuarios anónimos -->
             <div *ngIf="usuariosAnonimos > 0" class="col-md-3 col-sm-6 col-12 mb-4">
               <div class="miembro-item">
                 <img src="../../assets/usuario.png" alt="Usuario anónimo" class="perfil-imagen" />
-                <h4 class="text-center">
-                  {{ usuariosAnonimos }} Usuario{{ usuariosAnonimos > 1 ? 's' : '' }} anónimo{{ usuariosAnonimos > 1 ?
-                  's' : '' }}
-                </h4>
+                <h4 class="text-center">{{ usuariosAnonimos }} Usuario{{ usuariosAnonimos > 1 ? 's' : '' }} anónimo{{ usuariosAnonimos > 1 ? 's' : '' }}</h4>
               </div>
             </div>
           </div>
         </div>
 
-
-
+        <!-- Botones de edición y eliminación -->
         <div class="d-flex justify-content-center mt-3">
           <button *ngIf="creador" class="btn btn-primary btn-lg mx-2" (click)="editarEvento()">Editar</button>
           <button *ngIf="creador" class="btn btn-danger btn-lg mx-2" (click)="eliminarEvento()">Eliminar evento</button>
         </div>
+
+        <!-- Cargando -->
         <div *ngIf="isLoading" class="d-flex justify-content-center mt-3">
           <mat-progress-spinner mode="indeterminate" diameter="50" color="primary"></mat-progress-spinner>
         </div>
+
+        <!-- Botón Volver -->
         <div class="d-flex justify-content-center mt-4">
           <button (click)="goBack()" class="btn btn-secondary btn-lg">Volver</button>
         </div>
@@ -110,7 +112,6 @@
     </div>
   </div>
 </div>
-
 
 
 

@@ -342,8 +342,7 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
             MATCH (u:Usuario {nombreUsuario: $nombreUsuario}) // Usuario que hace la consulta
             MATCH (otros:Usuario)
             WHERE otros <> u // Evita incluir al usuario que hace la consulta
-            AND (toUpper(otros.nombreUsuario) CONTAINS toUpper($term)
-                 OR toUpper(otros.nombreReal) CONTAINS toUpper($term)) // Filtra por término
+            AND (toUpper(otros.nombreUsuario) CONTAINS toUpper($term))
 
             // Cuenta amigos en común entre 'u' y 'otros'
             OPTIONAL MATCH (u)-[:ES_AMIGO_DE]-(amigo)-[:ES_AMIGO_DE]-(otros)
