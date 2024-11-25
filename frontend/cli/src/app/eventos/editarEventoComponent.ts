@@ -14,6 +14,7 @@ import { CommonModule } from '@angular/common';
 import { UbicacionService } from '../ubicacion.service'; // Importa tu servicio de ubicación
 import { EtiquetaPopularidadDTO } from '../etiqueta/etiquetaPopularidadDTO';
 import { DataPackage } from '../data-package';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-crear-evento',
@@ -57,7 +58,8 @@ export class EditarEventoComponent {
     private location: Location,
     private ubicacionService: UbicacionService,
     private cdr: ChangeDetectorRef,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private snackBar: MatSnackBar
   ) { }
 
   async ngOnInit(): Promise<void> {
@@ -135,7 +137,9 @@ export class EditarEventoComponent {
       } else {
         this.formatoValido = false; // El formato no es válido
         this.vistaPreviaArchivo = null; // No se muestra la vista previa
-        alert('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF).');
+        this.snackBar.open('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF).', 'Cerrar', {
+          duration: 3000,
+        });
       }
     }
   }
@@ -346,7 +350,9 @@ export class EditarEventoComponent {
       window.location.reload();
     } catch (error) {
       console.error('Error al guardar el evento:', error);
-      alert('Error al guardar el evento.');
+      this.snackBar.open('Error al guardar el evento.', 'Cerrar', {
+        duration: 3000,
+      });
     }
   }
 

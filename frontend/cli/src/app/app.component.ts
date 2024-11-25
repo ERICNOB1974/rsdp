@@ -168,6 +168,7 @@ export class AppComponent {
       case 'ACEPTACION_PRIVADA':
       case 'UNION_PUBLICA':
       case 'INVITACION_COMUNIDAD':
+      case 'EXPULSION_COMUNIDAD':
         // Notificaciones relacionadas con comunidades
         urlDestino = `/comunidad-muro/${notificacion.entidadId}`;
         break;

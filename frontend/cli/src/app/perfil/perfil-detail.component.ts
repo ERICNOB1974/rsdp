@@ -28,7 +28,7 @@ export class PerfilDetailComponent implements OnInit {
   campoModificado: boolean = false;
   nombreUsuarioValido: boolean = true;
   nombreRealValido: boolean = true;
-  
+
 
 
   constructor(
@@ -36,7 +36,7 @@ export class PerfilDetailComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private snackBar: MatSnackBar
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const usuarioId = this.authService.getUsuarioId();
@@ -49,6 +49,7 @@ export class PerfilDetailComponent implements OnInit {
       if (dataPackage.status === 200) {
         this.usuario = dataPackage.data as Usuario;
         this.nombreUsuarioOriginal = this.usuario.nombreUsuario; // Guarda el nombre original
+        this.formatoValido = (this.usuario.fotoPerfil != '')
       } else {
         console.error(dataPackage.message);
       }
@@ -83,7 +84,7 @@ export class PerfilDetailComponent implements OnInit {
       if (validImageTypes.includes(file.type)) {
         this.formatoValido = true;
         this.archivoSeleccionado = file;
-        this.campoModificado = true;  
+        this.campoModificado = true;
 
         const reader = new FileReader();
         reader.onload = () => {
@@ -94,7 +95,9 @@ export class PerfilDetailComponent implements OnInit {
       } else {
         this.formatoValido = false;
         this.vistaPreviaArchivo = null;
-        alert('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF).');
+        this.snackBar.open('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF).', 'Cerrar', {
+          duration: 3000,
+        });
       }
     }
   }
@@ -105,22 +108,22 @@ export class PerfilDetailComponent implements OnInit {
       this.nombreUsuarioExistente = false;
       return;
     }
-    
-    
-    this.usuarioService.existeNombreUsuarioMenosElActual(this.usuario.nombreUsuario,this.nombreUsuarioOriginal)
-    .subscribe(response => {
+
+
+    this.usuarioService.existeNombreUsuarioMenosElActual(this.usuario.nombreUsuario, this.nombreUsuarioOriginal)
+      .subscribe(response => {
         this.nombreUsuarioExistente = <boolean><unknown>response.data;
         this.nombreUsuarioValido = !this.nombreUsuarioExistente;
       });
   }
-  
+
   verificarHabilitacionBotonGuardar(): boolean {
     this.nombreRealValido = this.usuario.nombreReal.length >= 3;
     this.nombreUsuarioValido = this.usuario.nombreUsuario.length >= 3 && !this.nombreUsuarioExistente;
-    
-    console.log("Nombre real valido"+this.nombreRealValido); 
-    console.log("Nombre usuario valido"+this.nombreUsuarioValido);
-    console.log("Campo modificado"+this.campoModificado);
+
+    console.log("Nombre real valido" + this.nombreRealValido);
+    console.log("Nombre usuario valido" + this.nombreUsuarioValido);
+    console.log("Campo modificado" + this.campoModificado);
     return this.campoModificado && this.nombreRealValido && this.nombreUsuarioValido;
   }
 
@@ -129,7 +132,7 @@ export class PerfilDetailComponent implements OnInit {
     this.validarNombreUsuario();
     this.nombreRealValido = this.usuario.nombreReal.length >= 3;
   }
-  
+
   irACambiarCorreo(): void {
     this.router.navigate(['/cambiar-correo']);
   }

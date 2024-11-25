@@ -39,7 +39,7 @@
                     {{ usuario?.nombreUsuario || 'Cargando...' }}
                 </a>
             </div>
-            
+
 
 
         </div>
@@ -52,8 +52,6 @@
     <div class="hamburger-icon" (click)="toggleSidebar()">
         <i class="fa fa-bars"></i>
     </div>
-
-   
 
     <ul>
         <div class="logo-container">
@@ -168,8 +166,6 @@
 </div>
 
 
-
 <div class="main-content" [ngClass]="{ 'full-width': isSidebarHidden }">
     <router-outlet></router-outlet>
 </div>
-

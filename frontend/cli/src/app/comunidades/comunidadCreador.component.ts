@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router'; // Para obtener el parámetro de la URL
 import { ComunidadService } from './comunidad.service'; // Servicio para obtener las comunidades
 import { UsuarioService } from '../usuarios/usuario.service';
@@ -33,6 +33,11 @@ export class ComunidadCreadorComponent implements OnInit {
     miembrosVisibles: Usuario[] = []; // Miembros visibles actualmente
     cargaInicial: number = 5; // Número inicial de elementos visibles
     cargaIncremento: number = 5; // Número de elementos adicionales cargados en cada scroll
+    motivoExpulsion: string = '';
+    usuarioEliminar: any;
+    mostrarMotivo: boolean = false;
+    expulsado: boolean = false; // Indica si el usuario fue expulsado
+    @ViewChild('modalExpulsion') modalExpulsion!: TemplateRef<any>; // Referencia al modal
 
     constructor(
         private route: ActivatedRoute, // Para obtener el parámetro de la URL
@@ -49,9 +54,38 @@ export class ComunidadCreadorComponent implements OnInit {
         await this.getComunidad(); // Al inicializar el componente, obtener los detalles de la comunidad
         const usuarioId = this.authService.getUsuarioId();
         this.idUsuarioAutenticado = Number(usuarioId);
- 
 
     }
+
+
+
+    seleccionarUsuario(usuario: any): void {
+        this.usuarioEliminar = usuario;
+    }
+
+
+    confirmarExpulsion(): void {
+        if (!this.motivoExpulsion.trim()) {
+            alert('Por favor, ingresa un motivo válido.');
+            return;
+        }
+
+
+        this.eliminarMiembro(this.usuarioEliminar.id, this.motivoExpulsion);
+
+        // Limpia los datos
+        this.motivoExpulsion = '';
+        this.usuarioEliminar = null;
+    }
+
+    abrirModalExpulsion(usuario: any): void {
+        this.usuarioEliminar = usuario; // Asigna el usuario al abrir el modal
+        this.modalService.open(this.modalExpulsion, {
+          centered: true, // Centra el modal
+          backdrop: 'static', // Impide cerrar al hacer clic fuera
+          keyboard: false, // Desactiva el cierre con teclado
+        });
+      }
 
     getComunidad(): void {
         const id = this.route.snapshot.paramMap.get('id');
@@ -99,22 +133,22 @@ export class ComunidadCreadorComponent implements OnInit {
     traerMiembrosYAdministradores(): void {
         const miembros$ = this.usuarioService.miembrosComunidad(this.comunidad.id);
         const administradores$ = this.usuarioService.administradoresComunidad(this.comunidad.id);
-        
+
         forkJoin([miembros$, administradores$]).subscribe(([miembrosData, administradoresData]) => {
             if (Array.isArray(miembrosData.data)) {
                 this.miembros = miembrosData.data as Usuario[];
             }
-            
+
             if (Array.isArray(administradoresData.data)) {
                 this.administradores = administradoresData.data as Usuario[];
             }
-            
+
             // Combina ambos arrays
             this.miembros = this.miembros.concat(this.administradores);
-            
+
             // Verificar roles
             this.verificarRoles();
-            
+
             // Eliminar duplicados después de verificar roles
             this.miembros = this.miembros.reduce((acc: Usuario[], user: Usuario) => {
                 if (!acc.some((existingUser: Usuario) => existingUser.id === user.id)) {
@@ -202,8 +236,8 @@ export class ComunidadCreadorComponent implements OnInit {
         return this.administradores.some(admin => admin.id === idMiembro);
     }
 
-    eliminarMiembro(usuario: Usuario): void {
-        this.comunidadService.eliminarMiembro(this.idUsuarioAutenticado, usuario.id, this.comunidad.id).subscribe(dataPackage => {
+    eliminarMiembro(idUsuario: number, motivo: string): void {
+        this.comunidadService.eliminarMiembroConMotivo(motivo, idUsuario, this.comunidad.id).subscribe(dataPackage => {
             let mensaje = JSON.stringify(dataPackage.data); // Convierte a string
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000,
@@ -211,6 +245,7 @@ export class ComunidadCreadorComponent implements OnInit {
             this.traerMiembrosYAdministradores(); // Actualiza la lista de miembros
         });
     }
+   
 
     openModal(content: any) {
         this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
@@ -260,12 +295,12 @@ export class ComunidadCreadorComponent implements OnInit {
     cargarMasMiembros(): void {
         const totalCargados = this.miembrosVisibles.length;
         const nuevosMiembros = this.miembros.slice(totalCargados, totalCargados + this.cargaIncremento);
-    
+
         if (nuevosMiembros.length > 0) {
             this.miembrosVisibles = [...this.miembrosVisibles, ...nuevosMiembros];
         } else {
             console.log('No hay más miembros por cargar');
         }
     }
-    
+
 }
