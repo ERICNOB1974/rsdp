@@ -1,27 +1,38 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, NgModule } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule, NgModel, ReactiveFormsModule } from '@angular/forms';
-import { Ejercicio } from './ejercicio';
-import { RutinaService } from './rutina.service';
-import { Rutina } from './rutina';
-import { Observable, catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom, map, of, switchMap, tap } from 'rxjs';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
-import { EtiquetaService } from '../etiqueta/etiqueta.service';
-import { Etiqueta } from '../etiqueta/etiqueta';
+import { Observable, catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom, map, of, switchMap, tap } from 'rxjs';
 import { DataPackage } from '../data-package';
+import { Etiqueta } from '../etiqueta/etiqueta';
+import { EtiquetaService } from '../etiqueta/etiqueta.service';
 import { EtiquetaPopularidadDTO } from '../etiqueta/etiquetaPopularidadDTO';
 import { Dia } from './dia';
+import { Ejercicio } from './ejercicio';
+import { RutinaService } from './rutina.service';
 import { TipoEjercicio } from './tipoEjercicio';
-import { NgxMaskDirective } from 'ngx-mask';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-crearRutina',
   templateUrl: './crearRutina.component.html',
   styleUrls: ['./crearRutina.component.css', '../css/etiquetas.css', '../css/crear.component.css'],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NgbTypeaheadModule, NgxMaskDirective],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    MatChipsModule,
+    NgbTypeaheadModule],
   standalone: true
 })
-export class CrearRutinaComponent {
+export class CrearRutinaComponent implements OnInit {
   nombreRutina: string = '';
   descripcionRutina: string = '';
   dias: Dia[] = [];
@@ -34,12 +45,35 @@ export class CrearRutinaComponent {
   tipoArchivo: string = ''; // Para distinguir entre imagen o video
   vistaPreviaArchivo: string | ArrayBuffer | null = null; // Para mostrar la vista previa de la imagen o video
   formatoValido: boolean = true;
+  formRutina: FormGroup;
+
 
   constructor(
     private rutinaService: RutinaService,
     private etiquetaService: EtiquetaService,
+    private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef
-  ) { }
+  ) {
+    this.formRutina = this.formBuilder.group(
+      {
+        nombreRutina: ['', [Validators.required]],
+
+      }
+    );
+  }
+  ngOnInit(): void {
+    this.formRutina.markAllAsTouched();
+  }
+
+  get nombreRutinaValid() {
+    return this.nombreRutina.trim().length > 0;
+  }
+  validarEtiquetas() {
+    return this.etiquetasSeleccionadas.length > 0;
+  }
+  todosLosDiasTienenEjercicios(): boolean {
+    return this.dias.every(dia => dia.ejercicios && dia.ejercicios.length > 0);
+  }
 
   agregarDiaTrabajo() {
     const nuevoDia: Dia = {
@@ -109,6 +143,12 @@ export class CrearRutinaComponent {
     (ejercicio as any)[campo + 'Valido'] = valor !== null && valor > 0;
   }
 
+  validarSerieORepeticion(numero: number | null): boolean {
+    if (numero != null && numero > 0) {
+      return true;
+    }
+    return false;
+  }
   esFormularioValido(): boolean {
 
     if (
@@ -116,7 +156,8 @@ export class CrearRutinaComponent {
       this.dias.length === 0 ||
       this.dias[0].tipo === 'descanso' ||
       this.etiquetasSeleccionadas.length === 0 ||
-      this.etiquetasSeleccionadas.length > 15
+      this.etiquetasSeleccionadas.length > 15 ||
+      !this.todosLosDiasTienenEjercicios()
     ) {
       return false;
     }
@@ -203,52 +244,50 @@ export class CrearRutinaComponent {
   onSelectEjercicio(ejercicioSeleccionado: Ejercicio, dia: Dia) {
     const ejercicio = dia.ejercicios[dia.ejercicios.length - 1]; // Obtener el último ejercicio agregado
     ejercicio.nombre = ejercicioSeleccionado.nombre; // Asignar solo el nombre
-}
-
-async guardarRutinaOptimizada() {
-  if (!this.esFormularioValido()) {
-    alert('Complete todos los campos obligatorios y añada al menos un ejercicio por día de trabajo.');
-    return;
   }
 
-  try {
-    const rutinaCompleta = {
-      nombre: this.nombreRutina,
-      descripcion: this.descripcionRutina,
-      etiquetas: this.etiquetasSeleccionadas.map(etiqueta => ({ nombre: etiqueta.nombre })),
-      dias: this.dias.map((dia, index) => ({
-        nombre: dia.nombre,
-        descripcion: dia.descripcion,
-        orden: index + 1,
-        ejercicios: dia.ejercicios.map((ejercicio, j) => {
-          // Verificar si 'ejercicio.nombre' es un objeto, y si es así, tomar 'ejercicio.nombre.nombre'
-          const nombreEjercicio = typeof ejercicio.nombre === 'object' && ejercicio.nombre !== null 
-            ? ejercicio.nombre.nombre 
-            : ejercicio.nombre;
-          
-          return {
-            nombre: nombreEjercicio,
-            descripcion: ejercicio.descripcion,
-            imagen: ejercicio.imagen,
-            tipo: ejercicio.tipo,
-            orden: j + 1,
-            tiempo: ejercicio.tiempo || null,
-            series: ejercicio.series || null,
-            repeticiones: ejercicio.repeticiones || null,
-          };
-        })
-      }))
-    };
+  async guardarRutinaOptimizada() {
+    if (!this.esFormularioValido()) {
+      alert('Complete todos los campos obligatorios y añada al menos un ejercicio por día de trabajo.');
+      return;
+    }
 
-    console.info("A VER QUÉ DEVUELVE", rutinaCompleta);
-    const response = await firstValueFrom(this.rutinaService.guardarRutinaOptimizada(rutinaCompleta));
-    alert('Rutina guardada con éxito');
-    window.location.reload();
-  } catch (error) {
-    console.error('Error al guardar la rutina optimizada:', error);
-    alert('Error al guardar la rutina.');
+    try {
+      const rutinaCompleta = {
+        nombre: this.nombreRutina,
+        descripcion: this.descripcionRutina,
+        etiquetas: this.etiquetasSeleccionadas.map(etiqueta => ({ nombre: etiqueta.nombre })),
+        dias: this.dias.map((dia, index) => ({
+          nombre: dia.nombre,
+          descripcion: dia.descripcion,
+          orden: index + 1,
+          ejercicios: dia.ejercicios.map((ejercicio, j) => {
+            // Verificar si 'ejercicio.nombre' es un objeto, y si es así, tomar 'ejercicio.nombre.nombre'
+            const nombreEjercicio = typeof ejercicio.nombre === 'object' && ejercicio.nombre !== null
+              ? ejercicio.nombre.nombre
+              : ejercicio.nombre;
+
+            return {
+              nombre: nombreEjercicio,
+              descripcion: ejercicio.descripcion,
+              imagen: ejercicio.imagen,
+              tipo: ejercicio.tipo,
+              orden: j + 1,
+              tiempo: ejercicio.tiempo || null,
+              series: ejercicio.series || null,
+              repeticiones: ejercicio.repeticiones || null,
+            };
+          })
+        }))
+      };
+
+      const response = await firstValueFrom(this.rutinaService.guardarRutinaOptimizada(rutinaCompleta));
+      alert('Rutina guardada con éxito');
+      window.location.reload();
+    } catch (error) {
+      alert('Error al guardar la rutina.');
+    }
   }
-}
 
 
 
