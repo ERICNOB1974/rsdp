@@ -28,12 +28,10 @@ export class RutinaService {
     return response;
   }
 
-  guardarRutinaOptimizada(rutinaCompleta: any): Observable<void> {
+  guardarRutinaOptimizada(rutinaCompleta: any): Observable<DataPackage> {
     const usuarioId = this.authService.getUsuarioId();
-    return this.http.post<void>(`${this.rutinasUrl}/guardarRutinaCompleta/${usuarioId}`, rutinaCompleta);
+    return this.http.post<DataPackage>(`${this.rutinasUrl}/guardarRutinaCompleta/${usuarioId}`, rutinaCompleta);
   }
-  
-  
 
   async guardarDia(dia: Dia, idRutina: string, orden: number): Promise<string> {
     const response = await firstValueFrom(

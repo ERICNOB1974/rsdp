@@ -67,18 +67,17 @@ export class VerificarMailComponent implements OnInit {
       
       this.authService.enviarCodigo(correo).subscribe(
         () => {
-          alert('Código de verificación enviado. Revisa tu correo.');
           this.router.navigate(['/verificar-codigo'], {
+            state: { mensajeSnackBar: 'Código de verificación enviado. Revisa tu correo.' },
             queryParams: { tipo: 'recuperacion' },
           });
         },
         (error) => {
-          console.error('Error al enviar el código de verificación:', error);
-          this.snackBar.open('Error al enviar el código de verificación.', 'Cerrar', {
+          this.snackBar.open('Error al enviar el código. Intenta nuevamente.', 'Cerrar', {
             duration: 3000,
           });
         }
-      );
+      );      
     } else {
       console.warn('Formulario inválido');
     }

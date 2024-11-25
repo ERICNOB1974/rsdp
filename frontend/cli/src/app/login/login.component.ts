@@ -50,6 +50,12 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const state = window.history.state;
+    if (state && state.mensajeSnackBar) {
+      this.snackBar.open(state.mensajeSnackBar, 'Cerrar', {
+        duration: 3000
+      });
+    }
     // this.loadLogo();
   }
 
