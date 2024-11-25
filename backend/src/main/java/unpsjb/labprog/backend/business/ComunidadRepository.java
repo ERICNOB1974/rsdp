@@ -166,9 +166,9 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "WHERE NOT (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR]-(u) " +
                         "MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR]-(h) " + // Encontramos los demás miembros de
                                                                                   // la comunidad
-                        "WITH c, COUNT(DISTINCT h) AS numParticipantes " +
+                        "WITH c, COUNT(DISTINCT h) AS numParticipantes, u " +
                         "WHERE numParticipantes < c.cantidadMaximaMiembros " +
-                        "AND NOT (u)-[r:EXPULSADO_COMUNIDAD]-(c) " +
+                        "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c) " +
 
                         "RETURN c " +
                         "ORDER BY c.nombre ASC " +
@@ -405,8 +405,8 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         @Query("""
                         MATCH (u:Usuario) WHERE id(u)=$idUsuario
                         MATCH (c:Comunidad) WHERE id(c)=$idComunidad
-                        MATCH (u)-[r:PARTICIPA_EN]->(c) DELETE r
-                        CREATE (u)-[:EXPULSADO_COMUNIDAD{motivoExpulsion: $motivoExpulsion}]->(e)
+                        MATCH (u)-[r:MIEMBRO|ADMINISTRADA_POR]->(c) DELETE r
+                        CREATE (u)-[:EXPULSADO_COMUNIDAD {motivoExpulsion: $motivoExpulsion}]->(c)
                                    """)
         void eliminarUsuario(Long idComunidad, Long idUsuario, String motivoExpulsion);
 

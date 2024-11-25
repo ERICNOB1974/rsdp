@@ -290,8 +290,8 @@ public class ComunidadPresenter {
         return Response.ok(comunidades);
     }
 
-    @GetMapping("/estaExpulsado/{idUsuario}/{idEvento}")
-    public ResponseEntity<Object> eventosFuturosPertenecientesAUnUsuario(@PathVariable Long idUsuario,
+    @GetMapping("/estaExpulsado/{idUsuario}/{idComunidad}")
+    public ResponseEntity<Object> comunidadesFuturosPertenecientesAUnUsuario(@PathVariable Long idUsuario,
             @PathVariable Long idComunidad) {
         boolean estado = comunidadService.estaExpulsado(idUsuario, idComunidad);
         String mensaje = comunidadService.motivoExpulsion(idUsuario, idComunidad);
@@ -299,7 +299,7 @@ public class ComunidadPresenter {
         return Response.ok(estado, mensaje);
     }
 
-    @PutMapping("/eliminarParticipante/{idEvento}/{idUsuario}")
+    @PutMapping("/eliminarParticipante/{idComunidad}/{idUsuario}")
     public ResponseEntity<Object> eliminarParticipante(@PathVariable Long idComunidad, @PathVariable Long idUsuario,
             @RequestBody String motivo) {
         comunidadService.eliminarUsuario(motivo, idComunidad, idUsuario);
