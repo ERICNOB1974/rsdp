@@ -91,7 +91,9 @@ export class EditarComunidadComponent implements OnInit {
       } else {
         this.formatoValido = false; // El formato no es válido
         this.vistaPreviaArchivo = null; // No se muestra la vista previa
-        alert('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF).');
+        this.snackBar.open('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF).', 'Cerrar', {
+          duration: 3000,
+        });
       }
     }
   }

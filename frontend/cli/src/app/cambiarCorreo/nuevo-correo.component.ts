@@ -12,6 +12,7 @@ import { NgIf } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { UsuarioService } from '../usuarios/usuario.service';
 import { Observable, map, catchError, of } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-nuevo-correo',
@@ -37,7 +38,8 @@ export class NuevoCorreoComponent {
         private router: Router,
         private authService: AuthService,
         private usuarioService: UsuarioService,
-        private location: Location
+        private location: Location,
+        private snackBar: MatSnackBar
     ) {
         this.nuevoCorreoForm = this.formBuilder.group({
             nuevoCorreo: ['', [
@@ -73,11 +75,15 @@ export class NuevoCorreoComponent {
                             queryParams: { tipo: 'cambio-correo' }
                         });
                     } else {
-                        alert('Error al enviar el código de verificación');
+                        this.snackBar.open('Error al enviar el código de verificación', 'Cerrar', {
+                            duration: 3000,
+                        });
                     }
                 },
                 (error) => {
-                    alert('Error en el servidor');
+                    this.snackBar.open('Error en el servidor', 'Cerrar', {
+                        duration: 3000,
+                    });
                 }
             );
         }

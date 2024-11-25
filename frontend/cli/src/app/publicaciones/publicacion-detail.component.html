@@ -1,5 +1,16 @@
 <div class="form-container">
-  <h2>Detalles de la publicación</h2>
+  <div class="header" style="display: flex; align-items: center; margin-bottom: 20px;">
+    <a [routerLink]="['/perfil', publicadoPor.id]" style="text-decoration: none; display: flex; align-items: center;">
+      <img [src]="publicadoPor.fotoPerfil" alt="Foto de perfil" 
+           style="width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+    </a>
+    <div>
+      <a [routerLink]="['/perfil', publicadoPor.id]" style="text-decoration: none; color: #333; font-weight: bold; font-size: 16px;">
+        {{ publicadoPor.nombreUsuario }}
+      </a>
+      <p style="margin: 0; font-size: 12px; color: #999;">Publicado el {{ publicacion.fechaDeCreacion | date:'mediumDate' }}</p>
+    </div>
+  </div>
 
   <p><strong></strong> {{ publicacion.texto }}</p>
 
@@ -36,9 +47,7 @@
         <div class="comment-header" style="display: flex; align-items: center;">
           <a [routerLink]="['/perfil', com.usuario.id]"
             style="text-decoration: none; display: flex; align-items: center;">
-            <img *ngIf="com.usuario.fotoPerfil" [src]="com.usuario.fotoPerfil" alt="foto de Perfil"
-              style="width: 30px; height: 30px; border-radius: 50%; margin-right: 8px;">
-            <img *ngIf="!com.usuario.fotoPerfil" src="../../assets/usuario.png" alt="foto de Perfil"
+            <img [src]="com.usuario.fotoPerfil" alt="foto de Perfil"
               style="width: 30px; height: 30px; border-radius: 50%; margin-right: 8px;">
           </a>
           <a [routerLink]="['/perfil', com.usuario.id]" style="text-decoration: none; color: #3897f0;">
@@ -71,9 +80,7 @@
       <a [routerLink]="['/perfil', usuario.id]" style="text-decoration: none; display: flex; align-items: center;"
         (click)="cerrarModal()">
         >
-        <img *ngIf="usuario.fotoPerfil" [src]="usuario.fotoPerfil" alt="foto de Perfil"
-          style="width: 30px; height: 30px; border-radius: 50%; margin-right: 8px;">
-        <img *ngIf="!usuario.fotoPerfil" src="../../assets/usuario.png" alt="foto de Perfil"
+        <img [src]="usuario.fotoPerfil" alt="foto de Perfil"
           style="width: 30px; height: 30px; border-radius: 50%; margin-right: 8px;">
       </a>
       <a [routerLink]="['/perfil', usuario.id]" style="text-decoration: none; color: #000000;" (click)="cerrarModal()">
