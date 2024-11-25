@@ -1,11 +1,11 @@
 <div class="form-container">
   <h2>Crear Nuevo Evento</h2>
-  <form #form="ngForm" class="evento-form">
+  <form [formGroup]="formEvento" (ngSubmit)="onSubmit()">
 
     <!-- Nombre del Evento -->
     <mat-form-field appearance="outline" class="form-group">
       <mat-label>Nombre del Evento</mat-label>
-      <input matInput [(ngModel)]="evento.nombre" name="nombre" required>
+      <input matInput name="nombre" formControlName="nombre" required [(ngModel)]="evento.nombre">
       <mat-error *ngIf="formEvento.get('nombre')?.hasError('required')">
         El nombre del evento es requerido
       </mat-error>
@@ -25,10 +25,10 @@
 
 
     <!-- Fecha y Hora del Evento -->
-    <mat-form-field appearance="outline" class="form-group">
+    <mat-form-field appearance="outline">
       <mat-label>Fecha y Hora del Evento</mat-label>
-      <input matInput type="datetime-local" id="fechaHora" [(ngModel)]="evento.fechaHora" name="fechaHora"
-        [min]="minFechaHora" required>
+      <input matInput type="datetime-local" id="fechaHora" name="fechaHora" [min]="minFechaHora"
+        formControlName="fechaHora" required [(ngModel)]="evento.fechaHora">
       <mat-error *ngIf="formEvento.get('fechaHora')?.hasError('invalidDate')">
         La fecha debe ser mayor a hoy
       </mat-error>
@@ -36,6 +36,8 @@
         La fecha y hora del evento son requeridas
       </mat-error>
     </mat-form-field>
+
+
 
     <!-- Descripción -->
     <mat-form-field appearance="outline" class="form-group">
@@ -46,8 +48,8 @@
     <!-- Cantidad Máxima de Participantes -->
     <mat-form-field appearance="outline" class="form-group">
       <mat-label>Cantidad Máxima de Participantes</mat-label>
-      <input matInput type="number" min="1" [(ngModel)]="evento.cantidadMaximaParticipantes"
-        name="cantidadMaximaParticipantes" required>
+      <input matInput type="number" min="1" name="cantidadMaximaParticipantes" required
+        formControlName="cantidadMaximaParticipantes" [(ngModel)]="evento.cantidadMaximaParticipantes">
       <mat-error *ngIf="formEvento.get('cantidadMaximaParticipantes')?.hasError('required')">
         La cantidad máxima de participantes es requerida y debe ser un número positivo
       </mat-error>
@@ -56,13 +58,15 @@
     <!-- Buscar Etiquetas -->
     <mat-form-field appearance="outline" class="form-group">
       <mat-label>Buscar Etiquetas:</mat-label>
-      <input matInput id="etiquetas" [(ngModel)]="etiquetaSeleccionada" [ngbTypeahead]="searchEtiqueta"
-        [resultFormatter]="resultFormatEtiqueta" [inputFormatter]="inputFormatEtiqueta"
-        (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada" placeholder="Buscar etiqueta" />
-      <mat-error *ngIf="etiquetasSeleccionadas.length == 0">
+      <input matInput id="etiquetas" [ngbTypeahead]="searchEtiqueta" [resultFormatter]="resultFormatEtiqueta"
+        [inputFormatter]="inputFormatEtiqueta" (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada"
+        placeholder="Buscar etiqueta" [(ngModel)]="etiquetaSeleccionada" />
+
+      <footer *ngIf="etiquetasSeleccionadas.length==0" class="mat-error-custom">
         Al menos una etiqueta es requerida
-      </mat-error>
+      </footer>
     </mat-form-field>
+
 
     <div class="selected-tags">
       <span *ngFor="let etiqueta of etiquetasSeleccionadas" class="tag">
@@ -99,5 +103,6 @@
         Evento</button>
       <button mat-flat-button color="accent" type="button" (click)="cancel()">Cancelar</button>
     </div>
+    
   </form>
 </div>

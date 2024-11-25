@@ -121,13 +121,14 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         void quitarRolAdministrador(Long idMiembro, Long idComunidad, LocalDateTime fechaIngreso,
                         LocalDateTime fechaOtorgacion);
 
-    @Query("MATCH (u:Usuario) WHERE id(u) = $idUsuario " +
-            "CREATE (c:Comunidad {nombre: $nombre, fechaDeCreacion: $fechaCreacion, latitud: $latitud, longitud: $longitud, descripcion: $descripcion, cantidadMaximaMiembros: $participantes, esPrivada: $privada, imagen: $imagen, ubicacion: $ubicacion})"
-            +
-            " CREATE (u)<-[:CREADA_POR {fechaCreacion: $fechaCreacion}]-(c) " +
-            "RETURN c")
-    Comunidad guardarComunidadYCreador(String nombre, String descripcion, int participantes, boolean privada,
-            Long idUsuario, LocalDate fechaCreacion, double latitud, double longitud, String imagen, String ubicacion);
+        @Query("MATCH (u:Usuario) WHERE id(u) = $idUsuario " +
+                        "CREATE (c:Comunidad {nombre: $nombre, fechaDeCreacion: $fechaCreacion, latitud: $latitud, longitud: $longitud, descripcion: $descripcion, cantidadMaximaMiembros: $participantes, esPrivada: $privada, imagen: $imagen, ubicacion: $ubicacion})"
+                        +
+                        " CREATE (u)<-[:CREADA_POR {fechaCreacion: $fechaCreacion}]-(c) " +
+                        "RETURN c")
+        Comunidad guardarComunidadYCreador(String nombre, String descripcion, int participantes, boolean privada,
+                        Long idUsuario, LocalDate fechaCreacion, double latitud, double longitud, String imagen,
+                        String ubicacion);
 
         @Query("MATCH (u:Usuario)-[r:SOLICITUD_DE_INGRESO]->(c:Comunidad) " +
                         "Where id(u) = $idUsuario AND id(c) = $idComunidad " +
@@ -167,6 +168,8 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                                                                                   // la comunidad
                         "WITH c, COUNT(DISTINCT h) AS numParticipantes " +
                         "WHERE numParticipantes < c.cantidadMaximaMiembros " +
+                        "AND NOT (u)-[r:EXPULSADO_COMUNIDAD]-(c) " +
+
                         "RETURN c " +
                         "ORDER BY c.nombre ASC " +
                         "SKIP $skip " + // Paginación: omite el número de resultados especificado
@@ -185,65 +188,70 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         @Param("skip") int skip,
                         @Param("limit") int limit);
 
-    @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario) " +
-            "MATCH (amigo)-[:MIEMBRO]->(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
-            "WHERE NOT (u)-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR]-(comunidad) " +
-            "OPTIONAL MATCH (comunidad)<-[:MIEMBRO]-(miembro) " +
-            "WITH u, comunidad, COUNT(DISTINCT etiqueta) AS etiquetasEnComun, COUNT(miembro) AS cantidadMiembros "
-            +
-            "WHERE cantidadMiembros < comunidad.cantidadMaximaMiembros " +
-            "WITH u, comunidad, etiquetasEnComun, " +
-            "point({latitude: comunidad.latitud, longitude: comunidad.longitud}) AS ubicacionComunidad, " +
-            "point({latitude: u.latitud, longitude: u.longitud}) AS ubicacionUsuario " +
-            "WITH comunidad, etiquetasEnComun, " +
-            "point.distance(ubicacionComunidad, ubicacionUsuario) AS distancia " +
-            "RETURN comunidad, (etiquetasEnComun / (distancia + 1500000)) AS score, 'a tus amigos le gustan eventos de este tipo, porque tienen '+etiquetasEnComun+' etiqueta/s en comun con las comunidades en las que participas' AS motivo "
-            + // Cambiar aquí
-            "ORDER BY score DESC ")
-    List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario);
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario) " +
+                        "MATCH (amigo)-[:MIEMBRO]->(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
+                        "WHERE NOT (u)-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR]-(comunidad) " +
+                        "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
 
-    @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(evento:Evento)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta), "
-            +
-            "(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta) " +
-            "WHERE NOT (u)<-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR]-(comunidad) " +
-            "OPTIONAL MATCH (comunidad)<-[:MIEMBRO]-(miembro) " +
-            "WITH u, comunidad, COUNT(DISTINCT etiqueta) AS etiquetasEnComun, COUNT(miembro) AS cantidadMiembros "
-            +
-            "WHERE cantidadMiembros < comunidad.cantidadMaximaMiembros " +
-            "WITH u, comunidad, etiquetasEnComun, " +
-            "point({latitude: comunidad.latitud, longitude: comunidad.longitud}) AS ubicacionComunidad, " +
-            "point({latitude: u.latitud, longitude: u.longitud}) AS ubicacionUsuario " +
-            "WITH comunidad, etiquetasEnComun, " +
-            "point.distance(ubicacionComunidad, ubicacionUsuario) AS distancia " +
-            "WITH comunidad, etiquetasEnComun, distancia, " +
-            "(etiquetasEnComun/(distancia+1500000)) AS score " +
-            "RETURN comunidad, score, 'tienen '+etiquetasEnComun+' etiqueta/s en comun con eventos en los que participas' AS motivo  "
-            +
-            "ORDER BY score DESC ")
-    List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnEventos2(String nombreUsuario);
+                        "OPTIONAL MATCH (comunidad)<-[:MIEMBRO]-(miembro) " +
+                        "WITH u, comunidad, COUNT(DISTINCT etiqueta) AS etiquetasEnComun, COUNT(miembro) AS cantidadMiembros "
+                        +
+                        "WHERE cantidadMiembros < comunidad.cantidadMaximaMiembros " +
+                        "WITH u, comunidad, etiquetasEnComun, " +
+                        "point({latitude: comunidad.latitud, longitude: comunidad.longitud}) AS ubicacionComunidad, " +
+                        "point({latitude: u.latitud, longitude: u.longitud}) AS ubicacionUsuario " +
+                        "WITH comunidad, etiquetasEnComun, " +
+                        "point.distance(ubicacionComunidad, ubicacionUsuario) AS distancia " +
+                        "RETURN comunidad, (etiquetasEnComun / (distancia + 1500000)) AS score, 'a tus amigos le gustan eventos de este tipo, porque tienen '+etiquetasEnComun+' etiqueta/s en comun con las comunidades en las que participas' AS motivo "
+                        + // Cambiar aquí
+                        "ORDER BY score DESC ")
+        List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario);
 
-    @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(c1:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta), "
-            +
-            "(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta) " +
-            "WHERE NOT (u)<-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR]->(comunidad) " +
-            "OPTIONAL MATCH (comunidad)<-[:MIEMBRO]-(miembro) " +
-            "WITH u, comunidad, COUNT(DISTINCT etiqueta) AS etiquetasEnComun, COUNT(miembro) AS cantidadMiembros "
-            +
-            "WHERE cantidadMiembros < comunidad.cantidadMaximaMiembros " +
-            "WITH u, comunidad, etiquetasEnComun, " +
-            "point({latitude: comunidad.latitud, longitude: comunidad.longitud}) AS ubicacionComunidad, " +
-            "point({latitude: u.latitud, longitude: u.longitud}) AS ubicacionUsuario " +
-            "WITH comunidad, etiquetasEnComun, point.distance(ubicacionComunidad, ubicacionUsuario) AS distancia "
-            +
-            "WITH comunidad, etiquetasEnComun, distancia, (etiquetasEnComun/(distancia+1500000)) AS score "
-            +
-            "RETURN comunidad, score, 'tienen '+etiquetasEnComun+' etiqueta/s en comun con comunidades en las que perteneces' AS motivo   "
-            +
-            "ORDER BY score DESC ")
-    List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnComunidades2(
-            @Param("nombreUsuario") String nombreUsuario);
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(evento:Evento)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta), "
+                        +
+                        "(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta) " +
+                        "WHERE NOT (u)<-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR]-(comunidad) " +
+                        "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
+                        "OPTIONAL MATCH (comunidad)<-[:MIEMBRO]-(miembro) " +
+                        "WITH u, comunidad, COUNT(DISTINCT etiqueta) AS etiquetasEnComun, COUNT(miembro) AS cantidadMiembros "
+                        +
+                        "WHERE cantidadMiembros < comunidad.cantidadMaximaMiembros " +
+                        "WITH u, comunidad, etiquetasEnComun, " +
+                        "point({latitude: comunidad.latitud, longitude: comunidad.longitud}) AS ubicacionComunidad, " +
+                        "point({latitude: u.latitud, longitude: u.longitud}) AS ubicacionUsuario " +
+                        "WITH comunidad, etiquetasEnComun, " +
+                        "point.distance(ubicacionComunidad, ubicacionUsuario) AS distancia " +
+                        "WITH comunidad, etiquetasEnComun, distancia, " +
+                        "(etiquetasEnComun/(distancia+1500000)) AS score " +
+                        "RETURN comunidad, score, 'tienen '+etiquetasEnComun+' etiqueta/s en comun con eventos en los que participas' AS motivo  "
+                        +
+                        "ORDER BY score DESC ")
+        List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnEventos2(String nombreUsuario);
+
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(c1:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta), "
+                        +
+                        "(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta) " +
+                        "WHERE NOT (u)<-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR]->(comunidad) " +
+                        "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
+                        "OPTIONAL MATCH (comunidad)<-[:MIEMBRO]-(miembro) " +
+                        "WITH u, comunidad, COUNT(DISTINCT etiqueta) AS etiquetasEnComun, COUNT(miembro) AS cantidadMiembros "
+                        +
+                        "WHERE cantidadMiembros < comunidad.cantidadMaximaMiembros " +
+                        "WITH u, comunidad, etiquetasEnComun, " +
+                        "point({latitude: comunidad.latitud, longitude: comunidad.longitud}) AS ubicacionComunidad, " +
+                        "point({latitude: u.latitud, longitude: u.longitud}) AS ubicacionUsuario " +
+                        "WITH comunidad, etiquetasEnComun, point.distance(ubicacionComunidad, ubicacionUsuario) AS distancia "
+                        +
+                        "WITH comunidad, etiquetasEnComun, distancia, (etiquetasEnComun/(distancia+1500000)) AS score "
+                        +
+                        "RETURN comunidad, score, 'tienen '+etiquetasEnComun+' etiqueta/s en comun con comunidades en las que perteneces' AS motivo   "
+                        +
+                        "ORDER BY score DESC ")
+        List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnComunidades2(
+                        @Param("nombreUsuario") String nombreUsuario);
 
         @Query("MATCH (c:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
+                        "WHERE NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
                         "WITH c, collect(etiqueta.nombre) AS etiquetasComunidad " +
                         "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasComunidad) " +
                         "RETURN c")
@@ -254,6 +262,8 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "  MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c) " +
                         "  WHERE id(u) = $idUsuario " +
                         "} " +
+                        "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
+
                         "WITH c, collect(etiqueta.nombre) AS etiquetasComunidad " +
                         "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasComunidad) " +
                         "RETURN c")
@@ -262,6 +272,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
 
         @Query("MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR]-(c:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
                         "WHERE id(u) = $idUsuario " +
+                        "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
                         "WITH c, collect(etiqueta.nombre) AS etiquetasComunidad " +
                         "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasComunidad) " +
                         "RETURN c")
@@ -278,15 +289,18 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                             WHERE toUpper(c.nombre) CONTAINS toUpper($nombre)
                               AND NOT (c)<-[:MIEMBRO]-(u)
                               AND NOT (c)-[:CREADA_POR|ADMINISTRADA_POR]->(u)
+                              AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad)
+
                             RETURN DISTINCT c
                         """)
         List<Comunidad> comunidadesNombreDisponibles(String nombre, @Param("usuarioId") Long usuarioId);
 
         @Query("""
-                            MATCH (c:Comunidad)<-[:MIEMBRO]-(u)
-                            WHERE toUpper(c.nombre) CONTAINS toUpper($nombre)
-                            AND id(u) = $usuarioId
-                            RETURN c
+                        MATCH (c:Comunidad)<-[:MIEMBRO]-(u)
+                        WHERE toUpper(c.nombre) CONTAINS toUpper($nombre)
+                        AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad)
+                        AND id(u) = $usuarioId
+                        RETURN c
                         """)
         List<Comunidad> comunidadesNombreMiembro(String nombre, @Param("usuarioId") Long usuarioId);
 
@@ -295,7 +309,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                             MATCH (us:Usuario)
                             WHERE id(us) = $usuarioId
                             OPTIONAL MATCH (u:Usuario)-[r]-(c)
-                            WHERE type(r) <> 'SOLICITUD_DE_INGRESO' AND type(r) <> 'NOTIFICACION'
+                            WHERE type(r) <> 'SOLICITUD_DE_INGRESO' AND type(r) <> 'NOTIFICACION' AND type(r) <> 'EXPULSADO_COMUNIDAD'
                             WITH c, count(DISTINCT u) AS totalUsuarios, us
                             WHERE totalUsuarios >= $min AND totalUsuarios <= $max
                             AND NOT EXISTS {
@@ -311,7 +325,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                             MATCH (us:Usuario)
                             WHERE id(us) = $usuarioId
                             OPTIONAL MATCH (u:Usuario)-[r]-(c)
-                            WHERE type(r) <> 'SOLICITUD_DE_INGRESO' AND type(r) <> 'NOTIFICACION'
+                            WHERE type(r) <> 'SOLICITUD_DE_INGRESO' AND type(r) <> 'NOTIFICACION' AND type(r) <> 'EXPULSADO_COMUNIDAD'
                             WITH c, count(DISTINCT u) AS totalUsuarios, us
                             WHERE totalUsuarios >= $min AND totalUsuarios <= $max
                             AND (c)-[:MIEMBRO|ADMINISTRADA_POR]-(us) // Verifica si el usuario es miembro de la comunidad
@@ -323,16 +337,16 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
 
         @Query("MATCH (c:Comunidad) " +
                         "OPTIONAL MATCH (u:Usuario)-[r]-(c) " +
-                        "WHERE type(r) <> 'SOLICITUD_DE_INGRESO' AND type(r) <> 'NOTIFICACION' " +
+                        "WHERE type(r) <> 'SOLICITUD_DE_INGRESO' AND type(r) <> 'NOTIFICACION' AND type(r) <> 'EXPULSADO_COMUNIDAD'" +
                         "WITH c, count(DISTINCT u) AS totalUsuarios " +
                         "WHERE totalUsuarios >= $min AND totalUsuarios <= $max " +
                         "RETURN c")
         List<Comunidad> comunidadesCantidadParticipantes(int min, int max);
 
-@Query("MATCH (u:Usuario)-[:MIEMBRO]-(c:Comunidad) "
-            + "WHERE id(u) = $idUsuario AND id(c) = $idComunidad "
-            + "RETURN COUNT(c) > 0")
-    boolean esMiembro(Long idUsuario, Long idComunidad);
+        @Query("MATCH (u:Usuario)-[:MIEMBRO]-(c:Comunidad) "
+                        + "WHERE id(u) = $idUsuario AND id(c) = $idComunidad "
+                        + "RETURN COUNT(c) > 0")
+        boolean esMiembro(Long idUsuario, Long idComunidad);
 
         @Query("MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c:Comunidad)" +
                         "WHERE id(c) = $idComunidad " +
@@ -381,13 +395,35 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "RETURN c")
         Comunidad buscarComunidadPorEventoInterno(@Param("idEvento") Long idEvento);
 
-
         @Query("""
-                        MATCH (p:Publicacion)-[:PUBLICADO_DENTRO_DE]-(c:Comunidad) 
+                        MATCH (p:Publicacion)-[:PUBLICADO_DENTRO_DE]-(c:Comunidad)
                         WHERE id(p)=$idPublicacion
                         return c
                         """)
         Optional<Comunidad> comunidadDePublicacion(Long idPublicacion);
-        
+
+        @Query("""
+                        MATCH (u:Usuario) WHERE id(u)=$idUsuario
+                        MATCH (c:Comunidad) WHERE id(c)=$idComunidad
+                        MATCH (u)-[r:PARTICIPA_EN]->(c) DELETE r
+                        CREATE (u)-[:EXPULSADO_COMUNIDAD{motivoExpulsion: $motivoExpulsion}]->(e)
+                                   """)
+        void eliminarUsuario(Long idComunidad, Long idUsuario, String motivoExpulsion);
+
+        @Query("""
+                        MATCH (u:Usuario) WHERE id(u)=$idUsuario
+                        MATCH (e:Comunidad) WHERE id(e)=$idComunidad
+                        MATCH (u)-[r:EXPULSADO_COMUNIDAD]-(e)
+                        RETURN COUNT(r)>0
+                        """)
+        boolean estaExpulsado(Long idUsuario, Long idComunidad);
+
+        @Query("""
+                        MATCH (u:Usuario) WHERE id(u)=$idUsuario
+                        MATCH (e:Comunidad) WHERE id(e)=$idComunidad
+                        MATCH (u)-[r:EXPULSADO_COMUNIDAD]-(e)
+                        RETURN r.motivoExpulsion
+                        """)
+        String motivoExpulsion(Long idUsuario, Long idComunidad);
 
 }

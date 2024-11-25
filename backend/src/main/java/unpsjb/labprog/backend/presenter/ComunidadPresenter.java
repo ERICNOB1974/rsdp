@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -289,6 +290,22 @@ public class ComunidadPresenter {
         return Response.ok(comunidades);
     }
 
+
+    @GetMapping("/estaExpulsado/{idUsuario}/{idEvento}")
+    public ResponseEntity<Object> eventosFuturosPertenecientesAUnUsuario(@PathVariable Long idUsuario,
+            @PathVariable Long idComunidad) {
+        boolean estado = comunidadService.estaExpulsado(idUsuario, idComunidad);
+        String mensaje = comunidadService.motivoExpulsion(idUsuario, idComunidad);
+
+        return Response.ok(estado, mensaje);
+    }
+
+
+    @PutMapping("/eliminarParticipante/{idEvento}/{idUsuario}")
+    public ResponseEntity<Object> eliminarParticipante(@PathVariable Long idComunidad, @PathVariable Long idUsuario,
+            @RequestBody String motivo) {
+        comunidadService.eliminarUsuario(motivo, idComunidad, idUsuario);
+        return Response.ok("OK");
     @PostMapping("/actualizarUbicaciones")
     public ResponseEntity<Object> actualizarUbicaciones() {
         comunidadService.agregarUbicacionAComunidadesSinUbicacion();

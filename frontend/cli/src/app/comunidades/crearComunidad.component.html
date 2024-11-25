@@ -1,11 +1,10 @@
 <div class="form-container">
     <h2>Crear Nueva Comunidad</h2>
-
-    <form #form="ngForm">
+    <form [formGroup]="formComunidad" (ngSubmit)="onSubmit()">
 
         <mat-form-field appearance="outline" class="form-group">
             <mat-label>Nombre de la comunidad</mat-label>
-            <input matInput [(ngModel)]="comunidad.nombre" name="nombre" required>
+            <input matInput name="nombre" formControlName="nombre" required [(ngModel)]="comunidad.nombre">
             <mat-error *ngIf="formComunidad.get('nombre')?.hasError('required')">
                 El nombre de la comunidad es requerido
             </mat-error>
@@ -23,30 +22,32 @@
             <button type="button" (click)="eliminarArchivo()" class="btn btn-danger mt-2">Eliminar archivo</button>
         </div>
 
-        <div class="form-group">
-            <label for="descripcion">Descripción</label>
-            <textarea id="descripcion" [(ngModel)]="comunidad.descripcion" name="descripcion"></textarea>
-        </div>
+        <mat-form-field appearance="outline" class="form-group">
+            <mat-label>Descripción</mat-label>
+            <input matInput [(ngModel)]="comunidad.descripcion" name="descripcion">
+        </mat-form-field>
 
-    
 
         <!-- Cantidad Máxima de Participantes -->
         <mat-form-field appearance="outline" class="form-group">
             <mat-label>Cantidad Máxima de Participantes</mat-label>
-            <input matInput type="number" min="1" [(ngModel)]="comunidad.cantidadMaximaMiembros"
-                name="cantidadMaximaParticipantes" required>
-            <mat-error *ngIf="formComunidad.get('cantidadMaximaParticipantes')?.hasError('required')">
+            <input matInput type="number" min="1" name="cantidadMaximaMiembros" required
+                formControlName="cantidadMaximaMiembros" [(ngModel)]="comunidad.cantidadMaximaMiembros">
+            <mat-error *ngIf="formComunidad.get('cantidadMaximaMiembros')?.hasError('required')">
                 La cantidad máxima de participantes es requerida y debe ser un número positivo
             </mat-error>
         </mat-form-field>
 
-        <div class="form-group">
-            <label for="etiquetas">Buscar Etiquetas:</label>
-            <input id="etiquetas" class="form-control" [(ngModel)]="etiquetaSeleccionada"
-                [ngbTypeahead]="searchEtiqueta" [resultFormatter]="resultFormatEtiqueta"
+        <mat-form-field appearance="outline" class="form-group">
+            <mat-label>Buscar Etiquetas:</mat-label>
+            <input matInput id="etiquetas" [ngbTypeahead]="searchEtiqueta" [resultFormatter]="resultFormatEtiqueta"
                 [inputFormatter]="inputFormatEtiqueta" (selectItem)="agregarEtiqueta($event)"
-                name="etiquetaSeleccionada" placeholder="Buscar etiqueta" />
-        </div>
+                name="etiquetaSeleccionada" placeholder="Buscar etiqueta" [(ngModel)]="etiquetaSeleccionada" />
+            <footer *ngIf="etiquetasSeleccionadas.length==0" class="mat-error-custom">
+                Al menos una etiqueta es requerida
+            </footer>
+        </mat-form-field>
+
 
         <div class="selected-tags">
             <span *ngFor="let etiqueta of etiquetasSeleccionadas" class="tag">
@@ -59,10 +60,10 @@
 
 
         <div class="mapa-container">
-            <div class="input-container">
-                <input type="text" class="form-control" placeholder="Ingresa una dirección"
+            <mat-form-field appearance="outline" class="form-group">
+                <mat-label>Ubicación de la comunidad</mat-label>
+                <input matInput type="text" class="form-control" placeholder="Ingresa una dirección"
                     (input)="buscarDireccion($event)" />
-
                 <ul *ngIf="sugerencias.length > 0" class="list-group">
                     <li *ngFor="let sugerencia of sugerencias" (click)="seleccionarDireccion(sugerencia)"
                         class="list-group-item list-group-item-action" style="cursor: pointer;">
@@ -70,10 +71,12 @@
                         sugerencia.pais }}
                     </li>
                 </ul>
+            </mat-form-field>
+
+            <div class="form-group">
+                <div id="map"></div>
             </div>
 
-            <!-- Aquí se mostrará el mapa -->
-            <div id="map"></div>
         </div>
 
         <div class="form-group">
@@ -85,10 +88,12 @@
 
 
         <div class="form-buttons">
-            <button type="submit" (click)="saveComunidad()" [disabled]="!isFormValid()" class="btn btn-primary">Guardar
-                comunidad</button>
-            <button type="button" (click)="cancel()" class="btn btn-secondary">Cancelar</button>
-        </div>
+            <button mat-raised-button color="primary" type="button" (click)="saveComunidad()" [disabled]="!isFormValid()">Guardar
+              comunidad</button>
+            <button mat-flat-button color="accent" type="button" (click)="cancel()">Cancelar</button>
+          </div>
+
+
     </form>
     <!-- Mensaje de confirmación o error -->
     <div *ngIf="showMessage" class="alert alert-info">
