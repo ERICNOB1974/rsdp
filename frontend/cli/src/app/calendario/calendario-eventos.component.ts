@@ -82,6 +82,19 @@ export class CalendarioEventosComponent implements OnInit {
     };
   }
 
+  // Asegúrate de que el código de la lupa se quede dentro de esta función
+  openMotivoModal(motivo: string, event: Event) {
+    // Detener la propagación del clic al contenedor de FullCalendar
+    event.stopPropagation();
+
+    const modal = document.getElementById('motivoModal');
+    const motivoText = document.getElementById('motivoText');
+    if (modal && motivoText) {
+      motivoText.innerHTML = motivo;
+      modal.style.display = 'block'; // Mostrar el modal
+    }
+  }
+
   ngOnInit() {
     window.addEventListener('resize', this.updateView.bind(this)); // Detectar cambios en tamaño de pantalla
     const colors = ['#FFA500', '#1E90FF', '#32CD32', '#FF6347', '#9370DB']; // Paleta de colores
@@ -129,10 +142,6 @@ export class CalendarioEventosComponent implements OnInit {
       },
       (error) => console.error('Error al cargar rutinas:', error)
     );
-  }
-
-  showMotivo(motivo: string) {
-    alert(motivo);
   }
 
   ngOnDestroy() {

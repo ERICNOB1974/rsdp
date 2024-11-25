@@ -95,7 +95,9 @@ export class PerfilDetailComponent implements OnInit {
       } else {
         this.formatoValido = false;
         this.vistaPreviaArchivo = null;
-        alert('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF).');
+        this.snackBar.open('Formato no válido. Solo se permiten imágenes (JPEG, PNG, GIF).', 'Cerrar', {
+          duration: 3000,
+        });
       }
     }
   }

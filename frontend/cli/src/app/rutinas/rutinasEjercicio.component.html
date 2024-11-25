@@ -25,7 +25,8 @@
                         </div>
 
                         <div *ngIf="ejercicioActual.tipo === 'resistencia'">
-                            <p><strong>Tiempo:</strong> {{ ejercicioActual.tiempo }}</p>
+                            <p><strong>Tiempo:</strong> {{ tiempoRestante || ejercicioActual.tiempo }}</p>
+                            <button class="btn btn-primary btn-lg" (click)="iniciarCronometro(ejercicioActual.tiempo)">Cronometrar</button>
                         </div>
 
                         <div class="exercise-image-container text-center mb-3">
