@@ -282,30 +282,19 @@ body {
 /* Ajustar el main-content para la nueva navbar */
 
 /* Contenido principal */
-.main-content {
-  display: flex;
-  flex-direction: column;
-  padding: 2dvh;
-  /* Esto es necesario para dejar espacio a la sidebar */
-  margin-top: 5vw;
-  /* Esto es necesario para dejar espacio a la navbar */
-  margin-left: 20vw;
-  /* Asegura que el contenido principal ocupe toda la pantalla restante */
-  /* Esto asegura que si el contenido es largo, se agregue scroll */
-  overflow-y: auto;
-  height: calc(100vh - 60px);
-  width: calc(100% - 250px);
-  transition: margin-left 0.3s, ease;
-  flex-grow: 1;
-}
-
-
 
 .main-content.full-width {
   margin-left: 20vw;
   /* Ajuste el margen cuando la barra está oculta */
 }
 
+.sidebar.collapsed ~ .main-content {
+  margin-left: 70px;
+}
+
+.main-content {
+  margin-left: 250px; /* Ajusta según la barra */
+}
 
 
 .profile-image {
@@ -322,4 +311,36 @@ body {
   margin-right: 5px;
   /* Espacio entre la imagen y el texto */
   cursor: pointer;
+}
+
+.router-outlet-component {
+  width: 80%; /* Ajusta el tamaño que prefieras */
+  height: auto;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  padding: 2dvh;
+  margin-left: 20vw;
+  overflow-y: auto;
+  transition: margin-left 0.3s, ease;
+  flex-grow: 1;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+}
+
+.white-island {
+  width: 80%; /* Ajusta según necesites */
+  height: auto;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  padding: 2%;
+  position: relative;
+  transition: transform 0.3s; /* Suaviza el movimiento */
+  overflow-y: auto;
+    align-items: center;
+
 }
