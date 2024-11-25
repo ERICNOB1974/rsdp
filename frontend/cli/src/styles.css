@@ -114,18 +114,6 @@ body {
   /* Centra el texto */
 }
 
-.notification-item {
-  background-color: #f5f5f5;
-  /* Fondo claro para no leídas */
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-}
 
 .notification-content {
   display: flex;
@@ -155,15 +143,12 @@ body {
   bottom: 5px;
   right: 5px;
   cursor: pointer;
-  color: #888;
+  color: #f40c0c;
   font-size: larger;
 }
 
 
-.delete-icon:hover {
-  color: #d9534f;
-  /* Cambia a un color rojo en hover */
-}
+
 
 
 .new-notification-dot {
@@ -183,7 +168,7 @@ body {
   /* Esto empuja las notificaciones hacia la derecha 
   */
   color: white;
-
+  
 }
 
 .notification-item.leida {
@@ -193,16 +178,20 @@ body {
 
 .notification-badge {
   position: absolute;
-  top: -8px;
+/*   top: -8px;
   right: 10px;
+  padding: 2px 6px; */
+  top: 5px;
+  right: 5px;
+  padding: 5px;
   background-color: #ff4444;
   color: white;
   border-radius: 50%;
-  padding: 2px 6px;
   font-size: 12px;
   min-width: 18px;
   text-align: center;
 }
+
 
 .notifications-menu {
   position: absolute;
@@ -217,9 +206,10 @@ body {
   overflow-y: auto;
   z-index: 1002;
   color: rgb(0, 0, 0);
-
+  
   /* Asegura que el menú desplegable esté por encima de otros elementos */
 }
+
 
 .fa-bell {
   font-size: 20px;
@@ -240,7 +230,19 @@ body {
   border-bottom: 1px solid #eee;
   cursor: pointer;
   position: relative;
-
+  
+}
+.notification-item {
+  background-color: #f5f5f5;
+  /* Fondo claro para no leídas */
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
 }
 
 .notification-item:not(.leida):hover {
@@ -276,8 +278,10 @@ body {
 .no-notifications {
   padding: 15px;
   text-align: center;
+  font-size: 14px;
   color: #666;
 }
+
 
 /* Ajustar el main-content para la nueva navbar */
 
@@ -321,7 +325,7 @@ body {
 .main-content {
   display: flex;
   flex-direction: column;
-  padding: 2dvh;
+  padding: 0 10px; /* Espacio para evitar corte */
   margin-left: 20vw;
   overflow-y: auto;
   transition: margin-left 0.3s, ease;
@@ -330,3 +334,61 @@ body {
   justify-content: center;
   align-items: center;
 }
+
+.white-island {
+  width: 80%; /* Ajusta según necesites */
+  height: auto;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  padding: 2%;
+  position: relative;
+  transition: transform 0.3s; /* Suaviza el movimiento */
+  overflow-y: auto;
+    align-items: center;
+
+}
+
+
+@media (max-width: 768px) {
+  .notifications-menu {
+      width: 90%; /* Ajusta el ancho en pantallas pequeñas */
+      left: 5%;
+  }
+
+  .notification-item p {
+      font-size: 14px; /* Aumenta la legibilidad en dispositivos móviles */
+  }
+
+  .notification-badge {
+      top: 0;
+      right: 0;
+      font-size: 10px; /* Ajusta el tamaño del badge en pantallas pequeñas */
+  }
+}
+.notification-content {
+  display: flex;
+  align-items: center;
+}
+
+.notifications-list {
+  max-height: 350px; /* Ajusta según el espacio disponible */
+  overflow-y: auto; /* Habilita el scroll vertical */
+}
+.notifications-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 300px; /* Ajusta el tamaño según tu preferencia */
+  background-color: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  max-height: 400px; /* Limita la altura de las notificaciones */
+  overflow-y: auto; /* Permite el scroll vertical */
+  border-radius: 4px;
+}
+.notifications-dropdown {
+  position: relative;
+}
+

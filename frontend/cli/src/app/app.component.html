@@ -17,22 +17,23 @@
                     </span>
                 </a>
                 <div class="notifications-menu">
-                    <div *ngFor="let notificacion of notificaciones" class="notification-item"
-                        [ngClass]="{'leida': notificacion.leida}" (click)="manejarClickNotificacion(notificacion)">
-                        <div class="notification-content">
-                            <span *ngIf="!notificacion.leida" class="new-notification-dot"></span>
-                            <p>{{ notificacion.mensaje }}</p>
+                    <div class="notifications-list">
+                        <div *ngFor="let notificacion of notificaciones" class="notification-item"
+                            [ngClass]="{'leida': notificacion.leida}" (click)="manejarClickNotificacion(notificacion)">
+                            <div class="notification-content">
+                                <span *ngIf="!notificacion.leida" class="new-notification-dot"></span>
+                                <p>{{ notificacion.mensaje }}</p>
+                            </div>
+                            <i class="fa fa-trash delete-icon"
+                                (click)="eliminarNotificacion(notificacion); $event.stopPropagation()"></i>
                         </div>
-                        <i class="fa fa-trash delete-icon"
-                            (click)="eliminarNotificacion(notificacion); $event.stopPropagation()"></i>
                     </div>
-
+            
                     <div *ngIf="getNotificacionesNoLeidas().length === 0" class="no-notifications">
                         No hay notificaciones nuevas
                     </div>
                 </div>
             </div>
-
             <div class="perfil-contenedor">
                 <a (click)="navigateToMiPerfil()" class="imagen-perfil">
                     <img [src]="usuario?.fotoPerfil || '../assets/usuario.png'" alt="Foto de perfil" />
@@ -50,10 +51,9 @@
 
 <div *ngIf="!esPantallaLogin" class="sidebar" [class.collapsed]="isCollapsed">
 
-    <div class="sidebar-toggle">
-        <button class="toggle-btn" (click)="toggleSidebar()">
-            <i class="bi bi-list"></i>
-        </button>
+
+    <div class="hamburger-icon" (click)="toggleSidebar()">
+        <i class="fa fa-bars"></i>
     </div>
 
     <ul>
