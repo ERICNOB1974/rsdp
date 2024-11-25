@@ -68,8 +68,14 @@ export class CrearRutinaComponent implements OnInit {
     return this.etiquetasSeleccionadas.length > 0;
   }
   todosLosDiasTienenEjercicios(): boolean {
-    return this.dias.every(dia => dia.ejercicios && dia.ejercicios.length > 0);
+    return this.dias.every(dia => {
+      if (dia.tipo === 'descanso') {
+        return true; // Si es día de descanso, siempre devuelve true
+      }
+      return dia.ejercicios && dia.ejercicios.length > 0; // Si es día de trabajo, verifica que tenga ejercicios
+    });
   }
+  
 
 
   agregarDiaTrabajo() {

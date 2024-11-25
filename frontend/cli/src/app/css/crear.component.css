@@ -19,9 +19,6 @@
     /* Para que el contenedor de etiquetas sea relativo a esto */
 }
 
-.form-group {
-    margin-bottom: 15px;
-}
 
 textarea {
     resize: vertical;
