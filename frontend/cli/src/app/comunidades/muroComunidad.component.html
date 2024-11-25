@@ -94,8 +94,8 @@
         </div>
       </div>
 
-      <div *ngIf="tabSeleccionada === 'miembros'" class="perfil-miembros">
-        <div *ngFor="let miembro of miembrosVisibles" class="miembro-item" [routerLink]="['/perfil', miembro.id]">
+      <div *ngIf="tabSeleccionada === 'miembros'" class="perfil-miembros" (scroll)="onScrollMiembros()">
+        <div *ngFor="let miembro of miembrosVisiblesPaginados" class="miembro-item" [routerLink]="['/perfil', miembro.id]">
           <div>
             <img [src]="(miembro.anonimos || !miembro.fotoPerfil) ? '../../assets/usuario.png' : miembro.fotoPerfil"
               alt="{{ miembro.nombreUsuario }}" class="perfil-imagen">
@@ -131,52 +131,102 @@
 
 <ng-template #modalInvitarAmigos>
   <div class="modal-header">
-    <h5 class="modal-title">Invitar amigos al evento</h5>
-    <button type="button" class="close btn-close" aria-label="Close" (click)="cerrarModal()"></button>
+    <h5 class="modal-title">Invitar amigos a la comunidad</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="cerrarModal()"></button>
   </div>
   <div class="modal-body">
-    <!-- Amigos no en comunidad -->
-    <h6 class="text-primary">Amigos que aún no están en la comunidad</h6>
-    <div *ngIf="amigosNoEnComunidad.length > 0; else sinAmigosNoEnComunidad">
-      <div *ngFor="let amigo of amigosNoEnComunidad"
-        class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
-        <span>{{ amigo.nombreUsuario }}</span>
-        <button (click)="invitarAmigo(amigo.id)" class="btn btn-outline-primary btn-sm ml-2 animate-btn">
-          Invitar a la comunidad
+    <!-- Buscador -->
+    <div class="input-group mb-3">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Buscar amigos..."
+        [(ngModel)]="buscador"
+        (input)="filtrarAmigos()"
+      />
+      <span class="input-group-text"><i class="bi bi-search"></i></span>
+    </div>
+
+    <!-- Amigos que aún no están en la comunidad -->
+    <div *ngIf="mostrarAmigosNoEnComunidad">
+      <h6 class="text-primary">Amigos que aún no están en la comunidad</h6>
+      <div *ngIf="amigosNoEnComunidadFiltrados.length > 0">
+        <div
+          *ngFor="let amigo of amigosNoEnComunidadFiltrados | slice:0:mostrarMasAmigosNoEnComunidad"
+          class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom"
+        >
+          <span>{{ amigo.nombreUsuario }}</span>
+          <button
+            class="btn btn-outline-primary btn-sm"
+            (click)="invitarAmigo(amigo.id)"
+          >
+            Invitar a la comunidad
+          </button>
+        </div>
+        <button
+          *ngIf="amigosNoEnComunidadFiltrados.length > mostrarMasAmigosNoEnComunidad"
+          class="btn btn-link text-primary"
+          (click)="verMasAmigos('noEnComunidad')"
+        >
+          Ver más
         </button>
       </div>
+      <p *ngIf="amigosNoEnComunidadFiltrados.length === 0" class="text-muted">
+        No se encontraron amigos disponibles para invitar.
+      </p>
     </div>
-    <ng-template #sinAmigosNoEnComunidad>
-      <p class="text-muted">No tienes amigos disponibles para invitar.</p>
-    </ng-template>
 
-    <!-- Amigos en comunidad -->
-    <h6 class="text-success mt-4">Amigos ya en la comunidad</h6>
-    <div *ngIf="amigosEnComunidad.length > 0; else sinAmigosEnComunidad">
-      <div *ngFor="let amigo of amigosEnComunidad"
-        class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
-        <span>{{ amigo.nombreUsuario }}</span>
-        <span class="badge bg-success text-white">En la comunidad</span>
+    <!-- Amigos ya en la comunidad -->
+    <div *ngIf="mostrarAmigosEnComunidad" class="mt-4">
+      <h6 class="text-success">Amigos ya en la comunidad</h6>
+      <div *ngIf="amigosEnComunidadFiltrados.length > 0">
+        <div
+          *ngFor="let amigo of amigosEnComunidadFiltrados | slice:0:mostrarMasAmigosEnComunidad"
+          class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom"
+        >
+          <span>{{ amigo.nombreUsuario }}</span>
+          <span class="badge bg-success">En la comunidad</span>
+        </div>
+        <button
+          *ngIf="amigosEnComunidadFiltrados.length > mostrarMasAmigosEnComunidad"
+          class="btn btn-link text-success"
+          (click)="verMasAmigos('enComunidad')"
+        >
+          Ver más
+        </button>
       </div>
+      <p *ngIf="amigosEnComunidadFiltrados.length === 0" class="text-muted">
+        No se encontraron amigos en la comunidad.
+      </p>
     </div>
-    <ng-template #sinAmigosEnComunidad>
-      <p class="text-muted">No tienes amigos en la comunidad.</p>
-    </ng-template>
 
     <!-- Amigos ya invitados -->
-    <h6 class="text-warning mt-4">Amigos ya invitados</h6>
-    <div *ngIf="amigosYaInvitados.length > 0; else sinAmigosYaInvitados">
-      <div *ngFor="let amigo of amigosYaInvitados"
-        class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
-        <span>{{ amigo.nombreUsuario }}</span>
-        <span class="badge bg-warning text-dark">Ya invitado</span>
+    <div *ngIf="mostrarAmigosYaInvitados" class="mt-4">
+      <h6 class="text-warning">Amigos ya invitados</h6>
+      <div *ngIf="amigosYaInvitadosFiltrados.length > 0">
+        <div
+          *ngFor="let amigo of amigosYaInvitadosFiltrados | slice:0:mostrarMasAmigosYaInvitados"
+          class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom"
+        >
+          <span>{{ amigo.nombreUsuario }}</span>
+          <span class="badge bg-warning">Ya invitado</span>
+        </div>
+        <button
+          *ngIf="amigosYaInvitadosFiltrados.length > mostrarMasAmigosYaInvitados"
+          class="btn btn-link text-warning"
+          (click)="verMasAmigos('yaInvitados')"
+        >
+          Ver más
+        </button>
       </div>
+      <p *ngIf="amigosYaInvitadosFiltrados.length === 0" class="text-muted">
+        No se encontraron amigos ya invitados.
+      </p>
     </div>
-    <ng-template #sinAmigosYaInvitados>
-      <p class="text-muted">No tienes amigos ya invitados.</p>
-    </ng-template>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
+    <button type="button" class="btn btn-secondary" (click)="cerrarModal()">
+      Cerrar
+    </button>
   </div>
 </ng-template>

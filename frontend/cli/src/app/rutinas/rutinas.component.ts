@@ -321,7 +321,6 @@ export class RutinasComponent implements OnInit {
       .subscribe(
         async (dataPackage) => {
           const resultados = dataPackage.data as Rutina[]
-          console.log("eric ", resultados);
           if (resultados && resultados.length > 0) {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerDias(resultados); // Llamar a traerDias para las rutinas del usuario

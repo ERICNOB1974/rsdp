@@ -306,6 +306,10 @@ public class ComunidadPresenter {
             @RequestBody String motivo) {
         comunidadService.eliminarUsuario(motivo, idComunidad, idUsuario);
         return Response.ok("OK");
+    @PostMapping("/actualizarUbicaciones")
+    public ResponseEntity<Object> actualizarUbicaciones() {
+        comunidadService.agregarUbicacionAComunidadesSinUbicacion();
+        return Response.ok("Ubicaciones actualizadas correctamente.");
     }
 
 }
