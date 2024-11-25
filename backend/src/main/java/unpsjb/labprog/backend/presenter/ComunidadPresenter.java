@@ -290,7 +290,6 @@ public class ComunidadPresenter {
         return Response.ok(comunidades);
     }
 
-
     @GetMapping("/estaExpulsado/{idUsuario}/{idEvento}")
     public ResponseEntity<Object> eventosFuturosPertenecientesAUnUsuario(@PathVariable Long idUsuario,
             @PathVariable Long idComunidad) {
@@ -300,12 +299,13 @@ public class ComunidadPresenter {
         return Response.ok(estado, mensaje);
     }
 
-
     @PutMapping("/eliminarParticipante/{idEvento}/{idUsuario}")
     public ResponseEntity<Object> eliminarParticipante(@PathVariable Long idComunidad, @PathVariable Long idUsuario,
             @RequestBody String motivo) {
         comunidadService.eliminarUsuario(motivo, idComunidad, idUsuario);
         return Response.ok("OK");
+    }
+
     @PostMapping("/actualizarUbicaciones")
     public ResponseEntity<Object> actualizarUbicaciones() {
         comunidadService.agregarUbicacionAComunidadesSinUbicacion();
