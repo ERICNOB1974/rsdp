@@ -11,6 +11,7 @@
     text-align: center;
     font-family: Arial, sans-serif;
     color: #333;
+    width: 95%; /* Cambiado de px a % para ser más flexible */
 }
 
 
@@ -20,6 +21,7 @@
     justify-content: space-around;
     border-bottom: 2px solid #ddd;
     margin-bottom: 20px;
+    flex-wrap: wrap; /* Esto asegura que las pestañas se ajusten en pantallas pequeñas */
 }
 
 
@@ -63,7 +65,7 @@
 
 
 /* Icon styles */
-.btn img.icono-boton {
+.btn2 img.icono-boton {
     width: 30px;
     /* Icon size */
     height: 30px;
@@ -72,7 +74,7 @@
 }
 
 /* Hover effect */
-.btn:hover {
+.btn2:hover {
     background-color: #0056b3;
     /* Darker shade on hover */
     transform: scale(1.05);
@@ -80,13 +82,13 @@
 }
 
 /* Active effect */
-.btn:active {
+.btn2:active {
     transform: scale(0.95);
     /* Slightly shrink when clicked */
 }
 
 /* Focus effect for accessibility */
-.btn:focus {
+.btn2:focus {
     outline: 2px solid #fff;
     /* White outline for focus */
     outline-offset: 2px;
@@ -163,7 +165,7 @@
     margin-bottom: 15px;
 }
 
-.btn {
+.btn2 {
     border: none;
     color: white;
     padding: 12px 24px;
@@ -189,50 +191,41 @@
     color: #007bff;
 }
 
-button {
-    padding: 10px 20px;
-    margin-top: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
 
-.btn-editar {
+.btn2-editar {
     background-color: #007bff;
     color: white;
 }
 
-.btn-editar:hover {
+.btn2-editar:hover {
     background-color: #0056b3;
 }
 
-.btn-eliminar-amigo {
+.btn2-eliminar-amigo {
     background-color: #ff4d4d;
     color: white;
 }
 
-.btn-eliminar-amigo:hover {
+.btn2-eliminar-amigo:hover {
     background-color: #ff3333;
 }
 
-.btn-solicitud,
-.btn-cancelar-solicitud,
-.btn-aceptar,
-.btn-rechazar {
+.btn2-solicitud,
+.btn2-cancelar-solicitud,
+.btn2-aceptar,
+.btn2-rechazar {
     background-color: #007bff;
     color: white;
     margin: 0 5px;
 }
 
-.btn-solicitud:hover,
-.btn-cancelar-solicitud:hover,
-.btn-aceptar:hover {
+.btn2-solicitud:hover,
+.btn2-cancelar-solicitud:hover,
+.btn2-aceptar:hover {
     background-color: #0056b3;
 }
 
-.btn-rechazar:hover {
+.btn2-rechazar:hover {
     background-color: #d9534f;
 }
 
@@ -303,7 +296,7 @@ button {
     margin-top: 8px;
 }
 
-.btn-eliminar {
+.btn2-eliminar {
     background-color: #dc3545;
     color: white;
     position: absolute;
@@ -315,7 +308,7 @@ button {
     transition: background-color 0.3s ease;
 }
 
-.btn-eliminar:hover {
+.btn2-eliminar:hover {
     background-color: #c82333;
 }
 
@@ -462,7 +455,7 @@ perfil-eventos {
 }
 
 /* Botón para crear evento */
-.perfil-eventos .btn {
+.perfil-eventos .btn2 {
     background-color: #ff5722;
     border-radius: 20px;
     padding: 10px 20px;
@@ -470,7 +463,7 @@ perfil-eventos {
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.perfil-eventos .btn:hover {
+.perfil-eventos .btn2:hover {
     background-color: #e64a19;
     transform: scale(1.05);
 }
@@ -645,7 +638,7 @@ perfil-eventos {
     transition: opacity 0.3s ease;
 }
 
-.btn-crear-evento:hover {
+.btn2-crear-evento:hover {
     background-color: #0056b3;
 }
 
@@ -676,7 +669,7 @@ perfil-eventos {
     margin-bottom: 20px;
 }
 
-.btn-crear-evento {
+.btn2-crear-evento {
     background-color: #007bff;
     color: white;
     margin-bottom: 20px;
@@ -719,7 +712,7 @@ perfil-eventos {
   }
   
   
-  .modal-header .btn-close {
+  .modal-header .btn2-close {
     position: absolute;
     top: 0.5rem; /* Ajusta la distancia desde la parte superior */
     right: 0.5rem; /* Ajusta la distancia desde la derecha */
@@ -746,3 +739,45 @@ perfil-eventos {
     font-size: 1.5rem;
     color: #007bff;
   }
+
+  /* Media Queries */
+@media (max-width: 768px) {
+    .perfil-container {
+        padding: 15px;
+    }
+    .perfil-header h2 {
+        font-size: 1.5rem; /* Reducir el tamaño en pantallas más pequeñas */
+    }
+    .publicaciones-grid {
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* Reducir el tamaño de las columnas en pantallas pequeñas */
+    }
+    .tab-button {
+        padding: 8px 16px;
+    }
+    .btn2 {
+        font-size: 1rem;
+    }
+    .btn2 img.icono-boton {
+        width: 25px;
+        height: 25px;
+    }
+}
+
+@media (max-width: 480px) {
+    .perfil-container {
+        padding: 10px;
+    }
+    .perfil-header h2 {
+        font-size: 1.2rem;
+    }
+    .tab-button {
+        font-size: 0.9rem;
+    }
+    .btn2 {
+        padding: 10px 20px;
+    }
+    .btn2 img.icono-boton {
+        width: 20px;
+        height: 20px;
+    }
+}
