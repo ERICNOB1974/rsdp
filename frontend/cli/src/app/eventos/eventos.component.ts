@@ -349,7 +349,6 @@ export class EventosComponent implements OnInit {
     .subscribe(
       async (dataPackage) => {
         const resultados = dataPackage.data as Evento[]
-          console.info(resultados);
           if (resultados && resultados.length > 0) {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerParticipantes(resultados); // Llamar a traerParticipantes después de cargar los eventos
