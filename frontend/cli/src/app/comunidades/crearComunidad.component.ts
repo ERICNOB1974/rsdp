@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ComunidadService } from './comunidad.service';
 import { Comunidad } from './comunidad';
 import { Location } from '@angular/common'; // Asegúrate de que está importado desde aquí
@@ -15,15 +15,24 @@ import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { EtiquetaPopularidadDTO } from '../etiqueta/etiquetaPopularidadDTO';
 import { DataPackage } from '../data-package';
 import { forkJoin } from 'rxjs';
+import { minimoUnaEtiqueta } from '../eventos/minimoEtiqueta';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-crear-comunidad',
 
   templateUrl: './crearComunidad.component.html',
-  styleUrls: ['../eventos/crearEvento.component.css', '../css/etiquetas.css', '../css/crear.component.css'],
+  styleUrls: ['../eventos/crearEvento.component.css', '../css/etiquetas.css', '../css/crear.component.css', '../css/registro.component.css'],
 
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, NgbTypeaheadModule, NgIf]
+  imports: [CommonModule, FormsModule, RouterModule, NgbTypeaheadModule, MatInputModule,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule, NgIf]
 })
 export class CrearComunidadComponent {
   comunidad!: Comunidad;
@@ -44,21 +53,55 @@ export class CrearComunidadComponent {
   archivoSeleccionado!: File; // Para almacenar la imagen o video seleccionado
   tipoArchivo: string = ''; // Para distinguir entre imagen o video
   vistaPreviaArchivo: string | ArrayBuffer | null = null;
+  formComunidad: FormGroup;
 
   constructor(
     private route: ActivatedRoute,
     private location: Location,
+    private formBuilder: FormBuilder,
     private comunidadService: ComunidadService,
     private etiquetaService: EtiquetaService,
     private router: Router,
     private ubicacionService: UbicacionService,
     private cdr: ChangeDetectorRef
-  ) { }
+  ) {
+    this.formComunidad = this.formBuilder.group(
+      {
+        nombre: ['', [Validators.required]],
+
+        cantidadMaximaParticipantes: [
+          '',
+          [Validators.required],
+          [this.cantidadParticipantesValidator.bind(this)],
+        ],
+        latitud: [
+          '',
+          [Validators.required]
+        ],
+        longitud: ['', [Validators.required]],
+
+        etiquetasSeleccionadas: [[], [minimoUnaEtiqueta()]], // Inicializa como un array vacío
+
+      }
+    );
+  }
 
   goBack(): void {
     this.location.back(); // Esto debería funcionar correctamente
   }
 
+  cantidadParticipantesValidator(control: AbstractControl): Observable<ValidationErrors | null> {
+    const cantidadIngresada = control.value;
+
+    // Verificar si la cantidad es válida
+    if (cantidadIngresada > 0) {
+      // La cantidad es válida
+      return of(null);
+    } else {
+      // La cantidad es inválida
+      return of({ cantidadInvalida: true });
+    }
+  }
   get(): void {
     const id = this.route.snapshot.paramMap.get('id')!;
     if (id === 'new') {
@@ -374,6 +417,6 @@ export class CrearComunidadComponent {
     this.vistaPreviaArchivo = null;
     this.formatoValido = false;
     this.comunidad.imagen = '';
-  
+
   }
 }

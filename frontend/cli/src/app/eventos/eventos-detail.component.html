@@ -28,11 +28,23 @@
         </div>
 
         <!-- Botón Inscribirse o Desinscribirse centrado -->
-        <button class="btn btn-primary btn-block ingresar-button mx-auto"
+        <!-- Modificación para el botón de inscribirse -->
+        <button *ngIf="!expulsado" class="btn btn-primary btn-block ingresar-button mx-auto"
           [disabled]="!(inscribirseValid() || salirValid()) || isLoading"
           (click)="salirValid() ? salir() : inscribirse()">
           {{ salirValid() ? 'Desinscribirse' : 'Inscribirse' }}
         </button>
+
+        <!-- Mensaje de expulsión -->
+        <div *ngIf="expulsado" class="alert alert-warning mt-4">
+          <p>Has sido expulsado del evento.</p>
+          <button class="btn btn-info" (click)="toggleMotivo()">
+            ¿Por qué? <span [class]="mostrarMotivo ? 'arrow-up' : 'arrow-down'"></span>
+          </button>
+          <div *ngIf="mostrarMotivo" class="mt-2">
+            <strong>Motivo de expulsión:</strong> {{ motivoExpulsion }}
+          </div>
+        </div>
 
         <!-- Botón de regresar centrado -->
 

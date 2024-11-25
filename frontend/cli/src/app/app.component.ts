@@ -43,7 +43,7 @@ export class AppComponent {
     private notificacionService: NotificacionService
     // private toastr: ToastrService,
     //private webSocketService: WebSocketService
-    ) { }
+  ) { }
 
   ngOnInit(): void {
     this.router.events.subscribe(event => {
@@ -150,6 +150,7 @@ export class AppComponent {
       case 'RECORDATORIO_EVENTO_PROXIMO':
       case 'MODIFICACION_EVENTO':
       case 'INVITACION_EVENTO':
+      case 'EXPULSION_EVENTO':
         // Notificaciones relacionadas con eventos
         urlDestino = `/eventos/${notificacion.entidadId}`;
         break;

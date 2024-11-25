@@ -8,7 +8,7 @@
 
   <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
     <h1 style="text-align: center; margin: 0;">{{ comunidad.nombre }}</h1>
-    <i class="bi" [ngClass]="{'bi-star-fill': esFavorito, 'bi-star': !esFavorito}"
+    <i *ngIf="esParte" class="bi" [ngClass]="{'bi-star-fill': esFavorito, 'bi-star': !esFavorito}"
       [ngStyle]="{'color': esFavorito ? 'gold' : 'gray', 'font-size': '8dvh', 'cursor': 'pointer'}"
      (click)="toggleFavorito()">
     </i>
