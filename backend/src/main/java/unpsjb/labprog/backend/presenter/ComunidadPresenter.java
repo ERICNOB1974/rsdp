@@ -289,4 +289,10 @@ public class ComunidadPresenter {
         return Response.ok(comunidades);
     }
 
+    @PostMapping("/actualizarUbicaciones")
+    public ResponseEntity<Object> actualizarUbicaciones() {
+        comunidadService.agregarUbicacionAComunidadesSinUbicacion();
+        return Response.ok("Ubicaciones actualizadas correctamente.");
+    }
+
 }

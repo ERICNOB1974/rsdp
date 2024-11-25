@@ -4,6 +4,7 @@ import unpsjb.labprog.backend.model.Etiqueta;
 import unpsjb.labprog.backend.model.DTO.EtiquetaPopularidadDTO;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.neo4j.repository.query.Query;
@@ -14,6 +15,9 @@ public interface EtiquetaRepository extends Neo4jRepository<Etiqueta, Long> {
 
     @Query("MATCH (e:Etiqueta) WHERE toUpper(e.nombre) CONTAINS toUpper($nombre) RETURN e")
     List<Etiqueta> buscarPorNombre(String nombre);
+
+    @Query("MATCH (e:Etiqueta) WHERE e.nombre = $nombre RETURN e")
+    Optional<Etiqueta> findByNombre(String nombre);
 
     @Query("MATCH (r:Rutina)-[:ETIQUETADA_CON]->(e:Etiqueta) " +
             "WHERE id(r) = $idRutina " +

@@ -276,4 +276,30 @@ public class ComunidadService {
         return comunidadRepository.buscarComunidadPorEventoInterno(idEvento);
     }
 
+    @Transactional
+    public void agregarUbicacionAComunidadesSinUbicacion() {
+        List<Comunidad> comunidades = comunidadRepository.findAll(); 
+
+        for (Comunidad comunidad : comunidades) {
+            if (comunidad.getUbicacion() == null || comunidad.getUbicacion().isEmpty()) {
+                try {
+                    // Obtener latitud y longitud del evento
+                    Double latitud = comunidad.getLatitud();
+                    Double longitud = comunidad.getLongitud();
+
+                    if (latitud != null && longitud != null) {
+                        String ubicacion = locationService.getCityAndCountry(latitud, longitud);
+
+                        comunidad.setUbicacion(ubicacion);
+
+                        comunidadRepository.save(comunidad);
+                    }
+                } catch (Exception e) {
+                    System.err
+                            .println("Error al procesar la comunidad con ID: " + comunidad.getId() + " - " + e.getMessage());
+                }
+            }
+        }
+    }
+
 }
