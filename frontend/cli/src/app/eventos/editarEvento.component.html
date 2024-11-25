@@ -1,4 +1,12 @@
 <div class="form-container">
+  <h2>Editar evento</h2>
+  <form [formGroup]="formEvento" class="evento-form">
+
+    <!-- 
+        <div class="form-group">
+          <label for="nombre">Nombre del Evento</label>
+          <input [(ngModel)]="evento.nombre" name="nombre" required>
+
     <h2>Editar evento</h2>
     <form #form="ngForm" class="evento-form">
   
@@ -47,49 +55,105 @@
              *ngIf="evento.cantidadMaximaParticipantes < participantes">
           La cantidad máxima de participantes no puede ser menor a los participantes ya inscriptos ({{participantes}})
         </div>
-      </div>
-  
-      <div class="form-group">
-        <label for="etiquetas">Buscar Etiquetas:</label>
-        <input id="etiquetas" class="form-control" [(ngModel)]="etiquetaSeleccionada"
-          [ngbTypeahead]="searchEtiqueta" [resultFormatter]="resultFormatEtiqueta" [inputFormatter]="inputFormatEtiqueta"
-          (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada" placeholder="Buscar etiqueta" />
-      </div>
-  
-      <div *ngIf="etiquetasSeleccionadas.length > 0" class="etiquetas-lista">
-        <h4>Etiquetas seleccionadas:</h4>
-        <ul class="list-group">
-          <li *ngFor="let etiqueta of etiquetasSeleccionadas"
-            class="list-group-item d-flex justify-content-between align-items-center">
-            {{ etiqueta.nombre }}
-            <button type="button" class="btn btn-danger btn-sm" (click)="eliminarEtiqueta(etiqueta)">Eliminar</button>
+        -->
+
+
+    <mat-form-field appearance="outline" class="form-group">
+      <mat-label>Nombre del Evento</mat-label>
+      <input matInput name="nombre" formControlName="nombre" required [(ngModel)]="evento.nombre">
+      <mat-error *ngIf="formEvento.get('nombre')?.hasError('required')">
+        El nombre del evento es requerido
+      </mat-error>
+    </mat-form-field>
+
+    <div *ngIf="evento.imagen==='' || evento.imagen==null" class="drag-drop-area" (dragover)="onDragOver($event)"
+      (drop)="onDrop($event)">
+      <p>Arrastra y suelta una imagen o video aquí, o selecciona uno desde tus archivos.</p>
+      <input type="file" id="archivo" (change)="onFileSelect($event)" hidden #fileInput>
+      <button type="button" (click)="fileInput.click()">Seleccionar archivo</button>
+    </div>
+    <div *ngIf="formatoValido && evento.imagen!='' && evento.imagen!=null" class="vista-previa-contenedor">
+      <img [src]="evento.imagen" alt="Vista previa de la imagen" class="vista-previa-imagen">
+      <button type="button" (click)="eliminarArchivo()" class="btn btn-danger mt-2">Eliminar archivo</button>
+    </div>
+
+
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha y Hora del Evento</mat-label>
+      <input matInput type="datetime-local" id="fechaHora" name="fechaHora" [min]="minFechaHora"
+        formControlName="fechaHora" required [(ngModel)]="evento.fechaHora">
+      <mat-error *ngIf="formEvento.get('fechaHora')?.hasError('invalidDate')">
+        La fecha debe ser mayor a hoy
+      </mat-error>
+      <mat-error *ngIf="formEvento.get('fechaHora')?.hasError('required')">
+        La fecha y hora del evento son requeridas
+      </mat-error>
+    </mat-form-field>
+
+
+
+    <!-- Descripción -->
+    <mat-form-field appearance="outline" class="form-group">
+      <mat-label>Descripción</mat-label>
+      <input matInput [(ngModel)]="evento.descripcion" formControlName="descripcion" name="descripcion">
+    </mat-form-field>
+
+    <!-- Cantidad Máxima de Participantes -->
+    <mat-form-field appearance="outline" class="form-group">
+      <mat-label>Cantidad Máxima de Participantes</mat-label>
+      <input matInput type="number" min="1" name="cantidadMaximaParticipantes" required
+        formControlName="cantidadMaximaParticipantes" [(ngModel)]="evento.cantidadMaximaParticipantes">
+      <mat-error *ngIf="formEvento.get('cantidadMaximaParticipantes')?.hasError('required')">
+        La cantidad máxima de participantes es requerida y debe ser un número positivo
+      </mat-error>
+    </mat-form-field>
+
+
+    <!-- Buscar Etiquetas -->
+    <mat-form-field appearance="outline" class="form-group">
+      <mat-label>Buscar Etiquetas:</mat-label>
+      <input matInput id="etiquetas" [ngbTypeahead]="searchEtiqueta" [resultFormatter]="resultFormatEtiqueta"
+        [inputFormatter]="inputFormatEtiqueta" (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada"
+        placeholder="Buscar etiqueta" [(ngModel)]="etiquetaSeleccionada" />
+
+      <footer *ngIf="etiquetasSeleccionadas.length==0" class="mat-error-custom">
+        Al menos una etiqueta es requerida
+      </footer>
+    </mat-form-field>
+
+    <div class="selected-tags">
+      <span *ngFor="let etiqueta of etiquetasSeleccionadas" class="tag">
+        {{ etiqueta.nombre }}
+        <button (click)="eliminarEtiqueta(etiqueta)" class="remove-tag">
+          &times;
+        </button>
+      </span>
+    </div>
+
+    <!-- Sección de búsqueda de direcciones y mapa -->
+    <div class="mapa-container">
+      <div class="input-container">
+        <label for="direccion" class="padding-top-20">Ubicación del Evento</label>
+        <input type="text" class="form-control padding-top-20" placeholder="Ingresa una dirección"
+          (input)="buscarDireccion($event)" />
+        <ul *ngIf="sugerencias.length > 0" class="list-group">
+          <li *ngFor="let sugerencia of sugerencias" (click)="seleccionarDireccion(sugerencia)"
+            class="list-group-item list-group-item-action" style="cursor: pointer;">
+            {{ sugerencia.direccion }} - {{ sugerencia.altura }}, {{ sugerencia.ciudad }}, {{ sugerencia.pais }}
           </li>
         </ul>
       </div>
-  
-      <!-- Sección de búsqueda de direcciones y mapa -->
-      <div class="mapa-container">
-        <div class="input-container">
-            <label for="direccion" class="padding-top-20">Ubicación del Evento</label>
-            <input type="text" class="form-control padding-top-20" placeholder="Ingresa una dirección" (input)="buscarDireccion($event)" />
-            <ul *ngIf="sugerencias.length > 0" class="list-group">
-                <li *ngFor="let sugerencia of sugerencias" (click)="seleccionarDireccion(sugerencia)"
-                    class="list-group-item list-group-item-action" style="cursor: pointer;">
-                    {{ sugerencia.direccion }} - {{ sugerencia.altura }}, {{ sugerencia.ciudad }}, {{ sugerencia.pais }}
-                </li>
-            </ul>
-        </div>
-        
-        <div class="form-group">
-          <div id="map"></div>
-        </div>
-        
+
+      <div class="form-group">
+        <div id="map"></div>
       </div>
-  
-      <div class="form-buttons">
-        <button type="button" (click)="saveEvento()" class="btn btn-success" [disabled]="!isFormValid()">Guardar
-          Evento</button>
-        <button type="button" (click)="cancel()" class="btn btn-secondary">Cancelar</button>
-      </div>
-    </form>
-  </div>
+
+    </div>
+
+    <div class="form-buttons">
+      <button type="button" (click)="saveEvento()" class="btn btn-success" [disabled]="!isFormValid()">Guardar
+        Evento</button>
+      <button type="button" (click)="cancel()" class="btn btn-secondary">Cancelar</button>
+    </div>
+  </form>
+</div>

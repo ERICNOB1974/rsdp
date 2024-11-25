@@ -1,27 +1,39 @@
+import { CommonModule, Location, NgIf } from '@angular/common'; // Asegúrate de que está importado desde aquí
 import { ChangeDetectorRef, Component } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EventoService } from './evento.service';
-import { Evento } from './evento';
-import { FormsModule } from '@angular/forms';
-import { catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom, forkJoin, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import axios from 'axios'; // Asegúrate de tener axios instalado
+import * as L from 'leaflet';
+import { catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom, map, Observable, of, Subject, switchMap, tap } from 'rxjs';
+import { DataPackage } from '../data-package';
 import { Etiqueta } from '../etiqueta/etiqueta';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
-import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
-import { Location, NgIf } from '@angular/common'; // Asegúrate de que está importado desde aquí
-import * as L from 'leaflet';
-import axios from 'axios'; // Asegúrate de tener axios instalado
-import { CommonModule } from '@angular/common';
-import { UbicacionService } from '../ubicacion.service'; // Importa tu servicio de ubicación
 import { EtiquetaPopularidadDTO } from '../etiqueta/etiquetaPopularidadDTO';
-import { DataPackage } from '../data-package';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { UbicacionService } from '../ubicacion.service'; // Importa tu servicio de ubicación
+import { Evento } from './evento';
+import { EventoService } from './evento.service';
+import { cantidadParticipantesValidator, dateValidator } from './validacionesEvento';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-crear-evento',
   templateUrl: './editarEvento.component.html',
-  styleUrls: ['./crearEvento.component.css', '../css/crear.component.css'],
+  styleUrls: ['./crearEvento.component.css', '../css/crear.component.css', '../css/etiquetas.css', '../css/registro.component.css'],
   standalone: true,
-  imports: [FormsModule, NgbTypeaheadModule, CommonModule, NgIf]
+  imports: [FormsModule, NgbTypeaheadModule, CommonModule, MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatCardModule,
+    MatIconModule,
+    ReactiveFormsModule,
+    MatChipsModule, MatIconModule, NgIf]
 })
 export class EditarEventoComponent {
 
@@ -48,6 +60,7 @@ export class EditarEventoComponent {
   archivoSeleccionado!: File; // Para almacenar la imagen o video seleccionado
   tipoArchivo: string = ''; // Para distinguir entre imagen o video
   vistaPreviaArchivo: string | ArrayBuffer | null = null;
+  formEvento: FormGroup;
 
 
 
@@ -55,12 +68,33 @@ export class EditarEventoComponent {
     private eventoService: EventoService,
     private etiquetaService: EtiquetaService,
     private router: Router,
+    private formBuilder: FormBuilder,
     private location: Location,
     private ubicacionService: UbicacionService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar
-  ) { }
+  ) {
+    this.formEvento = this.formBuilder.group(
+      {
+        nombre: ['', [Validators.required]],
+        fechaHora: ['', [Validators.required, dateValidator()]],
+
+        cantidadMaximaParticipantes: [
+          '',
+          [Validators.required],
+          [cantidadParticipantesValidator.bind(this)],
+        ],
+        latitud: [
+          '',
+          [Validators.required]
+        ],
+        longitud: ['', [Validators.required]],
+        descripcion: [''] // Esta línea ahora no tiene validación
+
+      }
+    );
+  }
 
   async ngOnInit(): Promise<void> {
     const id = this.route.snapshot.paramMap.get('id');
@@ -196,11 +230,17 @@ export class EditarEventoComponent {
 
 
     // Agregar evento de clic en el mapa para mover el marcador
-    this.marcador.on('dragend', (event) => {
-      const position = event.target.getLatLng();
-      this.evento.latitud = position.latlng.lat;
-      this.evento.longitud = position.latlng
-        .lng;
+    /*   this.marcador.on('dragend', (event) => {
+        const position = event.target.getLatLng();
+        this.evento.latitud = position.latlng.lat;
+        this.evento.longitud = position.latlng
+          .lng;
+      }); */
+
+    this.mapa.on('click', (event: L.LeafletMouseEvent) => {
+      this.moverMarcador(event.latlng);
+      this.evento.latitud = event.latlng.lat;
+      this.evento.longitud = event.latlng.lng;
     });
 
 
