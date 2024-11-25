@@ -18,8 +18,10 @@
 
   <button *ngIf="!esCreador && !expulsado && !(comunidad.cantidadMaximaMiembros<=comunidad.miembros)" class="btn btn-primary btn-block ingresar-button"
     [disabled]="!(salirValid() || inscribirseValid())" (click)="salirValid() ? salir() : ingresar()">
+
     {{ salirValid() ? 'Abandonar comunidad' : (comunidad.esPrivada ? 'Solicitar ingreso' : 'Ingresar') }}
   </button>
+ 
 
   <div *ngIf="expulsado" class="alert alert-warning mt-4">
     <p>Has sido expulsado de la comunidad.</p>
@@ -33,12 +35,12 @@
   <div *ngIf="comunidad.cantidadMaximaMiembros<=comunidad.miembros" class="alert alert-warning mt-4">
     <p>No hay mas espacio en la comunidad.</p>
   
-    
   </div>
   <button *ngIf="salirValid()" (click)="abrirModalInvitarAmigos()" class="btn btn-success btn-block">
+
     Invitar amigos
   </button>
-  <button *ngIf="esCreador || esAdministrador" class="btn btn-primary btn-block ingresar-button"
+  <button *ngIf="esCreador || esAdministrador" class="btn2 btn2-primary btn2-block ingresar-button"
     (click)="gestionarComunidad()">
     Gestionar
   </button>
@@ -56,7 +58,7 @@
     <div class="tab-content">
       <div *ngIf="tabSeleccionada === 'publicaciones'" class="perfil-publicaciones">
         <h3>Publicaciones</h3>
-        <button *ngIf="esParte" class="btn primary" (click)="publicarEnComunidad()">
+        <button *ngIf="esParte" class="btn2 primary" (click)="publicarEnComunidad()">
           Publicar
         </button>
 
@@ -80,7 +82,7 @@
       <div *ngIf="tabSeleccionada === 'eventos'" class="perfil-eventos">
         <h3 class="titulo-eventos">Eventos</h3>
 
-        <button *ngIf="esParte" (click)="crearEvento()" class="btn btn-crear-evento">
+        <button *ngIf="esParte" (click)="crearEvento()" class="btn2 btn2-crear-evento">
           Crear Evento
         </button>
 

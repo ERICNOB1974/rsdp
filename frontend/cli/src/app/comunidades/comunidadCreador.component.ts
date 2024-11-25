@@ -66,7 +66,9 @@ export class ComunidadCreadorComponent implements OnInit {
 
     confirmarExpulsion(): void {
         if (!this.motivoExpulsion.trim()) {
-            alert('Por favor, ingresa un motivo válido.');
+            this.snackBar.open('Por favor, ingresa un motivo válido.', 'Cerrar', {
+                duration: 3000,
+              });
             return;
         }
 

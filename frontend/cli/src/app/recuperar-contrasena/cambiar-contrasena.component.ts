@@ -84,9 +84,10 @@ export class CambiarContrasenaComponent {
                 this.authService.cambiarContrasena(correo, nuevaContrasena).subscribe(
                     (dataPackage) => {
                         if (dataPackage.status == 200) {
-                            alert('Contraseña cambiada exitosamente.');
                             localStorage.removeItem('correoElectronico'); // Eliminar el correo del localStorage
-                            this.router.navigate(['/login']);
+                            this.router.navigate(['/login'], {
+                                state: { mensajeSnackBar: 'Contraseña cambiada exitosamente.' }
+                              });                              
                         } else {
                             this.snackBar.open(dataPackage.message, 'Cerrar', {
                                 duration: 3000,
@@ -108,6 +109,12 @@ export class CambiarContrasenaComponent {
 
     ngOnInit(): void {
         this.contrasenaForm.get('contrasenaActual')?.setValue('');
+        const state = window.history.state;
+        if (state && state.mensajeSnackBar) {
+          this.snackBar.open(state.mensajeSnackBar, 'Cerrar', {
+            duration: 3000,
+          });
+        }
     }
 
 

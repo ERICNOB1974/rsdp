@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -67,7 +67,8 @@ export class PerfilComponent implements OnInit {
     private rutinaService: RutinaService,
     private authService: AuthService,  // Inyecta el AuthService
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -134,6 +135,7 @@ export class PerfilComponent implements OnInit {
         if (!this.esMiPerfil) {
           this.verificarRelacion().then(() => {
             this.traerPublicacionesSegunPrivacidad();
+            console.info(this.publicaciones);
 
           }).catch((error) => {
             console.error('Error en la verificación de relación:', error);
@@ -214,8 +216,12 @@ export class PerfilComponent implements OnInit {
     this.usuarioService.enviarSolicitudAmistad(this.idUsuarioAutenticado, this.usuario.id).subscribe({
       next: (dataPackage: DataPackage) => {
         if (dataPackage.status === 200) {
-          alert('Solicitud de amistad enviada exitosamente.');
-          window.location.reload(); // Recargar la página
+          this.relacion = 'solicitudEnviada';
+          this.cargarPerfil();
+          this.cdr.detectChanges();
+          this.snackBar.open('Solicitud de amistad enviada exitosamente.', 'Cerrar', {
+            duration: 3000,
+          });
         } else {
           this.snackBar.open('Error: ' + dataPackage.message, 'Cerrar', {
             duration: 3000,
@@ -235,8 +241,12 @@ export class PerfilComponent implements OnInit {
     this.usuarioService.eliminarAmigo(this.usuario.id).subscribe({
       next: (dataPackage: DataPackage) => {
         if (dataPackage.status === 200) {
-          alert('Amigo eliminado exitosamente.');
-          window.location.reload(); // Recargar la página
+          this.relacion = '';
+          this.cargarPerfil();
+          this.cdr.detectChanges();
+          this.snackBar.open('Amigo eliminado exitosamente.', 'Cerrar', {
+            duration: 3000,
+          });
         } else {
           this.snackBar.open('Error: ' + dataPackage.message, 'Cerrar', {
             duration: 3000,
@@ -255,8 +265,12 @@ export class PerfilComponent implements OnInit {
     this.usuarioService.cancelarSolicitudAmistad(this.usuario.id).subscribe({
       next: (dataPackage: DataPackage) => {
         if (dataPackage.status === 200) {
-          alert('Solicitud canceladda exitosamente.');
-          window.location.reload(); // Recargar la página
+          this.relacion = '';
+          this.cargarPerfil();
+          this.cdr.detectChanges();
+          this.snackBar.open('Solicitud cancelada exitosamente.', 'Cerrar', {
+            duration: 3000,
+          });
         } else {
           this.snackBar.open('Error: ' + dataPackage.message, 'Cerrar', {
             duration: 3000,
@@ -278,6 +292,7 @@ export class PerfilComponent implements OnInit {
       // Si el usuario está viendo su propio perfil, mostrar todas las publicaciones
       this.getPublicacionesPaginadas(); // Cargar todas las publicaciones del usuario
     } else if (this.usuario.privacidadPerfil === 'Privada') {
+      console.info("entreporaca1111",this.noMasPublicaciones);
       this.publicaciones = []; // No mostrar publicaciones
     } else if (this.usuario.privacidadPerfil === 'Solo amigos') {
       if (this.relacion === 'amigos') {
@@ -305,8 +320,12 @@ export class PerfilComponent implements OnInit {
             if (nuevasPublicaciones.length > 0) {
               this.publicaciones = [...this.publicaciones, ...nuevasPublicaciones]; // Añadir las nuevas publicaciones
               this.currentIndexPublicaciones++;
+              if(nuevasPublicaciones.length<this.cantidadPorPagina){
+                this.noMasPublicaciones = true;
+              }
             } else {
               this.noMasPublicaciones = true;
+
             }
           } else {
             console.error('Error al obtener las publicaciones:', dataPackage.message);
@@ -325,8 +344,21 @@ export class PerfilComponent implements OnInit {
       next: (dataPackage: DataPackage) => {
         if (dataPackage.status === 200) {
           const mensaje = aceptar ? 'Solicitud de amistad aceptada exitosamente.' : 'Solicitud de amistad rechazada exitosamente.';
-          alert(mensaje);
-          window.location.reload(); // Recargar la página
+          if (aceptar){
+            this.relacion = 'amigos';
+            this.cargarPerfil();
+            this.cdr.detectChanges();
+            this.snackBar.open(mensaje, 'Cerrar', {
+              duration: 3000,
+            });           
+          } else {
+            this.relacion = '';
+            this.cargarPerfil();
+            this.cdr.detectChanges();
+            this.snackBar.open(mensaje, 'Cerrar', {
+              duration: 3000,
+            });           
+          }
         } else {
           this.snackBar.open('Error: ' + dataPackage.message, 'Cerrar', {
             duration: 3000,
@@ -393,6 +425,8 @@ export class PerfilComponent implements OnInit {
 
   // Método para cargar todas las rutinas (sin filtro)
   cargarRutinas(): void {
+    if (this.usuario.privacidadPerfil === 'Privada' && !this.esMiPerfil) return;
+    if (this.usuario.privacidadPerfil === 'Solo amigos' && this.relacion !== 'amigos' && !this.esMiPerfil) return;
     if (this.loadingRutinas || this.noMasRutinas) return;  // Si ya estamos cargando o no hay más resultados, no hacemos nada
     this.loadingRutinas = true;
 
@@ -426,6 +460,8 @@ export class PerfilComponent implements OnInit {
   }
 
   cargarRutinasFiltradas(nombre: string): void {
+    if (this.usuario.privacidadPerfil === 'Privada' && !this.esMiPerfil) return;
+    if (this.usuario.privacidadPerfil === 'Solo amigos' && this.relacion !== 'amigos' && !this.esMiPerfil) return;
     if (this.loadingRutinas || this.noMasRutinas) return;  // Si ya estamos cargando o no hay más resultados, no hacemos nada
 
     this.loadingRutinas = true;
@@ -512,6 +548,8 @@ export class PerfilComponent implements OnInit {
   }
 
   cargarEventos(): void {
+    if (this.usuario.privacidadEventos === 'Privada' && !this.esMiPerfil) return;
+    if (this.usuario.privacidadEventos === 'Solo amigos' && this.relacion !== 'amigos' && !this.esMiPerfil) return;
     if (this.loadingEventos || this.noMasEventos) return;  // Si ya estamos cargando o no hay más resultados, no hacemos nada
     this.loadingEventos = true;
 
@@ -545,6 +583,8 @@ export class PerfilComponent implements OnInit {
   }
 
   cargarEventosFiltrados(nombre: string): void {
+    if (this.usuario.privacidadEventos === 'Privada' && !this.esMiPerfil) return;
+    if (this.usuario.privacidadEventos === 'Solo amigos' && this.relacion !== 'amigos' && !this.esMiPerfil) return;
     if (this.loadingEventos || this.noMasEventos) return;  // Si ya estamos cargando o no hay más resultados, no hacemos nada
 
     this.loadingEventos = true;
@@ -620,6 +660,8 @@ export class PerfilComponent implements OnInit {
 
 
   cargarComunidades(): void {
+    if (this.usuario.privacidadComunidades === 'Privada' && !this.esMiPerfil) return;
+    if (this.usuario.privacidadComunidades === 'Solo amigos' && this.relacion !== 'amigos' && !this.esMiPerfil) return;
 
     if (this.loadingComunidades || this.noMasComunidades) return;  // Si ya estamos cargando o no hay más resultados, no hacemos nada
     this.loadingComunidades = true;
@@ -660,6 +702,8 @@ export class PerfilComponent implements OnInit {
   }
 
   cargarComunidadesFiltradas(nombre: string): void {
+    if (this.usuario.privacidadComunidades === 'Privada' && !this.esMiPerfil) return;
+    if (this.usuario.privacidadComunidades === 'Solo amigos' && this.relacion !== 'amigos' && !this.esMiPerfil) return;
     if (this.loadingComunidades || this.noMasComunidades) return;  // Si ya estamos cargando o no hay más resultados, no hacemos nada
 
     this.loadingComunidades = true;

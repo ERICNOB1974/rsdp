@@ -116,12 +116,11 @@ public class RutinaPresenter {
     @PostMapping("/guardarRutinaCompleta/{usuarioId}")
     public ResponseEntity<Object> guardarRutinaCompleta(@PathVariable Long usuarioId, @RequestBody RutinaCompletaDTO rutinaCompletaDTO) {
         try {
-            rutinaService.guardarRutinaCompleta(rutinaCompletaDTO, usuarioId);
-            return Response.ok(Collections.singletonMap("message", "Rutina guardada con éxito"));
+            return Response.ok(rutinaService.guardarRutinaCompleta(rutinaCompletaDTO, usuarioId));
         } catch (Exception e) {
-            return Response.error(HttpStatus.INTERNAL_SERVER_ERROR, "Error");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "Error al guardar la rutina"));
         }
-    }
+    }    
 
     @PostMapping("/dias/ejerciciosResistencia/{diaId}")
     public void guardarEjercicioResistencia(@PathVariable Long diaId,

@@ -138,7 +138,7 @@ button {
 }
 
 .publicacion-item:hover {
-    transform: scale(1.03);
+    transform: scale(0.98);
     box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
 }
 
@@ -476,8 +476,8 @@ perfil-eventos {
 
 .perfil-publicaciones .publicaciones-container {
     max-height: 400px; /* Ajusta el tamaño según lo necesario */
-    overflow-y: auto;
     margin-bottom: 10px;
+    overflow-y: auto;
 }
 .buscador {
     margin-bottom: 20px;

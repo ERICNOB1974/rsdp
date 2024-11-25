@@ -1,10 +1,10 @@
-<div class="wrap-register">
+<div class="wrap-registro">
   <div class="container">
     <form [formGroup]="contrasenaForm" (ngSubmit)="onSubmit()">
-      <mat-card class="register-box">
-        <mat-card-header>
-          <h2>Cambiar contraseña</h2>
-        </mat-card-header>
+      <mat-card-header>
+        <h2>Cambiar contraseña</h2>
+      </mat-card-header>
+      <mat-card class="registro-box">
 
         <mat-card-content>
 
@@ -35,10 +35,10 @@
         </mat-card-content>      
 
         <mat-card-actions>
+          <button mat-flat-button color="accent" class="btn-right" (click)="goBack()">Atrás</button>
           <button mat-raised-button color="primary" type="submit" class="btn-left" [disabled]="!contrasenaForm.valid">
             Cambiar contraseña
           </button>
-          <button mat-flat-button color="accent" type="button" class="btn-right" (click)="goBack()">Atrás</button>
         </mat-card-actions>
 
       </mat-card>

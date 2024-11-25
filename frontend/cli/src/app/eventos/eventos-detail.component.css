@@ -2,6 +2,7 @@
 html, body {
   height: 100%;
   margin: 0;
+  font-family: Arial, sans-serif;
 }
 
 /* Elimina bordes y establece el fondo oscuro en todos los niveles del modal */
@@ -108,15 +109,22 @@ html, body {
   flex-direction: column;
   justify-content: center; /* Centra verticalmente */
   align-items: center; /* Centra horizontalmente */
-  padding: 50px; /* Reduce el padding para que no se vea tan grande */
   background-color: #ffffff;
-  border-radius: 8px;
-  width: 190%; /* Ajusta al ancho total */
-  height: 100%; /* Ajusta al alto total */
+  border-radius: 8vh;
   margin: 0; /* Elimina el margen */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   box-sizing: border-box; /* Para que el padding no afecte el tamaño total */
+  padding: 5vw; /* Usa valores relativos */
+  height: auto; /* Cambia a auto para ajustarse al contenido */
+  max-width: 100%;
+  width: 90%; /* Ajusta al ancho total */
 }
+
+/* .evento-detail-container {
+  padding: 50px; 
+  width: 190%; 
+  height: 100%; 
+} */
 
 .mx-auto {
   display: block;
@@ -266,3 +274,107 @@ html, body {
 .padding-bottom-20 {
   padding-bottom: 20px;
 }
+
+@media (max-width: 768px) {
+  .evento-detail-container {
+    width: 95%; /* Ajuste en pantallas pequeñas */
+    padding: 5vw; /* Menos padding para que se ajuste mejor */
+  }
+
+  .card-body {
+    padding: 1.5rem; /* Ajusta el padding de la tarjeta */
+  }
+
+  .card-title {
+    font-size: 1.8rem; /* Ajustar el tamaño del título */
+  }
+
+  .btn-cancel, .btn-highlight {
+    padding: 0.4rem 1rem; /* Botones más pequeños */
+  }
+
+  .inscribirse-button {
+    padding: 2.5vw 5vw; /* Ajusta el tamaño del botón */
+  }
+
+  .perfil-imagen {
+    width: 30vw; /* Ajusta las imágenes de perfil */
+    height: 30vw; /* Ajusta las imágenes de perfil */
+  }
+
+  /* Ajustes a las imágenes del evento */
+  .img-fluid {
+    max-width: 90%; /* Ajusta el tamaño de la imagen */
+    height: auto; /* Mantiene la proporción de la imagen */
+  }
+
+  /* Modal headers */
+  .modal-header {
+    padding: 1rem;
+  }
+
+  /* Ajuste de los participantes */
+  .miembro-item {
+    text-align: center;
+  }
+
+  /* Ajuste en las filas de participantes */
+  .members-list .col-md-3 {
+    flex: 0 0 50%; /* Cambia el ancho de las columnas */
+    max-width: 50%;
+  }
+
+  .btn-success, .btn-warning {
+    width: 100%; /* Botones ocupan todo el ancho */
+    margin-top: 1rem;
+  }
+
+  /* Ajuste mapa */
+  #map {
+    height: 50vh;
+  }
+}
+
+@media (max-width: 576px) {
+  .evento-detail-container {
+    width: 100%; /* Uso de pantalla completa en móviles */
+    padding: 3vw; /* Ajuste de padding para pantallas muy pequeñas */
+  }
+
+  .evento-detail h2 {
+    font-size: 1.4rem; /* Ajusta el tamaño del título en pantallas muy pequeñas */
+  }
+
+  .inscribirse-button {
+    padding: 4vw 8vw; /* Ajusta el tamaño del botón */
+  }
+
+  .perfil-imagen {
+    width: 40vw; /* Aumenta el tamaño de la imagen de perfil */
+    height: 40vw; /* Mantiene la proporción */
+  }
+
+  /* Ajuste mapa */
+  #map {
+    height: 40vh;
+  }
+
+  .card-title {
+    font-size: 1.5rem; /* Ajusta el tamaño de los títulos */
+  }
+
+  .miembro-item {
+    margin: 0.5rem; /* Ajusta el margen de los participantes */
+  }
+
+  /* Ajustes para los botones */
+  .btn-block {
+    width: 100%; /* Botones de ancho completo */
+    margin-top: 1rem;
+  }
+
+  .d-flex.justify-content-center {
+    margin-bottom: 1rem; /* Ajusta el margen inferior */
+  }
+}
+

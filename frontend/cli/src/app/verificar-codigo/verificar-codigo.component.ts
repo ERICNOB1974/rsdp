@@ -74,6 +74,15 @@ export class VerificarCodigoComponent {
     });
   }
 
+  ngOnInit(): void {
+    const state = window.history.state;
+    if (state && state.mensajeSnackBar) {
+      this.snackBar.open(state.mensajeSnackBar, 'Cerrar', {
+        duration: 3000
+      });
+    }
+  }
+
   ngAfterViewInit() {
     this.codigoInputs.forEach((input, index) => {
       input.nativeElement.addEventListener('input', (event: any) => this.onInput(event, index));
@@ -129,23 +138,24 @@ export class VerificarCodigoComponent {
       this.codigoForm.value.codigo6;
   
     this.authService.verificarCodigo(this.email, codigo).subscribe((dataPackage) => {
-      if (dataPackage.status === 200) {
-        alert('Código verificado exitosamente.');
-  
+      if (dataPackage.status === 200) {  
         if (this.tipo === 'registro') {
           this.crearUsuario();
         } else if (this.tipo === 'recuperacion') {
-          this.router.navigate(['/cambiar-contrasena']);
+          this.router.navigate(['/cambiar-contrasena'], {
+            state: { mensajeSnackBar: 'Código verificado exitosamente.' }
+          });
         } else if (this.tipo === 'cambio-correo') {
           const nuevoCorreo = localStorage.getItem('nuevoCorreo');
           if (nuevoCorreo) {
             this.usuarioService.actualizarCorreo(nuevoCorreo).subscribe(
               (response: DataPackage) => {
                 if (response.status === 200) {
-                  alert('Correo electrónico actualizado correctamente.');
+                  this.router.navigate(['/login'], {
+                    state: { mensajeSnackBar: 'Correo electrónico actualizado correctamente. Por favor, inicia sesión nuevamente.' }
+                  });                  
                   localStorage.removeItem('nuevoCorreo'); // Limpiamos el localStorage
                   this.authService.logout(); // Cerramos la sesión actual
-                  this.router.navigate(['/login']); // Redirigimos al login
                 } else {
                   this.snackBar.open('Error al actualizar el correo electrónico: ' + response.message, 'Cerrar', {
                     duration: 3000,
@@ -194,8 +204,9 @@ export class VerificarCodigoComponent {
       )
       .subscribe(
         () => {
-          alert('Usuario creado exitosamente.');
-          this.router.navigate(['/login']);
+          this.router.navigate(['/login'], {
+            state: { mensajeSnackBar: 'Usuario creado exitosamente.' }
+          });
         },
         (error) => {
           const errorMessage = error.error.message || 'Error al crear el usuario.';
