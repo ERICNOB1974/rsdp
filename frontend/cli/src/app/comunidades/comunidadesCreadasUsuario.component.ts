@@ -71,6 +71,7 @@ export class ComunidadesCreadasUsuarioComponent implements OnInit {
         (dataPackage) => {
           if (dataPackage && typeof dataPackage.data === 'number') {
             comunidad.miembros = dataPackage.data; // Asignar el número de miembros
+            console.info("AOPSDAOPDSAPODPO"+ comunidad.miembros);
           }
         },
         (error) => {
