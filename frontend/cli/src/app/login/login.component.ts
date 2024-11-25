@@ -13,6 +13,7 @@ import { Location, NgIf } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { AuthInterceptor } from '../autenticacion/auth.interceptor';
 import { UbicacionService } from '../ubicacion.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -39,7 +40,8 @@ export class LoginComponent implements OnInit {
     private imageLoader: ImageLoaderService,
     private ubicacionService: UbicacionService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar
     ) {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required]],
@@ -76,7 +78,9 @@ export class LoginComponent implements OnInit {
           localStorage.setItem('shouldReloadHome', 'true');
           window.location.href = '/';
         } else {
-          alert(dataPackage.message);
+          this.snackBar.open(dataPackage.message, 'Cerrar', {
+            duration: 3000,
+          });
         }
       }
     );
