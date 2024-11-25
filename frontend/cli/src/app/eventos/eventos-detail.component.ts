@@ -27,8 +27,6 @@ import * as L from 'leaflet';
 })
 export class EventoDetailComponent implements OnInit {
 
-
-
   motivo: string = '';
   mensaje: string = '';
   evento!: Evento; // Evento específico que se va a mostrar
@@ -326,7 +324,6 @@ export class EventoDetailComponent implements OnInit {
     }
   }
   
-
   invitarAmigo(idUsuarioReceptor: number): void {
     const idEvento = this.evento.id;
     this.usuarioService.enviarInvitacionEvento(idUsuarioReceptor, idEvento).subscribe(() => {
@@ -475,7 +472,9 @@ export class EventoDetailComponent implements OnInit {
 
   confirmarExpulsion(): void {
     if (!this.motivoExpulsion.trim()) {
-      alert('Por favor, ingresa un motivo válido.');
+      this.snackBar.open('Por favor, ingresa un motivo válido.', 'Cerrar', {
+        duration: 3000,
+      });
       return;
     }
 

@@ -15,6 +15,7 @@ import { EventoService } from '../eventos/evento.service';
 import { ComunidadService } from '../comunidades/comunidad.service';
 import { RutinaService } from '../rutinas/rutina.service';
 import { debounceTime, Subject } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-perfil',
@@ -57,7 +58,6 @@ export class PerfilComponent implements OnInit {
   searchSubjectRutinas: Subject<string> = new Subject<string>();
   searchSubjectComunidades: Subject<string> = new Subject<string>();
 
-
   constructor(
     private route: ActivatedRoute,
     private usuarioService: UsuarioService,
@@ -66,7 +66,8 @@ export class PerfilComponent implements OnInit {
     private comunidadService: ComunidadService,
     private rutinaService: RutinaService,
     private authService: AuthService,  // Inyecta el AuthService
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
@@ -216,11 +217,15 @@ export class PerfilComponent implements OnInit {
           alert('Solicitud de amistad enviada exitosamente.');
           window.location.reload(); // Recargar la página
         } else {
-          alert('Error: ' + dataPackage.message);
+          this.snackBar.open('Error: ' + dataPackage.message, 'Cerrar', {
+            duration: 3000,
+          });
         }
       },
       error: (error) => {
-        alert('Error al enviar la solicitud de amistad.');
+        this.snackBar.open('Error al enviar la solicitud de amistad.', 'Cerrar', {
+          duration: 3000,
+        }); 
       }
     });
   }
@@ -233,11 +238,15 @@ export class PerfilComponent implements OnInit {
           alert('Amigo eliminado exitosamente.');
           window.location.reload(); // Recargar la página
         } else {
-          alert('Error: ' + dataPackage.message);
+          this.snackBar.open('Error: ' + dataPackage.message, 'Cerrar', {
+            duration: 3000,
+          }); 
         }
       },
       error: (error) => {
-        alert('Error al eliminar amigo.');
+        this.snackBar.open('Error al eliminar amigo.', 'Cerrar', {
+          duration: 3000,
+        }); 
       }
     });
   }
@@ -249,11 +258,15 @@ export class PerfilComponent implements OnInit {
           alert('Solicitud canceladda exitosamente.');
           window.location.reload(); // Recargar la página
         } else {
-          alert('Error: ' + dataPackage.message);
+          this.snackBar.open('Error: ' + dataPackage.message, 'Cerrar', {
+            duration: 3000,
+          });           
         }
       },
       error: (error) => {
-        alert('Error al cancelar solicitud de amistad.');
+        this.snackBar.open('Error al cancelar solicitud de amistad.', 'Cerrar', {
+          duration: 3000,
+        }); 
       }
     });
   }
@@ -315,12 +328,16 @@ export class PerfilComponent implements OnInit {
           alert(mensaje);
           window.location.reload(); // Recargar la página
         } else {
-          alert('Error: ' + dataPackage.message);
+          this.snackBar.open('Error: ' + dataPackage.message, 'Cerrar', {
+            duration: 3000,
+          }); 
         }
       },
       error: (error) => {
         const mensaje = aceptar ? 'Error al aceptar la solicitud de amistad.' : 'Error al rechazar la solicitud de amistad.';
-        alert(mensaje);
+        this.snackBar.open(mensaje, 'Cerrar', {
+          duration: 3000,
+        }); 
       }
     });
   }
@@ -335,16 +352,22 @@ export class PerfilComponent implements OnInit {
     this.publicacionService.eliminar(idPublicacion).subscribe({
       next: (dataPackage: DataPackage) => {
         if (dataPackage.status === 200) {
-          alert('Publicación eliminada exitosamente.');
+          this.snackBar.open('Publicación eliminada exitosamente.', 'Cerrar', {
+            duration: 3000,
+          }); 
           // Actualizar la lista de publicaciones
           this.getPublicacionesPaginadas();
         } else {
-          alert('Error: ' + dataPackage.message);
+          this.snackBar.open('Error: ' + dataPackage.message, 'Cerrar', {
+            duration: 3000,
+          }); 
         }
       },
       error: (error) => {
         console.error('Error al eliminar la publicación:', error);
-        alert('Error al eliminar la publicación.');
+        this.snackBar.open('Error al eliminar la publicación.', 'Cerrar', {
+          duration: 3000,
+        }); 
       }
     });
   }

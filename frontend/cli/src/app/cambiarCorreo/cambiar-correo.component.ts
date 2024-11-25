@@ -10,6 +10,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { NgIf } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
     selector: 'app-cambiar-correo',
@@ -34,7 +35,8 @@ export class CambiarCorreoComponent {
         private formBuilder: FormBuilder,
         private router: Router,
         private authService: AuthService,
-        private location: Location
+        private location: Location,
+        private snackBar: MatSnackBar
     ) {
         this.correoForm = this.formBuilder.group({
             contrasenaActual: ['', [
@@ -58,11 +60,15 @@ export class CambiarCorreoComponent {
                     if (response.status === 200) {
                         this.router.navigate(['/nuevo-correo']);
                     } else {
-                        alert('Contraseña incorrecta');
+                        this.snackBar.open('Contraseña incorrecta', 'Cerrar', {
+                            duration: 3000,
+                        });
                     }
                 },
                 (error) => {
-                    alert('Error al verificar la contraseña');
+                    this.snackBar.open('Error al verificar la contraseña', 'Cerrar', {
+                        duration: 3000,
+                    });
                 }
             );
         }

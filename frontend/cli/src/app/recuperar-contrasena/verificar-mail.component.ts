@@ -12,6 +12,7 @@ import { NgIf } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Observable, catchError, map, of } from 'rxjs';
 import { UsuarioService } from '../usuarios/usuario.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-verificar-mail',
@@ -36,7 +37,8 @@ export class VerificarMailComponent implements OnInit {
     private formBuilder: FormBuilder,
     private authService: AuthService,
     public router: Router,
-    private usuarioService: UsuarioService
+    private usuarioService: UsuarioService,
+    private snackBar: MatSnackBar
   ) {
     this.recoverForm = this.formBuilder.group({
         correoElectronico: [
@@ -72,7 +74,9 @@ export class VerificarMailComponent implements OnInit {
         },
         (error) => {
           console.error('Error al enviar el código de verificación:', error);
-          alert('Error al enviar el código de verificación.');
+          this.snackBar.open('Error al enviar el código de verificación.', 'Cerrar', {
+            duration: 3000,
+          });
         }
       );
     } else {

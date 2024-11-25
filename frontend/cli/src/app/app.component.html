@@ -2,7 +2,10 @@
     <div class="nav-content">
 
         <div class="nav-items">
-
+            
+            <div class="logo-container">
+                <h5 (click)="navigateTo('/')" style="cursor: pointer;" class="logo-text">RSDP</h5>
+            </div>
             <a class="nav-link" style="cursor: pointer; color: azure;" routerLink="/calendario">
                 <i class="fa fa-calendar"></i>
             </a>
@@ -49,17 +52,12 @@
 
     <div class="sidebar-toggle">
         <button class="toggle-btn" (click)="toggleSidebar()">
-            <i class="fa-solid fa-bars"></i>
+            <i class="bi bi-list"></i>
         </button>
     </div>
 
-
     <ul>
-        <div class="logo-container">
-            <li class="logo">
-                <h5 (click)="navigateTo('/')" style="text-align: center; margin: 10px; cursor: pointer;">RSDP</h5>
-            </li>
-        </div>
+
 
         <nav class="menu">
             <!-- Dropdown: Eventos -->
