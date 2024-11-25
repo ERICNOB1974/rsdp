@@ -22,9 +22,9 @@ import unpsjb.labprog.backend.business.RutinaDTO;
 import unpsjb.labprog.backend.business.RutinaService;
 import unpsjb.labprog.backend.business.ScoreRutina;
 import unpsjb.labprog.backend.model.Rutina;
-import unpsjb.labprog.backend.model.DTO.DiaDTO;
 import unpsjb.labprog.backend.model.DTO.EjercicioResistenciaDTO;
 import unpsjb.labprog.backend.model.DTO.EjercicioSeriesDTO;
+import unpsjb.labprog.backend.model.DTO.RutinaCompletaDTO;
 
 @RestController
 @RequestMapping("rutinas")
@@ -108,23 +108,32 @@ public class RutinaPresenter {
         return Response.ok(amigosDeAmigos);
     }
 
-    @PostMapping("/dias/{rutinaId}")
-    public Long guardarDia(@PathVariable Long rutinaId, @RequestBody DiaDTO diaDTO) {
-        return rutinaService.guardarDia(rutinaId, diaDTO.getDia(), diaDTO.getOrden());
+    // @PostMapping("/dias/{rutinaId}")
+    // public Long guardarDia(@PathVariable Long rutinaId, @RequestBody DiaDTO diaDTO) {
+    //     return rutinaService.guardarDia(rutinaId, diaDTO.getDia(), diaDTO.getOrden());
+    // }
+
+    @PostMapping("/guardarRutinaCompleta/{usuarioId}")
+    public ResponseEntity<Object> guardarRutinaCompleta(@PathVariable Long usuarioId, @RequestBody RutinaCompletaDTO rutinaCompletaDTO) {
+        try {
+            rutinaService.guardarRutinaCompleta(rutinaCompletaDTO, usuarioId);
+            return Response.ok(Collections.singletonMap("message", "Rutina guardada con éxito"));
+        } catch (Exception e) {
+            return Response.error(HttpStatus.INTERNAL_SERVER_ERROR, "Error");
+        }
     }
 
     @PostMapping("/dias/ejerciciosResistencia/{diaId}")
     public void guardarEjercicioResistencia(@PathVariable Long diaId,
             @RequestBody EjercicioResistenciaDTO ejercicioResistenciaDTO) {
         rutinaService.guardarEjercicioResistencia(diaId, ejercicioResistenciaDTO.getEjercicio(),
-                ejercicioResistenciaDTO.getOrden(), ejercicioResistenciaDTO.getTiempo(),
-                ejercicioResistenciaDTO.getImagen());
+                ejercicioResistenciaDTO.getOrden(), ejercicioResistenciaDTO.getTiempo());
     }
 
     @PostMapping("/dias/ejerciciosSeries/{diaId}")
     public void guardarEjercicioSeries(@PathVariable Long diaId, @RequestBody EjercicioSeriesDTO ejercicioSeriesDTO) {
         rutinaService.guardarEjercicioSeries(diaId, ejercicioSeriesDTO.getEjercicio(), ejercicioSeriesDTO.getOrden(),
-                ejercicioSeriesDTO.getSeries(), ejercicioSeriesDTO.getRepeticiones(), ejercicioSeriesDTO.getImagen());
+                ejercicioSeriesDTO.getSeries(), ejercicioSeriesDTO.getRepeticiones());
     }
 
     @RequestMapping(value = "/search/{term}", method = RequestMethod.GET)

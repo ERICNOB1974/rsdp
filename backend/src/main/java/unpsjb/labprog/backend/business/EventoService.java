@@ -444,6 +444,37 @@ public class EventoService {
         this.eventoRepository.eliminarUsuario(idEvento, idUsuario, mensaje);
     }
 
+    @Transactional
+    public void agregarUbicacionAEventosSinUbicacion() {
+        List<Evento> eventos = eventoRepository.findAll(); // Obtener todos los eventos
+
+        for (Evento evento : eventos) {
+            // Verificar si el evento ya tiene el atributo 'ubicacion'
+            if (evento.getUbicacion() == null || evento.getUbicacion().isEmpty()) {
+                try {
+                    // Obtener latitud y longitud del evento
+                    Double latitud = evento.getLatitud();
+                    Double longitud = evento.getLongitud();
+
+                    if (latitud != null && longitud != null) {
+                        // Llamar al servicio para obtener el nombre de la ubicación
+                        String ubicacion = locationService.getDisplayName(latitud, longitud);
+
+                        // Actualizar el atributo 'ubicacion' del evento
+                        evento.setUbicacion(ubicacion);
+
+                        // Guardar los cambios en la base de datos
+                        eventoRepository.save(evento);
+                    }
+                } catch (Exception e) {
+                    // Manejo de errores al obtener la ubicación
+                    System.err
+                            .println("Error al procesar el evento con ID: " + evento.getId() + " - " + e.getMessage());
+                }
+            }
+        }
+    }
+
     public boolean estaExpulsado(Long idUsuario, Long idEvento){
         return this.eventoRepository.estaExpulsado(idUsuario ,idEvento);
     }
