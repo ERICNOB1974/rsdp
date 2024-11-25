@@ -137,8 +137,8 @@ public class RutinaService {
         return rutinaRepository.sugerenciasDeRutinasBasadosEnEventosPorEtiqueta(nombreUsuario);
     }
 
-     @Transactional
-    public void guardarRutinaCompleta(RutinaCompletaDTO rutinaCompletaDTO, Long usuarioId) throws Exception {
+    @Transactional
+    public Long guardarRutinaCompleta(RutinaCompletaDTO rutinaCompletaDTO, Long usuarioId) throws Exception {
         Rutina rutina = new Rutina();
         rutina.setNombre(rutinaCompletaDTO.getNombre());
         rutina.setDescripcion(rutinaCompletaDTO.getDescripcion());
@@ -175,6 +175,9 @@ public class RutinaService {
                 }
             }
         }
+
+        return rutinaId;
+
     }
 
     @Transactional

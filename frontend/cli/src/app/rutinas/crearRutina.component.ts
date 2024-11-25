@@ -19,6 +19,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { NgxMaskDirective } from 'ngx-mask';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-crearRutina',
@@ -35,6 +36,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   standalone: true
 })
 export class CrearRutinaComponent implements OnInit {
+  idRutina: number | undefined;
   nombreRutina: string = '';
   descripcionRutina: string = '';
   dias: Dia[] = [];
@@ -53,8 +55,8 @@ export class CrearRutinaComponent implements OnInit {
     private etiquetaService: EtiquetaService,
     private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private snackBar: MatSnackBar
-
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {
 
   }
@@ -282,10 +284,13 @@ export class CrearRutinaComponent implements OnInit {
         }))
       };
 
+      this.rutinaService.guardarRutinaOptimizada(rutinaCompleta).subscribe(dataPackage => {
+        this.idRutina = <number><unknown>dataPackage.data;
+        this.router.navigate([`rutinas/${this.idRutina}`], {
+          state: { mensajeSnackBar: 'Rutina creada correctamente.' }
+        });
+      });
 
-      const response = await firstValueFrom(this.rutinaService.guardarRutinaOptimizada(rutinaCompleta));
-      alert('Rutina guardada con éxito');
-      window.location.reload();
     } catch (error) {
       console.error('Error al guardar la rutina optimizada:', error);
       this.snackBar.open('Error al guardar la rutina.', 'Cerrar', {
