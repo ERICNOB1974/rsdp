@@ -6,7 +6,27 @@
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     position: auto;
-    /* Para que el contenedor de etiquetas sea relativo a esto */
+}
+.form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative; /* Para que el contenedor de etiquetas sea relativo a esto */
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+textarea {
+    resize: vertical;
+}
+
+mat-card-actions {
+    display: flex;
+    justify-content: space-between;
 }
 
 h2 {
@@ -126,6 +146,7 @@ button.btn-secondary {
     text-align: center;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin-bottom: 4vh;
 }
 
 .drag-drop-area:hover {

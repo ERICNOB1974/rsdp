@@ -1,12 +1,11 @@
-<div class="filtros-container" style="display: flex; gap: 10px;">
+<div class="filtros-container">
 
   <!-- Filtro por nombre -->
-  <div class="filtro">
+  <div>
     <label class="container">
       <input type="checkbox" [(ngModel)]="filtroNombreActivo" (change)="aplicarTodosLosFiltros()">
       <div class="checkmark"></div>
     </label>
-    <!-- Filtro por nombre -->
     <div class="filtro-container filtro-nombre">
       <button (click)="toggleFiltroNombre()" class="filtro-toggle">
         Filtrar por nombre <i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
@@ -28,7 +27,7 @@
 
 
   <!-- Filtro por participantes -->
-  <div class="filtro">
+  <div>
     <label class="container">
       <input type="checkbox" [(ngModel)]="filtroParticipantesActivo" (change)="aplicarTodosLosFiltros()">
       <div class="checkmark"></div>
@@ -94,6 +93,11 @@
   </div>
 
 </div>
+
+
+
+
+
 <div class="tabs">
   <!-- Botones de las pestañas -->
   <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'disponibles' }"
