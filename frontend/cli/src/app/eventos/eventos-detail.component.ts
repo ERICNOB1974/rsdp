@@ -322,7 +322,6 @@ export class EventoDetailComponent implements OnInit {
         }
       }
     });
-    console.log(this.participantesVisibles);
     this.participantesVisiblesPaginados = this.participantesVisibles.slice(0, this.cargaInicial);
   }
 

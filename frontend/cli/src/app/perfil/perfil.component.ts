@@ -132,7 +132,6 @@ export class PerfilComponent implements OnInit {
         this.esMiPerfil = this.usuario.id === this.idUsuarioAutenticado;
         if (!this.esMiPerfil) {
           this.verificarRelacion().then(() => {
-            console.info(this.relacion);
             this.traerPublicacionesSegunPrivacidad();
 
           }).catch((error) => {
@@ -289,8 +288,6 @@ export class PerfilComponent implements OnInit {
         next: (dataPackage) => {
           if (dataPackage.status === 200 && Array.isArray(dataPackage.data)) {
             const nuevasPublicaciones = dataPackage.data;
-            console.info(this.currentIndexPublicaciones + " " + this.cantidadPorPagina);
-            console.log('Publicaciones recibidas:', nuevasPublicaciones);
 
             if (nuevasPublicaciones.length > 0) {
               this.publicaciones = [...this.publicaciones, ...nuevasPublicaciones]; // Añadir las nuevas publicaciones
@@ -459,7 +456,6 @@ export class PerfilComponent implements OnInit {
 
   traerDias(rutinas: Rutina[]): void {
     for (let rutina of rutinas) {
-      console.info(rutina);
       this.rutinaService.obtenerDiasEnRutina(rutina.id!).subscribe(
         (dataPackage) => {
           if (dataPackage && typeof dataPackage.data === 'number') {
