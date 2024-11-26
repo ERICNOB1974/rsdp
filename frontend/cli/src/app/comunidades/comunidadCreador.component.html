@@ -13,7 +13,7 @@
     <h2>Miembros</h2>
     <ul class="members-list" (scroll)="onScroll()">
       <li *ngFor="let miembro of miembrosVisibles" class="miembro-item">
-        <img [src]="miembro.fotoPerfil" alt="Foto de {{ miembro.nombreUsuario }}" class="avatar-circular"
+        <img [src]="miembro.fotoPerfil ? miembro.fotoPerfil : '../../assets/usuario.png' " alt="Foto de {{ miembro.nombreUsuario }}" class="avatar-circular"
           (click)="verPerfil(miembro)">
         <span class="name" (click)="verPerfil(miembro)">{{ miembro.nombreUsuario }}</span>
         <div class="actions">
