@@ -2,16 +2,23 @@
 
 /* Asegura que todo el contenedor del perfil esté centrado y con un diseño elegante */
 .perfil-container {
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 25px;
+    margin: 0 auto;
+    padding: 20px;
     border-radius: 15px;
     background-color: #f8f9fa;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     text-align: center;
     font-family: Arial, sans-serif;
     color: #333;
+    max-width: 1200px; /* Ancho máximo en computadoras */
+    box-sizing: border-box;
 }
+
+/* .perfil-container {
+    max-width: 100%;
+    padding: 20px;
+}
+ */
 
 /* Estilo del encabezado de perfil */
 .perfil-header h2 {
@@ -27,6 +34,7 @@
     align-items: center;
     margin-bottom: 30px;
 }
+
 
 .perfil-avatar img.avatar {
     width: 160px;
@@ -521,4 +529,99 @@ perfil-eventos {
     border-color: #007bff;
     font-weight: bold;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Efecto de sombra */
+}
+
+.publicaciones-grid, 
+.eventos-grid, 
+.rutinas-grid, 
+.comunidades-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Máximo 3 elementos por fila */
+    gap: 20px; /* Espaciado entre elementos */
+    margin: 0 auto; /* Centra el contenido */
+    max-width: 1200px; /* Limita el ancho total */
+}
+
+@media (max-width: 768px) {
+    .perfil-header h2 {
+        font-size: 1.5em;
+    }
+
+    .perfil-avatar img.avatar {
+        width: 120px; /* Reduce el tamaño del avatar */
+        height: 120px;
+    }
+
+    .perfil-details h2 {
+        font-size: 22px; /* Ajusta el tamaño del texto */
+    }
+
+    .tabs {
+        flex-direction: column; /* Cambia la orientación de las solapas */
+        text-align: center;
+    }
+
+    .tab-button {
+        padding: 8px;
+        font-size: 0.9em;
+    }
+
+    .publicaciones-grid, 
+    .eventos-grid, 
+    .rutinas-grid, 
+    .comunidades-grid {
+        grid-template-columns: 1fr; /* Una sola columna */
+    }
+    .publicacion-item, 
+    .evento-item, 
+    .rutina-item, 
+    .comunidad-item {
+        padding: 15px;
+        font-size: 0.9em;
+    }
+
+    button {
+        font-size: 0.8em;
+        padding: 8px 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .perfil-avatar img.avatar {
+        width: 100px;
+        height: 100px;
+    }
+
+    .publicaciones-grid, 
+    .eventos-grid, 
+    .rutinas-grid, 
+    .comunidades-grid {
+        grid-template-columns: 1fr; /* Una sola columna en pantallas muy pequeñas */
+    }
+
+    .perfil-header h2 {
+        font-size: 1.2em;
+    }
+
+    button {
+        font-size: 0.7em;
+        padding: 5px 10px;
+    }
+}
+
+.publicacion-item p, 
+.evento-item p, 
+.rutina-item p, 
+.comunidad-item p {
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+@media (max-width: 1024px) {
+    .publicaciones-grid, 
+    .eventos-grid, 
+    .rutinas-grid, 
+    .comunidades-grid {
+        grid-template-columns: repeat(1, 1fr); /* Máximo 2 elementos por fila */
+    }
 }

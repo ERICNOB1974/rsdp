@@ -1,11 +1,12 @@
 <nav class="top-navbar" *ngIf="!esPantallaLogin ">
     <div class="nav-content">
 
+
+        <div class="logo-container">
+            <h5 (click)="navigateTo('/')" style="cursor: pointer;" class="logo-text">RSDP</h5>
+        </div>
         <div class="nav-items">
-            
-            <div class="logo-container">
-                <h5 (click)="navigateTo('/')" style="cursor: pointer;" class="logo-text">RSDP</h5>
-            </div>
+
             <a class="nav-link" style="cursor: pointer; color: azure;" routerLink="/calendario">
                 <i class="fa fa-calendar"></i>
             </a>
@@ -28,12 +29,13 @@
                                 (click)="eliminarNotificacion(notificacion); $event.stopPropagation()"></i>
                         </div>
                     </div>
-            
+
                     <div *ngIf="getNotificacionesNoLeidas().length === 0" class="no-notifications">
                         No hay notificaciones nuevas
                     </div>
                 </div>
             </div>
+
             <div class="perfil-contenedor">
                 <a (click)="navigateToMiPerfil()" class="imagen-perfil">
                     <img [src]="usuario?.fotoPerfil || '../assets/usuario.png'" alt="Foto de perfil" />
@@ -42,9 +44,6 @@
                     {{ usuario?.nombreUsuario || 'Cargando...' }}
                 </a>
             </div>
-
-
-
         </div>
     </div>
 </nav>
@@ -57,8 +56,6 @@
     </div>
 
     <ul>
-
-
         <nav class="menu">
             <!-- Dropdown: Eventos -->
             <li class="menu-item dropdown" [class.open]="isDropdownOpen['eventos']"
@@ -120,19 +117,12 @@
                 </ul>
             </li>
 
-            <!-- Dropdown: Publicación -->
-            <li class="menu-item dropdown" [class.open]="isDropdownOpen['publicacion']"
-                (mouseleave)="closeDropdown('publicacion')">
-                <a (click)="toggleDropdown('publicacion')">
+            <!--  Publicación -->
+            <li class="menu-item friends-link">
+                <a [routerLink]="['/publicacion']">
                     <span class="icon"><i class="fa fa-thumbs-o-up"></i></span>
-                    <span class="menu-text" *ngIf="!isSidebarHidden">Publicación</span>
-                    <span class="dropdown-arrow" *ngIf="!isSidebarHidden">
-                        <i [class]="isDropdownOpen['publicacion'] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
-                    </span>
+                    <span class="menu-text" *ngIf="!isSidebarHidden">Nueva publicacion</span>
                 </a>
-                <ul class="dropdown-menu" *ngIf="isDropdownOpen['publicacion']">
-                    <li><a [routerLink]="['/publicacion']">Nueva</a></li>
-                </ul>
             </li>
 
             <!-- Dropdown: Rutinas -->
@@ -140,6 +130,10 @@
                 (mouseleave)="closeDropdown('rutinas')">
                 <a (click)="toggleDropdown('rutinas')">
                     <span class="icon"><i class="fa fa-soccer-ball-o"></i></span>
+                    <!-- 
+                        <i class="bi bi-barbell"></i>
+                        <i class="fas fa-gym"></i>
+                        -->
                     <span class="menu-text" *ngIf="!isSidebarHidden">Rutinas</span>
                     <span class="dropdown-arrow" *ngIf="!isSidebarHidden">
                         <i [class]="isDropdownOpen['rutinas'] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>

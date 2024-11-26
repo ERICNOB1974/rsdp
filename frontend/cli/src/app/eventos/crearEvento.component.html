@@ -11,16 +11,23 @@
       </mat-error>
     </mat-form-field>
 
-    <div *ngIf="evento.imagen==='' || evento.imagen==null" class="drag-drop-area" (dragover)="onDragOver($event)"
-      (drop)="onDrop($event)">
+
+    
+    <div 
+    *ngIf="evento.imagen === '' || evento.imagen == null" 
+    class="drag-drop-area" 
+    (dragover)="onDragOver($event)" 
+    (drop)="onDrop($event)"
+  >
       <p>Arrastra y suelta una imagen o video aquí, o selecciona uno desde tus archivos.</p>
       <input type="file" id="archivo" (change)="onFileSelect($event)" hidden #fileInput>
       <button type="button" (click)="fileInput.click()">Seleccionar archivo</button>
     </div>
-    <div *ngIf="formatoValido && evento.imagen!='' && evento.imagen!=null" class="vista-previa-contenedor">
+    <div *ngIf="formatoValido && evento.imagen!='' && evento.imagen!=null" class="drag-drop-area">
       <img [src]="evento.imagen" alt="Vista previa de la imagen" class="vista-previa-imagen">
       <button type="button" (click)="eliminarArchivo()" class="btn btn-danger mt-2">Eliminar archivo</button>
     </div>
+
 
 
 
@@ -42,7 +49,7 @@
     <!-- Descripción -->
     <mat-form-field appearance="outline" class="form-group">
       <mat-label>Descripción</mat-label>
-      <input matInput [(ngModel)]="evento.descripcion" name="descripcion">
+      <input matInput [(ngModel)]="evento.descripcion" formControlName="descripcion" name="descripcion">
     </mat-form-field>
 
     <!-- Cantidad Máxima de Participantes -->
@@ -103,6 +110,6 @@
       <button type="button" (click)="saveEvento()" [disabled]="!isFormValid()" class="btn btn-success">Guardar
         Evento</button>
     </div>
-    
+
   </form>
 </div>

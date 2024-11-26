@@ -16,9 +16,9 @@
 
 
 
+  <button *ngIf="!esCreador && !expulsado && !(comunidad.cantidadMaximaMiembros<=comunidad.miembros)" class="btn btn-primary btn-block ingresar-button"
+    [disabled]="!(salirValid() || inscribirseValid())" (click)="salirValid() ? salir() : ingresar()">
 
-  <button *ngIf="!esCreador && !expulsado" class="btn2 btn2-primary btn2-block ingresar-button"
-    [disabled]="!(salirValid() || !inscribirseValid())" (click)="salirValid() ? salir() : ingresar()">
     {{ salirValid() ? 'Abandonar comunidad' : (comunidad.esPrivada ? 'Solicitar ingreso' : 'Ingresar') }}
   </button>
  
@@ -32,7 +32,11 @@
       <strong>Motivo de expulsión:</strong> {{ motivoExpulsion }}
     </div>
   </div>
-  <button *ngIf="salirValid()" (click)="abrirModalInvitarAmigos()" class="btn2 btn2-success btn2-block">
+  <div *ngIf="comunidad.cantidadMaximaMiembros<=comunidad.miembros" class="alert alert-warning mt-4">
+    <p>No hay mas espacio en la comunidad.</p>
+  
+  </div>
+  <button *ngIf="salirValid()" (click)="abrirModalInvitarAmigos()" class="btn btn-success btn-block">
 
     Invitar amigos
   </button>
@@ -61,16 +65,47 @@
         <div class="publicaciones-grid" (scroll)="onScroll('publicaciones')">
           <div class="publicacion-item" *ngFor="let publicacion of publicaciones"
             (click)="esParte ? irADetallePublicacion(publicacion.id): null">
-            <div class="publicacion-contenido">
-              <p>{{ publicacion.texto }}</p>
-              <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
-                <img [src]="publicacion.file" alt="Imagen de la publicaciÃ³n" class="publicacion-imagen">
+            <div class="publicacion-container">
+              <div class="publicacion-header">
+                <!-- Foto de perfil del usuario -->
+                <div class="usuario-info">
+                  <img
+                    *ngIf="usuariosPublicadores[publicacion.id]?.fotoPerfil"
+                    [src]="usuariosPublicadores[publicacion.id].fotoPerfil"
+                    alt="Foto de perfil"
+                    class="foto-perfil"
+                  />
+                  <p *ngIf="usuariosPublicadores[publicacion.id]" class="usuario-publicador">
+                    Publicado por:
+                    <a
+                      (click)="goToPerfil(usuariosPublicadores[publicacion.id].id); $event.stopPropagation();"
+                      class="publicacion-usuario"
+                    >
+                      {{ usuariosPublicadores[publicacion.id].nombreUsuario }}
+                    </a>
+                  </p>
+                </div>
+                <!-- Fecha de creación -->
+                <div class="publicacion-fecha">
+                  {{ publicacion.fechaDeCreacion | date:'medium' }}
+                </div>
               </div>
+              <!-- Contenido de la publicación -->
+              <p class="publicacion-texto">{{ publicacion.texto }}</p>
+              <!-- Imagen de la publicación -->
+              <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
+                <img
+                  [src]="publicacion.file"
+                  alt="Imagen de la publicación"
+                  class="publicacion-imagen"
+                />
+              </div>
+              <!-- Video de la publicación -->
               <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
                 <video [src]="publicacion.file" controls class="publicacion-video"></video>
               </div>
-              <div class="publicacion-fecha">{{ publicacion.fechaDeCreacion | date:'medium' }}</div>
             </div>
+            
           </div>
         </div>
       </div>
@@ -83,7 +118,8 @@
         </button>
 
         <div class="eventos-grid">
-          <div class="evento-item" *ngFor="let evento of eventos" (click)="irADetalleEvento(evento.id)">
+          <div class="evento-item" *ngFor="let evento of eventos" [class.clickeable]="esParte"
+            (click)="esParte && irADetalleEvento(evento.id)">
             <!-- Imagen del evento como fondo -->
             <div class="evento-imagen"
               [style.backgroundImage]="'url(' +  (evento.imagen || '../../assets/evento.webp') + ')'"></div>

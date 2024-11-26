@@ -15,6 +15,7 @@ import { DataPackage } from '../data-package';
 import { lastValueFrom } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { EventoService } from '../eventos/evento.service';
+import { Comentario } from '../publicaciones/Comentario';
 
 @Component({
     selector: 'app-editar-comunidad',
@@ -67,6 +68,13 @@ export class MuroComunidadComponent implements OnInit {
     expulsado: boolean = false; // Indica si el usuario fue expulsado
     motivoExpulsion: string = '';
 
+    usuariosPublicadores: { [key: number]: Usuario } = {};
+
+    comentarios: { [key: number]: Comentario[] } = {}; // Para almacenar comentarios por publicación
+    likesCount: { [key: number]: number } = {}; // Para almacenar cantidad de likes por publicación
+    isLiked: { [key: number]: boolean } = {}; // Para almacenar estado del like por publicación
+    newComments: { [key: number]: string } = {}; // Para manejar nuevos comentarios
+    showCommentInput: { [key: number]: boolean } = {}; // Para mostrar/ocultar input de comentarios
 
     @ViewChild('modalInvitarAmigos') modalInvitarAmigos!: TemplateRef<any>;
 
@@ -286,6 +294,7 @@ export class MuroComunidadComponent implements OnInit {
                 async (dataPackage) => {
                     const resultados = dataPackage.data as Publicacion[]
                     if (resultados && resultados.length > 0) {
+                        this.loadUsuariosPublicadores(resultados); // Cargar datos de los usuarios publicadores
                         this.publicaciones = [...this.publicaciones, ...resultados,];
                         this.currentIndexPublicaciones++; // Aumentar el índice para la siguiente carga
 
@@ -300,6 +309,18 @@ export class MuroComunidadComponent implements OnInit {
                 }
             );
     }
+    loadUsuariosPublicadores(publicaciones: Publicacion[]) {
+        publicaciones.forEach(publicacion => {
+          this.publicacionService.publicadoPor(publicacion.id).subscribe(
+            (dataPackage) => {
+              if (dataPackage.status === 200) {
+                this.usuariosPublicadores[publicacion.id] = dataPackage.data as unknown as Usuario;
+              }
+            }
+          );
+        });
+      }
+    
 
     async traerMiembros(): Promise<void> {
         this.usuarioService.miembrosComunidad(this.comunidad.id).subscribe(async dataPackage => {
@@ -335,6 +356,8 @@ export class MuroComunidadComponent implements OnInit {
     async getCantidadMiembros() {
         this.comunidadService.cantidadMiembrosEnComunidad(this.comunidad.id).subscribe(dataPackage => {
             this.cantidadMiembros = <number><unknown>dataPackage.data;
+            this.comunidad.miembros=<number><unknown>dataPackage.data;
+            this.comunidad.participantes=this.cantidadMiembros;
         });
     }
     async getCreadorOAdministradorComunidad(): Promise<void> {
@@ -444,6 +467,8 @@ export class MuroComunidadComponent implements OnInit {
 
     filtrarMiembrosVisibles(): void {
         // Verificamos que los datos requeridos estén definidos
+        console.log("ERICC2");
+
         if (!this.amigos || !this.miembros || !this.administradores) {
             console.error("Amigos, miembros o administradores no están definidos.");
             return;
@@ -503,6 +528,7 @@ export class MuroComunidadComponent implements OnInit {
             });
         } else if (!this.esParte && this.comunidad.esPrivada) {
             {
+                console.log("ERICC");
                 this.usuariosAnonimos = this.miembros.length - 1;
             }
         }
@@ -541,14 +567,14 @@ export class MuroComunidadComponent implements OnInit {
     }
 
     inscribirseValid(): boolean {
-        if (this.comunidad.miembros < this.comunidad.cantidadMaximaMiembros) {
+        if (this.cantidadMiembros < this.comunidad.cantidadMaximaMiembros) {
             if (!this.esParte
                 && !this.pendiente
                 && !this.esCreador)
                 return true;
-            return false
+            return false;
         }
-        return false
+        return false;
     }
 
 
@@ -624,4 +650,7 @@ export class MuroComunidadComponent implements OnInit {
         });
         // Aquí envías la actualización al backend para registrar el cambio.
     }
+    goToPerfil(usuarioId: number) {
+        this.router.navigate(['/perfil', usuarioId]); // Ajusta la ruta según tu configuración de enrutamiento
+      }
 }

@@ -120,10 +120,6 @@ export class PerfilDetailComponent implements OnInit {
   verificarHabilitacionBotonGuardar(): boolean {
     this.nombreRealValido = this.usuario.nombreReal.length >= 3;
     this.nombreUsuarioValido = this.usuario.nombreUsuario.length >= 3 && !this.nombreUsuarioExistente;
-
-    console.log("Nombre real valido" + this.nombreRealValido);
-    console.log("Nombre usuario valido" + this.nombreUsuarioValido);
-    console.log("Campo modificado" + this.campoModificado);
     return this.campoModificado && this.nombreRealValido && this.nombreUsuarioValido;
   }
 
@@ -161,6 +157,7 @@ export class PerfilDetailComponent implements OnInit {
     this.vistaPreviaArchivo = null;
     this.formatoValido = false;
     this.usuario.fotoPerfil = '';
+    
   }
 
 }

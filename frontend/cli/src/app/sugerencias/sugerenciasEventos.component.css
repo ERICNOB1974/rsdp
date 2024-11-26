@@ -303,3 +303,76 @@ body {
   color: #fff;
   transition: transform 0.2s;
 }
+
+.card {
+  position: relative; /* Necesario para que los elementos absolutos dentro de esta se posicionen correctamente */
+  flex: 0 0 calc(100% / 4 - 20px);
+  max-width: calc(100% / 4 - 20px);
+  height: 250px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: 1; /* Coloca la imagen detrás del contenido */
+  filter: brightness(70%); /* Oscurece ligeramente la imagen para mejorar la legibilidad del texto */
+}
+
+/* Detalles del evento */
+.evento-details {
+  position: relative;
+  z-index: 2; /* Coloca los detalles sobre la imagen */
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+  color: white;
+  padding: 10px;
+  border-radius: 0 0 10px 10px;
+  text-align: center;
+}
+
+/* Efecto hover */
+.card:hover {
+  transform: scale(1.05);
+}
+
+/* Motivo estilizado */
+.motivo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.motivo-icon {
+  font-size: 1.2rem;
+  color: #ffd700; /* Cambia a un color más vibrante */
+  margin-right: 5px;
+}
+
+.motivo-text {
+  font-style: italic;
+  color: #fff;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+  .card {
+    flex: 0 0 calc(100% / 2 - 15px);
+    max-width: calc(100% / 2 - 15px);
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}

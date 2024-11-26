@@ -302,10 +302,10 @@ export class RutinasComponent implements OnInit {
       this.filtroNombreActivo = false
       if (this.tabSeleccionada === 'disponibles') {
         this.loadingDisponibles = false;
-        this.cargarRutinasDisponibles();
+        //this.cargarRutinasDisponibles();
       } else if (this.tabSeleccionada === 'realizaRutina') {
         this.loadingRealiza = false;
-        this.cargarRutinasRealizaUsuario();
+        //this.cargarRutinasRealizaUsuario();
       }
     }
   }
@@ -380,8 +380,8 @@ export class RutinasComponent implements OnInit {
 
 
   onScroll(): void {
-    const element = document.querySelector('.content-container') as HTMLElement;
-    if (element.scrollTop + element.clientHeight >= element.scrollHeight) {
+    const element = document.querySelector('.grid') as HTMLElement;
+    if (element.scrollTop + element.clientHeight >= element.scrollHeight-10) {
       if (this.hayResultadosFiltrados) {
         this.cargarMasResultadosFiltrados();
       } else {

@@ -177,7 +177,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         List<Comunidad> disponibles(@Param("nombreUsuario") String nombreUsuario, @Param("skip") int skip,
                         @Param("limit") int limit);
 
-        @Query("MATCH (u:Usuario)-[r:MIEMBRO|ADMINISTRADA_POR]-(c:Comunidad) " +
+        @Query("MATCH (u:Usuario)-[r:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c:Comunidad) " +
                         "WHERE id(u) = $idUsuario " +
                         "AND (toLower(c.nombre) CONTAINS toLower($nombreComunidad) OR $nombreComunidad = '') " +
                         "RETURN c ORDER BY r.fechaIngreso ASC " +
@@ -206,6 +206,17 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         + // Cambiar aquí
                         "ORDER BY score DESC ")
         List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario);
+
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario) " +
+                "MATCH (amigo)-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR]-(comunidad:Comunidad) " +
+                "WHERE NOT (u)-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR]-(comunidad) " +
+                "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
+                "OPTIONAL MATCH (comunidad)-[:MIEMBRO|:ADMINISTRADA_POR|:CREADA_POR]-(miembro) " +
+                "WITH u, comunidad, COUNT(DISTINCT amigo) AS cantidadAmigosEnComunidad, COUNT(DISTINCT miembro) AS cantidadMiembros " +
+                "WHERE cantidadMiembros < comunidad.cantidadMaximaMiembros " +
+                "RETURN comunidad, (cantidadAmigosEnComunidad) AS score, 'Tienes amigos en esta comunidad' AS motivo " +
+                "ORDER BY score DESC ")
+            List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos2SinEtiquetas(String nombreUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(evento:Evento)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta), "
                         +
@@ -270,7 +281,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         List<Comunidad> comunidadesEtiquetasDisponibles(@Param("idUsuario") Long idUsuario,
                         @Param("etiquetas") List<String> etiquetas);
 
-        @Query("MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR]-(c:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
+        @Query("MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
                         "WHERE id(u) = $idUsuario " +
                         "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
                         "WITH c, collect(etiqueta.nombre) AS etiquetasComunidad " +
@@ -296,7 +307,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         List<Comunidad> comunidadesNombreDisponibles(String nombre, @Param("usuarioId") Long usuarioId);
 
         @Query("""
-                        MATCH (c:Comunidad)<-[:MIEMBRO]-(u)
+                        MATCH (c:Comunidad)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(u)
                         WHERE toUpper(c.nombre) CONTAINS toUpper($nombre)
                         AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad)
                         AND id(u) = $usuarioId
@@ -328,7 +339,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                             WHERE type(r) <> 'SOLICITUD_DE_INGRESO' AND type(r) <> 'NOTIFICACION' AND type(r) <> 'EXPULSADO_COMUNIDAD'
                             WITH c, count(DISTINCT u) AS totalUsuarios, us
                             WHERE totalUsuarios >= $min AND totalUsuarios <= $max
-                            AND (c)-[:MIEMBRO|ADMINISTRADA_POR]-(us) // Verifica si el usuario es miembro de la comunidad
+                            AND (c)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(us) // Verifica si el usuario es miembro de la comunidad
                             RETURN DISTINCT c
                         """)
         List<Comunidad> comunidadesCantidadParticipantesMiembro(@Param("usuarioId") Long usuarioId,
