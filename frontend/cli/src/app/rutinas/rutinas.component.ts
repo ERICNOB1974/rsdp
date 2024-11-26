@@ -302,10 +302,10 @@ export class RutinasComponent implements OnInit {
       this.filtroNombreActivo = false
       if (this.tabSeleccionada === 'disponibles') {
         this.loadingDisponibles = false;
-        this.cargarRutinasDisponibles();
+        //this.cargarRutinasDisponibles();
       } else if (this.tabSeleccionada === 'realizaRutina') {
         this.loadingRealiza = false;
-        this.cargarRutinasRealizaUsuario();
+        //this.cargarRutinasRealizaUsuario();
       }
     }
   }
