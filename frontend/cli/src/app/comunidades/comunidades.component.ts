@@ -434,7 +434,7 @@ cargarMasResultadosFiltrados(): void {
 
 
   onScroll(): void {
-    const element = document.querySelector('.grid-container') as HTMLElement;
+    const element = document.querySelector('.grid') as HTMLElement;
     if (element.scrollTop + element.clientHeight >= element.scrollHeight-1) {
       if(this.hayResultadosFiltrados){
         this.cargarMasResultadosFiltrados();

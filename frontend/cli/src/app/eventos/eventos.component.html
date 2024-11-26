@@ -121,7 +121,7 @@
 </div>
 
 
-<div class="tabs">
+<div class="tabs-container">
   <!-- Botones de las pestañas -->
   <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'disponibles' }"
     (click)="seleccionarTab('disponibles')">Eventos Disponibles</button>
@@ -130,42 +130,37 @@
 </div>
 
 
+<div class="content-container">
 
-<section class="grid-container" (scroll)="onScroll()">
-  <!-- Grilla de comunidades disponibles -->
-  <div class="grid-header" *ngIf="tabSeleccionada === 'disponibles'">
-    <h2>Eventos Disponibles</h2>
-  </div>
-  <div class="grid" *ngIf="tabSeleccionada === 'disponibles'">
-    <div class="grid-item" *ngFor="let evento of eventosDisponiblesAMostrar"
-      (click)="irADetallesDelEvento(evento.id)"
-      [ngStyle]="{'background-image': 'url(' + (evento.imagen || '../../assets/evento.webp') + ')'}">
-      <div class="evento-card clickable">
-        <h3>{{ evento.nombre }}</h3>
-        <p>{{ evento.descripcion }}</p>
-        <p>Participantes: {{ evento.participantes }}/{{evento.cantidadMaximaParticipantes}}</p>
-        <p>Ubicación: {{evento.ubicacion}}</p>
+  <div *ngIf="tabSeleccionada === 'disponibles'" class="content-section">
+    <h2 class="section-title">Explora Eventos Disponibles</h2>
+    <div class="grid" (scroll)="onScroll()">
+      <div class="grid-item" *ngFor="let evento of eventosDisponiblesAMostrar"
+        (click)="irADetallesDelEvento(evento.id)"
+        [ngStyle]="{'background-image': 'url(' + (evento.imagen || '../../assets/evento.webp') + ')'}">
+        <div class="evento-card clickable">
+          <h3>{{ evento.nombre }}</h3>
+          <p>{{ evento.descripcion }}</p>
+          <p>Participantes: {{ evento.participantes }}/{{evento.cantidadMaximaParticipantes}}</p>
+          <p>Ubicación: {{evento.ubicacion}}</p>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Grilla de comunidades en las que el usuario participa -->
-  <div class="grid-header" *ngIf="tabSeleccionada === 'participante'">
-    <h2>Eventos en los que estas inscripto</h2>
-  </div>
-  <div class="grid" *ngIf="tabSeleccionada === 'participante'">
-    <div class="grid-item" *ngFor="let evento of eventosParticipaUsuario"
-      (click)="irADetallesDelEvento(evento.id)"
-      [ngStyle]="{'background-image': 'url(' + (evento.imagen || '../../assets/evento.webp') + ')'}">
-      <div class="evento-card clickable">
-        <h3>{{ evento.nombre }}</h3>
-        <p>{{ evento.descripcion }}</p>
-        <p>Participantes: {{ evento.participantes }}/{{evento.cantidadMaximaParticipantes}}</p>
-        <p>Ubicación: {{evento.ubicacion}}</p>
-        <p>{{ evento.fechaHora | date: 'MMM d, y, h:mm a' }}</p> <!-- Formato de fecha -->
+  <div *ngIf="tabSeleccionada === 'participante'" class="content-section">
+    <h2 class="section-title">Eventos en los que estas inscripto</h2>
+    <div class="grid" (scroll)="onScroll()">
+      <div class="grid-item" *ngFor="let evento of eventosParticipaUsuario" (click)="irADetallesDelEvento(evento.id)"
+        [ngStyle]="{'background-image': 'url(' + (evento.imagen || '../../assets/evento.webp') + ')'}">
+        <div class="evento-card clickable">
+          <h3>{{ evento.nombre }}</h3>
+          <p>{{ evento.descripcion }}</p>
+          <p>Participantes: {{ evento.participantes }}/{{evento.cantidadMaximaParticipantes}}</p>
+          <p>Ubicación: {{evento.ubicacion}}</p>
+          <p>{{ evento.fechaHora | date: 'MMM d, y, h:mm a' }}</p> <!-- Formato de fecha -->
+        </div>
       </div>
     </div>
   </div>
-</section>
-
-
+</div>

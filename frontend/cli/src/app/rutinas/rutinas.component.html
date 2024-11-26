@@ -71,11 +71,11 @@
   </button>
 </div>
 
-<div class="content-container" (scroll)="onScroll()">
+<div class="content-container">
   <!-- Comunidades Disponibles -->
   <div *ngIf="tabSeleccionada === 'disponibles'" class="content-section">
     <h2 class="section-title">Explora Rutinas Disponibles</h2>
-    <div class="grid">
+    <div class="grid" (scroll)="onScroll()">
       <div 
         class="grid-item" 
         *ngFor="let rutina of rutinasDisponibles" 
@@ -98,7 +98,7 @@
   <!-- Comunidades en las que el usuario participa -->
   <div *ngIf="tabSeleccionada === 'realizaRutina'" class="content-section">
     <h2 class="section-title">Tus Rutinas Activas</h2>
-    <div class="grid">
+    <div class="grid" (scroll)="onScroll()">
       <div 
         class="grid-item" 
         *ngFor="let rutina of rutinasRealizaUsuario" 
