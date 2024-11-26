@@ -36,41 +36,39 @@ export class EventosCreadosUsuarioComponent implements OnInit {
 
   getEventosCreadosUsuario(): void {
     if (this.loading || this.noMasEventos) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
-
+  
     this.loading = true;
-
-    // Suponiendo que tienes un método que obtiene más comunidades con paginación
+  
     this.eventoService
       .eventosCreadosPorUsuario(this.offset, this.limit)
       .subscribe(
         async (dataPackage) => {
-          const resultados = dataPackage.data as Evento[]
+          const resultados = dataPackage.data as Evento[];
+  
           if (resultados && resultados.length > 0) {
-            console.log(resultados);
-            console.log("offset:",this.offset);
-            console.log("limit:",this.limit);
-
-
-            // Agregar las comunidades obtenidas a la lista que se muestra
-            this.traerParticipantes(resultados); // Llamar a traerParticipantes después de cargar los eventos
-            // for (const evento of resultados) {
-            //   evento.ubicacion = evento.latitud && evento.longitud 
-            //   ? await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud)
-            //   : 'Ubicación desconocida';
-            // }
-            this.eventosUsuario = [
-              ...this.eventosUsuario,
-              ...resultados,
-            ];
-            this.offset += this.limit;
-
+            // Filtrar los resultados para evitar duplicados
+            const nuevosEventos = resultados.filter(
+              (eventoNuevo) =>
+                !this.eventosUsuario.some(
+                  (eventoExistente) => eventoExistente.id === eventoNuevo.id
+                )
+            );
+  
+            if (nuevosEventos.length > 0) {
+              this.traerParticipantes(nuevosEventos); // Llamar a traerParticipantes después de cargar los eventos
+              this.eventosUsuario = [...this.eventosUsuario, ...nuevosEventos];
+              this.offset += this.limit;
+            } else {
+              this.noMasEventos = true; // No hay más eventos nuevos
+            }
           } else {
-            this.noMasEventos = true; // No hay más comunidades por cargar
+            this.noMasEventos = true; // No hay más eventos por cargar
           }
+  
           this.loading = false; // Desactivar el indicador de carga
         },
         (error) => {
-          console.error('Error al cargar más comunidades:', error);
+          console.error('Error al cargar más eventos:', error);
           this.loading = false;
         }
       );
