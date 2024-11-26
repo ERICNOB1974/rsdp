@@ -19,7 +19,6 @@
     /* Para que el contenedor de etiquetas sea relativo a esto */
 }
 
-
 textarea {
     resize: vertical;
 }
@@ -35,7 +34,7 @@ h2 {
 }
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 40px;
 }
 
 label {
