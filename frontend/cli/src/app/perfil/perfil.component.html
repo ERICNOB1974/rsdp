@@ -211,7 +211,7 @@
 
 
             <!-- Botón de carga -->
-            <button (click)="cargarMasComunidades()" [disabled]="loadingComunidades || !noMasComunidades || historicoComunidades.length < 1">
+            <button (click)="cargarMasComunidades()" [disabled]="loadingComunidades || noMasComunidades || historicoComunidades.length < 1">
                 {{ loadingComunidades ? 'Cargando...' : noMasComunidades ? 'No hay más comunidades' : 'Cargar más' }}
             </button>
         </div>

@@ -665,38 +665,41 @@ export class PerfilComponent implements OnInit {
 
     if (this.loadingComunidades || this.noMasComunidades) return;  // Si ya estamos cargando o no hay más resultados, no hacemos nada
     this.loadingComunidades = true;
-
+    
     const serviceCall =
-      this.subTabSeleccionada === 'todas'
-        ? this.comunidadService.miembroUsuario(this.idUsuario, "", this.currentIndexComunidades, this.cantidadPorPagina)
-        : this.comunidadService.comunidadesFavoritas(this.idUsuario, "", this.currentIndexComunidades, this.cantidadPorPagina);
-
+    this.subTabSeleccionada === 'todas'
+    ? this.comunidadService.miembroUsuario(this.idUsuario, "", this.currentIndexComunidades, this.cantidadPorPagina)
+    : this.comunidadService.comunidadesFavoritas(this.idUsuario, "", this.currentIndexComunidades, this.cantidadPorPagina);
+    
     serviceCall.subscribe(
       async (dataPackage) => {
         const responseData = dataPackage.data;
         if (Array.isArray(responseData) && responseData.length > 0) {
           this.traerMiembros(responseData); // Llamar a traerParticipantes después de cargar los eventos
-
+          
           // for (const comunidad of responseData) {
-          //   if (comunidad.latitud && comunidad.longitud) {
-          //     comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
-          //   } else {
-          //     comunidad.ubicacion = 'Ubicación desconocida';
-          //   }
-          // }
-          this.historicoComunidades = [...this.historicoComunidades, ...responseData];  // Agregamos las nuevas rutinas
-          this.currentIndexComunidades++;  // Incrementamos el índice para la siguiente carga
-          if (responseData.length < this.cantidadPorPagina) {
-            this.noMasComunidades = true;
-          }
-        } else {
-          this.noMasComunidades = true;  // No hay más resultados
-        }
-        this.loadingComunidades = false;  // Desactivamos el indicador de carga
-      },
-      (error) => {
-        console.error('Error al cargar todas las rutinas:', error);
-        this.loadingComunidades = false;
+            //   if (comunidad.latitud && comunidad.longitud) {
+              //     comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
+              //   } else {
+                //     comunidad.ubicacion = 'Ubicación desconocida';
+                //   }
+                // }
+                this.historicoComunidades = [...this.historicoComunidades, ...responseData];  // Agregamos las nuevas rutinas
+                this.currentIndexComunidades++;  // Incrementamos el índice para la siguiente carga
+                if (responseData.length < this.cantidadPorPagina) {
+                  this.noMasComunidades = true;
+                }
+              } else {
+                this.noMasComunidades = true;  // No hay más resultados
+              }
+              this.loadingComunidades = false;  // Desactivamos el indicador de carga
+              console.info(this.loadingComunidades);
+              console.info(this.noMasComunidades);
+              console.info(this.historicoComunidades);
+            },
+            (error) => {
+              console.error('Error al cargar todas las rutinas:', error);
+              this.loadingComunidades = false;
       }
     );
   }

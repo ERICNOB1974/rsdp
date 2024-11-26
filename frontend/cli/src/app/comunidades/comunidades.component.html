@@ -98,7 +98,7 @@
 
 
 
-<div class="tabs">
+<div class="tabs-container">
   <!-- Botones de las pestañas -->
   <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'disponibles' }"
     (click)="seleccionarTab('disponibles')">Comunidades Disponibles</button>
@@ -106,42 +106,48 @@
     (click)="seleccionarTab('miembro')">Comunidades en las que Participas</button>
 </div>
 
-<section class="grid-container" (scroll)="onScroll()"  style="overflow-y: auto">
-  <!-- Grilla de comunidades disponibles -->
-  <div class="grid-header" *ngIf="tabSeleccionada === 'disponibles'">
-    <h2>Comunidades Disponibles</h2>
-  </div>
-  <div class="grid" *ngIf="tabSeleccionada === 'disponibles'">
-    <div class="grid-item" *ngFor="let comunidad of comunidadesDisponiblesAMostrar"
-      (click)="irADetallesDeLaComunidad(comunidad.id)"
-      [ngStyle]="{'background-image': 'url(' + (comunidad.imagen || '../../assets/comunidad.jpg') + ')'}">
-      <div class="comunidad-card clickable">
-        <h3>{{ comunidad.nombre }}
-          <i *ngIf="comunidad.esPrivada" class="fa fa-lock" aria-hidden="true"></i>
-        </h3>
-        <p>{{ comunidad.descripcion }}</p>
-        <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
-        <p>Ubicación: {{comunidad.ubicacion}}</p>
+
+
+<div class="content-container">
+  <!-- Comunidades Disponibles -->
+  <div *ngIf="tabSeleccionada === 'disponibles'" class="content-section">
+    <h2 class="section-title">Explora Comunidades Disponibles</h2>
+    <div class="grid" (scroll)="onScroll()">
+      <div 
+        class="grid-item" 
+        *ngFor="let comunidad of comunidadesDisponiblesAMostrar" 
+        (click)="irADetallesDeLaComunidad(comunidad.id)"
+        [ngStyle]="{'background-image': 'url(' + (comunidad.imagen || '../../assets/comunidad.jpg') + ')'}">
+        <div class="comunidad-card clickable">
+          <h3>{{ comunidad.nombre }}
+            <i *ngIf="comunidad.esPrivada" class="fa fa-lock" aria-hidden="true"></i>
+          </h3>
+          <p>{{ comunidad.descripcion }}</p>
+          <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
+          <p>Ubicación: {{comunidad.ubicacion}}</p>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Grilla de comunidades en las que el usuario participa -->
-  <div class="grid-header" *ngIf="tabSeleccionada === 'miembro'">
-    <h2>Comunidades en las que Participas</h2>
-  </div>
-  <div class="grid" *ngIf="tabSeleccionada === 'miembro'">
-    <div class="grid-item" *ngFor="let comunidad of comunidadesMiembroUsuarioAMostrar"
-      (click)="irADetallesDeLaComunidad(comunidad.id)"
-      [ngStyle]="{'background-image': 'url(' + (comunidad.imagen || '../../assets/comunidad.jpg') + ')'}">
-      <div class="comunidad-card clickable">
-        <h3>{{ comunidad.nombre }}
-          <i *ngIf="comunidad.esPrivada" class="fa fa-lock" aria-hidden="true"></i>
-        </h3>
-        <p>{{ comunidad.descripcion }}</p>
-        <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
-        <p>Ubicación: {{comunidad.ubicacion}}</p>
+
+  <div *ngIf="tabSeleccionada === 'miembro'" class="content-section">
+    <h2 class="section-title">Comunidades En Las Que Eres Miembro</h2>
+    <div class="grid" (scroll)="onScroll()">
+      <div 
+        class="grid-item" 
+        *ngFor="let comunidad of comunidadesMiembroUsuarioAMostrar" 
+        (click)="irADetallesDeLaComunidad(comunidad.id)"
+        [ngStyle]="{'background-image': 'url(' + (comunidad.imagen || '../../assets/comunidad.jpg') + ')'}">
+        <div class="comunidad-card clickable">
+          <h3>{{ comunidad.nombre }}
+            <i *ngIf="comunidad.esPrivada" class="fa fa-lock" aria-hidden="true"></i>
+          </h3>
+          <p>{{ comunidad.descripcion }}</p>
+          <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
+          <p>Ubicación: {{comunidad.ubicacion}}</p>
+        </div>
       </div>
     </div>
   </div>
-</section>
+</div>

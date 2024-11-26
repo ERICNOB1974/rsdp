@@ -81,7 +81,8 @@ export class CrearComunidadComponent {
           '',
           [Validators.required]
         ],
-        longitud: ['', [Validators.required]]
+        longitud: ['', [Validators.required]],
+        descripcion: [''] // Esta línea ahora no tiene validación
       }
 
     );
@@ -357,20 +358,13 @@ export class CrearComunidadComponent {
   }
 
   isFormValid(): boolean {
-    console.log('Ubicación aceptada:', this.ubicacionAceptada);
-    console.log('Nombre de la comunidad:', this.comunidad.nombre);
-    console.log('Cantidad máxima de participantes:', this.comunidad.cantidadMaximaMiembros);
-    console.log('Latitud:', this.comunidad.latitud);
-    console.log('Longitud:', this.comunidad.longitud);
-    console.log('Etiquetas seleccionadas:', this.etiquetasSeleccionadas.length);
-
     return (this.ubicacionAceptada && !!this.comunidad.nombre &&
       this.comunidad.cantidadMaximaMiembros > 0 &&
       !!this.comunidad.latitud &&
       !!this.comunidad.longitud &&
       !!(this.etiquetasSeleccionadas.length > 0) &&
       !!(this.etiquetasSeleccionadas.length <= 15));
-}
+  }
 
 
   onSubmit(): void {
