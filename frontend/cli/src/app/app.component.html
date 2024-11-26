@@ -7,17 +7,17 @@
         </div>
         <div class="nav-items">
 
-        <a class="nav-link" style="cursor: pointer; color: azure;" routerLink="/calendario">
-            <i class="fa fa-calendar"></i>
-        </a>
-        <div class="notifications-dropdown">
-            <a class="nav-link dropdown-toggle" style="cursor: pointer;">
-                <i class="fa fa-bell"></i>
-                <span *ngIf="getNotificacionesNoLeidas().length > 0" class="notification-badge">
-                    {{ getNotificacionesNoLeidas().length }}
-                </span>
+            <a class="nav-link" style="cursor: pointer; color: azure;" routerLink="/calendario">
+                <i class="fa fa-calendar"></i>
             </a>
-      <div class="notifications-menu">
+            <div class="notifications-dropdown">
+                <a class="nav-link dropdown-toggle" style="cursor: pointer;">
+                    <i class="fa fa-bell"></i>
+                    <span *ngIf="getNotificacionesNoLeidas().length > 0" class="notification-badge">
+                        {{ getNotificacionesNoLeidas().length }}
+                    </span>
+                </a>
+                <div class="notifications-menu">
                     <div class="notifications-list">
                         <div *ngFor="let notificacion of notificaciones" class="notification-item"
                             [ngClass]="{'leida': notificacion.leida}" (click)="manejarClickNotificacion(notificacion)">
@@ -30,25 +30,21 @@
                         </div>
                     </div>
 
-                <div *ngIf="getNotificacionesNoLeidas().length === 0" class="no-notifications">
-                    No hay notificaciones nuevas
+                    <div *ngIf="getNotificacionesNoLeidas().length === 0" class="no-notifications">
+                        No hay notificaciones nuevas
+                    </div>
                 </div>
             </div>
+
+            <div class="perfil-contenedor">
+                <a (click)="navigateToMiPerfil()" class="imagen-perfil">
+                    <img [src]="usuario?.fotoPerfil || '../assets/usuario.png'" alt="Foto de perfil" />
+                </a>
+                <a (click)="navigateToMiPerfil()" class="nombre-usuario">
+                    {{ usuario?.nombreUsuario || 'Cargando...' }}
+                </a>
+            </div>
         </div>
-
-        <div class="perfil-contenedor">
-            <a (click)="navigateToMiPerfil()" class="imagen-perfil">
-                <img [src]="usuario?.fotoPerfil || '../assets/usuario.png'" alt="Foto de perfil" />
-            </a>
-            <a (click)="navigateToMiPerfil()" class="nombre-usuario">
-                {{ usuario?.nombreUsuario || 'Cargando...' }}
-            </a>
-        </div>
-
-
-
-
-    </div>
     </div>
 </nav>
 
@@ -134,6 +130,10 @@
                 (mouseleave)="closeDropdown('rutinas')">
                 <a (click)="toggleDropdown('rutinas')">
                     <span class="icon"><i class="fa fa-soccer-ball-o"></i></span>
+                    <!-- 
+                        <i class="bi bi-barbell"></i>
+                        <i class="fas fa-gym"></i>
+                        -->
                     <span class="menu-text" *ngIf="!isSidebarHidden">Rutinas</span>
                     <span class="dropdown-arrow" *ngIf="!isSidebarHidden">
                         <i [class]="isDropdownOpen['rutinas'] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>

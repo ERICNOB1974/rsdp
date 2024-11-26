@@ -12,9 +12,9 @@
 
 
 .sidebar {
-    width: 20%;
+    width: 16%;
+    height: 100%;
     /* Tamaño fijo en vista de escritorio */
-    height: 100vh;
     background-color: #15202b;
     color: white;
     display: flex;
@@ -29,18 +29,24 @@
     /* Suave transición al cambiar el ancho */
 }
 
+
 .sidebar.collapsed {
     transition: width 0.3s ease; /* Suave transición al cambiar el ancho */
     z-index: 5000;
   }
-  
+
 
 
 .top-navbar {
-    height: 80%;
-    background-color: #15202b;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    z-index: 6000;
+    background-color: #15202b;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px; /* Ajusta la altura según sea necesario */
+
+    z-index: 6000; /* Asegúrate de que la barra esté por encima de otros elementos */
 }
 
 .nav-content {
@@ -118,6 +124,7 @@
     /* Transición suave para el hover */
 }
 
+
 .sidebar ul li:hover {
     background: #1a1919f8;
     /* Color de fondo más claro al pasar el mouse */
@@ -164,6 +171,7 @@
 
 .sidebar.collapsed {
     width: 9%;
+    height: 100%;
 }
 
 .sidebar.collapsed .menu-text {
@@ -209,7 +217,6 @@
 }
 
 .menu-item {
-    display: flex;
     align-items: center;
     justify-content: flex-start;
     /* Asegúrate de que los elementos estén alineados a la izquierda */
@@ -230,6 +237,7 @@
     transition: transform 0.2s;
     /* Suaviza el efecto de hover */
 }
+
 
 .menu-item:hover i {
     transform: scale(1.2);
@@ -321,6 +329,17 @@
     /* Centra la flecha verticalmente */
 }
 
+.menu-item, .dropdown-menu {
+    align-items: center; /* Alinea verticalmente */
+    justify-content: flex-start; /* Alinea horizontalmente a la izquierda */
+    padding: 10px; /* Espaciado uniforme */
+}
+
+.dropdown-menu {
+    padding-left: 10px; /* Asegúrate de que el padding sea consistente */
+    margin-left: 0; /* Elimina márgenes que puedan causar desalineación */
+}
+
 .perfil-contenedor {
     display: flex;
     align-items: center;
@@ -372,6 +391,7 @@
 
     .sidebar.collapsed {
         width: 15%;
+        height: 100%;
         /* Ancho en modo colapsado para móviles */
     }
 
