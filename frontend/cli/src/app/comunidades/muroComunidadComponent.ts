@@ -25,6 +25,8 @@ import { Comentario } from '../publicaciones/Comentario';
     styleUrls: ['./comunidadMuro.css']
 })
 export class MuroComunidadComponent implements OnInit {
+
+    isLoading: boolean = false;
     comunidad!: Comunidad;
     idComunidad!: number;
     esParte: boolean = false;
@@ -32,7 +34,7 @@ export class MuroComunidadComponent implements OnInit {
     tabSeleccionada: string = 'publicaciones';
     esCreador: boolean = false;
     creadorComunidad!: Usuario;
-    miembros!: Usuario[];
+    miembros: Usuario[] = [];
     amigos!: Usuario[];
     administradores!: Usuario[];
     idUsuarioAutenticado!: number;
@@ -42,7 +44,7 @@ export class MuroComunidadComponent implements OnInit {
     visible: boolean = false;
     esAdministrador: boolean = false;
     currentIndexPublicaciones: number = 0;
-    cantidadPorPagina: number = 6;
+    cantidadPorPagina: number = 4;
     noMasPublicaciones: boolean = false;
     loandingPublicaciones: boolean = false;
     amigosNoEnComunidad: any[] = [];
@@ -92,7 +94,6 @@ export class MuroComunidadComponent implements OnInit {
         private dialog: MatDialog,
         private eventoService: EventoService
     ) { }
-
 
     ngOnInit(): void {
         const state = window.history.state;
@@ -358,6 +359,8 @@ export class MuroComunidadComponent implements OnInit {
             this.cantidadMiembros = <number><unknown>dataPackage.data;
             this.comunidad.miembros=<number><unknown>dataPackage.data;
             this.comunidad.participantes=this.cantidadMiembros;
+            this.usuariosAnonimos = this.cantidadMiembros - 1;
+
         });
     }
     async getCreadorOAdministradorComunidad(): Promise<void> {
@@ -397,6 +400,7 @@ export class MuroComunidadComponent implements OnInit {
                     this.esAdministrador = true;
                     this.esParte = true; // El creador es parte de la comunidad por defecto
                 }
+                console.info(estado);
                 resolve(); // Resuelve la promesa después de procesar el estado
             });
         });
@@ -412,15 +416,16 @@ export class MuroComunidadComponent implements OnInit {
                 this.comunidadService.get(parseInt(id)).subscribe(async dataPackage => {
                     this.comunidadService.puedeVer(parseInt(id)).subscribe(dataP => {
                         this.visible = <boolean><unknown>dataP.data
+                        console.info(this.visible);
                     });
                     this.visible = true
                     this.comunidad = <Comunidad>dataPackage.data;
                     this.idComunidad = this.comunidad.id;
                     await this.procesarEstado(); // Asegúrate de que procesarEstado complete
                     await this.getCreadorOAdministradorComunidad();
-                    if (this.visible) {
                         this.getCantidadMiembros();
-                    }
+                        this.usuariosAnonimos = this.miembros.length - 1;
+                    
                     resolve();
                 });
             }
@@ -467,36 +472,33 @@ export class MuroComunidadComponent implements OnInit {
 
     filtrarMiembrosVisibles(): void {
         // Verificamos que los datos requeridos estén definidos
-        console.log("ERICC2");
-
         if (!this.amigos || !this.miembros || !this.administradores) {
             console.error("Amigos, miembros o administradores no están definidos.");
             return;
         }
-
+    
         const amigosIds = this.amigos.map(amigo => amigo.id);
         this.miembrosVisibles = []; // Reiniciamos la lista de miembros visibles
         this.usuariosAnonimos = 0; // Reiniciamos el conteo de usuarios anónimos
-
+    
         const creador = this.miembros[0]; // Asumiendo que `this.miembros[0]` es el creador
         if (creador) {
             this.miembrosVisibles.push(creador);
         }
-
+    
         // Agregar administradores a la lista visible
         this.administradores.forEach(admin => {
             if (!this.miembrosVisibles.some(m => m.id === admin.id)) {
                 this.miembrosVisibles.push(admin);
             }
         });
+    
         // Verificamos si la comunidad es privada
         if ((!this.comunidad.esPrivada) || ((this.comunidad.esPrivada) && (this.esParte))) {
-            // Solo se mostrará el creador y los miembros si el usuario es parte
+    
             // Iterar sobre los miembros y añadir solo aquellos que sean visibles
             this.miembros.forEach(miembro => {
-
                 if (miembro.id === this.idUsuarioAutenticado) {
-                    // Siempre mostrar el usuario que está viendo la lista
                     if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
                         this.miembrosVisibles.push(miembro);
                     }
@@ -505,12 +507,10 @@ export class MuroComunidadComponent implements OnInit {
                         this.miembrosVisibles.push(miembro);
                     }
                 } else if (this.esCreador || this.administradores.some(admin => admin.id === this.idUsuarioAutenticado)) {
-                    // Si es el creador o un administrador, añadir todos los miembros
                     if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
                         this.miembrosVisibles.push(miembro);
                     }
                 } else {
-                    // Para miembros normales, aplicar la lógica de privacidad
                     if (miembro.privacidadComunidades === 'Pública') {
                         if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
                             this.miembrosVisibles.push(miembro);
@@ -521,40 +521,52 @@ export class MuroComunidadComponent implements OnInit {
                         }
                     } else {
                         if (!this.administradores.some(admin => admin.id === miembro.id)) {
-                            this.usuariosAnonimos++; // Aumentar el conteo de anónimos si no se muestra
+                            this.usuariosAnonimos++;
                         }
                     }
                 }
             });
         } else if (!this.esParte && this.comunidad.esPrivada) {
-            {
-                console.log("ERICC");
-                this.usuariosAnonimos = this.miembros.length - 1;
-            }
+            this.usuariosAnonimos = this.miembros.length - 1;
         }
         this.miembrosVisiblesPaginados = this.miembrosVisibles.slice(0, this.cargaInicial);
     }
+    
 
     ingresar(): void {
+        this.isLoading = true; // Activar el estado de carga
         this.usuarioService.solicitarIngresoAComunidad(this.comunidad.id).subscribe(dataPackage => {
             let mensaje = dataPackage.message;
             this.procesarEstado();
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000,
             });
+        }, error => {
+            console.error('Error al ingresar a la comunidad:', error);
+            this.snackBar.open('Error al ingresar a la comunidad', 'Cerrar', {
+                duration: 3000,
+            });
+        }).add(() => {
+            this.isLoading = false; // Desactivar el estado de carga
         });
-
     }
 
     salir(): void {
+        this.isLoading = true; // Activar el estado de carga
         this.comunidadService.salir(this.comunidad.id).subscribe(dataPackage => {
             let mensaje = dataPackage.message;
             this.procesarEstado();
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000, // Duración del snackbar en milisegundos
             });
+        }, error => {
+            console.error('Error al salir de la comunidad:', error);
+            this.snackBar.open('Error al salir de la comunidad', 'Cerrar', {
+                duration: 3000,
+            });
+        }).add(() => {
+            this.isLoading = false; // Desactivar el estado de carga
         });
-        this.esFavorito = false;
     }
 
     salirValid(): boolean {
@@ -629,7 +641,7 @@ export class MuroComunidadComponent implements OnInit {
 
     cargarMasMiembros(): void {
         const totalCargados = this.miembrosVisiblesPaginados.length;
-        const nuevosMiembros = this.miembros.slice(totalCargados, totalCargados + this.cargaIncremento);
+        const nuevosMiembros = this.miembrosVisibles.slice(totalCargados, totalCargados + this.cargaIncremento);
 
         if (nuevosMiembros.length > 0) {
             this.miembrosVisiblesPaginados = [...this.miembrosVisiblesPaginados, ...nuevosMiembros];

@@ -30,6 +30,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class RegistroComponent implements OnInit {
   registroForm: FormGroup;
+  passwordVisible = false;
+  passwordVisible2 = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -65,6 +67,30 @@ export class RegistroComponent implements OnInit {
       },
       { validators: this.matchPasswords('contrasena', 'confirmarContrasena') }
     );
+  }
+
+  togglePasswordVisibility() {
+    this.passwordVisible = !this.passwordVisible;
+    const passwordInput = document.getElementById('passwordInput');
+    if (passwordInput) { // Verificar que passwordInput no sea null
+      if (this.passwordVisible) {
+        passwordInput.setAttribute('type', 'text');
+      } else {
+        passwordInput.setAttribute('type', 'password');
+      }
+    }
+  }
+
+  togglePasswordVisibility2() {
+    this.passwordVisible2 = !this.passwordVisible2;
+    const passwordInput = document.getElementById('passwordInput2');
+    if (passwordInput) { // Verificar que passwordInput no sea null
+      if (this.passwordVisible2) {
+        passwordInput.setAttribute('type', 'text');
+      } else {
+        passwordInput.setAttribute('type', 'password');
+      }
+    }
   }
 
   nombreUsuarioValidator(control: AbstractControl): Observable<ValidationErrors | null> {

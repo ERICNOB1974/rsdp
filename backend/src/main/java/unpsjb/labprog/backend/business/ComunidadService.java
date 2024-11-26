@@ -256,13 +256,23 @@ public class ComunidadService {
         if (!c.isEsPrivada()) {
             return true;
         }
-        if (c.isEsPrivada() && (comunidadRepository.esMiembro(idComunidad, idUsuario)
-                || usuarioRepository.esAdministrador(idUsuario, idComunidad)
-                || usuarioRepository.esCreador(idUsuario, idComunidad))) {
+        if (c.isEsPrivada()){
+            if(comunidadRepository.esMiembro(idUsuario, idComunidad)){
+                return true;
+            }
+            if(usuarioRepository.esAdministrador(idUsuario, idComunidad)){
+                return true;
+            }
+            if(usuarioRepository.esCreador(idUsuario, idComunidad)){
+                return true;
+            }
+
+        return false;
+        } 
+            
             return true;
         }
-        return false;
-    }
+    
 
     public void cambiarEstadoFavorita(Long idComunidad, Long idUsuario) {
         if (comunidadRepository.esFavorita(idComunidad, idUsuario)) {

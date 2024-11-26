@@ -46,9 +46,13 @@
             <mat-label>Buscar Etiquetas:</mat-label>
             <input matInput id="etiquetas" [ngbTypeahead]="searchEtiqueta" [resultFormatter]="resultFormatEtiqueta"
                 [inputFormatter]="inputFormatEtiqueta" (selectItem)="agregarEtiqueta($event)"
-                name="etiquetaSeleccionada" placeholder="Buscar etiqueta" [(ngModel)]="etiquetaSeleccionada" />
+                name="etiquetaSeleccionada" placeholder="Buscar etiqueta" [(ngModel)]="etiquetaSeleccionada" [ngModelOptions]="{standalone: true}" [container]="'body'" 
+                />
             <footer *ngIf="etiquetasSeleccionadas.length==0" class="mat-error-custom">
                 Al menos una etiqueta es requerida
+            </footer>
+            <footer *ngIf="etiquetasSeleccionadas.length>15" class="mat-error-custom">
+                No puedes ingresar mas de 15 etiquetas
             </footer>
         </mat-form-field>
 
