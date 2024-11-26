@@ -50,6 +50,9 @@
             <footer *ngIf="etiquetasSeleccionadas.length==0" class="mat-error-custom">
                 Al menos una etiqueta es requerida
             </footer>
+            <footer *ngIf="etiquetasSeleccionadas.length>15" class="mat-error-custom">
+                No puedes ingresar mas de 15 etiquetas
+            </footer>
         </mat-form-field>
 
 

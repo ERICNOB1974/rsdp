@@ -160,15 +160,12 @@ button.btn-secondary {
 .mat-error-custom {
     color: #cc2f24;
     font-size: 2dvh;
-    margin-top: -2dvh;
-    margin-bottom: 2dvh;
     display: block;
 }
 
 .mat-error-custom {
     font-size: 1em; /* Tamaño de fuente por defecto */
-    padding: 10px; /* Espaciado por defecto */
-  }
+}
   
   @media (max-width: 600px) {
     .mat-error-custom {
