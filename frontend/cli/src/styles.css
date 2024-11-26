@@ -178,12 +178,9 @@ body {
 
 .notification-badge {
   position: absolute;
-/*   top: -8px;
+  top: -8px;
   right: 10px;
-  padding: 2px 6px; */
-  top: 5px;
-  right: 5px;
-  padding: 5px;
+  padding: 2px 6px; 
   background-color: #ff4444;
   color: white;
   border-radius: 50%;
@@ -297,7 +294,9 @@ body {
 }
 
 .main-content {
-  margin-left: 250px; /* Ajusta según la barra */
+  margin-left: 250px;
+  margin-top: calc(60px + env(safe-area-inset-top)); /* Ajusta este valor según la altura de tu barra de navegación */
+
 }
 
 
@@ -333,7 +332,9 @@ body {
   flex: 1;
   justify-content: flex-start; /* Evita el centrado dinámico */
   align-items: stretch; /* Estira elementos para usar todo el ancho */
-  min-height: 100vh; /* Asegura que ocupe la altura de la ventana */
+  min-height: 100vh; 
+  /*
+   Asegura que ocupe la altura de la ventana */
   
 }
 
