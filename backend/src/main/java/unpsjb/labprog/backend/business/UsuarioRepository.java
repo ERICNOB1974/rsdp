@@ -286,6 +286,7 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
             "WITH u, ev " +
             "MATCH (u)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
             "WHERE NOT EXISTS { MATCH (amigo)-[:PARTICIPA_EN]->(ev) } " +
+            "AND NOT EXISTS { MATCH (ev)-[:EXPULSADO_EVENTO]-(amigo) } " +
             "AND NOT EXISTS { MATCH (ev)-[:CREADO_POR]->(amigo) } " +
             "RETURN amigo")
     List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(Long idUsuario, Long idEvento);
@@ -295,6 +296,7 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
             "      (com:Comunidad) " +
             "WHERE id(u) = $idUsuario AND id(ev) = $idEvento AND id(com) = $idComunidad " +
             "AND NOT EXISTS { MATCH (amigo)-[:PARTICIPA_EN]->(ev) } " +
+            "AND NOT EXISTS { MATCH (ev)-[:EXPULSADO_EVENTO]-(amigo) } " +
             "AND NOT EXISTS { MATCH (ev)-[:CREADO_POR]->(amigo) } " +
             "AND ( " +
             "    EXISTS { MATCH (amigo)-[:MIEMBRO]->(com) } " +
@@ -311,6 +313,7 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
             "WITH u, com " +
             "MATCH (u)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
             "WHERE NOT EXISTS { MATCH (amigo)-[:MIEMBRO]->(com) } " +
+            "AND NOT EXISTS { MATCH (com)-[:EXPULSADO_COMUNIDAD]-(amigo) } " +
             "AND NOT EXISTS { MATCH (com)-[:ADMINISTRADA_POR|CREADA_POR]->(amigo) } " +
             "RETURN amigo")
     List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad);
