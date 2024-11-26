@@ -46,6 +46,11 @@ export class EventosCreadosUsuarioComponent implements OnInit {
         async (dataPackage) => {
           const resultados = dataPackage.data as Evento[]
           if (resultados && resultados.length > 0) {
+            console.log(resultados);
+            console.log("offset:",this.offset);
+            console.log("limit:",this.limit);
+
+
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerParticipantes(resultados); // Llamar a traerParticipantes después de cargar los eventos
             // for (const evento of resultados) {
