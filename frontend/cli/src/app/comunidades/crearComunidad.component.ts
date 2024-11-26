@@ -164,7 +164,6 @@ export class CrearComunidadComponent {
 
   }
 
-
   cancel(): void {
     this.router.navigate(['/comunidades']);
   }
