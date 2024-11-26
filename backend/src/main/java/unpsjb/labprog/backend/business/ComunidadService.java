@@ -130,6 +130,13 @@ public class ComunidadService {
         return sugerencias;
     }
 
+     public List<ScoreComunidad> obtenerSugerenciasDeComunidadesBasadasEnAmigosSinEtiquetas2(String nombreUsuario) {
+        List<ScoreComunidad> sugerencias = comunidadRepository.sugerenciasDeComunidadesBasadasEnAmigos2SinEtiquetas(nombreUsuario);
+        sugerencias.forEach(
+                s -> System.out.println("Comunidad: " + s.getComunidad().getId() + ", Score: " + s.getScore()));
+        return sugerencias;
+    }
+
     public List<ScoreComunidad> obtenerSugerenciasDeComunidadesBasadasEnEventos2(String nombreUsuario) {
         List<ScoreComunidad> sugerencias = comunidadRepository.sugerenciasDeComunidadesBasadasEnEventos2(nombreUsuario);
         sugerencias.forEach(
@@ -154,12 +161,15 @@ public class ComunidadService {
                 .sugerenciasDeComunidadesBasadasEnEventos2(nombreUsuario);
         List<ScoreComunidad> sugerenciasComunidades = comunidadRepository
                 .sugerenciasDeComunidadesBasadasEnComunidades2(nombreUsuario);
+        List<ScoreComunidad> sugerenciasAmigosSinEtiquetas = comunidadRepository
+                .sugerenciasDeComunidadesBasadasEnAmigos2SinEtiquetas(nombreUsuario);
 
         // Combinar todas las sugerencias en una sola lista
         List<ScoreComunidad> todasLasSugerencias = new ArrayList<>();
         todasLasSugerencias.addAll(sugerenciasAmigos);
         todasLasSugerencias.addAll(sugerenciasEventos);
         todasLasSugerencias.addAll(sugerenciasComunidades);
+        todasLasSugerencias.addAll(sugerenciasAmigosSinEtiquetas);
 
         // Usar un Map para eliminar duplicados y sumar los scores de las comunidades
         Map<Long, ScoreComunidad> mapaSugerencias = new HashMap<>();

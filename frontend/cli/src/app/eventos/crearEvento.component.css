@@ -115,8 +115,8 @@ button.btn-secondary {
 }
 .drag-drop-area img,
 .drag-drop-area video {
-    max-width: 100%; /* Ajusta al ancho disponible */
-    max-height: 100%; /* Ajusta al alto disponible */
+    max-width: 60%; /* Ajusta al ancho disponible */
+    max-height: 60%; /* Ajusta al alto disponible */
     object-fit: contain; /* Ajusta el contenido sin recortar ni distorsionar */
     margin: auto; /* Centra el contenido */
     display: block; /* Evita problemas con márgenes colapsados */
