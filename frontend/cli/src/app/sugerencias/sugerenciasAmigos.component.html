@@ -3,24 +3,29 @@
 <div class="wrapper">
   <section class="carousel">
     <div class="carousel-container">
-      <div class="card" [routerLink]="['/perfil', usuario.id]" *ngFor="let usuario of obtenerUsuariosParaMostrar()"
+      <div class="card" *ngFor="let usuario of obtenerUsuariosParaMostrar()" 
            [style.background-image]="'url(' + (usuario.fotoPerfil ? usuario.fotoPerfil : '../../assets/usuario.png') + ')'">
-        <div class="evento-card clickable">
-          <div class="evento-details">
-            <h3>{{ usuario.nombreReal }}</h3>
-            <p>{{ usuario.nombreUsuario }}</p>
-            <p>{{ usuario.descripcion }}</p>
-
-            <!-- Motivo estilizado -->
-            <div class="motivo-container" *ngIf="motivos[usuario.id]">
-              <p class="motivo-text">Motivo: "{{ motivos[usuario.id] }}"</p>
-            </div>
+        <div class="evento-details">
+          <h3>{{ usuario.nombreReal }}</h3>
+          <p>{{ usuario.nombreUsuario }}</p>
+<!--           <p>{{ usuario.descripcion }}</p>
+ -->          <div class="motivo-container" *ngIf="motivos[usuario.id]">
+            <i class="fa fa-search motivo-icon" (click)="openMotivoModal(usuario.id)"></i>
+            <p class="motivo-text">Motivo: "{{ motivos[usuario.id] }}"</p>
           </div>
         </div>
       </div>
     </div>
-    
   </section>
+
+  <div *ngIf="isModalOpen" class="modal-overlay" (click)="closeMotivoModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3>Motivo de {{ usuarioSeleccionado?.nombreUsuario }}</h3>
+      <p>{{ motivos[usuarioSeleccionado?.id]?.toString() }}</p>
+      <button class="close-btn" (click)="closeMotivoModal()">Cerrar</button>
+    </div>
+  </div>
+  
   <!-- Controles del carrusel debajo -->
   <div class="carousel-controls">
     <button class="carousel-control prev" (click)="usuarioAnterior()" [disabled]="results.length === 0">‹</button>

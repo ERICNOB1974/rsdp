@@ -35,8 +35,9 @@
 </section>
   <!-- Paginación -->
   <app-pagination 
-    [totalPages]="totalPages" 
-    [currentPage]="page + 1" 
-    (pageChangeRequested)="onPageChangeRequested($event)"
-    [hidden]="elementos < 1 || totalPages <= 1">
+  [totalPages]="totalPages" 
+  [currentPage]="page+1" 
+  (pageChangeRequested)="onPageChangeRequested($event)"
+  [number]="page" 
+  [hidden]="elementos < 1 || totalPages <= 1">
   </app-pagination>

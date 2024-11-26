@@ -65,16 +65,47 @@
         <div class="publicaciones-grid" (scroll)="onScroll('publicaciones')">
           <div class="publicacion-item" *ngFor="let publicacion of publicaciones"
             (click)="esParte ? irADetallePublicacion(publicacion.id): null">
-            <div class="publicacion-contenido">
-              <p>{{ publicacion.texto }}</p>
-              <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
-                <img [src]="publicacion.file" alt="Imagen de la publicaciÃ³n" class="publicacion-imagen">
+            <div class="publicacion-container">
+              <div class="publicacion-header">
+                <!-- Foto de perfil del usuario -->
+                <div class="usuario-info">
+                  <img
+                    *ngIf="usuariosPublicadores[publicacion.id]?.fotoPerfil"
+                    [src]="usuariosPublicadores[publicacion.id].fotoPerfil"
+                    alt="Foto de perfil"
+                    class="foto-perfil"
+                  />
+                  <p *ngIf="usuariosPublicadores[publicacion.id]" class="usuario-publicador">
+                    Publicado por:
+                    <a
+                      (click)="goToPerfil(usuariosPublicadores[publicacion.id].id); $event.stopPropagation();"
+                      class="publicacion-usuario"
+                    >
+                      {{ usuariosPublicadores[publicacion.id].nombreUsuario }}
+                    </a>
+                  </p>
+                </div>
+                <!-- Fecha de creación -->
+                <div class="publicacion-fecha">
+                  {{ publicacion.fechaDeCreacion | date:'medium' }}
+                </div>
               </div>
+              <!-- Contenido de la publicación -->
+              <p class="publicacion-texto">{{ publicacion.texto }}</p>
+              <!-- Imagen de la publicación -->
+              <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
+                <img
+                  [src]="publicacion.file"
+                  alt="Imagen de la publicación"
+                  class="publicacion-imagen"
+                />
+              </div>
+              <!-- Video de la publicación -->
               <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
                 <video [src]="publicacion.file" controls class="publicacion-video"></video>
               </div>
-              <div class="publicacion-fecha">{{ publicacion.fechaDeCreacion | date:'medium' }}</div>
             </div>
+            
           </div>
         </div>
       </div>
