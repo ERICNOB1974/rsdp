@@ -1,4 +1,5 @@
-<div class="filtros-container" style="display: flex; gap: 10px;">
+<div class="filtros-container">
+
   <!-- Filtro por nombre -->
   <div class="filtro-container filtro-nombre">
     <label class="container">
@@ -11,21 +12,19 @@
     <div *ngIf="filtroNombreAbierto" class="filtro-content">
       <div class="input-group">
         <div class="input-container">
-          <label for="nombreEvento">Nombre del evento:</label>
+          <label for="nombreEvento">Nombre de la comunidad:</label>
           <input type="text" id="nombreEvento" [(ngModel)]="nombreEventoFiltro">
         </div>
       </div>
       <div class="button-group">
-        <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar</button>
-        <button (click)="limpiarFiltroNombre()" class="limpiar-filtro">Limpiar</button>
+        <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar Filtro</button>
+        <button (click)="limpiarFiltroNombre()" class="limpiar-filtro">Limpiar Filtro</button>
       </div>
     </div>
   </div>
-
-
-
   <!-- Filtro por etiquetas -->
-  <div class=" filtro-container filtro-etiquetas">
+  
+  <div class="filtro-container filtro-etiquetas">
     <label class="container">
       <input type="checkbox" [(ngModel)]="filtroEtiquetasActivo" (change)="aplicarTodosLosFiltros()">
       <div class="checkmark"></div>
@@ -33,24 +32,20 @@
     <button (click)="toggleFiltroEtiquetas()" class="filtro-toggle">
       Filtrar por etiquetas <i [class]="filtroEtiquetasAbierto ? 'arrow up' : 'arrow down'"></i>
     </button>
-    <div class="filtro-content" *ngIf="filtroEtiquetasAbierto">
+    <div *ngIf="filtroEtiquetasAbierto" class="filtro-content">
       <input id="etiquetas" class="form-control" [(ngModel)]="etiquetaSeleccionada" [ngbTypeahead]="searchEtiqueta"
         [resultFormatter]="resultFormatEtiqueta" [inputFormatter]="inputFormatEtiqueta"
         (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada" placeholder="Buscar etiqueta" />
       <div class="selected-tags">
         <span *ngFor="let etiqueta of etiquetasSeleccionadas" class="tag">
           {{ etiqueta.nombre }}
-          <button (click)="removerEtiqueta(etiqueta)" class="remove-tag">
-            &times;
-          </button>
+          <button (click)="removerEtiqueta(etiqueta)" class="remove-tag">&times;</button>
         </span>
       </div>
-      <button (click)="aplicarTodosLosFiltros()" class="btn btn-primary">
-        Aplicar filtro
-      </button>
-      <button (click)="limpiarFiltroEtiquetas()" class="btn btn-secondary">
-        Limpiar filtro
-      </button>
+      <div class="button-group">
+        <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar Filtro</button>
+        <button (click)="limpiarFiltroEtiquetas()" class="limpiar-filtro">Limpiar Filtro</button>
+      </div>
     </div>
   </div>
 
