@@ -113,9 +113,29 @@
   <div *ngIf="tabSeleccionada === 'disponibles'" class="content-section">
     <h2 class="section-title">Explora Comunidades Disponibles</h2>
     <div class="grid" (scroll)="onScroll()">
-      <div 
-        class="grid-item" 
-        *ngFor="let comunidad of comunidadesDisponiblesAMostrar" 
+      <div class="grid-item" *ngFor="let comunidad of comunidadesDisponiblesAMostrar"
+        (click)="irADetallesDeLaComunidad(comunidad.id)"
+        [ngStyle]="{'background-image': 'url(' + (comunidad.imagen || '../../assets/comunidad.jpg') + ')'}">
+        <div class="comunidad-card clickable">
+          <h3>{{ comunidad.nombre }}
+            <i *ngIf="comunidad.esPrivada" class="fa fa-lock" aria-hidden="true"></i>
+          </h3>
+          <p>{{ comunidad.descripcion }}</p>
+          <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
+          <p>Ubicación: {{comunidad.ubicacion}}</p>
+        </div>
+      </div>
+      <div *ngIf="comunidadesDisponiblesAMostrar.length==0">
+        No hay comunidades disponibles para mostrar con los filtros seleccionados
+      </div>
+    </div>
+  </div>
+
+
+  <div *ngIf="tabSeleccionada === 'miembro'" class="content-section">
+    <h2 class="section-title">Comunidades En Las Que Eres Miembro</h2>
+    <div class="grid" (scroll)="onScroll()">
+      <div class="grid-item" *ngFor="let comunidad of comunidadesMiembroUsuarioAMostrar"
         (click)="irADetallesDeLaComunidad(comunidad.id)"
         [ngStyle]="{'background-image': 'url(' + (comunidad.imagen || '../../assets/comunidad.jpg') + ')'}">
         <div class="comunidad-card clickable">
@@ -128,26 +148,8 @@
         </div>
       </div>
     </div>
-  </div>
-
-
-  <div *ngIf="tabSeleccionada === 'miembro'" class="content-section">
-    <h2 class="section-title">Comunidades En Las Que Eres Miembro</h2>
-    <div class="grid" (scroll)="onScroll()">
-      <div 
-        class="grid-item" 
-        *ngFor="let comunidad of comunidadesMiembroUsuarioAMostrar" 
-        (click)="irADetallesDeLaComunidad(comunidad.id)"
-        [ngStyle]="{'background-image': 'url(' + (comunidad.imagen || '../../assets/comunidad.jpg') + ')'}">
-        <div class="comunidad-card clickable">
-          <h3>{{ comunidad.nombre }}
-            <i *ngIf="comunidad.esPrivada" class="fa fa-lock" aria-hidden="true"></i>
-          </h3>
-          <p>{{ comunidad.descripcion }}</p>
-          <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
-          <p>Ubicación: {{comunidad.ubicacion}}</p>
-        </div>
-      </div>
+    <div *ngIf="comunidadesMiembroUsuarioAMostrar.length==0">
+      No hay comunidades a las que pertenezcas que cumplan con los filtros seleccionados
     </div>
   </div>
 </div>
