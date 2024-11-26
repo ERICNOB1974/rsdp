@@ -190,6 +190,13 @@ public class ComunidadPresenter {
         return Response.ok(sugerenciasDeComunidadesBasadasEnAmigos);
     }
 
+     @GetMapping("/sugerenciasDeComunidadesBasadasEnAmigosSinEtiquetas2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeComunidadesBasadasEnAmigosSinEtiquetas2(@PathVariable String nombreUsuario) {
+        List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigosSinEtiquetas = comunidadService
+                .obtenerSugerenciasDeComunidadesBasadasEnAmigosSinEtiquetas2(nombreUsuario);
+        return Response.ok(sugerenciasDeComunidadesBasadasEnAmigosSinEtiquetas);
+    }
+
     @GetMapping("/sugerenciasDeComunidadesBasadasEnEventos2/{nombreUsuario}")
     public ResponseEntity<Object> sugerenciasDeComunidadesBasadasEnEventos2(@PathVariable String nombreUsuario) {
         List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos = comunidadService
@@ -208,7 +215,7 @@ public class ComunidadPresenter {
     public ResponseEntity<Object> obtenerSugerenciasCombinadas(
             @PathVariable String nombreUsuario,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "4") int size) {
+            @RequestParam(defaultValue = "10") int size) {
         try {
             // Llamar al servicio que devuelve los eventos y el total de páginas
             Map<String, Object> result = comunidadService.obtenerSugerenciasComunidadesConTotalPaginas(nombreUsuario,
