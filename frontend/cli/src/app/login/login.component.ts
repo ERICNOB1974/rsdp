@@ -34,6 +34,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   logoUrl: string = '';
+  passwordVisible = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -57,6 +58,18 @@ export class LoginComponent implements OnInit {
       });
     }
     // this.loadLogo();
+  }
+
+  togglePasswordVisibility() {
+    this.passwordVisible = !this.passwordVisible;
+    const passwordInput = document.getElementById('passwordInput');
+    if (passwordInput) { // Verificar que passwordInput no sea null
+      if (this.passwordVisible) {
+        passwordInput.setAttribute('type', 'text');
+      } else {
+        passwordInput.setAttribute('type', 'password');
+      }
+    }
   }
 
   loadLogo() {
