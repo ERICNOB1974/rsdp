@@ -45,7 +45,10 @@
 
           <mat-form-field appearance="outline">
             <mat-label>Contraseña</mat-label>
-            <input matInput type="password" formControlName="contrasena" required>
+            <input matInput id="passwordInput" [type]="passwordVisible ? 'text' : 'password'" formControlName="contrasena" required>
+            <button mat-icon-button type="button" (click)="togglePasswordVisibility()" class="toggle-password-visibility">
+              <mat-icon>{{ passwordVisible ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
             <mat-error *ngIf="registroForm.get('contrasena')?.hasError('required')">
               La contraseña es requerida
             </mat-error>
@@ -59,7 +62,10 @@
           
           <mat-form-field appearance="outline">
             <mat-label>Confirmar contraseña</mat-label>
-            <input matInput type="password" formControlName="confirmarContrasena" required>
+            <input matInput id="passwordInput2" [type]="passwordVisible2 ? 'text' : 'password'" formControlName="confirmarContrasena" required>
+            <button mat-icon-button type="button" (click)="togglePasswordVisibility2()" class="toggle-password-visibility">
+              <mat-icon>{{ passwordVisible2 ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
             <mat-error *ngIf="registroForm.get('confirmarContrasena')?.hasError('required')">
               Confirmar contraseña es requerido
             </mat-error>
