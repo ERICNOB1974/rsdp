@@ -25,6 +25,8 @@ import { Comentario } from '../publicaciones/Comentario';
     styleUrls: ['./comunidadMuro.css']
 })
 export class MuroComunidadComponent implements OnInit {
+
+    isLoading: boolean = false;
     comunidad!: Comunidad;
     idComunidad!: number;
     esParte: boolean = false;
@@ -92,7 +94,6 @@ export class MuroComunidadComponent implements OnInit {
         private dialog: MatDialog,
         private eventoService: EventoService
     ) { }
-
 
     ngOnInit(): void {
         const state = window.history.state;
@@ -536,25 +537,39 @@ export class MuroComunidadComponent implements OnInit {
     }
 
     ingresar(): void {
+        this.isLoading = true; // Activar el estado de carga
         this.usuarioService.solicitarIngresoAComunidad(this.comunidad.id).subscribe(dataPackage => {
             let mensaje = dataPackage.message;
             this.procesarEstado();
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000,
             });
+        }, error => {
+            console.error('Error al ingresar a la comunidad:', error);
+            this.snackBar.open('Error al ingresar a la comunidad', 'Cerrar', {
+                duration: 3000,
+            });
+        }).add(() => {
+            this.isLoading = false; // Desactivar el estado de carga
         });
-
     }
 
     salir(): void {
+        this.isLoading = true; // Activar el estado de carga
         this.comunidadService.salir(this.comunidad.id).subscribe(dataPackage => {
             let mensaje = dataPackage.message;
             this.procesarEstado();
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000, // Duración del snackbar en milisegundos
             });
+        }, error => {
+            console.error('Error al salir de la comunidad:', error);
+            this.snackBar.open('Error al salir de la comunidad', 'Cerrar', {
+                duration: 3000,
+            });
+        }).add(() => {
+            this.isLoading = false; // Desactivar el estado de carga
         });
-        this.esFavorito = false;
     }
 
     salirValid(): boolean {
