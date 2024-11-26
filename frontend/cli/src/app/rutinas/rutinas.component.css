@@ -18,6 +18,7 @@ body {
   margin: 20px auto;
   max-width: 800px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  flex-wrap: wrap; /* Permite que los tabs se ajusten a varias líneas */
 }
 
 .tab-button {
@@ -30,6 +31,7 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  white-space: nowrap; /* Evita que el texto de los botones se divida */
 }
 
 .tab-button:hover {
@@ -48,8 +50,11 @@ body {
 .content-container {
   margin: auto;
   padding: 20px;
-  max-height: 600px; /* Ajusta la altura máxima según sea necesario */
   overflow-y: auto; /* Permite el desplazamiento vertical */
+  display: flex;
+  flex-direction: column;
+  max-height: 700px;
+  height: 80%;
 }
 
 .section-title {
@@ -64,9 +69,14 @@ body {
 /* Grid Layout */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(2, 1fr); /* Dos columnas */
   gap: 20px;
+  margin-top: 20px;
+  height: 600px;
+  overflow-y: auto; /* Permite el desplazamiento vertical */
+
 }
+
 
 .grid-item {
   position: relative;
@@ -74,10 +84,15 @@ body {
   background-position: center;
   border-radius: 15px;
   overflow: hidden;
-  height: 250px;
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 90%; /* Para que la tarjeta no ocupe toda la pantalla, ajustable */
+  margin: 10px; /* Añadido para separar las tarjetas */
+  height: 300px;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
 }
 
 .grid-item:hover {
@@ -154,4 +169,56 @@ body {
   background: #b8efa9;
   color: #000000;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Media Queries para Responsividad */
+@media screen and (max-width: 768px) {
+  .tabs-container {
+    gap: 10px; /* Reduce el espacio entre tabs */
+    flex-wrap: wrap; /* Hace que los tabs ocupen varias filas si es necesario */
+    padding: 15px;
+  }
+
+  .tab-button {
+    padding: 10px 15px; /* Reduce el tamaño de los botones */
+    font-size: 14px; /* Disminuye el tamaño de la fuente */
+  }
+  .grid {
+    grid-template-columns: repeat(1, 1fr); /* Una columna en dispositivos más pequeños */
+  }
+
+  .tab-button {
+    font-size: 14px; /* Botones más pequeños */
+    padding: 10px 15px;
+  }
+
+  .grid-item {
+    height: 250px; /* Reduce el tamaño de las tarjetas */
+  }
+
+  .section-title {
+    font-size: 24px; /* Reduce el tamaño del título */
+  }
+}
+
+@media screen and (max-width: 480px) {
+
+
+  .tab-button {
+    font-size: 12px; /* Ajusta aún más el tamaño del texto */
+    padding: 8px 12px; /* Reduce el espacio del botón */
+  }
+
+  .tabs-container {
+    flex-wrap: wrap; /* Ajusta los botones en filas si no caben */
+    gap: 10px;
+  }
+
+  .grid-item {
+    height: 200px; /* Tarjetas aún más pequeñas */
+  }
+
+  .section-title {
+    font-size: 20px; /* Reduce más el tamaño del título */
+  }
 }
