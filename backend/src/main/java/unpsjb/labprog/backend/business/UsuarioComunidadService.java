@@ -51,10 +51,10 @@ public class UsuarioComunidadService {
 
         // Verificar si ya existe una solicitud de ingreso pendiente o enviada
         if (usuarioRepository.solicitudIngresoExiste(idUsuario, idComunidad)) {
-            throw new Exception("Ya existe una solicitud de ingreso para esta comunidad.");
+            throw new Exception("Ya existe una solicitud de ingreso para la comunidad: "+ comunidad.getNombre());
         }
         usuarioRepository.enviarSolicitudIngreso(idUsuario, idComunidad, "pendiente", LocalDateTime.now());
-        return "Solicitud de ingreso enviada correctamente";
+        return "Solicitud de ingreso a la comunidad: "+comunidad.getNombre()+" enviada correctamente";
     }
 
     public String otorgarRolAdministrador(Long idCreador, Long idMiembro, Long idComunidad) throws Exception {
