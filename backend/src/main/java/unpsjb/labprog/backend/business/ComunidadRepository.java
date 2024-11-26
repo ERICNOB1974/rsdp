@@ -300,7 +300,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                             WHERE toUpper(c.nombre) CONTAINS toUpper($nombre)
                               AND NOT (c)<-[:MIEMBRO]-(u)
                               AND NOT (c)-[:CREADA_POR|ADMINISTRADA_POR]->(u)
-                              AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad)
+                              AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c)
 
                             RETURN DISTINCT c
                         """)
@@ -309,7 +309,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         @Query("""
                         MATCH (c:Comunidad)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(u)
                         WHERE toUpper(c.nombre) CONTAINS toUpper($nombre)
-                        AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad)
+                        AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c)
                         AND id(u) = $usuarioId
                         RETURN c
                         """)
@@ -319,6 +319,8 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                             MATCH (c:Comunidad)
                             MATCH (us:Usuario)
                             WHERE id(us) = $usuarioId
+                            AND NOT (us)-[:EXPULSADO_COMUNIDAD]-(c)
+
                             OPTIONAL MATCH (u:Usuario)-[r]-(c)
                             WHERE type(r) <> 'SOLICITUD_DE_INGRESO' AND type(r) <> 'NOTIFICACION' AND type(r) <> 'EXPULSADO_COMUNIDAD'
                             WITH c, count(DISTINCT u) AS totalUsuarios, us
@@ -335,6 +337,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                             MATCH (c:Comunidad)
                             MATCH (us:Usuario)
                             WHERE id(us) = $usuarioId
+                            AND NOT (us)-[:EXPULSADO_COMUNIDAD]-(c)
                             OPTIONAL MATCH (u:Usuario)-[r]-(c)
                             WHERE type(r) <> 'SOLICITUD_DE_INGRESO' AND type(r) <> 'NOTIFICACION' AND type(r) <> 'EXPULSADO_COMUNIDAD'
                             WITH c, count(DISTINCT u) AS totalUsuarios, us

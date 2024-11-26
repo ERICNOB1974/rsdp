@@ -164,3 +164,15 @@ button.btn-secondary {
     margin-bottom: 2dvh;
     display: block;
 }
+
+.mat-error-custom {
+    font-size: 1em; /* Tamaño de fuente por defecto */
+    padding: 10px; /* Espaciado por defecto */
+  }
+  
+  @media (max-width: 600px) {
+    .mat-error-custom {
+      font-size: 0.8em; /* Tamaño de fuente más pequeño en pantallas pequeñas */
+      padding: 5px; /* Menos espaciado */
+    }
+  }
