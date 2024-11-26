@@ -18,7 +18,8 @@ export class SugerenciasAmigosComponent implements OnInit {
   currentIndex: number = 0; // Índice actual del carrusel
   results: Usuario[] = [];              
   motivos: { [key: number]: String } = {}; // Para almacenar comentarios por publicación
-
+  isModalOpen: boolean = false; // Controla si el modal está abierto
+  usuarioSeleccionado: any = null; // Almacena la comunidad seleccionada
   constructor(private eventoService: EventoService,
     private comunidadService: ComunidadService,
     private usuarioService: UsuarioService,
@@ -72,5 +73,15 @@ export class SugerenciasAmigosComponent implements OnInit {
     }
   
     return usuariosParaMostrar;
+  }
+  openMotivoModal(id: number): void {
+    this.isModalOpen = true;
+    this.usuarioSeleccionado = this.results.find((usuario) => usuario.id === id);
+  }
+
+  // Método para cerrar el modal
+  closeMotivoModal(): void {
+    this.isModalOpen = false;
+    this.usuarioSeleccionado = null;
   }
 }
