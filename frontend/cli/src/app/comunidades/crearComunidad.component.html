@@ -88,11 +88,10 @@
 
 
         <div class="form-buttons">
-            <button mat-raised-button color="primary" type="button" (click)="saveComunidad()" [disabled]="!isFormValid()">Guardar
+            <button type="button" (click)="cancel()" class="btn btn-secondary" >Cancelar</button>
+            <button type="button" (click)="saveComunidad()" [disabled]="!isFormValid()" class="btn btn-success">Guardar
               comunidad</button>
-            <button mat-flat-button color="accent" type="button" (click)="cancel()">Cancelar</button>
-          </div>
-
+        </div>
 
     </form>
     <!-- Mensaje de confirmación o error -->
