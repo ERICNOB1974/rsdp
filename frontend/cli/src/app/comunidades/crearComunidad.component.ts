@@ -186,21 +186,20 @@ export class CrearComunidadComponent {
       tap(() => (this.searching = false))
     );
 
-  agregarEtiqueta(event: any): void {
-    const etiqueta: Etiqueta = event.item;
+    agregarEtiqueta(event: any): void {
+      const etiqueta: Etiqueta = event.item;
+    
+      // Verificar si la etiqueta ya está seleccionada
+      if (!this.etiquetasSeleccionadas.some(e => e.nombre === etiqueta.nombre)) {
+        this.etiquetasSeleccionadas.push(etiqueta);
+      }
 
-    // Verificar por nombre en lugar de por ID para evitar duplicados
-    if (!this.etiquetasSeleccionadas.some(e => e.nombre === etiqueta.nombre)) {
-      this.etiquetasSeleccionadas.push(etiqueta);
+      this.etiquetaSeleccionada = null;
+    
+      // Limpiar el campo
+      this.cdr.detectChanges(); // Forzar la actualización de la vista
     }
-
-    // Restablecer la etiqueta seleccionada
-    this.etiquetaSeleccionada = null;
-
-    // Forzar actualización visual del input
-    this.cdr.detectChanges();
-  }
-
+    
 
   eliminarEtiqueta(etiqueta: Etiqueta): void {
     this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(
