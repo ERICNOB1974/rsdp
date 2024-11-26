@@ -36,11 +36,11 @@
                     </div>
 
                     <div class="d-flex justify-content-between mt-4">
-                        <button class="btn btn-success btn-lg" (click)="terminarEjercicio()">
-                            {{ esUltimoEjercicio() ? 'Finalizar día' : 'Terminado' }}
-                        </button>
                         <button class="btn btn-secondary btn-lg" (click)="volver()" style="background-color: gray; border-color: gray;">
                             Atrás
+                        </button>
+                        <button class="btn btn-success btn-lg" (click)="terminarEjercicio()">
+                            {{ esUltimoEjercicio() ? 'Finalizar día' : 'Terminado' }}
                         </button>
                     </div>
                 </div>
@@ -50,10 +50,10 @@
                         <h4 class="text-warning">Descanso</h4>
                         <p>Tómate un descanso de <strong>{{ tiempoDescanso }}</strong> segundos.</p>
                         <div class="d-flex justify-content-between mt-4">
-                            <button class="btn btn-success btn-lg" (click)="terminarEjercicio()">Terminado</button>
                             <button class="btn btn-secondary btn-lg" (click)="volver()" style="background-color: gray; border-color: gray;">
                                 Atrás
                             </button>
+                            <button class="btn btn-success btn-lg" (click)="terminarEjercicio()">Terminado</button>
                         </div>
                     </div>
                 </ng-template>
