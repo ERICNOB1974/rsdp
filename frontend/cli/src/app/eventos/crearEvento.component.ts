@@ -284,15 +284,20 @@ export class CrearEventoComponent {
       tap(() => (this.searching = false))
     );
 
-  agregarEtiqueta(event: any): void {
-    const etiqueta: Etiqueta = event.item;
-    if (event.item) {
-      this.etiquetasSeleccionadas.push(event.item);
-      this.etiquetaSeleccionada = null; // Limpiar el campo de entrada
+    agregarEtiqueta(event: any): void {
+      const etiqueta: Etiqueta = event.item;
+    
+      // Verificar si la etiqueta ya está seleccionada
+      if (!this.etiquetasSeleccionadas.some(e => e.nombre === etiqueta.nombre)) {
+        this.etiquetasSeleccionadas.push(etiqueta);
+      }
 
-      this.cdr.detectChanges();
+      this.etiquetaSeleccionada = null;
+    
+      // Limpiar el campo
+      this.cdr.detectChanges(); // Forzar la actualización de la vista
     }
-  }
+    
 
   eliminarEtiqueta(etiqueta: Etiqueta): void {
     this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(
