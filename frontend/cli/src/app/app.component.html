@@ -60,6 +60,7 @@
             <!-- Dropdown: Eventos -->
             <li class="menu-item dropdown" [class.open]="isDropdownOpen['eventos']"
                 (mouseleave)="closeDropdown('eventos')">
+
                 <a (click)="toggleDropdown('eventos')">
                     <span class="icon"><i class="fa fa-calendar"></i></span>
                     <span class="menu-text" *ngIf="!isSidebarHidden">Eventos</span>

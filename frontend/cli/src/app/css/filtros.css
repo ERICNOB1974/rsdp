@@ -1,13 +1,108 @@
 .filtros-container {
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
+  /* Cambia a row para que estén en una fila */
+  justify-content: center;
+  /* Asegúrate de que haya espacio entre los filtros */
   align-items: flex-start;
-  margin-bottom: 2dvh;
+  /* Alinea los filtros al inicio */
+  margin-top: 2%;
+
+  /* Espacio entre filtros y botones */
 }
 
 .filtro-container {
-  flex: 0 1 calc(33.333% - 20px);
-  margin-bottom: 2dvh;
+  margin: 0 10px; /* Añadir margen horizontal para separar los filtros */
+  margin-bottom: 10px; /* Mantener el margen inferior para el espacio entre filtros */
+}
+
+.filtro-participantes .filtro-content {
+  max-width: 300px;
+  /* Establece un ancho máximo */
+  width: 100%;
+  /* Asegúrate de que ocupe el 100% del contenedor padre */
+  padding: 8px;
+  /* Espaciado interno */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  /* Sombra para darle un poco de profundidad */
+  background-color: white;
+  /* Asegúrate de que tenga un fondo blanco */
+}
+
+.input-group {
+  display: flex;
+  justify-content: space-between;
+  /* Alinea los inputs de manera horizontal */
+}
+
+.input-container {
+  flex: 1;
+  /* Permite que los inputs ocupen el espacio disponible */
+  margin-right: 10px;
+  /* Espacio entre los inputs */
+}
+
+.input-container:last-child {
+  margin-right: 0;
+  /* Elimina el margen derecho del último input */
+}
+
+.filtro-container {
+  margin-bottom: 10px;
+  /* Espacio entre cada filtro */
+}
+
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  /* Espacio entre los botones */
+}
+
+.aplicar-filtro,
+.limpiar-filtro {
+  padding: 10px 20px;
+  background-color: #ff0040;
+  /* Color de fondo */
+  color: white;
+  /* Color del texto */
+  border: none;
+  border-radius: 5px;
+  /* Bordes redondeados */
+  cursor: pointer;
+}
+
+.aplicar-filtro:hover {
+  background-color: #ff0040;
+  /* Color de fondo al pasar el mouse */
+}
+
+.limpiar-filtro:hover {
+  background-color: #949494;
+  /* Color de fondo al pasar el mouse */
+}
+
+
+
+.aplicar-filtro,
+.limpiar-filtro {
+  width: 100%;
+  /* Asegúrate de que ocupen todo el ancho */
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  margin-top: 10px;
+  /* Añadir margen superior */
+}
+
+
+.limpiar-filtro {
+  background-color: #e4e4e4;
+  /* Color de fondo para limpiar */
+  color: #333;
+  margin-left: 5px;
+  /* Añadir margen a la izquierda */
 }
 
 .filtro-fecha {
@@ -30,11 +125,7 @@
   font-size: 0.9em;
 }
 
-.aplicar-filt ros {
-  background-color: #4CAF50;
-  color: #fff;
 
-}
 
 .limpiar-filtro {
   background-color: #e4e4e4;
@@ -81,18 +172,7 @@
   border-top: none;
 }
 
-.input-group {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
 
-.input-container {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  /* Hacemos que el input ocupe todo el ancho disponible */
-}
 
 .input-container input {
   width: 100%;
@@ -105,7 +185,7 @@
 .aplicar-filtro {
   width: 100%;
   padding: 8px;
-  background-color: #3483fa;
+  background-color: #ff0040;
   color: white;
   border: none;
   border-radius: 4px;
@@ -115,7 +195,7 @@
 }
 
 .aplicar-filtro:hover {
-  background-color: #2968c8;
+  background-color: #ff0040;
 }
 
 .aplicar-filtro:hover,
