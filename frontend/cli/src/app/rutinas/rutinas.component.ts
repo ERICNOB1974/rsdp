@@ -380,8 +380,8 @@ export class RutinasComponent implements OnInit {
 
 
   onScroll(): void {
-    const element = document.querySelector('.content-container') as HTMLElement;
-    if (element.scrollTop + element.clientHeight >= element.scrollHeight) {
+    const element = document.querySelector('.grid') as HTMLElement;
+    if (element.scrollTop + element.clientHeight >= element.scrollHeight-10) {
       if (this.hayResultadosFiltrados) {
         this.cargarMasResultadosFiltrados();
       } else {

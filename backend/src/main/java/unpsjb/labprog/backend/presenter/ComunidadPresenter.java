@@ -245,7 +245,7 @@ public class ComunidadPresenter {
         } catch (RuntimeException e) {
             return Response.error(aComunidad, e.getMessage());
         }
-        return Response.ok("Persona ", +id + " borrada con exito");
+        return Response.ok("comunidad borrada con exito");
     }
 
     @RequestMapping(path = "/actualizar", method = RequestMethod.PUT)
