@@ -17,7 +17,7 @@ import { AuthService } from '../autenticacion/auth.service';
   imports: [CommonModule, FormsModule, RouterModule, HttpClientModule, NgbTypeaheadModule],
 
   templateUrl: 'eventos.component.html',
-  styleUrls: ['eventos.component.css']
+  styleUrls: ['eventos.component.css', '../css/filtros.css']
 })
 export class EventosComponent implements OnInit {
   eventos: Evento[] = []; // Arreglo para almacenar los eventos que provienen del backend
