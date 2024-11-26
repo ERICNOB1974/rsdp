@@ -14,14 +14,11 @@
     </i>
   </div>
 
-
-
-  <button *ngIf="!esCreador && !expulsado && !(comunidad.cantidadMaximaMiembros<=comunidad.miembros)" class="btn btn-primary btn-block ingresar-button"
-    [disabled]="!(salirValid() || inscribirseValid())" (click)="salirValid() ? salir() : ingresar()">
-
+  <button *ngIf="!esCreador && !expulsado && !(comunidad.cantidadMaximaMiembros <= comunidad.miembros)"
+    class="btn btn-primary btn-block ingresar-button" [disabled]="isLoading || !(salirValid() || inscribirseValid())"
+    (click)="salirValid() ? salir() : ingresar()">
     {{ salirValid() ? 'Abandonar comunidad' : (comunidad.esPrivada ? 'Solicitar ingreso' : 'Ingresar') }}
   </button>
- 
 
   <div *ngIf="expulsado" class="alert alert-warning mt-4">
     <p>Has sido expulsado de la comunidad.</p>
@@ -34,10 +31,10 @@
   </div>
   <div *ngIf="comunidad.cantidadMaximaMiembros<=comunidad.miembros" class="alert alert-warning mt-4">
     <p>No hay mas espacio en la comunidad.</p>
-  
-  </div>
-  <button *ngIf="salirValid()" (click)="abrirModalInvitarAmigos()" class="btn btn-success btn-block">
 
+  </div>
+  <button *ngIf="salirValid()" (click)="abrirModalInvitarAmigos()" class="btn btn-success btn-block"
+    [disabled]="isLoading">
     Invitar amigos
   </button>
   <button *ngIf="esCreador || esAdministrador" class="btn2 btn2-primary btn2-block ingresar-button"
@@ -69,18 +66,12 @@
               <div class="publicacion-header">
                 <!-- Foto de perfil del usuario -->
                 <div class="usuario-info">
-                  <img
-                    *ngIf="usuariosPublicadores[publicacion.id]?.fotoPerfil"
-                    [src]="usuariosPublicadores[publicacion.id].fotoPerfil"
-                    alt="Foto de perfil"
-                    class="foto-perfil"
-                  />
+                  <img *ngIf="usuariosPublicadores[publicacion.id]?.fotoPerfil"
+                    [src]="usuariosPublicadores[publicacion.id].fotoPerfil" alt="Foto de perfil" class="foto-perfil" />
                   <p *ngIf="usuariosPublicadores[publicacion.id]" class="usuario-publicador">
                     Publicado por:
-                    <a
-                      (click)="goToPerfil(usuariosPublicadores[publicacion.id].id); $event.stopPropagation();"
-                      class="publicacion-usuario"
-                    >
+                    <a (click)="goToPerfil(usuariosPublicadores[publicacion.id].id); $event.stopPropagation();"
+                      class="publicacion-usuario">
                       {{ usuariosPublicadores[publicacion.id].nombreUsuario }}
                     </a>
                   </p>
@@ -94,18 +85,14 @@
               <p class="publicacion-texto">{{ publicacion.texto }}</p>
               <!-- Imagen de la publicación -->
               <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
-                <img
-                  [src]="publicacion.file"
-                  alt="Imagen de la publicación"
-                  class="publicacion-imagen"
-                />
+                <img [src]="publicacion.file" alt="Imagen de la publicación" class="publicacion-imagen" />
               </div>
               <!-- Video de la publicación -->
               <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
                 <video [src]="publicacion.file" controls class="publicacion-video"></video>
               </div>
             </div>
-            
+
           </div>
         </div>
       </div>
