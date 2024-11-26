@@ -97,9 +97,6 @@ export class CrearEventoComponent {
     );
   }
 
-
-
-
   ngOnInit(): void {
     this.formEvento.markAllAsTouched();
     this.evento = <Evento>{
