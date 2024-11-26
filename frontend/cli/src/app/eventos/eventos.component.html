@@ -145,6 +145,9 @@
           <p>Ubicación: {{evento.ubicacion}}</p>
         </div>
       </div>
+      <div *ngIf="eventosDisponiblesAMostrar.length==0">
+        No hay eventos disponibles para mostrar con los filtros seleccionados
+      </div>
     </div>
   </div>
 
@@ -160,6 +163,9 @@
           <p>Ubicación: {{evento.ubicacion}}</p>
           <p>{{ evento.fechaHora | date: 'MMM d, y, h:mm a' }}</p> <!-- Formato de fecha -->
         </div>
+      </div>
+      <div *ngIf="eventosParticipaUsuario.length==0">
+        No hay eventos en los que participes que cumplan con los filtros seleccionados
       </div>
     </div>
   </div>

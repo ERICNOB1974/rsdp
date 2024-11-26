@@ -210,8 +210,8 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
         "AND NOT EXISTS { " +
         "  MATCH (u:Usuario)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
         "  WHERE id(u) = $usuarioId " +
-        "} " +
         "AND NOT (u)-[:EXPULSADO_EVENTO]-(e) "+
+        "} " +
         "RETURN e")
         List<Evento> eventosNombreDisponibles(String nombre, Long usuarioId);
 
