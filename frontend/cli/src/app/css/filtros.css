@@ -1,21 +1,23 @@
 .filtros-container {
   display: flex;
   flex-direction: row;
-  /* Cambia a row para que estén en una fila */
   justify-content: center;
-  /* Asegúrate de que haya espacio entre los filtros */
   align-items: flex-start;
-  /* Alinea los filtros al inicio */
   margin-top: 2%;
-
-  /* Espacio entre filtros y botones */
+  flex-wrap: wrap; /* Permitir que los filtros se envuelvan */
 }
 
 .filtro-container {
-  margin: 0 10px; /* Añadir margen horizontal para separar los filtros */
-  margin-bottom: 10px; /* Mantener el margen inferior para el espacio entre filtros */
+  margin: 10px; /* Espacio entre filtros */
+  flex: 1 1 200px; /* Ajustar el tamaño de los filtros */
+  max-width: 300px; /* Ancho máximo para los filtros */
 }
 
+@media (max-width: 600px) {
+  .filtro-container {
+    flex: 1 1 100%; /* En pantallas pequeñas, cada filtro ocupará el 100% del ancho */
+  }
+}
 .filtro-participantes .filtro-content {
   max-width: 300px;
   /* Establece un ancho máximo */
