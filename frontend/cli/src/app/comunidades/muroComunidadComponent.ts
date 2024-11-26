@@ -438,6 +438,8 @@ export class MuroComunidadComponent implements OnInit {
 
     filtrarMiembrosVisibles(): void {
         // Verificamos que los datos requeridos estén definidos
+        console.log("ERICC2");
+
         if (!this.amigos || !this.miembros || !this.administradores) {
             console.error("Amigos, miembros o administradores no están definidos.");
             return;
@@ -497,6 +499,7 @@ export class MuroComunidadComponent implements OnInit {
             });
         } else if (!this.esParte && this.comunidad.esPrivada) {
             {
+                console.log("ERICC");
                 this.usuariosAnonimos = this.miembros.length - 1;
             }
         }
