@@ -52,7 +52,7 @@ export class CalendarioEventosComponent implements OnInit {
               <div class="custom-event-title" style="font-size: 18px; color: #111; font-weight: bold; margin-bottom: 5px; width: 100%; white-space: normal; overflow: hidden; text-overflow: ellipsis; cursor: pointer; word-wrap: break-word; word-break: break-word; line-height: 1.4; text-transform: uppercase;">
                 ${arg.event.extendedProps['type'] === 'rutina' ? 'Rutina' :
               arg.event.extendedProps['type'] === 'evento' ? 'Evento' :
-                arg.event.extendedProps['type'] === 'recomendado' ? 'Evento Recomendado' : 'Evento Desconocido'}
+                arg.event.extendedProps['type'] === 'recomendado' ? 'Sugerencia Evento' : 'Evento Desconocido'}
               </div>
               <div class="custom-event-name" style="font-size: 16px; color: #555; font-weight: bold; margin-bottom: 5px; width: 100%; white-space: normal; overflow: hidden; text-overflow: ellipsis; cursor: pointer; word-wrap: break-word; word-break: break-word; line-height: 1.4;">
                 ${arg.event.title} 
@@ -63,12 +63,6 @@ export class CalendarioEventosComponent implements OnInit {
                 </div>`
               : ''
             }
-              ${arg.event.extendedProps['type'] === 'recomendado' ?
-              `<div class="custom-event-motivo" style="font-size: 14px; color: #555; margin-top: 5px; width: 100%; text-align: left; white-space: normal; overflow: hidden; text-overflow: ellipsis; word-wrap: break-word; word-break: break-word; line-height: 1.4;">
-            <strong>Motivo:</strong> ${arg.event.extendedProps['motivo']}
-          </div>`
-              : ''
-            }
             </div>`
         };
       },
@@ -77,8 +71,9 @@ export class CalendarioEventosComponent implements OnInit {
       fixedWeekCount: false,
       showNonCurrentDates: true,
       longPressDelay: 0,
-      height: 'auto', // Adapta automáticamente la altura del calendario
-      contentHeight: 'auto', // Ajusta el contenido dinámicamente
+      height: '100%', // Adapta la altura al contenedor
+      contentHeight: 'auto', // Ajusta dinámicamente según el contenido
+      aspectRatio: 1.8, // Relación de aspecto entre ancho y alto (ajusta este valor según el diseño)
     };
   }
 
@@ -97,35 +92,40 @@ export class CalendarioEventosComponent implements OnInit {
 
   ngOnInit() {
     window.addEventListener('resize', this.updateView.bind(this)); // Detectar cambios en tamaño de pantalla
-    const colors = ['#FFA500', '#1E90FF', '#32CD32', '#FF6347', '#9370DB']; // Paleta de colores
+  
+    const colorMap = {
+      rutina: ['#FFA500', '#1E90FF', '#32CD32', '#FF6347', '#9370DB'], // Colores únicos para rutinas
+      evento: '#FFC0CB', // Rosa para eventos
+      recomendado: '#FFD700' // Dorado para sugerencias
+    };
     const calendarEvents: any[] = [];
-
+  
     // Cargar rutinas
     this.rutinaService.rutinasRealizaUsuarioSinPaginacion().subscribe(
       (dataPackage: DataPackage[]) => {
         const rutinas = dataPackage as unknown as Rutina[];
         console.log('Rutinas recibidas y procesadas:', rutinas);
-
+  
         rutinas.forEach((rutina, rutinaIndex) => {
-          const color = colors[rutinaIndex % colors.length];
+          const color = colorMap.rutina[rutinaIndex % colorMap.rutina.length]; // Color cíclico para rutinas
           let baseDate = new Date();
           baseDate.setHours(0, 0, 0, 0);
-
+  
           if (rutina.hizoUltimoDiaHoy) {
             baseDate.setDate(baseDate.getDate() + 1); // Comenzar desde el día siguiente
           }
-
+  
           if (rutina.dias && rutina.dias.length > 0) {
             rutina.dias.forEach((dia, diaIndex) => {
               const eventDate = new Date(baseDate);
               eventDate.setDate(baseDate.getDate() + diaIndex);
-
+  
               calendarEvents.push({
                 title: `${rutina.nombre}`,
                 start: eventDate.toISOString(),
                 end: eventDate.toISOString(),
                 allDay: true,
-                backgroundColor: color,
+                backgroundColor: color, // Color específico para cada rutina
                 extendedProps: {
                   type: 'rutina',
                   rutinaId: rutina.id ?? 0,
@@ -136,13 +136,81 @@ export class CalendarioEventosComponent implements OnInit {
             });
           }
         });
-
+  
         console.log('Eventos de rutinas generados:', calendarEvents);
-        this.loadEventos(calendarEvents);
+        this.loadEventos(calendarEvents, colorMap);
       },
       (error) => console.error('Error al cargar rutinas:', error)
     );
   }
+  
+  loadEventos(calendarEvents: any[], colorMap: any) {
+    // Cargar eventos deportivos
+    this.eventosService.eventosFuturosPertenecientesAUnUsuario().subscribe(
+      (dataPackage: DataPackage) => {
+        const eventos = dataPackage.data as Evento[];
+        console.log('Eventos recibidos del backend:', eventos);
+  
+        eventos.forEach(evento => {
+          const startDate = new Date(evento.fechaHora);
+          startDate.setHours(0, 0, 0, 0);
+          const endDate = new Date(startDate);
+          endDate.setDate(endDate.getDate() + 1);
+          endDate.setMilliseconds(endDate.getMilliseconds() - 1);
+  
+          calendarEvents.push({
+            title: evento.nombre,
+            start: startDate.toISOString(),
+            end: endDate.toISOString(),
+            allDay: true,
+            backgroundColor: colorMap.evento, // Azul para eventos
+            extendedProps: {
+              type: 'evento',
+              id: evento.id
+            }
+          });
+        });
+  
+        console.log('Eventos deportivos generados:', calendarEvents);
+        this.calendarOptions.events = calendarEvents;
+  
+        // Cargar eventos recomendados
+        this.eventosService.sugerencias(0, 1000).subscribe((dataPackage: DataPackage) => {
+          const data = dataPackage.data as { data: any[], totalPaginas: number };
+          data.data.forEach(item => {
+            const evento = item.evento;
+            const startDate = new Date(evento.fechaHora);
+            startDate.setHours(0, 0, 0, 0);
+            const endDate = new Date(startDate);
+            endDate.setDate(endDate.getDate() + 1);
+            endDate.setMilliseconds(endDate.getMilliseconds() - 1);
+  
+            calendarEvents.push({
+              title: evento.nombre,
+              start: startDate.toISOString(),
+              end: endDate.toISOString(),
+              allDay: true,
+              backgroundColor: colorMap.recomendado, // Dorado para sugerencias
+              extendedProps: {
+                type: 'recomendado',
+                id: evento.id,
+                motivo: item.motivo
+              }
+            });
+          });
+  
+          console.log('Eventos recomendados generados:', calendarEvents);
+  
+          setTimeout(() => {
+            this.calendarOptions.events = [...calendarEvents];
+          }, 0);
+  
+        }, (error) => console.error('Error al cargar eventos recomendados:', error));
+      },
+      (error) => console.error('Error al cargar eventos:', error)
+    );
+  }
+  
 
   ngOnDestroy() {
     window.removeEventListener('resize', this.updateView.bind(this)); // Limpiar el evento
@@ -158,72 +226,6 @@ export class CalendarioEventosComponent implements OnInit {
     if (calendarApi && calendarApi.view.type !== newView) {
       calendarApi.changeView(newView); // Cambiar la vista dinámicamente
     }
-  }
-
-
-  loadEventos(calendarEvents: any[]) {
-    // Cargar eventos deportivos
-    this.eventosService.eventosFuturosPertenecientesAUnUsuario().subscribe(
-      (dataPackage: DataPackage) => {
-        const eventos = dataPackage.data as Evento[];
-        console.log('Eventos recibidos del backend:', eventos);
-
-        eventos.forEach(evento => {
-          const startDate = new Date(evento.fechaHora);
-          startDate.setHours(0, 0, 0, 0);
-          const endDate = new Date(startDate);
-          endDate.setDate(endDate.getDate() + 1);
-          endDate.setMilliseconds(endDate.getMilliseconds() - 1);
-
-          calendarEvents.push({
-            title: evento.nombre,
-            start: startDate.toISOString(),
-            end: endDate.toISOString(),
-            allDay: true,
-            extendedProps: {
-              type: 'evento',
-              id: evento.id
-            }
-          });
-        });
-
-        console.log('Eventos deportivos generados:', calendarEvents);
-        this.calendarOptions.events = calendarEvents;
-
-        // Cargar eventos recomendados
-        this.eventosService.sugerencias(0, 1000).subscribe((dataPackage: DataPackage) => {
-          const data = dataPackage.data as { data: any[], totalPaginas: number };
-          data.data.forEach(item => {
-            const evento = item.evento;
-            const startDate = new Date(evento.fechaHora);
-            startDate.setHours(0, 0, 0, 0);
-            const endDate = new Date(startDate);
-            endDate.setDate(endDate.getDate() + 1);
-            endDate.setMilliseconds(endDate.getMilliseconds() - 1);
-
-            calendarEvents.push({
-              title: evento.nombre,
-              start: startDate.toISOString(),
-              end: endDate.toISOString(),
-              allDay: true,
-              extendedProps: {
-                type: 'recomendado',
-                id: evento.id,
-                motivo: item.motivo
-              }
-            });
-          });
-
-          console.log('Eventos recomendados generados:', calendarEvents);
-
-          setTimeout(() => {
-            this.calendarOptions.events = [...calendarEvents];
-          }, 0);
-
-        }, (error) => console.error('Error al cargar eventos recomendados:', error));
-      },
-      (error) => console.error('Error al cargar eventos:', error)
-    );
   }
 
   handleDateClick(arg: DateClickArg) {
