@@ -358,18 +358,35 @@ body {
 
 @media (max-width: 768px) {
   .notifications-menu {
-      width: 90%; /* Ajusta el ancho en pantallas pequeñas */
-      left: 5%;
+      width: 80%; /* Ocupa el 80% del ancho disponible */
+      left: 15%; /* Centra el menú */
+      right: auto; /* Elimina ajustes desde el borde derecho */
+      max-height: 50vh; /* Limita la altura en pantallas pequeñas */
+      overflow-y: auto; /* Permite desplazamiento si hay muchas notificaciones */
   }
 
   .notification-item p {
-      font-size: 14px; /* Aumenta la legibilidad en dispositivos móviles */
+      font-size: 14px; /* Tamaño de fuente más pequeño para mejor legibilidad */
+      margin-right: 20px; /* Espacio suficiente para evitar solapamiento con íconos */
   }
 
   .notification-badge {
-      top: 0;
-      right: 0;
-      font-size: 10px; /* Ajusta el tamaño del badge en pantallas pequeñas */
+      top: 5px; /* Ajusta la posición superior del badge */
+      right: 10px; /* Ajusta la posición derecha del badge */
+      font-size: 10px; /* Tamaño de fuente reducido */
+      min-width: 15px; /* Reduce el tamaño mínimo del badge */
+  }
+
+  .delete-icon {
+      font-size: 18px; /* Reduce el tamaño del ícono de eliminación */
+      right: 8px; /* Ajusta la posición para pantallas pequeñas */
+      top: 50%; /* Centra verticalmente */
+      transform: translateY(-50%); /* Mantiene el centro vertical */
+  }
+
+  .notification-item {
+      padding: 8px 40px 8px 10px; /* Espacio adecuado para íconos y texto */
+      border-radius: 5px; /* Mantiene bordes suaves */
   }
 }
 .notification-content {

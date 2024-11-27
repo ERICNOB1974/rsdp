@@ -51,7 +51,7 @@
 <div *ngIf="!esPantallaLogin" class="sidebar" [class.collapsed]="isCollapsed">
 
 
-    <div class="hamburger-icon" (click)="toggleSidebar()">
+    <div class="hamburger-icon" (click)="toggleSidebar(); closeAllDropdown()">
         <i class="fa fa-bars"></i>
     </div>
 
@@ -63,15 +63,18 @@
 
                 <a (click)="toggleDropdown('eventos')">
                     <span class="icon"><i class="fa fa-calendar"></i></span>
-                    <span class="menu-text" *ngIf="!isSidebarHidden">Eventos</span>
-                    <span class="dropdown-arrow" *ngIf="!isSidebarHidden">
+                    <span class="menu-text" *ngIf="!isCollapsed">Eventos</span>
+                    <span class="dropdown-arrow" *ngIf="!isCollapsed">
                         <i [class]="isDropdownOpen['eventos'] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
                     </span>
                 </a>
                 <ul class="dropdown-menu" *ngIf="isDropdownOpen['eventos']">
-                    <li><a [routerLink]="['/eventos']">Listar eventos</a></li>
-                    <li><a [routerLink]="['/eventos/crearEvento']">Crear evento</a></li>
-                    <li><a [routerLink]="['/eventosUsuario']">Eventos creados</a></li>
+                    <li><a (click)="closeDropdown('eventos'); cerrarBarra()" [routerLink]="['/eventos']">Listar
+                            eventos</a></li>
+                    <li><a (click)="closeDropdown('eventos'); cerrarBarra()"
+                            [routerLink]="['/eventos/crearEvento']">Crear evento</a></li>
+                    <li><a (click)="closeDropdown('eventos'); cerrarBarra()" [routerLink]="['/eventosUsuario']">Eventos
+                            creados</a></li>
                 </ul>
             </li>
 
@@ -80,15 +83,18 @@
                 (mouseleave)="closeDropdown('comunidades')">
                 <a (click)="toggleDropdown('comunidades')">
                     <span class="icon"><i class="fa fa-users"></i></span>
-                    <span class="menu-text" *ngIf="!isSidebarHidden">Comunidades</span>
-                    <span class="dropdown-arrow" *ngIf="!isSidebarHidden">
+                    <span class="menu-text" *ngIf="!isCollapsed">Comunidades</span>
+                    <span class="dropdown-arrow" *ngIf="!isCollapsed">
                         <i [class]="isDropdownOpen['comunidades'] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
                     </span>
                 </a>
                 <ul class="dropdown-menu" *ngIf="isDropdownOpen['comunidades']">
-                    <li><a [routerLink]="['/comunidades']">Listar comunidades</a></li>
-                    <li><a [routerLink]="['/comunidades/crearComunidad']">Crear comunidad</a></li>
-                    <li><a [routerLink]="['/comunidadesUsuario']">Comunidades creadas</a></li>
+                    <li><a (click)="closeDropdown('comunidades'); cerrarBarra()" [routerLink]="['/comunidades']">Listar
+                            comunidades</a></li>
+                    <li><a (click)="closeDropdown('comunidades'); cerrarBarra()"
+                            [routerLink]="['/comunidades/crearComunidad']">Crear comunidad</a></li>
+                    <li><a (click)="closeDropdown('comunidades'); cerrarBarra()"
+                            [routerLink]="['/comunidadesUsuario']">Comunidades creadas</a></li>
                 </ul>
             </li>
 
@@ -96,7 +102,7 @@
             <li class="menu-item friends-link">
                 <a [routerLink]="['/amigos']">
                     <span class="icon"><i class="fa fa-user"></i></span>
-                    <span class="menu-text" *ngIf="!isSidebarHidden">Amigos</span>
+                    <span class="menu-text" *ngIf="!isCollapsed">Amigos</span>
                 </a>
             </li>
 
@@ -105,25 +111,21 @@
                 (mouseleave)="closeDropdown('sugerencias')">
                 <a (click)="toggleDropdown('sugerencias')">
                     <span class="icon"><i class="fa fa-question-circle"></i></span>
-                    <span class="menu-text" *ngIf="!isSidebarHidden">Sugerencias</span>
-                    <span class="dropdown-arrow" *ngIf="!isSidebarHidden">
+                    <span class="menu-text" *ngIf="!isCollapsed">Sugerencias</span>
+                    <span class="dropdown-arrow" *ngIf="!isCollapsed">
                         <i [class]="isDropdownOpen['sugerencias'] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
                     </span>
                 </a>
                 <ul class="dropdown-menu" *ngIf="isDropdownOpen['sugerencias']">
-                    <li><a [routerLink]="['/sugerencias/amigos']">De amigos</a></li>
-                    <li><a [routerLink]="['/sugerencias/eventos']">De eventos</a></li>
-                    <li><a [routerLink]="['/sugerencias/comunidades']">De comunidades</a></li>
-                    <li><a [routerLink]="['/sugerencias/rutinas']">De rutinas</a></li>
+                    <li><a (click)="closeDropdown('sugerencias'); cerrarBarra()"
+                            [routerLink]="['/sugerencias/amigos']">De amigos</a></li>
+                    <li><a (click)="closeDropdown('sugerencias'); cerrarBarra()"
+                            [routerLink]="['/sugerencias/eventos']">De eventos</a></li>
+                    <li><a (click)="closeDropdown('sugerencias'); cerrarBarra()"
+                            [routerLink]="['/sugerencias/comunidades']">De comunidades</a></li>
+                    <li><a (click)="closeDropdown('sugerencias'); cerrarBarra()"
+                            [routerLink]="['/sugerencias/rutinas']">De rutinas</a></li>
                 </ul>
-            </li>
-
-            <!--  Publicación -->
-            <li class="menu-item friends-link">
-                <a [routerLink]="['/publicacion']">
-                    <span class="icon"><i class="fa fa-thumbs-o-up"></i></span>
-                    <span class="menu-text" *ngIf="!isSidebarHidden">Nueva publicacion</span>
-                </a>
             </li>
 
             <!-- Dropdown: Rutinas -->
@@ -131,27 +133,36 @@
                 (mouseleave)="closeDropdown('rutinas')">
                 <a (click)="toggleDropdown('rutinas')">
                     <span class="icon"><i class="fa fa-soccer-ball-o"></i></span>
-                    <!-- 
-                        <i class="bi bi-barbell"></i>
-                        <i class="fas fa-gym"></i>
-                        -->
-                    <span class="menu-text" *ngIf="!isSidebarHidden">Rutinas</span>
-                    <span class="dropdown-arrow" *ngIf="!isSidebarHidden">
+                    <span class="menu-text" *ngIf="!isCollapsed">Rutinas</span>
+                    <span class="dropdown-arrow" *ngIf="!isCollapsed">
                         <i [class]="isDropdownOpen['rutinas'] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
                     </span>
                 </a>
                 <ul class="dropdown-menu" *ngIf="isDropdownOpen['rutinas']">
-                    <li><a [routerLink]="['/rutinas']">Listar Rutinas</a></li>
-                    <li><a [routerLink]="['/rutinas/crearRutina']">Nueva Rutina</a></li>
-                    <li><a [routerLink]="['/rutinasUsuario']">Mis Rutinas Creadas</a></li>
+                    <li><a (click)="closeDropdown('rutinas'); cerrarBarra()" [routerLink]="['/rutinas']">Listar
+                            Rutinas</a></li>
+                    <li><a (click)="closeDropdown('rutinas'); cerrarBarra()"
+                            [routerLink]="['/rutinas/crearRutina']">Nueva Rutina</a></li>
+                    <li><a (click)="closeDropdown('rutinas'); cerrarBarra()" [routerLink]="['/rutinasUsuario']">Mis
+                            Rutinas Creadas</a></li>
                 </ul>
             </li>
+            
+            <!--  Publicación -->
+            <li class="menu-item friends-link">
+                <a [routerLink]="['/publicacion']">
+                    <span class="icon"><i class="fa fa-thumbs-o-up"></i></span>
+                    <span class="menu-text" *ngIf="!isCollapsed">Nueva publicacion</span>
+                </a>
+            </li>
+
+
 
             <!-- Simple: Cerrar sesión -->
             <li class="menu-item">
                 <a (click)="logout()" class="logout-button">
                     <span class="icon"><i class="bi bi-box-arrow-right"></i></span>
-                    <span class="menu-text" *ngIf="!isSidebarHidden">Cerrar sesión</span>
+                    <span class="menu-text" *ngIf="!isCollapsed">Cerrar sesión</span>
                 </a>
             </li>
         </nav>
@@ -160,6 +171,6 @@
 </div>
 
 
-<div class="main-content" [ngClass]="{ 'full-width': isSidebarHidden }">
+<div class="main-content" [ngClass]="{ 'full-width': isCollapsed }">
     <router-outlet></router-outlet>
 </div>

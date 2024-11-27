@@ -408,7 +408,7 @@
     .sidebar {
         width: 60vw;
         /* Ancho más pequeño en dispositivos móviles */
-        height: auto;
+        height: 100%;
         /* Altura automática */
         background-color: #15202b;
         /* Mantener el color de fondo */
