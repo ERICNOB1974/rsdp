@@ -48,7 +48,6 @@ export class AppComponent {
   idUsuarioAutenticado!: number; // Variable para almacenar el ID del usuario autenticado
   notificacionesNoLeidasCount = 0;
   usuario: Usuario | null = null;
-  isSidebarHidden = false; // Estado para ocultar/mostrar la barra lateral
   fotoPerfil: string = '';
   isCollapsed: boolean = false; // Estado por defecto
   loading: boolean = false;
@@ -65,7 +64,7 @@ export class AppComponent {
   setLoading(isLoading: boolean) {
     this.loading = isLoading;
   }
-  
+
   ngOnInit(): void {
     const storedState = localStorage.getItem('sidebarState');
     if (storedState) {
@@ -98,6 +97,26 @@ export class AppComponent {
 
   toggleDropdown(menu: string) {
     this.isDropdownOpen[menu] = !this.isDropdownOpen[menu];
+    if (this.isDropdownOpen[menu]) {
+      Object.keys(this.isDropdownOpen).forEach(key => {
+        this.isDropdownOpen[key] = (key === menu); // Asigna false a cada clave, excepto a la clave que coincide con 'menu'
+      });
+    }
+
+  }
+
+  cerrarBarra() {
+    if (!this.isCollapsed) {
+      this.isCollapsed = true;
+    }
+  }
+
+  closeAllDropdown() {
+
+    //aca solo cuando plegas la barrra o siempre. ver eso. 
+    Object.keys(this.isDropdownOpen).forEach(key => {
+      this.isDropdownOpen[key] = false; // Asigna false a cada clave
+    });
   }
 
   closeDropdown(menu: string) {
