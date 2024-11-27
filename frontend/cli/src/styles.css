@@ -354,7 +354,22 @@ body {
     align-items: center;
 
 }
+@media (max-width: 768px) {
+  .notifications-menu {
+      width: 90%; /* Ajusta el ancho en pantallas pequeñas */
+      left: 5%;
+  }
 
+  .notification-item p {
+      font-size: 14px; /* Aumenta la legibilidad en dispositivos móviles */
+  }
+
+  .notification-badge {
+      top: 0;
+      right: 0;
+      font-size: 10px; /* Ajusta el tamaño del badge en pantallas pequeñas */
+  }
+}
 
 @media (max-width: 768px) {
   .notifications-menu {
@@ -389,6 +404,8 @@ body {
       border-radius: 5px; /* Mantiene bordes suaves */
   }
 }
+
+
 .notification-content {
   display: flex;
   align-items: center;
