@@ -6,7 +6,8 @@ services:
       - NEO4J_AUTH=neo4j/ericfaculucas
     ports:
       - "7474:7474"
-      - "28002:28002"
+      - "7687:7687"
+      #- "28002:28002"
 
   # 10.000km
 

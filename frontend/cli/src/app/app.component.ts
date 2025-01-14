@@ -80,8 +80,6 @@ export class AppComponent {
     this.getUsuario();
     this.actualizarUbicacion();
     this.cargarNotificaciones();
-
-
   }
 
 
