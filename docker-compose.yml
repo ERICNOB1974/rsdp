@@ -6,8 +6,7 @@ services:
       - NEO4J_AUTH=neo4j/ericfaculucas
     ports:
       - "7474:7474"
-      - "7687:7687"
-      #- "28002:28002"
+      - "28002:28002"
 
   # 10.000km
 
@@ -48,10 +47,7 @@ services:
     tty: true
     volumes:
       - ./frontend:/home/node      
-    # Activar lo siguiente luego del taller End-to-end
-    # depends_on: 
-      # - backend
-
+ 
   testing:
     image: node:alpine
     container_name: testing
@@ -62,9 +58,4 @@ services:
       - ./testing:/home/node
       - ../common/testing/node_modules:/home/node/node_modules      
     command: npm test
-    # comentar esto
-    # depends_on:
-    #   - backend
 
-# volumes:
-#   postgres:
