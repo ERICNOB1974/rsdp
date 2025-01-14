@@ -6,10 +6,10 @@ services:
     environment:
       - NEO4J_AUTH=neo4j/ericfaculucas
     ports:
-      - "7474:7474"   # Puerto HTTP de Neo4j
-      - "7687:7687"   # Puerto BOLT de Neo4j
-    networks:
-      - my_network
+      - "7474:7474"
+      - "28002:28002"
+
+  # 10.000km
 
   backend:
     build:
@@ -45,12 +45,15 @@ services:
     stdin_open: true
     tty: true
     volumes:
-      - ./frontend:/home/node
-    depends_on:
-      - backend
-    networks:
-      - my_network
-
-networks:
-  my_network:
-    driver: bridge
+      - ./frontend:/home/node      
+ 
+  testing:
+    image: node:alpine
+    container_name: testing
+    profiles:
+      - test
+    working_dir: /home/node
+    volumes:
+      - ./testing:/home/node
+      - ../common/testing/node_modules:/home/node/node_modules      
+    command: npm test
