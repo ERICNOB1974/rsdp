@@ -1,5 +1,6 @@
-services:
+version: '3.8'
 
+services:
   database:
     image: neo4j:5.23.0
     environment:
@@ -21,28 +22,26 @@ services:
     working_dir: /app
     command: sh run.sh
     ports:
-      - 8080:8080
-      - 35729:35729
-      - 5005:5005
+      - "28004:8080"   # Exponer el backend en el puerto 28002 del servidor
+    environment:
+      SPRING_NEO4J_URI: bolt://if012rsdp.fi.mdn.unp.edu.ar:28002
+      SPRING_NEO4J_AUTHENTICATION_USERNAME: neo4j
+      SPRING_NEO4J_AUTHENTICATION_PASSWORD: ericfaculucas
     depends_on:
       - database
-
+    networks:
+      - my_network
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: frontend
-    ### --- SEGUIR INSTRUCIVO AQUI ####
-    #0 -- Comentar luego de ng new
-    #working_dir: /home/node 
-    # -- Descomentar luego de ng new
     working_dir: /home/node/cli
     command: ng serve --host=0.0.0.0
-    ### ------------------------- ####
+    #command: ng serve --ssl --host=0.0.0.0 --ssl-cert "" --ssl-key "" #certificados
     restart: always
     ports:
-      - "4200:4200"
-    # stdin_open y tty mantienen el servidor funcionando sin commandos en ejecución
+      - "28003:4200"  # Exponer el frontend en el puerto 28003 del servidor
     stdin_open: true
     tty: true
     volumes:
@@ -58,4 +57,3 @@ services:
       - ./testing:/home/node
       - ../common/testing/node_modules:/home/node/node_modules      
     command: npm test
-
