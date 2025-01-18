@@ -361,6 +361,55 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
     List<Usuario> buscarUsuarios(String nombreUsuario, String term, @Param("skip") int skip,
             @Param("limit") int limit);
 
+
+@Query("""
+    MATCH (c:Comunidad) 
+    WHERE id(c) = $idComunidad
+    MATCH (c)-[rel:CREADA_POR|ADMINISTRADA_POR|MIEMBRO]-(miembro:Usuario) 
+    WHERE toUpper(miembro.nombreUsuario) CONTAINS toUpper($term)
+
+    // Verificar si el usuario solicitante es creador o administrador
+    OPTIONAL MATCH (solicitante:Usuario {nombreUsuario: $nombreUsuario})
+    OPTIONAL MATCH (solicitante)-[rol:CREADA_POR|ADMINISTRADA_POR]-(c)
+    WITH c, miembro, rel, solicitante, rol IS NOT NULL AS esAdminOCreador
+
+    // Verificar si el miembro es amigo del solicitante
+    OPTIONAL MATCH (solicitante)-[:ES_AMIGO_DE]-(miembro)
+    WITH c, miembro, rel, esAdminOCreador, 
+         CASE WHEN (solicitante)-[:ES_AMIGO_DE]-(miembro) THEN true ELSE false END AS esAmigo,
+         miembro.privacidadComunidades AS privacidad
+
+    // Filtrar resultados según el rol del solicitante y la privacidad de los miembros
+    WHERE 
+        // Si el solicitante es creador o administrador, ver todos los miembros
+        esAdminOCreador
+    OR (
+        // Si el solicitante es un miembro normal, aplicar reglas de privacidad
+        (rel:CREADA_POR OR rel:ADMINISTRADA_POR) // Siempre mostrar creadores y administradores
+        OR (rel:MIEMBRO AND privacidad IN ['Pública', 'Solo amigos'] AND esAmigo) // Mostrar amigos con privacidad adecuada
+        OR (rel:MIEMBRO AND privacidad = 'Pública' AND NOT esAmigo) // Mostrar no amigos con privacidad pública
+    )
+
+    RETURN DISTINCT miembro, 
+           CASE 
+               WHEN rel:CREADA_POR THEN 1
+               WHEN rel:ADMINISTRADA_POR THEN 2
+               WHEN rel:MIEMBRO THEN 3
+               ELSE 4
+           END AS prioridad,
+           esAmigo, 
+           privacidad
+    ORDER BY prioridad, esAmigo DESC, privacidad, id(miembro)
+    SKIP $skip
+    LIMIT $limit
+""")
+List<Usuario> buscarMiembrosComunidad(
+        @Param("nombreUsuario") String nombreUsuario,
+        @Param("idComunidad") Long idComunidad,
+        @Param("term") String term,
+        @Param("skip") int skip,
+        @Param("limit") int limit);
+
     @Query("""
 
 
@@ -372,4 +421,121 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
     Usuario buscarCreadorDeUnEventoInterno(@Param("comunidadId") Long comunidadId,
             @Param("eventoId") Long eventoId);
 
+
+@Query("""
+    MATCH (c:Comunidad)
+    WHERE id(c) = $idComunidad
+    MATCH (c)-[rel:CREADA_POR|ADMINISTRADA_POR|MIEMBRO]-(miembro:Usuario)
+
+    // Verificar si el usuario solicitante es creador o administrador
+    OPTIONAL MATCH (solicitante:Usuario {nombreUsuario: $nombreUsuario})
+    OPTIONAL MATCH (solicitante)-[rol:CREADA_POR|ADMINISTRADA_POR]-(c)
+    WITH c, miembro, rel, solicitante, rol IS NOT NULL AS esAdminOCreador
+
+    // Verificar si el miembro es amigo del solicitante
+    OPTIONAL MATCH (solicitante)-[:ES_AMIGO_DE]-(miembro)
+    WITH c, miembro, rel, esAdminOCreador, 
+         CASE WHEN (solicitante)-[:ES_AMIGO_DE]-(miembro) THEN true ELSE false END AS esAmigo,
+         miembro.privacidadComunidades AS privacidad
+
+    // Contar usuarios anónimos
+    WHERE NOT (
+        // Si el solicitante es creador o administrador, ver todos los miembros
+        esAdminOCreador
+        OR (
+            // Si el solicitante es un miembro normal, aplicar reglas de privacidad
+            (rel:CREADA_POR OR rel:ADMINISTRADA_POR) // Siempre mostrar creadores y administradores
+            OR (rel:MIEMBRO AND privacidad IN ['Pública', 'Solo amigos'] AND esAmigo) // Mostrar amigos con privacidad adecuada
+            OR (rel:MIEMBRO AND privacidad = 'Pública' AND NOT esAmigo) // Mostrar no amigos con privacidad pública
+        )
+    )
+
+    RETURN COUNT(DISTINCT miembro) AS usuariosAnonimos
+""")
+Long contarUsuariosAnonimos(
+        @Param("nombreUsuario") String nombreUsuario,
+        @Param("idComunidad") Long idComunidad);
+
+
+@Query("""
+    MATCH (e:Evento) 
+    WHERE id(e) = $idEvento
+
+    // Buscar miembros inscritos o creador relacionado
+    MATCH (e)-[rel:PARTICIPA_EN]-(miembro:Usuario) 
+    WHERE toUpper(miembro.nombreUsuario) CONTAINS toUpper($term)
+
+    // Verificar si el usuario solicitante es creador o administrador del evento
+    OPTIONAL MATCH (solicitante:Usuario {nombreUsuario: $nombreUsuario})
+    OPTIONAL MATCH (solicitante)-[rol:CREADO_POR]-(e)
+    WITH e, miembro, rel, solicitante, rol IS NOT NULL AS esAdminOCreador
+
+    // Verificar si el miembro es amigo del solicitante
+    OPTIONAL MATCH (solicitante)-[:ES_AMIGO_DE]-(miembro)
+    WITH e, miembro, rel, esAdminOCreador, 
+         CASE WHEN (solicitante)-[:ES_AMIGO_DE]-(miembro) THEN true ELSE false END AS esAmigo,
+         miembro.privacidadEventos AS privacidad
+
+    // Filtrar resultados según el rol del solicitante y la privacidad de los miembros
+    WHERE 
+        // Si el solicitante es creador o administrador, ver todos los miembros
+        esAdminOCreador
+    OR (
+        // Si el solicitante es un miembro normal, aplicar reglas de privacidad
+        (rel:PARTICIPA_EN AND privacidad IN ['Pública', 'Solo amigos'] AND esAmigo) // Mostrar amigos con privacidad adecuada
+        OR (rel:PARTICIPA_EN AND privacidad = 'Pública' AND NOT esAmigo) // Mostrar no amigos con privacidad pública
+    )
+
+    RETURN DISTINCT miembro, 
+           CASE 
+               WHEN rel:PARTICIPA_EN THEN 1
+               ELSE 2
+           END AS prioridad, 
+           esAmigo, 
+           privacidad
+    ORDER BY prioridad, esAmigo DESC, privacidad, id(miembro)
+    SKIP $skip
+    LIMIT $limit
+""")
+List<Usuario> buscarParticipanteEvento(
+        @Param("nombreUsuario") String nombreUsuario,
+        @Param("idEvento") Long idEvento,
+        @Param("term") String term,
+        @Param("skip") int skip,
+        @Param("limit") int limit);
+
+
+@Query("""
+    MATCH (e:Evento)
+    WHERE id(e) = $idEvento
+    MATCH (e)-[rel:PARTICIPA_EN]-(participante:Usuario)
+
+    // Verificar si el usuario solicitante es creador o administrador
+    OPTIONAL MATCH (solicitante:Usuario {nombreUsuario: $nombreUsuario})
+    OPTIONAL MATCH (solicitante)-[rol:CREADO_POR]-(e)
+    WITH e, participante, rel, solicitante, rol IS NOT NULL AS esAdminOCreador
+
+    // Verificar si el participante es amigo del solicitante
+    OPTIONAL MATCH (solicitante)-[:ES_AMIGO_DE]-(participante)
+    WITH e, participante, rel, esAdminOCreador, 
+         CASE WHEN (solicitante)-[:ES_AMIGO_DE]-(participante) THEN true ELSE false END AS esAmigo,
+         participante.privacidadEventos AS privacidad
+
+    // Contar usuarios anónimos
+    WHERE NOT (
+        // Si el solicitante es creador o administrador, ver todos los participantes
+        esAdminOCreador
+        OR (
+            // Si el solicitante es un participante normal, aplicar reglas de privacidad
+        
+            (rel:PARTICIPA_EN AND privacidad IN ['Pública', 'Solo amigos'] AND esAmigo) // Mostrar amigos con privacidad adecuada
+            OR (rel:PARTICIPA_EN AND privacidad = 'Pública' AND NOT esAmigo) // Mostrar no amigos con privacidad pública
+        )
+    )
+
+    RETURN COUNT(DISTINCT participante) AS usuariosAnonimos
+""")
+Long contarParticipantesAnonimos(
+        @Param("nombreUsuario") String nombreUsuario,
+        @Param("idEvento") Long idEvento);
 }

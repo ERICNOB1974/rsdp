@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -146,6 +147,42 @@ public class UsuarioService {
         String filtroNombre = (term == null || term.trim().isEmpty()) ? "" : term;
         return usuarioRepository.buscarUsuarios(nombreUsuario, filtroNombre, skip, size);
     }
+
+public List<Usuario> buscarMiembrosComunidad(String nombreUsuario, Long idComunidad, String term, int page, int size) {
+    if (page < 0 || size <= 0) {
+        throw new IllegalArgumentException("Los parámetros de paginación no son válidos.");
+    }
+
+    int skip = page * size;
+    String filtroNombre = (term == null || term.trim().isEmpty()) ? "" : term;
+    List<Usuario> usuarios = new ArrayList<>();
+    
+    if(page==0){
+
+    // Verificar si el solicitante es miembro de la comunidad
+    Optional<Usuario> solicitante = usuarioRepository.findByNombreUsuario(nombreUsuario);
+    solicitante.ifPresent(s -> {
+        // Verificar si el solicitante ya está en los resultados
+        boolean solicitanteYaIncluido = usuarios.stream()
+            .anyMatch(usuario -> usuario.getId().equals(s.getId()));
+
+        // Si el solicitante no está en los resultados, agregarlo
+        if (!solicitanteYaIncluido) {
+            // Verificar si es miembro de la comunidad
+            boolean esMiembro = usuarioRepository.esMiembro(s.getId(), idComunidad);
+            if (esMiembro) {
+                usuarios.add(s);
+            }
+        }
+    });
+    }
+
+    usuarios.addAll(usuarioRepository.buscarMiembrosComunidad(nombreUsuario, idComunidad, filtroNombre, skip, size));
+    return usuarios;
+}
+
+
+
 
     public boolean sonAmigos(Long idEmisor, Long idReceptor) {
         return usuarioRepository.sonAmigos(idEmisor, idReceptor);
@@ -306,4 +343,54 @@ public class UsuarioService {
 
         return usuarioRepository.likesPublicacion(idPublicacion, skip, size);
     }
+
+       public Long contarUsuariosAnonimos(String nombreUsuario, Long idComunidad) {
+        Long usuariosAnonimos = usuarioRepository.contarUsuariosAnonimos(nombreUsuario, idComunidad);
+        if(usuariosAnonimos!=0){
+            usuariosAnonimos--;
+        }
+        return usuariosAnonimos;
+    }
+
+    public List<Usuario> buscarParticipantesEvento(String nombreUsuario, Long idEvento, String term, int page, int size) {
+    if (page < 0 || size <= 0) {
+        throw new IllegalArgumentException("Los parámetros de paginación no son válidos.");
+    }
+
+    int skip = page * size;
+    String filtroNombre = (term == null || term.trim().isEmpty()) ? "" : term;
+    List<Usuario> usuarios = new ArrayList<>();
+    
+    if(page==0){
+
+    // Verificar si el solicitante es miembro de la comunidad
+    Optional<Usuario> solicitante = usuarioRepository.findByNombreUsuario(nombreUsuario);
+    solicitante.ifPresent(s -> {
+        // Verificar si el solicitante ya está en los resultados
+        boolean solicitanteYaIncluido = usuarios.stream()
+            .anyMatch(usuario -> usuario.getId().equals(s.getId()));
+
+        // Si el solicitante no está en los resultados, agregarlo
+        if (!solicitanteYaIncluido) {
+            // Verificar si es miembro de la comunidad
+            boolean esMiembro = eventoRepository.participa(s.getId(), idEvento);
+            if (esMiembro) {
+                usuarios.add(s);
+            }
+        }
+    });
+    }
+
+    usuarios.addAll(usuarioRepository.buscarParticipanteEvento(nombreUsuario, idEvento, filtroNombre, skip, size));
+    return usuarios;
+}
+
+       public Long contarParticipantesAnonimos(String nombreUsuario, Long idEvento) {
+        Long usuariosAnonimos = usuarioRepository.contarParticipantesAnonimos(nombreUsuario, idEvento);
+        if(usuariosAnonimos!=0){
+            usuariosAnonimos--;
+        }
+        return usuariosAnonimos;
+    }
+
 }

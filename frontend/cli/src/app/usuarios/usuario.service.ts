@@ -150,7 +150,13 @@ export class UsuarioService {
       (term ? `&term=${term}` : '');  // Agregar solo si no está vacío
     return this.http.get<DataPackage>(url);
   }
-  
+
+
+  buscarMiembro(idComunidad: number, term: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.usuariosUrl}/miembros/${idComunidad}/${this.authService.getNombreUsuario()}?page=${page}&size=${size}` +
+      (term ? `&term=${term}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+  }
 
   enviarInvitacionEvento(idUsuarioReceptor: number, idEvento: number): Observable<DataPackage> {
     const body = {};
@@ -200,5 +206,20 @@ export class UsuarioService {
   usuariosLikePublicacion(idPublicacion: number,page: number, size: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.usuariosUrl}/likesPublicacion/${idPublicacion}?page=${page}&size=${size}`);
   }
+
+  contarUsuariosAnonimos(idComunidad: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.usuariosUrl}/contarUsuariosAnonimos/${this.authService.getNombreUsuario()}/${idComunidad}`);
+  }
+
+  buscarParticipante(idEvento: number, term: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.usuariosUrl}/participantes/${idEvento}/${this.authService.getNombreUsuario()}?page=${page}&size=${size}` +
+      (term ? `&term=${term}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+  }
+
+  contarParticipantesAnonimos(idEvento: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.usuariosUrl}/contarParticipantesAnonimos/${this.authService.getNombreUsuario()}/${idEvento}`);
+  }
+
 
 }
