@@ -16,6 +16,7 @@ import { AuthService } from '../autenticacion/auth.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, NgForm } from '@angular/forms';
 import * as L from 'leaflet';
+import { DataPackage } from '../data-package';
 
 @Component({
   selector: 'app-evento-detail',
@@ -45,6 +46,7 @@ export class EventoDetailComponent implements OnInit {
   @ViewChild('modalInvitarAmigos') modalInvitarAmigos!: TemplateRef<any>;
   marcador!: L.Marker; // Agregar una propiedad para el marcador
   @ViewChild('modalExpulsion') modalExpulsion!: TemplateRef<any>; // Referencia al modal
+  searchTimeout: any // Variable para almacenar el timer
 
   creador: boolean = false;
   miembros: Usuario[] = []; // Lista de miembros de la comunidad
@@ -53,7 +55,11 @@ export class EventoDetailComponent implements OnInit {
   usuarioEliminar: any;
   mostrarMotivo: boolean = false;
   expulsado: boolean = false; // Indica si el usuario fue expulsado
-
+  searchTerm: string = '';  // Para almacenar el término de búsqueda
+  page: number = 0;         // Página actual
+  size: number = 5;    
+  loading: boolean = false;  // Para manejar el estado de carga
+  loadingScroll: boolean = false;
   buscador: string = '';
   amigosNoEnEventoFiltrados: any[] = [];
   amigosEnEventoFiltrados: any[] = [];
@@ -152,18 +158,19 @@ export class EventoDetailComponent implements OnInit {
           this.evento.fechaHora = new Date(this.evento.fechaHora);
         }
         await this.getCreadorEvento();
-        this.traerParticipantes();
+        this.traerNumeroParticipantes();
         this.checkParticipacion();
         this.checkExpulsion();    
         this.traerMiembros();
+        this.traerParticipantes();
+        this.contarUsuariosAnonimos();
         this.cargarAmigos();
         this.iniciarMapa();
-
       });
     }
   }
 
-  traerParticipantes(): void {
+  traerNumeroParticipantes(): void {
     this.eventoService.participantesEnEvento(this.evento.id).subscribe(
       (dataPackage) => {
         if (dataPackage && typeof dataPackage.data === 'number') {
@@ -271,11 +278,43 @@ export class EventoDetailComponent implements OnInit {
     this.eventoService.listaParticipantes(this.evento.id).subscribe(dataPackage => {
       if (Array.isArray(dataPackage.data)) {
         this.miembros = dataPackage.data as Usuario[];
-        this.cargarAmigos(); // Espera a obtener amigos
-        this.filtrarParticipantesVisibles(); // Filtra miembros después de obtener amigos
+       // this.filtrarParticipantesVisibles(); // Filtra miembros después de obtener amigos
       }
     });
   }
+
+
+  async traerParticipantes(): Promise<void> {
+    if (this.loading) return;  // Evitar solicitudes repetidas mientras se cargan datos
+    this.loading = true;
+
+    // Llamada al servicio para obtener miembros filtrados por el término de búsqueda
+    this.usuarioService.buscarParticipante(this.evento.id, this.searchTerm, this.page, this.size)
+        .subscribe(async dataPackage => {
+            if (Array.isArray(dataPackage.data)) {
+
+                // Si es la primera página, reinicia la lista de miembros
+                if (this.page === 0) {
+                    this.participantesVisibles = dataPackage.data;
+
+                } else {
+                    // Si no es la primera página, agrega los nuevos miembros a la lista
+                    this.participantesVisibles = [...this.participantesVisibles, ...dataPackage.data];
+                }
+
+
+            }
+            this.loadingScroll = false;
+            this.loading = false;
+        });
+}
+
+contarUsuariosAnonimos(): void {
+      this.usuarioService.contarParticipantesAnonimos(this.evento.id).subscribe((dataPackage: DataPackage) => {
+          this.usuariosAnonimos = Number(dataPackage.data); // Convierte explícitamente a number
+      });
+  
+}
 
   abrirModalInvitarAmigos(): void {
     this.cargarAmigos();
@@ -361,7 +400,7 @@ export class EventoDetailComponent implements OnInit {
     });
   }
 
-  filtrarParticipantesVisibles(): void {
+ /*  filtrarParticipantesVisibles(): void {
     // Verificamos que los datos requeridos estén definidos
     if (!this.amigosEnEvento || !this.miembros) {
       console.error("Amigos o miembros no están definidos.");
@@ -406,7 +445,7 @@ export class EventoDetailComponent implements OnInit {
       }
     });
     this.participantesVisiblesPaginados = this.participantesVisibles.slice(0, this.cargaInicial);
-  }
+  } */
 
   openModal(content: any) {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
@@ -445,14 +484,22 @@ export class EventoDetailComponent implements OnInit {
     this.modalService.dismissAll();
   }
 
-  onScroll(): void {
+/*   onScroll(): void {
     const element = document.querySelector('.members-list') as HTMLElement;
     if (element.scrollTop + element.clientHeight >= element.scrollHeight - 10) {
       this.cargarMasParticipantes();
     }
+  } */
+  onScroll(): void {
+    const element = document.querySelector('.members-list') as HTMLElement;
+    if (!this.loadingScroll && element.scrollTop + element.clientHeight >= element.scrollHeight - 10) {
+      this.loadingScroll = true;  // Marca como en proceso de carga
+      this.page++;
+      this.traerParticipantes();  // Llama a la función de carga de miembros con la nueva página
+    }
   }
 
-  cargarMasParticipantes(): void {
+/*   cargarMasParticipantes(): void {
     const totalCargados = this.participantesVisiblesPaginados.length;
     const nuevosMiembros = this.participantesVisibles.slice(totalCargados, totalCargados + this.cargaIncremento);
 
@@ -462,7 +509,7 @@ export class EventoDetailComponent implements OnInit {
       console.log('No hay más participantes por cargar');
     }
   }
-
+ */
 
   abrirModalExpulsion(usuario: any): void {
     this.usuarioEliminar = usuario; // Asigna el usuario al abrir el modal
@@ -537,6 +584,19 @@ export class EventoDetailComponent implements OnInit {
         this.mostrarMasAmigosYaInvitados += 4;
         break;
     }
+  }
+
+  buscarParticipantes(): void {
+    // Limpia el timer anterior, si existe
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
+  
+    // Configura un nuevo timer para ejecutar después de 2 segundos
+    this.searchTimeout = setTimeout(() => {
+      this.page = 0; // Reinicia la página cuando cambia el término de búsqueda
+      this.traerParticipantes(); // Trae los miembros con el nuevo término
+    }, 1000); // Retraso de 2 segundos
   }
 
 }

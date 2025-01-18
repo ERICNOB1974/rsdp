@@ -228,6 +228,7 @@ export class AppComponent {
     return new Promise((resolve, reject) => {
       this.notificacionService.marcarLeida(idNotificacion).subscribe(
         (dataPackage: DataPackage) => {
+          console.info("entre aca");
           if (dataPackage.status === 200) {
             // Encuentra y actualiza el estado de la notificación a "leída"
             const notificacionIndex = this.notificaciones.findIndex(n => n.id === idNotificacion);
