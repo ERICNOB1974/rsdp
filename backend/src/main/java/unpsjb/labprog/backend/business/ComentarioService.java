@@ -87,6 +87,9 @@ comentario.setUsuario(usuarioRepository.findById(usuarioId).orElseThrow(() -> ne
         return comentarioRepository.contarRespuestasPorComentarioPadreId(comentarioPadreId);
     }
 
+    public void eliminar(Long idComentario) {
+        this.comentarioRepository.delete(this.comentarioRepository.findById(idComentario).get());
+    }
 
 
 }

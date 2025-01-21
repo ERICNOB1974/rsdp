@@ -324,44 +324,63 @@ export class PublicacionDetailComponent implements OnInit {
     // Función para enviar la respuesta
     submitReply(commentId: number): void {
       if (this.replyText.trim()) {
-        // Creamos la respuesta
-        const respuesta: Comentario = {
-          id: 0, // Este ID debe ser generado por el backend
-          texto: this.replyText,
-          fecha: new Date(),
-          usuario: {
-            id: Number(this.authService.getUsuarioId()),
-            nombreUsuario: this.authService.getNombreUsuario() || '',
-            nombreReal: this.authService.getNombreReal() || '',
-            fechaNacimiento: new Date(),
-            fechaDeCreacion: new Date(),
-            correoElectronico: '',
-            contrasena: '',
-            descripcion: '',
-            latitud: 0,
-            longitud: 0,
-            fotoPerfil: this.authService.getFotoPerfil() || ''
-          },
-          respuestas: []
-        };
-  
-        // Llamamos al servicio para enviar la respuesta
         this.comentarioService.responderComentario(commentId, this.replyText).subscribe(
           (response: any) => {
-            // Añadimos la respuesta al comentario correspondiente
-            const comentario = this.comentarios.find(c => c.id === commentId);
-            if (comentario) {
-              comentario.respuestas = comentario.respuestas || [];
-              comentario.respuestas.push(respuesta); // Añadimos la nueva respuesta
+            const usuarioId = this.authService.getUsuarioId();
+            const idUsuarioAutenticado = Number(usuarioId);
+    
+            const nuevaRespuesta: Comentario = {
+              id: response.data.id, // ID de la respuesta desde el backend
+              texto: this.replyText,
+              fecha: new Date(),
+              usuario: {
+                id: idUsuarioAutenticado,
+                nombreUsuario: this.authService.getNombreUsuario() || '',
+                nombreReal: '',
+                fechaNacimiento: new Date(),
+                fechaDeCreacion: new Date(),
+                correoElectronico: '',
+                contrasena: '',
+                descripcion: '',
+                latitud: 0,
+                longitud: 0,
+                fotoPerfil: ''
+              },
+              respuestas: [] // Las respuestas no tienen sub-respuestas por defecto
+            };
+    
+            // Encuentra el comentario original
+            const comentarioOriginal = this.comentarios.find(c => c.id === commentId);
+    
+            if (!comentarioOriginal) {
+              console.error(`No se encontró el comentario con ID: ${commentId}`);
+              return; // Salir si no se encuentra
             }
-  
-            // Limpiamos el campo y ocultamos la respuesta
+    
+            // Asegúrate de que 'respuestas' esté inicializado
+            if (!comentarioOriginal.respuestas) {
+              comentarioOriginal.respuestas = [];
+            }
+    
+            // Agrega la nueva respuesta al array
+            comentarioOriginal.respuestas.unshift(nuevaRespuesta);
+    
+            // Opcional: manejar la paginación de respuestas
+            if (this.respuestaPaginacion[commentId]) {
+              this.respuestaPaginacion[commentId].respuestas.unshift(nuevaRespuesta);
+              this.respuestaPaginacion[commentId].totalRespuestas++;
+            }
+    
+            // Limpiar el campo de texto y ocultar el input de respuesta
             this.replyText = '';
             this.showReplyInput = false;
+    
+            // Opcional: mostrar una notificación
+            this.snackBar.open('Respuesta agregada con éxito', 'Cerrar', { duration: 3000 });
           },
           error => {
-            console.error('Error al enviar la respuesta:', error);
-            // Manejo de errores
+            console.error('Error al responder al comentario:', error);
+            this.snackBar.open('Error al agregar la respuesta', 'Cerrar', { duration: 3000 });
           }
         );
       }
@@ -445,5 +464,48 @@ toggleReplies(comentarioId: number): void {
   }
 }
     
+puedeEliminarComentario(comentario: Comentario): boolean {
+  const usuarioId = this.authService.getUsuarioId();
+  const esAutorDelComentario = comentario.usuario.id === Number(usuarioId);
+  const esCreadorDeLaPublicacion = this.publicadoPor.id === Number(usuarioId);
+
+  // Puede eliminar si es el autor del comentario o el creador de la publicación
+  return esAutorDelComentario || esCreadorDeLaPublicacion;
+}
+
+  eliminarComentario(comentarioId: number): void {
+    this.comentarioService.eliminar(comentarioId).subscribe(
+      () => {
+        // Filtrar comentarios principales
+        this.comentarios = this.comentarios.filter(c => c.id !== comentarioId);
+
+        // Filtrar respuestas en los comentarios existentes
+        this.comentarios.forEach(comentario => {
+          if (comentario.respuestas) {
+            // Eliminar respuesta si existe
+            comentario.respuestas = comentario.respuestas.filter(respuesta => respuesta.id !== comentarioId);
+
+            // Si se utiliza paginación, actualizar el mapa de respuestas
+            if (this.respuestaPaginacion[comentario.id]) {
+              // Filtrar respuesta eliminada en el mapa de respuestas paginadas
+              this.respuestaPaginacion[comentario.id].respuestas = this.respuestaPaginacion[comentario.id].respuestas.filter(r => r.id !== comentarioId);
+
+              // Actualizar el contador de respuestas restantes
+              this.respuestaPaginacion[comentario.id].totalRespuestas--;
+            }
+          }
+        });
+
+        // Mostrar mensaje de éxito
+        this.snackBar.open('Comentario eliminado con éxito', 'Cerrar', { duration: 3000 });
+      },
+      error => {
+        console.error('Error al eliminar el comentario:', error);
+        this.snackBar.open('Error al eliminar el comentario', 'Cerrar', { duration: 3000 });
+      }
+    );
+  }
+
+
     
 }
