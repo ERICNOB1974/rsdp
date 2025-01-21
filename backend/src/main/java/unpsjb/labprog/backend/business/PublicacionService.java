@@ -59,13 +59,7 @@ public class PublicacionService {
         return publicacionRepository.estaLikeada(usuarioId, publicacionId);
     }
 
-    public void comentar(Long usuarioId, Long publicacionId, String comentario) {
-        Long idCreador = this.obtenerCreadorPublicacion(publicacionId).getId();
-        notificacionService.crearNotificacionPublicacion(idCreador, usuarioId, publicacionId, "COMENTARIO",
-                LocalDateTime.now());
-        publicacionRepository.comentar(usuarioId, publicacionId, comentario, ZonedDateTime.now());
-    }
-
+ 
     public Usuario obtenerCreadorPublicacion(Long idPublicacion) {
         return usuarioRepository.publicadoPor(idPublicacion);
     }
@@ -96,7 +90,7 @@ public class PublicacionService {
         return publicacionRepository.publicacionesComunidad(comunidadId, skip, size);
     }
 
-    public List<Comentario> obtenerComentariosPorPublicacion(Long idPublicacion) throws Exception {
+/*     public List<Comentario> obtenerComentariosPorPublicacion(Long idPublicacion) throws Exception {
         List<Long> comentariosId = publicacionRepository.idComentarios(idPublicacion);
 
         List<Comentario> comentarios = new ArrayList<>();
@@ -125,7 +119,7 @@ public class PublicacionService {
         comentario.setUsuario(usuario);
 
         return comentario;
-    }
+    } */
 
     public Long cantidadLikes(Long idPublicacion) {
         return publicacionRepository.cantidadLikes(idPublicacion);

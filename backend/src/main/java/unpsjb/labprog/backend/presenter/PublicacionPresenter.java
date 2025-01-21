@@ -72,13 +72,7 @@ public class PublicacionPresenter {
         return Response.ok(like, "OK");
     }
 
-    @PostMapping("/comentar/{idUsuario}/{idPublicacion}")
-    public ResponseEntity<Object> comentar(@PathVariable Long idUsuario, @PathVariable Long idPublicacion,
-            @RequestBody String comentario)
-            throws Exception {
-        publicacionService.comentar(idUsuario, idPublicacion, comentario);
-        return Response.ok(null, "OK");
-    }
+   
 
     @GetMapping("/publicaciones/usuario/{idUsuario}")
     public ResponseEntity<Object> publicacionesUsuario(@PathVariable Long idUsuario,
@@ -121,14 +115,14 @@ public class PublicacionPresenter {
         return Response.ok(publicaciones, "OK");
     }
 
-    @GetMapping("/comentarios/{idPublicacion}")
+/*     @GetMapping("/comentarios/{idPublicacion}")
     public ResponseEntity<Object> obtenerNotificaciones(@PathVariable Long idPublicacion) {
         try {
             return Response.ok(publicacionService.obtenerComentariosPorPublicacion(idPublicacion));
         } catch (Exception e) {
             return Response.error("", "Error al obtener los comentarios: " + e.getMessage());
         }
-    }
+    } */
 
     @GetMapping("/cantidadLikes/{idPublicacion}")
     public ResponseEntity<Object> cantidadLikes(@PathVariable Long idPublicacion) {
