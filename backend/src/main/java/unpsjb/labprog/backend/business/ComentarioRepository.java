@@ -45,7 +45,7 @@ Comentario responderComentario( @Param("comentarioPadreId") Long comentarioPadre
     @Query("MATCH (c:Comentario)-[:RESPONDE_A]->(p:Comentario) " +
            "WHERE id(p) = $comentarioPadreId " +
            "RETURN c " +
-           "ORDER BY c.fecha ASC SKIP $skip LIMIT $limit")
+           "ORDER BY c.fecha DESC SKIP $skip LIMIT $limit")
     List<Comentario> findRespuestasByComentarioPadreId(
             @Param("comentarioPadreId") Long comentarioPadreId,
             @Param("skip") int skip,

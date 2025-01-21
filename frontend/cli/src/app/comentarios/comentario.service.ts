@@ -38,7 +38,10 @@ export class ComentarioService {
     return this.http.get<DataPackage>(`${this.comentariosUrl}/contarRespuestas/${comentarioPadreId}`);
   }
 
-
+  eliminar(comentarioId: number): Observable<any> {
+    return this.http.delete<DataPackage>(`${this.comentariosUrl}/eliminar/${comentarioId}`);
+  }
+  
   
 
 }
