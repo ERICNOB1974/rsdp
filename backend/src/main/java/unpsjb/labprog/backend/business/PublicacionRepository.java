@@ -80,7 +80,7 @@ public interface PublicacionRepository extends Neo4jRepository<Publicacion, Long
                    """)
 
     List<Publicacion> publicacionesAmigosUsuario(@Param("usuarioId") Long usuarioId);
-
+    
 @Query("CALL { " +
             "    MATCH (u:Usuario)-[:POSTEO]->(p:Publicacion) " +
             "    WHERE id(u) = $usuarioId " +
@@ -91,9 +91,8 @@ public interface PublicacionRepository extends Neo4jRepository<Publicacion, Long
             "      AND NOT EXISTS { MATCH (p)-[:PUBLICADO_DENTRO_DE]->(:Comunidad) } " +
             "    RETURN p " +
             "    UNION " +
-            "    MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario)-[:POSTEO]->(p:Publicacion)-[:PUBLICADO_DENTRO_DE]->(c:Comunidad) " +
+            "    MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c:Comunidad)<-[:PUBLICADO_DENTRO_DE]-(p:Publicacion) " +
             "    WHERE id(u) = $usuarioId " +
-            "      AND (u)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c) " +
             "    RETURN p " +
             "} " +
             "RETURN p " +
@@ -104,6 +103,7 @@ List<Publicacion> publicacionesUsuarioYAmigos(
         @Param("usuarioId") Long usuarioId,
         @Param("skip") int skip,
         @Param("limit") int limit);
+
 
 
 

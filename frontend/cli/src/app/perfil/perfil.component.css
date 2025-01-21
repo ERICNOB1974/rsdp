@@ -625,3 +625,24 @@ perfil-eventos {
         grid-template-columns: repeat(1, 1fr); /* Máximo 2 elementos por fila */
     }
 }
+
+.boton-nueva-publicacion {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+}
+
+.btn-publicar {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-publicar:hover {
+    background-color: #0056b3;
+}

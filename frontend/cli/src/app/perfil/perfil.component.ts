@@ -845,5 +845,8 @@ export class PerfilComponent implements OnInit {
       this.cargarComunidades();  // Si no estamos buscando o el texto está vacío, cargamos eventos sin filtro
     }
   }
-
+  
+  irAPublicar() {
+    this.router.navigate(['/publicacion']);
+}
 }
