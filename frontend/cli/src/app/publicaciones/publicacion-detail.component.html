@@ -46,7 +46,7 @@
 
     <div class="comments-section" style="font-family: Arial, sans-serif;">
       <div *ngFor="let com of comentarios" class="comment"
-        style="margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        style="margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: relative;">
     
         <!-- Encabezado del comentario -->
         <div class="comment-header" style="display: flex; align-items: center; margin-bottom: 10px;">
@@ -65,10 +65,10 @@
         <!-- Texto del comentario -->
         <p class="comment-text" style="font-size: 14px; margin: 0 0 10px; color: #333;">{{ com.texto }}</p>
     
-        <!-- Botón para responder -->
-        <button (click)="toggleCommentInput(com.id)"
-          style="font-size: 12px; color: #007bff; background: none; border: none; cursor: pointer; padding: 5px 15px; margin-right: 20px;">
-          Responder
+        <!-- Botón de eliminar comentario -->
+        <button *ngIf="puedeEliminarComentario(com)" (click)="eliminarComentario(com.id)"
+          style="position: absolute;top:65px; right: 10px; background: none; border: none; cursor: pointer;">
+          <img alt="Eliminar" style="width: 20px; height: 20px;">
         </button>
     
         <!-- Campo para ingresar la respuesta -->
@@ -82,7 +82,7 @@
     
         <!-- Mostrar respuestas -->
         <div *ngFor="let reply of respuestaPaginacion[com.id]?.respuestas" class="reply"
-          style="margin-top: 15px; margin-left: 20px; padding: 15px; background-color: #e7f3ff; border-radius: 8px;">
+          style="margin-top: 15px; margin-left: 20px; padding: 15px; background-color: #e7f3ff; border-radius: 8px; position: relative;">
           <!-- Encabezado de la respuesta -->
           <div class="reply-header" style="display: flex; align-items: center; margin-bottom: 5px;">
             <a [routerLink]="['/perfil', reply.usuario.id]"
@@ -100,6 +100,12 @@
     
           <!-- Texto de la respuesta -->
           <p class="reply-text" style="font-size: 13px; margin: 0; color: #444;">{{ reply.texto }}</p>
+    
+          <!-- Botón de eliminar respuesta -->
+          <button *ngIf="puedeEliminarComentario(reply)" (click)="eliminarComentario(reply.id)"
+            style="position: absolute; bottom: 10px; right: 10px; background: none; border: none; cursor: pointer;">
+            <img  alt="Eliminar" style="width: 16px; height: 16px;">
+          </button>
         </div>
     
         <!-- Botón para cargar más respuestas -->
@@ -109,11 +115,10 @@
         </button>
         <!-- Botón para mostrar/ocultar respuestas -->
         <button *ngIf="respuestaPaginacion[com.id]?.mostrarRespuestas && loadedMoreReplies[com.id]"
-        (click)="toggleReplies(com.id)"
-        style="font-size: 12px; color: #007bff; background: none; border: none; cursor: pointer; margin-top: 15px; padding: 5px 20px;">
-        Ocultar respuestas
-      </button>
-    
+          (click)="toggleReplies(com.id)"
+          style="font-size: 12px; color: #007bff; background: none; border: none; cursor: pointer; margin-top: 15px; padding: 5px 20px;">
+          Ocultar respuestas
+        </button>
       </div>
     </div>
     
