@@ -15,7 +15,7 @@ import { DataPackage } from '../data-package';
 import { lastValueFrom } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { EventoService } from '../eventos/evento.service';
-import { Comentario } from '../publicaciones/Comentario';
+import { Comentario } from '../comentarios/Comentario';
 
 @Component({
     selector: 'app-editar-comunidad',

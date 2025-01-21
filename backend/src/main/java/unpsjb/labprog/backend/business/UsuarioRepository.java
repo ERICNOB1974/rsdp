@@ -253,8 +253,9 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
             + "ORDER BY score DESC, usuario.nombreUsuario ASC")
     List<ScoreAmigo> sugerenciasDeAmigosBasadosEnComunidades2(String nombreUsuario);
 
-    @Query("MATCH (u:Usuario)-[n:COMENTA]->() WHERE id(n) = $id RETURN u AS usuario")
-    Usuario findUsuarioById(@Param("id") Long id);
+@Query("MATCH (u:Usuario)-[:HIZO]->(c:Comentario) WHERE id(c) = $id RETURN u")
+Usuario findUsuarioByComentarioId(@Param("id") Long id);
+
 
     @Query("MATCH (u:Usuario)-[:POSTEO]->(p:Publicacion) WHERE id(p) = $idPublicacion RETURN u AS usuario")
     Usuario publicadoPor(@Param("idPublicacion") Long idPublicacion);

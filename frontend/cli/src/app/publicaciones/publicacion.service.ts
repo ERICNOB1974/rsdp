@@ -47,9 +47,7 @@ export class PublicacionService {
   darLike(idPublicacion: number) {
     return this.http.get<DataPackage>(` ${this.publicacionsUrl}/likear/${this.authService.getUsuarioId()}/${idPublicacion}`);
   }
-  comentar(idPublicacion: number, comentario: string) {
-    return this.http.post<DataPackage>(` ${this.publicacionsUrl}/comentar/${this.authService.getUsuarioId()}/${idPublicacion}`, comentario);
-  }
+
   comentarios(idPublicacion: number) {
     return this.http.get<DataPackage>(` ${this.publicacionsUrl}/comentarios/${idPublicacion}`);
   }
