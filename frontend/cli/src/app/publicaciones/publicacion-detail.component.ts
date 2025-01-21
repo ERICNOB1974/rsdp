@@ -7,11 +7,12 @@ import { PublicacionService } from './publicacion.service';
 import { Publicacion } from './publicacion';
 import { FormsModule } from '@angular/forms';
 import { DataPackage } from '../data-package';
-import { Comentario } from './Comentario';
+import { Comentario } from '../comentarios/Comentario';
 import { AuthService } from '../autenticacion/auth.service';
 import { Usuario } from '../usuarios/usuario';
 import { UsuarioService } from '../usuarios/usuario.service';
 import { MatDialog } from '@angular/material/dialog';
+import { ComentarioService } from '../comentarios/comentario.service';
 
 
 
@@ -32,6 +33,7 @@ export class PublicacionDetailComponent implements OnInit {
   loadingLikes: boolean = false; // Estado de carga
   currentPageLikes: number = 0; // Página actual para paginación
   @ViewChild('modalLikes') modalLikes!: TemplateRef<any>;
+  usuario: Usuario | null = null;
 
 
   constructor(
@@ -39,6 +41,7 @@ export class PublicacionDetailComponent implements OnInit {
     private publicacionService: PublicacionService,
     private usuarioService: UsuarioService,
     private location: Location,
+    private comentarioService: ComentarioService,
     private router: Router,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
@@ -46,7 +49,7 @@ export class PublicacionDetailComponent implements OnInit {
   ) { }
 
   isLiked: boolean = false;
-  showCommentInput: boolean = false;
+  showCommentInput: boolean = true;
   comment: string = '';
   comments: string[] = [];
   comentarios: Comentario[] = [];
@@ -56,7 +59,23 @@ export class PublicacionDetailComponent implements OnInit {
   isOwnPublication: boolean = false;
   cantidadPorPagina: number = 10;
   noMasUsuarios = false;
+  pageSize: number = 2  ;
 
+  currentCommentId: number | null = null;
+  showReplyInput: boolean = false; // Para mostrar u ocultar el campo de respuesta
+  replyText: string = ''; // El texto de la respuesta
+
+  loadedMoreReplies: { [key: number]: boolean } = {};  // Usamos el id del comentario como clave
+
+  respuestaPaginacion: { 
+    [comentarioId: number]: { 
+      paginaActual: number; 
+      totalRespuestas: number; 
+      respuestas: Comentario[]; 
+      mostrarRespuestas: boolean; // Propiedad adicional
+    } 
+  } = {};
+  
   toggleLike() {
     if (this.isLiked) {
       this.publicacionService.sacarLike(this.publicacion.id).subscribe();
@@ -152,7 +171,7 @@ export class PublicacionDetailComponent implements OnInit {
 
   submitComment() {
     if (this.comment.trim()) {
-      this.publicacionService.comentar(this.publicacion.id, this.comment).subscribe(
+      this.comentarioService.comentar(this.publicacion.id, this.comment).subscribe(
         (response: any) => {
           const usuarioId = this.authService.getUsuarioId();
           const idUsuarioAutenticado = Number(usuarioId);
@@ -172,7 +191,8 @@ export class PublicacionDetailComponent implements OnInit {
               latitud: 0,
               longitud: 0,
               fotoPerfil: ''
-            }
+            },
+            respuestas: []
           };
 
           // Añadir el nuevo comentario al principio de la lista
@@ -194,6 +214,7 @@ export class PublicacionDetailComponent implements OnInit {
   }
   ngOnInit(): void {
     this.getPublicacion();
+    this.getUsuario();
     //this.cargarComentarios();
     //this.traerParticipantes();
     this.updateDisplayedComments();
@@ -201,12 +222,26 @@ export class PublicacionDetailComponent implements OnInit {
 
   }
 
+ 
+
   cargarComentarios(): void {
-    this.publicacionService.comentarios(this.publicacion.id)
+    this.comentarioService.obtenerComentariosPorPublicacion(this.publicacion.id)
       .subscribe({
         next: (dataPackage: DataPackage) => {
           if (dataPackage && dataPackage.status === 200 && dataPackage.data) {
             this.comentarios = dataPackage.data as Comentario[];
+  
+            // Inicializar la estructura de paginación para cada comentario
+            this.comentarios.forEach(comentario => {
+              this.respuestaPaginacion[comentario.id] = {
+                paginaActual: 0,
+                totalRespuestas: 0,
+                respuestas: [],
+                mostrarRespuestas: true
+              };
+              this.contarRespuestas(comentario);
+              this.cargarRespuestas(comentario);
+            });
           } else {
             console.error('Error al cargar los comentarios:', dataPackage.message);
           }
@@ -216,6 +251,8 @@ export class PublicacionDetailComponent implements OnInit {
         }
       });
   }
+  
+
 
   deletePublicacion(): void {
     if (confirm('¿Estás seguro de que quieres eliminar esta publicación?')) {
@@ -260,6 +297,153 @@ export class PublicacionDetailComponent implements OnInit {
   goBack(): void {
     this.location.back();
   }
+  
+  getUsuario() {
+    this.usuarioService.get(Number(this.authService.getUsuarioId())).subscribe(dataPackage => {
+      this.usuario = dataPackage.data as Usuario;
+    }, error => {
+      console.error('Error al cargar el usuario:', error);
+      this.usuario = null; // Para manejar el estado de error
+    });
+  }
+
+  
+  // Función para activar el campo de respuesta
+  toggleCommentInput(commentId: number): void {
+    if (this.currentCommentId === commentId) {
+      // Si ya estamos respondiendo al mismo comentario, ocultamos el campo
+      this.showReplyInput = !this.showReplyInput;
+    } else {
+      // Si estamos respondiendo a un comentario diferente, mostramos el campo
+      this.currentCommentId = commentId;
+      this.showReplyInput = true;
+    }
+    this.replyText = ''; // Limpiamos el texto de la respuesta cuando abrimos el campo
+  }
+
+    // Función para enviar la respuesta
+    submitReply(commentId: number): void {
+      if (this.replyText.trim()) {
+        // Creamos la respuesta
+        const respuesta: Comentario = {
+          id: 0, // Este ID debe ser generado por el backend
+          texto: this.replyText,
+          fecha: new Date(),
+          usuario: {
+            id: Number(this.authService.getUsuarioId()),
+            nombreUsuario: this.authService.getNombreUsuario() || '',
+            nombreReal: this.authService.getNombreReal() || '',
+            fechaNacimiento: new Date(),
+            fechaDeCreacion: new Date(),
+            correoElectronico: '',
+            contrasena: '',
+            descripcion: '',
+            latitud: 0,
+            longitud: 0,
+            fotoPerfil: this.authService.getFotoPerfil() || ''
+          },
+          respuestas: []
+        };
+  
+        // Llamamos al servicio para enviar la respuesta
+        this.comentarioService.responderComentario(commentId, this.replyText).subscribe(
+          (response: any) => {
+            // Añadimos la respuesta al comentario correspondiente
+            const comentario = this.comentarios.find(c => c.id === commentId);
+            if (comentario) {
+              comentario.respuestas = comentario.respuestas || [];
+              comentario.respuestas.push(respuesta); // Añadimos la nueva respuesta
+            }
+  
+            // Limpiamos el campo y ocultamos la respuesta
+            this.replyText = '';
+            this.showReplyInput = false;
+          },
+          error => {
+            console.error('Error al enviar la respuesta:', error);
+            // Manejo de errores
+          }
+        );
+      }
+    }
+
+/*  cargarRespuestas(comentario: Comentario) {
+  this.comentarioService.getRespuestas(comentario.id, 0, this.pageSize)
+    .subscribe(dataPackage => {
+      comentario.respuestas = dataPackage.data as Comentario[]; // Asegúrate de que `data` sea de tipo `Respuesta[]`
+      console.log("Respuestas recibidas:", dataPackage.data);
+    });
+}  */
+
+    cargarRespuestas(comentario: Comentario): void {
+      const paginacion = this.respuestaPaginacion[comentario.id];
+      if(paginacion.paginaActual!=0){
+        this.loadedMoreReplies[comentario.id] = true;  // Marca que se ha cargado más respuestas
+      }
+      this.comentarioService.getRespuestas(comentario.id, paginacion.paginaActual, this.pageSize)
+        .subscribe(dataPackage => {
+          // Asegúrate de que `data` contiene las respuestas como un array
+          const respuestas = dataPackage.data as Comentario[]; // Cast para acceder como un array de Respuesta
+          if (Array.isArray(respuestas) && respuestas.length > 0) {
+            paginacion.respuestas.push(...respuestas);
+            paginacion.paginaActual = paginacion.paginaActual+1;
+          }
+        }, error => {
+          console.error(`Error al cargar respuestas para el comentario ${comentario.id}:`, error);
+        });
+    }
+
+contarRespuestas(comentario: Comentario) {
+  this.comentarioService.contarRespuestas(comentario.id)
+    .subscribe(dataPackage => {
+      if (dataPackage && typeof dataPackage.data === 'number') {
+        //comentario.cantidadRespuestas = dataPackage.data; // Asignar el número de miembros
+        this.respuestaPaginacion[comentario.id].totalRespuestas = dataPackage.data;
+
+      }
+    },
+    (error) => {
+      console.error(`Error al traer la cantidad de respuestas del comentario ${comentario.id}:`, error);
+    }
+  );
+} 
 
 
+cargarMasRespuestas(comentario: Comentario): void {
+  if (this.respuestaPaginacion[comentario.id].respuestas.length < this.respuestaPaginacion[comentario.id].totalRespuestas) {
+    this.cargarRespuestas(comentario);
+  }
+}
+
+
+
+
+respuestasRestantes(comentarioId: number): number {
+  const paginacion = this.respuestaPaginacion[comentarioId];
+  if (!paginacion) return 0; // Si no hay datos, no hay respuestas restantes
+  return paginacion.totalRespuestas - paginacion.respuestas.length;
+}
+
+hayMasRespuestas(comentarioId: number): boolean {
+  return this.respuestasRestantes(comentarioId) > 0;
+}
+
+toggleReplies(comentarioId: number): void {
+  const paginacion = this.respuestaPaginacion[comentarioId];
+
+  if (paginacion.mostrarRespuestas) {
+    // Si estaba mostrando, ocultar pero conservar las primeras respuestas
+    this.loadedMoreReplies[comentarioId] = false;  // Marca que se ha cargado más respuestas
+    paginacion.mostrarRespuestas = false;
+    if (paginacion.respuestas.length > this.pageSize) {
+      // Conservar solo las primeras respuestas
+      paginacion.respuestas = paginacion.respuestas.slice(0, this.pageSize);
+    }
+  } else {
+    // Mostrar y mantener las respuestas existentes
+    paginacion.mostrarRespuestas = true;
+  }
+}
+    
+    
 }

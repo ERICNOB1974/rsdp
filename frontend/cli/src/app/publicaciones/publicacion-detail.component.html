@@ -2,8 +2,7 @@
   <div class="header" style="display: flex; align-items: center; margin-bottom: 20px;">
     <a [routerLink]="['/perfil', publicadoPor.id]" style="text-decoration: none; display: flex; align-items: center;">
       <img [src]="publicadoPor.fotoPerfil ? publicadoPor.fotoPerfil : '../../assets/usuario.png' "
-      
-      style="width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        style="width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
       >
     </a>
     <div>
@@ -32,7 +31,7 @@
       </i>
       <span class="likes-count" (click)="abrirModalLikes()">{{ numeroLikes }} Usuarios le dieron like</span>
 
-      <div class="comment-icon" (click)="showCommentInput = !showCommentInput">
+      <div class="comment-icon">
         <i class="fa fa-comment"></i>
       </div>
     </div>
@@ -45,26 +44,84 @@
 
 
 
-    <div class="comments-section">
+    <div class="comments-section" style="font-family: Arial, sans-serif;">
       <div *ngFor="let com of comentarios" class="comment"
-        style="margin-bottom: 15px; padding: 10px; background-color: #f8f9fa; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-        <div class="comment-header" style="display: flex; align-items: center;">
-          <a [routerLink]="['/perfil', com.usuario.id]"
-            style="text-decoration: none; display: flex; align-items: center;">
-            <img [src]="com.usuario.fotoPerfil ? com.usuario.fotoPerfil : '../../assets/usuario.png' "
-
-              style="width: 30px; height: 30px; border-radius: 50%; margin-right: 8px;">
-              
+        style="margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    
+        <!-- Encabezado del comentario -->
+        <div class="comment-header" style="display: flex; align-items: center; margin-bottom: 10px;">
+          <a [routerLink]="['/perfil', com.usuario.id]" style="text-decoration: none; display: flex; align-items: center;">
+            <img [src]="com.usuario.fotoPerfil ? com.usuario.fotoPerfil : '../../assets/usuario.png'"
+              style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; border: 2px solid #ddd;">
           </a>
-          <a [routerLink]="['/perfil', com.usuario.id]" style="text-decoration: none; color: #3897f0;">
-            <span class="username" style="font-size: 12px; font-weight: bold;">{{ com.usuario.nombreUsuario }}</span>
-          </a>
-          <span class="date" style="font-size: 10px; color: #999; margin-left: auto;">{{ com.fecha | date:'short'
-            }}</span>
+          <div>
+            <a [routerLink]="['/perfil', com.usuario.id]" style="text-decoration: none; color: #007bff;">
+              <span class="username" style="font-size: 14px; font-weight: bold;">{{ com.usuario.nombreUsuario }}</span>
+            </a>
+            <span class="date" style="font-size: 12px; color: #888; display: block;">{{ com.fecha | date:'short' }}</span>
+          </div>
         </div>
-        <p class="comment-text" style="font-size: 14px; margin: 0; color: #262626;">{{ com.texto }}</p>
+    
+        <!-- Texto del comentario -->
+        <p class="comment-text" style="font-size: 14px; margin: 0 0 10px; color: #333;">{{ com.texto }}</p>
+    
+        <!-- Botón para responder -->
+        <button (click)="toggleCommentInput(com.id)"
+          style="font-size: 12px; color: #007bff; background: none; border: none; cursor: pointer; padding: 5px 15px; margin-right: 20px;">
+          Responder
+        </button>
+    
+        <!-- Campo para ingresar la respuesta -->
+        <div *ngIf="com.id === currentCommentId && showReplyInput" class="comment-input-container"
+          style="margin-top: 10px; padding: 10px; background-color: #f1f1f1; border-radius: 8px;">
+          <textarea [(ngModel)]="replyText" class="form-control" placeholder="Escribe tu respuesta aquí"
+            style="width: 100%; border-radius: 5px; padding: 10px; border: 1px solid #ddd;"></textarea>
+          <button class="btn btn-primary" (click)="submitReply(com.id)"
+            style="margin-top: 5px; float: right;">Enviar</button>
+        </div>
+    
+        <!-- Mostrar respuestas -->
+        <div *ngFor="let reply of respuestaPaginacion[com.id]?.respuestas" class="reply"
+          style="margin-top: 15px; margin-left: 20px; padding: 15px; background-color: #e7f3ff; border-radius: 8px;">
+          <!-- Encabezado de la respuesta -->
+          <div class="reply-header" style="display: flex; align-items: center; margin-bottom: 5px;">
+            <a [routerLink]="['/perfil', reply.usuario.id]"
+              style="text-decoration: none; display: flex; align-items: center;">
+              <img [src]="reply.usuario.fotoPerfil || '../assets/usuario.png'"
+                style="width: 30px; height: 30px; border-radius: 50%; margin-right: 8px; border: 1px solid #bbb;">
+            </a>
+            <div>
+              <a [routerLink]="['/perfil', reply.usuario.id]" style="text-decoration: none; color: #0056b3;">
+                <span class="username" style="font-size: 12px; font-weight: bold;">{{ reply.usuario.nombreUsuario }}</span>
+              </a>
+              <span class="date" style="font-size: 10px; color: #666; display: block;">{{ reply.fecha | date:'short' }}</span>
+            </div>
+          </div>
+    
+          <!-- Texto de la respuesta -->
+          <p class="reply-text" style="font-size: 13px; margin: 0; color: #444;">{{ reply.texto }}</p>
+        </div>
+    
+        <!-- Botón para cargar más respuestas -->
+        <button *ngIf="hayMasRespuestas(com.id)" (click)="cargarRespuestas(com)"
+          style="font-size: 12px; color: #007bff; background: none; border: none; cursor: pointer; margin-top: 15px; padding: 5px 20px;">
+          Cargar más respuestas ({{ respuestasRestantes(com.id) }})
+        </button>
+        <!-- Botón para mostrar/ocultar respuestas -->
+        <button *ngIf="respuestaPaginacion[com.id]?.mostrarRespuestas && loadedMoreReplies[com.id]"
+        (click)="toggleReplies(com.id)"
+        style="font-size: 12px; color: #007bff; background: none; border: none; cursor: pointer; margin-top: 15px; padding: 5px 20px;">
+        Ocultar respuestas
+      </button>
+    
       </div>
     </div>
+    
+    
+
+
+
+
 
     <button *ngIf="isOwnPublication" (click)="deletePublicacion()" class="btn btn-danger">
       Eliminar publicación
@@ -87,7 +144,6 @@
         (click)="cerrarModal()">
         >
         <img [src]="usuario.fotoPerfil ? usuario.fotoPerfil : '../../assets/usuario.png' "
-
           style="width: 30px; height: 30px; border-radius: 50%; margin-right: 8px;">
       </a>
       <a [routerLink]="['/perfil', usuario.id]" style="text-decoration: none; color: #000000;" (click)="cerrarModal()">

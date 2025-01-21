@@ -1,0 +1,44 @@
+import { Injectable } from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { DataPackage } from '../data-package';
+import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../autenticacion/auth.service';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ComentarioService {
+
+
+  private comentariosUrl = 'rest/comentarios';
+
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService
+  ) { }
+
+
+  obtenerComentariosPorPublicacion(idPublicacion: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.comentariosUrl}/publicacion/${idPublicacion}`);
+  }
+
+  responderComentario(comentarioPadreId: number, comentario: string) {
+    return this.http.post<DataPackage>(` ${this.comentariosUrl}/responder/${comentarioPadreId}/${this.authService.getUsuarioId()}`, comentario);
+  }
+
+  comentar(idPublicacion: number, comentario: string) {
+    return this.http.post<DataPackage>(` ${this.comentariosUrl}/comentar/${this.authService.getUsuarioId()}/${idPublicacion}`, comentario);
+  }
+
+  getRespuestas(comentarioId: number, page: number, size: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.comentariosUrl}/respuestas/${comentarioId}?page=${page}&size=${size}`);
+  }
+
+  contarRespuestas(comentarioPadreId: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.comentariosUrl}/contarRespuestas/${comentarioPadreId}`);
+  }
+
+
+  
+
+}
