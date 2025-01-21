@@ -6,8 +6,9 @@ import { AuthService } from '../autenticacion/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Usuario } from '../usuarios/usuario';
-import { Comentario } from '../publicaciones/Comentario';
+import { Comentario } from '../comentarios/Comentario';
 import { PublicacionDto } from './PublicacionesDto';
+import { ComentarioService } from '../comentarios/comentario.service';
 
 @Component({
   selector: 'app-home',
@@ -31,6 +32,7 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private publicacionService: PublicacionService,
+    private comentarioService: ComentarioService,
     private router: Router,
     private authService: AuthService
   ) { }
@@ -82,8 +84,9 @@ export class HomeComponent implements OnInit {
 
 
   loadComentarios(publicacionId: number) {
-    this.publicacionService.comentarios(publicacionId).subscribe(dataPackage => {
+    this.comentarioService.obtenerComentariosPorPublicacion(publicacionId).subscribe(dataPackage => {
       if (dataPackage.status === 200) {
+        // Asumiendo que dataPackage.data es un array de comentarios con su usuario
         this.comentarios[publicacionId] = dataPackage.data as Comentario[];
       }
     });
@@ -109,7 +112,7 @@ export class HomeComponent implements OnInit {
   submitComment(publicacionId: number, event: Event) {
     event.stopPropagation();
     if (this.newComments[publicacionId]?.trim()) {
-      this.publicacionService.comentar(publicacionId, this.newComments[publicacionId]).subscribe(
+      this.comentarioService.comentar(publicacionId, this.newComments[publicacionId]).subscribe(
         () => {
           // Recargar comentarios después de agregar uno nuevo
           this.loadComentarios(publicacionId);
