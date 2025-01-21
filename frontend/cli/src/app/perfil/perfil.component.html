@@ -71,15 +71,18 @@
                             </div>
                             <div class="publicacion-fecha">{{ publicacion.fechaDeCreacion | date:'medium' }}</div>
                         </div>
-                        <button *ngIf="esMiPerfil" (click)="confirmarEliminarPublicacion(publicacion.id)"
+                        <button *ngIf="esMiPerfil"
+                            (click)="confirmarEliminarPublicacion(publicacion.id); $event.stopPropagation(); $event.preventDefault()"
                             class="btn-eliminar">
                             Eliminar
                         </button>
                     </div>
                 </div>
             </div>
-            <button (click)="getPublicacionesPaginadas()" [disabled]="loadingPublicaciones || noMasPublicaciones || publicaciones.length<1">
-                {{ loadingPublicaciones ? 'Cargando...' : noMasPublicaciones ? 'No hay más publicaciones' : 'Cargar más' }}
+            <button (click)="getPublicacionesPaginadas()"
+                [disabled]="loadingPublicaciones || noMasPublicaciones || publicaciones.length<1">
+                {{ loadingPublicaciones ? 'Cargando...' : noMasPublicaciones ? 'No hay más publicaciones' : 'Cargar más'
+                }}
             </button>
 
         </div>
@@ -110,7 +113,8 @@
                     </div>
                 </div>
             </div>
-            <button (click)="cargarMasEventos()" [disabled]="loadingEventos || noMasEventos || historicoEventos.length<1">
+            <button (click)="cargarMasEventos()"
+                [disabled]="loadingEventos || noMasEventos || historicoEventos.length<1">
                 {{ loadingEventos ? 'Cargando...' : noMasEventos ? 'No hay más eventos' : 'Cargar más' }}
             </button>
         </div>
@@ -133,8 +137,7 @@
             <!-- Campo de búsqueda -->
             <div class="search-container">
                 <input type="text" placeholder="Buscar rutina por nombre" #searchInput
-                (input)="onSearchInput(searchInput.value)"
-                class="form-control search-input"
+                    (input)="onSearchInput(searchInput.value)" class="form-control search-input"
                     [(ngModel)]="searchText" />
                 <i class="fas fa-search search-icon"></i>
             </div>
@@ -158,7 +161,8 @@
             </div>
 
             <!-- Botón de cargar más -->
-            <button (click)="cargarMasRutinas()" [disabled]="loadingRutinas || noMasRutinas || historicoRutinas.length < 1">
+            <button (click)="cargarMasRutinas()"
+                [disabled]="loadingRutinas || noMasRutinas || historicoRutinas.length < 1">
                 {{ loadingRutinas ? 'Cargando...' : noMasRutinas ? 'No hay más rutinas' : 'Cargar más' }}
             </button>
         </div>
@@ -183,8 +187,7 @@
 
             <div class="search-container">
                 <input type="text" placeholder="Buscar comunidad por nombre" #searchInput
-                (input)="onSearchInputComunidades(searchInput.value)"
-                    class="form-control search-input"
+                    (input)="onSearchInputComunidades(searchInput.value)" class="form-control search-input"
                     [(ngModel)]="searchText" />
                 <i class="fas fa-search search-icon"></i>
             </div>
@@ -211,7 +214,8 @@
 
 
             <!-- Botón de carga -->
-            <button (click)="cargarMasComunidades()" [disabled]="loadingComunidades || noMasComunidades || historicoComunidades.length < 1">
+            <button (click)="cargarMasComunidades()"
+                [disabled]="loadingComunidades || noMasComunidades || historicoComunidades.length < 1">
                 {{ loadingComunidades ? 'Cargando...' : noMasComunidades ? 'No hay más comunidades' : 'Cargar más' }}
             </button>
         </div>
