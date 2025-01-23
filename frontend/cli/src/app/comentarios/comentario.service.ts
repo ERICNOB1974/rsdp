@@ -41,6 +41,22 @@ export class ComentarioService {
   eliminar(comentarioId: number): Observable<any> {
     return this.http.delete<DataPackage>(`${this.comentariosUrl}/eliminar/${comentarioId}`);
   }
+
+  cantidadLikes(comentarioId: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.comentariosUrl}/cantidadLikes/${comentarioId}`);
+  }
+
+  estaLikeada(comentarioId: number) {
+    return this.http.get<DataPackage>(` ${this.comentariosUrl}/isLikeada/${this.authService.getUsuarioId()}/${comentarioId}`);
+  }
+
+  sacarLike(comentarioId: number) {
+    return this.http.get<DataPackage>(` ${this.comentariosUrl}/deslikear/${this.authService.getUsuarioId()}/${comentarioId}`);
+  }
+
+  darLike(comentarioId: number) {
+    return this.http.get<DataPackage>(` ${this.comentariosUrl}/likear/${this.authService.getUsuarioId()}/${comentarioId}`);
+  }
   
   
 
