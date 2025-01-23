@@ -12,10 +12,32 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import unpsjb.labprog.backend.model.Comentario;
-import unpsjb.labprog.backend.model.Evento;      
+import unpsjb.labprog.backend.model.Evento;
 
 @Repository
 public interface ComentarioRepository extends Neo4jRepository<Comentario, Long> {
+
+       @Query("MATCH (u:Usuario), (c:Comentario) " +
+                     "WHERE id(u) = $usuarioId AND id(c) = $comentarioId " +
+                     "CREATE (u)-[:LIKE_COMENTARIO]->(c)")
+       void likearComentario(@Param("usuarioId") Long usuarioId, @Param("comentarioId") Long comentarioId);
+
+       @Query("MATCH (u:Usuario)-[rel:LIKE_COMENTARIO]->(c:Comentario) " +
+                     "WHERE id(u) = $usuarioId AND id(c) = $comentarioId " +
+                     "DELETE rel")
+       void sacarLike(@Param("usuarioId") Long usuarioId, @Param("comentarioId") Long comentarioId);
+
+       @Query("MATCH (u:Usuario), (c:Comentario) " +
+                     "WHERE id(u) = $usuarioId AND id(c) = $comentarioId " +
+                     "MATCH (u)-[l:LIKE_COMENTARIO]->(c) " +
+                     "RETURN COUNT (l)>0")
+       boolean estaLikeada(@Param("usuarioId") Long usuarioId, @Param("comentarioId") Long comentarioId);
+
+       @Query("MATCH (u:Usuario), (c:Comentario) " +
+                     "WHERE id(c) = $comentarioId " +
+                     "MATCH (u)-[l:LIKE_COMENTARIO]->(c) " +
+                     "RETURN COUNT (l)")
+       Long cantidadLikes(@Param("comentarioId") Long comentarioId);
 
 @Query("MATCH (u:Usuario), (p:Publicacion) " +
        "WHERE id(u) = $usuarioId AND id(p) = $publicacionId " +

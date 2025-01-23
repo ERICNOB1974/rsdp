@@ -1,25 +1,21 @@
 package unpsjb.labprog.backend.presenter;
 
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-
-import unpsjb.labprog.backend.model.Comentario;
-import unpsjb.labprog.backend.model.Comunidad;
-import unpsjb.labprog.backend.business.ComentarioService;
-import org.springframework.beans.factory.annotation.Autowired;
 import unpsjb.labprog.backend.Response;
+import unpsjb.labprog.backend.business.ComentarioService;
+import unpsjb.labprog.backend.model.Comentario;
 
 @RestController
 @RequestMapping("comentarios")
@@ -28,25 +24,24 @@ public class ComentarioPresenter {
     @Autowired
     ComentarioService comentarioService;
 
-
-   @GetMapping("/publicacion/{idPublicacion}")
+    @GetMapping("/publicacion/{idPublicacion}")
     public ResponseEntity<Object> obtenerComentariosPorPublicacion(@PathVariable Long idPublicacion) {
         List<Comentario> comentarios = comentarioService.obtenerComentariosPorPublicacion(idPublicacion);
         return Response.ok(comentarios);
     }
 
+    @PostMapping("/responder/{comentarioPadreId}/{usuarioId}")
+    public ResponseEntity<Object> responderComentario(@PathVariable Long comentarioPadreId,
+            @PathVariable Long usuarioId, @RequestBody String texto)
+            throws Exception {
+        // Llamar al servicio que maneja la lógica de responder comentario
+        Comentario comentarioRespondido = comentarioService.responderComentario(comentarioPadreId, texto, usuarioId);
 
-@PostMapping("/responder/{comentarioPadreId}/{usuarioId}")
-public ResponseEntity<Object> responderComentario(@PathVariable Long comentarioPadreId, @PathVariable Long usuarioId, @RequestBody String texto) 
-        throws Exception {
-    // Llamar al servicio que maneja la lógica de responder comentario
-    Comentario comentarioRespondido = comentarioService.responderComentario(comentarioPadreId, texto, usuarioId);
+        // Retornar el comentario respondido
+        return Response.ok(comentarioRespondido); // Devuelve el comentario respondido con un código de estado 200
+    }
 
-    // Retornar el comentario respondido
-    return Response.ok(comentarioRespondido); // Devuelve el comentario respondido con un código de estado 200
-}
-
- @PostMapping("/comentar/{idUsuario}/{idPublicacion}")
+    @PostMapping("/comentar/{idUsuario}/{idPublicacion}")
     public ResponseEntity<Object> comentar(@PathVariable Long idUsuario, @PathVariable Long idPublicacion,
             @RequestBody String comentario)
             throws Exception {
@@ -54,21 +49,19 @@ public ResponseEntity<Object> responderComentario(@PathVariable Long comentarioP
         return Response.ok(null, "OK");
     }
 
-@GetMapping("/respuestas/{comentarioPadreId}")
-public ResponseEntity<Object> obtenerRespuestasPaginadas(
-        @PathVariable Long comentarioPadreId,
-       @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size) {
+    @GetMapping("/respuestas/{comentarioPadreId}")
+    public ResponseEntity<Object> obtenerRespuestasPaginadas(
+            @PathVariable Long comentarioPadreId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
 
-    return Response.ok(comentarioService.obtenerRespuestas(comentarioPadreId, page, size));
-}
-
-  @GetMapping("/contarRespuestas/{comentarioPadreId}")
-    public ResponseEntity<Object> contarRespuestas(@PathVariable Long comentarioPadreId) {
-     return Response.ok(comentarioService.contarRespuestas(comentarioPadreId));
+        return Response.ok(comentarioService.obtenerRespuestas(comentarioPadreId, page, size));
     }
 
-
+    @GetMapping("/contarRespuestas/{comentarioPadreId}")
+    public ResponseEntity<Object> contarRespuestas(@PathVariable Long comentarioPadreId) {
+        return Response.ok(comentarioService.contarRespuestas(comentarioPadreId));
+    }
 
     @DeleteMapping("/eliminar/{comentarioId}")
     public ResponseEntity<Object> eliminar(@PathVariable Long comentarioId) {
@@ -76,5 +69,37 @@ public ResponseEntity<Object> obtenerRespuestasPaginadas(
         return Response.ok("OK");
     }
 
-      
+
+    @GetMapping("/likear/{idUsuario}/{idComentaro}")
+    public ResponseEntity<Object> likear(@PathVariable Long idUsuario, @PathVariable Long idComentaro)
+            throws Exception {
+        comentarioService.likear(idUsuario, idComentaro);
+        return Response.ok(null, "OK");
+    }
+
+    @GetMapping("/deslikear/{idUsuario}/{idComentaro}")
+    public ResponseEntity<Object> sacarLike(@PathVariable Long idUsuario, @PathVariable Long idComentaro)
+            throws Exception {
+        comentarioService.sacarLike(idUsuario, idComentaro);
+        return Response.ok(null, "OK");
+    }
+
+    @GetMapping("/isLikeada/{idUsuario}/{idComentaro}")
+    public ResponseEntity<Object> estaLikeado(@PathVariable Long idUsuario, @PathVariable Long idComentaro)
+            throws Exception {
+        boolean like = comentarioService.estaLikeado(idUsuario, idComentaro);
+        return Response.ok(like, "OK");
+    }
+
+
+    @GetMapping("/cantidadLikes/{idComentaro}")
+    public ResponseEntity<Object> cantidadLikes(@PathVariable Long idComentaro) {
+        try {
+            return Response.ok(comentarioService.cantidadLikes(idComentaro));
+        } catch (Exception e) {
+            return Response.error("", "Error al obtener los comentarios: " + e.getMessage());
+        }
+    }
+   
+
 }

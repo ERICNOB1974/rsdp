@@ -339,8 +339,19 @@ Usuario findUsuarioByComentarioId(@Param("id") Long id);
             SKIP $skip
             LIMIT $limit
             """)
-    List<Usuario> likesPublicacion(@Param("publicacionId") Long publicacionId, @Param("skip") int skip,
+        List<Usuario> likesPublicacion(@Param("publicacionId") Long publicacionId, @Param("skip") int skip,
             @Param("limit") int limit);
+
+        @Query("""
+                MATCH (c:Comentario)
+                WHERE id(c) = $comentarioId
+                MATCH (u:Usuario)-[:LIKE_COMENTARIO]-(c)
+                RETURN u ORDER BY u.nombreUsuario DESC
+                SKIP $skip
+                LIMIT $limit
+                """)
+        List<Usuario> likesComentario(@Param("comentarioId") Long comentarioId, @Param("skip") int skip,
+                @Param("limit") int limit);
 
     @Query("""
             MATCH (u:Usuario {nombreUsuario: $nombreUsuario}) // Usuario que hace la consulta
