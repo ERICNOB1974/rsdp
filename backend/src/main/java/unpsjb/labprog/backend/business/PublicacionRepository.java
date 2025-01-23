@@ -24,7 +24,6 @@ public interface PublicacionRepository extends Neo4jRepository<Publicacion, Long
     void likear(@Param("usuarioId") Long usuarioId, @Param("publicacionId") Long publicacionId);
 
     @Query("MATCH (u:Usuario)-[rel:LIKE]->(p:Publicacion) " +
-
             "WHERE id(u) = $usuarioId AND id(p) = $publicacionId " +
             "DELETE rel")
     void sacarLike(@Param("usuarioId") Long usuarioId, @Param("publicacionId") Long publicacionId);
