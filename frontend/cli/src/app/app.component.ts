@@ -183,29 +183,53 @@ export class AppComponent {
 
     switch (notificacion.tipo) {
       case 'ACEPTACION_PRIVADA':
+        urlDestino = `/comunidad-muro/${notificacion.entidadId}`;
+        break;
       case 'UNION_PUBLICA':
+        urlDestino = `/comunidad-muro/${notificacion.entidadId}`;
+        break;
       case 'INVITACION_COMUNIDAD':
+        urlDestino = `/comunidad-muro/${notificacion.entidadId}`;
+        break;
       case 'EXPULSION_COMUNIDAD':
         // Notificaciones relacionadas con comunidades
         urlDestino = `/comunidad-muro/${notificacion.entidadId}`;
         break;
 
       case 'INSCRIPCION_A_EVENTO':
+        urlDestino = `/eventos/${notificacion.entidadId}`;
+        break;
       case 'RECORDATORIO_EVENTO_PROXIMO':
+        urlDestino = `/eventos/${notificacion.entidadId}`;
+        break;
       case 'MODIFICACION_EVENTO':
+        urlDestino = `/eventos/${notificacion.entidadId}`;
+        break;
       case 'INVITACION_EVENTO':
+        urlDestino = `/eventos/${notificacion.entidadId}`;
+        break;
       case 'EXPULSION_EVENTO':
         // Notificaciones relacionadas con eventos
         urlDestino = `/eventos/${notificacion.entidadId}`;
         break;
 
       case 'SOLICITUD_ENTRANTE':
+        urlDestino = `/perfil/${notificacion.entidadId}`;
+        break;
       case 'SOLICITUD_ACEPTADA':
         // Notificaciones relacionadas con usuarios
         urlDestino = `/perfil/${notificacion.entidadId}`;
         break;
 
       case 'LIKE':
+        urlDestino = `/publicacion/${notificacion.entidadId}`;
+        break;
+      case 'LIKE_COMENTARIO':
+        urlDestino = `/publicacion/${notificacion.entidadId}`;
+        break;
+      case 'RESPUESTA':
+        urlDestino = `/publicacion/${notificacion.entidadId}`;
+        break;
       case 'COMENTARIO':
         // Notificaciones relacionadas con publicaciones
         urlDestino = `/publicacion/${notificacion.entidadId}`;
