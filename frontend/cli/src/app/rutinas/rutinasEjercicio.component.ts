@@ -124,7 +124,9 @@ export class RutinasEjercicioComponent implements OnInit, OnDestroy {
     
     terminarEjercicio(): void {
         console.info('Terminando ejercicio...');
-    
+        const sonidoFinal = new Audio('../../assets/bonus.mp3');
+        sonidoFinal.play(); // Reproduce el sonido1
+
         if (!this.rutinaTerminada) {
             if (this.ejercicioActualIndex < this.diaActual.ejercicios.length - 1) {
                 if (!this.enDescanso) {

@@ -76,4 +76,10 @@ public interface ComentarioRepository extends Neo4jRepository<Comentario, Long> 
                      "Where id(c) = $idComentario " +
                      "DETACH DELETE c")
        void eliminarComentario(Long idComentario);
+
+
+       @Query("MATCH (u:Usuario)-[:HIZO]->(c:Comentario) " +
+       "WHERE id(c) = $comentarioPadreId " +
+       "RETURN id(u)")
+       Long creadorComentarioByComentarioId(@Param("comentarioPadreId") Long comentarioPadreId);
 }
