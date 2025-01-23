@@ -56,4 +56,9 @@ Comentario responderComentario( @Param("comentarioPadreId") Long comentarioPadre
        "WHERE id(p) = $comentarioPadreId " +
        "RETURN count(c)")
 long contarRespuestasPorComentarioPadreId(@Param("comentarioPadreId") Long comentarioPadreId);
+
+    @Query("MATCH (c:Comentario) " +
+                        "Where id(c) = $idComentario " +
+                        "DETACH DELETE c")
+        void eliminarComentario(Long idComentario);
 }

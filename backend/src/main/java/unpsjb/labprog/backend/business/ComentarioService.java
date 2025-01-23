@@ -88,7 +88,7 @@ comentario.setUsuario(usuarioRepository.findById(usuarioId).orElseThrow(() -> ne
     }
 
     public void eliminar(Long idComentario) {
-        this.comentarioRepository.delete(this.comentarioRepository.findById(idComentario).get());
+        this.comentarioRepository.eliminarComentario(idComentario);
     }
 
 

@@ -4,30 +4,30 @@
       <div class="publicacion-item" *ngFor="let publicacion of publicaciones"
         (click)="goToPublicacionDetail(publicacion.publicacion.id)">
         <div class="publicacion-container">
-          <!-- Cabecera de la publicación -->
           <div class="publicacion-header">
             <div class="perfil-container">
-              <!-- Foto de la comunidad (redirige a la comunidad) -->
+              <!-- Foto de la comunidad -->
               <div *ngIf="publicacion.comunidad" class="foto-comunidad"
                 (click)="goToComunidad(publicacion.comunidad.id); $event.stopPropagation()">
-                <img [src]="publicacion.comunidad.imagen ? publicacion.comunidad.imagen : '../../assets/comunidad.jpg' " >
+                <img [src]="publicacion.comunidad.imagen ? publicacion.comunidad.imagen : '../../assets/comunidad.jpg'" alt="Comunidad">
               </div>
-              <!-- Foto del usuario (redirige al perfil del usuario) -->
+              <!-- Foto del usuario -->
               <div class="foto-usuario" (click)="goToPerfil(publicacion.creador.id); $event.stopPropagation()">
-                <img [src]="publicacion.creador.fotoPerfil ? publicacion.creador.fotoPerfil : '../../assets/usuario.png' " >
+                <img [src]="publicacion.creador.fotoPerfil ? publicacion.creador.fotoPerfil : '../../assets/usuario.png'" alt="Usuario">
               </div>
-            </div>
-            <div class="nombres-container">
-              <!-- Nombre de la comunidad (redirige a la comunidad) -->
-              <p *ngIf="publicacion.comunidad" class="nombre-comunidad"
-                (click)="goToComunidad(publicacion.comunidad.id); $event.stopPropagation()">
-                {{ publicacion.comunidad.nombre }}
-              </p>
-              <!-- Nombre del usuario (redirige al perfil del usuario) -->
               <p class="nombre-usuario" (click)="goToPerfil(publicacion.creador.id); $event.stopPropagation()">
                 {{ publicacion.creador.nombreUsuario }}
               </p>
             </div>
+            <div class="nombres-container">
+              <!-- Nombre de la comunidad -->
+              <p *ngIf="publicacion.comunidad" class="nombre-comunidad"
+                (click)="goToComunidad(publicacion.comunidad.id); $event.stopPropagation()">
+                {{ publicacion.comunidad.nombre }}
+              </p>
+              <!-- Nombre del usuario -->
+            </div>
+            <!-- Fecha de publicación -->
             <div class="publicacion-fecha">
               {{ publicacion.publicacion.fechaDeCreacion | date:'medium' }}
             </div>
