@@ -468,7 +468,7 @@ puedeEliminarComentario(comentario: Comentario): boolean {
   const usuarioId = this.authService.getUsuarioId();
   const esAutorDelComentario = comentario.usuario.id === Number(usuarioId);
   const esCreadorDeLaPublicacion = this.publicadoPor.id === Number(usuarioId);
-
+  console.info(comentario.texto);
   // Puede eliminar si es el autor del comentario o el creador de la publicación
   return esAutorDelComentario || esCreadorDeLaPublicacion;
 }

@@ -82,7 +82,7 @@ public class ComentarioService {
     }
 
     public void eliminar(Long idComentario) {
-        this.comentarioRepository.delete(this.comentarioRepository.findById(idComentario).get());
+        this.comentarioRepository.eliminarComentario(idComentario);
     }
 
     public void likear(Long usuarioId, Long comentarioId) {
