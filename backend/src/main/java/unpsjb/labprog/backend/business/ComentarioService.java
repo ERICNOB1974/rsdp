@@ -21,6 +21,9 @@ public class ComentarioService {
     UsuarioRepository usuarioRepository;
 
     @Autowired
+    PublicacionRepository publicacionRepository;
+
+    @Autowired
     private NotificacionService notificacionService;
 
     public void comentar(Long usuarioId, Long publicacionId, String comentario) {
@@ -57,8 +60,12 @@ public class ComentarioService {
         // Crear la respuesta
         Comentario comentario = comentarioRepository.responderComentario(comentarioPadreId, texto, ZonedDateTime.now(),
                 usuarioId);
+        Long idPublicacion = publicacionRepository.findPublicacionIdByComentarioId(comentarioPadreId);
+        long idUsuarioComentarioPadre = comentarioRepository.creadorComentarioByComentarioId(comentarioPadreId);
         comentario.setUsuario(
                 usuarioRepository.findById(usuarioId).orElseThrow(() -> new Exception("Usuario no encontrado.")));
+            notificacionService.crearNotificacionPublicacion( idUsuarioComentarioPadre, usuarioId, idPublicacion, "RESPUESTA",
+            LocalDateTime.now());
         return comentario;
     }
 
