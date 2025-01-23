@@ -125,6 +125,10 @@ public class PublicacionService {
         return publicacionRepository.cantidadLikes(idPublicacion);
     }
 
+    public Long findPublicacionIdByComentarioId(Long idComentarioPadre){
+        return publicacionRepository.findPublicacionIdByComentarioId(idComentarioPadre);
+    }
+
     public void publicarEnComunidad(Long idComunidad, Long idUsuario, Publicacion publicacion) {
         this.save(publicacion, idUsuario);
         publicacionRepository.publicarEnComunidad(publicacion.getId(), idComunidad);
