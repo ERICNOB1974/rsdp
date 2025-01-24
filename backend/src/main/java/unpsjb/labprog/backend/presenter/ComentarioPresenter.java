@@ -73,15 +73,14 @@ public class ComentarioPresenter {
     @GetMapping("/likear/{idUsuario}/{idComentaro}")
     public ResponseEntity<Object> likear(@PathVariable Long idUsuario, @PathVariable Long idComentaro)
             throws Exception {
-        comentarioService.likear(idUsuario, idComentaro);
-        return Response.ok(null, "OK");
+        
+        return Response.ok(null, comentarioService.likear(idUsuario, idComentaro));
     }
 
     @GetMapping("/deslikear/{idUsuario}/{idComentaro}")
     public ResponseEntity<Object> sacarLike(@PathVariable Long idUsuario, @PathVariable Long idComentaro)
             throws Exception {
-        comentarioService.sacarLike(idUsuario, idComentaro);
-        return Response.ok(null, "OK");
+        return Response.ok(null, comentarioService.sacarLike(idUsuario, idComentaro));
     }
 
     @GetMapping("/isLikeada/{idUsuario}/{idComentaro}")
