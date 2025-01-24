@@ -550,4 +550,8 @@ List<Usuario> buscarParticipanteEvento(
 Long contarParticipantesAnonimos(
         @Param("nombreUsuario") String nombreUsuario,
         @Param("idEvento") Long idEvento);
+
+        @Query("MATCH (u:Usuario)-[:HIZO]-(c:Comentario) WHERE id(c) = $idComentario RETURN u AS usuario")
+        Usuario comentadoPor(@Param("idComentario") Long idComentario);
+    
 }

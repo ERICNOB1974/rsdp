@@ -73,6 +73,13 @@
           Responder
         </button>
 
+        <div class="likes-container" style="display: flex; align-items: center; margin-top: 10px;">
+          <i class="heart"
+             [ngClass]="com.estaLikeado ? 'fas fa-heart liked' : 'far fa-heart'"
+             (click)="toggleLikeComentario(com)">
+          </i>
+          <span class="likes-count" style="margin-left: 8px;">{{ com.cantidadLikes || 0 }} likes</span>
+        </div>
 
         <!-- Botón de eliminar comentario -->
         <i *ngIf="puedeEliminarComentario(com)" class="fa fa-trash delete-icon"
@@ -106,6 +113,14 @@
               </a>
               <span class="date" style="font-size: 10px; color: #666; display: block;">{{ reply.fecha | date:'short'
                 }}</span>
+            </div>
+            <div class="likes-container" style="display: flex; align-items: center; margin-top: 10px;">
+              <i class="heart"
+                 [ngClass]="reply.estaLikeado ? 'fas fa-heart liked' : 'far fa-heart'"
+                 (click)="toggleLikeComentario(reply)">
+              </i>
+              
+              <span class="likes-count" style="margin-left: 16px;">{{ reply.cantidadLikes }} likes</span>
             </div>
           </div>
 
