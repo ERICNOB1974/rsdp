@@ -87,8 +87,6 @@ public interface ComentarioRepository extends Neo4jRepository<Comentario, Long> 
               """)
        Long idPublicacionDadoComentario(Long idComentario);
        
-
-
        @Query("MATCH (u:Usuario)-[:HIZO]->(c:Comentario) " +
        "WHERE id(c) = $comentarioPadreId " +
        "RETURN id(u)")
