@@ -123,4 +123,11 @@ List<Publicacion> publicacionesUsuarioYAmigos(
     List<Publicacion> publicacionesComunidad(@Param("comunidadId") Long comunidadId, @Param("skip") int skip,
             @Param("limit") int limit);
 
+
+            @Query("""
+                MATCH (c:Comentario)-[:PERTENECE_A]->(p:Publicacion)
+                WHERE id(c) = $comentarioPadreId
+                RETURN id(p)
+            """)
+            Long findPublicacionIdByComentarioId(Long comentarioPadreId);
 }
