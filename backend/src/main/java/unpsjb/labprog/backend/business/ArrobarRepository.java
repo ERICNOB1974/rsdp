@@ -16,7 +16,7 @@ public interface ArrobarRepository extends Neo4jRepository<Usuario, Long> {
             MATCH (emisor:Usuario) WHERE id(emisor)=$idUsuario
             MATCH (etiquetado:Usuario) WHERE id(etiquetado)=$idEtiquetado
             MATCH (p:Publicacion) WHERE id(p) = $idPublicacion
-            CREATE (emisor)-[r:ETIQUETA_PUBLICACION {
+            CREATE (emisor)-[r:ARROBA_PUBLICACION {
             idPublicacion: $idPublicacion }]->(etiquetado)
             """)
     void etiquetarEnPublicacion(Long idUsuario, Long idEtiquetado, Long idPublicacion);
@@ -25,7 +25,7 @@ public interface ArrobarRepository extends Neo4jRepository<Usuario, Long> {
             MATCH (emisor:Usuario) WHERE id(emisor)=$idUsuario
             MATCH (etiquetado:Usuario) WHERE id(etiquetado)=$idEtiquetado
             MATCH (c:Comentario) WHERE id(c) = $idComentario
-            CREATE (emisor)-[r:ETIQUETA_COMENTARIO {
+            CREATE (emisor)-[r:ARROBA_COMENTARIO {
             idComentario: $idComentario }]->(etiquetado)
             """)
     void etiquetarEnComentario(Long idUsuario, Long idEtiquetado, Long idComentario);
