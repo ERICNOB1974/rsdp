@@ -46,6 +46,9 @@ public class ComentarioService {
     public Usuario obtenerCreadorPublicacion(Long idPublicacion) {
         return usuarioRepository.publicadoPor(idPublicacion);
     }
+    public Usuario obtenerCreadorComentario(Long idPublicacion) {
+        return usuarioRepository.comentadoPor(idPublicacion);
+    }
 
     public Comentario responderComentario(Long comentarioPadreId, String texto, Long usuarioId) throws Exception {
         // Validación: Verificar que el comentario a responder no sea una respuesta.
@@ -85,15 +88,24 @@ public class ComentarioService {
         this.comentarioRepository.eliminarComentario(idComentario);
     }
 
-    public void likear(Long usuarioId, Long comentarioId) {
-        Long idCreador = this.obtenerCreadorPublicacion(comentarioId).getId();
-        notificacionService.crearNotificacionPublicacion(idCreador, usuarioId, comentarioId, "LIKE_COMENTARIO",
+    public String likear(Long usuarioId, Long comentarioId) {
+        if(this.estaLikeado(usuarioId, comentarioId)){
+            return "Error. El comentario ya estaba likeado";
+        }
+        Long idCreador = this.obtenerCreadorComentario(comentarioId).getId();
+        Long idPublicacion=comentarioRepository.idPublicacionDadoComentario(comentarioId);
+        notificacionService.crearNotificacionPublicacion(idCreador, usuarioId, idPublicacion, "LIKE_COMENTARIO",
                 LocalDateTime.now());
         comentarioRepository.likearComentario(usuarioId, comentarioId);
+        return "OK";
     }
 
-    public void sacarLike(Long usuarioId, Long comentarioId) {
+    public String sacarLike(Long usuarioId, Long comentarioId) {
+        if(!this.estaLikeado(usuarioId, comentarioId)){
+            return "Error. El comentario no estaba likeado";
+        }
         comentarioRepository.sacarLike(usuarioId, comentarioId);
+        return "OK";
     }
 
     public boolean estaLikeado(Long usuarioId, Long comentarioId) {
