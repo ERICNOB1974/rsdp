@@ -26,6 +26,8 @@ public class PublicacionService {
     UsuarioRepository usuarioRepository;
     @Autowired
     private NotificacionService notificacionService;
+    @Autowired
+    private ArrobarService arrobarService;
 
     @Transactional
     public Publicacion save(Publicacion publicacion, Long idUsuario) {
@@ -49,6 +51,7 @@ public class PublicacionService {
 
     public void eliminar(Long idPublicacion) {
         publicacionRepository.delete(publicacionRepository.findById(idPublicacion).get());
+        arrobarService.eliminarArrobaPublicacion(idPublicacion);
     }
 
     public void sacarLike(Long usuarioId, Long publicacionId) {

@@ -25,6 +25,8 @@ public class ComentarioService {
 
     @Autowired
     private NotificacionService notificacionService;
+    @Autowired
+    private ArrobarService arrobarService;
 
     public void comentar(Long usuarioId, Long publicacionId, String comentario) {
         Long idCreador = this.obtenerCreadorPublicacion(publicacionId).getId();
@@ -93,6 +95,7 @@ public class ComentarioService {
 
     public void eliminar(Long idComentario) {
         this.comentarioRepository.eliminarComentario(idComentario);
+        this.arrobarService.eliminarArrobaComentario(idComentario);
     }
 
     public String likear(Long usuarioId, Long comentarioId) {
