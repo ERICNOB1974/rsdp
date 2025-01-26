@@ -53,5 +53,10 @@ public interface ArrobarRepository extends Neo4jRepository<Usuario, Long> {
                 DETACH DELETE r 
                 """)
         void eliminarArrobaPublicacion(Long idPublicacion);
+        @Query("""
+                MATCH ()-[r:ARROBA_COMENTARIO {idComentario:$idComentario}]-()
+                DETACH DELETE r 
+                """)
+        void eliminarArrobaComentario(Long idComentario);
 
 }

@@ -1,0 +1,21 @@
+.boton-flotante {
+    position: fixed;
+    z-index: 1000;
+    transition: top 0.5s ease, left 0.5s ease; /* Animación suave al moverse */
+  }
+  
+  .btn-actualizar {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 50px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .btn-actualizar:hover {
+    background-color: #0056b3;
+  }
+  
