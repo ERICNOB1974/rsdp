@@ -160,4 +160,12 @@ export class PerfilDetailComponent implements OnInit {
     
   }
 
+  cambiarArchivo(): void {
+    this.formatoValido = false; // Muestra el área de arrastrar/soltar nuevamente.
+    this.usuario.fotoPerfil = ''; // Resetea la foto actual si lo prefieres.
+    const fileInput = document.getElementById('archivo') as HTMLInputElement;
+    fileInput?.click(); // Abre el selector de archivos.
+  }
+  
+
 }

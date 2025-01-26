@@ -50,9 +50,10 @@ public class ArrobarService {
     }
 
     public void eliminarArrobaPublicacion(Long idPublicacion){
-
+        this.arrobarRepository.eliminarArrobaPublicacion(idPublicacion);
     }
     public void eliminarArrobaComentario(Long idComentario){
+        this.arrobarRepository.eliminarArrobaComentario(idComentario);
 
     }
 }

@@ -100,7 +100,7 @@ export class CrearPublicacionComponent implements OnInit {
           // Extraer usuarios etiquetados del texto
           const usuariosEtiquetados = this.extraerUsuariosEtiquetados(this.publicacion.texto);
     
-        /*   // Llamar al servicio de arrobar para cada usuario etiquetado
+         // Llamar al servicio de arrobar para cada usuario etiquetado
           usuariosEtiquetados.forEach((usuario) => {
             this.arrobaService.arrobarEnPublicacion(usuario.id, idPublicacion).subscribe({
               next: () => {
@@ -110,22 +110,10 @@ export class CrearPublicacionComponent implements OnInit {
                 console.error(`Error al etiquetar a ${usuario.nombreUsuario}:`, err);
               }
             });
-          }); */
-          const etiquetarObservables = usuariosEtiquetados.map((usuario) =>
-            this.arrobaService.arrobarEnPublicacion(usuario.id, idPublicacion)
-          );
+          }); 
+      
     
-          // Llamar a todas las etiquetas en paralelo
-          //NO ESTA ENTRANDO ACA ME CANSE CHAU
-          forkJoin(etiquetarObservables).subscribe({
-            next: () => {
-              console.log('Todos los usuarios han sido etiquetados correctamente.');
-            },
-            error: (err) => {
-              console.error('Error al etiquetar usuarios:', err);
-            }
-          });
-    
+          //si descomento esto no anda. ademas no anda en el caso de etiquetar a mas de 1 persona
           // Regresar a la página anterior
           //this.location.back();
         },
