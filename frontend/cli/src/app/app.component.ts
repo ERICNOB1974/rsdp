@@ -224,6 +224,12 @@ export class AppComponent {
       case 'LIKE':
         urlDestino = `/publicacion/${notificacion.entidadId}`;
         break;
+      case 'ARROBA_PUBLICACION':
+        urlDestino = `/publicacion/${notificacion.entidadId}`;
+        break;
+      case 'ARROBA_COMENTARIO':
+        urlDestino = `/publicacion/${notificacion.entidadId}`;
+        break;
       case 'LIKE_COMENTARIO':
         urlDestino = `/publicacion/${notificacion.entidadId}`;
         break;
