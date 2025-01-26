@@ -59,7 +59,7 @@
             <h3>Publicaciones</h3>
             <!-- Botón para agregar una nueva publicación -->
             <div class="boton-nueva-publicacion">
-                <button (click)="irAPublicar()" class="btn-publicar">
+                <button *ngIf="esMiPerfil" (click)="irAPublicar()" class="btn-publicar">
                     + Nueva Publicación
                 </button>
             </div>

@@ -8,7 +8,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+public class WebSocketConfig2 implements WebSocketMessageBrokerConfigurer {
    
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {

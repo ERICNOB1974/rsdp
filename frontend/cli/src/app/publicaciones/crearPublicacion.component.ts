@@ -5,12 +5,25 @@ import { FormsModule } from '@angular/forms';
 import { Publicacion } from './publicacion';
 import { PublicacionService } from './publicacion.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { UsuarioEsAmigoDTO } from '../arrobar/UsuarioEsAmigoDTO';
+import { forkJoin, Observable, of } from 'rxjs';
+import {
+  debounceTime,
+  distinctUntilChanged,
+  filter,
+  switchMap,
+  tap,
+  catchError,
+  map,
+} from 'rxjs/operators';
+import { ArrobarService } from '../arrobar/arrobar.service';
+import { Usuario } from '../usuarios/usuario';
 
 @Component({
   selector: 'app-publicaciones',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
-  styleUrls: ['../css/crear.component.css'],
+  styleUrls: ['../css/crear.component.css', '../css/arroba.css'],
   templateUrl: 'crearPublicacion.component.html'
 })
 export class CrearPublicacionComponent implements OnInit {
@@ -22,9 +35,14 @@ export class CrearPublicacionComponent implements OnInit {
   vistaPreviaArchivo: string | ArrayBuffer | null = null; // Para mostrar la vista previa de la imagen o video
   tipo!: 'comunidad' | 'publicacion'; // Tipo de flujo (registro o recuperación)
   idComunidad: number | null = null;
+  usuariosFiltrados: UsuarioEsAmigoDTO[] = [];
+  searchingArroba = false;
+  searchFailedArroba = false;
+
 
   constructor(private router: Router,
     private publicacionService: PublicacionService,
+    private arrobaService: ArrobarService,
     private route: ActivatedRoute,
     private location: Location,
     private snackBar: MatSnackBar
@@ -52,7 +70,7 @@ export class CrearPublicacionComponent implements OnInit {
     this.location.back()
   }
 
-  savePublicacion(): void {
+/*   savePublicacion(): void {
     this.publicacion.fechaDeCreacion = new Date().toISOString();
     if (this.tipo === 'comunidad' && this.idComunidad) {
       this.publicacionService.publicarEnComunidad(this.publicacion, this.idComunidad).subscribe(() => {
@@ -63,7 +81,68 @@ export class CrearPublicacionComponent implements OnInit {
         this.location.back()
       });
     }
-  }
+  } */
+
+    savePublicacion(): void {
+      this.publicacion.fechaDeCreacion = new Date().toISOString();
+    
+      // Guardar publicación dependiendo del tipo
+      const saveObservable = this.tipo === 'comunidad' && this.idComunidad
+        ? this.publicacionService.publicarEnComunidad(this.publicacion, this.idComunidad)
+        : this.publicacionService.saveConCreador(this.publicacion);
+    
+      saveObservable.subscribe({
+        next: (publicacionGuardada) => {
+          // Suponiendo que el id de la publicación se retorna en la respuesta
+          const p = publicacionGuardada.data as unknown as Publicacion;
+          const idPublicacion = p.id;
+    
+          // Extraer usuarios etiquetados del texto
+          const usuariosEtiquetados = this.extraerUsuariosEtiquetados(this.publicacion.texto);
+    
+         // Llamar al servicio de arrobar para cada usuario etiquetado
+          usuariosEtiquetados.forEach((usuario) => {
+            this.arrobaService.arrobarEnPublicacion(usuario.id, idPublicacion).subscribe({
+              next: () => {
+                console.log(`Usuario ${usuario.nombreUsuario} etiquetado en la publicación.`);
+              },
+              error: (err) => {
+                console.error(`Error al etiquetar a ${usuario.nombreUsuario}:`, err);
+              }
+            });
+          }); 
+      
+    
+          //si descomento esto no anda. ademas no anda en el caso de etiquetar a mas de 1 persona
+          // Regresar a la página anterior
+          //this.location.back();
+        },
+        error: (err) => {
+          console.error('Error al guardar la publicación:', err);
+        }
+      });
+    }
+
+    private extraerUsuariosEtiquetados(texto: string): Usuario[] {
+      const regex = /@(\w+)/g; // Coincide con palabras que comienzan con '@'
+      const usuariosMencionados = [];
+      let match;
+    
+      while ((match = regex.exec(texto)) !== null) {
+        const nombreUsuario = match[1];
+        const usuario = this.usuariosFiltrados.find(u => u.usuario.nombreUsuario === nombreUsuario);
+    
+        if (usuario) {
+          usuariosMencionados.push(usuario.usuario); // Agregar el usuario encontrado
+        }
+      }
+    
+      return usuariosMencionados;
+    }
+    
+
+
+
 
   onFileSelect(event: any) {
     const file = event.target.files[0];
@@ -132,6 +211,57 @@ export class CrearPublicacionComponent implements OnInit {
     this.tipoArchivo = '';
     this.formatoValido = false;
     this.publicacion.file = '';
+  }
+
+
+  searchUsuarios = (text$: Observable<string>): Observable<UsuarioEsAmigoDTO[]> =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      filter((term) => term.startsWith('@') && term.length > 1),
+      tap(() => (this.searchingArroba = true)),
+      switchMap((term) =>
+        this.arrobaService.listaUsuarios(term.slice(1)).pipe(
+          map((response) => response as unknown as UsuarioEsAmigoDTO[]),
+          catchError(() => {
+            this.searchFailedArroba = true;
+            return of([]);
+          })
+        )
+
+      ),
+      tap(() => (this.searchingArroba = false))
+    );
+  onTextChange(event: Event): void {
+    const input = (event.target as HTMLInputElement).value;
+    const words = input.split(' ');
+    const lastWord = words[words.length - 1];
+    if (lastWord.startsWith('@') && lastWord.length > 1) {
+      const textObservable = of(lastWord);
+      this.searchUsuarios(textObservable).subscribe((results) => {
+        this.usuariosFiltrados = results;
+      });
+    }
+    else {
+      this.usuariosFiltrados = [];
+    }
+
+  }
+
+  resultFormatUsuario(value: Usuario) {
+    return value.nombreUsuario;
+  }
+
+  inputFormatEtiqueta(value: Usuario) {
+    return value ? value.nombreUsuario : '';
+  }
+
+  // Método para agregar un usuario mencionado
+  addUsuario(usuario: UsuarioEsAmigoDTO): void {
+    const words = this.publicacion.texto.split(' ');
+    words[words.length - 1] = `@${usuario.usuario.nombreUsuario}`;
+    this.publicacion.texto = words.join(' ');
+    this.usuariosFiltrados = [];
   }
 }
 
