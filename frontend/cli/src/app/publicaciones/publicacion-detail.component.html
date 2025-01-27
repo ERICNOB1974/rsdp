@@ -37,8 +37,17 @@
     </div>
 
 
-    <div class="comment-input-container">
-      <textarea [(ngModel)]="comment" class="form-control" placeholder="Escribe tu comentario aquí"></textarea>
+    <div *ngIf="showCommentInput" class="comment-input-container">
+      <input [(ngModel)]="comment" name="descripcion" class="form-control" (input)="onTextChange($event)"
+        placeholder="Escribe tu comentario con @ para mencionar usuarios..." />
+
+      <ul *ngIf="usuariosFiltrados.length > 0" class="suggestions">
+        <li *ngFor="let usuario of usuariosFiltrados" (click)="addUsuarioComentario(usuario)">
+          {{ usuario.usuario.nombreUsuario }}
+        </li>
+      </ul>
+      
+
       <button class="btn btn-success" (click)="submitComment()">Enviar</button>
     </div>
 
@@ -74,9 +83,8 @@
         </button>
 
         <div class="likes-container" style="display: flex; align-items: center; margin-top: 10px;">
-          <i class="heart"
-             [ngClass]="com.estaLikeado ? 'fas fa-heart liked' : 'far fa-heart'"
-             (click)="toggleLikeComentario(com)">
+          <i class="heart" [ngClass]="com.estaLikeado ? 'fas fa-heart liked' : 'far fa-heart'"
+            (click)="toggleLikeComentario(com)">
           </i>
           <span class="likes-count" style="margin-left: 8px;">{{ com.cantidadLikes || 0 }} likes</span>
         </div>
@@ -92,6 +100,11 @@
           style="margin-top: 10px; padding: 10px; background-color: #f1f1f1; border-radius: 8px;">
           <textarea [(ngModel)]="replyText" class="form-control" placeholder="Escribe tu respuesta aquí"
             style="width: 100%; border-radius: 5px; padding: 10px; border: 1px solid #ddd;"></textarea>
+          <ul *ngIf="usuariosFiltrados.length > 0" class="suggestions">
+            <li *ngFor="let usuario of usuariosFiltrados" (click)="addUsuarioRespuesta(usuario)">
+              {{ usuario.usuario.nombreUsuario }}
+            </li>
+          </ul>
           <button class="btn btn-primary" (click)="submitReply(com.id)"
             style="margin-top: 5px; float: right;">Enviar</button>
         </div>
@@ -115,11 +128,10 @@
                 }}</span>
             </div>
             <div class="likes-container" style="display: flex; align-items: center; margin-top: 10px;">
-              <i class="heart"
-                 [ngClass]="reply.estaLikeado ? 'fas fa-heart liked' : 'far fa-heart'"
-                 (click)="toggleLikeComentario(reply)">
+              <i class="heart" [ngClass]="reply.estaLikeado ? 'fas fa-heart liked' : 'far fa-heart'"
+                (click)="toggleLikeComentario(reply)">
               </i>
-              
+
               <span class="likes-count" style="margin-left: 16px;">{{ reply.cantidadLikes }} likes</span>
             </div>
           </div>
