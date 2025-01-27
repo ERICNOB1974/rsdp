@@ -17,6 +17,20 @@
         </ul>
       </div>
   
+
+<!--       <div *ngIf="showCommentInput" class="comment-input-container">
+        <textarea [(ngModel)]="comment" class="form-control" placeholder="Escribe tu comentario aquí"></textarea>
+       
+        <ul *ngIf="usuariosFiltrados.length > 0" class="suggestions">
+          <li *ngFor="let usuario of usuariosFiltrados" (click)="addUsuario(usuario)">
+            {{ usuario.usuario.nombreUsuario }}
+          </li>
+        </ul>
+
+        <button class="btn btn-success" (click)="submitComment()">Enviar</button>
+      </div> -->
+
+
       <!-- Área de arrastrar y soltar o eliminar archivo -->
       <div *ngIf="!formatoValido" class="drag-drop-area" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
         <p>Arrastra y suelta una imagen o video aquí, o selecciona uno desde tus archivos.</p>

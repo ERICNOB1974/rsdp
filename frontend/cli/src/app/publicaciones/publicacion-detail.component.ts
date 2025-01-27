@@ -13,6 +13,9 @@ import { Usuario } from '../usuarios/usuario';
 import { UsuarioService } from '../usuarios/usuario.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ComentarioService } from '../comentarios/comentario.service';
+import { UsuarioEsAmigoDTO } from '../arrobar/UsuarioEsAmigoDTO';
+import { ArrobarService } from '../arrobar/arrobar.service';
+import { catchError, debounceTime, distinctUntilChanged, filter, map, Observable, of, switchMap, tap } from 'rxjs';
 
 
 
@@ -20,7 +23,7 @@ import { ComentarioService } from '../comentarios/comentario.service';
   selector: 'app-publicaciones',
   templateUrl: './publicacion-detail.component.html',
   imports: [CommonModule, FormsModule, RouterModule],
-  styleUrls: ['./publicacion-detail.component.css'],
+  styleUrls: ['./publicacion-detail.component.css', '../css/arroba.css'],
   standalone: true
 })
 export class PublicacionDetailComponent implements OnInit {
@@ -34,6 +37,10 @@ export class PublicacionDetailComponent implements OnInit {
   currentPageLikes: number = 0; // Página actual para paginación
   @ViewChild('modalLikes') modalLikes!: TemplateRef<any>;
   usuario: Usuario | null = null;
+  usuariosMencionados: Usuario[] = [];
+  usuariosFiltrados: UsuarioEsAmigoDTO[] = [];
+  searchingArroba = false;
+  searchFailedArroba = false;
 
 
   constructor(
@@ -45,7 +52,8 @@ export class PublicacionDetailComponent implements OnInit {
     private router: Router,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-    private authService: AuthService
+    private authService: AuthService,
+    private arrobaService: ArrobarService
   ) { }
 
   isLiked: boolean = false;
@@ -77,6 +85,17 @@ export class PublicacionDetailComponent implements OnInit {
       cantidadLikes: number;
     }
   } = {};
+
+  ngOnInit(): void {
+    this.getPublicacion();
+    this.getUsuario();
+    //this.cargarComentarios();
+    //this.traerParticipantes();
+    this.updateDisplayedComments();
+    this.checkIfOwnPublication();
+
+  }
+
 
   toggleLike() {
     if (this.isLiked) {
@@ -173,12 +192,16 @@ export class PublicacionDetailComponent implements OnInit {
 
   submitComment() {
     if (this.comment.trim()) {
+      //console.info(this.publicacion.id, this.comment);
       this.comentarioService.comentar(this.publicacion.id, this.comment).subscribe(
         (response: any) => {
           const usuarioId = this.authService.getUsuarioId();
           const idUsuarioAutenticado = Number(usuarioId);
+          //console.info("ID comentario ",  response.data.id);
+          const comentarioAux = response.data as Comentario
+          console.info(comentarioAux)
           const newComment: Comentario = {
-            id: 0, // Asegúrate de que el servidor devuelve el ID del nuevo comentario
+            id: response.data.id,
             texto: this.comment,
             fecha: new Date(),
             usuario: {
@@ -199,6 +222,8 @@ export class PublicacionDetailComponent implements OnInit {
             respuestas: []
           };
 
+          this.arrobar(this.comment, response.data.id);
+
           // Añadir el nuevo comentario al principio de la lista
           this.comentarios.unshift(newComment);
 
@@ -216,15 +241,7 @@ export class PublicacionDetailComponent implements OnInit {
       );
     }
   }
-  ngOnInit(): void {
-    this.getPublicacion();
-    this.getUsuario();
-    //this.cargarComentarios();
-    //this.traerParticipantes();
-    this.updateDisplayedComments();
-    this.checkIfOwnPublication();
 
-  }
 
 
 
@@ -277,8 +294,8 @@ export class PublicacionDetailComponent implements OnInit {
     comentario.estaLikeado = !estabaLikeado;
     comentario.cantidadLikes += estabaLikeado ? -1 : 1;
   }
-    deletePublicacion(): void {
-      if(confirm('¿Estás seguro de que quieres eliminar esta publicación?')) {
+  deletePublicacion(): void {
+    if (confirm('¿Estás seguro de que quieres eliminar esta publicación?')) {
       this.publicacionService.eliminar(this.publicacion.id).subscribe(
         () => {
           this.snackBar.open('Publicación eliminada con éxito', 'Cerrar', { duration: 3000 });
@@ -374,6 +391,7 @@ export class PublicacionDetailComponent implements OnInit {
             estaLikeado: false
           };
 
+          this.arrobar(this.replyText, response.data.id);
           // Encuentra el comentario original
           const comentarioOriginal = this.comentarios.find(c => c.id === commentId);
 
@@ -540,5 +558,91 @@ export class PublicacionDetailComponent implements OnInit {
   }
 
 
+  private extraerUsuariosEtiquetados(texto: string): Usuario[] {
+    const regex = /@(\w+)/g;
 
+    const usuariosEtiquetados = [];
+    let match;
+
+    while ((match = regex.exec(texto)) !== null) {
+      const nombreUsuario = match[1];
+      const usuario = this.usuariosMencionados.find(u => u.nombreUsuario === nombreUsuario);
+
+      if (usuario) {
+        usuariosEtiquetados.push(usuario); // Agregar el usuario encontrado
+      }
+    }
+    return usuariosEtiquetados;
+  }
+
+
+  // Método para agregar un usuario mencionado
+  addUsuarioComentario(usuario: UsuarioEsAmigoDTO): void {
+    const words = this.comment.split(' ');
+    words[words.length - 1] = `@${usuario.usuario.nombreUsuario}`;
+    this.comment = words.join(' ');
+    this.usuariosMencionados.push(usuario.usuario); // Agregar el usuario encontrado
+
+    //this.usuariosFiltrados = [];
+  }
+  addUsuarioRespuesta(usuario: UsuarioEsAmigoDTO): void {
+    const words = this.replyText.split(' ');
+    words[words.length - 1] = `@${usuario.usuario.nombreUsuario}`;
+    this.replyText = words.join(' ');
+    this.usuariosMencionados.push(usuario.usuario); // Agregar el usuario encontrado
+
+    //this.usuariosFiltrados = [];
+  }
+
+
+  arrobar(texto: string, idComentario: number) {
+    const usuariosEtiquetados = this.extraerUsuariosEtiquetados(texto);
+    // Llamar al servicio de arrobar para cada usuario etiquetado
+    usuariosEtiquetados.forEach((usuario) => {
+      this.arrobaService.arrobarEnComentario(usuario.id, idComentario).subscribe({
+        next: () => {
+          console.log(`Usuario ${usuario.nombreUsuario} etiquetado en el comentario.`);
+        },
+        error: (err) => {
+          console.error(`Error al etiquetar a ${usuario.nombreUsuario}:`, err);
+        }
+      });
+    });
+  }
+
+
+  searchUsuarios = (text$: Observable<string>): Observable<UsuarioEsAmigoDTO[]> =>
+    text$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      filter((term) => term.startsWith('@') && term.length > 1),
+      tap(() => (this.searchingArroba = true)),
+      switchMap((term) =>
+        this.arrobaService.listaUsuarios(term.slice(1)).pipe(
+          map((response) => response as unknown as UsuarioEsAmigoDTO[]),
+          catchError(() => {
+            this.searchFailedArroba = true;
+            return of([]);
+          })
+        )
+
+      ),
+      tap(() => (this.searchingArroba = false))
+    );
+
+  onTextChange(event: Event): void {
+    const input = (event.target as HTMLInputElement).value;
+    const words = input.split(' ');
+    const lastWord = words[words.length - 1];
+    if (lastWord.startsWith('@') && lastWord.length > 1) {
+      const textObservable = of(lastWord);
+      this.searchUsuarios(textObservable).subscribe((results) => {
+        this.usuariosFiltrados = results;
+      });
+    }
+    else {
+      this.usuariosFiltrados = [];
+    }
+
+  }
 }
