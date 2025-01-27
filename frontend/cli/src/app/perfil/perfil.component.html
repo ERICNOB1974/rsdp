@@ -78,11 +78,6 @@
                             </div>
                             <div class="publicacion-fecha">{{ publicacion.fechaDeCreacion | date:'medium' }}</div>
                         </div>
-                        <button *ngIf="esMiPerfil"
-                            (click)="confirmarEliminarPublicacion(publicacion.id); $event.stopPropagation(); $event.preventDefault()"
-                            class="btn-eliminar">
-                            Eliminar
-                        </button>
                     </div>
                 </div>
             </div>
