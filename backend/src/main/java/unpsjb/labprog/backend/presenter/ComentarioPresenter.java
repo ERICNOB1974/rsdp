@@ -45,8 +45,8 @@ public class ComentarioPresenter {
     public ResponseEntity<Object> comentar(@PathVariable Long idUsuario, @PathVariable Long idPublicacion,
             @RequestBody String comentario)
             throws Exception {
-        comentarioService.comentar(idUsuario, idPublicacion, comentario);
-        return Response.ok(null, "OK");
+        Comentario coment = comentarioService.comentar(idUsuario, idPublicacion, comentario);
+        return Response.ok(coment, "OK");
     }
 
     @GetMapping("/respuestas/{comentarioPadreId}")

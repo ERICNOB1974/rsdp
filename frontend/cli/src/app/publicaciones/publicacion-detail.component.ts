@@ -227,9 +227,7 @@ export class PublicacionDetailComponent implements OnInit {
           // Añadir el nuevo comentario al principio de la lista
           this.comentarios.unshift(newComment);
 
-          // Limpiar el campo de texto y ocultar el input
-          this.comment = '';
-          this.showCommentInput = false;
+       
 
           // Actualizar los comentarios mostrados
           this.updateDisplayedComments();
@@ -241,6 +239,7 @@ export class PublicacionDetailComponent implements OnInit {
       );
     }
   }
+
 
 
 
@@ -368,7 +367,7 @@ export class PublicacionDetailComponent implements OnInit {
         (response: any) => {
           const usuarioId = this.authService.getUsuarioId();
           const idUsuarioAutenticado = Number(usuarioId);
-
+  
           const nuevaRespuesta: Comentario = {
             id: response.data.id, // ID de la respuesta desde el backend
             texto: this.replyText,
@@ -392,32 +391,42 @@ export class PublicacionDetailComponent implements OnInit {
           };
 
           this.arrobar(this.replyText, response.data.id);
+
           // Encuentra el comentario original
           const comentarioOriginal = this.comentarios.find(c => c.id === commentId);
-
+  
           if (!comentarioOriginal) {
             console.error(`No se encontró el comentario con ID: ${commentId}`);
             return; // Salir si no se encuentra
           }
-
+  
           // Asegúrate de que 'respuestas' esté inicializado
           if (!comentarioOriginal.respuestas) {
             comentarioOriginal.respuestas = [];
           }
-
+  
           // Agrega la nueva respuesta al array
           comentarioOriginal.respuestas.unshift(nuevaRespuesta);
-
-          // Opcional: manejar la paginación de respuestas
-          if (this.respuestaPaginacion[commentId]) {
+  
+          // Inicializa o actualiza la estructura de paginación
+          if (!this.respuestaPaginacion[commentId]) {
+            this.respuestaPaginacion[commentId] = {
+              paginaActual: 1, // Inicializamos la página actual como 1
+              totalRespuestas: 1, // Iniciamos con 1 respuesta
+              respuestas: [nuevaRespuesta], // Agregamos la nueva respuesta
+              mostrarRespuestas: true, // Por defecto mostramos las respuestas
+              estaLikeado: false, // Por defecto no está likeado
+              cantidadLikes: 0 // Sin likes iniciales
+            };
+          } else {
             this.respuestaPaginacion[commentId].respuestas.unshift(nuevaRespuesta);
             this.respuestaPaginacion[commentId].totalRespuestas++;
           }
-
+  
           // Limpiar el campo de texto y ocultar el input de respuesta
           this.replyText = '';
           this.showReplyInput = false;
-
+  
           // Opcional: mostrar una notificación
           this.snackBar.open('Respuesta agregada con éxito', 'Cerrar', { duration: 3000 });
         },
@@ -428,6 +437,7 @@ export class PublicacionDetailComponent implements OnInit {
       );
     }
   }
+  
 
   /*  cargarRespuestas(comentario: Comentario) {
     this.comentarioService.getRespuestas(comentario.id, 0, this.pageSize)
@@ -529,24 +539,24 @@ export class PublicacionDetailComponent implements OnInit {
       () => {
         // Filtrar comentarios principales
         this.comentarios = this.comentarios.filter(c => c.id !== comentarioId);
-
+  
         // Filtrar respuestas en los comentarios existentes
         this.comentarios.forEach(comentario => {
           if (comentario.respuestas) {
             // Eliminar respuesta si existe
             comentario.respuestas = comentario.respuestas.filter(respuesta => respuesta.id !== comentarioId);
-
+  
             // Si se utiliza paginación, actualizar el mapa de respuestas
             if (this.respuestaPaginacion[comentario.id]) {
               // Filtrar respuesta eliminada en el mapa de respuestas paginadas
               this.respuestaPaginacion[comentario.id].respuestas = this.respuestaPaginacion[comentario.id].respuestas.filter(r => r.id !== comentarioId);
-
+  
               // Actualizar el contador de respuestas restantes
               this.respuestaPaginacion[comentario.id].totalRespuestas--;
             }
           }
         });
-
+  
         // Mostrar mensaje de éxito
         this.snackBar.open('Comentario eliminado con éxito', 'Cerrar', { duration: 3000 });
       },
@@ -556,7 +566,7 @@ export class PublicacionDetailComponent implements OnInit {
       }
     );
   }
-
+  
 
   private extraerUsuariosEtiquetados(texto: string): Usuario[] {
     const regex = /@(\w+)/g;
