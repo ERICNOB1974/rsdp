@@ -40,8 +40,8 @@
   
       <!-- Vista previa y botón de eliminar -->
       <div *ngIf="formatoValido">
-        <img *ngIf="tipoArchivo === 'image'" [src]="vistaPreviaArchivo" alt="Vista previa de la imagen" />
-        <video *ngIf="tipoArchivo === 'video'" [src]="vistaPreviaArchivo" controls></video>
+        <img *ngIf="tipoArchivo === 'image'" [src]="vistaPreviaArchivo" class="vista-previa-imagen" alt="Vista previa de la imagen" />
+        <video *ngIf="tipoArchivo === 'video'" [src]="vistaPreviaArchivo" class="vista-previa-imagen" controls></video>
         <button type="button" (click)="eliminarArchivo()" class="btn btn-danger mt-2">Eliminar archivo</button>
       </div>
   

@@ -37,6 +37,8 @@ export class AmigosComponent implements OnInit {
   usuariosBuscados: Usuario[] = []; //PARA BUSCAR USUARIOS
   cantidadPorPagina = 6;
   textoBuscador: string = '';
+  searchTimeout: any // Variable para almacenar el timer
+
 
   constructor(private usuarioService: UsuarioService,
     private authService: AuthService,  // Inyecta el AuthService
@@ -229,36 +231,44 @@ export class AmigosComponent implements OnInit {
   buscarUsuarios(texto: string): void {
     this.textoBuscador = texto; // Actualizar el texto del buscador
 
-    // Restablecer índices y datos de cada lista al buscar
-    this.currentIndexAmigos = 0;
-    this.currentIndexSolicitudesRecibidas = 0;
-    this.currentIndexSolicitudesEnviadas = 0;
-    this.currentIndexUsuarios = 0;
-    this.noMasAmigos = false;
-    this.noMasUsuarios = false;
-    this.noMasSolicitudesRecibidas = false;
-    this.noMasSolicitudesEnviadas = false;
-    this.amigos = [];
-    this.solicitudes = [];
-    this.solicitudesEnviadas = [];
-    this.usuariosBuscados = [];
-
-    // Llamar al método correspondiente según el tab activo
-    switch (this.estadoActual) {
-      case 'amigos':
-        this.obtenerAmigos();
-        break;
-      case 'solicitudes':
-        this.obtenerSolicitudes();
-        this.obtenerSolicitudesEnviadas();
-        break;
-      case 'usuarios':
-        this.todosLosUsuarios();
-        break;
-      default:
-        console.error('Vista no reconocida:', this.estadoActual);
+    // Limpia el timer anterior, si existe
+    if (this.searchTimeout) {
+        clearTimeout(this.searchTimeout);
     }
-  }
+
+    // Configura un nuevo timer para ejecutar después de 1 segundo
+    this.searchTimeout = setTimeout(() => {
+        // Restablecer índices y datos de cada lista al buscar
+        this.currentIndexAmigos = 0;
+        this.currentIndexSolicitudesRecibidas = 0;
+        this.currentIndexSolicitudesEnviadas = 0;
+        this.currentIndexUsuarios = 0;
+        this.noMasAmigos = false;
+        this.noMasUsuarios = false;
+        this.noMasSolicitudesRecibidas = false;
+        this.noMasSolicitudesEnviadas = false;
+        this.amigos = [];
+        this.solicitudes = [];
+        this.solicitudesEnviadas = [];
+        this.usuariosBuscados = [];
+
+        // Llamar al método correspondiente según el tab activo
+        switch (this.estadoActual) {
+            case 'amigos':
+                this.obtenerAmigos();
+                break;
+            case 'solicitudes':
+                this.obtenerSolicitudes();
+                this.obtenerSolicitudesEnviadas();
+                break;
+            case 'usuarios':
+                this.todosLosUsuarios();
+                break;
+            default:
+                console.error('Vista no reconocida:', this.estadoActual);
+        }
+    }, 1000); // Retraso de 1 segundo
+}
 
   cancelarSolicitudDeAmistad(idUsuarioCancelar: number): void {
     this.usuarioService.cancelarSolicitudAmistad(idUsuarioCancelar).subscribe({
