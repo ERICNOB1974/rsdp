@@ -601,7 +601,7 @@ contarUsuariosAnonimos(): void {
     }
 
     onScroll(tabName: string): void {
-        const element = document.querySelector('.publicaciones-list') as HTMLElement; //si se quiere hacer scroll en otros lados. llamar a todos con el mismo class en el div
+        const element = document.querySelector('.publicaciones-grid') as HTMLElement; //si se quiere hacer scroll en otros lados. llamar a todos con el mismo class en el div
 
         if (element) {
             // Detecta si se ha alcanzado el final del scroll
