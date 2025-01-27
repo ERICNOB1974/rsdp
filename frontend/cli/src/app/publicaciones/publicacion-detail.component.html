@@ -37,7 +37,7 @@
     </div>
 
 
-    <div *ngIf="showCommentInput" class="comment-input-container">
+    <div class="comment-input-container">
       <textarea [(ngModel)]="comment" class="form-control" placeholder="Escribe tu comentario aquí"></textarea>
       <button class="btn btn-success" (click)="submitComment()">Enviar</button>
     </div>

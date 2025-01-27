@@ -28,11 +28,11 @@ public class ComentarioService {
     @Autowired
     private ArrobarService arrobarService;
 
-    public void comentar(Long usuarioId, Long publicacionId, String comentario) {
+    public Comentario comentar(Long usuarioId, Long publicacionId, String comentario) {
         Long idCreador = this.obtenerCreadorPublicacion(publicacionId).getId();
         notificacionService.crearNotificacionPublicacion(idCreador, usuarioId, publicacionId, "COMENTARIO",
                 LocalDateTime.now());
-        comentarioRepository.comentar(usuarioId, publicacionId, comentario, ZonedDateTime.now());
+        return comentarioRepository.comentar(usuarioId, publicacionId, comentario, ZonedDateTime.now());
     }
 
     public List<Comentario> obtenerComentariosPorPublicacion(Long idPublicacion) {

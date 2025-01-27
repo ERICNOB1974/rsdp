@@ -38,8 +38,9 @@ public interface ComentarioRepository extends Neo4jRepository<Comentario, Long> 
        @Query("MATCH (u:Usuario), (p:Publicacion) " +
                      "WHERE id(u) = $usuarioId AND id(p) = $publicacionId " +
                      "CREATE (c:Comentario {texto: $texto, fecha: $fecha}) " +
-                     "CREATE (u)-[:HIZO]->(c)-[:PERTENECE_A]->(p)")
-       void comentar(Long usuarioId, Long publicacionId, String texto, ZonedDateTime fecha);
+                     "CREATE (u)-[:HIZO]->(c)-[:PERTENECE_A]->(p) "+
+                     "RETURN c")
+       Comentario comentar(Long usuarioId, Long publicacionId, String texto, ZonedDateTime fecha);
 
        @Query("MATCH (c:Comentario)-[:PERTENECE_A]->(p:Publicacion), " +
                      "(u:Usuario)-[:HIZO]->(c) " +
