@@ -39,18 +39,16 @@
 
     <div *ngIf="showCommentInput" class="comment-input-container">
       <input [(ngModel)]="comment" name="descripcion" class="form-control" (input)="onTextChange($event)"
-        placeholder="Escribe tu comentario con @ para mencionar usuarios..." />
+        placeholder="Escribe tu comentario con @ para mencionar usuarios..." (focus)="isReplying = false" />
 
-      <ul *ngIf="usuariosFiltrados.length > 0" class="suggestions">
+      <ul *ngIf=" !isReplying && usuariosFiltrados.length > 0" class="suggestions">
         <li *ngFor="let usuario of usuariosFiltrados" (click)="addUsuarioComentario(usuario)">
           {{ usuario.usuario.nombreUsuario }}
         </li>
       </ul>
-      
 
       <button class="btn btn-success" (click)="submitComment()">Enviar</button>
     </div>
-
 
 
     <div class="comments-section" style="font-family: Arial, sans-serif;">
@@ -98,9 +96,10 @@
         <!-- Campo para ingresar la respuesta -->
         <div *ngIf="com.id === currentCommentId && showReplyInput" class="comment-input-container"
           style="margin-top: 10px; padding: 10px; background-color: #f1f1f1; border-radius: 8px;">
-          <textarea [(ngModel)]="replyText" class="form-control" placeholder="Escribe tu respuesta aquí"
-            style="width: 100%; border-radius: 5px; padding: 10px; border: 1px solid #ddd;"></textarea>
-          <ul *ngIf="usuariosFiltrados.length > 0" class="suggestions">
+          <input [(ngModel)]="replyText" style="width: 100%; border-radius: 5px; padding: 10px; border: 1px solid #ddd;"
+            name="descripcion" class="form-control" (input)="onTextChange($event)"
+            placeholder="Escribe tu respuesta con @ para mencionar usuarios..." (focus)="isReplying = true" />
+          <ul *ngIf="isReplying && usuariosFiltrados.length > 0" class="suggestions">
             <li *ngFor="let usuario of usuariosFiltrados" (click)="addUsuarioRespuesta(usuario)">
               {{ usuario.usuario.nombreUsuario }}
             </li>
