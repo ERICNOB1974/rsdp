@@ -15,7 +15,7 @@ import { DataPackage } from '../data-package';
 import { lastValueFrom } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { EventoService } from '../eventos/evento.service';
-import { Comentario } from '../publicaciones/Comentario';
+import { Comentario } from '../comentarios/Comentario';
 
 @Component({
     selector: 'app-editar-comunidad',
@@ -34,7 +34,7 @@ export class MuroComunidadComponent implements OnInit {
     tabSeleccionada: string = 'publicaciones';
     esCreador: boolean = false;
     creadorComunidad!: Usuario;
-    miembros: Usuario[] = [];
+    miembros: any[] = [];
     amigos!: Usuario[];
     administradores!: Usuario[];
     idUsuarioAutenticado!: number;
@@ -44,7 +44,7 @@ export class MuroComunidadComponent implements OnInit {
     visible: boolean = false;
     esAdministrador: boolean = false;
     currentIndexPublicaciones: number = 0;
-    cantidadPorPagina: number = 4;
+    cantidadPorPagina: number = 5;
     noMasPublicaciones: boolean = false;
     loandingPublicaciones: boolean = false;
     amigosNoEnComunidad: any[] = [];
@@ -54,8 +54,12 @@ export class MuroComunidadComponent implements OnInit {
     esFavorito: boolean = false;
     cargaInicial: number = 5; // Número inicial de elementos visibles
     cargaIncremento: number = 5; // Número de elementos adicionales cargados en cada scroll
-    miembrosVisiblesPaginados: any[] = []; // Almacena los usuarios visibles en la interfaz
-
+    searchTerm: string = '';  // Para almacenar el término de búsqueda
+    page: number = 0;         // Página actual
+    size: number = 5;        // Tamaño por página
+    miembrosVisiblesPaginados: any[] = [];  // Miembros visibles en la interfaz
+    loading: boolean = false;  // Para manejar el estado de carga
+    loadingScroll: boolean = false;
     buscador: string = '';
     amigosNoEnComunidadFiltrados: any[] = [];
     amigosEnComunidadFiltrados: any[] = [];
@@ -69,8 +73,10 @@ export class MuroComunidadComponent implements OnInit {
     mostrarMotivo: boolean = false;
     expulsado: boolean = false; // Indica si el usuario fue expulsado
     motivoExpulsion: string = '';
+    rolesCalculados: { [id: string]: string } = {};
 
     usuariosPublicadores: { [key: number]: Usuario } = {};
+    searchTimeout: any // Variable para almacenar el timer
 
     comentarios: { [key: number]: Comentario[] } = {}; // Para almacenar comentarios por publicación
     likesCount: { [key: number]: number } = {}; // Para almacenar cantidad de likes por publicación
@@ -93,6 +99,7 @@ export class MuroComunidadComponent implements OnInit {
         private cdr: ChangeDetectorRef,
         private dialog: MatDialog,
         private eventoService: EventoService
+
     ) { }
 
     ngOnInit(): void {
@@ -104,13 +111,13 @@ export class MuroComunidadComponent implements OnInit {
         }
         this.idUsuarioAutenticado = Number(this.authService.getUsuarioId());
         this.getComunidad().then(() => {
-            //this.traerMiembros(); //quien fue el gil
             if ((!this.comunidad.esPrivada) || (this.esParte)) {
                 this.getPublicaciones();
                 this.traerMiembros();
                 this.obtenerEventosDeLaComunidad();
             }
             this.checkExpulsion();
+            this.contarUsuariosAnonimos();
 
             if (this.esParte) {
                 this.comunidadService.esFavorita(this.comunidad.id).subscribe(dataPackage => {
@@ -323,16 +330,56 @@ export class MuroComunidadComponent implements OnInit {
       }
     
 
-    async traerMiembros(): Promise<void> {
-        this.usuarioService.miembrosComunidad(this.comunidad.id).subscribe(async dataPackage => {
+// Función para traer los miembros con paginación y término de búsqueda
+async traerMiembros(): Promise<void> {
+    if (this.loading) return;  // Evitar solicitudes repetidas mientras se cargan datos
+    this.loading = true;
+
+    // Llamada al servicio para obtener miembros filtrados por el término de búsqueda
+    this.usuarioService.buscarMiembro(this.comunidad.id, this.searchTerm, this.page, this.size)
+        .subscribe(async dataPackage => {
             if (Array.isArray(dataPackage.data)) {
-                this.miembros = dataPackage.data;
-                await this.obtenerAmigos(); // Espera a obtener amigos
+                console.info("datapackage ", dataPackage.data);
+                // Si es la primera página, reinicia la lista de miembros
+                if (this.page === 0) {
+                    this.miembros = dataPackage.data;
+
+                } else {
+                    // Si no es la primera página, agrega los nuevos miembros a la lista
+                    this.miembros = [...this.miembros, ...dataPackage.data];
+                }
+
+                // Realiza la obtención de amigos y administradores para el filtrado de visibilidad
+                //await this.obtenerAmigos();
                 await this.traerAdministradores();
-                this.filtrarMiembrosVisibles(); // Filtra miembros después de obtener amigos
             }
+            this.loadingScroll = false;
+            this.loading = false;
+        });
+}
+
+contarUsuariosAnonimos(): void {
+    if((this.comunidad.esPrivada) && (!this.esParte)){
+        this.comunidadService.cantidadMiembrosEnComunidad(this.comunidad.id).subscribe(
+            (dataPackage) => {
+                console.info("menor");
+              if (dataPackage && typeof dataPackage.data === 'number') {
+                this.comunidad.participantes = dataPackage.data; // Asignar el número de miembros
+                this.usuariosAnonimos=this.comunidad.participantes-1;
+              }
+            },
+            (error) => {
+              console.error(`Error al traer los miembros de la comunidad ${this.comunidad.id}:`, error);
+            }
+          );
+
+    }else{
+   
+        this.usuarioService.contarUsuariosAnonimos(this.comunidad.id).subscribe((dataPackage: DataPackage) => {
+            this.usuariosAnonimos = Number(dataPackage.data); // Convierte explícitamente a number
         });
     }
+}
 
     obtenerAmigos(): Promise<void> {
         return new Promise((resolve, reject) => {
@@ -359,7 +406,7 @@ export class MuroComunidadComponent implements OnInit {
             this.cantidadMiembros = <number><unknown>dataPackage.data;
             this.comunidad.miembros=<number><unknown>dataPackage.data;
             this.comunidad.participantes=this.cantidadMiembros;
-            this.usuariosAnonimos = this.cantidadMiembros - 1;
+           // this.usuariosAnonimos = this.cantidadMiembros - 1;
 
         });
     }
@@ -424,7 +471,7 @@ export class MuroComunidadComponent implements OnInit {
                     await this.procesarEstado(); // Asegúrate de que procesarEstado complete
                     await this.getCreadorOAdministradorComunidad();
                         this.getCantidadMiembros();
-                        this.usuariosAnonimos = this.miembros.length - 1;
+                       //this.usuariosAnonimos = this.miembros.length - 1;
                     
                     resolve();
                 });
@@ -470,67 +517,6 @@ export class MuroComunidadComponent implements OnInit {
         });
     }
 
-    filtrarMiembrosVisibles(): void {
-        // Verificamos que los datos requeridos estén definidos
-        if (!this.amigos || !this.miembros || !this.administradores) {
-            console.error("Amigos, miembros o administradores no están definidos.");
-            return;
-        }
-    
-        const amigosIds = this.amigos.map(amigo => amigo.id);
-        this.miembrosVisibles = []; // Reiniciamos la lista de miembros visibles
-        this.usuariosAnonimos = 0; // Reiniciamos el conteo de usuarios anónimos
-    
-        const creador = this.miembros[0]; // Asumiendo que `this.miembros[0]` es el creador
-        if (creador) {
-            this.miembrosVisibles.push(creador);
-        }
-    
-        // Agregar administradores a la lista visible
-        this.administradores.forEach(admin => {
-            if (!this.miembrosVisibles.some(m => m.id === admin.id)) {
-                this.miembrosVisibles.push(admin);
-            }
-        });
-    
-        // Verificamos si la comunidad es privada
-        if ((!this.comunidad.esPrivada) || ((this.comunidad.esPrivada) && (this.esParte))) {
-    
-            // Iterar sobre los miembros y añadir solo aquellos que sean visibles
-            this.miembros.forEach(miembro => {
-                if (miembro.id === this.idUsuarioAutenticado) {
-                    if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
-                        this.miembrosVisibles.push(miembro);
-                    }
-                } else if (miembro.id == this.creadorComunidad.id) {
-                    if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
-                        this.miembrosVisibles.push(miembro);
-                    }
-                } else if (this.esCreador || this.administradores.some(admin => admin.id === this.idUsuarioAutenticado)) {
-                    if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
-                        this.miembrosVisibles.push(miembro);
-                    }
-                } else {
-                    if (miembro.privacidadComunidades === 'Pública') {
-                        if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
-                            this.miembrosVisibles.push(miembro);
-                        }
-                    } else if (miembro.privacidadComunidades === 'Solo amigos' && amigosIds.includes(miembro.id)) {
-                        if (!this.miembrosVisibles.some(m => m.id === miembro.id)) {
-                            this.miembrosVisibles.push(miembro);
-                        }
-                    } else {
-                        if (!this.administradores.some(admin => admin.id === miembro.id)) {
-                            this.usuariosAnonimos++;
-                        }
-                    }
-                }
-            });
-        } else if (!this.esParte && this.comunidad.esPrivada) {
-            this.usuariosAnonimos = this.miembros.length - 1;
-        }
-        this.miembrosVisiblesPaginados = this.miembrosVisibles.slice(0, this.cargaInicial);
-    }
     
 
     ingresar(): void {
@@ -602,17 +588,20 @@ export class MuroComunidadComponent implements OnInit {
     }
 
     obtenerRol(miembro: Usuario): string {
-        if (miembro.id === this.creadorComunidad.id) {
-            return 'Creador';
-        } else if (this.administradores.includes(miembro)) {
-            return 'Administrador';
-        } else {
-            return 'Miembro';
+        if (!this.rolesCalculados[miembro.id]) {
+            if (miembro.id === this.creadorComunidad.id) {
+                this.rolesCalculados[miembro.id] = 'Creador';
+            } else if (this.administradores.some(admin => admin.id === miembro.id)) {
+                this.rolesCalculados[miembro.id] = 'Administrador';
+            } else {
+                this.rolesCalculados[miembro.id] = 'Miembro';
+            }
         }
+        return this.rolesCalculados[miembro.id];
     }
 
     onScroll(tabName: string): void {
-        const element = document.querySelector('.publicaciones-list') as HTMLElement; //si se quiere hacer scroll en otros lados. llamar a todos con el mismo class en el div
+        const element = document.querySelector('.publicaciones-grid') as HTMLElement; //si se quiere hacer scroll en otros lados. llamar a todos con el mismo class en el div
 
         if (element) {
             // Detecta si se ha alcanzado el final del scroll
@@ -632,12 +621,21 @@ export class MuroComunidadComponent implements OnInit {
         }
     }
 
-    onScrollMiembros(): void {
+  /*   onScrollMiembros(): void {
         const element = document.querySelector('.perfil-miembros') as HTMLElement;
         if (element.scrollTop + element.clientHeight >= element.scrollHeight - 10) {
             this.cargarMasMiembros();
         }
-    }
+    } */
+    
+        onScrollMiembros(): void {
+            const element = document.querySelector('.perfil-miembros') as HTMLElement;
+            if (!this.loadingScroll && element.scrollTop + element.clientHeight >= element.scrollHeight - 10) {
+              this.loadingScroll = true;  // Marca como en proceso de carga
+              this.page++;
+              this.traerMiembros();  // Llama a la función de carga de miembros con la nueva página
+            }
+          }
 
     cargarMasMiembros(): void {
         const totalCargados = this.miembrosVisiblesPaginados.length;
@@ -665,4 +663,20 @@ export class MuroComunidadComponent implements OnInit {
     goToPerfil(usuarioId: number) {
         this.router.navigate(['/perfil', usuarioId]); // Ajusta la ruta según tu configuración de enrutamiento
       }
+
+
+      buscarMiembros(): void {
+        // Limpia el timer anterior, si existe
+        if (this.searchTimeout) {
+          clearTimeout(this.searchTimeout);
+        }
+      
+        // Configura un nuevo timer para ejecutar después de 2 segundos
+        this.searchTimeout = setTimeout(() => {
+          this.miembrosVisiblesPaginados = [];
+          this.page = 0; // Reinicia la página cuando cambia el término de búsqueda
+          this.traerMiembros(); // Trae los miembros con el nuevo término
+        }, 1000); // Retraso de 2 segundos
+      }
+      
 }

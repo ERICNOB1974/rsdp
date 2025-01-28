@@ -96,6 +96,20 @@ export class AuthService {
   getCorreoElectronico(): string | null {
     return localStorage.getItem('correoElectronico');
   }
+
+  getNombreReal(): string | null {
+    return localStorage.getItem('nombreReal');
+  }
+
+
+  
+
+  
+  getFotoPerfil(): string | null {
+    return localStorage.getItem('fotoPerfil');
+  }
+  
+  
   
   logout() {
     this.http.post(`${this.autenticacionUrl}/logout`, {}).subscribe({

@@ -1,20 +1,21 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PublicacionService } from '../publicaciones/publicacion.service';
-import { Publicacion } from '../publicaciones/publicacion';
 import { AuthService } from '../autenticacion/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Usuario } from '../usuarios/usuario';
-import { Comentario } from '../publicaciones/Comentario';
+import { Comentario } from '../comentarios/Comentario';
 import { PublicacionDto } from './PublicacionesDto';
+import { ComentarioService } from '../comentarios/comentario.service';
+import { WebSocketService } from '../tiempoReal/webSocketService';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css', './tiempoReal.css']
 })
 export class HomeComponent implements OnInit {
   publicaciones: PublicacionDto[] = [];
@@ -29,13 +30,28 @@ export class HomeComponent implements OnInit {
   newComments: { [key: number]: string } = {}; // Para manejar nuevos comentarios
   showCommentInput: { [key: number]: boolean } = {}; // Para mostrar/ocultar input de comentarios
 
+  mostrarBotonActualizar: boolean = false; // Controlar visibilidad del botón
+
+  posicionBoton = { top: 100, left: 500 }; // Posición inicial del botón
+
   constructor(
     private publicacionService: PublicacionService,
+    private comentarioService: ComentarioService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private webSocketService: WebSocketService // Inyectar el servicio
+
   ) { }
 
   ngOnInit() {
+    this.webSocketService.connect(); // Establecer conexión con WebSocket
+
+    // Suscribirse a nuevas publicaciones
+    this.webSocketService.nuevasPublicaciones$.subscribe(() => {
+      this.mostrarBotonActualizar = true; // Mostrar botón cuando haya una nueva publicación
+      //this.moverBoton(); // Activar movimiento cuando aparezca
+
+    });
     this.loadPublicaciones();
   }
 
@@ -77,13 +93,38 @@ export class HomeComponent implements OnInit {
       console.warn('No se encontró el ID del usuario autenticado.');
       this.loading = false;
     }
+    this.mostrarBotonActualizar = false; // Ocultar el botón después de cargar
+
   }
 
+  actualizarPublicaciones(): void {
+    window.location.reload()
+    //this.loadPublicaciones(); // Recargar publicaciones
+  }
+
+ /*  moverBoton(): void {
+    // Mueve el botón a una posición aleatoria cada 2 segundos
+    const interval = setInterval(() => {
+      if (!this.mostrarBotonActualizar) {
+        clearInterval(interval); // Detener el movimiento si el botón está oculto
+        return;
+      }
+
+      const maxX = window.innerWidth - 150; // Ancho máximo (ajustado al tamaño del botón)
+      const maxY = window.innerHeight - 50; // Alto máximo
+
+      this.posicionBoton = {
+        top: Math.random() * maxY,
+        left: Math.random() * maxX,
+      };
+    }, 2000); // Intervalo de movimiento
+  } */
 
 
   loadComentarios(publicacionId: number) {
-    this.publicacionService.comentarios(publicacionId).subscribe(dataPackage => {
+    this.comentarioService.obtenerComentariosPorPublicacion(publicacionId).subscribe(dataPackage => {
       if (dataPackage.status === 200) {
+        // Asumiendo que dataPackage.data es un array de comentarios con su usuario
         this.comentarios[publicacionId] = dataPackage.data as Comentario[];
       }
     });
@@ -109,7 +150,7 @@ export class HomeComponent implements OnInit {
   submitComment(publicacionId: number, event: Event) {
     event.stopPropagation();
     if (this.newComments[publicacionId]?.trim()) {
-      this.publicacionService.comentar(publicacionId, this.newComments[publicacionId]).subscribe(
+      this.comentarioService.comentar(publicacionId, this.newComments[publicacionId]).subscribe(
         () => {
           // Recargar comentarios después de agregar uno nuevo
           this.loadComentarios(publicacionId);

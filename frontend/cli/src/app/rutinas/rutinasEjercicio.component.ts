@@ -124,7 +124,9 @@ export class RutinasEjercicioComponent implements OnInit, OnDestroy {
     
     terminarEjercicio(): void {
         console.info('Terminando ejercicio...');
-    
+        const sonidoFinal = new Audio('../../assets/bonus.mp3');
+        sonidoFinal.play(); // Reproduce el sonido1
+
         if (!this.rutinaTerminada) {
             if (this.ejercicioActualIndex < this.diaActual.ejercicios.length - 1) {
                 if (!this.enDescanso) {
@@ -200,7 +202,7 @@ export class RutinasEjercicioComponent implements OnInit, OnDestroy {
     iniciarCronometro(tiempo: string): void {
         // Si ya hay un cronómetro corriendo, lo detenemos
         if (this.intervalId) {
-          clearInterval(this.intervalId);
+            clearInterval(this.intervalId);
         }
     
         // Convierte el tiempo (formato "mm:ss") a segundos
@@ -209,17 +211,21 @@ export class RutinasEjercicioComponent implements OnInit, OnDestroy {
     
         this.tiempoRestante = tiempo; // Inicializa el tiempo restante
     
+        // Carga el archivo de sonido
+        const sonidoFinal = new Audio('../../assets/bonus.mp3');
+    
         this.intervalId = setInterval(() => {
-          if (tiempoEnSegundos <= 0) {
-            clearInterval(this.intervalId);
-            this.tiempoRestante = 'Tiempo finalizado';
-          } else {
-            tiempoEnSegundos--;
-            const min = Math.floor(tiempoEnSegundos / 60).toString().padStart(2, '0');
-            const sec = (tiempoEnSegundos % 60).toString().padStart(2, '0');
-            this.tiempoRestante = `${min}:${sec}`;
-          }
+            if (tiempoEnSegundos <= 0) {
+                sonidoFinal.play(); // Reproduce el sonido1
+                this.tiempoRestante = 'Tiempo finalizado';
+                clearInterval(this.intervalId);
+            } else {
+                tiempoEnSegundos--;
+                const min = Math.floor(tiempoEnSegundos / 60).toString().padStart(2, '0');
+                const sec = (tiempoEnSegundos % 60).toString().padStart(2, '0');
+                this.tiempoRestante = `${min}:${sec}`;
+            }
         }, 1000); // Decrementar cada segundo
-      }
+    }
 
 }

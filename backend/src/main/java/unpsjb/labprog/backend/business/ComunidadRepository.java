@@ -459,4 +459,5 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         """)
         String motivoExpulsion(Long idUsuario, Long idComunidad);
 
+    
 }
