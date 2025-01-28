@@ -122,11 +122,11 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         LocalDateTime fechaOtorgacion);
 
         @Query("MATCH (u:Usuario) WHERE id(u) = $idUsuario " +
-                        "CREATE (c:Comunidad {nombre: $nombre, fechaDeCreacion: $fechaCreacion, latitud: $latitud, longitud: $longitud, descripcion: $descripcion, cantidadMaximaMiembros: $participantes, esPrivada: $privada, imagen: $imagen, ubicacion: $ubicacion})"
+                        "CREATE (c:Comunidad {nombre: $nombre, fechaDeCreacion: $fechaCreacion, latitud: $latitud, longitud: $longitud, genero: $genero, descripcion: $descripcion, cantidadMaximaMiembros: $participantes, esPrivada: $privada, imagen: $imagen, ubicacion: $ubicacion})"
                         +
                         " CREATE (u)<-[:CREADA_POR {fechaCreacion: $fechaCreacion}]-(c) " +
                         "RETURN c")
-        Comunidad guardarComunidadYCreador(String nombre, String descripcion, int participantes, boolean privada,
+        Comunidad guardarComunidadYCreador(String nombre, String genero, String descripcion, int participantes, boolean privada,
                         Long idUsuario, LocalDate fechaCreacion, double latitud, double longitud, String imagen,
                         String ubicacion);
 
@@ -192,7 +192,11 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "MATCH (amigo)-[:MIEMBRO]->(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
                         "WHERE NOT (u)-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR]-(comunidad) " +
                         "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
-
+                        "AND (" +
+                        "   ($generoUsuario = 'masculino' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'sinGenero')) OR " +
+                        "   ($generoUsuario = 'femenino' AND (comunidad.genero = 'femenino' OR comunidad.genero = 'sinGenero')) OR " +
+                        "   ($generoUsuario = 'otros' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'femenino' OR comunidad.genero = 'sinGenero'))" +
+                        ") " +
                         "OPTIONAL MATCH (comunidad)<-[:MIEMBRO]-(miembro) " +
                         "WITH u, comunidad, COUNT(DISTINCT etiqueta) AS etiquetasEnComun, COUNT(miembro) AS cantidadMiembros "
                         +
@@ -205,24 +209,34 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "RETURN comunidad, (etiquetasEnComun / (distancia + 1500000)) AS score, 'A tus amigos le gustan eventos de este tipo' AS motivo "
                         + // Cambiar aquí
                         "ORDER BY score DESC ")
-        List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario);
+        List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario, String generoUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario) " +
                 "MATCH (amigo)-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR]-(comunidad:Comunidad) " +
                 "WHERE NOT (u)-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR]-(comunidad) " +
                 "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
+                "AND (" +
+                "   ($generoUsuario = 'masculino' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'sinGenero')) OR " +
+                "   ($generoUsuario = 'femenino' AND (comunidad.genero = 'femenino' OR comunidad.genero = 'sinGenero')) OR " +
+                "   ($generoUsuario = 'otros' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'femenino' OR comunidad.genero = 'sinGenero'))" +
+                ") " +
                 "OPTIONAL MATCH (comunidad)-[:MIEMBRO|:ADMINISTRADA_POR|:CREADA_POR]-(miembro) " +
                 "WITH u, comunidad, COUNT(DISTINCT amigo) AS cantidadAmigosEnComunidad, COUNT(DISTINCT miembro) AS cantidadMiembros " +
                 "WHERE cantidadMiembros < comunidad.cantidadMaximaMiembros " +
                 "RETURN comunidad, (cantidadAmigosEnComunidad) AS score, 'Tienes amigos en esta comunidad' AS motivo " +
                 "ORDER BY score DESC ")
-            List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos2SinEtiquetas(String nombreUsuario);
+            List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos2SinEtiquetas(String nombreUsuario, String generoUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(evento:Evento)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta), "
                         +
                         "(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta) " +
                         "WHERE NOT (u)<-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR]-(comunidad) " +
                         "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
+                        "AND (" +
+                        "   ($generoUsuario = 'masculino' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'sinGenero')) OR " +
+                        "   ($generoUsuario = 'femenino' AND (comunidad.genero = 'femenino' OR comunidad.genero = 'sinGenero')) OR " +
+                        "   ($generoUsuario = 'otros' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'femenino' OR comunidad.genero = 'sinGenero'))" +
+                        ") " +
                         "OPTIONAL MATCH (comunidad)<-[:MIEMBRO]-(miembro) " +
                         "WITH u, comunidad, COUNT(DISTINCT etiqueta) AS etiquetasEnComun, COUNT(miembro) AS cantidadMiembros "
                         +
@@ -237,13 +251,18 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "RETURN comunidad, score, 'Es similar a los eventos en los que participas' AS motivo  "
                         +
                         "ORDER BY score DESC ")
-        List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnEventos2(String nombreUsuario);
+        List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnEventos2(String nombreUsuario, String generoUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(c1:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta), "
                         +
                         "(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta) " +
                         "WHERE NOT (u)<-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR]->(comunidad) " +
                         "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
+                        "AND (" +
+                        "   ($generoUsuario = 'masculino' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'sinGenero')) OR " +
+                        "   ($generoUsuario = 'femenino' AND (comunidad.genero = 'femenino' OR comunidad.genero = 'sinGenero')) OR " +
+                        "   ($generoUsuario = 'otros' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'femenino' OR comunidad.genero = 'sinGenero'))" +
+                        ") " +
                         "OPTIONAL MATCH (comunidad)<-[:MIEMBRO]-(miembro) " +
                         "WITH u, comunidad, COUNT(DISTINCT etiqueta) AS etiquetasEnComun, COUNT(miembro) AS cantidadMiembros "
                         +
@@ -259,7 +278,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         +
                         "ORDER BY score DESC ")
         List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnComunidades2(
-                        @Param("nombreUsuario") String nombreUsuario);
+                        @Param("nombreUsuario") String nombreUsuario, String generoUsuario);
 
         @Query("MATCH (c:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
                         "WHERE NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +

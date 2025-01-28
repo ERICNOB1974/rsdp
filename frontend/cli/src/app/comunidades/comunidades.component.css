@@ -116,12 +116,7 @@
 
 
 /* Asegúrate de que la etiqueta .container no expanda el área clickeable */
-.container {
-  display: inline-block;
-  cursor: pointer;
-  width: 1.3em;
-  height: 1.3em;
-}
+
 
 /* Oculta el input original */
 .container input {

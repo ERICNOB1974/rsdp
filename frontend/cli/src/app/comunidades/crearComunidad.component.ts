@@ -21,6 +21,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { cantidadParticipantesValidator } from '../eventos/validacionesEvento';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-crear-comunidad',
@@ -34,7 +36,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatCardModule,
     MatIconModule,
     MatFormFieldModule, ReactiveFormsModule,
-    NgIf]
+    NgIf, MatOptionModule, MatSelectModule]
 })
 export class CrearComunidadComponent {
   comunidad!: Comunidad;
@@ -82,7 +84,8 @@ export class CrearComunidadComponent {
           [Validators.required]
         ],
         longitud: ['', [Validators.required]],
-        descripcion: [''] // Esta línea ahora no tiene validación
+        genero: ['', [Validators.required]],
+        descripcion: [''] 
       }
 
     );
@@ -361,6 +364,7 @@ export class CrearComunidadComponent {
       this.comunidad.cantidadMaximaMiembros > 0 &&
       !!this.comunidad.latitud &&
       !!this.comunidad.longitud &&
+      !!this.comunidad.genero &&
       !!(this.etiquetasSeleccionadas.length > 0) &&
       !!(this.etiquetasSeleccionadas.length <= 15));
   }

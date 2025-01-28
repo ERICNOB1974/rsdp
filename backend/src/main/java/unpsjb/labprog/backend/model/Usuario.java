@@ -26,6 +26,7 @@ public class Usuario {
     private LocalDate fechaDeCreacion;
     private String correoElectronico;
     private String contrasena;
+    private String genero;
     private String descripcion;
     private double latitud;
     private double longitud;

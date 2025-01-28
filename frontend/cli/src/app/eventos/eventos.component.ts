@@ -63,7 +63,8 @@ export class EventosComponent implements OnInit {
   searchFailed: boolean = false;
   etiquetasSeleccionadas: Etiqueta[] = [];
   etiquetaSeleccionada: Etiqueta | null = null;
-
+  filtersVisible: boolean = false;
+  filtersAnimating: boolean = false;
 
   constructor(private eventoService: EventoService,
     private router: Router,
@@ -80,6 +81,25 @@ export class EventosComponent implements OnInit {
     this.idUsuarioAutenticado = Number(usuarioId);
     this.cargarEventosParticipante();
   }
+  
+  toggleFilters() {
+    if (this.filtersAnimating) return;
+  
+    this.filtersAnimating = true;
+  
+    if (this.filtersVisible) {
+      this.filtersVisible = false;
+      setTimeout(() => {
+        this.filtersAnimating = false;
+      }, 500);
+    } else {
+      this.filtersVisible = true;
+      setTimeout(() => {
+        this.filtersAnimating = false;
+      }, 500);
+    }
+  }
+  
 
   agregarEtiqueta(event: any): void {
     const etiqueta = event.item;
@@ -294,6 +314,8 @@ export class EventosComponent implements OnInit {
       }else if (this.tabSeleccionada==='participante'){
         this.loadingParticipante=false;
         this.cargarEventosParticipante();
+      }  else if (this.tabSeleccionada === 'filtros') {
+        
       }
     }
   }

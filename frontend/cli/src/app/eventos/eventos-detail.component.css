@@ -1,3 +1,22 @@
+
+/* Asegura que el modal no se desborde */
+.modal-body {
+  max-height: 70vh; /* Limita la altura del contenido para dispositivos pequeños */
+  overflow-y: auto; /* Activa el scroll cuando el contenido es muy largo */
+}
+
+/* Estilos para el modal de notificación */
+.modal-dialog {
+  max-width: 600px; /* Ancho máximo por defecto */
+}
+
+
+/* Estilos para el modal de invitar amigos */
+.modal-dialog {
+  max-width: 700px; /* Ancho máximo por defecto */
+}
+
+
 /* Asegura que el contenedor ocupe toda la pantalla */
 html, body {
   height: 100%;
@@ -180,7 +199,7 @@ html, body {
   background-color: #0056b3;
 }
 
-.btn-secondary {
+.btn-personalizado {
   display: block;
   margin: 10px auto;
 }
@@ -378,3 +397,45 @@ html, body {
   }
 }
 
+
+@media (max-width: 768px) {
+  .modal-dialog {
+    max-width: 90%; /* Reducir el ancho en pantallas pequeñas */
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-dialog {
+    max-width: 90%; /* Reducir el ancho en pantallas pequeñas */
+  }
+}
+
+@media (max-width: 576px) {
+  /* Ajustes específicos para pantallas muy pequeñas */
+  .modal-header h5 {
+    font-size: 16px; /* Reducir el tamaño de la fuente */
+  }
+
+  .modal-body {
+    padding: 15px; /* Reducir el padding */
+  }
+}
+
+/* Para pantallas pequeñas, ajustar el tamaño del modal */
+@media (max-width: 576px) {
+  .modal-dialog {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+/* Puedes ajustar el tamaño de la fuente y el contenido para pantallas más pequeñas */
+@media (max-width: 768px) {
+  .modal-title {
+    font-size: 1.25rem;
+  }
+
+  .input-group input {
+    font-size: 0.9rem;
+  }
+}

@@ -52,7 +52,8 @@ export class ComunidadesComponent implements OnInit {
   searchFailed: boolean = false;
   etiquetasSeleccionadas: Etiqueta[] = [];
   etiquetaSeleccionada: Etiqueta | null = null;
-
+  filtersVisible: boolean = false;
+  filtersAnimating: boolean = false;
 
   constructor(private comunidadService: ComunidadService,
     private authService: AuthService,  // Inyecta el AuthService
@@ -69,6 +70,24 @@ export class ComunidadesComponent implements OnInit {
 
   }
 
+  toggleFilters() {
+    if (this.filtersAnimating) return;
+  
+    this.filtersAnimating = true;
+  
+    if (this.filtersVisible) {
+      this.filtersVisible = false;
+      setTimeout(() => {
+        this.filtersAnimating = false;
+      }, 500);
+    } else {
+      this.filtersVisible = true;
+      setTimeout(() => {
+        this.filtersAnimating = false;
+      }, 500);
+    }
+  }
+  
 
   traerMiembros(comunidades: Comunidad[]): void {
     for (let comunidad of comunidades) {
@@ -354,6 +373,8 @@ cargarMasResultadosFiltrados(): void {
         this.loadingMiembro=false;
 
         this.cargarComunidadesMiembro();
+      } else if (this.tabSeleccionada === 'filtros') {
+        
       }
     }
   }

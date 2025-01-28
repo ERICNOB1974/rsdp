@@ -28,6 +28,7 @@ public class Evento {
     private double latitud;
     private double longitud;
 
+    private String genero;
     private String descripcion;
     private int cantidadMaximaParticipantes;
     private boolean esPrivadoParaLaComunidad;

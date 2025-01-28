@@ -11,20 +11,30 @@
         </mat-form-field>
 
 
-        <div 
-        *ngIf="comunidad.imagen === '' || comunidad.imagen == null" 
-        class="drag-drop-area" 
-        (dragover)="onDragOver($event)" 
-        (drop)="onDrop($event)"
-      >
+        <div *ngIf="comunidad.imagen === '' || comunidad.imagen == null" class="drag-drop-area"
+            (dragover)="onDragOver($event)" (drop)="onDrop($event)">
             <p>Arrastra y suelta una imagen o video aquí, o selecciona uno desde tus archivos.</p>
             <input type="file" id="archivo" (change)="onFileSelect($event)" hidden #fileInput>
             <button type="button" (click)="fileInput.click()">Seleccionar archivo</button>
         </div>
-        <div *ngIf="formatoValido && comunidad.imagen!='' && comunidad.imagen!=null"  class="drag-drop-area">
+        <div *ngIf="formatoValido && comunidad.imagen!='' && comunidad.imagen!=null" class="drag-drop-area">
             <img [src]="comunidad.imagen" alt="Vista previa de la imagen" class="vista-previa-imagen">
             <button type="button" (click)="eliminarArchivo()" class="btn btn-danger mt-2">Eliminar archivo</button>
-          </div>
+        </div>
+
+        <!-- Género -->
+        <mat-form-field appearance="outline" class="form-group">
+            <mat-label>Género</mat-label>
+            <mat-select [(ngModel)]="comunidad.genero" formControlName="genero" required>
+                <mat-option value="" disabled>Seleccione un género</mat-option>
+                <mat-option value="masculino">Masculino</mat-option>
+                <mat-option value="femenino">Femenino</mat-option>
+                <mat-option value="sinGenero">Sin género</mat-option>
+            </mat-select>
+            <mat-error *ngIf="formComunidad.get('genero')?.hasError('required')">
+                El género es requerido
+            </mat-error>
+        </mat-form-field>
 
         <mat-form-field appearance="outline" class="form-group">
             <mat-label>Descripción</mat-label>
@@ -46,8 +56,8 @@
             <mat-label>Buscar Etiquetas:</mat-label>
             <input matInput id="etiquetas" [ngbTypeahead]="searchEtiqueta" [resultFormatter]="resultFormatEtiqueta"
                 [inputFormatter]="inputFormatEtiqueta" (selectItem)="agregarEtiqueta($event)"
-                name="etiquetaSeleccionada" placeholder="Buscar etiqueta" [(ngModel)]="etiquetaSeleccionada" [ngModelOptions]="{standalone: true}" [container]="'body'" 
-                />
+                name="etiquetaSeleccionada" placeholder="Buscar etiqueta" [(ngModel)]="etiquetaSeleccionada"
+                [ngModelOptions]="{standalone: true}" [container]="'body'" />
             <footer *ngIf="etiquetasSeleccionadas.length==0" class="mat-error-custom">
                 Al menos una etiqueta es requerida
             </footer>
@@ -96,9 +106,9 @@
 
 
         <div class="form-buttons">
-            <button type="button" (click)="cancel()" class="btn btn-secondary" >Cancelar</button>
+            <button type="button" (click)="cancel()" class="btn btn-secondary">Cancelar</button>
             <button type="button" (click)="saveComunidad()" [disabled]="!isFormValid()" class="btn btn-success">Guardar
-              comunidad</button>
+                comunidad</button>
         </div>
 
     </form>
