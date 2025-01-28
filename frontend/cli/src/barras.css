@@ -1,26 +1,135 @@
+/* Cuando el sidebar está colapsado */
+.sidebar.collapsed {
+    width: 80px;
+}
+
+/* Icono de la hamburguesa */
+.hamburger-icon {
+    display: none;
+}   
+
+/* Menú */
+.menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Estilo de los elementos del menú */
+.menu-item {
+    position: relative;
+}
+
+.menu-item a {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    text-decoration: none;
+    color: #fff;
+}
+
+/* Flecha para el dropdown */
+.dropdown-arrow {
+    margin-left: auto;
+    transition: transform 0.3s ease;
+}
+
+/* Submenú con animación de deslizamiento */
+.dropdown-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: none;
+    position: absolute;
+    left: 95%;
+    top: 0;
+    background-color: #444;
+    border-radius: 5px;
+    width: 200px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-20px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+/* Cuando el dropdown está abierto */
+.menu-item.open .dropdown-menu {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Estilo de los elementos dentro del submenú */
+.dropdown-menu li a {
+    padding: 10px;
+    text-decoration: none;
+    color: #fff;
+    display: block;
+}
+
+/* Hover en los elementos del submenú */
+.dropdown-menu li a:hover {
+    background-color: #555;
+}
+
+
+/* Estilo general para el menú */
+.menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 15px;
+}
+
+.menu-item a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: #000;
+    font-size: 1rem; /* Tamaño base del texto */
+}
+
+/* Iconos generales */
+.icon i {
+    font-size: 1.5rem; /* Tamaño base de los iconos */
+    min-width: 24px; /* Ancho mínimo para mantener alineación */
+}
+
+/* Flechita al lado de cada ítem */
+.dropdown-arrow i {
+    font-size: 1.2rem; /* Tamaño base de las flechitas */
+}
+
+.navbar {
+    height: 56px; /* Altura fija para la navbar */
+    margin-bottom: 0; /* Elimina cualquier margen inferior */
+}
 
 .sidebar {
     width: 16%;
-    height: 100%;
     /* Tamaño fijo en vista de escritorio */
-    background-color: #15202b;
+    background-color: #212529;
     color: white;
     display: flex;
     flex-direction: column;
     align-items: center;
     position: fixed;
     transition: width 0.3s;
-    z-index: 5000;
+    z-index: 1000;
     transition: width 0.3s ease;
-    
-    /* Suave transición al cambiar el ancho */
+    top: 56px; /* Coincide con la altura de la navbar */
+    left: 0;
+    height: calc(100vh - 56px); /* Ajusta la altura restante */
+    margin-top: 0; /* Evita cualquier margen superior */
 }
 
 
 .sidebar.collapsed {
     transition: width 0.3s ease;
     /* Suave transición al cambiar el ancho */
-    z-index: 5000;
+    z-index: 1001;
     flex-direction: column;
     align-items: center;
     position: fixed;
@@ -32,15 +141,15 @@
     width: 100%;
     margin-left: 4dvh;
     top: 0; /* Alinea en la parte superior */
-    z-index: 9000; /* Asegúrate de que esté por encima de otros elementos */
-    background-color: #636363; /* Mantén el fondo */
+    z-index: 3000; /* Asegúrate de que esté por encima de otros elementos */
+    background-color: #212529; /* Mantén el fondo */
 }
 
 .sidebar-collapsed .dropdown-menu {
     position: absolute; /* Mantiene la posición absoluta */
     left: 100% !important;/* Despliega a la derecha de la barra lateral */
     top: 0; /* Alinea en la parte superior */
-    z-index: 9000; /* Asegúrate de que esté por encima de otros elementos */
+    z-index: 3000; /* Asegúrate de que esté por encima de otros elementos */
     display: block; /* Asegúrate de que esté visible */
     background-color: #ff6600; /* Mantén el fondo */
     width: 200px; /* Ajusta el ancho según sea necesario */
@@ -70,7 +179,7 @@
     height: 60px;
     /* Ajusta la altura según sea necesario */
 
-    z-index: 6000;
+    z-index: 2000;
     /* Asegúrate de que la barra esté por encima de otros elementos */
 }
 
@@ -139,11 +248,7 @@
 }
 
 
-.sidebar ul li:hover {
-    background: #1a1919f8;
 
-    /* Color de fondo más claro al pasar el mouse */
-}
 
 /*flecha de cada seccion de la sidebar*/
 .sidebar ul li a {
@@ -338,6 +443,7 @@
 .toggle-btn:hover {
     color: #ff6f6f;
     /* Cambia el color al pasar el mouse */
+    
 }
 
 .sidebar .dropdown-arrow i {
@@ -402,56 +508,6 @@
     /* Espaciado a la izquierda cuando el menú está desplegado */
 }
 
-/* Media Query para pantallas pequeñas (por ejemplo, móviles) */
-/* Responsividad */
-@media (max-width: 768px) {
-    .sidebar {
-        width: 60vw;
-        /* Ancho más pequeño en dispositivos móviles */
-        height: 100%;
-        /* Altura automática */
-        background-color: #15202b;
-        /* Mantener el color de fondo */
-    }
-
-    .sidebar.collapsed {
-        width: 15%;
-        height: 100%;
-        /* Ancho en modo colapsado para móviles */
-    }
-
-    .sidebar ul li a .icon {
-        font-size: 1.2em;
-        /* Tamaño de ícono más pequeño */
-    }
-
-    .sidebar ul li a .text {
-        font-size: 0.8em;
-        /* Tamaño de texto más pequeño */
-    }
-
-    .sidebar ul li {
-        padding: 10px;
-        /* Espaciado interno más pequeño */
-    }
-}
-
-/* Media Query para pantallas más grandes (por ejemplo, tablets) */
-@media (max-width: 1024px) {
-   
-    .main-content {
-        margin-left: 25vw;
-        /* Menos espacio para el main content */
-    }
-
-    .white-island {
-        width: 85%;
-        /* Ajusta el tamaño de la white-island */
-    }
-
-
-}
-
 .hamburger-icon {
     display: flex;
     align-items: center;
@@ -459,4 +515,205 @@
     color: aliceblue;
     font-size: 1.5rem;
     margin-right: 10px;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.hamburger-icon:hover {
+    transform: scale(1.2);
+}
+
+@media (max-width: 810px){
+    .sidebar {
+        width: 22%; /* Ajuste específico para iPad */
+    }
+
+    .menu-item a {
+        font-size: 0.9rem; /* Texto ligeramente más grande que en tablets pequeñas */
+    }
+
+    .icon i,
+    span.icon i {
+        font-size: 1.3rem; /* Iconos de tamaño más grande */
+    }
+
+    .dropdown-arrow i {
+        font-size: 1.1rem; /* Flechas más grandes */
+    }
+
+    .main-content {
+        margin-left: 22%; /* Ajustar margen del contenido principal */
+    }
+
+    .white-island {
+        width: 80%; /* Ajustar el contenido para iPad */
+    }
+
+    .sidebar.collapsed{
+        width: 80px;
+    }
+}
+
+/* Pantallas pequeñas: móviles */
+@media (max-width: 576px) {
+    .sidebar {
+        width: 30%;
+    }
+
+    .menu-item a {
+        font-size: 0.75rem; /* Texto más pequeño */
+    }
+
+    .icon i,
+    span.icon i {
+        font-size: 1rem; /* Iconos más pequeños */
+    }
+
+    .dropdown-arrow i {
+        font-size: 0.875rem; /* Flechas más pequeñas */
+    }
+}
+
+/* Pantallas medianas: tablets pequeñas y phablets */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 25%; /* Sidebar más grande para tablets pequeñas */
+    }
+
+    .menu-item a {
+        font-size: 0.875rem; /* Texto ligeramente más pequeño */
+    }
+
+    .icon i,
+    span.icon i {
+        font-size: 1.2rem; /* Iconos medianos */
+    }
+
+    .dropdown-arrow i {
+        font-size: 1rem; /* Flechas de tamaño mediano */
+    }
+}
+
+/* Pantallas grandes: laptops pequeñas */
+@media (max-width: 629px) {
+    .sidebar {
+        width: 50%;
+    }
+
+    .menu-item a {
+        font-size: 1rem; /* Texto adaptado para laptops */
+    }
+
+    .icon i,
+    span.icon i {
+        font-size: 1.5rem; /* Iconos más grandes */
+    }
+
+    .dropdown-arrow i {
+        font-size: 1.2rem; /* Flechas más grandes */
+    }
+
+    .main-content {
+        margin-left: 20%;
+    }
+
+    .white-island {
+        width: 75%;
+    }
+
+    .sidebar.collapsed{
+        width: 55px;
+    }
+
+}
+
+/* Pantallas muy grandes: laptops grandes y monitores */
+@media (min-width: 630px) and (max-width: 952px) {
+    .sidebar {
+        width: 35%; /* Sidebar más estrecha en escritorios */
+    }
+
+    .menu-item a {
+        font-size: 1.125rem; /* Texto más grande */
+    }
+
+    .icon i,
+    span.icon i {
+        font-size: 1.75rem; /* Iconos grandes */
+    }
+
+    .dropdown-arrow i {
+        font-size: 1.5rem; /* Flechas grandes */
+    }
+
+    .main-content {
+        margin-left: 16%;
+    }
+
+    .white-island {
+        width: 70%;
+    }
+
+    .sidebar.collapsed{
+        width: 70px;
+    }
+
+}
+
+@media (min-width: 953px) {
+    .sidebar {
+        width: 25%; /* Sidebar más pequeña en pantallas muy grandes */
+    }
+
+    .menu-item a {
+        font-size: 1.25rem; /* Texto aún más grande */
+    }
+
+    .icon i,
+    span.icon i {
+        font-size: 2rem; /* Iconos más grandes */
+    }
+
+    .dropdown-arrow i {
+        font-size: 1.75rem; /* Flechas más grandes */
+    }
+
+    .main-content {
+        margin-left: 25%; /* Ajustar margen del contenido principal */
+    }
+
+    .white-island {
+        width: 65%;
+    }
+
+}
+
+/* Alturas bajas: para ajustar en pantallas horizontales */
+@media (max-height: 600px) {
+    .menu-item a {
+        font-size: 0.75rem;
+    }
+
+    .icon i,
+    span.icon i {
+        font-size: 1rem;
+    }
+
+    .dropdown-arrow i {
+        font-size: 0.875rem;
+    }
+}
+
+@media (max-height: 400px) {
+    .menu-item a {
+        font-size: 0.65rem;
+    }
+
+    .icon i,
+    span.icon i {
+        font-size: 0.8rem;
+    }
+
+    .dropdown-arrow i {
+        font-size: 0.75rem;
+    }
 }

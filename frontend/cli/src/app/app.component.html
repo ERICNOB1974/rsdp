@@ -1,6 +1,6 @@
-<nav class="top-navbar" *ngIf="!esPantallaLogin ">
-    <div class="nav-content">
-
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark position-fixed w-100 top-0" style="z-index: 1050;"
+    *ngIf="!esPantallaLogin">
+    <div class="container-fluid">
 
         <div class="logo-container">
             <h5 (click)="navigateTo('/')" style="cursor: pointer;" class="logo-text">RSDP</h5>
@@ -8,16 +8,16 @@
         <div class="nav-items">
 
             <a class="nav-link" style="cursor: pointer; color: azure;" routerLink="/calendario">
-                <i class="fa fa-calendar"></i>
+                <span class="icon"><i class="fa fa-calendar"></i></span>
             </a>
             <div class="notifications-dropdown">
-                <a class="nav-link dropdown-toggle" style="cursor: pointer;">
-                    <i class="fa fa-bell"></i>
+                <a class="nav-link dropdown-toggle" style="cursor: pointer;" (click)="toggleMenu()">
+                    <span class="icon"><i class="fa fa-bell"></i></span>
                     <span *ngIf="getNotificacionesNoLeidas().length > 0" class="notification-badge">
                         {{ getNotificacionesNoLeidas().length }}
                     </span>
                 </a>
-                <div class="notifications-menu">
+                <div class="notifications-menu" *ngIf="menuAbierto">
                     <div class="notifications-list">
                         <div *ngFor="let notificacion of notificaciones" class="notification-item"
                             [ngClass]="{'leida': notificacion.leida}" (click)="manejarClickNotificacion(notificacion)">
@@ -36,12 +36,12 @@
                 </div>
             </div>
 
-            <div class="perfil-contenedor">
-                <a (click)="navigateToMiPerfil()" class="imagen-perfil">
-                    <img [src]="usuario?.fotoPerfil || '../assets/usuario.png'" alt="Foto de perfil" />
-                </a>
-                <a (click)="navigateToMiPerfil()" class="nombre-usuario">
-                    {{ usuario?.nombreUsuario || 'Cargando...' }}
+
+            <div class="perfil-contenedor d-flex align-items-center ms-3">
+                <a (click)="navigateToMiPerfil()" class="d-flex align-items-center" style="cursor: pointer;">
+                    <img [src]="usuario?.fotoPerfil || '../assets/usuario.png'" alt="Foto de perfil"
+                        class="rounded-circle me-2" style="width: 35px; height: 35px;" />
+                    <span class="text-light">{{ usuario?.nombreUsuario || 'Cargando...' }}</span>
                 </a>
             </div>
         </div>
@@ -50,23 +50,24 @@
 
 <div *ngIf="!esPantallaLogin" class="sidebar" [class.collapsed]="isCollapsed">
 
-
     <div class="hamburger-icon" (click)="toggleSidebar(); closeAllDropdown()">
-        <i class="fa fa-bars"></i>
+        <span class="icon"><i class="fa fa-bars"></i></span>
     </div>
 
     <ul>
         <nav class="menu">
             <!-- Dropdown: Eventos -->
             <li class="menu-item dropdown" [class.open]="isDropdownOpen['eventos']"
-                (mouseleave)="closeDropdown('eventos')">
+                >
 
                 <a (click)="toggleDropdown('eventos')">
-                    <span class="icon"><i class="fa fa-calendar"></i></span>
+                    <span class="icon"><i class="fa fa-running"></i></span>
                     <span class="menu-text" *ngIf="!isCollapsed">Eventos</span>
-                    <span class="dropdown-arrow" *ngIf="!isCollapsed">
-                        <i [class]="isDropdownOpen['eventos'] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
+                    <span class="dropdown-arrow">
+                        <i [class]="isDropdownOpen['eventos'] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"
+                            *ngIf="isCollapsed || !isCollapsed"></i>
                     </span>
+
                 </a>
                 <ul class="dropdown-menu" *ngIf="isDropdownOpen['eventos']">
                     <li><a (click)="closeDropdown('eventos'); cerrarBarra()" [routerLink]="['/eventos']">Listar
@@ -80,12 +81,13 @@
 
             <!-- Dropdown: Comunidades -->
             <li class="menu-item dropdown" [class.open]="isDropdownOpen['comunidades']"
-                (mouseleave)="closeDropdown('comunidades')">
+                >
                 <a (click)="toggleDropdown('comunidades')">
                     <span class="icon"><i class="fa fa-users"></i></span>
                     <span class="menu-text" *ngIf="!isCollapsed">Comunidades</span>
-                    <span class="dropdown-arrow" *ngIf="!isCollapsed">
-                        <i [class]="isDropdownOpen['comunidades'] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
+                    <span class="dropdown-arrow">
+                        <i [class]="isDropdownOpen['comunidades'] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"
+                            *ngIf="isCollapsed || !isCollapsed"></i>
                     </span>
                 </a>
                 <ul class="dropdown-menu" *ngIf="isDropdownOpen['comunidades']">
@@ -98,22 +100,36 @@
                 </ul>
             </li>
 
-            <!-- Simple: Amigos -->
-            <li class="menu-item friends-link">
-                <a [routerLink]="['/amigos']">
-                    <span class="icon"><i class="fa fa-user"></i></span>
-                    <span class="menu-text" *ngIf="!isCollapsed">Amigos</span>
+            <!-- Dropdown: Rutinas -->
+            <li class="menu-item dropdown" [class.open]="isDropdownOpen['rutinas']"
+                >
+                <a (click)="toggleDropdown('rutinas')">
+                    <span class="icon"><i class="fa fa-dumbbell"></i></span>
+                    <span class="menu-text" *ngIf="!isCollapsed">Rutinas</span>
+                    <span class="dropdown-arrow">
+                        <i [class]="isDropdownOpen['rutinas'] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"
+                            *ngIf="isCollapsed || !isCollapsed"></i>
+                    </span>
                 </a>
+                <ul class="dropdown-menu" *ngIf="isDropdownOpen['rutinas']">
+                    <li><a (click)="closeDropdown('rutinas'); cerrarBarra()" [routerLink]="['/rutinas']">Listar
+                            Rutinas</a></li>
+                    <li><a (click)="closeDropdown('rutinas'); cerrarBarra()"
+                            [routerLink]="['/rutinas/crearRutina']">Nueva Rutina</a></li>
+                    <li><a (click)="closeDropdown('rutinas'); cerrarBarra()" [routerLink]="['/rutinasUsuario']">Mis
+                            Rutinas Creadas</a></li>
+                </ul>
             </li>
 
             <!-- Dropdown: Sugerencias -->
             <li class="menu-item dropdown" [class.open]="isDropdownOpen['sugerencias']"
-                (mouseleave)="closeDropdown('sugerencias')">
+                >
                 <a (click)="toggleDropdown('sugerencias')">
                     <span class="icon"><i class="fa fa-question-circle"></i></span>
                     <span class="menu-text" *ngIf="!isCollapsed">Sugerencias</span>
-                    <span class="dropdown-arrow" *ngIf="!isCollapsed">
-                        <i [class]="isDropdownOpen['sugerencias'] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
+                    <span class="dropdown-arrow">
+                        <i [class]="isDropdownOpen['sugerencias'] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"
+                            *ngIf="isCollapsed || !isCollapsed"></i>
                     </span>
                 </a>
                 <ul class="dropdown-menu" *ngIf="isDropdownOpen['sugerencias']">
@@ -128,40 +144,26 @@
                 </ul>
             </li>
 
-            <!-- Dropdown: Rutinas -->
-            <li class="menu-item dropdown" [class.open]="isDropdownOpen['rutinas']"
-                (mouseleave)="closeDropdown('rutinas')">
-                <a (click)="toggleDropdown('rutinas')">
-                    <span class="icon"><i class="fa fa-soccer-ball-o"></i></span>
-                    <span class="menu-text" *ngIf="!isCollapsed">Rutinas</span>
-                    <span class="dropdown-arrow" *ngIf="!isCollapsed">
-                        <i [class]="isDropdownOpen['rutinas'] ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"></i>
-                    </span>
+            <!-- Simple: Amigos -->
+            <li class="menu-item friends-link">
+                <a [routerLink]="['/amigos']">
+                    <span class="icon"><i class="fa fa-search"></i></span>
+                    <span class="menu-text" *ngIf="!isCollapsed">Amigos</span>
                 </a>
-                <ul class="dropdown-menu" *ngIf="isDropdownOpen['rutinas']">
-                    <li><a (click)="closeDropdown('rutinas'); cerrarBarra()" [routerLink]="['/rutinas']">Listar
-                            Rutinas</a></li>
-                    <li><a (click)="closeDropdown('rutinas'); cerrarBarra()"
-                            [routerLink]="['/rutinas/crearRutina']">Nueva Rutina</a></li>
-                    <li><a (click)="closeDropdown('rutinas'); cerrarBarra()" [routerLink]="['/rutinasUsuario']">Mis
-                            Rutinas Creadas</a></li>
-                </ul>
             </li>
-            
+
             <!--  Publicación -->
             <li class="menu-item friends-link">
                 <a [routerLink]="['/publicacion']">
-                    <span class="icon"><i class="fa fa-thumbs-o-up"></i></span>
+                    <span class="icon"><i class="fa fa-pencil-alt"></i></span>
                     <span class="menu-text" *ngIf="!isCollapsed">Nueva publicacion</span>
                 </a>
             </li>
 
-
-
             <!-- Simple: Cerrar sesión -->
             <li class="menu-item">
                 <a (click)="logout()" class="logout-button">
-                    <span class="icon"><i class="bi bi-box-arrow-right"></i></span>
+                    <span class="icon"><i class="fa fa-sign-out-alt"></i></span>
                     <span class="menu-text" *ngIf="!isCollapsed">Cerrar sesión</span>
                 </a>
             </li>
@@ -169,7 +171,6 @@
     </ul>
 
 </div>
-
 
 <div class="main-content" [ngClass]="{ 'full-width': isCollapsed }">
     <router-outlet></router-outlet>

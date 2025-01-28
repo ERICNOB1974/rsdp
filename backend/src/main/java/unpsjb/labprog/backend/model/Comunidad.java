@@ -22,6 +22,7 @@ public class Comunidad {
 
     private String nombre;
     private LocalDate fechaDeCreacion;
+    private String genero;
     private String descripcion;
     private int cantidadMaximaMiembros;
     private boolean esPrivada;

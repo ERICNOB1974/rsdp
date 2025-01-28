@@ -1,4 +1,46 @@
-<full-calendar
-  #fullcalendar
-  [options]="calendarOptions"
-></full-calendar>
+<div class="container h-100 d-flex flex-column justify-content-center">
+  <!-- Fila del botón centrado -->
+  <div class="row justify-content-center mb-4">
+    <div class="col-auto text-center">
+      <button (click)="toggleFilters()" class="btn btn-custom rounded-pill shadow-sm d-flex align-items-center">
+        <span class="material-icons me-2">filter_list</span> <!-- Icono de filtro -->
+        Filtros
+      </button>
+    </div>
+  </div>
+  
+  <!-- Fila de los filtros desplegables -->
+  <div class="row">
+    <div class="col-12">
+      <div *ngIf="filtersVisible || filtersAnimating" 
+           [ngClass]="{'fadeIn': filtersVisible, 'fadeOut': !filtersVisible && filtersAnimating}" 
+           class="d-flex flex-wrap justify-content-center gap-3 mt-3 mb-5"> <!-- Agregado mb-5 para más espacio -->
+        <div class="form-check form-check-inline">
+          <input type="checkbox" class="form-check-input" [(ngModel)]="showEventos" (change)="updateCalendar()" id="showEventos" />
+          <label class="form-check-label" for="showEventos">
+            <span class="fw-semibold">Mostrar eventos</span>
+          </label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input type="checkbox" class="form-check-input" [(ngModel)]="showRutinas" (change)="updateCalendar()" id="showRutinas" />
+          <label class="form-check-label" for="showRutinas">
+            <span class="fw-semibold">Mostrar rutinas</span>
+          </label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input type="checkbox" class="form-check-input" [(ngModel)]="showRecomendados" (change)="updateCalendar()" id="showRecomendados" />
+          <label class="form-check-label" for="showRecomendados">
+            <span class="fw-semibold">Mostrar sugerencias</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendario -->
+  <div class="row">
+    <div class="col-12">
+      <full-calendar #fullcalendar [options]="calendarOptions"></full-calendar>
+    </div>
+  </div>
+</div>

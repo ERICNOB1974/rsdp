@@ -337,40 +337,68 @@ public class EventoService {
     }
 
     public List<ScoreEvento> sugerenciasDeEventosBasadosEnEventos2(String nombreUsuario) {
-        List<ScoreEvento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnEventos2(nombreUsuario);
+        Usuario usuario = usuarioService.findByNombreUsuario(nombreUsuario);
+
+        String generoUsuario = usuario.getGenero();
+
+        List<ScoreEvento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnEventos2(nombreUsuario,
+                generoUsuario);
         sugerencias
                 .forEach(s -> System.out.println("Comunidad: " + s.getEvento().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
     public List<ScoreEvento> sugerenciasDeEventosBasadosEnAmigos2(String nombreUsuario) {
-        List<ScoreEvento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnAmigos2(nombreUsuario);
+        Usuario usuario = usuarioService.findByNombreUsuario(nombreUsuario);
+
+        String generoUsuario = usuario.getGenero();
+
+        List<ScoreEvento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnAmigos2(nombreUsuario,
+                generoUsuario);
         sugerencias
                 .forEach(s -> System.out.println("Comunidad: " + s.getEvento().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
     public List<ScoreEvento> sugerenciasDeEventosBasadosEnComunidades2(String nombreUsuario) {
-        List<ScoreEvento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnComunidades2(nombreUsuario);
+        Usuario usuario = usuarioService.findByNombreUsuario(nombreUsuario);
+
+        String generoUsuario = usuario.getGenero();
+
+        List<ScoreEvento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnComunidades2(nombreUsuario,
+                generoUsuario);
         sugerencias
                 .forEach(s -> System.out.println("Comunidad: " + s.getEvento().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
     public List<ScoreEvento> sugerenciasDeEventosBasadosEnRutinas2(String nombreUsuario) {
-        List<ScoreEvento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnRutinas2(nombreUsuario);
+        Usuario usuario = usuarioService.findByNombreUsuario(nombreUsuario);
+
+        String generoUsuario = usuario.getGenero();
+
+        List<ScoreEvento> sugerencias = eventoRepository.sugerenciasDeEventosBasadosEnRutinas2(nombreUsuario,
+                generoUsuario);
         sugerencias
                 .forEach(s -> System.out.println("Comunidad: " + s.getEvento().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
     public Map<String, Object> obtenerSugerenciasEventosConTotalPaginas(String nombreUsuario, int page, int pageSize) {
+
+        Usuario usuario = usuarioService.findByNombreUsuario(nombreUsuario);
+
+        String generoUsuario = usuario.getGenero();
+
         // Obtener todas las sugerencias de eventos (como en tu código original)
-        List<ScoreEvento> sugerenciasEventos = eventoRepository.sugerenciasDeEventosBasadosEnEventos2(nombreUsuario);
-        List<ScoreEvento> sugerenciasAmigos = eventoRepository.sugerenciasDeEventosBasadosEnAmigos2(nombreUsuario);
+        List<ScoreEvento> sugerenciasEventos = eventoRepository.sugerenciasDeEventosBasadosEnEventos2(nombreUsuario,
+                generoUsuario);
+        List<ScoreEvento> sugerenciasAmigos = eventoRepository.sugerenciasDeEventosBasadosEnAmigos2(nombreUsuario,
+                generoUsuario);
         List<ScoreEvento> sugerenciasComunidades = eventoRepository
-                .sugerenciasDeEventosBasadosEnComunidades2(nombreUsuario);
-        List<ScoreEvento> sugerenciasRutinas = eventoRepository.sugerenciasDeEventosBasadosEnRutinas2(nombreUsuario);
+                .sugerenciasDeEventosBasadosEnComunidades2(nombreUsuario, generoUsuario);
+        List<ScoreEvento> sugerenciasRutinas = eventoRepository.sugerenciasDeEventosBasadosEnRutinas2(nombreUsuario,
+                generoUsuario);
 
         // Combinar todas las sugerencias en una sola lista
         List<ScoreEvento> todasLasSugerencias = new ArrayList<>();
@@ -391,6 +419,14 @@ public class EventoService {
                         existente.setMotivo(nuevoMotivo);
                         return existente;
                     });
+        }
+
+        for (ScoreEvento scoreEvento : mapaSugerencias.values()) {
+            String motivo = scoreEvento.getMotivo();
+            if (!motivo.contains("Está adecuado a tus preferencias de género")) {
+                motivo += " --- Está adecuado a tus preferencias de género";
+                scoreEvento.setMotivo(motivo);
+            }
         }
 
         // Obtener la lista de ScoreEvento sin duplicados con los scores sumados
@@ -446,7 +482,6 @@ public class EventoService {
         this.eventoRepository.eliminarUsuario(idEvento, idUsuario, mensaje);
     }
 
-
     @Transactional
     public void agregarUbicacionAEventosSinUbicacion() {
         List<Evento> eventos = eventoRepository.findAll(); // Obtener todos los eventos
@@ -478,8 +513,8 @@ public class EventoService {
         }
     }
 
-    public boolean estaExpulsado(Long idUsuario, Long idEvento){
-        return this.eventoRepository.estaExpulsado(idUsuario ,idEvento);
+    public boolean estaExpulsado(Long idUsuario, Long idEvento) {
+        return this.eventoRepository.estaExpulsado(idUsuario, idEvento);
     }
 
     public String motivoExpulsion(Long idUsuario, Long idEvento) {

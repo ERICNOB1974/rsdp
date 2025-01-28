@@ -1,5 +1,17 @@
-<div class="filtros-container">
+<div class="container">
+  <div class="row justify-content-center align-items-center mb-4">
+    <div class="col-auto">
+      <button class="tab-button d-flex align-items-center" [ngClass]="{ active: tabSeleccionada === 'filtros' }"
+        (click)="toggleFilters()">
+        <span class="material-icons me-2">filter_list</span>
+        Filtros
+      </button>
+    </div>
+  </div>
+</div>
 
+<div *ngIf="filtersVisible || filtersAnimating"
+  [ngClass]="{'fadeIn': filtersVisible, 'fadeOut': !filtersVisible && filtersAnimating}" class="filtros-container">
   <!-- Filtro por nombre -->
   <div class="filtro-container filtro-nombre">
     <label class="container">
@@ -102,6 +114,10 @@
           <p>{{ comunidad.descripcion }}</p>
           <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
           <p>Ubicación: {{comunidad.ubicacion}}</p>
+          <p>Género:
+            {{ { masculino: 'Masculino', femenino: 'Femenino', sinGenero: 'Sin Género' }[comunidad.genero] || comunidad.genero
+            }}
+          </p>
         </div>
       </div>
       <div *ngIf="comunidadesDisponiblesAMostrar.length==0">
@@ -124,6 +140,10 @@
           <p>{{ comunidad.descripcion }}</p>
           <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
           <p>Ubicación: {{comunidad.ubicacion}}</p>
+          <p>Género:
+            {{ { masculino: 'Masculino', femenino: 'Femenino', sinGenero: 'Sin Género' }[comunidad.genero] || comunidad.genero
+            }}
+          </p>
         </div>
       </div>
     </div>

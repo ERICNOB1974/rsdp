@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { NavigationEnd, Router, RouterModule, RouterLink, RouterOutlet } from '@angular/router';
 import { UbicacionService } from './ubicacion.service';
 import { Location, NgIf } from '@angular/common';
@@ -41,6 +41,8 @@ import { Usuario } from './usuarios/usuario';
     `],
 })
 export class AppComponent {
+  isResponsive = false;
+  menuAbierto: boolean = false;
   esPantallaLogin = false;
   rutasSinSidebar: string[] = ['/login', '/registro', '/verificar-codigo', '/recuperar-contrasena', '/verificar-codigo?tipo=registro', '/verificar-codigo?tipo=recuperacion', '/verificar-mail', '/cambiar-contrasena'];
 
@@ -66,6 +68,7 @@ export class AppComponent {
   }
 
   ngOnInit(): void {
+    this.updateResponsiveState();
     const storedState = localStorage.getItem('sidebarState');
     if (storedState) {
       this.isCollapsed = storedState === 'true'; // Convierte el valor guardado a booleano
@@ -91,16 +94,30 @@ export class AppComponent {
     rutinas: false,
   };
 
-
-
-  toggleDropdown(menu: string) {
+  toggleDropdown(menu: string): void {
+    // Cierra todos los dropdowns excepto el actual
+    Object.keys(this.isDropdownOpen).forEach(key => {
+      if (key !== menu) {
+        this.isDropdownOpen[key] = false;
+      }
+    });
+  
+    // Alterna el estado del dropdown actual
     this.isDropdownOpen[menu] = !this.isDropdownOpen[menu];
+  
+    // Si se abre un dropdown, expande la sidebar
     if (this.isDropdownOpen[menu]) {
-      Object.keys(this.isDropdownOpen).forEach(key => {
-        this.isDropdownOpen[key] = (key === menu); // Asigna false a cada clave, excepto a la clave que coincide con 'menu'
-      });
+      this.isCollapsed = false;
     }
+  }
 
+  @HostListener('window:resize', ['$event'])
+  onResize(): void {
+    this.updateResponsiveState();
+  }
+
+  private updateResponsiveState(): void {
+    this.isResponsive = window.innerWidth <= 984; // Cambia el valor según el límite deseado
   }
 
   cerrarBarra() {
@@ -140,7 +157,6 @@ export class AppComponent {
       this.router.navigate(['/perfil', this.idUsuarioAutenticado]); // Navega al perfil del usuario autenticado
     }
   }
-
 
   cargarNotificaciones(): void {
     this.notificacionService.obtenerNotificaciones(this.idUsuarioAutenticado)
@@ -285,10 +301,30 @@ export class AppComponent {
     });
   }
 
-  toggleSidebar() {
-    this.isCollapsed = !this.isCollapsed;
-    // Guardar el nuevo estado en localStorage
+  toggleMenu(): void {
+    if (this.isResponsive) {
+      if (!this.isCollapsed) {
+        this.isCollapsed = true;
+        localStorage.setItem('sidebarState', String(this.isCollapsed)); // Guarda el estado de la sidebar
+      }
+      this.menuAbierto = !this.menuAbierto;
+    } else {
+      this.menuAbierto = !this.menuAbierto;
+    }
+  }
+
+  toggleSidebar(): void {
+    if (this.isResponsive) {
+      if (this.menuAbierto) {
+        this.menuAbierto = false;
+      }
+      this.isCollapsed = !this.isCollapsed;
+      localStorage.setItem('sidebarState', String(this.isCollapsed)); // Guarda el estado de la sidebar
+    } else {
+      this.isCollapsed = !this.isCollapsed; // Alterna el estado de la sidebar
+        // Guardar el nuevo estado en localStorage
     localStorage.setItem('sidebarState', String(this.isCollapsed));
+    }
   }
 
 }
