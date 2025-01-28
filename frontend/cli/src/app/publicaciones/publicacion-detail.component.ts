@@ -41,6 +41,7 @@ export class PublicacionDetailComponent implements OnInit {
   usuariosFiltrados: UsuarioEsAmigoDTO[] = [];
   searchingArroba = false;
   searchFailedArroba = false;
+  isReplying = false; // Para saber si está respondiendo a un comentario
 
 
   constructor(
@@ -227,7 +228,7 @@ export class PublicacionDetailComponent implements OnInit {
           // Añadir el nuevo comentario al principio de la lista
           this.comentarios.unshift(newComment);
 
-       
+          this.comment='';
 
           // Actualizar los comentarios mostrados
           this.updateDisplayedComments();

@@ -12,7 +12,10 @@
         <!-- Lista de usuarios sugeridos -->
         <ul *ngIf="usuariosFiltrados.length > 0" class="suggestions">
           <li *ngFor="let usuario of usuariosFiltrados" (click)="addUsuario(usuario)">
-            {{ usuario.usuario.nombreUsuario }}
+            <span>{{ usuario.usuario.nombreUsuario }}</span>
+            <span>{{ usuario.usuario.nombreReal }}</span>          
+            <span *ngIf="usuario.esAmigo" class="friend-label">Amigo</span>
+            <span *ngIf="!usuario.esAmigo" class="non-friend-label">No es tu amigo</span>
           </li>
         </ul>
       </div>
