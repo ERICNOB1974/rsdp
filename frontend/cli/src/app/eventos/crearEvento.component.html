@@ -12,13 +12,9 @@
     </mat-form-field>
 
 
-    
-    <div 
-    *ngIf="evento.imagen === '' || evento.imagen == null" 
-    class="drag-drop-area" 
-    (dragover)="onDragOver($event)" 
-    (drop)="onDrop($event)"
-  >
+
+    <div *ngIf="evento.imagen === '' || evento.imagen == null" class="drag-drop-area" (dragover)="onDragOver($event)"
+      (drop)="onDrop($event)">
       <p>Arrastra y suelta una imagen o video aquí, o selecciona uno desde tus archivos.</p>
       <input type="file" id="archivo" (change)="onFileSelect($event)" hidden #fileInput>
       <button type="button" (click)="fileInput.click()">Seleccionar archivo</button>
@@ -44,6 +40,20 @@
       </mat-error>
     </mat-form-field>
 
+    <!-- Género -->
+    <mat-form-field appearance="outline" class="form-group">
+      <mat-label>Género</mat-label>
+      <mat-select [(ngModel)]="evento.genero" formControlName="genero" required>
+        <mat-option value="" disabled>Seleccione un género</mat-option>
+        <mat-option value="masculino">Masculino</mat-option>
+        <mat-option value="femenino">Femenino</mat-option>
+        <mat-option value="sinGenero">Sin género</mat-option>
+      </mat-select>
+      <mat-error *ngIf="formEvento.get('genero')?.hasError('required')">
+        El género es requerido
+      </mat-error>
+    </mat-form-field>
+
 
 
     <!-- Descripción -->
@@ -65,19 +75,11 @@
     <!-- Buscar Etiquetas -->
     <mat-form-field appearance="outline" class="form-group">
       <mat-label>Buscar Etiquetas:</mat-label>
-      <input matInput
-             id="etiquetas"
-             [ngbTypeahead]="searchEtiqueta"
-             [resultFormatter]="resultFormatEtiqueta"
-             [inputFormatter]="inputFormatEtiqueta"
-             (selectItem)="agregarEtiqueta($event)"
-             name="etiquetaSeleccionada"
-             placeholder="Buscar etiqueta"
-             [(ngModel)]="etiquetaSeleccionada"
-             [ngModelOptions]="{standalone: true}"
-             [container]="'body'" 
-             />
-      
+      <input matInput id="etiquetas" [ngbTypeahead]="searchEtiqueta" [resultFormatter]="resultFormatEtiqueta"
+        [inputFormatter]="inputFormatEtiqueta" (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada"
+        placeholder="Buscar etiqueta" [(ngModel)]="etiquetaSeleccionada" [ngModelOptions]="{standalone: true}"
+        [container]="'body'" />
+
       <footer *ngIf="etiquetasSeleccionadas.length==0" class="mat-error-custom">
         Al menos una etiqueta es requerida
       </footer>
@@ -85,8 +87,8 @@
         No puedes ingresar mas de 15 etiquetas
       </footer>
     </mat-form-field>
-    
-    
+
+
 
 
     <div class="selected-tags">

@@ -21,8 +21,8 @@ import { EventoService } from './evento.service';
 import { cantidadParticipantesValidator, dateValidator, minimoUnaEtiqueta } from './validacionesEvento';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
-
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-crear-evento',
@@ -36,7 +36,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatIconModule,
     ReactiveFormsModule,
     MatChipsModule, MatIconModule, // Asegúrate de que este módulo está aquí
-    NgIf]
+    NgIf,
+    MatOptionModule, MatSelectModule
+  ]
 })
 export class CrearEventoComponent {
 
@@ -91,8 +93,8 @@ export class CrearEventoComponent {
           [Validators.required]
         ],
         longitud: ['', [Validators.required]],
+        genero: ['', [Validators.required]],
         descripcion: [''] // Esta línea ahora no tiene validación
-
       }
     );
   }
@@ -390,7 +392,8 @@ export class CrearEventoComponent {
       !!(this.etiquetasSeleccionadas.length <= 15) &&
       !!this.evento.cantidadMaximaParticipantes &&
       !!this.evento.latitud &&
-      !!this.evento.longitud
+      !!this.evento.longitud &&
+      !!this.evento.genero
     // return this.formEvento.valid
   }
 
