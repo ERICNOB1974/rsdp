@@ -28,6 +28,9 @@
         <p><strong>Fecha y hora:</strong> {{ evento.fechaHora | date:'short' }}</p>
         <p><strong>Descripción:</strong> {{ evento.descripcion }}</p>
         <p><strong>Cantidad máxima de participantes:</strong> {{ evento.cantidadMaximaParticipantes }}</p>
+        <p><strong>Género:</strong> 
+          {{ { masculino: 'Masculino', femenino: 'Femenino', sinGenero: 'Sin Género' }[evento.genero] || evento.genero }}
+        </p>
         <p><strong>Ubicación:</strong> {{ evento.ubicacion }}</p>
 
         <!-- Mapa -->
@@ -119,50 +122,41 @@
 
 
 <ng-template #modalNotificacion>
-  <div class="modal" id="notificacionModal" tabindex="-1" aria-labelledby="notificacionModalLabel" aria-hidden="true"
-    role="dialog">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content bg-dark-custom text-light">
-        <div class="modal-header border-bottom border-secondary">
-          <h5 class="modal-title text-highlight" id="notificacionModalLabel">Enviar notificación a los inscriptos al
-            evento</h5>
-          <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="closeModal()"></button>
-        </div>
-        <div class="modal-body">
-          <form #notificacionForm="ngForm" class="p-3">
-            <div class="mb-3">
-              <label for="motivo" class="form-label text-light">Motivo de la notificación</label>
-              <input type="text" class="form-control border-secondary bg-dark-input text-light" id="motivo"
-                [(ngModel)]="motivo" name="motivo" placeholder="Escribe el motivo" required>
-              <div *ngIf="!motivo && notificacionForm.submitted" class="text-danger mt-1">
-                El motivo es obligatorio.
-              </div>
-            </div>
-            <div class="mb-3">
-              <label for="mensaje" class="form-label text-light">Mensaje</label>
-              <textarea class="form-control border-secondary bg-dark-input text-light" id="mensaje"
-                [(ngModel)]="mensaje" name="mensaje" rows="4" placeholder="Escribe el mensaje" required>
-              </textarea>
-              <div *ngIf="!mensaje && notificacionForm.submitted" class="text-danger mt-1">
-                El mensaje es obligatorio.
-              </div>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer border-top border-secondary d-flex justify-content-between">
-          <button type="button" class="btn btn-cancel" (click)="closeModal()">Cancelar</button>
-          <button type="button" class="btn btn-primary btn-highlight d-flex align-items-center"
-            [disabled]="!motivo || !mensaje || isLoading" (click)="enviarNotificacion()">
-            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"
-              aria-hidden="true"></span>
-            Enviar
-          </button>
+  <div class="modal-header">
+    <h5 class="modal-title">Enviar notificación a los inscriptos al evento</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+  </div>
+  <div class="modal-body">
+    <form #notificacionForm="ngForm" class="p-3">
+      <div class="mb-3">
+        <label for="motivo" class="form-label">Motivo de la notificación</label>
+        <input type="text" class="form-control" id="motivo"
+          [(ngModel)]="motivo" name="motivo" placeholder="Escribe el motivo" required>
+        <div *ngIf="!motivo && notificacionForm.submitted" class="text-danger mt-1">
+          El motivo es obligatorio.
         </div>
       </div>
-    </div>
+      <div class="mb-3">
+        <label for="mensaje" class="form-label">Mensaje</label>
+        <textarea class="form-control" id="mensaje"
+          [(ngModel)]="mensaje" name="mensaje" rows="4" placeholder="Escribe el mensaje" required>
+        </textarea>
+        <div *ngIf="!mensaje && notificacionForm.submitted" class="text-danger mt-1">
+          El mensaje es obligatorio.
+        </div>
+      </div>
+    </form>
   </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary me-auto" (click)="closeModal()">Cancelar</button>
+    <button type="button" class="btn btn-primary d-flex align-items-center"
+      [disabled]="!motivo || !mensaje || isLoading" (click)="enviarNotificacion()">
+      <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"
+        aria-hidden="true"></span>
+      Enviar
+    </button>
+  </div>  
 </ng-template>
-
 
 <ng-template #modalInvitarAmigos>
   <div class="modal-header">
@@ -237,7 +231,7 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="cerrarModal()">
+    <button type="button" class="btn btn-secondary btn-personalizado" (click)="cerrarModal()">
       Cerrar
     </button>
   </div>

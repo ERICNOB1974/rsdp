@@ -1,5 +1,17 @@
-<div class="filtros-container">
+<div class="container">
+  <div class="row justify-content-center align-items-center mb-4">
+    <div class="col-auto">
+      <button class="tab-button d-flex align-items-center" [ngClass]="{ active: tabSeleccionada === 'filtros' }"
+        (click)="toggleFilters()">
+        <span class="material-icons me-2">filter_list</span>
+        Filtros
+      </button>
+    </div>
+  </div>
+</div>
 
+<div *ngIf="filtersVisible || filtersAnimating"
+  [ngClass]="{'fadeIn': filtersVisible, 'fadeOut': !filtersVisible && filtersAnimating}" class="filtros-container">
   <!-- Filtro por nombre -->
   <div class="filtro-container filtro-nombre">
     <label class="container">
@@ -51,31 +63,30 @@
   </div>
 
   <!-- Filtro por fecha -->
-  <div class="filtro">
+  <div class="filtro-container filtro-participantes">
     <label class="container">
       <input type="checkbox" [(ngModel)]="filtroFechaActivo" (change)="aplicarTodosLosFiltros()">
       <div class="checkmark"></div>
     </label>
-    <div class="filtro-container filtro-fecha">
-      <button (click)="toggleFiltroFecha()" class="filtro-toggle">
-        Filtrar por fecha <i [class]="filtroFechaAbierto ? 'arrow up' : 'arrow down'"></i>
-      </button>
-      <div *ngIf="filtroFechaAbierto" class="filtro-content">
-        <div class="input-group">
-          <div class="input-container">
-            <label for="fechaMin">Fecha mínima:</label>
-            <input type="date" id="fechaMin" [(ngModel)]="fechaMinFiltro">
-          </div>
-          <div class="input-container">
-            <label for="fechaMax">Fecha máxima:</label>
-            <input type="date" id="fechaMax" [(ngModel)]="fechaMaxFiltro">
-          </div>
+    <button (click)="toggleFiltroFecha()" class="filtro-toggle">
+      Filtrar por fecha <i [class]="filtroFechaAbierto ? 'arrow up' : 'arrow down'"></i>
+    </button>
+    <div *ngIf="filtroFechaAbierto" class="filtro-content">
+      <div class="input-group">
+        <div class="input-container">
+          <label for="fechaMin">Fecha mínima:</label>
+          <input type="date" id="fechaMin" [(ngModel)]="fechaMinFiltro">
         </div>
-        <div class="button-group">
-          <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar</button>
-          <button (click)="limpiarFiltroFecha()" class="limpiar-filtro">Limpiar</button>
+        <div class="input-container">
+          <label for="fechaMax">Fecha máxima:</label>
+          <input type="date" id="fechaMax" [(ngModel)]="fechaMaxFiltro">
         </div>
       </div>
+      <div class="button-group">
+        <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar</button>
+        <button (click)="limpiarFiltroFecha()" class="limpiar-filtro">Limpiar</button>
+      </div>
+
     </div>
   </div>
 
@@ -129,6 +140,10 @@
           <p>{{ evento.descripcion }}</p>
           <p>Participantes: {{ evento.participantes }}/{{evento.cantidadMaximaParticipantes}}</p>
           <p>Ubicación: {{evento.ubicacion}}</p>
+          <p>{{ evento.fechaHora | date: 'MMM d, y, h:mm a' }}</p> <!-- Formato de fecha -->
+          <p>Género:
+            {{ { masculino: 'Masculino', femenino: 'Femenino', sinGenero: 'Sin Género' }[evento.genero] || evento.genero }}
+          </p>
         </div>
       </div>
       <div *ngIf="eventosDisponiblesAMostrar.length==0">
@@ -148,6 +163,9 @@
           <p>Participantes: {{ evento.participantes }}/{{evento.cantidadMaximaParticipantes}}</p>
           <p>Ubicación: {{evento.ubicacion}}</p>
           <p>{{ evento.fechaHora | date: 'MMM d, y, h:mm a' }}</p> <!-- Formato de fecha -->
+          <p>Género: 
+            {{ { masculino: 'Masculino', femenino: 'Femenino', sinGenero: 'Sin Género' }[evento.genero] || evento.genero }}
+          </p>
         </div>
       </div>
       <div *ngIf="eventosParticipaUsuario.length==0">

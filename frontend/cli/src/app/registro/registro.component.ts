@@ -1,10 +1,8 @@
 import { AuthService } from '../autenticacion/auth.service';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
-import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { NgIf } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
@@ -13,6 +11,11 @@ import { dateValidator } from './date-validator';
 import { Observable, catchError, map, of } from 'rxjs';
 import { UsuarioService } from '../usuarios/usuario.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatOptionModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-registro',
@@ -23,6 +26,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatButtonModule,
     MatCardModule,
     MatIconModule,
+    MatOptionModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
     ReactiveFormsModule,
     NgIf,
     HttpClientModule],
@@ -63,6 +71,7 @@ export class RegistroComponent implements OnInit {
         ],
         confirmarContrasena: ['', [Validators.required]],
         fechaNacimiento: ['', [Validators.required, dateValidator()]],
+        genero: ['', [Validators.required]],
         descripcion: [''],
       },
       { validators: this.matchPasswords('contrasena', 'confirmarContrasena') }
@@ -133,6 +142,8 @@ export class RegistroComponent implements OnInit {
   onSubmit(): void {
     if (this.registroForm.valid) {
       const formData = this.registroForm.value;
+
+      formData.genero = formData.genero.toLowerCase();
 
       localStorage.setItem('registroData', JSON.stringify(formData));
 

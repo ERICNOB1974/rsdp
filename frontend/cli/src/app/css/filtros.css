@@ -1,3 +1,43 @@
+/* Efecto de entrada */
+.fadeIn {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Efecto de salida */
+.fadeOut {
+  animation: fadeOut 0.5s ease-in-out forwards;
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.filtro {
+  display: flex;
+  align-items: center; /* Asegura que el contenido esté alineado verticalmente */
+  justify-content: flex-start; /* Alinea todos los filtros al inicio */
+  margin-bottom: 10px; /* Uniforma el espacio inferior */
+  flex-wrap: wrap; /* Permite que los filtros se adapten en pantallas pequeñas */
+}
+
 .filtros-container {
   display: flex;
   flex-direction: row;
@@ -97,7 +137,6 @@
   margin-top: 10px;
   /* Añadir margen superior */
 }
-
 
 .limpiar-filtro {
   background-color: #e4e4e4;

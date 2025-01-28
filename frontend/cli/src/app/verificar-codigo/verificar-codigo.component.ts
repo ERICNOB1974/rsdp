@@ -197,6 +197,7 @@ export class VerificarCodigoComponent {
         this.email,
         registroData.contrasena,
         registroData.fechaNacimiento,
+        registroData.genero,
         registroData.descripcion,
         registroData.privacidadPerfil,
         registroData.privacidadEventos,

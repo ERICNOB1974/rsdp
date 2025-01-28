@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,9 @@ public class ComunidadService {
     ComunidadRepository comunidadRepository;
     @Autowired
     UsuarioRepository usuarioRepository;
+    @Autowired
+    @Lazy
+    UsuarioService usuarioService;
     @Autowired
     private NotificacionService notificacionService;
     @Autowired
@@ -124,29 +128,48 @@ public class ComunidadService {
     }
 
     public List<ScoreComunidad> obtenerSugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario) {
-        List<ScoreComunidad> sugerencias = comunidadRepository.sugerenciasDeComunidadesBasadasEnAmigos2(nombreUsuario);
+        Usuario usuario = usuarioService.findByNombreUsuario(nombreUsuario);
+
+        String generoUsuario = usuario.getGenero();
+
+        List<ScoreComunidad> sugerencias = comunidadRepository.sugerenciasDeComunidadesBasadasEnAmigos2(nombreUsuario,
+                generoUsuario);
         sugerencias.forEach(
                 s -> System.out.println("Comunidad: " + s.getComunidad().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
-     public List<ScoreComunidad> obtenerSugerenciasDeComunidadesBasadasEnAmigosSinEtiquetas2(String nombreUsuario) {
-        List<ScoreComunidad> sugerencias = comunidadRepository.sugerenciasDeComunidadesBasadasEnAmigos2SinEtiquetas(nombreUsuario);
+    public List<ScoreComunidad> obtenerSugerenciasDeComunidadesBasadasEnAmigosSinEtiquetas2(String nombreUsuario) {
+        Usuario usuario = usuarioService.findByNombreUsuario(nombreUsuario);
+
+        String generoUsuario = usuario.getGenero();
+
+        List<ScoreComunidad> sugerencias = comunidadRepository
+                .sugerenciasDeComunidadesBasadasEnAmigos2SinEtiquetas(nombreUsuario, generoUsuario);
         sugerencias.forEach(
                 s -> System.out.println("Comunidad: " + s.getComunidad().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
     public List<ScoreComunidad> obtenerSugerenciasDeComunidadesBasadasEnEventos2(String nombreUsuario) {
-        List<ScoreComunidad> sugerencias = comunidadRepository.sugerenciasDeComunidadesBasadasEnEventos2(nombreUsuario);
+        Usuario usuario = usuarioService.findByNombreUsuario(nombreUsuario);
+
+        String generoUsuario = usuario.getGenero();
+
+        List<ScoreComunidad> sugerencias = comunidadRepository.sugerenciasDeComunidadesBasadasEnEventos2(nombreUsuario,
+                generoUsuario);
         sugerencias.forEach(
                 s -> System.out.println("Comunidad: " + s.getComunidad().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
     public List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnComunidades2(String nombreUsuario) {
+        Usuario usuario = usuarioService.findByNombreUsuario(nombreUsuario);
+
+        String generoUsuario = usuario.getGenero();
+
         List<ScoreComunidad> sugerencias = comunidadRepository
-                .sugerenciasDeComunidadesBasadasEnComunidades2(nombreUsuario);
+                .sugerenciasDeComunidadesBasadasEnComunidades2(nombreUsuario, generoUsuario);
         sugerencias.forEach(
                 s -> System.out.println("Comunidad: " + s.getComunidad().getId() + ", Score: " + s.getScore()));
         return sugerencias;
@@ -154,15 +177,20 @@ public class ComunidadService {
 
     public Map<String, Object> obtenerSugerenciasComunidadesConTotalPaginas(String nombreUsuario, int page,
             int pageSize) {
+
+        Usuario usuario = usuarioService.findByNombreUsuario(nombreUsuario);
+
+        String generoUsuario = usuario.getGenero();
+
         // Obtener todas las sugerencias de comunidades desde las tres consultas
         List<ScoreComunidad> sugerenciasAmigos = comunidadRepository
-                .sugerenciasDeComunidadesBasadasEnAmigos2(nombreUsuario);
+                .sugerenciasDeComunidadesBasadasEnAmigos2(nombreUsuario, generoUsuario);
         List<ScoreComunidad> sugerenciasEventos = comunidadRepository
-                .sugerenciasDeComunidadesBasadasEnEventos2(nombreUsuario);
+                .sugerenciasDeComunidadesBasadasEnEventos2(nombreUsuario, generoUsuario);
         List<ScoreComunidad> sugerenciasComunidades = comunidadRepository
-                .sugerenciasDeComunidadesBasadasEnComunidades2(nombreUsuario);
+                .sugerenciasDeComunidadesBasadasEnComunidades2(nombreUsuario, generoUsuario);
         List<ScoreComunidad> sugerenciasAmigosSinEtiquetas = comunidadRepository
-                .sugerenciasDeComunidadesBasadasEnAmigos2SinEtiquetas(nombreUsuario);
+                .sugerenciasDeComunidadesBasadasEnAmigos2SinEtiquetas(nombreUsuario, generoUsuario);
 
         // Combinar todas las sugerencias en una sola lista
         List<ScoreComunidad> todasLasSugerencias = new ArrayList<>();
@@ -183,9 +211,17 @@ public class ComunidadService {
                         double nuevoScore = existente.getScore() + nuevo.getScore(); // Sumar scores
                         existente.setScore(nuevoScore); // Actualizar el score sumado
                         String nuevoMotivo = existente.getMotivo() + " --- " + nuevo.getMotivo();
-                        existente.setMotivo(nuevoMotivo);
+                        existente.setMotivo(nuevoMotivo); // Actualizar el motivo
                         return existente; // Retornar el objeto existente actualizado
                     });
+        }
+
+        for (ScoreComunidad scoreComunidad : mapaSugerencias.values()) {
+            String motivo = scoreComunidad.getMotivo();
+            if (!motivo.contains("Está adecuado a tus preferencias de género")) {
+                motivo += " --- Está adecuado a tus preferencias de género";
+                scoreComunidad.setMotivo(motivo);
+            }
         }
 
         // Obtener la lista de ScoreComunidad sin duplicados con los scores sumados
@@ -256,23 +292,22 @@ public class ComunidadService {
         if (!c.isEsPrivada()) {
             return true;
         }
-        if (c.isEsPrivada()){
-            if(comunidadRepository.esMiembro(idUsuario, idComunidad)){
+        if (c.isEsPrivada()) {
+            if (comunidadRepository.esMiembro(idUsuario, idComunidad)) {
                 return true;
             }
-            if(usuarioRepository.esAdministrador(idUsuario, idComunidad)){
+            if (usuarioRepository.esAdministrador(idUsuario, idComunidad)) {
                 return true;
             }
-            if(usuarioRepository.esCreador(idUsuario, idComunidad)){
+            if (usuarioRepository.esCreador(idUsuario, idComunidad)) {
                 return true;
             }
 
-        return false;
-        } 
-            
-            return true;
+            return false;
         }
-    
+
+        return true;
+    }
 
     public void cambiarEstadoFavorita(Long idComunidad, Long idUsuario) {
         if (comunidadRepository.esFavorita(idComunidad, idUsuario)) {

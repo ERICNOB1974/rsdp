@@ -59,6 +59,8 @@ export class RutinasComponent implements OnInit {
   searchFailed: boolean = false;
   etiquetasSeleccionadas: Etiqueta[] = [];
   etiquetaSeleccionada: Etiqueta | null = null;
+  filtersVisible: boolean = false;
+  filtersAnimating: boolean = false;
 
   constructor(private rutinaService: RutinaService,
     private authService: AuthService,
@@ -75,7 +77,24 @@ export class RutinasComponent implements OnInit {
     this.cargarRutinasRealizaUsuario();
   }
 
-
+  toggleFilters() {
+    if (this.filtersAnimating) return;
+  
+    this.filtersAnimating = true;
+  
+    if (this.filtersVisible) {
+      this.filtersVisible = false;
+      setTimeout(() => {
+        this.filtersAnimating = false;
+      }, 500);
+    } else {
+      this.filtersVisible = true;
+      setTimeout(() => {
+        this.filtersAnimating = false;
+      }, 500);
+    }
+  }
+  
   traerDias(rutinas: Rutina[]): void {
     for (let rutina of rutinas) {
       this.rutinaService.obtenerDiasEnRutina(rutina.id!).subscribe(
