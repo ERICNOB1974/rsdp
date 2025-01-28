@@ -129,26 +129,52 @@
         </div>
       </div>
 
-      <div *ngIf="tabSeleccionada === 'miembros'" class="perfil-miembros" (scroll)="onScrollMiembros()">
-        <div *ngFor="let miembro of miembrosVisiblesPaginados" class="miembro-item"
-          [routerLink]="['/perfil', miembro.id]">
-          <div>
-            <img [src]="(miembro.anonimos || !miembro.fotoPerfil) ? '../../assets/usuario.png' : miembro.fotoPerfil"
-              alt="{{ miembro.nombreUsuario }}" class="perfil-imagen">
-            <h4>{{ miembro.nombreUsuario }}</h4>
-            <span
-              [ngClass]="{'creador': obtenerRol(miembro) === 'Creador', 'administrador': obtenerRol(miembro) === 'Administrador', 'miembro': obtenerRol(miembro) === 'Miembro'}"
-              class="rol">
-              {{ obtenerRol(miembro) }}
-            </span>
-          </div>
+      <!-- Caja de búsqueda -->
+      
+      <div *ngIf="tabSeleccionada === 'miembros'" class="perfil-miembros-contenedor">
+        <!-- Buscador fuera de la grilla -->
+        <div class="buscador-contenedor">
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (input)="buscarMiembros()"
+            placeholder="🔍 Buscar miembros..."
+            class="buscador-input"
+          />
         </div>
-
-        <!-- Mostrar la cantidad de usuarios anónimos al final con una imagen predeterminada -->
-        <div *ngIf="usuariosAnonimos > 0" class="miembro-item">
-          <img src="../../assets/usuario.png" alt="Usuario anónimo" class="perfil-imagen" />
-          <h4>{{ usuariosAnonimos }} Usuario{{ usuariosAnonimos > 1 ? 's' : '' }} anónimo{{ usuariosAnonimos > 1 ? 's' :
-            '' }}</h4>
+      
+        <!-- Mostrar la cantidad de usuarios anónimos fuera de la grilla -->
+        <div *ngIf="usuariosAnonimos > 0" class="usuarios-anonimos-info">
+          <img src="../../assets/usuario.png" alt="Usuario anónimo" class="usuarios-anonimos-img" />
+          <p>{{ usuariosAnonimos }} Usuario{{ usuariosAnonimos > 1 ? 's' : '' }} anónimo{{ usuariosAnonimos > 1 ? 's' : '' }}</p>
+        </div>
+      
+        <!-- Lista de miembros -->
+        <div class="perfil-miembros" (scroll)="onScrollMiembros()">
+          <div
+            *ngFor="let miembro of miembros"
+            class="miembro-item"
+            [routerLink]="['/perfil', miembro.id]"
+          >
+            <div>
+              <img
+                [src]="(miembro.anonimos || !miembro.fotoPerfil) ? '../../assets/usuario.png' : miembro.fotoPerfil"
+                alt="{{ miembro.nombreUsuario }}"
+                class="perfil-imagen"
+              />
+              <h4>{{ miembro.nombreUsuario }}</h4>
+              <span
+                [ngClass]="{
+                  creador: obtenerRol(miembro) === 'Creador',
+                  administrador: obtenerRol(miembro) === 'Administrador',
+                  miembro: obtenerRol(miembro) === 'Miembro'
+                }"
+                class="rol"
+              >
+                {{ obtenerRol(miembro) }}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -159,7 +185,7 @@
     <h3>Creador</h3>
     <img [src]="creadorComunidad.fotoPerfil" alt="{{ creadorComunidad.nombreUsuario }}" class="perfil-imagen">
     <span>{{ creadorComunidad.nombreUsuario }}</span>
-    <h3>Cantidad de miembros</h3>
+    <h3>Cantidad de miembros anonimos</h3>
     <h1>{{ usuariosAnonimos }}</h1>
   </div>
 </div>

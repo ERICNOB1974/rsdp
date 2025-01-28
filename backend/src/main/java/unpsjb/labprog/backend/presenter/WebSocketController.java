@@ -10,8 +10,6 @@ public class WebSocketController {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
-
-
     // Enviar notificación a todos los usuarios conectados
     public void enviarNotificacionGlobal(String mensaje) {
         simpMessagingTemplate.convertAndSend("/topic/notificaciones", mensaje);

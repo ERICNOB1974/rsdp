@@ -1,0 +1,33 @@
+.suggestions {
+  border: 1px solid #ccc;
+  max-height: 150px;
+  overflow-y: auto;
+  background: white;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: absolute;
+  z-index: 1000;
+  width: 90%;
+}
+
+.suggestions li {
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+}
+
+.suggestions li:hover {
+  background: #f0f0f0;
+}
+
+.friend-label {
+  color: green;
+  font-size: 12px;
+}
+
+.non-friend-label {
+  color: red;
+  font-size: 12px;
+}

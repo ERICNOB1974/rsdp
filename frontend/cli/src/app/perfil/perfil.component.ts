@@ -388,7 +388,8 @@ export class PerfilComponent implements OnInit {
             duration: 3000,
           }); 
           // Actualizar la lista de publicaciones
-          this.getPublicacionesPaginadas();
+          //this.getPublicacionesPaginadas();
+          this.publicaciones = this.publicaciones.filter(pub => pub.id !== idPublicacion);  
         } else {
           this.snackBar.open('Error: ' + dataPackage.message, 'Cerrar', {
             duration: 3000,
@@ -845,5 +846,8 @@ export class PerfilComponent implements OnInit {
       this.cargarComunidades();  // Si no estamos buscando o el texto está vacío, cargamos eventos sin filtro
     }
   }
-
+  
+  irAPublicar() {
+    this.router.navigate(['/publicacion']);
+}
 }
