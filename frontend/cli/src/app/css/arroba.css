@@ -31,3 +31,13 @@
   color: red;
   font-size: 12px;
 }
+
+.mention-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.mention-link:hover {
+  text-decoration: underline;
+}

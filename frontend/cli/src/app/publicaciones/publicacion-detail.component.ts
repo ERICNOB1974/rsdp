@@ -15,7 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ComentarioService } from '../comentarios/comentario.service';
 import { UsuarioEsAmigoDTO } from '../arrobar/UsuarioEsAmigoDTO';
 import { ArrobarService } from '../arrobar/arrobar.service';
-import { catchError, debounceTime, distinctUntilChanged, filter, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
 
 
 
@@ -42,6 +42,7 @@ export class PublicacionDetailComponent implements OnInit {
   searchingArroba = false;
   searchFailedArroba = false;
   isReplying = false; // Para saber si está respondiendo a un comentario
+  textoConMenciones$: Observable<string> = undefined!;
 
 
   constructor(
@@ -329,6 +330,8 @@ export class PublicacionDetailComponent implements OnInit {
           this.checkIfOwnPublication();
           this.cargarComentarios();
           this.cantidadLikes();
+          this.textoConMenciones$ = this.getTextoConMenciones(this.publicacion.texto);
+
         });
       });
     }
@@ -656,4 +659,70 @@ export class PublicacionDetailComponent implements OnInit {
     }
 
   }
+
+  getTextoConMenciones(texto: string): Observable<string> {
+    if (!texto) {
+      console.log("Texto vacío, retornando observable vacío.");
+      return of('');
+    }
+  
+    // Expresión regular para encontrar menciones
+    const regex = /@(\w+)/g;
+    const menciones = texto.match(regex) || [];
+    console.log("Menciones encontradas:", menciones);
+  
+    // Si no hay menciones, devolvemos el texto original
+    if (menciones.length === 0) {
+      return of(texto);  // Devolvemos el texto tal cual sin cambios
+    }
+  
+    const verificaciones: Observable<{ username: string; idUsuario: number | null }>[] = [];
+  
+    // Verificamos la existencia de los usuarios mencionados
+    menciones.forEach((match) => {
+      const username = match.substring(1); // Quita el '@'
+      console.log("Verificando existencia de usuario:", username);
+  
+      verificaciones.push(
+        this.usuarioService.findByNombreUsuario(username).pipe(
+          map((dataPackage: DataPackage) => {
+            let idUsuario: number | null = null;  // Inicializamos idUsuario como null
+            if (dataPackage.status === 200) {
+              const usuario: Usuario = dataPackage.data as Usuario;
+              if (usuario.nombreUsuario === username) {
+                idUsuario = usuario.id;  // Asignamos el idUsuario del objeto Usuario
+              }
+            }
+  
+            console.log(`Usuario ${username} tiene id:`, idUsuario);
+            return { username, idUsuario };
+          }),
+          catchError(() => {
+            console.error(`Error al verificar el usuario: ${username}`);
+            return of({ username, idUsuario: null }); // Si hay error, asumimos que no existe
+          })
+        )
+      );
+    });
+  
+    // Ejecutamos todas las verificaciones en paralelo y transformamos el texto
+    return forkJoin(verificaciones).pipe(
+      map((resultados) => {
+        console.log("Resultados de la verificación:", resultados);
+  
+        // Reemplazamos las menciones por enlaces
+        return texto.replace(regex, (match, username) => {
+          const usuario = resultados.find((r) => r.username === username);
+          const idUsuario = usuario?.idUsuario;
+          console.log(`¿El usuario ${username} tiene id?`, idUsuario);
+  
+          return idUsuario !== null
+            ? `<a href="/perfil/${idUsuario}" class="mention-link">${match}</a>`  // Usamos idUsuario como número
+            : match;
+        });
+      })
+    );
+  }
+  
+
 }
