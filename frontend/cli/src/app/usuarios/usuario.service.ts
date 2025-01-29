@@ -55,6 +55,10 @@ export class UsuarioService {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/existeNombreUsuario/${nombreUsuario}`);
   }
 
+  findByNombreUsuario(nombreUsuario: string): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/findByNombreUsuario/${nombreUsuario}`);
+  }
+
   existeNombreUsuarioMenosElActual(nombreUsuarioIngresado: string, nombreUsuarioActual: string): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/existeNombreUsuarioMenosElActual/${nombreUsuarioIngresado}/${nombreUsuarioActual}`);
   }
