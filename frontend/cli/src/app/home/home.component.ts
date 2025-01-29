@@ -48,6 +48,7 @@ export class HomeComponent implements OnInit {
 
     // Suscribirse a nuevas publicaciones
     this.webSocketService.nuevasPublicaciones$.subscribe(() => {
+      
       this.mostrarBotonActualizar = true; // Mostrar botón cuando haya una nueva publicación
       //this.moverBoton(); // Activar movimiento cuando aparezca
 
