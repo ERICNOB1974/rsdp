@@ -1,3 +1,14 @@
+.modal {
+  position: fixed !important;
+  z-index: 9999 !important;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 /* Asegura que el modal no se desborde */
 .modal-body {
@@ -102,7 +113,6 @@ html, body {
   position: absolute;
   top: 0.5rem; /* Ajusta la distancia desde la parte superior */
   right: 0.5rem; /* Ajusta la distancia desde la derecha */
-  z-index: 1; /* Asegura que siempre esté encima */
 }
 
 .btn-cancel {

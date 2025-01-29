@@ -148,41 +148,40 @@ public class UsuarioService {
         return usuarioRepository.buscarUsuarios(nombreUsuario, filtroNombre, skip, size);
     }
 
-public List<Usuario> buscarMiembrosComunidad(String nombreUsuario, Long idComunidad, String term, int page, int size) {
-    if (page < 0 || size <= 0) {
-        throw new IllegalArgumentException("Los parámetros de paginación no son válidos.");
-    }
-
-    int skip = page * size;
-    String filtroNombre = (term == null || term.trim().isEmpty()) ? "" : term;
-    List<Usuario> usuarios = new ArrayList<>();
-    
-    if(page==0){
-
-    // Verificar si el solicitante es miembro de la comunidad
-    Optional<Usuario> solicitante = usuarioRepository.findByNombreUsuario(nombreUsuario);
-    solicitante.ifPresent(s -> {
-        // Verificar si el solicitante ya está en los resultados
-        boolean solicitanteYaIncluido = usuarios.stream()
-            .anyMatch(usuario -> usuario.getId().equals(s.getId()));
-
-        // Si el solicitante no está en los resultados, agregarlo
-        if (!solicitanteYaIncluido) {
-            // Verificar si es miembro de la comunidad
-            boolean esMiembro = usuarioRepository.esMiembro(s.getId(), idComunidad);
-            if (esMiembro) {
-                usuarios.add(s);
-            }
+    public List<Usuario> buscarMiembrosComunidad(String nombreUsuario, Long idComunidad, String term, int page,
+            int size) {
+        if (page < 0 || size <= 0) {
+            throw new IllegalArgumentException("Los parámetros de paginación no son válidos.");
         }
-    });
+
+        int skip = page * size;
+        String filtroNombre = (term == null || term.trim().isEmpty()) ? "" : term;
+        List<Usuario> usuarios = new ArrayList<>();
+
+        if (page == 0) {
+
+            // Verificar si el solicitante es miembro de la comunidad
+            Optional<Usuario> solicitante = usuarioRepository.findByNombreUsuario(nombreUsuario);
+            solicitante.ifPresent(s -> {
+                // Verificar si el solicitante ya está en los resultados
+                boolean solicitanteYaIncluido = usuarios.stream()
+                        .anyMatch(usuario -> usuario.getId().equals(s.getId()));
+
+                // Si el solicitante no está en los resultados, agregarlo
+                if (!solicitanteYaIncluido) {
+                    // Verificar si es miembro de la comunidad
+                    boolean esMiembro = usuarioRepository.esMiembro(s.getId(), idComunidad);
+                    if (esMiembro) {
+                        usuarios.add(s);
+                    }
+                }
+            });
+        }
+
+        usuarios.addAll(
+                usuarioRepository.buscarMiembrosComunidad(nombreUsuario, idComunidad, filtroNombre, skip, size));
+        return usuarios;
     }
-
-    usuarios.addAll(usuarioRepository.buscarMiembrosComunidad(nombreUsuario, idComunidad, filtroNombre, skip, size));
-    return usuarios;
-}
-
-
-
 
     public boolean sonAmigos(Long idEmisor, Long idReceptor) {
         return usuarioRepository.sonAmigos(idEmisor, idReceptor);
@@ -315,9 +314,11 @@ public List<Usuario> buscarMiembrosComunidad(String nombreUsuario, Long idComuni
         return usuarioRepository.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(idUsuario, idEvento);
     }
 
-    public List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEventoPrivadoPeroSiALaComunidad(Long idUsuario, Long idEvento) {
+    public List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEventoPrivadoPeroSiALaComunidad(Long idUsuario,
+            Long idEvento) {
         Comunidad comunidad = comunidadService.buscarComunidadPorEventoInterno(idEvento);
-        return usuarioRepository.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEventoPrivadoPeroSiALaComunidad(idUsuario, idEvento, comunidad.getId());
+        return usuarioRepository.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEventoPrivadoPeroSiALaComunidad(idUsuario,
+                idEvento, comunidad.getId());
     }
 
     public List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad) {
@@ -333,6 +334,10 @@ public List<Usuario> buscarMiembrosComunidad(String nombreUsuario, Long idComuni
         return usuarioRepository.todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(idUsuario, idComunidad);
     }
 
+    public List<Usuario> usuariosConMasInteracciones(Long idUsuario) {
+        return usuarioRepository.usuariosConMasInteracciones(idUsuario);
+    }
+
     public Usuario buscarCreadorDeUnEventoInterno(Long comunidadId, Long eventoId) {
         return usuarioRepository.buscarCreadorDeUnEventoInterno(comunidadId, eventoId);
     }
@@ -344,50 +349,51 @@ public List<Usuario> buscarMiembrosComunidad(String nombreUsuario, Long idComuni
         return usuarioRepository.likesPublicacion(idPublicacion, skip, size);
     }
 
-       public Long contarUsuariosAnonimos(String nombreUsuario, Long idComunidad) {
+    public Long contarUsuariosAnonimos(String nombreUsuario, Long idComunidad) {
         Long usuariosAnonimos = usuarioRepository.contarUsuariosAnonimos(nombreUsuario, idComunidad);
-        if(usuariosAnonimos!=0){
+        if (usuariosAnonimos != 0) {
             usuariosAnonimos--;
         }
         return usuariosAnonimos;
     }
 
-    public List<Usuario> buscarParticipantesEvento(String nombreUsuario, Long idEvento, String term, int page, int size) {
-    if (page < 0 || size <= 0) {
-        throw new IllegalArgumentException("Los parámetros de paginación no son válidos.");
-    }
-
-    int skip = page * size;
-    String filtroNombre = (term == null || term.trim().isEmpty()) ? "" : term;
-    List<Usuario> usuarios = new ArrayList<>();
-    
-    if(page==0){
-
-    // Verificar si el solicitante es miembro de la comunidad
-    Optional<Usuario> solicitante = usuarioRepository.findByNombreUsuario(nombreUsuario);
-    solicitante.ifPresent(s -> {
-        // Verificar si el solicitante ya está en los resultados
-        boolean solicitanteYaIncluido = usuarios.stream()
-            .anyMatch(usuario -> usuario.getId().equals(s.getId()));
-
-        // Si el solicitante no está en los resultados, agregarlo
-        if (!solicitanteYaIncluido) {
-            // Verificar si es miembro de la comunidad
-            boolean esMiembro = eventoRepository.participa(s.getId(), idEvento);
-            if (esMiembro) {
-                usuarios.add(s);
-            }
+    public List<Usuario> buscarParticipantesEvento(String nombreUsuario, Long idEvento, String term, int page,
+            int size) {
+        if (page < 0 || size <= 0) {
+            throw new IllegalArgumentException("Los parámetros de paginación no son válidos.");
         }
-    });
+
+        int skip = page * size;
+        String filtroNombre = (term == null || term.trim().isEmpty()) ? "" : term;
+        List<Usuario> usuarios = new ArrayList<>();
+
+        if (page == 0) {
+
+            // Verificar si el solicitante es miembro de la comunidad
+            Optional<Usuario> solicitante = usuarioRepository.findByNombreUsuario(nombreUsuario);
+            solicitante.ifPresent(s -> {
+                // Verificar si el solicitante ya está en los resultados
+                boolean solicitanteYaIncluido = usuarios.stream()
+                        .anyMatch(usuario -> usuario.getId().equals(s.getId()));
+
+                // Si el solicitante no está en los resultados, agregarlo
+                if (!solicitanteYaIncluido) {
+                    // Verificar si es miembro de la comunidad
+                    boolean esMiembro = eventoRepository.participa(s.getId(), idEvento);
+                    if (esMiembro) {
+                        usuarios.add(s);
+                    }
+                }
+            });
+        }
+
+        usuarios.addAll(usuarioRepository.buscarParticipanteEvento(nombreUsuario, idEvento, filtroNombre, skip, size));
+        return usuarios;
     }
 
-    usuarios.addAll(usuarioRepository.buscarParticipanteEvento(nombreUsuario, idEvento, filtroNombre, skip, size));
-    return usuarios;
-}
-
-       public Long contarParticipantesAnonimos(String nombreUsuario, Long idEvento) {
+    public Long contarParticipantesAnonimos(String nombreUsuario, Long idEvento) {
         Long usuariosAnonimos = usuarioRepository.contarParticipantesAnonimos(nombreUsuario, idEvento);
-        if(usuariosAnonimos!=0){
+        if (usuariosAnonimos != 0) {
             usuariosAnonimos--;
         }
         return usuariosAnonimos;

@@ -331,6 +331,12 @@ Usuario findUsuarioByComentarioId(@Param("id") Long id);
             "RETURN amigo")
     List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(Long idUsuario, Long idComunidad);
 
+    @Query("MATCH (u:Usuario)-[r]->(otro:Usuario) " +
+          "WHERE id(u) = $idUsuario " + 
+          "RETURN otro, count(r) AS cantidadRelaciones " +
+          "ORDER BY cantidadRelaciones DESC")
+    List<Usuario> usuariosConMasInteracciones(Long idUsuario);
+
     @Query("""
             MATCH (p:Publicacion)
             WHERE id(p) = $publicacionId

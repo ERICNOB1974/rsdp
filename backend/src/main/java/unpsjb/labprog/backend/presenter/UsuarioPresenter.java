@@ -379,6 +379,13 @@ public class UsuarioPresenter {
                 usuarioService.todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(idUsuario, idComunidad));
     }
 
+    @GetMapping("/usuariosConMasInteracciones/{idUsuario}")
+    public ResponseEntity<Object> usuariosConMasInteracciones(
+            @PathVariable Long idUsuario) {
+        return Response.ok(
+                usuarioService.usuariosConMasInteracciones(idUsuario));
+    }
+
     @GetMapping("/buscar/{nombreUsuario}")
     public ResponseEntity<Object> buscarUsuarios(@PathVariable String nombreUsuario, @RequestParam String term,
             @RequestParam(defaultValue = "0") int page,
