@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import unpsjb.labprog.backend.model.Evento;
@@ -26,6 +27,9 @@ public class NotificacionService {
 
     @Autowired
     private WebSocketController webSocketController;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     public void notificarInscripcionEvento(Long idUsuario, Long idEvento) {
         notificacionRepository.crearNotificacion(
@@ -100,9 +104,13 @@ public class NotificacionService {
 
     public void crearNotificacionPublicacion(Long idUsuarioReceptor, Long idUsuarioEmisor, Long idEntidad, String tipo,
             LocalDateTime fecha) {
-                if(idUsuarioReceptor!=idUsuarioEmisor){
-        notificacionRepository.crearNotificacionPublicacion(idUsuarioReceptor, idUsuarioEmisor, idEntidad, tipo, fecha);
-                }
+        if (idUsuarioReceptor != idUsuarioEmisor) {
+            messagingTemplate.convertAndSend("/queue/notificaciones/" + idUsuarioReceptor, tipo);
+            messagingTemplate.convertAndSend("/topic/notificaciones", tipo);
+
+            notificacionRepository.crearNotificacionPublicacion(idUsuarioReceptor, idUsuarioEmisor, idEntidad, tipo,
+                    fecha);
+        }
     }
 
     public void eliminarNotificacionSolicitudEntrante(Long idReceptor, Long idEmisor) {
@@ -139,10 +147,13 @@ public class NotificacionService {
     }
     // Otros métodos para diferentes tipos de notificaciones
 
-    public void notificarExpulsionEvento(String mensaje, Long idEvento, Long idUsuario){
-        this.notificacionRepository.crearNotificacionMotivoExpulsion(idUsuario, idEvento, "EXPULSION_EVENTO", LocalDateTime.now(), mensaje);
+    public void notificarExpulsionEvento(String mensaje, Long idEvento, Long idUsuario) {
+        this.notificacionRepository.crearNotificacionMotivoExpulsion(idUsuario, idEvento, "EXPULSION_EVENTO",
+                LocalDateTime.now(), mensaje);
     }
-    public void notificarExpulsionComunidad(String mensaje, Long idComunidad, Long idUsuario){
-        this.notificacionRepository.crearNotificacionMotivoExpulsion(idUsuario, idComunidad, "EXPULSION_COMUNIDAD", LocalDateTime.now(), mensaje);
+
+    public void notificarExpulsionComunidad(String mensaje, Long idComunidad, Long idUsuario) {
+        this.notificacionRepository.crearNotificacionMotivoExpulsion(idUsuario, idComunidad, "EXPULSION_COMUNIDAD",
+                LocalDateTime.now(), mensaje);
     }
 }

@@ -26,16 +26,22 @@
                                 <p>{{ notificacion.mensaje }}</p>
                             </div>
                             <i class="fa fa-trash delete-icon"
-                                (click)="eliminarNotificacion(notificacion); $event.stopPropagation()"></i>
+                            (click)="eliminarNotificacion(notificacion); $event.stopPropagation()"></i>
                         </div>
                     </div>
-
+                    
                     <div *ngIf="getNotificacionesNoLeidas().length === 0" class="no-notifications">
                         No hay notificaciones nuevas
                     </div>
                 </div>
             </div>
-
+            
+            <div class="boton-flotante" *ngIf="mostrarBotonActualizar" [style.top.px]="posicionBoton.top"
+                [style.left.px]="posicionBoton.left">
+                <button (click)="actualizarNotificaciones()" class="btn-actualizar">
+                    Nuevas notificaciones disponibles
+                </button>
+            </div>
 
             <div class="perfil-contenedor d-flex align-items-center ms-3">
                 <a (click)="navigateToMiPerfil()" class="d-flex align-items-center" style="cursor: pointer;">
@@ -54,11 +60,11 @@
         <span class="icon"><i class="fa fa-bars"></i></span>
     </div>
 
+
     <ul>
         <nav class="menu">
             <!-- Dropdown: Eventos -->
-            <li class="menu-item dropdown" [class.open]="isDropdownOpen['eventos']"
-                >
+            <li class="menu-item dropdown" [class.open]="isDropdownOpen['eventos']">
 
                 <a (click)="toggleDropdown('eventos')">
                     <span class="icon"><i class="fa fa-running"></i></span>
@@ -80,8 +86,7 @@
             </li>
 
             <!-- Dropdown: Comunidades -->
-            <li class="menu-item dropdown" [class.open]="isDropdownOpen['comunidades']"
-                >
+            <li class="menu-item dropdown" [class.open]="isDropdownOpen['comunidades']">
                 <a (click)="toggleDropdown('comunidades')">
                     <span class="icon"><i class="fa fa-users"></i></span>
                     <span class="menu-text" *ngIf="!isCollapsed">Comunidades</span>
@@ -101,8 +106,7 @@
             </li>
 
             <!-- Dropdown: Rutinas -->
-            <li class="menu-item dropdown" [class.open]="isDropdownOpen['rutinas']"
-                >
+            <li class="menu-item dropdown" [class.open]="isDropdownOpen['rutinas']">
                 <a (click)="toggleDropdown('rutinas')">
                     <span class="icon"><i class="fa fa-dumbbell"></i></span>
                     <span class="menu-text" *ngIf="!isCollapsed">Rutinas</span>
@@ -122,8 +126,7 @@
             </li>
 
             <!-- Dropdown: Sugerencias -->
-            <li class="menu-item dropdown" [class.open]="isDropdownOpen['sugerencias']"
-                >
+            <li class="menu-item dropdown" [class.open]="isDropdownOpen['sugerencias']">
                 <a (click)="toggleDropdown('sugerencias')">
                     <span class="icon"><i class="fa fa-question-circle"></i></span>
                     <span class="menu-text" *ngIf="!isCollapsed">Sugerencias</span>
