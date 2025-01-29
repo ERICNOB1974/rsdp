@@ -19,7 +19,6 @@ export class WebSocketService {
 
     this.stompClient.onConnect = () => {
       console.log('Conexión establecida con WebSocket.');
-
       this.stompClient?.subscribe('/topic/publicaciones', () => {
         this.nuevasPublicaciones$.next(); // Emitir evento
       });
