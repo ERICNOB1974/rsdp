@@ -19,6 +19,11 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
             "RETURN amigos")
     List<Usuario> amigos(String nombreUsuario);
 
+ /*    @Query("MATCH (u:Usuario) WHERE id(u)=$idUsuario "+
+            " AND (u)-[:ES_AMIGO_DE]->(amigos) " +
+            "RETURN amigos")
+    List<Usuario> amigosd(Long idUsuario);
+ */
     @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(a:Usuario)" +
             "WHERE (toLower(a.nombreUsuario) CONTAINS toLower($nombreUsuarioFiltrar) OR $nombreUsuarioFiltrar = '') "
             +
