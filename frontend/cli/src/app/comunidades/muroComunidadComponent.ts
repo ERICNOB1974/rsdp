@@ -50,6 +50,7 @@ export class MuroComunidadComponent implements OnInit {
     amigosNoEnComunidad: any[] = [];
     amigosEnComunidad: any[] = [];
     amigosYaInvitados: any[] = [];
+    listaReferencia: any[] = [];
     cantidadMiembros: number = 0;
     esFavorito: boolean = false;
     cargaInicial: number = 5; // Número inicial de elementos visibles
@@ -199,34 +200,56 @@ export class MuroComunidadComponent implements OnInit {
 
     cargarAmigos(): void {
         const idComunidad = this.comunidad.id;
-
-        // Cargar amigos que ya están en la comunidad
-        this.usuarioService.todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(idComunidad).subscribe((dataPackage) => {
-            this.amigosEnComunidad = dataPackage.data as Comunidad[];
-            this.amigosEnComunidadFiltrados = [...this.amigosEnComunidad]; // Sincronizar
-            this.mostrarCategorias();
-        });
-
-        // Cargar amigos ya invitados a la comunidad
-        this.usuarioService.todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(idComunidad).subscribe((dataPackage) => {
-            this.amigosYaInvitados = dataPackage.data as Comunidad[];
-            this.amigosYaInvitadosFiltrados = [...this.amigosYaInvitados]; // Sincronizar
-            this.mostrarCategorias();
-        });
-
-        // Cargar amigos que no están en la comunidad
-        this.usuarioService.todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(idComunidad).subscribe((dataPackage) => {
-            this.amigosNoEnComunidad = dataPackage.data as Comunidad[];
-            this.amigosNoEnComunidad = this.amigosNoEnComunidad.filter(
-                amigoNoEnComunidad =>
-                    !this.amigosEnComunidad.some(amigoEnComunidad => amigoEnComunidad.id === amigoNoEnComunidad.id) &&
-                    !this.amigosYaInvitados.some(amigoYaInvitado => amigoYaInvitado.id === amigoNoEnComunidad.id)
-            );
-            this.amigosNoEnComunidadFiltrados = [...this.amigosNoEnComunidad]; // Sincronizar
-            this.mostrarCategorias();
+    
+        // Obtener la lista de referencia con usuarios ordenados
+        this.usuarioService.usuariosConMasInteracciones().subscribe((dataPackage) => {
+            this.listaReferencia = dataPackage.data as Usuario[];
+    
+            // Cargar amigos que ya están en la comunidad
+            this.usuarioService.todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(idComunidad).subscribe((dataPackage) => {
+                this.amigosEnComunidad = dataPackage.data as Usuario[];
+                this.ordenarLista(this.amigosEnComunidad);
+                this.amigosEnComunidadFiltrados = [...this.amigosEnComunidad];
+                this.mostrarCategorias();
+            });
+    
+            // Cargar amigos ya invitados a la comunidad
+            this.usuarioService.todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(idComunidad).subscribe((dataPackage) => {
+                this.amigosYaInvitados = dataPackage.data as Usuario[];
+                this.ordenarLista(this.amigosYaInvitados);
+                this.amigosYaInvitadosFiltrados = [...this.amigosYaInvitados];
+                this.mostrarCategorias();
+            });
+    
+            // Cargar amigos que no están en la comunidad
+            this.usuarioService.todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(idComunidad).subscribe((dataPackage) => {
+                this.amigosNoEnComunidad = dataPackage.data as Usuario[];
+                this.filtrarYOrdenarAmigosNoEnComunidad();
+                this.amigosNoEnComunidadFiltrados = [...this.amigosNoEnComunidad];
+                this.mostrarCategorias();
+            });
         });
     }
-
+    
+    // Método para ordenar una lista de usuarios en base a la lista de referencia
+    ordenarLista(lista: Usuario[]): void {
+        lista.sort((a, b) => {
+            const indexA = this.listaReferencia.findIndex(usuario => usuario.id === a.id);
+            const indexB = this.listaReferencia.findIndex(usuario => usuario.id === b.id);
+            return (indexA === -1 ? Infinity : indexA) - (indexB === -1 ? Infinity : indexB);
+        });
+    }
+    
+    // Filtra y ordena amigos que no están en la comunidad
+    filtrarYOrdenarAmigosNoEnComunidad(): void {
+        this.amigosNoEnComunidad = this.amigosNoEnComunidad.filter(
+            amigoNoEnComunidad =>
+                !this.amigosEnComunidad.some(amigoEnComunidad => amigoEnComunidad.id === amigoNoEnComunidad.id) &&
+                !this.amigosYaInvitados.some(amigoYaInvitado => amigoYaInvitado.id === amigoNoEnComunidad.id)
+        );
+        this.ordenarLista(this.amigosNoEnComunidad);
+    }
+    
 
     invitarAmigo(idUsuarioReceptor: number): void {
         const idComunidad = this.comunidad.id;
