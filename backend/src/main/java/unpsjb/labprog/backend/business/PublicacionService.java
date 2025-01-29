@@ -37,6 +37,15 @@ public class PublicacionService {
             publicacionRepository.establecerCreador(idUsuario, p.getId());
         }
         // Enviar notificación al frontend
+        // Obtener la lista de amigos del usuario
+        List<Long> amigosIds = usuarioRepository.amigos(
+                usuarioRepository.findById(idUsuario).get().getNombreUsuario()).stream()
+                .map(Usuario::getId) // Suponiendo que getId() devuelve el ID de tipo Long
+                .collect(Collectors.toList());
+
+        // Enviar la publicación solo a los amigos
+        amigosIds.forEach(amigoId -> messagingTemplate.convertAndSend("/queue/publicaciones/" + amigoId, publicacion));
+
         messagingTemplate.convertAndSend("/topic/publicaciones", publicacion);
         return p;
     }

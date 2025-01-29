@@ -717,3 +717,17 @@
         font-size: 0.75rem;
     }
 }
+
+
+
+.btn-actualizar {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+}
