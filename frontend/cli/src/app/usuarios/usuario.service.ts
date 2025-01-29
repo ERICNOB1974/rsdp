@@ -179,6 +179,10 @@ export class UsuarioService {
     return this.http.get<DataPackage>(` ${this.usuariosUrl}/todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario/${this.idUsuarioAutenticado}/${idEvento}`);
   }
 
+  usuariosConMasInteracciones(): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.usuariosUrl}/usuariosConMasInteracciones/${this.idUsuarioAutenticado}`);
+  }
+
   invitacionEvento(idUsuarioReceptor: number, idEvento: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.emailUrl}/invitacionEvento/${this.idUsuarioAutenticado}/${idUsuarioReceptor}/${idEvento}`);
   }
