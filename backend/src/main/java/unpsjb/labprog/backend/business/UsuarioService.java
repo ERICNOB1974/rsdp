@@ -398,5 +398,10 @@ public class UsuarioService {
         }
         return usuariosAnonimos;
     }
+    
+    public Long idDadoNombreUsuario(String nombreUsuario) {
+        Long idUsuario = usuarioRepository.findByNombreUsuario(nombreUsuario).get().getId();
+        return idUsuario;
+    }
 
 }

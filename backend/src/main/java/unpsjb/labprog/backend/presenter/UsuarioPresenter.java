@@ -216,6 +216,10 @@ public class UsuarioPresenter {
     public ResponseEntity<Object> existeNombreUsuario(@PathVariable String nombreUsuario) {
         return Response.ok(usuarioService.existeNombreUsuario(nombreUsuario));
     }
+    @GetMapping("/idDadoNombreUsuario/{nombreUsuario}")
+    public ResponseEntity<Object> idDadoNombreUsuario(@PathVariable String nombreUsuario) {
+        return Response.ok(usuarioService.idDadoNombreUsuario(nombreUsuario));
+    }
 
     @GetMapping("/existeNombreUsuarioMenosElActual/{nombreUsuarioIngresado}/{nombreUsuarioActual}")
     public ResponseEntity<Object> existeNombreUsuarioMenosElActual(@PathVariable String nombreUsuarioIngresado,
