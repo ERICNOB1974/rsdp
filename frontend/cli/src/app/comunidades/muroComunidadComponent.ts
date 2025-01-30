@@ -16,6 +16,7 @@ import { lastValueFrom } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { EventoService } from '../eventos/evento.service';
 import { Comentario } from '../comentarios/Comentario';
+import { Expulsado } from './expulsado';
 
 @Component({
     selector: 'app-editar-comunidad',
@@ -72,10 +73,10 @@ export class MuroComunidadComponent implements OnInit {
     mostrarMasAmigosEnComunidad: number = 4;
     mostrarMasAmigosYaInvitados: number = 4;
     mostrarMotivo: boolean = false;
-    expulsado: boolean = false; // Indica si el usuario fue expulsado
+    //expulsado: boolean = false; // Indica si el usuario fue expulsado
     motivoExpulsion: string = '';
     rolesCalculados: { [id: string]: string } = {};
-
+    expulsado: Expulsado | undefined
     usuariosPublicadores: { [key: number]: Usuario } = {};
     searchTimeout: any // Variable para almacenar el timer
 
@@ -137,8 +138,8 @@ export class MuroComunidadComponent implements OnInit {
     checkExpulsion() {
         this.comunidadService.verificarExpulsion(this.idUsuarioAutenticado, this.comunidad.id)
             .subscribe(response => {
-                this.expulsado = response.data as unknown as boolean;
-                this.motivoExpulsion = response.message; // Asumiendo que el backend devuelve el motivo
+                this.expulsado = response.data as Expulsado ;
+                
             });
     }
 

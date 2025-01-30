@@ -20,13 +20,25 @@
     {{ salirValid() ? 'Abandonar comunidad' : (comunidad.esPrivada ? 'Solicitar ingreso' : 'Ingresar') }}
   </button>
 
-  <div *ngIf="expulsado" class="alert alert-warning mt-4">
+  <div *ngIf="expulsado?.estaExpulsado" class="alert alert-warning mt-4">
     <p>Has sido expulsado de la comunidad.</p>
+    
+    <!-- Mostrar razón de la expulsión -->
     <button class="btn btn-info" (click)="toggleMotivo()">
       ¿Por qué? <span [class]="mostrarMotivo ? 'arrow-up' : 'arrow-down'"></span>
     </button>
     <div *ngIf="mostrarMotivo" class="mt-2">
-      <strong>Motivo de expulsión:</strong> {{ motivoExpulsion }}
+      <strong>Motivo de expulsión:</strong> {{ expulsado?.motivoExpulsion }}
+    </div>
+  
+    <!-- Mostrar la fecha hasta que se considera expulsado, o si es permanente -->
+    <div class="mt-2" *ngIf="expulsado?.tipo === 'temporal'">
+      <strong>Expulsado hasta:</strong> {{ expulsado?.fechaHoraExpulsion | date:'short' }}<br>
+    </div>
+  
+    <!-- Mostrar que la expulsión es permanente -->
+    <div *ngIf="expulsado?.tipo === 'permanente'" class="mt-2">
+      <strong>Has sido expulsado permanentemente.</strong>
     </div>
   </div>
   <div *ngIf="comunidad.cantidadMaximaMiembros<=comunidad.miembros" class="alert alert-warning mt-4">

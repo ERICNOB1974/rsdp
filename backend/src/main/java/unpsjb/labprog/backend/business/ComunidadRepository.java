@@ -12,6 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Evento;
+import unpsjb.labprog.backend.model.DTO.ExpulsionDTO;
+
 
 @Repository
 public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
@@ -435,29 +437,39 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         """)
         Optional<Comunidad> comunidadDePublicacion(Long idPublicacion);
 
-        @Query("""
-                        MATCH (u:Usuario) WHERE id(u)=$idUsuario
-                        MATCH (c:Comunidad) WHERE id(c)=$idComunidad
-                        MATCH (u)-[r:MIEMBRO|ADMINISTRADA_POR]->(c) DELETE r
-                        CREATE (u)-[:EXPULSADO_COMUNIDAD {motivoExpulsion: $motivoExpulsion}]->(c)
-                                   """)
-        void eliminarUsuario(Long idComunidad, Long idUsuario, String motivoExpulsion);
+   @Query("""
+        MATCH (u:Usuario) WHERE id(u)=$idUsuario
+        MATCH (c:Comunidad) WHERE id(c)=$idComunidad
+        MATCH (u)-[r:MIEMBRO|ADMINISTRADA_POR]->(c) DELETE r
+        CREATE (u)-[:EXPULSADO_COMUNIDAD {motivoExpulsion: $motivoExpulsion, tipo: $tipo, fechaHoraExpulsion: $fechaHoraExpulsion, fechaExpulsado: $fechaExpulsado}]->(c)
+        """)
+void eliminarUsuario(Long idComunidad, Long idUsuario, String motivoExpulsion, String tipo, LocalDateTime fechaHoraExpulsion, LocalDateTime fechaExpulsado);
 
-        @Query("""
-                        MATCH (u:Usuario) WHERE id(u)=$idUsuario
-                        MATCH (e:Comunidad) WHERE id(e)=$idComunidad
-                        MATCH (u)-[r:EXPULSADO_COMUNIDAD]-(e)
-                        RETURN COUNT(r)>0
-                        """)
-        boolean estaExpulsado(Long idUsuario, Long idComunidad);
 
-        @Query("""
-                        MATCH (u:Usuario) WHERE id(u)=$idUsuario
-                        MATCH (e:Comunidad) WHERE id(e)=$idComunidad
-                        MATCH (u)-[r:EXPULSADO_COMUNIDAD]-(e)
-                        RETURN r.motivoExpulsion
-                        """)
-        String motivoExpulsion(Long idUsuario, Long idComunidad);
+@Query("MATCH (u:Usuario)-[r:EXPULSADO_COMUNIDAD]->(c:Comunidad) " +
+       "WHERE id(u) = $idUsuario AND id(c) = $idComunidad " +
+       "RETURN r.motivoExpulsion AS motivoExpulsion " +
+       "ORDER BY r.fechaExpulsado DESC " +
+       "LIMIT 1")
+String findMotivoExpulsion(@Param("idUsuario") Long idUsuario, 
+                           @Param("idComunidad") Long idComunidad);
+
+@Query("MATCH (u:Usuario)-[r:EXPULSADO_COMUNIDAD]->(c:Comunidad) " +
+       "WHERE id(u) = $idUsuario AND id(c) = $idComunidad " +
+       "RETURN r.tipo AS tipo " +
+       "ORDER BY r.fechaExpulsado DESC " +
+       "LIMIT 1")
+String findTipoExpulsion(@Param("idUsuario") Long idUsuario, 
+                         @Param("idComunidad") Long idComunidad);
+
+@Query("MATCH (u:Usuario)-[r:EXPULSADO_COMUNIDAD]->(c:Comunidad) " +
+       "WHERE id(u) = $idUsuario AND id(c) = $idComunidad " +
+       "RETURN r.fechaHoraExpulsion AS fechaHoraExpulsion " +
+       "ORDER BY r.fechaExpulsado DESC " +
+       "LIMIT 1")
+LocalDateTime findFechaHoraExpulsion(@Param("idUsuario") Long idUsuario, 
+                                      @Param("idComunidad") Long idComunidad);
+
 
     
 }
