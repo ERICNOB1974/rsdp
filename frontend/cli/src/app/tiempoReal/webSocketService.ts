@@ -19,6 +19,9 @@ export class WebSocketService {
 
   connect(): void {
     const socket = new SockJS('http://localhost:8080/ws'); // URL del endpoint
+    /*configuracion del servidor*/
+    //const socket = new SockJS('http://if012rsdp.fi.mdn.unp.edu.ar:28004/ws'); 
+    /*fin configuracion del servidor*/
     this.stompClient = new Client({
       webSocketFactory: () => socket,
       reconnectDelay: 5000,
