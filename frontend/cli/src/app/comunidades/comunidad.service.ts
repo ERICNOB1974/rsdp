@@ -128,10 +128,18 @@ export class ComunidadService {
     return this.http.post<DataPackage>(` ${this.comunidadesUrl}/eliminarUsuario/${idSuperUsuario}/${idMiembro}/${idComunidad}`, body);
   }
 
-  eliminarMiembroConMotivo(motivo: String, idMiembro: number, idComunidad: number): Observable<DataPackage> {
-    return this.http.put<DataPackage>(` ${this.comunidadesUrl}/eliminarParticipante/${idComunidad}/${idMiembro}`, motivo);
-  }
-  
+  eliminarMiembroConMotivo(motivo: string, tipo: string,fechaHoraExpulsion: string, idMiembro: number, idComunidad: number): Observable<DataPackage> {
+    const params = new HttpParams()
+        .set('motivo', motivo)
+        .set('tipo', tipo)
+        .set('fechaHoraExpulsion', fechaHoraExpulsion);
+
+    return this.http.put<DataPackage>(
+        `${this.comunidadesUrl}/eliminarParticipante/${idComunidad}/${idMiembro}`,
+        null,  // No es necesario enviar un cuerpo de solicitud.
+        { params }  // Pasamos los parámetros de consulta aquí.
+    );
+}
   verificarExpulsion(idUsuarioAutenticado: number, idComunidad: number) {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/estaExpulsado/${idUsuarioAutenticado}/${idComunidad}`);
   }

@@ -20,6 +20,8 @@ import unpsjb.labprog.backend.business.ComunidadService;
 import unpsjb.labprog.backend.business.ScoreComunidad;
 import unpsjb.labprog.backend.business.UsuarioComunidadService;
 import unpsjb.labprog.backend.model.Comunidad;
+import unpsjb.labprog.backend.model.DTO.ExpulsionDTO;
+
 
 @RestController
 @RequestMapping("comunidades")
@@ -297,21 +299,36 @@ public class ComunidadPresenter {
         return Response.ok(comunidades);
     }
 
-    @GetMapping("/estaExpulsado/{idUsuario}/{idComunidad}")
-    public ResponseEntity<Object> comunidadesFuturosPertenecientesAUnUsuario(@PathVariable Long idUsuario,
+/*     @GetMapping("/estaExpulsado/{idUsuario}/{idComunidad}")
+    public ResponseEntity<Object> estaExpulsado(@PathVariable Long idUsuario,
             @PathVariable Long idComunidad) {
         boolean estado = comunidadService.estaExpulsado(idUsuario, idComunidad);
         String mensaje = comunidadService.motivoExpulsion(idUsuario, idComunidad);
 
         return Response.ok(estado, mensaje);
-    }
+    } */
 
-    @PutMapping("/eliminarParticipante/{idComunidad}/{idUsuario}")
-    public ResponseEntity<Object> eliminarParticipante(@PathVariable Long idComunidad, @PathVariable Long idUsuario,
-            @RequestBody String motivo) {
-        comunidadService.eliminarUsuario(motivo, idComunidad, idUsuario);
-        return Response.ok("OK");
-    }
+@GetMapping("/estaExpulsado/{idUsuario}/{idComunidad}")
+public ResponseEntity<Object> estaExpulsado(@PathVariable Long idUsuario,
+        @PathVariable Long idComunidad) {
+    
+    // Llamar al servicio para obtener el DTO
+    ExpulsionDTO expulsionDTO = comunidadService.obtenerExpulsionDTO(idUsuario, idComunidad);
+    
+    // Devolver el DTO dentro de la respuesta HTTP
+    return Response.ok(expulsionDTO);
+}
+
+
+@PutMapping("/eliminarParticipante/{idComunidad}/{idUsuario}")
+public ResponseEntity<Object> eliminarParticipante(@PathVariable Long idComunidad, 
+                                                   @PathVariable Long idUsuario,
+                                                   @RequestParam String motivo,
+                                                   @RequestParam String tipo,
+                                                   @RequestParam String fechaHoraExpulsion) {
+    comunidadService.eliminarUsuario(motivo, tipo, fechaHoraExpulsion, idComunidad, idUsuario);
+    return Response.ok("OK");
+}
 
     @PostMapping("/actualizarUbicaciones")
     public ResponseEntity<Object> actualizarUbicaciones() {

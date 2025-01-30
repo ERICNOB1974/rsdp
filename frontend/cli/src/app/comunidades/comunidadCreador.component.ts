@@ -36,7 +36,11 @@ export class ComunidadCreadorComponent implements OnInit {
     motivoExpulsion: string = '';
     usuarioEliminar: any;
     mostrarMotivo: boolean = false;
+    fechaExpulsion: Date | null = null;
+    horaExpulsion: Date | null = null;
+    tipoExpulsion: string = 'permanente'; // Valor predeterminado
     expulsado: boolean = false; // Indica si el usuario fue expulsado
+    estadoActual: string = 'miembros'; // Por defecto, se muestra la sección de Miembros
     @ViewChild('modalExpulsion') modalExpulsion!: TemplateRef<any>; // Referencia al modal
 
     constructor(
@@ -47,7 +51,7 @@ export class ComunidadCreadorComponent implements OnInit {
         private router: Router,
         private authService: AuthService,  // Inyecta el AuthService
         private snackBar: MatSnackBar, // Para mostrar notificaciones
-        private modalService: NgbModal
+        public modalService: NgbModal
     ) { }
 
     async ngOnInit(): Promise<void> {
@@ -63,23 +67,65 @@ export class ComunidadCreadorComponent implements OnInit {
         this.usuarioEliminar = usuario;
     }
 
+    cambiarVista(estado: string) {
+        this.estadoActual = estado;
+      }
+    
 
     confirmarExpulsion(): void {
         if (!this.motivoExpulsion.trim()) {
             this.snackBar.open('Por favor, ingresa un motivo válido.', 'Cerrar', {
                 duration: 3000,
-              });
+            });
             return;
         }
-
-
-        this.eliminarMiembro(this.usuarioEliminar.id, this.motivoExpulsion);
-
+    
+        let fechaHoraExpulsion: Date;
+    
+        if (this.tipoExpulsion === 'permanente') {
+            // Si es permanente, se establece una fecha muy lejana (año 9999)
+            fechaHoraExpulsion = new Date(9998, 11, 31, 15, 0); // 31 de diciembre de 9999 a las 23:59
+            console.log("Expulsión permanente, fecha configurada a:", fechaHoraExpulsion.toISOString());
+        } else if (!this.fechaExpulsion || !this.horaExpulsion) {
+            this.snackBar.open('Por favor, selecciona la fecha y hora de la expulsión.', 'Cerrar', {
+                duration: 3000,
+            });
+            return;
+        } else {
+            // Combinar fecha y hora en un solo objeto Date solo si ambos son válidos
+            const fecha = new Date(this.fechaExpulsion);
+            const hora = new Date('1970-01-01T' + this.horaExpulsion + 'Z'); // Crear un objeto Date solo con la hora
+    
+            if (isNaN(fecha.getTime()) || isNaN(hora.getTime())) {
+                this.snackBar.open('Por favor, selecciona una fecha y hora válidas.', 'Cerrar', {
+                    duration: 3000,
+                });
+                return;
+            }
+    
+            // Combinar la fecha y la hora
+            fechaHoraExpulsion = new Date(
+                fecha.getFullYear(),
+                fecha.getMonth(),
+                fecha.getDate(),
+                hora.getHours(),
+                hora.getMinutes()
+            );
+        
+            console.log("Expulsión temporal hasta:", fechaHoraExpulsion.toISOString());
+        }
+    
+        // Llamar a la función para eliminar al usuario con la fecha de expulsión
+        this.eliminarMiembro(this.usuarioEliminar.id, this.motivoExpulsion, fechaHoraExpulsion);
+    
         // Limpia los datos
         this.motivoExpulsion = '';
+        this.fechaExpulsion = null;
+        this.horaExpulsion = null;
         this.usuarioEliminar = null;
     }
-
+    
+    
     abrirModalExpulsion(usuario: any): void {
         this.usuarioEliminar = usuario; // Asigna el usuario al abrir el modal
         this.modalService.open(this.modalExpulsion, {
@@ -238,15 +284,17 @@ export class ComunidadCreadorComponent implements OnInit {
         return this.administradores.some(admin => admin.id === idMiembro);
     }
 
-    eliminarMiembro(idUsuario: number, motivo: string): void {
-        this.comunidadService.eliminarMiembroConMotivo(motivo, idUsuario, this.comunidad.id).subscribe(dataPackage => {
-            let mensaje = JSON.stringify(dataPackage.data); // Convierte a string
-            this.snackBar.open(mensaje, 'Cerrar', {
-                duration: 3000,
+    eliminarMiembro(idUsuario: number, motivo: string, fechaHoraExpulsion: Date): void {
+        this.comunidadService.eliminarMiembroConMotivo(motivo, this.tipoExpulsion, fechaHoraExpulsion.toISOString(), idUsuario, this.comunidad.id)
+            .subscribe(dataPackage => {
+                let mensaje = JSON.stringify(dataPackage.data); // Convierte a string
+                this.snackBar.open(mensaje, 'Cerrar', {
+                    duration: 3000,
+                });
+                this.traerMiembrosYAdministradores(); // Actualiza la lista de miembros
             });
-            this.traerMiembrosYAdministradores(); // Actualiza la lista de miembros
-        });
     }
+    
    
 
     openModal(content: any) {
