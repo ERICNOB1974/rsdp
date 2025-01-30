@@ -1,6 +1,7 @@
 package unpsjb.labprog.backend.business;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Usuario;
+import unpsjb.labprog.backend.model.DTO.ExpulsionDTO;
+
 
 @Service
 public class ComunidadService {
@@ -331,20 +334,56 @@ public class ComunidadService {
         return comunidadRepository.buscarComunidadPorEventoInterno(idEvento);
     }
 
-    public void eliminarUsuario(String mensaje, Long idComunidad, Long idUsuario) {
+/*     public void eliminarUsuario(String mensaje, Long idComunidad, Long idUsuario) {
         Comunidad c = comunidadRepository.findById(idComunidad).get();
         String notificacion = "Has sido eliminado de la comunidad " + c.getNombre();
         this.notificacionService.notificarExpulsionComunidad(notificacion, idComunidad, idUsuario);
         this.comunidadRepository.eliminarUsuario(idComunidad, idUsuario, mensaje);
+    } */
+public void eliminarUsuario(String motivo, String tipo, String fechaHoraExpulsion, Long idComunidad, Long idUsuario) {
+    // Convertir la fechaHoraExpulsion en un objeto LocalDateTime
+    DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+    LocalDateTime fechaExpulsion = LocalDateTime.parse(fechaHoraExpulsion, formatter);
+    
+    Comunidad c = comunidadRepository.findById(idComunidad).get();
+    String notificacion = "Has sido eliminado de la comunidad " + c.getNombre();
+    
+    // Aquí, notificar la expulsión
+    this.notificacionService.notificarExpulsionComunidad(notificacion, idComunidad, idUsuario);
+    
+    // Eliminar el usuario con el mensaje y la fecha de expulsión
+    this.comunidadRepository.eliminarUsuario(idComunidad, idUsuario, motivo, tipo, fechaExpulsion, LocalDateTime.now());
+}
+
+
+   
+
+public ExpulsionDTO obtenerExpulsionDTO(Long idUsuario, Long idComunidad) {
+    // Crear un nuevo objeto ExpulsionDTO
+    ExpulsionDTO expulsionDTO = new ExpulsionDTO();
+    
+    // Obtener los atributos de la base de datos o lógica
+    String motivoExpulsion = comunidadRepository.findMotivoExpulsion(idUsuario, idComunidad);  // Suponiendo que esta es la lógica correcta
+    String tipo = comunidadRepository.findTipoExpulsion(idUsuario,idComunidad);  // Asegúrate de que este valor se obtiene correctamente
+    if(tipo.equals("temporal")){
+    LocalDateTime fechaHoraExpulsion = comunidadRepository.findFechaHoraExpulsion(idUsuario,idComunidad);  // Verifica que esto devuelva la fecha correcta
+    expulsionDTO.setFechaHoraExpulsion(fechaHoraExpulsion);  // Establecer la fecha de expulsión
     }
 
-    public boolean estaExpulsado(Long idUsuario, Long idComunidad) {
-        return this.comunidadRepository.estaExpulsado(idUsuario, idComunidad);
+    // Comprobar si el tipo no es null y si es así, marcar como expulsado
+    if (tipo != null) {
+        expulsionDTO.setEstaExpulsado(true);  // Usar el setter correcto
+    } else {
+        expulsionDTO.setEstaExpulsado(false); // Opcional: Establecer en falso si tipo es null
     }
 
-    public String motivoExpulsion(Long idUsuario, Long idComunidad) {
-        return this.comunidadRepository.motivoExpulsion(idUsuario, idComunidad);
-    }
+    // Establecer los valores obtenidos en el DTO
+    expulsionDTO.setMotivoExpulsion(motivoExpulsion);  // Establecer el motivo de expulsión
+    expulsionDTO.setTipo(tipo);  // Establecer el tipo
+
+    return expulsionDTO;  // Retornar el DTO con los datos establecidos
+}
+
 
     @Transactional
     public void agregarUbicacionAComunidadesSinUbicacion() {
