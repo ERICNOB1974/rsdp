@@ -663,27 +663,82 @@ export class PublicacionDetailComponent implements OnInit {
 
   getTextoConMenciones(texto: string): Observable<string> {
     if (!texto) {
-      console.log("Texto vacío, retornando observable vacío.");
       return of('');
     }
-  
+
     // Expresión regular para encontrar menciones
     const regex = /@(\w+)/g;
     const menciones = texto.match(regex) || [];
-    console.log("Menciones encontradas:", menciones);
-  
+
     // Si no hay menciones, devolvemos el texto original
     if (menciones.length === 0) {
       return of(texto);  // Devolvemos el texto tal cual sin cambios
     }
-  
+
     const verificaciones: Observable<{ username: string; idUsuario: number | null }>[] = [];
-  
+
+    // Verificamos la existencia de los usuarios mencionados
+    menciones.forEach((match) => {
+      const username = match.substring(1); // Quita el '@'
+
+      verificaciones.push(
+        this.usuarioService.findByNombreUsuario(username).pipe(
+          map((dataPackage: DataPackage) => {
+            let idUsuario: number | null = null;  // Inicializamos idUsuario como null
+            if (dataPackage.status === 200) {
+              idUsuario = dataPackage.data as unknown as number;
+            }
+            return { username, idUsuario };
+          }),
+          catchError(() => {
+            return of({ username, idUsuario: null }); // Si hay error, asumimos que no existe
+          })
+        )
+      );
+    });
+
+    // Ejecutamos todas las verificaciones en paralelo y transformamos el texto
+    return forkJoin(verificaciones).pipe(
+      map((resultados) => {
+        // Reemplazamos las menciones por enlaces
+        return texto.replace(regex, (match, username) => {
+          const usuario = resultados.find((r) => r.username === username);
+          const idUsuario = usuario?.idUsuario;
+
+          return idUsuario !== null
+            ? `<a href="/perfil/${idUsuario}" class="mention-link">${match}</a>`  // Usamos idUsuario como número
+            : match;
+        });
+      })
+    );
+  }
+
+
+
+/* 
+  getTextoConMenciones2(texto: string): Observable<string> {
+    if (!texto) {
+      console.log("Texto vacío, retornando observable vacío.");
+      return of('');
+    }
+
+    // Expresión regular para encontrar menciones
+    const regex = /@(\w+)/g;
+    const menciones = texto.match(regex) || [];
+    console.log("Menciones encontradas:", menciones);
+
+    // Si no hay menciones, devolvemos el texto original
+    if (menciones.length === 0) {
+      return of(texto);  // Devolvemos el texto tal cual sin cambios
+    }
+
+    const verificaciones: Observable<{ username: string; idUsuario: number | null }>[] = [];
+
     // Verificamos la existencia de los usuarios mencionados
     menciones.forEach((match) => {
       const username = match.substring(1); // Quita el '@'
       console.log("Verificando existencia de usuario:", username);
-  
+
       verificaciones.push(
         this.usuarioService.findByNombreUsuario(username).pipe(
           map((dataPackage: DataPackage) => {
@@ -694,7 +749,7 @@ export class PublicacionDetailComponent implements OnInit {
                 idUsuario = usuario.id;  // Asignamos el idUsuario del objeto Usuario
               }
             }
-  
+
             console.log(`Usuario ${username} tiene id:`, idUsuario);
             return { username, idUsuario };
           }),
@@ -705,25 +760,24 @@ export class PublicacionDetailComponent implements OnInit {
         )
       );
     });
-  
+
     // Ejecutamos todas las verificaciones en paralelo y transformamos el texto
     return forkJoin(verificaciones).pipe(
       map((resultados) => {
         console.log("Resultados de la verificación:", resultados);
-  
+
         // Reemplazamos las menciones por enlaces
         return texto.replace(regex, (match, username) => {
           const usuario = resultados.find((r) => r.username === username);
           const idUsuario = usuario?.idUsuario;
           console.log(`¿El usuario ${username} tiene id?`, idUsuario);
-  
+
           return idUsuario !== null
             ? `<a href="/perfil/${idUsuario}" class="mention-link">${match}</a>`  // Usamos idUsuario como número
             : match;
         });
       })
     );
-  }
-  
+  } */
 
 }

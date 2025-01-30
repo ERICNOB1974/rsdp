@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import unpsjb.labprog.backend.model.Evento;
 import unpsjb.labprog.backend.model.Usuario;
-import unpsjb.labprog.backend.presenter.WebSocketController;
 
 @Service
 public class NotificacionService {
@@ -26,9 +25,6 @@ public class NotificacionService {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private WebSocketController webSocketController;
-
-    @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
     public void notificarInscripcionEvento(Long idUsuario, Long idEvento) {
@@ -37,9 +33,9 @@ public class NotificacionService {
                 idEvento,
                 "Inscripción a evento",
                 LocalDateTime.now());
+        enviarEventoTiempoReal(idUsuario, "Inscripción a evento");
 
         String mensaje = "Te has inscrito al evento: " + idEvento;
-        webSocketController.enviarNotificacion(idUsuario, mensaje);
     }
 
     public void notificarAceptacionAmistad(Long idUsuario, Long idAmigo) {
@@ -48,9 +44,9 @@ public class NotificacionService {
                 idAmigo,
                 "Aceptación de solicitud de amistad",
                 LocalDateTime.now());
+        enviarEventoTiempoReal(idUsuario, "Aceptación de solicitud de amistad");
 
         String mensaje = "Tu solicitud de amistad ha sido aceptada por el usuario: " + idAmigo;
-        webSocketController.enviarNotificacion(idUsuario, mensaje);
     }
 
     public List<Notificacion> obtenerNotificacionesPorUsuario(Long usuarioId) throws Exception {
@@ -98,18 +94,16 @@ public class NotificacionService {
     public void crearNotificacion(Long idUsuario, Long idEntidad, String tipo, LocalDateTime fecha) {
         // Crea la notificación en la base de datos
         notificacionRepository.crearNotificacion(idUsuario, idEntidad, tipo, fecha);
-        webSocketController.enviarNotificacion(idUsuario, "has recibido una notificacion.");
+        enviarEventoTiempoReal(idUsuario, tipo);
 
     }
 
     public void crearNotificacionPublicacion(Long idUsuarioReceptor, Long idUsuarioEmisor, Long idEntidad, String tipo,
             LocalDateTime fecha) {
         if (idUsuarioReceptor != idUsuarioEmisor) {
-            messagingTemplate.convertAndSend("/queue/notificaciones/" + idUsuarioReceptor, tipo);
-            messagingTemplate.convertAndSend("/topic/notificaciones", tipo);
-
             notificacionRepository.crearNotificacionPublicacion(idUsuarioReceptor, idUsuarioEmisor, idEntidad, tipo,
                     fecha);
+            enviarEventoTiempoReal(idUsuarioReceptor, tipo);
         }
     }
 
@@ -123,6 +117,8 @@ public class NotificacionService {
             List<Usuario> inscriptos = usuarioRepository.inscriptosEvento(ev.getId());
             for (Usuario u : inscriptos) {
                 this.crearNotificacion(u.getId(), ev.getId(), "RECORDATORIO_EVENTO_PROXIMO", LocalDateTime.now());
+                enviarEventoTiempoReal(u.getId(), "RECORDATORIO_EVENTO_PROXIMO");
+
             }
         }
     }
@@ -132,6 +128,8 @@ public class NotificacionService {
         for (Usuario u : inscriptos) {
             notificacionRepository.crearNotificacionCambioEvento(u.getId(), evento.getId(),
                     "MODIFICACION_EVENTO", LocalDateTime.now(), mensaje);
+            enviarEventoTiempoReal(u.getId(), "MODIFICACION_EVENTO");
+
         }
 
     }
@@ -150,10 +148,20 @@ public class NotificacionService {
     public void notificarExpulsionEvento(String mensaje, Long idEvento, Long idUsuario) {
         this.notificacionRepository.crearNotificacionMotivoExpulsion(idUsuario, idEvento, "EXPULSION_EVENTO",
                 LocalDateTime.now(), mensaje);
+        enviarEventoTiempoReal(idUsuario, "EXPULSION_EVENTO");
+
     }
 
     public void notificarExpulsionComunidad(String mensaje, Long idComunidad, Long idUsuario) {
         this.notificacionRepository.crearNotificacionMotivoExpulsion(idUsuario, idComunidad, "EXPULSION_COMUNIDAD",
                 LocalDateTime.now(), mensaje);
+        enviarEventoTiempoReal(idUsuario, "EXPULSION_COMUNIDAD");
+
+    }
+
+    public void enviarEventoTiempoReal(Long idUsuario, String tipo) {
+        messagingTemplate.convertAndSend("/queue/notificaciones/" + idUsuario, tipo);
+        messagingTemplate.convertAndSend("/topic/notificaciones", tipo);
+
     }
 }
