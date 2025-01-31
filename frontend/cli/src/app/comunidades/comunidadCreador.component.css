@@ -199,14 +199,14 @@ body {
     margin-bottom: 20px;
   }
   
-  .members-list, .solicitudes-list {
+  .members-list, .solicitudes-list, .expulsiones-list {
     list-style: none;
-    padding: 0;
+    padding: 20px;
     overflow-y: auto;
     max-height: 400px;
   }
   
-  .miembro-item, .solicitud-item {
+  .miembro-item, .solicitud-item, .expulsiones-item{
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -249,21 +249,41 @@ body {
   
   .solicitudes-list {
     list-style-type: none;
-    padding: 0;
+    padding: 20px;
   }
+  .expulsiones-list {
+    list-style-type: none;
+    padding: 20px;
+  }
+  
   
   .solicitudes-list li {
-    padding: 10px;
-    background-color: #fce4ec;
-    border: 1px solid #f8bbd0;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+      background-color: #fce4ec;
+      border: 1px solid #f8bbd0;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .expulsiones-list li {
+      padding: 20px;
+      background-color: #fce4ec;
+      border: 1px solid #f8bbd0;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
   
   .solicitudes-list li .name {
+    font-size: 1.2rem;
+    color: #333;
+  }
+  .expulsiones-list li .name {
     font-size: 1.2rem;
     color: #333;
   }
@@ -275,6 +295,19 @@ body {
   }
   
   .solicitudes-list li button:hover {
+    background-color: #d32f2f;
+  }
+
+
+  .expulsiones-list li button {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    background-color: #e57373;
+  }
+  
+  
+  
+  .expulsiones-list li button:hover {
     background-color: #d32f2f;
   }
   
@@ -324,4 +357,21 @@ body {
     margin-right: 15px;
     object-fit: cover;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.buscador-input {
+  width: 80%;
+  max-width: 400px;
+  padding: 0.5rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 1rem;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+
+.buscador-input::placeholder {
+  color: #aaa;
+  font-style: italic;
 }

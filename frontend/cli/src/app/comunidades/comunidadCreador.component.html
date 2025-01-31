@@ -3,61 +3,100 @@
 
   <!-- Tabs -->
   <div class="tabs">
-      <button [class.active]="estadoActual === 'miembros'" (click)="cambiarVista('miembros')">Miembros</button>
-      <button *ngIf="comunidad.esPrivada" [class.active]="estadoActual === 'solicitudes'" (click)="cambiarVista('solicitudes')">Solicitudes</button>
-      <button [class.active]="estadoActual === 'expulsiones'" (click)="cambiarVista('expulsiones')">Expulsiones</button>
+    <button [class.active]="estadoActual === 'miembros'" (click)="cambiarVista('miembros')">Miembros</button>
+    <button *ngIf="comunidad.esPrivada" [class.active]="estadoActual === 'solicitudes'"
+      (click)="cambiarVista('solicitudes')">Solicitudes</button>
+    <button [class.active]="estadoActual === 'expulsiones'" (click)="cambiarVista('expulsiones')">Expulsiones</button>
   </div>
 
   <!-- Contenido de los tabs -->
   <div class="tab-content">
-      <!-- Tab de Miembros -->
-      <div *ngIf="estadoActual === 'miembros'" class="tab miembros-tab">
-          <h2>Miembros</h2>
-          <ul class="members-list" (scroll)="onScroll()">
-              <li *ngFor="let miembro of miembrosVisibles" class="miembro-item">
-                  <img [src]="miembro.fotoPerfil ? miembro.fotoPerfil : '../../assets/usuario.png'"
-                      alt="Foto de {{ miembro.nombreUsuario }}" class="avatar-circular" (click)="verPerfil(miembro)">
-                  <span class="name" (click)="verPerfil(miembro)">{{ miembro.nombreUsuario }}</span>
-                  <div class="actions">
-                      <button *ngIf="esCreador && miembro.id !== idUsuarioAutenticado && esAdministrador(miembro.id)"
-                          class="btn btn-warning btn-sm" (click)="quitarRolOrganizador(miembro.id)">Quitar Rol de Admin</button>
-                      <button *ngIf="esCreador && miembro.id !== idUsuarioAutenticado && !esAdministrador(miembro.id)"
-                          class="btn btn-success btn-sm" (click)="otorgarRolOrganizador(miembro.id)">Hacer Admin</button>
-                      <button *ngIf="esCreador || (esAdmin && !esAdministrador(miembro.id) && miembro.id !== creadorComunidad.id) && miembro.id !== idUsuarioAutenticado"
-                          class="btn btn-danger btn-sm mt-2" (click)="abrirModalExpulsion(miembro)">
-                          Eliminar
-                      </button>
-                  </div>
-              </li>
-          </ul>
+    <!-- Tab de Miembros -->
+    <div *ngIf="estadoActual === 'miembros'" class="tab miembros-tab">
+      <h2>Miembros</h2>
+      <div class="buscador-contenedor">
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (input)="buscarUsuarios()"
+          placeholder="🔍 Buscar miembros..."
+          class="buscador-input"
+        />
       </div>
+      <ul class="members-list" (scroll)="onScrollMiembros()">
+        <li *ngFor="let miembro of miembros" class="miembro-item">
+          <img [src]="miembro.fotoPerfil ? miembro.fotoPerfil : '../../assets/usuario.png'"
+            alt="Foto de {{ miembro.nombreUsuario }}" class="avatar-circular" (click)="verPerfil(miembro)">
+          <span class="name" (click)="verPerfil(miembro)">{{ miembro.nombreUsuario }}</span>
+          <div class="actions">
+            <button *ngIf="esCreador && miembro.id !== idUsuarioAutenticado && esAdministrador(miembro.id)"
+              class="btn btn-warning btn-sm" (click)="quitarRolOrganizador(miembro.id)">Quitar Rol de Admin</button>
+            <button *ngIf="esCreador && miembro.id !== idUsuarioAutenticado && !esAdministrador(miembro.id)"
+              class="btn btn-success btn-sm" (click)="otorgarRolOrganizador(miembro.id)">Hacer Admin</button>
+            <button
+              *ngIf="esCreador || (esAdmin && !esAdministrador(miembro.id) && miembro.id !== creadorComunidad.id) && miembro.id !== idUsuarioAutenticado"
+              class="btn btn-danger btn-sm mt-2" (click)="abrirModalExpulsion(miembro)">
+              Eliminar
+            </button>
+          </div>
+        </li>
+      </ul>
+    </div>
 
-      <!-- Tab de Solicitudes -->
-      <div *ngIf="estadoActual === 'solicitudes'" class="tab solicitudes-tab">
-          <h2>Solicitudes Pendientes</h2>
-          <ul class="solicitudes-list" (scroll)="onScroll()">
-              <li *ngFor="let solicitud of solicitudesPendientes" class="solicitud-item">
-                  <span class="name">{{ solicitud.nombreUsuario }}</span>
-                  <div class="actions">
-                      <button class="btn btn-success btn-sm" (click)="gestionarSolicitud(solicitud.id, true)">Aceptar</button>
-                      <button class="btn btn-danger btn-sm" (click)="gestionarSolicitud(solicitud.id, false)">Rechazar</button>
-                  </div>
-              </li>
-          </ul>
+    <!-- Tab de Solicitudes -->
+    <div *ngIf="estadoActual === 'solicitudes'" class="tab solicitudes-tab">
+      <h2>Solicitudes Pendientes</h2>
+      <div class="buscador-contenedor">
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (input)="buscarUsuarios()"
+          placeholder="🔍 Buscar solicitudes..."
+          class="buscador-input"
+        />
       </div>
+      <ul class="solicitudes-list" (scroll)="onScrollSolicitudes()">
+        <li *ngFor="let solicitud of solicitudesPendientes" class="solicitud-item">
+          <img [src]="solicitud.fotoPerfil ? solicitud.fotoPerfil : '../../assets/usuario.png'"
+            alt="Foto de {{ solicitud.nombreUsuario }}" class="avatar-circular" (click)="verPerfil(solicitud)">
+          <span class="name" (click)="verPerfil(solicitud)">{{ solicitud.nombreUsuario }}</span>
+          <div class="actions">
+            <button class="btn btn-success btn-sm" (click)="gestionarSolicitud(solicitud.id, true)">Aceptar</button>
+            <button class="btn btn-danger btn-sm" (click)="gestionarSolicitud(solicitud.id, false)">Rechazar</button>
+          </div>
+        </li>
+      </ul>
+    </div>
 
-      <!-- Tab de Expulsiones -->
-      <div *ngIf="estadoActual === 'expulsiones'" class="tab expulsiones-tab">
-          <h2>Expulsiones</h2>
-          <ul class="expulsiones-list" (scroll)="onScroll()">
-              <li *ngFor="let expulsado of solicitudesPendientes" class="expulsado-item">
-                  <span class="name">{{ expulsado.nombreUsuario }}</span>
-                  <div class="actions">
-                      <button class="btn btn-danger btn-sm" (click)="confirmarExpulsion()">Eliminar</button>
-                  </div>
-              </li>
-          </ul>
+    <!-- Tab de Expulsiones -->
+    <div *ngIf="estadoActual === 'expulsiones'" class="tab expulsiones-tab">
+      <h2>Expulsiones</h2>
+      <div class="buscador-contenedor">
+        <input
+          type="text"
+          [(ngModel)]="searchTerm"
+          (input)="buscarUsuarios()"
+          placeholder="🔍 Buscar miembros expulsados..."
+          class="buscador-input"
+        />
       </div>
+      <ul class="expulsiones-list" (scroll)="onScrollExpulsados()">
+        <li *ngFor="let expulsado of expulsados" class="expulsado-item">
+          <img [src]="expulsado.fotoPerfil ? expulsado.fotoPerfil : '../../assets/usuario.png'"
+            alt="Foto de {{ expulsado.nombreUsuario }}" class="avatar-circular" (click)="verPerfil(expulsado)">
+          <span class="name" (click)="verPerfil(expulsado)">{{ expulsado.nombreUsuario }}</span>
+          <div class="actions">
+            <button class="btn btn-danger btn-sm" (click)="sacarExpulsion(expulsado.id)">Sacar expulsion</button>
+            <button
+            *ngIf="esCreador || (esAdmin && !esAdministrador(expulsado.id) && expulsado.id !== creadorComunidad.id) && expulsado.id !== idUsuarioAutenticado"
+            class="btn btn-danger btn-sm mt-2" (click)="abrirModalExpulsion(expulsado)">
+            Editar Expulsion
+          </button>
+          </div>
+        </li>
+      </ul>
+    </div>
+
   </div>
 
   <!-- Botón de Eliminar Comunidad -->
@@ -146,7 +185,8 @@
       </div>
 
       <div *ngIf="fechaExpulsion && horaExpulsion">
-        <p><strong>Fecha y hora seleccionada:</strong> {{ fechaExpulsion | date: 'shortDate' }} {{ horaExpulsion | date: 'shortTime' }}</p>
+        <p><strong>Fecha y hora seleccionada:</strong> {{ fechaExpulsion | date: 'shortDate' }} {{ horaExpulsion | date:
+          'shortTime' }}</p>
       </div>
     </div>
 

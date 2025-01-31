@@ -355,6 +355,21 @@ public void eliminarUsuario(String motivo, String tipo, String fechaHoraExpulsio
     this.comunidadRepository.eliminarUsuario(idComunidad, idUsuario, motivo, tipo, fechaExpulsion, LocalDateTime.now());
 }
 
+public void editarExpulsion(String motivo, String tipo, String fechaHoraExpulsion, Long idComunidad, Long idUsuario) {
+    // Lógica para editar la expulsión
+    // 1. Recuperar el usuario y la comunidad
+    Usuario usuario = usuarioRepository.findById(idUsuario).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    Comunidad comunidad = comunidadRepository.findById(idComunidad).orElseThrow(() -> new RuntimeException("Comunidad no encontrada"));
+    String expulsado = comunidadRepository.findTipoExpulsion(idUsuario,idComunidad);  // Asegúrate de que este valor se obtiene correctamente
+    if (expulsado != null) {
+        // Si la expulsión ya existe, actualizar los datos
+  DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+    LocalDateTime fechaExpulsion = LocalDateTime.parse(fechaHoraExpulsion, formatter);
+        comunidadRepository.actualizarExpulsion(idUsuario,idComunidad,motivo,tipo,fechaExpulsion);
+    } else {
+        eliminarUsuario(motivo,tipo,fechaHoraExpulsion,idComunidad,idUsuario);
+    }
+}
 
    
 
@@ -411,5 +426,9 @@ public ExpulsionDTO obtenerExpulsionDTO(Long idUsuario, Long idComunidad) {
             }
         }
 
+    }
+
+    public void eliminarBan(Long idComunidad, Long idUsuario){
+        comunidadRepository.eliminarBan(idComunidad,idUsuario);
     }
 }
