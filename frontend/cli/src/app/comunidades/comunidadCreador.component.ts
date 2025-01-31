@@ -170,8 +170,8 @@ export class ComunidadCreadorComponent implements OnInit {
                     this.getSolicitudesPendientes();
                 }
                 this.traerMiembros();
-                this.getExpulsados();
                 this.traerAdministradores();
+                this.getExpulsados();
             });
         }
     }
@@ -230,6 +230,7 @@ export class ComunidadCreadorComponent implements OnInit {
             this.creadorComunidad = dataPackage.data as Usuario;
             if (this.creadorComunidad.id == this.idUsuarioAutenticado) {
                 this.esCreador = true;  // El usuario es el creador
+                console.info("Sisoy");
             }
         });
     }
@@ -273,6 +274,7 @@ export class ComunidadCreadorComponent implements OnInit {
         this.usuarioService.administradoresComunidad(this.comunidad.id).subscribe(dataPackage => {
             if (Array.isArray(dataPackage.data)) {
                 this.administradores = dataPackage.data;
+                this.verificarRoles();
             }
         });
     }
