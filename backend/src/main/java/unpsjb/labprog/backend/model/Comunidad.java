@@ -26,6 +26,7 @@ public class Comunidad {
     private String descripcion;
     private int cantidadMaximaMiembros;
     private boolean esPrivada;
+    private boolean esModerada;
     private double latitud;
     private double longitud;
     private String imagen;
