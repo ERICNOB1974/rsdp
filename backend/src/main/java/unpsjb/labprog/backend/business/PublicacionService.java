@@ -37,6 +37,10 @@ public class PublicacionService {
             publicacionRepository.establecerCreador(idUsuario, p.getId());
         }
         // Enviar notificación al frontend
+
+        if (usuarioRepository.findById(idUsuario).get().getPrivacidadPerfil().equals("Privada")) {
+            return p; // No se envía notificación
+        }
         // Obtener la lista de amigos del usuario
         List<Long> amigosIds = usuarioRepository.amigos(
                 usuarioRepository.findById(idUsuario).get().getNombreUsuario()).stream()
@@ -147,9 +151,21 @@ public class PublicacionService {
         return publicacionRepository.findPublicacionIdByComentarioId(idComentarioPadre);
     }
 
-    public void publicarEnComunidad(Long idComunidad, Long idUsuario, Publicacion publicacion) {
-        this.save(publicacion, idUsuario);
+    public Publicacion publicarEnComunidad(Long idComunidad, Long idUsuario, Publicacion publicacion) {
+        Publicacion p = publicacionRepository.save(publicacion);
         publicacionRepository.publicarEnComunidad(publicacion.getId(), idComunidad);
+        if (p.getId() != null) {
+            publicacionRepository.establecerCreador(idUsuario, p.getId());
+        }
+        // Obtener la lista de amigos del usuario
+        List<Long> participantes = usuarioRepository.miembros(idComunidad).stream()
+                .map(Usuario::getId) // Suponiendo que getId() devuelve el ID de tipo Long
+                .collect(Collectors.toList());
+
+        // Enviar la publicación solo a los amigos
+        participantes.forEach(amigoId -> messagingTemplate.convertAndSend("/queue/publicaciones/" + amigoId, publicacion));
+        messagingTemplate.convertAndSend("/topic/publicaciones", publicacion);
+        return p;
     }
 
     public List<PublicacionesDTO> obtenerTodasLasPublicaciones(Long idUsuario, int page, int size) {
