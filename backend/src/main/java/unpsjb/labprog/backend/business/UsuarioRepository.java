@@ -159,11 +159,38 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
             + "CREATE (u)-[:SOLICITUD_DE_AMISTAD {estado: $estado, fechaEnvio: $fechaEnvio}]->(u2)")
     void enviarSolicitudAmistad(Long idEmisor, Long idReceptor, String estado, LocalDateTime fechaEnvio);
 
-    @Query("MATCH (u:Usuario)-[r:SOLICITUD_DE_INGRESO]->(c:Comunidad) "
+  @Query("MATCH (u:Usuario)-[r:SOLICITUD_DE_INGRESO]->(c:Comunidad) "
             + "WHERE id(c) = $idComunidad "
             + "RETURN u "
             + "ORDER BY r.fechaSolicitud DESC, u.nombreUsuario ASC")
     List<Usuario> solicititudesPendientes(Long idComunidad);
+
+@Query("MATCH (u:Usuario)-[r:SOLICITUD_DE_INGRESO]->(c:Comunidad) "
+      + "WHERE id(c) = $idComunidad "
+      + "AND toUpper(u.nombreUsuario) CONTAINS toUpper($term) "
+      + "RETURN u "
+      + "ORDER BY r.fechaSolicitud DESC, u.nombreUsuario ASC "
+      + "SKIP $skip LIMIT $size")
+List<Usuario> solicititudesPendientesPaginadas(@Param("idComunidad") Long idComunidad, 
+                                               @Param("term") String term, 
+                                               @Param("skip") int skip, 
+                                               @Param("size") int size);
+
+
+@Query("MATCH (u:Usuario)-[r:EXPULSADO_COMUNIDAD]->(c:Comunidad) "
+      + "WHERE id(c) = $idComunidad "
+      + "AND r.fechaHoraExpulsion > localdatetime() - duration({hours: 3}) "
+      + "AND toUpper(u.nombreUsuario) CONTAINS toUpper($term) "
+      + "RETURN u "
+      + "ORDER BY r.fechaHoraExpulsion DESC, u.nombreUsuario ASC "
+      + "SKIP $skip LIMIT $size")
+List<Usuario> obtenerExpulsadosActivos(@Param("idComunidad") Long idComunidad, 
+                                       @Param("term") String term, 
+                                       @Param("skip") int skip, 
+                                       @Param("size") int size);
+
+
+
 
     @Query("MATCH (u:Usuario), (u2:Usuario) WHERE id(u) = $idEmisor AND id(u2) = $idReceptor "
             + "CREATE (u)-[:ES_AMIGO_DE {fechaAmigos: $now}]->(u2) "
@@ -364,25 +391,25 @@ Usuario findUsuarioByComentarioId(@Param("id") Long id);
         List<Usuario> likesComentario(@Param("comentarioId") Long comentarioId, @Param("skip") int skip,
                 @Param("limit") int limit);
 
-    @Query("""
-            MATCH (u:Usuario {nombreUsuario: $nombreUsuario}) // Usuario que hace la consulta
-            MATCH (otros:Usuario)
-            WHERE otros <> u // Evita incluir al usuario que hace la consulta
-            AND (toUpper(otros.nombreUsuario) CONTAINS toUpper($term))
+        @Query("""
+                MATCH (u:Usuario {nombreUsuario: $nombreUsuario}) // Usuario que hace la consulta
+                MATCH (otros:Usuario)
+                WHERE otros <> u // Evita incluir al usuario que hace la consulta
+                AND (toUpper(otros.nombreUsuario) CONTAINS toUpper($term))
 
-            // Cuenta amigos en común entre 'u' y 'otros'
-            OPTIONAL MATCH (u)-[:ES_AMIGO_DE]-(amigo)-[:ES_AMIGO_DE]-(otros)
+                // Cuenta amigos en común entre 'u' y 'otros'
+                OPTIONAL MATCH (u)-[:ES_AMIGO_DE]-(amigo)-[:ES_AMIGO_DE]-(otros)
 
-            WITH otros, COUNT(amigo) AS amigosEnComun
+                WITH otros, COUNT(amigo) AS amigosEnComun
 
-            // Devuelve solo aquellos usuarios que coinciden con el término
-            RETURN otros
-            ORDER BY amigosEnComun DESC
-            SKIP $skip
-            LIMIT $limit
-            """)
-    List<Usuario> buscarUsuarios(String nombreUsuario, String term, @Param("skip") int skip,
-            @Param("limit") int limit);
+                // Devuelve solo aquellos usuarios que coinciden con el término
+                RETURN otros
+                ORDER BY amigosEnComun DESC
+                SKIP $skip
+                LIMIT $limit
+                """)
+        List<Usuario> buscarUsuarios(String nombreUsuario, String term, @Param("skip") int skip,
+                @Param("limit") int limit);
 
 
 @Query("""

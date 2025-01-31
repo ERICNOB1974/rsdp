@@ -140,6 +140,20 @@ export class ComunidadService {
         { params }  // Pasamos los parámetros de consulta aquí.
     );
 }
+
+editarExpulsionConMotivo(motivo: string, tipo: string, fechaHoraExpulsion: string, idMiembro: number, idComunidad: number): Observable<DataPackage> {
+  const params = new HttpParams()
+      .set('motivo', motivo)
+      .set('tipo', tipo)
+      .set('fechaHoraExpulsion', fechaHoraExpulsion);
+
+  return this.http.put<DataPackage>(
+      `${this.comunidadesUrl}/editarExpulsion/${idComunidad}/${idMiembro}`,  // Ruta para editar expulsión
+      null,  // No es necesario enviar un cuerpo de solicitud.
+      { params }  // Pasamos los parámetros de consulta aquí.
+  );
+}
+
   verificarExpulsion(idUsuarioAutenticado: number, idComunidad: number) {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/estaExpulsado/${idUsuarioAutenticado}/${idComunidad}`);
   }
@@ -149,9 +163,20 @@ export class ComunidadService {
     return this.http.post<DataPackage>(` ${this.comunidadesUrl}/gestionarSolicitudIngreso/${idSuperUsuario}/${idMiembro}/${idComunidad}?aceptada=${aceptada}`, body);
   }
 
-  visualizarSolicitudes(idSuperUsuario: number, idComunidad: number): Observable<DataPackage> {
-    return this.http.get<DataPackage>(` ${this.comunidadesUrl}/visualizarSolicitudes/${idSuperUsuario}/${idComunidad}`);
-  }
+  visualizarSolicitudes(idComunidad: number,term: string, page: number, size: number): Observable<DataPackage> {
+    const url = ` ${this.comunidadesUrl}/visualizarSolicitudes/${this.authService.getUsuarioId()}/${idComunidad}?page=${page}&size=${size}` +
+    (term ? `&term=${term}` : '');
+    return this.http.get<DataPackage>(url);
+    }
+    
+
+    obtenerExpulsadosActivos(idComunidad: number,term: string, page: number, size: number): Observable<DataPackage> {
+      const url = ` ${this.comunidadesUrl}/obtenerExpulsadosActivos/${this.authService.getUsuarioId()}/${idComunidad}?page=${page}&size=${size}` +
+      (term ? `&term=${term}` : '');
+      return this.http.get<DataPackage>(url);
+
+      }
+
 
 
   remove(id: number): Observable<DataPackage> {
@@ -233,5 +258,12 @@ export class ComunidadService {
 
     return this.http.post<DataPackage>(`${this.emailUrl}/enviar-notificacion`, requestBody);
   }
+
+
+  eliminarBan(idComunidad: number, idExpulsado:number): Observable<DataPackage> {
+    return this.http.delete<DataPackage>(`${this.comunidadesUrl}/eliminarBan/${idComunidad}/${idExpulsado}`)
+  }
+
+
 
 }
