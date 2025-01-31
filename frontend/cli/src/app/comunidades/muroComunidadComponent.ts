@@ -112,11 +112,13 @@ export class MuroComunidadComponent implements OnInit {
           });
         }
         this.idUsuarioAutenticado = Number(this.authService.getUsuarioId());
-        this.getComunidad().then(() => {
+        this.getComunidad().then(async () => {
             if ((!this.comunidad.esPrivada) || (this.esParte)) {
                 this.getPublicaciones();
                 this.traerMiembros();
                 this.obtenerEventosDeLaComunidad();
+                await this.traerAdministradores();
+
             }
             this.checkExpulsion();
             this.contarUsuariosAnonimos();
@@ -375,7 +377,7 @@ async traerMiembros(): Promise<void> {
 
                 // Realiza la obtención de amigos y administradores para el filtrado de visibilidad
                 //await this.obtenerAmigos();
-                await this.traerAdministradores();
+                //await this.traerAdministradores();
             }
             this.loadingScroll = false;
             this.loading = false;
