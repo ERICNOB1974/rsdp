@@ -448,6 +448,16 @@ void eliminarUsuario(Long idComunidad, Long idUsuario, String motivoExpulsion, S
 
 @Query("MATCH (u:Usuario)-[r:EXPULSADO_COMUNIDAD]->(c:Comunidad) " +
        "WHERE id(u) = $idUsuario AND id(c) = $idComunidad " +
+       "SET r.motivoExpulsion = $motivoExpulsion, r.tipo = $tipo, r.fechaHoraExpulsion = $fechaHoraExpulsion " +
+       "RETURN r")
+void actualizarExpulsion(@Param("idUsuario") Long idUsuario,
+                               @Param("idComunidad") Long idComunidad,
+                               @Param("motivoExpulsion") String motivoExpulsion,
+                               @Param("tipo") String tipo,
+                               @Param("fechaHoraExpulsion") LocalDateTime fechaHoraExpulsion);
+
+@Query("MATCH (u:Usuario)-[r:EXPULSADO_COMUNIDAD]->(c:Comunidad) " +
+       "WHERE id(u) = $idUsuario AND id(c) = $idComunidad " +
        "RETURN r.motivoExpulsion AS motivoExpulsion " +
        "ORDER BY r.fechaExpulsado DESC " +
        "LIMIT 1")
@@ -471,5 +481,11 @@ LocalDateTime findFechaHoraExpulsion(@Param("idUsuario") Long idUsuario,
                                       @Param("idComunidad") Long idComunidad);
 
 
-    
+       @Query("""
+        MATCH (u:Usuario) WHERE id(u)=$idUsuario
+        MATCH (c:Comunidad) WHERE id(c)=$idComunidad
+        MATCH (u)-[r:EXPULSADO_COMUNIDAD]->(c) 
+        DELETE r
+        """)
+void eliminarBan(Long idComunidad, Long idUsuario);
 }

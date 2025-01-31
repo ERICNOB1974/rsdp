@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.DeleteMapping;
 
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.ComunidadService;
@@ -133,15 +134,40 @@ public class ComunidadPresenter {
         }
     }
 
-    @GetMapping("/visualizarSolicitudes/{idSuperUsuario}/{idComunidad}")
-    public ResponseEntity<Object> visualizarSolicitudesPendientes(@PathVariable Long idSuperUsuario,
-            @PathVariable Long idComunidad) {
-        try {
-            return Response.ok(usuarioComunidadService.visualizarSolicitudes(idSuperUsuario, idComunidad));
-        } catch (Exception e) {
+
+ 
+     @GetMapping("/visualizarSolicitudes/{idSuperUsuario}/{idComunidad}")
+        public ResponseEntity<Object> visualizarSolicitudes(
+            @PathVariable Long idSuperUsuario,
+            @PathVariable Long idComunidad,
+            @RequestParam(required = false) String term,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+        ) {
+               try {
+            return Response.ok(usuarioComunidadService.visualizarSolicitudes(idSuperUsuario, idComunidad,term, page, size));
+                    } catch (Exception e) {
             return Response.error("", "Error al visualizar las solicitudes de la comunidad: " + e.getMessage() + e);
+                    }            
         }
-    }
+
+             @GetMapping("/obtenerExpulsadosActivos/{idSuperUsuario}/{idComunidad}")
+        public ResponseEntity<Object> obtenerExpulsadosActivos(
+            @PathVariable Long idSuperUsuario,
+            @PathVariable Long idComunidad,
+            @RequestParam(required = false) String term,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+        ) {
+               try {
+            return Response.ok(usuarioComunidadService.obtenerExpulsadosActivos(idSuperUsuario, idComunidad,term, page, size));
+                    } catch (Exception e) {
+            return Response.error("", "Error al visualizar los expulsados de la comunidad: " + e.getMessage() + e);
+                    }            
+        }
+
+
+
 
     @PostMapping("/etiquetar/{idEtiqueta}")
     public ResponseEntity<Object> etiquetarComunidad(@RequestBody Comunidad comunidad, @PathVariable Long idEtiqueta) {
@@ -330,10 +356,26 @@ public ResponseEntity<Object> eliminarParticipante(@PathVariable Long idComunida
     return Response.ok("OK");
 }
 
+@PutMapping("/editarExpulsion/{idComunidad}/{idUsuario}")
+public ResponseEntity<Object> editarExpulsion(@PathVariable Long idComunidad, 
+                                              @PathVariable Long idUsuario,
+                                              @RequestParam String motivo,
+                                              @RequestParam String tipo,
+                                              @RequestParam String fechaHoraExpulsion) {
+    comunidadService.editarExpulsion(motivo, tipo, fechaHoraExpulsion, idComunidad, idUsuario);
+    return Response.ok("Expulsión editada con éxito");
+}
+
     @PostMapping("/actualizarUbicaciones")
     public ResponseEntity<Object> actualizarUbicaciones() {
         comunidadService.agregarUbicacionAComunidadesSinUbicacion();
         return Response.ok("Ubicaciones actualizadas correctamente.");
+    }
+
+ @DeleteMapping("/eliminarBan/{idComunidad}/{idUsuario}")
+    public ResponseEntity<Object> eliminarBan(@PathVariable Long idComunidad,@PathVariable Long idUsuario) {
+        comunidadService.eliminarBan(idComunidad,idUsuario);
+        return Response.ok("OK");
     }
 
 }

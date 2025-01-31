@@ -217,7 +217,7 @@ public class UsuarioComunidadService {
         return "Miembro eliminado de la comunidad correctamente";
     }
 
-    public List<Usuario> visualizarSolicitudes(Long idSuperUsuario, Long idComunidad) throws Exception {
+    public List<Usuario> visualizarSolicitudes(Long idSuperUsuario, Long idComunidad, String term, int page, int size) throws Exception {
 
         Optional<Usuario> superUsuario = usuarioRepository.findById(idSuperUsuario);
         if (superUsuario.isEmpty()) {
@@ -233,9 +233,34 @@ public class UsuarioComunidadService {
                 && (!usuarioRepository.esAdministrador(idSuperUsuario, idComunidad))) {
             throw new Exception("Este usuario no puede gestionar solicitudes");
         }
+        int skip = page * size; // Cálculo de los resultados a omitir
+        String filtroNombre = (term == null || term.trim().isEmpty()) ? "" : term;
 
-        return usuarioRepository.solicititudesPendientes(idComunidad);
+        return usuarioRepository.solicititudesPendientesPaginadas(idComunidad,filtroNombre, skip, size);
     }
+
+        public List<Usuario> obtenerExpulsadosActivos(Long idSuperUsuario, Long idComunidad, String term, int page, int size) throws Exception {
+
+        Optional<Usuario> superUsuario = usuarioRepository.findById(idSuperUsuario);
+        if (superUsuario.isEmpty()) {
+            throw new Exception("El usuario con permisos no existe.");
+        }
+
+        Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
+        if (comunidadOpt.isEmpty()) {
+            throw new Exception("La comunidad no existe.");
+        }
+
+        if ((!usuarioRepository.esCreador(idSuperUsuario, idComunidad))
+                && (!usuarioRepository.esAdministrador(idSuperUsuario, idComunidad))) {
+            throw new Exception("Este usuario no puede gestionar solicitudes");
+        }
+        int skip = page * size; // Cálculo de los resultados a omitir
+        String filtroNombre = (term == null || term.trim().isEmpty()) ? "" : term;
+
+        return usuarioRepository.obtenerExpulsadosActivos(idComunidad,filtroNombre, skip, size);
+    }
+
 
     public String verEstado(Long idComunidad, Long idUsuario) {
         if (usuarioRepository.esCreador(idUsuario, idComunidad)) {

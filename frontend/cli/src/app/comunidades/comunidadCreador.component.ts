@@ -30,7 +30,7 @@ export class ComunidadCreadorComponent implements OnInit {
     esAdmin: boolean = false;
     motivo: string = '';
     mensaje: string = '';
-    miembrosVisibles: Usuario[] = []; // Miembros visibles actualmente
+    expulsados: Usuario[] = []; // Miembros visibles actualmente
     cargaInicial: number = 5; // Número inicial de elementos visibles
     cargaIncremento: number = 5; // Número de elementos adicionales cargados en cada scroll
     motivoExpulsion: string = '';
@@ -41,6 +41,16 @@ export class ComunidadCreadorComponent implements OnInit {
     tipoExpulsion: string = 'permanente'; // Valor predeterminado
     expulsado: boolean = false; // Indica si el usuario fue expulsado
     estadoActual: string = 'miembros'; // Por defecto, se muestra la sección de Miembros
+    loading: boolean = false;  // Para manejar el estado de carga
+    loadingScroll: boolean = false;
+    searchTerm: string = '';  // Para almacenar el término de búsqueda
+    page: number = 0;         // Página actual
+    pageSolicitudes: number = 0;         // Página actual
+    loadingSolicitudes: boolean = false;  // Para manejar el estado de carga
+    pageExpulsados: number = 0;         // Página actual
+    loadingExpulsados: boolean = false;  // Para manejar el estado de carga
+    size: number = 5;
+    searchTimeout: any // Variable para almacenar el timer
     @ViewChild('modalExpulsion') modalExpulsion!: TemplateRef<any>; // Referencia al modal
 
     constructor(
@@ -69,8 +79,8 @@ export class ComunidadCreadorComponent implements OnInit {
 
     cambiarVista(estado: string) {
         this.estadoActual = estado;
-      }
-    
+    }
+
 
     confirmarExpulsion(): void {
         if (!this.motivoExpulsion.trim()) {
@@ -79,9 +89,9 @@ export class ComunidadCreadorComponent implements OnInit {
             });
             return;
         }
-    
+
         let fechaHoraExpulsion: Date;
-    
+
         if (this.tipoExpulsion === 'permanente') {
             // Si es permanente, se establece una fecha muy lejana (año 9999)
             fechaHoraExpulsion = new Date(9998, 11, 31, 15, 0); // 31 de diciembre de 9999 a las 23:59
@@ -94,46 +104,56 @@ export class ComunidadCreadorComponent implements OnInit {
         } else {
             // Combinar fecha y hora en un solo objeto Date solo si ambos son válidos
             const fecha = new Date(this.fechaExpulsion);
+            console.log("Fecha y hora combinadas: ", this.fechaExpulsion);
+
             const hora = new Date('1970-01-01T' + this.horaExpulsion + 'Z'); // Crear un objeto Date solo con la hora
-    
+
             if (isNaN(fecha.getTime()) || isNaN(hora.getTime())) {
                 this.snackBar.open('Por favor, selecciona una fecha y hora válidas.', 'Cerrar', {
                     duration: 3000,
                 });
                 return;
             }
-    
+
             // Combinar la fecha y la hora
-            fechaHoraExpulsion = new Date(
-                fecha.getFullYear(),
-                fecha.getMonth(),
-                fecha.getDate(),
-                hora.getHours(),
-                hora.getMinutes()
-            );
-        
+            fechaHoraExpulsion = new Date(Date.UTC(
+                fecha.getUTCFullYear(),
+                fecha.getUTCMonth(),
+                fecha.getUTCDate(),
+                hora.getUTCHours(),
+                hora.getUTCMinutes()
+            ));
+            console.log("Fecha y hora combinadas: ", fecha, hora);
+
             console.log("Expulsión temporal hasta:", fechaHoraExpulsion.toISOString());
         }
+
+  // Verificar si el usuario está en el array de expulsados
+  const usuarioExpulsado = this.expulsados.find(user => user.id === this.usuarioEliminar.id);
     
-        // Llamar a la función para eliminar al usuario con la fecha de expulsión
-        this.eliminarMiembro(this.usuarioEliminar.id, this.motivoExpulsion, fechaHoraExpulsion);
-    
+  if (usuarioExpulsado) {
+      // Si está en la lista, hacer un PUT para editar la expulsión
+      this.editarExpulsion(this.usuarioEliminar.id, this.motivoExpulsion, fechaHoraExpulsion);
+  } else {
+      // Si no está en la lista, proceder con la eliminación
+      this.eliminarMiembro(this.usuarioEliminar.id, this.motivoExpulsion, fechaHoraExpulsion);
+  }
         // Limpia los datos
         this.motivoExpulsion = '';
         this.fechaExpulsion = null;
         this.horaExpulsion = null;
         this.usuarioEliminar = null;
     }
-    
-    
+
+
     abrirModalExpulsion(usuario: any): void {
         this.usuarioEliminar = usuario; // Asigna el usuario al abrir el modal
         this.modalService.open(this.modalExpulsion, {
-          centered: true, // Centra el modal
-          backdrop: 'static', // Impide cerrar al hacer clic fuera
-          keyboard: false, // Desactiva el cierre con teclado
+            centered: true, // Centra el modal
+            backdrop: 'static', // Impide cerrar al hacer clic fuera
+            keyboard: false, // Desactiva el cierre con teclado
         });
-      }
+    }
 
     getComunidad(): void {
         const id = this.route.snapshot.paramMap.get('id');
@@ -149,17 +169,60 @@ export class ComunidadCreadorComponent implements OnInit {
                 if (this.comunidad.esPrivada) {
                     this.getSolicitudesPendientes();
                 }
-                this.traerMiembrosYAdministradores();
+                this.traerMiembros();
+                this.getExpulsados();
+                this.traerAdministradores();
             });
         }
     }
     // Método para obtener las solicitudes pendientes si la comunidad es privada
     getSolicitudesPendientes(): void {
-        this.comunidadService.visualizarSolicitudes(this.idUsuarioAutenticado, this.comunidad.id).subscribe(dataPackage => {
+        if (this.loadingSolicitudes) return;  // Evitar solicitudes repetidas mientras se cargan datos
+        this.loadingSolicitudes = true;
+        // Llamada al servicio para obtener miembros filtrados por el término de búsqueda
+        this.comunidadService.visualizarSolicitudes(this.comunidad.id, this.searchTerm, this.pageSolicitudes, this.size)
+        .subscribe(async dataPackage => {
+            console.info("entre pendientes",dataPackage.data);
             if (Array.isArray(dataPackage.data)) {
-                this.solicitudesPendientes = dataPackage.data;
-            }
-        });
+                    // Si es la primera página, reinicia la lista de miembros
+                    if (this.page === 0) {
+                        this.solicitudesPendientes = dataPackage.data;
+
+                    } else {
+                        // Si no es la primera página, agrega los nuevos miembros a la lista
+                        this.solicitudesPendientes = [...this.solicitudesPendientes, ...dataPackage.data];
+                    }
+
+                }
+                this.loadingScroll = false;
+                this.loadingSolicitudes = false;
+            });
+    }
+    
+
+    getExpulsados(): void {
+        if (this.loadingExpulsados) return;  // Evitar solicitudes repetidas mientras se cargan datos
+        this.loadingExpulsados = true;
+
+        // Llamada al servicio para obtener miembros filtrados por el término de búsqueda
+        this.comunidadService.obtenerExpulsadosActivos(this.comunidad.id, this.searchTerm, this.pageExpulsados, this.size)
+            .subscribe(async dataPackage => {
+                console.info("entre pendientes",dataPackage.data);
+
+                if (Array.isArray(dataPackage.data)) {
+                    // Si es la primera página, reinicia la lista de miembros
+                    if (this.page === 0) {
+                        this.expulsados = dataPackage.data;
+
+                    } else {
+                        // Si no es la primera página, agrega los nuevos miembros a la lista
+                        this.expulsados = [...this.expulsados, ...dataPackage.data];
+                    }
+
+                }
+                this.loadingScroll = false;
+                this.loadingExpulsados = false;
+            });
     }
 
     getCreadorComunidad(): void {
@@ -179,41 +242,31 @@ export class ComunidadCreadorComponent implements OnInit {
     }
 
     traerMiembrosYAdministradores(): void {
-        const miembros$ = this.usuarioService.miembrosComunidad(this.comunidad.id);
-        const administradores$ = this.usuarioService.administradoresComunidad(this.comunidad.id);
 
-        forkJoin([miembros$, administradores$]).subscribe(([miembrosData, administradoresData]) => {
-            if (Array.isArray(miembrosData.data)) {
-                this.miembros = miembrosData.data as Usuario[];
-            }
 
-            if (Array.isArray(administradoresData.data)) {
-                this.administradores = administradoresData.data as Usuario[];
-            }
-
-            // Combina ambos arrays
-            this.miembros = this.miembros.concat(this.administradores);
-
-            // Verificar roles
-            this.verificarRoles();
-
-            // Eliminar duplicados después de verificar roles
-            this.miembros = this.miembros.reduce((acc: Usuario[], user: Usuario) => {
-                if (!acc.some((existingUser: Usuario) => existingUser.id === user.id)) {
-                    acc.push(user);
-                }
-                return acc;
-            }, []);
-            this.miembrosVisibles = this.miembros.slice(0, this.cargaInicial);
-        });
     }
 
-    traerMiembros(): void {
-        this.usuarioService.miembrosComunidad(this.comunidad.id).subscribe(dataPackage => {
-            if (Array.isArray(dataPackage.data)) {
-                this.miembros = dataPackage.data;
-            }
-        });
+    async traerMiembros(): Promise<void> {
+        if (this.loading) return;  // Evitar solicitudes repetidas mientras se cargan datos
+        this.loading = true;
+
+        // Llamada al servicio para obtener miembros filtrados por el término de búsqueda
+        this.usuarioService.buscarMiembro(this.comunidad.id, this.searchTerm, this.page, this.size)
+            .subscribe(async dataPackage => {
+                if (Array.isArray(dataPackage.data)) {
+                    // Si es la primera página, reinicia la lista de miembros
+                    if (this.page === 0) {
+                        this.miembros = dataPackage.data;
+
+                    } else {
+                        // Si no es la primera página, agrega los nuevos miembros a la lista
+                        this.miembros = [...this.miembros, ...dataPackage.data];
+                    }
+
+                }
+                this.loadingScroll = false;
+                this.loading = false;
+            });
     }
 
     traerAdministradores(): void {
@@ -291,11 +344,20 @@ export class ComunidadCreadorComponent implements OnInit {
                 this.snackBar.open(mensaje, 'Cerrar', {
                     duration: 3000,
                 });
-                this.traerMiembrosYAdministradores(); // Actualiza la lista de miembros
             });
     }
-    
-   
+
+    editarExpulsion(idUsuario: number, motivo: string, fechaHoraExpulsion: Date): void {
+        this.comunidadService.editarExpulsionConMotivo(motivo, this.tipoExpulsion, fechaHoraExpulsion.toISOString(), idUsuario, this.comunidad.id)
+            .subscribe(dataPackage => {
+                let mensaje = JSON.stringify(dataPackage.data); // Convierte a string
+                this.snackBar.open(mensaje, 'Cerrar', {
+                    duration: 3000,
+                });
+            });
+    }
+
+
 
     openModal(content: any) {
         this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
@@ -335,22 +397,67 @@ export class ComunidadCreadorComponent implements OnInit {
         this.router.navigate(['/perfil', usuario.id]); // Navega al perfil del usuario
     }
 
-    onScroll(): void {
+   
+
+    onScrollMiembros(): void {
         const element = document.querySelector('.members-list') as HTMLElement;
-        if (element.scrollTop + element.clientHeight >= element.scrollHeight - 10) {
-            this.cargarMasMiembros();
-
-        }
-    }
-    cargarMasMiembros(): void {
-        const totalCargados = this.miembrosVisibles.length;
-        const nuevosMiembros = this.miembros.slice(totalCargados, totalCargados + this.cargaIncremento);
-
-        if (nuevosMiembros.length > 0) {
-            this.miembrosVisibles = [...this.miembrosVisibles, ...nuevosMiembros];
-        } else {
-            console.log('No hay más miembros por cargar');
+        if (!this.loadingScroll && element.scrollTop + element.clientHeight >= element.scrollHeight - 10) {
+            this.loadingScroll = true;  // Marca como en proceso de carga
+            this.page++;
+            this.traerMiembros();  // Llama a la función de carga de miembros con la nueva página
         }
     }
 
+    onScrollSolicitudes(): void {
+        const element = document.querySelector('.solicitudes-list') as HTMLElement;
+        if (!this.loadingScroll && element.scrollTop + element.clientHeight >= element.scrollHeight - 10) {
+            this.loadingScroll = true;  // Marca como en proceso de carga
+            this.pageSolicitudes++;
+            this.getSolicitudesPendientes();  // Llama a la función de carga de miembros con la nueva página
+        }
+    }
+
+    onScrollExpulsados(): void {
+        const element = document.querySelector('.expulsiones-list') as HTMLElement;
+        if (!this.loadingScroll && element.scrollTop + element.clientHeight >= element.scrollHeight - 10) {
+            this.loadingScroll = true;  // Marca como en proceso de carga
+            this.pageExpulsados++;
+            this.getExpulsados();  // Llama a la función de carga de miembros con la nueva página
+        }
+    }
+
+
+    buscarUsuarios(): void {
+        // Limpia el timer anterior, si existe
+        if (this.searchTimeout) {
+          clearTimeout(this.searchTimeout);
+        }
+        // Configura un nuevo timer para ejecutar después de 2 segundos
+        this.searchTimeout = setTimeout(() => {
+            if(this.estadoActual==='miembros'){
+                this.miembros = [];
+                this.page = 0; // Reinicia la página cuando cambia el término de búsqueda
+                this.traerMiembros(); // Trae los miembros con el nuevo término
+
+            }else if(this.estadoActual==='solicitudes'){
+                this.solicitudesPendientes = [];
+                this.pageSolicitudes = 0; // Reinicia la página cuando cambia el término de búsqueda
+                this.getSolicitudesPendientes(); // Trae los miembros con el nuevo término
+            }else{
+                this.expulsados = [];
+                this.pageExpulsados = 0; // Reinicia la página cuando cambia el término de búsqueda
+                this.getExpulsados(); // Trae los miembros con el nuevo término
+            }
+        }, 1000); // Retraso de 2 segundos
+      }
+
+      sacarExpulsion(idExpulsado: number): void{
+        console.info(idExpulsado,"jiji");
+        this.comunidadService.eliminarBan(this.comunidad.id,idExpulsado).subscribe(dataPackage => {
+            let mensaje = dataPackage.message;
+            this.snackBar.open(mensaje, 'Cerrar', {
+                duration: 3000,
+            });
+        });
+      }
 }
