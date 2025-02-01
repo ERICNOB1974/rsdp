@@ -7,11 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.service.annotation.PutExchange;
 
 import unpsjb.labprog.backend.Response;
 import unpsjb.labprog.backend.business.PublicacionService;
@@ -145,5 +147,43 @@ public class PublicacionPresenter {
         } catch (Exception e) {
             return Response.error("", "Error al obtener las publicaciones: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/publicacionesPorAprobar/comunidad/{idComunidad}")
+    public ResponseEntity<Object> publicacionesComunidadPorAprobar(@PathVariable Long idComunidad,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
+            throws Exception {
+        List<Publicacion> publicaciones = publicacionService.publicacionesComunidadPorAprobar(idComunidad, page, size);
+        return Response.ok(publicaciones, "OK");
+    }
+
+    @GetMapping("/publicacionesPendientesUsuarioComunidad/comunidad/{idComunidad}/{idUsuario}")
+    public ResponseEntity<Object> publicacionesPendientesUsuarioComunidad(@PathVariable Long idComunidad,
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
+            throws Exception {
+        List<Publicacion> publicaciones = publicacionService.publicacionesPendientesUsuarioComunidad(idComunidad,
+                idUsuario, page, size);
+        return Response.ok(publicaciones, "OK");
+    }
+
+    @GetMapping("/publicacionesRechazadasUsuarioComunidad/comunidad/{idComunidad}/{idUsuario}")
+    public ResponseEntity<Object> publicacionesRechazadasUsuarioComunidad(@PathVariable Long idComunidad,
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
+            throws Exception {
+        List<Publicacion> publicaciones = publicacionService.publicacionesRechazadasUsuarioComunidad(idComunidad,
+                idUsuario, page, size);
+        return Response.ok(publicaciones, "OK");
+    }
+
+    @RequestMapping(path = "/actualizarEstadoPublicacion/{idComunidad}/{idPublicacion}", method = RequestMethod.PUT)
+    public ResponseEntity<Object> actualizarEstadoPublicacion(@PathVariable Long idComunidad,
+            @PathVariable Long idPublicacion, @RequestBody String nuevoEstado) {
+        Publicacion p = publicacionService.actualizarEstado(idComunidad, idPublicacion, nuevoEstado);
+        return Response.ok(p, "OK");
     }
 }

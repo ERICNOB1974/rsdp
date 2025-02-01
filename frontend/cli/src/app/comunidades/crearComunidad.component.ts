@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
@@ -58,6 +58,8 @@ export class CrearComunidadComponent {
   tipoArchivo: string = ''; // Para distinguir entre imagen o video
   vistaPreviaArchivo: string | ArrayBuffer | null = null;
   formComunidad: FormGroup;
+  mostrarTooltip:boolean=false;
+  mostrarTooltipPrivada:boolean=false;
 
   constructor(
     private route: ActivatedRoute,
@@ -435,5 +437,26 @@ export class CrearComunidadComponent {
     this.formatoValido = false;
     this.comunidad.imagen = '';
 
+  }
+
+
+  toggleTooltip(event: Event): void {
+    event.stopPropagation(); // Evita que el click en el ícono cierre el tooltip
+    this.mostrarTooltip = !this.mostrarTooltip;
+  }
+
+  @HostListener('document:click')
+  cerrarTooltip(): void {
+    this.mostrarTooltip = false;
+  }
+
+  toggleTooltipPrivada(event: Event): void {
+    event.stopPropagation(); // Evita que el click en el ícono cierre el tooltip
+    this.mostrarTooltipPrivada = !this.mostrarTooltipPrivada;
+  }
+
+  @HostListener('document:click')
+  cerrarTooltipPrivada(): void {
+    this.mostrarTooltipPrivada = false;
   }
 }
