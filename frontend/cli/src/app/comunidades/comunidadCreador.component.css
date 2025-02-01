@@ -375,3 +375,16 @@ body {
   color: #aaa;
   font-style: italic;
 }
+
+
+.btn-yellow {
+  background-color: #ffc107; /* Amarillo Bootstrap */
+  color: #212529; /* Texto oscuro para buen contraste */
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+}
+
+.btn-yellow:hover {
+  background-color: #e0a800; /* Amarillo más oscuro al pasar el mouse */
+}

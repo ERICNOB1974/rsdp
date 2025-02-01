@@ -97,12 +97,45 @@
 
         </div>
 
-        <div class="form-group">
-            <label class="padding-top-20">
+        <div class="form-group d-flex align-items-center">
+            <!-- Checkbox con su label -->
+            <label class="mb-0 me-2">
                 <input type="checkbox" [(ngModel)]="comunidad.esPrivada" name="esPrivada">
                 ¿La Comunidad es privada?
             </label>
+
+            <!-- Ícono de pregunta con tooltip -->
+            <div class="position-relative d-inline-block">
+                <i class="fa fa-question-circle" [class.text-primary]="!mostrarTooltipPrivada"
+                    [class.text-danger]="mostrarTooltipPrivada" [class.fw-bold]="mostrarTooltipPrivada" tabindex="0"
+                    (click)="toggleTooltipPrivada($event)">
+                </i>
+                <div *ngIf="mostrarTooltipPrivada" class="tooltip-bootstrap bg-dark text-white p-2 rounded shadow">
+                    Esto quiere decir que los usuarios enviaran solicitud para formar parte de la comunidad.
+                </div>
+            </div>
         </div>
+
+
+        <div class="form-group d-flex align-items-center">
+            <!-- Checkbox con su label -->
+            <label class="mb-0 me-2">
+                <input type="checkbox" [(ngModel)]="comunidad.esModerada" name="esModerada">
+                ¿La Comunidad es moderada?
+            </label>
+
+            <!-- Ícono de pregunta con tooltip -->
+            <div class="position-relative d-inline-block">
+                <i class="fa fa-question-circle" [class.text-primary]="!mostrarTooltip"
+                    [class.text-danger]="mostrarTooltip" [class.fw-bold]="mostrarTooltip" tabindex="0"
+                    (click)="toggleTooltip($event)">
+                </i>
+                <div *ngIf="mostrarTooltip" class="tooltip-bootstrap bg-dark text-white p-2 rounded shadow">
+                    Esto quiere decir que todas las publicaciones deberán ser aceptadas por un administrador.
+                </div>
+            </div>
+        </div>
+
 
 
         <div class="form-buttons">

@@ -22,6 +22,9 @@ public class NotificacionService {
     private EventoRepository eventoRepository;
 
     @Autowired
+    private PublicacionRepository publicacionRepository;
+
+    @Autowired
     private UsuarioRepository usuarioRepository;
 
     @Autowired
@@ -101,6 +104,9 @@ public class NotificacionService {
     public void crearNotificacionPublicacion(Long idUsuarioReceptor, Long idUsuarioEmisor, Long idEntidad, String tipo,
             LocalDateTime fecha) {
         if (idUsuarioReceptor != idUsuarioEmisor) {
+            if (publicacionRepository.publicadaYNoAprobada(idEntidad)) {
+                return;
+            }
             notificacionRepository.crearNotificacionPublicacion(idUsuarioReceptor, idUsuarioEmisor, idEntidad, tipo,
                     fecha);
             enviarEventoTiempoReal(idUsuarioReceptor, tipo);

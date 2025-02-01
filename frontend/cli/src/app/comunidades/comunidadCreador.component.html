@@ -15,13 +15,8 @@
     <div *ngIf="estadoActual === 'miembros'" class="tab miembros-tab">
       <h2>Miembros</h2>
       <div class="buscador-contenedor">
-        <input
-          type="text"
-          [(ngModel)]="searchTerm"
-          (input)="buscarUsuarios()"
-          placeholder="🔍 Buscar miembros..."
-          class="buscador-input"
-        />
+        <input type="text" [(ngModel)]="searchTerm" (input)="buscarUsuarios()" placeholder="🔍 Buscar miembros..."
+          class="buscador-input" />
       </div>
       <ul class="members-list" (scroll)="onScrollMiembros()">
         <li *ngFor="let miembro of miembros" class="miembro-item">
@@ -47,13 +42,8 @@
     <div *ngIf="estadoActual === 'solicitudes'" class="tab solicitudes-tab">
       <h2>Solicitudes Pendientes</h2>
       <div class="buscador-contenedor">
-        <input
-          type="text"
-          [(ngModel)]="searchTerm"
-          (input)="buscarUsuarios()"
-          placeholder="🔍 Buscar solicitudes..."
-          class="buscador-input"
-        />
+        <input type="text" [(ngModel)]="searchTerm" (input)="buscarUsuarios()" placeholder="🔍 Buscar solicitudes..."
+          class="buscador-input" />
       </div>
       <ul class="solicitudes-list" (scroll)="onScrollSolicitudes()">
         <li *ngFor="let solicitud of solicitudesPendientes" class="solicitud-item">
@@ -72,13 +62,8 @@
     <div *ngIf="estadoActual === 'expulsiones'" class="tab expulsiones-tab">
       <h2>Expulsiones</h2>
       <div class="buscador-contenedor">
-        <input
-          type="text"
-          [(ngModel)]="searchTerm"
-          (input)="buscarUsuarios()"
-          placeholder="🔍 Buscar miembros expulsados..."
-          class="buscador-input"
-        />
+        <input type="text" [(ngModel)]="searchTerm" (input)="buscarUsuarios()"
+          placeholder="🔍 Buscar miembros expulsados..." class="buscador-input" />
       </div>
       <ul class="expulsiones-list" (scroll)="onScrollExpulsados()">
         <li *ngFor="let expulsado of expulsados" class="expulsado-item">
@@ -88,10 +73,10 @@
           <div class="actions">
             <button class="btn btn-danger btn-sm" (click)="sacarExpulsion(expulsado.id)">Sacar expulsion</button>
             <button
-            *ngIf="esCreador || (esAdmin && !esAdministrador(expulsado.id) && expulsado.id !== creadorComunidad.id) && expulsado.id !== idUsuarioAutenticado"
-            class="btn btn-danger btn-sm mt-2" (click)="abrirModalExpulsion(expulsado)">
-            Editar Expulsion
-          </button>
+              *ngIf="esCreador || (esAdmin && !esAdministrador(expulsado.id) && expulsado.id !== creadorComunidad.id) && expulsado.id !== idUsuarioAutenticado"
+              class="btn btn-danger btn-sm mt-2" (click)="abrirModalExpulsion(expulsado)">
+              Editar Expulsion
+            </button>
           </div>
         </li>
       </ul>
@@ -99,7 +84,8 @@
 
   </div>
 
-  <!-- Botón de Eliminar Comunidad -->
+  <button *ngIf="esCreador" class="delete-button btn-yellow" (click)="editarComunidad()">Editar Comunidad</button>
+
   <button *ngIf="esCreador" class="delete-button" (click)="eliminarComunidad()">Eliminar Comunidad</button>
 
   <!-- Regresar -->
