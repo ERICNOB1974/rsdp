@@ -23,7 +23,7 @@ import { Usuario } from '../usuarios/usuario';
   selector: 'app-publicaciones',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
-  styleUrls: ['../css/crear.component.css', '../css/arroba.css'],
+  styleUrls: ['../css/crear.component.css', '../css/arroba.css','crearPublicacion.component.css'],
   templateUrl: 'crearPublicacion.component.html'
 })
 export class CrearPublicacionComponent implements OnInit {

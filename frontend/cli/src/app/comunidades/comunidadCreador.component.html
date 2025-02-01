@@ -171,15 +171,20 @@
       </div>
 
       <div *ngIf="fechaExpulsion && horaExpulsion">
-        <p><strong>Fecha y hora seleccionada:</strong> {{ fechaExpulsion | date: 'shortDate' }} {{ horaExpulsion | date:
-          'shortTime' }}</p>
+        <p><strong>Fecha y hora seleccionada:</strong> 
+          {{ fechaExpulsion | date: 'shortDate' }} {{ horaExpulsion }}
+        </p>
       </div>
     </div>
 
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancelar</button>
-    <button type="button" class="btn btn-danger" (click)="confirmarExpulsion(); modal.close()">
+    <button 
+      type="button" 
+      class="btn btn-danger" 
+      (click)="confirmarExpulsion(); modal.close()" 
+      [disabled]="!motivoExpulsion || (tipoExpulsion === 'temporal' && (!fechaExpulsion || !horaExpulsion))">
       Eliminar usuario
     </button>
   </div>

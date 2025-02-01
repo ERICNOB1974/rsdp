@@ -8,18 +8,35 @@
           name="descripcion"
           (input)="onTextChange($event)"
           placeholder="Escribe tu publicación con @ para mencionar usuarios..."
+          class="input-publicacion"
         />
+        
         <!-- Lista de usuarios sugeridos -->
-        <ul *ngIf="usuariosFiltrados.length > 0" class="suggestions">
-          <li *ngFor="let usuario of usuariosFiltrados" (click)="addUsuario(usuario)">
-            <span>{{ usuario.usuario.nombreUsuario }}</span>
-            <span>{{ usuario.usuario.nombreReal }}</span>          
-            <span *ngIf="usuario.esAmigo" class="friend-label">Amigo</span>
-            <span *ngIf="!usuario.esAmigo" class="non-friend-label">No es tu amigo</span>
-          </li>
-        </ul>
+        <div *ngIf="usuariosFiltrados.length > 0" class="suggestions-container">
+          <ul class="suggestions">
+            <li *ngFor="let usuario of usuariosFiltrados" 
+                (click)="addUsuario(usuario)" 
+                class="suggestion-item">
+              
+              <div class="user-avatar">
+                <img [src]="usuario.usuario.fotoPerfil || '../assets/usuario.png'" alt="Avatar">
+              </div>
+              
+              <div class="user-info">
+                <span class="username" >{{ usuario.usuario.nombreUsuario }}</span>
+                <span class="real-name">    {{ usuario.usuario.nombreReal }}</span>
+              </div>
+              
+              <div class="user-status">
+                <span *ngIf="usuario.esAmigo" class="friend-label">✔ Amigo</span>
+                <span *ngIf="!usuario.esAmigo" class="non-friend-label">➖ No es tu amigo</span>
+              </div>
+      
+            </li>
+          </ul>
+        </div>
       </div>
-  
+      
 
       <!-- Área de arrastrar y soltar o eliminar archivo -->
       <div *ngIf="!formatoValido" class="drag-drop-area" (dragover)="onDragOver($event)" (drop)="onDrop($event)">

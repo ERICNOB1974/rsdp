@@ -57,6 +57,26 @@ public class UsuarioComunidadService {
         return "Solicitud de ingreso a la comunidad: "+comunidad.getNombre()+" enviada correctamente";
     }
 
+      public String eliminarSolicitudIngreso(Long idUsuario, Long idComunidad) throws Exception {
+        Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
+        if (comunidadOpt.isEmpty()) {
+            throw new Exception("La comunidad no existe.");
+        }
+        Optional<Usuario> usuarioOpt = usuarioRepository.findById(idUsuario);
+        if (usuarioOpt.isEmpty()) {
+            throw new Exception("El usuario no existe.");
+        }
+        Comunidad comunidad = comunidadOpt.get();
+        Usuario usuario = usuarioOpt.get();
+        // Verificar si ya existe una solicitud de ingreso pendiente o enviada
+        if (!usuarioRepository.solicitudIngresoExiste(idUsuario, idComunidad)) {
+            throw new Exception("No existe una solicitud de ingreso para la comunidad: "+ comunidad.getNombre());
+        }
+        comunidadRepository.eliminarSolicitudIngreso(idUsuario, idComunidad);
+        return "Solicitud de ingreso a la comunidad: "+comunidad.getNombre()+" eliminada correctamente";
+    }
+
+
     public String otorgarRolAdministrador(Long idCreador, Long idMiembro, Long idComunidad) throws Exception {
         Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
         if (comunidadOpt.isEmpty()) {

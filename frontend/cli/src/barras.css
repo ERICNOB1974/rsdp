@@ -201,7 +201,7 @@
     align-items: center;
     margin-left: auto;
     /* Esto empuja los elementos hacia la derecha */
-
+    gap: 20px;
 }
 
 
