@@ -264,6 +264,10 @@ editarExpulsionConMotivo(motivo: string, tipo: string, fechaHoraExpulsion: strin
     return this.http.delete<DataPackage>(`${this.comunidadesUrl}/eliminarBan/${idComunidad}/${idExpulsado}`)
   }
 
+eliminarSolicitudIngreso(idComunidad: number): Observable<DataPackage>{
+  return this.http.delete<DataPackage>(`${this.comunidadesUrl}/eliminarSolicitudIngreso/${this.authService.getUsuarioId()}/${idComunidad}`)
+}
+
 
 
 }

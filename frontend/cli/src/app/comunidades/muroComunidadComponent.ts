@@ -83,6 +83,7 @@ export class MuroComunidadComponent implements OnInit {
     expulsado: Expulsado | undefined
     usuariosPublicadores: { [key: number]: Usuario } = {};
     searchTimeout: any // Variable para almacenar el timer
+    haSolicitadoIngreso: boolean = false; // Estado inicial
 
     comentarios: { [key: number]: Comentario[] } = {}; // Para almacenar comentarios por publicación
     likesCount: { [key: number]: number } = {}; // Para almacenar cantidad de likes por publicación
@@ -465,6 +466,7 @@ export class MuroComunidadComponent implements OnInit {
         return new Promise((resolve) => {
             this.comunidadService.estadoSolicitud(this.comunidad.id).subscribe(dataPackage => {
                 let estado = <String>dataPackage.data;
+        
                 if (estado == "Vacio") {
                     this.pendiente = false;
                     this.esParte = false;
@@ -476,20 +478,24 @@ export class MuroComunidadComponent implements OnInit {
                 if (estado == "Pendiente") {
                     this.pendiente = true;
                     this.esParte = false;
+                    this.haSolicitadoIngreso = true;
                 }
                 if (estado == "Creador") {
                     this.esCreador = true;
-                    this.esParte = true; // El creador es parte de la comunidad por defecto
+                    this.esParte = true;
                 }
                 if (estado == "Administrador") {
                     this.esAdministrador = true;
-                    this.esParte = true; // El creador es parte de la comunidad por defecto
+                    this.esParte = true;
                 }
-                console.info(estado);
-                resolve(); // Resuelve la promesa después de procesar el estado
+    
+      
+    
+                resolve();
             });
         });
     }
+    
 
     getComunidad(): Promise<void> {
         return new Promise((resolve) => {
@@ -566,6 +572,7 @@ export class MuroComunidadComponent implements OnInit {
         this.usuarioService.solicitarIngresoAComunidad(this.comunidad.id).subscribe(dataPackage => {
             let mensaje = dataPackage.message;
             this.procesarEstado();
+            this.haSolicitadoIngreso = true;
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000,
             });
@@ -578,6 +585,29 @@ export class MuroComunidadComponent implements OnInit {
             this.isLoading = false; // Desactivar el estado de carga
         });
     }
+
+    cancelarSolicitud() {
+        this.isLoading = true;
+        this.comunidadService.eliminarSolicitudIngreso(this.comunidad.id).subscribe(dataPackage => {
+            let mensaje = dataPackage.message;
+            this.procesarEstado().then(() => {
+                this.haSolicitadoIngreso = false;
+                this.pendiente = false; // Asegurar que pendiente es false
+                this.isLoading = false; // Detener la carga
+            });
+            this.snackBar.open(mensaje, 'Cerrar', {
+                duration: 3000,
+            });
+        }, error => {
+            console.error('Error al cancelar la solicitud:', error);
+            this.snackBar.open('Error al cancelar la solicitud', 'Cerrar', {
+                duration: 3000,
+            });
+        }).add(() => {
+            this.isLoading = false;
+        });
+    }
+    
 
     salir(): void {
         this.isLoading = true; // Activar el estado de carga
@@ -606,13 +636,11 @@ export class MuroComunidadComponent implements OnInit {
         //return this.esParte && !this.esCreador;
     }
 
+
+
     inscribirseValid(): boolean {
-        if (this.cantidadMiembros < this.comunidad.cantidadMaximaMiembros) {
-            if (!this.esParte
-                && !this.pendiente
-                && !this.esCreador)
-                return true;
-            return false;
+        if (this.comunidad.cantidadMaximaMiembros > this.comunidad.miembros) {
+            return (!this.esParte && !this.esCreador) || this.pendiente;
         }
         return false;
     }

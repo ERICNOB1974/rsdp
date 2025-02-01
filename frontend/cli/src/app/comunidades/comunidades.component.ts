@@ -399,6 +399,7 @@ cargarMasResultadosFiltrados(): void {
             //     ? await this.comunidadService.obtenerUbicacion(evento.latitud, evento.longitud)
             //     : 'Ubicación desconocida';
             // }
+
             this.comunidadesDisponiblesAMostrar = [...this.comunidadesDisponiblesAMostrar, ...resultados,];
             this.currentIndexComunidadesDisponibles++; // Aumentar el índice para la siguiente carga
 
@@ -434,6 +435,8 @@ cargarMasResultadosFiltrados(): void {
             //     ? await this.comunidadService.obtenerUbicacion(evento.latitud, evento.longitud)
             //     : 'Ubicación desconocida';
             // }
+            console.info("muestro",this.comunidadesMiembroUsuarioAMostrar);
+            console.info("traigo",resultados);
             this.comunidadesMiembroUsuarioAMostrar = [
               ...this.comunidadesMiembroUsuarioAMostrar,
               ...resultados,

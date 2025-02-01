@@ -15,10 +15,14 @@
   </div>
 
   <button *ngIf="!esCreador && !expulsado && !(comunidad.cantidadMaximaMiembros <= comunidad.miembros)"
-    class="btn btn-primary btn-block ingresar-button" [disabled]="isLoading || !(salirValid() || inscribirseValid())"
-    (click)="salirValid() ? salir() : ingresar()">
-    {{ salirValid() ? 'Abandonar comunidad' : (comunidad.esPrivada ? 'Solicitar ingreso' : 'Ingresar') }}
-  </button>
+  class="btn btn-primary btn-block ingresar-button" 
+  [disabled]="isLoading || !(salirValid() || inscribirseValid())"
+  (click)="salirValid() ? salir() : (haSolicitadoIngreso ? cancelarSolicitud() : ingresar())">
+  
+  {{ salirValid() ? 'Abandonar comunidad' 
+      : haSolicitadoIngreso ? 'Cancelar solicitud de ingreso' 
+      : (comunidad.esPrivada ? 'Solicitar ingreso' : 'Ingresar') }}
+</button>
 
   <div *ngIf="expulsado?.estaExpulsado" class="alert alert-warning mt-4">
     <p>Has sido expulsado de la comunidad.</p>
