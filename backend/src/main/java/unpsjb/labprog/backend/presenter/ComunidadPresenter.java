@@ -325,26 +325,17 @@ public class ComunidadPresenter {
         return Response.ok(comunidades);
     }
 
-/*     @GetMapping("/estaExpulsado/{idUsuario}/{idComunidad}")
-    public ResponseEntity<Object> estaExpulsado(@PathVariable Long idUsuario,
+
+@DeleteMapping("/eliminarSolicitudIngreso/{idUsuario}/{idComunidad}")
+    public ResponseEntity<Object> eliminarSolicitudIngreso(@PathVariable Long idUsuario,
             @PathVariable Long idComunidad) {
-        boolean estado = comunidadService.estaExpulsado(idUsuario, idComunidad);
-        String mensaje = comunidadService.motivoExpulsion(idUsuario, idComunidad);
-
-        return Response.ok(estado, mensaje);
-    } */
-
-@GetMapping("/estaExpulsado/{idUsuario}/{idComunidad}")
-public ResponseEntity<Object> estaExpulsado(@PathVariable Long idUsuario,
-        @PathVariable Long idComunidad) {
-    
-    // Llamar al servicio para obtener el DTO
-    ExpulsionDTO expulsionDTO = comunidadService.obtenerExpulsionDTO(idUsuario, idComunidad);
-    
-    // Devolver el DTO dentro de la respuesta HTTP
-    return Response.ok(expulsionDTO);
-}
-
+        try {
+            String respuesta = usuarioComunidadService.eliminarSolicitudIngreso(idUsuario, idComunidad);
+            return Response.ok(null, respuesta);
+        } catch (Exception e) {
+            return Response.error("", "Error al enviar eliminar la solicitud de ingreso: " + e);
+        }
+    }
 
 @PutMapping("/eliminarParticipante/{idComunidad}/{idUsuario}")
 public ResponseEntity<Object> eliminarParticipante(@PathVariable Long idComunidad, 

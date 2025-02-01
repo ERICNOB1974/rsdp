@@ -23,7 +23,7 @@ import { catchError, debounceTime, distinctUntilChanged, filter, forkJoin, map, 
   selector: 'app-publicaciones',
   templateUrl: './publicacion-detail.component.html',
   imports: [CommonModule, FormsModule, RouterModule],
-  styleUrls: ['./publicacion-detail.component.css', '../css/arroba.css'],
+  styleUrls: ['./publicacion-detail.component.css', '../css/arroba.css','crearPublicacion.component.css'],
   standalone: true
 })
 export class PublicacionDetailComponent implements OnInit {
