@@ -23,6 +23,7 @@ public class ArrobarService {
 
     public void etiquetarEnPublicacion(Long idUsuario, Long idEtiquetado, Long idPublicacion){
         arrobarRepository.etiquetarEnPublicacion(idUsuario, idEtiquetado, idPublicacion);
+        
         notificacionService.crearNotificacionPublicacion(idEtiquetado, idUsuario, idPublicacion, "ARROBA_PUBLICACION",
                 LocalDateTime.now());
     }

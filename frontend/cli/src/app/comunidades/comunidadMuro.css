@@ -1,5 +1,37 @@
 /* Asegura que todo el contenedor del perfil esté centrado y con un diseño elegante */
 
+.publicacion-acciones {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .btn.aprobar {
+    background-color: #4CAF50;
+    color: rgb(255, 255, 255);
+  }
+  
+  .btn.rechazar {
+    background-color: #F44336;
+    color: white;
+  }
+  
+
+  .btn.aprobar:hover{
+      transform: scale(1.15);
+  }
+  .btn.rechazar:hover{
+      transform: scale(1.15);
+  }
+
+
 
 .perfil2-container {
     max-width: 1300px;
