@@ -59,6 +59,9 @@ export class PublicacionService {
   publicacionesComunidad(idComunidad: number, page: number, size: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicaciones/comunidad/${idComunidad}?page=${page}&size=${size}`);
   }
+  publicacionesComunidadPorAprobar(idComunidad: number, page: number, size: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicacionesPorAprobar/comunidad/${idComunidad}?page=${page}&size=${size}`);
+  }
 
   publicacionesAmigos(idUsuario: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.publicacionsUrl}/publicaciones/amigos/usuario/${idUsuario}`);
@@ -90,7 +93,21 @@ export class PublicacionService {
     const idUsuario = Number(this.authService.getUsuarioId());
     return this.http.get(`${this.publicacionsUrl}/todasPublicaciones/${idUsuario}?page=${page}&size=${pageSize}`);
   }
-
+  publicacionesRechazadasUsuarioComunidad(idComunidad:number, page: number = 0, pageSize: number = 5): Observable<any> {
+    const idUsuario = Number(this.authService.getUsuarioId());
+    return this.http.get(`${this.publicacionsUrl}/publicacionesRechazadasUsuarioComunidad/comunidad/${idComunidad}/${idUsuario}?page=${page}&size=${pageSize}`);
+  }
+  
+  publicacionesPendientesUsuarioComunidad(idComunidad:number, page: number = 0, pageSize: number = 5): Observable<any> {
+    const idUsuario = Number(this.authService.getUsuarioId());
+    return this.http.get(`${this.publicacionsUrl}/publicacionesPendientesUsuarioComunidad/comunidad/${idComunidad}/${idUsuario}?page=${page}&size=${pageSize}`);
+  }
+  
+  
+  actualizarEstadoPublicacion(publicacion:Publicacion, idComunidad: number, nuevoEstado: string): Observable<any> {
+    return this.http.put(`${this.publicacionsUrl}/actualizarEstadoPublicacion/${idComunidad}/${publicacion.id}`, nuevoEstado);
+  }
+  
 
 
 

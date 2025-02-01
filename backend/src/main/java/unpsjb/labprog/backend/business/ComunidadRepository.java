@@ -124,11 +124,11 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         LocalDateTime fechaOtorgacion);
 
         @Query("MATCH (u:Usuario) WHERE id(u) = $idUsuario " +
-                        "CREATE (c:Comunidad {nombre: $nombre, fechaDeCreacion: $fechaCreacion, latitud: $latitud, longitud: $longitud, genero: $genero, descripcion: $descripcion, cantidadMaximaMiembros: $participantes, esPrivada: $privada, imagen: $imagen, ubicacion: $ubicacion})"
+                        "CREATE (c:Comunidad {nombre: $nombre, fechaDeCreacion: $fechaCreacion, latitud: $latitud, longitud: $longitud, genero: $genero, descripcion: $descripcion, cantidadMaximaMiembros: $participantes, esPrivada: $privada, esModerada: $moderada, imagen: $imagen, ubicacion: $ubicacion})"
                         +
                         " CREATE (u)<-[:CREADA_POR {fechaCreacion: $fechaCreacion}]-(c) " +
                         "RETURN c")
-        Comunidad guardarComunidadYCreador(String nombre, String genero, String descripcion, int participantes, boolean privada,
+        Comunidad guardarComunidadYCreador(String nombre, String genero, String descripcion, int participantes, boolean privada, boolean moderada,
                         Long idUsuario, LocalDate fechaCreacion, double latitud, double longitud, String imagen,
                         String ubicacion);
 

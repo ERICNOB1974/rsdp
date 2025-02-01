@@ -95,7 +95,6 @@ export class ComunidadCreadorComponent implements OnInit {
         if (this.tipoExpulsion === 'permanente') {
             // Si es permanente, se establece una fecha muy lejana (año 9999)
             fechaHoraExpulsion = new Date(9998, 11, 31, 15, 0); // 31 de diciembre de 9999 a las 23:59
-            console.log("Expulsión permanente, fecha configurada a:", fechaHoraExpulsion.toISOString());
         } else if (!this.fechaExpulsion || !this.horaExpulsion) {
             this.snackBar.open('Por favor, selecciona la fecha y hora de la expulsión.', 'Cerrar', {
                 duration: 3000,
@@ -104,7 +103,6 @@ export class ComunidadCreadorComponent implements OnInit {
         } else {
             // Combinar fecha y hora en un solo objeto Date solo si ambos son válidos
             const fecha = new Date(this.fechaExpulsion);
-            console.log("Fecha y hora combinadas: ", this.fechaExpulsion);
 
             const hora = new Date('1970-01-01T' + this.horaExpulsion + 'Z'); // Crear un objeto Date solo con la hora
 
@@ -123,21 +121,19 @@ export class ComunidadCreadorComponent implements OnInit {
                 hora.getUTCHours(),
                 hora.getUTCMinutes()
             ));
-            console.log("Fecha y hora combinadas: ", fecha, hora);
 
-            console.log("Expulsión temporal hasta:", fechaHoraExpulsion.toISOString());
         }
 
-  // Verificar si el usuario está en el array de expulsados
-  const usuarioExpulsado = this.expulsados.find(user => user.id === this.usuarioEliminar.id);
-    
-  if (usuarioExpulsado) {
-      // Si está en la lista, hacer un PUT para editar la expulsión
-      this.editarExpulsion(this.usuarioEliminar.id, this.motivoExpulsion, fechaHoraExpulsion);
-  } else {
-      // Si no está en la lista, proceder con la eliminación
-      this.eliminarMiembro(this.usuarioEliminar.id, this.motivoExpulsion, fechaHoraExpulsion);
-  }
+        // Verificar si el usuario está en el array de expulsados
+        const usuarioExpulsado = this.expulsados.find(user => user.id === this.usuarioEliminar.id);
+
+        if (usuarioExpulsado) {
+            // Si está en la lista, hacer un PUT para editar la expulsión
+            this.editarExpulsion(this.usuarioEliminar.id, this.motivoExpulsion, fechaHoraExpulsion);
+        } else {
+            // Si no está en la lista, proceder con la eliminación
+            this.eliminarMiembro(this.usuarioEliminar.id, this.motivoExpulsion, fechaHoraExpulsion);
+        }
         // Limpia los datos
         this.motivoExpulsion = '';
         this.fechaExpulsion = null;
@@ -181,9 +177,9 @@ export class ComunidadCreadorComponent implements OnInit {
         this.loadingSolicitudes = true;
         // Llamada al servicio para obtener miembros filtrados por el término de búsqueda
         this.comunidadService.visualizarSolicitudes(this.comunidad.id, this.searchTerm, this.pageSolicitudes, this.size)
-        .subscribe(async dataPackage => {
-            console.info("entre pendientes",dataPackage.data);
-            if (Array.isArray(dataPackage.data)) {
+            .subscribe(async dataPackage => {
+                console.info("entre pendientes", dataPackage.data);
+                if (Array.isArray(dataPackage.data)) {
                     // Si es la primera página, reinicia la lista de miembros
                     if (this.page === 0) {
                         this.solicitudesPendientes = dataPackage.data;
@@ -198,7 +194,7 @@ export class ComunidadCreadorComponent implements OnInit {
                 this.loadingSolicitudes = false;
             });
     }
-    
+
 
     getExpulsados(): void {
         if (this.loadingExpulsados) return;  // Evitar solicitudes repetidas mientras se cargan datos
@@ -207,7 +203,7 @@ export class ComunidadCreadorComponent implements OnInit {
         // Llamada al servicio para obtener miembros filtrados por el término de búsqueda
         this.comunidadService.obtenerExpulsadosActivos(this.comunidad.id, this.searchTerm, this.pageExpulsados, this.size)
             .subscribe(async dataPackage => {
-                console.info("entre pendientes",dataPackage.data);
+                console.info("entre pendientes", dataPackage.data);
 
                 if (Array.isArray(dataPackage.data)) {
                     // Si es la primera página, reinicia la lista de miembros
@@ -282,13 +278,20 @@ export class ComunidadCreadorComponent implements OnInit {
 
     // Método para rechazar una solicitud de ingreso
     gestionarSolicitud(idUsuario: number, aceptada: boolean): void {
+        const nuevoMiembro = this.solicitudesPendientes.find(s => s.id === idUsuario);
+        this.solicitudesPendientes = this.solicitudesPendientes.filter(s => s.id !== idUsuario);
         this.comunidadService.gestionarSolicitudIngreso(this.idUsuarioAutenticado, idUsuario, this.comunidad.id, aceptada).subscribe(dataPackage => {
             let mensaje = dataPackage.message;
             this.getSolicitudesPendientes(); // Actualiza la lista de solicitudes pendientes
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000,
             });
-            this.traerMiembrosYAdministradores(); // Actualiza la lista de miembros
+
+            // Si fue aceptado, agregarlo a miembros
+            if (aceptada) {
+                this.miembros.push(nuevoMiembro);
+            }
+            //this.traerMiembrosYAdministradores(); // Actualiza la lista de miembros
         });
     }
 
@@ -340,6 +343,9 @@ export class ComunidadCreadorComponent implements OnInit {
     }
 
     eliminarMiembro(idUsuario: number, motivo: string, fechaHoraExpulsion: Date): void {
+        const expulsado = this.miembros.find(s => s.id === idUsuario);
+        this.miembros = this.miembros.filter(s => s.id !== idUsuario);
+        this.expulsados.push(expulsado);
         this.comunidadService.eliminarMiembroConMotivo(motivo, this.tipoExpulsion, fechaHoraExpulsion.toISOString(), idUsuario, this.comunidad.id)
             .subscribe(dataPackage => {
                 let mensaje = JSON.stringify(dataPackage.data); // Convierte a string
@@ -399,7 +405,7 @@ export class ComunidadCreadorComponent implements OnInit {
         this.router.navigate(['/perfil', usuario.id]); // Navega al perfil del usuario
     }
 
-   
+
 
     onScrollMiembros(): void {
         const element = document.querySelector('.members-list') as HTMLElement;
@@ -432,34 +438,34 @@ export class ComunidadCreadorComponent implements OnInit {
     buscarUsuarios(): void {
         // Limpia el timer anterior, si existe
         if (this.searchTimeout) {
-          clearTimeout(this.searchTimeout);
+            clearTimeout(this.searchTimeout);
         }
         // Configura un nuevo timer para ejecutar después de 2 segundos
         this.searchTimeout = setTimeout(() => {
-            if(this.estadoActual==='miembros'){
+            if (this.estadoActual === 'miembros') {
                 this.miembros = [];
                 this.page = 0; // Reinicia la página cuando cambia el término de búsqueda
                 this.traerMiembros(); // Trae los miembros con el nuevo término
 
-            }else if(this.estadoActual==='solicitudes'){
+            } else if (this.estadoActual === 'solicitudes') {
                 this.solicitudesPendientes = [];
                 this.pageSolicitudes = 0; // Reinicia la página cuando cambia el término de búsqueda
                 this.getSolicitudesPendientes(); // Trae los miembros con el nuevo término
-            }else{
+            } else {
                 this.expulsados = [];
                 this.pageExpulsados = 0; // Reinicia la página cuando cambia el término de búsqueda
                 this.getExpulsados(); // Trae los miembros con el nuevo término
             }
         }, 1000); // Retraso de 2 segundos
-      }
+    }
 
-      sacarExpulsion(idExpulsado: number): void{
-        console.info(idExpulsado,"jiji");
-        this.comunidadService.eliminarBan(this.comunidad.id,idExpulsado).subscribe(dataPackage => {
+    sacarExpulsion(idExpulsado: number): void {
+        this.expulsados = this.expulsados.filter(s => s.id !== idExpulsado);
+        this.comunidadService.eliminarBan(this.comunidad.id, idExpulsado).subscribe(dataPackage => {
             let mensaje = dataPackage.message;
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000,
             });
         });
-      }
+    }
 }
