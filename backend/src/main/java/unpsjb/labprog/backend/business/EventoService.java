@@ -468,7 +468,7 @@ public class EventoService {
     }
 
     public void eliminar(Long idEvento) {
-        this.eventoRepository.delete(this.eventoRepository.findById(idEvento).get());
+        this.eventoRepository.eliminar(idEvento);
     }
 
     public List<Usuario> todosLosParticipantes(Long idEvento) {

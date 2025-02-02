@@ -105,6 +105,7 @@ export class CrearEventoComponent {
       fechaDeCreacion: new Date(),
       nombre: "",
       descripcion: "",
+      eliminado: false,
       esPrivadoParaLaComunidad: false,
       participantes: 0
     }; // Aseguramos que el objeto evento esté inicializado

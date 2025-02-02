@@ -41,6 +41,15 @@
             (input)="onFieldChange()" placeholder="Ingresa una descripción"></textarea>
         </div>
 
+        <div class="mb-3">
+          <label for="genero" class="form-label">Género</label>
+          <select class="form-select" id="genero" name="genero" [(ngModel)]="usuario.genero" (change)="onFieldChange()">
+            <option [value]="'masculino'">Masculino</option>
+            <option [value]="'femenino'">Femenino</option>
+            <option [value]="'otros'">Otros</option>
+          </select>
+        </div>        
+
         <h4 class="mt-4 mb-3">Configuración de Privacidad</h4>
 
         <div class="mb-3">

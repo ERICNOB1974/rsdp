@@ -91,7 +91,7 @@ public class ComunidadService {
 
     @Transactional
     public void deleteById(Long id) {
-        comunidadRepository.deleteById(id);
+        comunidadRepository.eliminar(id);
     }
 
     public Comunidad findById(Long id) {

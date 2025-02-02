@@ -5,6 +5,7 @@ export interface Comunidad {
     genero: string;
     descripcion: string;
     cantidadMaximaMiembros: number;
+    eliminada: boolean;
     esPrivada: boolean;
     participantes: number;
     latitud: number;

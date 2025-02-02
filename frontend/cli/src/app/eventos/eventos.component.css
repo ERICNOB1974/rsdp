@@ -1,4 +1,6 @@
-  .arrow {
+
+
+.arrow {
     border: solid black;
     border-width: 0 2px 2px 0;
     display: inline-block;
@@ -117,7 +119,6 @@
     margin-top: 20px;
     height: 600px;
     overflow-y: auto; /* Permite el desplazamiento vertical */
-
   }
 
 
