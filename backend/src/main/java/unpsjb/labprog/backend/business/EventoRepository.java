@@ -434,4 +434,11 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         RETURN r.motivoExpulsion
                         """)
         String motivoExpulsion(Long idUsuario, Long idEvento);
+
+
+        @Query("MATCH (ev:Evento)-[r:ETIQUETADO_CON]->(e:Etiqueta) " +
+        "WHERE id(ev) = $idEvento AND id(e) = $etiquetaId " +
+        "DELETE r")
+        void desetiquetarEvento(Long idEvento, Long etiquetaId);
+
 }

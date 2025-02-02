@@ -144,12 +144,6 @@ export class EditarComunidadComponent implements OnInit {
         }
       }
 
-      //por cada uno tengo que etiquetarlo si es que no esta etiquetado de antes.
-      //si esta en etiquetasOriginales y no en etiquetasSeleccionadas, entonces tengo que mandar a desetiquetar
-      //si no esta en etiquetasOriginales y si en etiquetasSeleccionadas, entonces tengo que mandar a etiquetar
-      //si esta en los dos no hago nada
-
-
       this.router.navigate(['/comunidad-muro', this.idComunidad]);
     }, error => {
       console.error('Error al actualizar la comunidad', error);
@@ -224,28 +218,6 @@ export class EditarComunidadComponent implements OnInit {
     this.comunidad.imagen = '';
 
   }
-
-  /*   agregarEtiqueta(event: any): void {
-      const etiqueta: Etiqueta = event.item;
-  
-      // Verificar por nombre en lugar de por ID para evitar duplicados
-      if (!this.etiquetasSeleccionadas.some(e => e.nombre === etiqueta.nombre)) {
-        this.etiquetasSeleccionadas.push(etiqueta);
-      }
-  
-      // Restablecer la etiqueta seleccionada
-      this.etiquetaSeleccionada = null;
-      
-      // Forzar actualización visual del input
-      this.cdr.detectChanges();
-    }
-    
-    eliminarEtiqueta(etiqueta: Etiqueta): void {
-      this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(
-        e => e.nombre !== etiqueta.nombre
-      );
-    } */
-
 
   cargarEtiquetas2() {
     this.etiquetaService.etiquetasEnComunidad(this.comunidad.id).subscribe(dataPackage => {

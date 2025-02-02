@@ -2,62 +2,6 @@
   <h2>Editar evento</h2>
   <form [formGroup]="formEvento" class="evento-form">
 
-    <!-- 
-        <div class="form-group">
-          <label for="nombre">Nombre del Evento</label>
-          <input [(ngModel)]="evento.nombre" name="nombre" required>
-
-    <h2>Editar evento</h2>
-    <form #form="ngForm" class="evento-form">
-  
-      <div class="form-group">
-        <label for="nombre">Nombre del Evento</label>
-        <input [(ngModel)]="evento.nombre" name="nombre" required>
-      </div>
-        <div 
-        *ngIf="evento.imagen === '' || evento.imagen == null" 
-        class="drag-drop-area" 
-        (dragover)="onDragOver($event)" 
-        (drop)="onDrop($event)"
-      >
-        <p>Arrastra y suelta una imagen o video aquí, o selecciona uno desde tus archivos.</p>
-        <input type="file" id="archivo" (change)="onFileSelect($event)" hidden #fileInput>
-        <button type="button" (click)="fileInput.click()">Seleccionar archivo</button>
-      </div>
-      <div *ngIf="formatoValido && evento.imagen!='' && evento.imagen!=null" class="drag-drop-area">
-        <img [src]="evento.imagen" alt="Vista previa de la imagen" class="vista-previa-imagen">
-        <button type="button" (click)="eliminarArchivo()" class="btn btn-danger mt-2">Eliminar archivo</button>
-      </div>
-  
-  
-  
-  
-      <div class="form-group">
-        <label for="evento.fechaHora">Fecha y Hora del Evento</label>
-        <input type="datetime-local" id="fechaHora" [(ngModel)]="evento.fechaHora" name="fechaHora" [min]="minFechaHora"
-          required>
-      </div>
-  
-      <div class="form-group">
-        <label for="descripcion">Descripción</label>
-        <input [(ngModel)]="evento.descripcion" name="descripcion">
-      </div>
-  
-      <div class="form-group">
-        <label for="cantidadMaximaParticipantes">Cantidad Máxima de Participantes</label>
-        <input type="number" 
-               [min]="maxParticipantes" 
-               [(ngModel)]="evento.cantidadMaximaParticipantes" 
-               name="cantidadMaximaParticipantes"
-               #cantidadMaxima="ngModel"
-               required>
-        <div class="alert alert-danger" 
-             *ngIf="evento.cantidadMaximaParticipantes < participantes">
-          La cantidad máxima de participantes no puede ser menor a los participantes ya inscriptos ({{participantes}})
-        </div>
-        -->
-
-
     <mat-form-field appearance="outline" class="form-group">
       <mat-label>Nombre del Evento</mat-label>
       <input matInput name="nombre" formControlName="nombre" required [(ngModel)]="evento.nombre">
