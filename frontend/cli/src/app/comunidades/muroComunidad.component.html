@@ -101,7 +101,7 @@
           <button *ngIf="comunidad.esModerada" class="tab-button"
             [ngClass]="{ active: subTabSeleccionada === 'publicacionesAprobadas' }"
             (click)="seleccionarSubTabAdministrador('publicacionesAprobadas')">Publicaciones</button>
-          <button *ngIf="comunidad.esModerada && (esAdministrador || esCreador)" class="tab-button"
+          <button *ngIf="comunidad.esModerada && (esAdministrador || esCreador || esModerador)" class="tab-button"
             [ngClass]="{ active: subTabSeleccionada === 'publicacionesPorAprobar' }"
             (click)="seleccionarSubTabAdministrador('publicacionesPorAprobar')">Publicaciones por aprobar</button>
 
