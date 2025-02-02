@@ -393,13 +393,7 @@ cargarMasResultadosFiltrados(): void {
         if (resultados && resultados.length > 0) {
           // Agregar las comunidades obtenidas a la lista que se muestra
           this.traerMiembros(resultados); // Llamar a traerParticipantes después de cargar los eventos
-
-            // for (const evento of resultados) {
-            //   evento.ubicacion = evento.latitud && evento.longitud
-            //     ? await this.comunidadService.obtenerUbicacion(evento.latitud, evento.longitud)
-            //     : 'Ubicación desconocida';
-            // }
-
+          this.traerEtiquetas(resultados);
             this.comunidadesDisponiblesAMostrar = [...this.comunidadesDisponiblesAMostrar, ...resultados,];
             this.currentIndexComunidadesDisponibles++; // Aumentar el índice para la siguiente carga
 
@@ -429,13 +423,7 @@ cargarMasResultadosFiltrados(): void {
           if (resultados && resultados.length > 0) {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerMiembros(resultados); // Llamar a traerParticipantes después de cargar los eventos
-            // for (const evento of resultados) {
-            //   evento.ubicacion = evento.latitud && evento.longitud
-            //     ? await this.comunidadService.obtenerUbicacion(evento.latitud, evento.longitud)
-            //     : 'Ubicación desconocida';
-            // }
-            console.info("muestro",this.comunidadesMiembroUsuarioAMostrar);
-            console.info("traigo",resultados);
+            this.traerEtiquetas(resultados);
             this.comunidadesMiembroUsuarioAMostrar = [
               ...this.comunidadesMiembroUsuarioAMostrar,
               ...resultados,
@@ -452,6 +440,22 @@ cargarMasResultadosFiltrados(): void {
           this.loadingMiembro = false;
         }
       );
+  }
+
+
+  traerEtiquetas(comunidades: Comunidad[]): void {
+    for (let comunidad of comunidades) {
+      this.etiquetaService.etiquetasEnComunidad(comunidad.id!).subscribe(
+        (dataPackage) => {
+          if (dataPackage && Array.isArray(dataPackage.data)) {
+            comunidad.etiquetas = dataPackage.data; // Asignar el número de días
+          }
+        },
+        (error) => {
+          console.error(`Error al traer las Etiquetas de la comunidad ${comunidad.id}:`, error);
+        }
+      );
+    }
   }
 
 
