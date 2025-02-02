@@ -443,4 +443,14 @@ public class UsuarioPresenter {
         return Response.ok(usuarioService.contarParticipantesAnonimos(nombreUsuario, idEvento));
     }
 
+    @GetMapping("/moderadoresComunidad/{idComunidad}")
+    public ResponseEntity<Object> moderadoresComunidad(@PathVariable Long idComunidad) {
+        try {
+            return Response.ok(usuarioService.moderadoresComunidad(idComunidad)); // Enviamos el resultado (true o
+                                                                                      // false)
+        } catch (Exception e) {
+            return Response.error("", "Error al visualizar los moderadores de la comunidad: " + e.getMessage());
+        }
+    }
+
 }

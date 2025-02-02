@@ -102,13 +102,14 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "MATCH (c)<-[r:MIEMBRO]-(u) DELETE r")
         void miembroSaliente(Long idComunidad, Long idUsuario);
 
-        @Query("MATCH (u:Usuario) WHERE id(u) = $idMiembro " +
-                        "MATCH (c:Comunidad) WHERE id(c) = $idComunidad " +
-                        "OPTIONAL MATCH (u)-[r:MIEMBRO]->(c) " +
-                        "OPTIONAL MATCH (u)<-[a:ADMINISTRADA_POR]-(c) " +
-                        "OPTIONAL MATCH (u)<-[a:MODERADA_POR]-(c) " +
-                        "RETURN COALESCE(r.fechaIngreso, a.fechaIngreso) AS fechaIngreso")
-        LocalDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
+      @Query("MATCH (u:Usuario) WHERE id(u) = $idMiembro " +
+       "MATCH (c:Comunidad) WHERE id(c) = $idComunidad " +
+       "OPTIONAL MATCH (u)-[r:MIEMBRO]->(c) " +
+       "OPTIONAL MATCH (u)<-[a:ADMINISTRADA_POR]-(c) " +
+       "OPTIONAL MATCH (u)<-[m:MODERADA_POR]-(c) " +
+       "RETURN COALESCE(r.fechaIngreso, a.fechaIngreso, m.fechaIngreso) AS fechaIngreso")
+LocalDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
+
 
         @Query("MATCH (c:Comunidad)<-[r:MIEMBRO]-(u:Usuario) " +
                         "WHERE id(c) = $idComunidad AND id(u) = $idMiembro " +
@@ -127,7 +128,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                           @Query("MATCH (c:Comunidad)<-[r:MIEMBRO|ADMINISTRADA_POR]-(u:Usuario) " +
                         "WHERE id(c) = $idComunidad AND id(u) = $idMiembro " +
                         "DELETE r " +
-                        "CREATE (u)<-[:ADMINISTRADA_POR {fechaIngreso: $fechaIngreso, fechaOtorgacion: $fechaOtorgacion}]-(c)")
+                        "CREATE (u)<-[:MODERADA_POR {fechaIngreso: $fechaIngreso, fechaOtorgacion: $fechaOtorgacion}]-(c)")
         void otorgarRolModerador(Long idMiembro, Long idComunidad, LocalDateTime fechaIngreso,
                         LocalDateTime fechaOtorgacion);
 
