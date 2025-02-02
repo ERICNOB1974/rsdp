@@ -151,6 +151,11 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
             + "RETURN COUNT(r) > 0")
     boolean esAdministrador(Long idMiembro, Long idComunidad);
 
+    @Query("MATCH (u:Usuario)-[r:MODERADA_POR]-(c:Comunidad) "
+            + "WHERE id(u) = $idMiembro AND id(c) = $idComunidad "
+            + "RETURN COUNT(r) > 0")
+    boolean esModerador(Long idMiembro, Long idComunidad);
+
     @Query("MATCH (u:Usuario), (c:Comunidad) WHERE id(u) = $idUsuario AND id(c) = $idComunidad "
             + "CREATE (u)-[:SOLICITUD_DE_INGRESO {estado: $estado, fechaEnvio: $fechaEnvio}]->(c)")
     void enviarSolicitudIngreso(Long idUsuario, Long idComunidad, String estado, LocalDateTime fechaEnvio);

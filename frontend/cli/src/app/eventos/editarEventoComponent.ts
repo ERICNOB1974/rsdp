@@ -1,6 +1,6 @@
 import { CommonModule, Location, NgIf } from '@angular/common'; // Asegúrate de que está importado desde aquí
-import { ChangeDetectorRef, Component } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, NgModel, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
@@ -61,6 +61,9 @@ export class EditarEventoComponent {
   tipoArchivo: string = ''; // Para distinguir entre imagen o video
   vistaPreviaArchivo: string | ArrayBuffer | null = null;
   formEvento: FormGroup;
+  etiquetasOriginales: Etiqueta[] = [];
+  @ViewChild('etiquetasInput') etiquetasInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('etiquetasModel') etiquetasModel!: NgModel;
 
 
 
@@ -69,9 +72,6 @@ export class EditarEventoComponent {
     private etiquetaService: EtiquetaService,
     private router: Router,
     private formBuilder: FormBuilder,
-    private location: Location,
-    private ubicacionService: UbicacionService,
-    private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar
   ) {
@@ -115,6 +115,7 @@ export class EditarEventoComponent {
           this.evento.fechaHora = `${year}-${month}-${day}T${hours}:${minutes}`;
           this.eventoService.etiquetasDelEvento(this.evento.id).subscribe(dataPackage => {
             this.etiquetasSeleccionadas = <Etiqueta[]>dataPackage.data;
+            this.etiquetasOriginales = <Etiqueta[]>dataPackage.data;
           });
           this.eventoService.participantesEnEvento(this.evento.id).subscribe(dataPackage => {
             this.participantes = <number><unknown>dataPackage.data;
@@ -334,12 +335,10 @@ export class EditarEventoComponent {
     if (!this.etiquetasSeleccionadas.some(e => e.nombre === etiqueta.nombre)) {
       this.etiquetasSeleccionadas.push(etiqueta);
     }
-
-    // Restablecer la etiqueta seleccionada
-    this.etiquetaSeleccionada = null;
-
-    // Forzar actualización visual del input
-    this.cdr.detectChanges();
+    setTimeout(() => {
+      this.etiquetasInput.nativeElement.value = '';
+      this.etiquetasModel.control.setValue('');
+    });
   }
 
 
@@ -384,6 +383,12 @@ export class EditarEventoComponent {
 
         // Realizar la etiquetación con la etiqueta final
         await this.eventoService.etiquetar(this.evento, etiquetaFinal.id).toPromise();
+      }
+      // Desetiquetar etiquetas removidas
+      for (const etiqueta of this.etiquetasOriginales) {
+        if (!this.etiquetasSeleccionadas.some(e => e.id === etiqueta.id)) {
+          await this.eventoService.desetiquetar(this.evento.id, etiqueta.id).toPromise();
+        }
       }
 
       this.router.navigate([`eventos/${this.evento.id}`]);
