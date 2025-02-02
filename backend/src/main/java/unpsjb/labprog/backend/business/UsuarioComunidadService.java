@@ -93,7 +93,7 @@ public class UsuarioComunidadService {
         Usuario usuario = miembroOpt.get();
 
         // Verificar si el usuario es miembro de la comunidad
-        if (!usuarioRepository.esMiembro(idMiembro, idComunidad)) {
+        if (!usuarioRepository.esMiembro(idMiembro, idComunidad) && !usuarioRepository.esModerador(idMiembro, idComunidad)) {
             throw new Exception("El usuario al que se le quiere asignar el rol no es miembro de la comunidad.");
         }
 
@@ -109,6 +109,10 @@ public class UsuarioComunidadService {
         LocalDateTime fechaIngreso = comunidadRepository.obtenerFechaIngreso(idMiembro, idComunidad);
         if (fechaIngreso == null) {
             throw new Exception("No se pudo obtener la fecha de ingreso.");
+        }
+
+        if(usuarioRepository.esModerador(idMiembro,idComunidad)){
+            quitarRolModerador(idCreador, idMiembro, idComunidad);
         }
         comunidadRepository.otorgarRolAdministrador(idMiembro, idComunidad, fechaIngreso, LocalDateTime.now());
         return "Rol administrador otorgado a: " + usuario.getNombreUsuario() + " correctamente";
@@ -317,7 +321,7 @@ public class UsuarioComunidadService {
         Usuario usuario = miembroOpt.get();
 
         // Verificar si el usuario es miembro de la comunidad
-        if (!usuarioRepository.esMiembro(idMiembro, idComunidad)) {
+        if (!usuarioRepository.esMiembro(idMiembro, idComunidad) && !usuarioRepository.esAdministrador(idMiembro, idComunidad)) {
             throw new Exception("El usuario al que se le quiere asignar el rol no es miembro de la comunidad.");
         }
 
@@ -338,7 +342,7 @@ public class UsuarioComunidadService {
         return "Rol moderador otorgado a: " + usuario.getNombreUsuario() + " correctamente";
     }
 
-    public String quitarRolAdministrador(Long idCreador, Long idAdministrador, Long idComunidad) throws Exception {
+    public String quitarRolModerador(Long idCreador, Long idAdministrador, Long idComunidad) throws Exception {
         // Verificar la existencia de la comunidad
         Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
         if (comunidadOpt.isEmpty()) {
@@ -375,7 +379,7 @@ public class UsuarioComunidadService {
         }
 
         // Realizar la operación en la base de datos
-        comunidadRepository.quitarRolModerador(idAdministrador, idComunidad, fechaIngreso);
+        comunidadRepository.quitarRolModerador(idAdministrador, idComunidad, fechaIngreso,LocalDateTime.now());
 
         return "Rol moderador quitado a: " + usuario.getNombreUsuario() + " correctamente.";
     }
