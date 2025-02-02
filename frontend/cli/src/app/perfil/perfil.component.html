@@ -204,22 +204,37 @@
             <div class="comunidades-grid">
                 <div class="comunidad-item" *ngFor="let comunidad of historicoComunidades"
                     (click)="irADetalleComunidad(comunidad.id ?? 0)">
-                    <div class="comunidad-imagen">
-                        <img [src]="comunidad.imagen ? comunidad.imagen : '../../assets/comunidad.jpg'"
-                            alt="Imagen de {{ comunidad.nombre }}" class="muro-imagen">
+
+                    
+                  <!-- Imagen de la comunidad -->
+                  <div class="comunidad-imagen">
+                    <img [src]="comunidad.imagen ? comunidad.imagen : '../../assets/comunidad.jpg'"
+                        alt="Imagen de {{ comunidad.nombre }}" class="muro-imagen">
+                  </div>
+              
+                  <!-- Detalles de la comunidad -->
+                  <div class="comunidad-detalles">
+                    <h4 class="comunidad-nombre">{{ comunidad.nombre }}</h4>
+                    <p class="comunidad-descripcion">{{ comunidad.descripcion }}</p>
+                    <p class="comunidad-miembros">👥 {{ comunidad.miembros }} / {{ comunidad.cantidadMaximaMiembros }} miembros</p>
+                    <p class="comunidad-ubicacion">📍 {{ comunidad.ubicacion }}</p>
+                    <p class="comunidad-fecha">📅 Creada el: {{ comunidad.fechaDeCreacion | date:'medium' }}</p>
+                    <p *ngIf="comunidad.esPrivada" class="comunidad-privada">🔒 Comunidad privada</p>
+                    <p *ngIf="comunidad.esModerada" class="comunidad-moderada">⚠️ Comunidad moderada</p>
+              
+                    <!-- Contenedor de etiquetas -->
+                    <div class="etiquetas-container">
+                      <h4 class="etiquetas-title">Etiquetas:</h4>
+                      <div class="etiquetas">
+                        <span *ngFor="let etiqueta of comunidad.etiquetas" class="etiqueta">
+                          {{ etiqueta.nombre }}
+                        </span>
+                      </div>
                     </div>
-                    <div class="comunidad-detalles">
-                        <h4 class="comunidad-nombre">{{ comunidad.nombre }}</h4>
-                        <p class="comunidad-descripcion">{{ comunidad.descripcion }}</p>
-                        <p class="comunidad-miembros">👥 {{ comunidad.miembros }} / {{
-                            comunidad.cantidadMaximaMiembros
-                            }} miembros</p>
-                        <p class="comunidad-ubicacion">📍 {{ comunidad.ubicacion }}</p>
-                        <p class="comunidad-fecha">📅 Creada el: {{ comunidad.fechaDeCreacion | date:'medium' }}</p>
-                        <p *ngIf="comunidad.esPrivada" class="comunidad-privada">🔒 Comunidad privada</p>
-                    </div>
+                  </div>
                 </div>
-            </div>
+              </div>
+              
 
 
 

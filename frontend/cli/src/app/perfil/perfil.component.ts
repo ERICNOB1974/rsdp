@@ -67,6 +67,7 @@ export class PerfilComponent implements OnInit {
     private comunidadService: ComunidadService,
     private rutinaService: RutinaService,
     private authService: AuthService,  // Inyecta el AuthService
+    private etiquetaService: EtiquetaService,
     private router: Router,
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef,
@@ -444,7 +445,7 @@ export class PerfilComponent implements OnInit {
         const responseData = dataPackage.data;
         if (Array.isArray(responseData) && responseData.length > 0) {
           this.traerDias(responseData);
-          this.traerEtiquetas(responseData);
+          this.traerEtiquetasRutina(responseData);
           this.historicoRutinas = [...this.historicoRutinas, ...responseData];  // Agregamos las nuevas rutinas
           this.currentIndexRutinas++;  // Incrementamos el índice para la siguiente carga
           if (responseData.length < this.cantidadPorPagina) {
@@ -479,7 +480,7 @@ export class PerfilComponent implements OnInit {
       const responseData = dataPackage.data;
       if (Array.isArray(responseData) && responseData.length > 0) {
         this.traerDias(responseData);
-        this.traerEtiquetas(responseData);
+        this.traerEtiquetasRutina(responseData);
         this.historicoRutinas = [...this.historicoRutinas, ...responseData];  // Agregamos las nuevas rutinas
         this.currentIndexRutinas++;  // Incrementamos el índice para la siguiente carga
         if (responseData.length < this.cantidadPorPagina) {
@@ -498,7 +499,7 @@ export class PerfilComponent implements OnInit {
   }
 
 
-  traerEtiquetas(rutinas: Rutina[]): void {
+  traerEtiquetasRutina(rutinas: Rutina[]): void {
     for (let rutina of rutinas) {
       this.rutinaService.obtenerEtiquetasDeRutina(rutina.id!).subscribe(
         (dataPackage) => {
@@ -675,6 +676,7 @@ export class PerfilComponent implements OnInit {
                 //     comunidad.ubicacion = 'Ubicación desconocida';
                 //   }
                 // }
+                this.traerEtiquetasComunidades(responseData);
                 this.historicoComunidades = [...this.historicoComunidades, ...responseData];  // Agregamos las nuevas rutinas
                 this.currentIndexComunidades++;  // Incrementamos el índice para la siguiente carga
                 if (responseData.length < this.cantidadPorPagina) {
@@ -842,7 +844,6 @@ export class PerfilComponent implements OnInit {
 }
 
 
-
 traerEtiquetasEvento(eventos: Evento[]): void {
   for (let evento of eventos) {
     this.etiquetaService.obtenerEtiquetasDeEvento(evento.id!).subscribe(
@@ -853,6 +854,20 @@ traerEtiquetasEvento(eventos: Evento[]): void {
       },
       (error) => {
         console.error(`Error al traer las Etiquetas del evento ${evento.id}:`, error);
+        }
+      );
+  }
+}
+traerEtiquetasComunidades(comunidades: Comunidad[]): void {
+  for (let comunidad of comunidades) {
+    this.etiquetaService.etiquetasEnComunidad(comunidad.id!).subscribe(
+      (dataPackage) => {
+        if (dataPackage && Array.isArray(dataPackage.data)) {
+          comunidad.etiquetas = dataPackage.data; // Asignar el número de días
+        }
+      },
+      (error) => {
+        console.error(`Error al traer las Etiquetas de la comunidad ${comunidad.id}:`, error);
       }
     );
   }

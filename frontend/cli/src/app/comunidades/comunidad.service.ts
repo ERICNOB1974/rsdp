@@ -127,6 +127,7 @@ export class ComunidadService {
   }
 
 
+
   eliminarMiembro(idSuperUsuario: number, idMiembro: number, idComunidad: number): Observable<DataPackage> {
     const body = {}
     return this.http.post<DataPackage>(` ${this.comunidadesUrl}/eliminarUsuario/${idSuperUsuario}/${idMiembro}/${idComunidad}`, body);
@@ -281,6 +282,7 @@ quitarRolModerador(idCreador: number, idMiembro: number, idComunidad: number): O
   const body = {}
   return this.http.post<DataPackage>(` ${this.comunidadesUrl}/quitarRolModerador/${idCreador}/${idMiembro}/${idComunidad}`, body);
 }
+
 
 
 }
