@@ -35,6 +35,7 @@ export class MuroComunidadComponent implements OnInit {
     tabSeleccionada: string = 'publicaciones';
     subTabSeleccionada: string = 'publicacionesAprobadas';
     esCreador: boolean = false;
+    esModerador: boolean = false;
     creadorComunidad!: Usuario;
     miembros: any[] = [];
     amigos!: Usuario[];
@@ -140,7 +141,7 @@ export class MuroComunidadComponent implements OnInit {
                 await this.traerAdministradores();
 
             }
-            if (this.comunidad.esModerada && (this.esAdministrador || this.esCreador)) {
+            if (this.comunidad.esModerada && (this.esAdministrador || this.esCreador || this.esModerador)) {
                 this.getPublicacionesPorAprobar();
             }
             if (this.comunidad.esModerada && !this.esCreador) {
@@ -500,6 +501,11 @@ export class MuroComunidadComponent implements OnInit {
                 }
                 if (estado == "Administrador") {
                     this.esAdministrador = true;
+                    this.esParte = true;
+                }
+                if (estado == "Moderador") {
+                    this.pendiente = false;
+                    this.esModerador = true;
                     this.esParte = true;
                 }
     
