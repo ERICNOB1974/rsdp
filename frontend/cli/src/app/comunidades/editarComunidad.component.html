@@ -59,16 +59,6 @@
       </div>
 
 
-      <!--     <div class="form-group checkbox-group">
-      <label for="esPrivada">¿Es Privada?</label>
-      <input type="checkbox" id="esPrivada" [(ngModel)]="comunidad.esPrivada" name="esPrivada">
-    </div>
-    <div class="form-group checkbox-group">
-      <label for="esPrivada">¿Es Privada?</label>
-      <input type="checkbox" id="esModerada" [(ngModel)]="comunidad.esModerada" name="esModerada">
-    </div> -->
-
-
       <div class="form-group d-flex align-items-center">
         <!-- Checkbox con su label -->
         <label class="mb-0 me-2">
@@ -76,13 +66,24 @@
           ¿La Comunidad es privada?
         </label>
 
+        <!-- Ícono de advertencia con tooltip -->
+        <div class="position-relative d-inline-block">
+          <i class="fa fa-triangle-exclamation text-danger fw-bold" tabindex="2"
+            (click)="toggleTooltipAdvertenciaPrivada($event)">
+          </i>
+          <div *ngIf="mostrarTooltipAdvertenciaPrivada" class="tooltip-ajustado">
+            ⚠️ ¡Atención! Si la comunidad es privada y la cambias a pública, ingresarán automáticamente todos los usuarios que hayan mandado solicitud, respetando la cantidad máxima de miembros.
+          </div>
+        </div>
+        
+
         <!-- Ícono de pregunta con tooltip -->
         <div class="position-relative d-inline-block">
           <i class="fa fa-question-circle" [class.text-primary]="!mostrarTooltipPrivada"
             [class.text-danger]="mostrarTooltipPrivada" [class.fw-bold]="mostrarTooltipPrivada" tabindex="0"
             (click)="toggleTooltipPrivada($event)">
           </i>
-          <div *ngIf="mostrarTooltipPrivada" class="tooltip-bootstrap bg-dark text-white p-2 rounded shadow">
+          <div *ngIf="mostrarTooltipPrivada" class="tooltip-ajustado">
             Esto quiere decir que los usuarios enviaran solicitud para formar parte de la comunidad.
           </div>
         </div>
@@ -96,6 +97,18 @@
           ¿La Comunidad es moderada?
         </label>
 
+
+        <!-- Ícono de advertencia con tooltip -->
+        <div class="position-relative d-inline-block">
+          <i class="fa fa-triangle-exclamation text-danger fw-bold" tabindex="2"
+            (click)="toggleTooltipAdvertenciaModeracion($event)">
+          </i>
+          <div *ngIf="mostrarTooltipAdvertenciaModeracion"
+            class="tooltip-bootstrap bg-dark text-white p-2 rounded shadow">
+            ⚠️ ¡Atención! Si la comunidad es moderada y la cambias a no moderada, todas las publicaciones pendientes
+            pasarán a aprobadas automáticamente.
+          </div>
+        </div>
         <!-- Ícono de pregunta con tooltip -->
         <div class="position-relative d-inline-block">
           <i class="fa fa-question-circle" [class.text-primary]="!mostrarTooltip" [class.text-danger]="mostrarTooltip"
@@ -105,6 +118,8 @@
             Esto quiere decir que todas las publicaciones deberán ser aceptadas por un administrador.
           </div>
         </div>
+
+
       </div>
 
       <div class="button-group">

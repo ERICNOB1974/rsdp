@@ -48,6 +48,8 @@ export class EditarComunidadComponent implements OnInit {
   @ViewChild('etiquetasInput') etiquetasInput!: ElementRef<HTMLInputElement>;
   @ViewChild('etiquetasModel') etiquetasModel!: NgModel;
 
+  mostrarTooltipAdvertenciaModeracion = false
+  mostrarTooltipAdvertenciaPrivada = false
 
   constructor(
     private route: ActivatedRoute,
@@ -322,4 +324,24 @@ export class EditarComunidadComponent implements OnInit {
   cerrarTooltipPrivada(): void {
     this.mostrarTooltipPrivada = false;
   }
+  toggleTooltipAdvertenciaModeracion(event: Event): void {
+    event.stopPropagation(); // Evita que el click en el ícono cierre el tooltip
+    this.mostrarTooltipAdvertenciaModeracion = !this.mostrarTooltipAdvertenciaModeracion;
+  }
+
+  @HostListener('document:click')
+  cerrarTooltipAdvertenciaModeracion(): void {
+    this.mostrarTooltipAdvertenciaModeracion = false;
+  }
+  toggleTooltipAdvertenciaPrivada(event: Event): void {
+    event.stopPropagation(); // Evita que el click en el ícono cierre el tooltip
+    this.mostrarTooltipAdvertenciaPrivada = !this.mostrarTooltipAdvertenciaPrivada;
+  }
+
+  @HostListener('document:click')
+  cerrarTooltipAdvertenciaPrivada(): void {
+    this.mostrarTooltipAdvertenciaPrivada = false;
+  }
+
+
 }

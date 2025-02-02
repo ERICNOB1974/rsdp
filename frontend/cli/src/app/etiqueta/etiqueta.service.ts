@@ -40,5 +40,9 @@ export class EtiquetaService {
     return this.http.get<DataPackage>(` ${this.etiquetasUrl}/etiquetasComunidad/${idComunidad}`);
   }
 
+  obtenerEtiquetasDeEvento(idEvento: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.etiquetasUrl}/etiquetasEvento/${idEvento}`);
+  }
+
 
 }

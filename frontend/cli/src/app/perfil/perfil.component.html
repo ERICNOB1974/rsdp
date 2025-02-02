@@ -112,6 +112,12 @@
                         <p class="evento-fecha-hora">📅 Fecha y hora: {{ evento.fechaHora | date:'medium' }}</p>
                         <p class="evento-participantes">👥 Participantes: {{ evento.participantes }} / {{
                             evento.cantidadMaximaParticipantes }}</p>
+                        <div class="etiquetas-container">
+                            <h4 class="etiquetas-title">Etiquetas:</h4>
+                            <span *ngFor="let etiqueta of evento.etiquetas" class="etiqueta">
+                                {{ etiqueta.nombre }}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -154,7 +160,8 @@
                     <h4>{{ rutina.nombre }}</h4>
                     <p class="descripcion">{{ rutina.descripcion }}</p>
                     <p class="etiquetas">
-                        <span *ngFor="let etiqueta of rutina.etiquetas" class="etiqueta">{{ etiqueta.nombre }}</span>
+                        <span *ngFor="let etiqueta of rutina.etiquetas" class="etiqueta">{{ etiqueta.nombre
+                            }}</span>
                     </p>
                     <div *ngIf="rutina.dias !== undefined" class="dias">
                         <i class="fas fa-calendar-alt"></i> Total de días: {{ rutina.dias }}
@@ -197,6 +204,7 @@
             <div class="comunidades-grid">
                 <div class="comunidad-item" *ngFor="let comunidad of historicoComunidades"
                     (click)="irADetalleComunidad(comunidad.id ?? 0)">
+
                     
                   <!-- Imagen de la comunidad -->
                   <div class="comunidad-imagen">
@@ -233,7 +241,8 @@
             <!-- Botón de carga -->
             <button (click)="cargarMasComunidades()"
                 [disabled]="loadingComunidades || noMasComunidades || historicoComunidades.length < 1">
-                {{ loadingComunidades ? 'Cargando...' : noMasComunidades ? 'No hay más comunidades' : 'Cargar más' }}
+                {{ loadingComunidades ? 'Cargando...' : noMasComunidades ? 'No hay más comunidades' : 'Cargar más'
+                }}
             </button>
         </div>
 

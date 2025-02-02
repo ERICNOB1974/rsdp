@@ -6,13 +6,14 @@ import { Router, RouterModule } from '@angular/router';
 import { Evento } from './evento';
 import { EventoService } from './evento.service';
 import { AuthService } from '../autenticacion/auth.service';
+import { EtiquetaService } from '../etiqueta/etiqueta.service';
 
 @Component({
   selector: 'app-eventos-usuario',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, HttpClientModule],
   templateUrl: 'eventosCreadosUsuario.component.html',
-  styleUrls: ['eventosCreadosUsuario.component.css']
+  styleUrls: ['eventosCreadosUsuario.component.css', '../css/etiquetas.css']
 })
 export class EventosCreadosUsuarioComponent implements OnInit {
   eventosUsuario: Evento[] = []; // Arreglo para almacenar los eventos creados por el usuario
@@ -24,6 +25,7 @@ export class EventosCreadosUsuarioComponent implements OnInit {
   constructor(
     private eventoService: EventoService,
     private authService: AuthService,
+    private etiquetaService: EtiquetaService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) { }
@@ -56,6 +58,7 @@ export class EventosCreadosUsuarioComponent implements OnInit {
   
             if (nuevosEventos.length > 0) {
               this.traerParticipantes(nuevosEventos); // Llamar a traerParticipantes después de cargar los eventos
+              this.traerEtiquetas(nuevosEventos);
               this.eventosUsuario = [...this.eventosUsuario, ...nuevosEventos];
               this.offset += this.limit;
             } else {
@@ -99,6 +102,21 @@ export class EventosCreadosUsuarioComponent implements OnInit {
     const element = document.querySelector('.eventos-list') as HTMLElement;
     if (element.scrollTop + element.clientHeight >= element.scrollHeight-1 && !this.loading) {
       this.getEventosCreadosUsuario();
+    }
+  }
+
+  traerEtiquetas(eventos: Evento[]): void {
+    for (let evento of eventos) {
+      this.etiquetaService.obtenerEtiquetasDeEvento(evento.id!).subscribe(
+        (dataPackage) => {
+          if (dataPackage && Array.isArray(dataPackage.data)) {
+            evento.etiquetas = dataPackage.data; // Asignar el número de días
+          }
+        },
+        (error) => {
+          console.error(`Error al traer las Etiquetas del evento ${evento.id}:`, error);
+        }
+      );
     }
   }
 }
