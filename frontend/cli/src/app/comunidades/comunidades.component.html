@@ -14,13 +14,12 @@
   [ngClass]="{'fadeIn': filtersVisible, 'fadeOut': !filtersVisible && filtersAnimating}" class="filtros-container">
   <!-- Filtro por nombre -->
   <div class="filtro-container filtro-nombre">
-    <label class="container">
+    <label class="filtro-label">
       <input type="checkbox" [(ngModel)]="filtroNombreActivo" (change)="aplicarTodosLosFiltros()">
-      <div class="checkmark"></div>
+      <button (click)="toggleFiltroNombre()" class="filtro-toggle">
+        Filtrar por nombre <i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
+      </button>
     </label>
-    <button (click)="toggleFiltroNombre()" class="filtro-toggle">
-      Filtrar por nombre <i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
-    </button>
     <div *ngIf="filtroNombreAbierto" class="filtro-content">
       <div class="input-group">
         <div class="input-container">
@@ -33,44 +32,42 @@
         <button (click)="limpiarFiltroNombre()" class="limpiar-filtro">Limpiar Filtro</button>
       </div>
     </div>
-  </div>
+  </div>  
 
   <!-- Filtro por participantes -->
-  <div class="filtro-container filtro-participantes">
-    <label class="container">
-      <input type="checkbox" [(ngModel)]="filtroParticipantesActivo" (change)="aplicarTodosLosFiltros()">
-      <div class="checkmark"></div>
-    </label>
+<div class="filtro-container filtro-participantes">
+  <label class="filtro-label">
+    <input type="checkbox" [(ngModel)]="filtroParticipantesActivo" (change)="aplicarTodosLosFiltros()">
     <button (click)="toggleFiltroParticipantes()" class="filtro-toggle">
       Filtrar por participantes <i [class]="filtroParticipantesAbierto ? 'arrow up' : 'arrow down'"></i>
     </button>
-    <div *ngIf="filtroParticipantesAbierto" class="filtro-content">
-      <div class="input-group">
-        <div class="input-container">
-          <label for="minParticipantes">Mínimo:</label>
-          <input type="number" id="minParticipantes" [(ngModel)]="minParticipantes">
-        </div>
-        <div class="input-container">
-          <label for="maxParticipantes">Máximo:</label>
-          <input type="number" id="maxParticipantes" [(ngModel)]="maxParticipantes">
-        </div>
+  </label>
+  <div *ngIf="filtroParticipantesAbierto" class="filtro-content">
+    <div class="input-group">
+      <div class="input-container">
+        <label for="minParticipantes">Mínimo:</label>
+        <input type="number" id="minParticipantes" [(ngModel)]="minParticipantes">
       </div>
-      <div class="button-group">
-        <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar Filtro</button>
-        <button (click)="limpiarFiltroParticipantes()" class="limpiar-filtro">Limpiar Filtro</button>
+      <div class="input-container">
+        <label for="maxParticipantes">Máximo:</label>
+        <input type="number" id="maxParticipantes" [(ngModel)]="maxParticipantes">
       </div>
     </div>
+    <div class="button-group">
+      <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar Filtro</button>
+      <button (click)="limpiarFiltroParticipantes()" class="limpiar-filtro">Limpiar Filtro</button>
+    </div>
   </div>
+</div>
 
   <!-- Filtro por etiquetas -->
   <div class="filtro-container filtro-etiquetas">
-    <label class="container">
+    <label class="filtro-label">
       <input type="checkbox" [(ngModel)]="filtroEtiquetasActivo" (change)="aplicarTodosLosFiltros()">
-      <div class="checkmark"></div>
+      <button (click)="toggleFiltroEtiquetas()" class="filtro-toggle">
+        Filtrar por etiquetas <i [class]="filtroEtiquetasAbierto ? 'arrow up' : 'arrow down'"></i>
+      </button>
     </label>
-    <button (click)="toggleFiltroEtiquetas()" class="filtro-toggle">
-      Filtrar por etiquetas <i [class]="filtroEtiquetasAbierto ? 'arrow up' : 'arrow down'"></i>
-    </button>
     <div *ngIf="filtroEtiquetasAbierto" class="filtro-content">
       <input id="etiquetas" class="form-control" [(ngModel)]="etiquetaSeleccionada" [ngbTypeahead]="searchEtiqueta"
         [resultFormatter]="resultFormatEtiqueta" [inputFormatter]="inputFormatEtiqueta"

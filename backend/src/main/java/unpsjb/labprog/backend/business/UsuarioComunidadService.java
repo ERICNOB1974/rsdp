@@ -148,7 +148,7 @@ public class UsuarioComunidadService {
         }
         comunidad.setFechaDeCreacion(LocalDate.now()); // Establece la fecha aquí
         return comunidadRepository.guardarComunidadYCreador(comunidad.getNombre(), comunidad.getGenero(), comunidad.getDescripcion(),
-                comunidad.getCantidadMaximaMiembros(), comunidad.isEsPrivada(), idUsuario,
+                comunidad.getCantidadMaximaMiembros(), comunidad.isEsPrivada(), comunidad.isEliminada(), idUsuario,
                 comunidad.getFechaDeCreacion(), comunidad.getLatitud(), comunidad.getLongitud(), comunidad.getImagen(), comunidad.getUbicacion());
     }
 
@@ -167,6 +167,7 @@ public class UsuarioComunidadService {
         if (comunidadOpt.isEmpty()) {
             throw new Exception("La comunidad no existe.");
         }
+        
         Comunidad comunidad = comunidadOpt.get();
         if (!usuarioRepository.solicitudIngresoExiste(idUsuario, idComunidad)) {
             throw new Exception("No hay solicitud de ingreso pendiente");

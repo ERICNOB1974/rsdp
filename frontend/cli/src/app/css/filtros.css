@@ -1,3 +1,45 @@
+
+.input-group {
+  display: flex;
+  flex-direction: column; /* Alinea los elementos en columna */
+  gap: 10px; /* Espacio entre los elementos */
+  width: 100%; /* Ocupa todo el ancho disponible */
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%; /* Ocupa todo el ancho disponible */
+}
+
+.input-container label {
+  margin-bottom: 5px;
+}
+
+.input-container input {
+  width: 100%; /* Hace que el input ocupe todo el ancho del contenedor */
+  max-width: 100%; /* Asegura que no se achique */
+  box-sizing: border-box; /* Evita que el padding afecte el ancho */
+}
+
+
+.filtro-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 3px; /* Reduce el espacio entre el checkbox y el botón */
+}
+
+.filtro-label input[type="checkbox"] {
+  margin: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.filtro-container {
+  padding: 10px;
+}
+
 /* Efecto de entrada */
 .fadeIn {
   animation: fadeIn 0.5s ease-in-out;
@@ -58,7 +100,7 @@
     flex: 1 1 100%; /* En pantallas pequeñas, cada filtro ocupará el 100% del ancho */
   }
 }
-.filtro-participantes .filtro-content {
+.filtro-content {
   max-width: 300px;
   /* Establece un ancho máximo */
   width: 100%;
@@ -69,24 +111,6 @@
   /* Sombra para darle un poco de profundidad */
   background-color: white;
   /* Asegúrate de que tenga un fondo blanco */
-}
-
-.input-group {
-  display: flex;
-  justify-content: space-between;
-  /* Alinea los inputs de manera horizontal */
-}
-
-.input-container {
-  flex: 1;
-  /* Permite que los inputs ocupen el espacio disponible */
-  margin-right: 10px;
-  /* Espacio entre los inputs */
-}
-
-.input-container:last-child {
-  margin-right: 0;
-  /* Elimina el margen derecho del último input */
 }
 
 .filtro-container {
@@ -114,7 +138,7 @@
 }
 
 .aplicar-filtro:hover {
-  background-color: #ff0040;
+  background-color: #920327;
   /* Color de fondo al pasar el mouse */
 }
 
@@ -144,10 +168,6 @@
   color: #333;
   margin-left: 5px;
   /* Añadir margen a la izquierda */
-}
-
-.filtro-fecha {
-  margin-left: auto;
 }
 
 .button-group {
@@ -215,13 +235,7 @@
 
 
 
-.input-container input {
-  width: 100%;
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 0.9em;
-}
+
 
 .aplicar-filtro {
   width: 100%;
@@ -236,19 +250,13 @@
 }
 
 .aplicar-filtro:hover {
-  background-color: #ff0040;
+  background-color: #aa012b;
 }
 
 .aplicar-filtro:hover,
 .limpiar-filtro:hover {
   opacity: 0.9;
 }
-
-/* Estilos específicos para el filtro de participantes */
-.filtro-container:not(.filtro-nombre) .input-container {
-  width: 48%;
-}
-
 
 .selected-tags {
   display: flex;

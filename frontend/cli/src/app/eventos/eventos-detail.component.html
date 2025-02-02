@@ -1,15 +1,15 @@
 <div class="container evento-detail-container" *ngIf="evento">
   <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10 col-12">
     <div class="card shadow-sm mt-4">
       <div class="card-body">
         <h2 class="card-title text-center mb-4">{{ evento.nombre }}</h2>
 
         <!-- Imagen del evento -->
-        <div *ngIf="evento.imagen && evento.imagen.startsWith('data:image')">
-          <img [src]="evento.imagen" class="img-fluid" style="max-width: 400px; max-height: 400px;">
-        </div>
-        <div *ngIf="!evento.imagen" class="d-flex justify-content-center">
-          <img src="../../assets/evento.webp" class="img-fluid" style="max-width: 400px; max-height: 400px;">
+        <div class="text-center">
+          <img [src]="evento.imagen || '../../assets/evento.webp'" 
+               class="img-fluid rounded" 
+               style="max-width: 100%; height: auto;">
         </div>
 
         <!-- Creador del evento -->
@@ -70,7 +70,7 @@
         </button>
 
         <!-- Participantes -->
-        <div class="mt-4">
+        <div class="mt-4 container-fluid">
           <h3 class="text-center">
             Participantes {{ evento.participantes }} / {{ evento.cantidadMaximaParticipantes }}
           </h3>
@@ -92,8 +92,8 @@
             (scroll)="onScroll()"
             style="max-height: 400px;"
           >
-            <div class="row">
-              <div *ngFor="let participante of participantesVisibles" class="col-md-3 col-sm-6 col-12 mb-4">
+            <div class="row"> 
+              <div *ngFor="let participante of participantesVisibles" class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
                 <div class="miembro-item text-center" [routerLink]="['/perfil', participante.id]">
                   <img
                     [src]="participante.fotoPerfil ? participante.fotoPerfil : '../../assets/usuario.png'"
@@ -116,7 +116,7 @@
         
             <!-- Mostrar usuarios anónimos -->
             <div *ngIf="usuariosAnonimos > 0" class="row">
-              <div class="col-md-3 col-sm-6 col-12 mb-4">
+              <div class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
                 <div class="miembro-item text-center">
                   <img src="../../assets/usuario.png" alt="Usuario anónimo" class="perfil-imagen rounded-circle mb-2" />
                   <h4>{{ usuariosAnonimos }} Usuario{{ usuariosAnonimos > 1 ? 's' : '' }} anónimo{{ usuariosAnonimos > 1 ? 's' : '' }}</h4>
@@ -144,6 +144,7 @@
           <button (click)="goBack()" class="btn btn-secondary btn-lg">Volver</button>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </div>

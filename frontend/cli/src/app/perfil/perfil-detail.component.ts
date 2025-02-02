@@ -43,7 +43,7 @@ export class PerfilDetailComponent implements OnInit {
     this.idUsuarioAutenticado = Number(usuarioId);
     this.cargarPerfil();
   }
-
+  
   cargarPerfil(): void {
     this.usuarioService.get(this.idUsuarioAutenticado).subscribe((dataPackage) => {
       if (dataPackage.status === 200) {

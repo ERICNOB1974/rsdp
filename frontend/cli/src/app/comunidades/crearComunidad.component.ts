@@ -129,7 +129,7 @@ export class CrearComunidadComponent {
 
   async saveComunidad(): Promise<void> {
     try {
-
+      this.comunidad.eliminada = false;
       // Guardar la comunidad y obtener su ID
       const dataPackage = await firstValueFrom(this.comunidadService.save(this.comunidad));
       this.comunidad = <Comunidad>dataPackage.data;
