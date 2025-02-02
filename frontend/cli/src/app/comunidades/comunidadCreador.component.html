@@ -86,8 +86,9 @@
 
   <button *ngIf="esCreador" class="delete-button btn-yellow" (click)="editarComunidad()">Editar Comunidad</button>
 
-  <button *ngIf="esCreador" class="delete-button" (click)="eliminarComunidad()">Eliminar Comunidad</button>
-
+  <button *ngIf="esCreador" class="delete-button" (click)="abrirModal(modalEliminar)">
+    Eliminar Comunidad
+  </button>
   <!-- Regresar -->
   <button class="btn btn-light" (click)="goBack()">Regresar</button>
 </div>
@@ -187,5 +188,29 @@
       [disabled]="!motivoExpulsion || (tipoExpulsion === 'temporal' && (!fechaExpulsion || !horaExpulsion))">
       Eliminar usuario
     </button>
+  </div>
+</ng-template>
+
+<ng-template #modalEliminar let-modal>
+  <div class="modal-content custom-modal">
+    <div class="modal-header bg-danger text-white">
+      <h5 class="modal-title">
+        <i class="bi bi-exclamation-triangle-fill"></i> Confirmación
+      </h5>
+      <button type="button" class="btn-close btn-close-dark" aria-label="Cerrar" (click)="modal.dismiss()"></button>
+    </div>
+    
+    <div class="modal-body text-center">
+      <i class="bi bi-trash-fill text-danger fs-1"></i>
+      <p class="mt-3">¿Estás seguro de que deseas eliminar la comunidad <strong>{{ comunidad.nombre }}</strong>?</p>
+      <p class="text-muted">Esta acción no se puede deshacer.</p>
+    </div>
+
+    <div class="modal-footer d-flex justify-content-center">
+      <button type="button" class="btn btn-light border" (click)="modal.dismiss()">Cancelar</button>
+      <button type="button" class="btn btn-danger shadow-sm" (click)="eliminarComunidad(); modal.close()">
+        <i class="bi bi-check-circle"></i> Eliminar
+      </button>
+    </div>
   </div>
 </ng-template>

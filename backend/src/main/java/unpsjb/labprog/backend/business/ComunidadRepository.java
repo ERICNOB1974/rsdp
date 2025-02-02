@@ -106,6 +106,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "MATCH (c:Comunidad) WHERE id(c) = $idComunidad " +
                         "OPTIONAL MATCH (u)-[r:MIEMBRO]->(c) " +
                         "OPTIONAL MATCH (u)<-[a:ADMINISTRADA_POR]-(c) " +
+                        "OPTIONAL MATCH (u)<-[a:MODERADA_POR]-(c) " +
                         "RETURN COALESCE(r.fechaIngreso, a.fechaIngreso) AS fechaIngreso")
         LocalDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
 
@@ -121,6 +122,20 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "DELETE r " +
                         "CREATE (u)-[:MIEMBRO {fechaIngreso: $fechaIngreso}]->(c)")
         void quitarRolAdministrador(Long idMiembro, Long idComunidad, LocalDateTime fechaIngreso,
+                        LocalDateTime fechaOtorgacion);
+
+                          @Query("MATCH (c:Comunidad)<-[r:MIEMBRO|ADMINISTRADA_POR]-(u:Usuario) " +
+                        "WHERE id(c) = $idComunidad AND id(u) = $idMiembro " +
+                        "DELETE r " +
+                        "CREATE (u)<-[:ADMINISTRADA_POR {fechaIngreso: $fechaIngreso, fechaOtorgacion: $fechaOtorgacion}]-(c)")
+        void otorgarRolModerador(Long idMiembro, Long idComunidad, LocalDateTime fechaIngreso,
+                        LocalDateTime fechaOtorgacion);
+
+        @Query("MATCH (c:Comunidad)-[r:MODERADA_POR]->(u:Usuario) " +
+                        "WHERE id(c) = $idComunidad AND id(u) = $idMiembro " +
+                        "DELETE r " +
+                        "CREATE (u)-[:MIEMBRO {fechaIngreso: $fechaIngreso}]->(c)")
+        void quitarRolModerador(Long idMiembro, Long idComunidad, LocalDateTime fechaIngreso,
                         LocalDateTime fechaOtorgacion);
 
         @Query("MATCH (u:Usuario) WHERE id(u) = $idUsuario " +
@@ -148,7 +163,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         " RETURN c")
         Comunidad comunidadOrganizadora(Evento e);
 
-        @Query("MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c:Comunidad)" +
+        @Query("MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR|MODERADA_POR|CREADA_POR]-(c:Comunidad)" +
                         "WHERE id(c) = $idComunidad " +
                         "RETURN COUNT(DISTINCT u) AS totalParticipaciones")
         int miembrosDeComunidad(Long idComunidad);
@@ -170,8 +185,8 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         void quitarRolAdministrador(Long idMiembro, Long idComunidad, LocalDateTime fechaIngreso);
 
         @Query("MATCH (c:Comunidad),(u:Usuario {nombreUsuario:$nombreUsuario})" +
-                        "WHERE NOT (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR]-(u) " +
-                        "MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR]-(h) " + // Encontramos los demás miembros de
+                        "WHERE NOT (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(u) " +
+                        "MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h) " + // Encontramos los demás miembros de
                                                                                   // la comunidad
                         "WITH c, COUNT(DISTINCT h) AS numParticipantes, u " +
                         "WHERE numParticipantes < c.cantidadMaximaMiembros " +
@@ -184,7 +199,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         List<Comunidad> disponibles(@Param("nombreUsuario") String nombreUsuario, @Param("skip") int skip,
                         @Param("limit") int limit);
 
-        @Query("MATCH (u:Usuario)-[r:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c:Comunidad) " +
+        @Query("MATCH (u:Usuario)-[r:MIEMBRO|ADMINISTRADA_POR|CREADA_POR|MODERADA_POR]-(c:Comunidad) " +
                         "WHERE id(u) = $idUsuario " +
                         "AND (toLower(c.nombre) CONTAINS toLower($nombreComunidad) OR $nombreComunidad = '') " +
                         "RETURN c ORDER BY r.fechaIngreso ASC, c.nombre DESC " +
@@ -198,7 +213,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario) " +
                         "MATCH (amigo)-[:MIEMBRO]->(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
-                        "WHERE NOT (u)-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR]-(comunidad) " +
+                        "WHERE NOT (u)-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR|:MODERADA_POR]-(comunidad) " +
                         "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
                         "AND (" +
                         "   ($generoUsuario = 'masculino' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'sinGenero')) OR " +
@@ -220,15 +235,15 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario, String generoUsuario);
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario) " +
-                "MATCH (amigo)-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR]-(comunidad:Comunidad) " +
-                "WHERE NOT (u)-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR]-(comunidad) " +
+                "MATCH (amigo)-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR|:MODERADA_POR]-(comunidad:Comunidad) " +
+                "WHERE NOT (u)-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR|:MODERADA_POR]-(comunidad) " +
                 "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
                 "AND (" +
                 "   ($generoUsuario = 'masculino' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'sinGenero')) OR " +
                 "   ($generoUsuario = 'femenino' AND (comunidad.genero = 'femenino' OR comunidad.genero = 'sinGenero')) OR " +
                 "   ($generoUsuario = 'otros' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'femenino' OR comunidad.genero = 'sinGenero'))" +
                 ") " +
-                "OPTIONAL MATCH (comunidad)-[:MIEMBRO|:ADMINISTRADA_POR|:CREADA_POR]-(miembro) " +
+                "OPTIONAL MATCH (comunidad)-[:MIEMBRO|:ADMINISTRADA_POR|:CREADA_POR|:MODERADA_POR]-(miembro) " +
                 "WITH u, comunidad, COUNT(DISTINCT amigo) AS cantidadAmigosEnComunidad, COUNT(DISTINCT miembro) AS cantidadMiembros " +
                 "WHERE cantidadMiembros < comunidad.cantidadMaximaMiembros " +
                 "RETURN comunidad, (cantidadAmigosEnComunidad) AS score, 'Tienes amigos en esta comunidad' AS motivo " +
@@ -238,7 +253,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(evento:Evento)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta), "
                         +
                         "(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta) " +
-                        "WHERE NOT (u)<-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR]-(comunidad) " +
+                        "WHERE NOT (u)<-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR|:MODERADA_POR]-(comunidad) " +
                         "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
                         "AND (" +
                         "   ($generoUsuario = 'masculino' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'sinGenero')) OR " +
@@ -264,7 +279,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(c1:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta), "
                         +
                         "(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta) " +
-                        "WHERE NOT (u)<-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR]->(comunidad) " +
+                        "WHERE NOT (u)<-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR|:MODERADA_POR]->(comunidad) " +
                         "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
                         "AND (" +
                         "   ($generoUsuario = 'masculino' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'sinGenero')) OR " +
@@ -297,7 +312,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
 
         @Query("MATCH (c:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
                         "WHERE NOT EXISTS { " +
-                        "  MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c) " +
+                        "  MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR|MODERADA_POR]-(c) " +
                         "  WHERE id(u) = $idUsuario " +
                         "} " +
                         "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
@@ -308,7 +323,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         List<Comunidad> comunidadesEtiquetasDisponibles(@Param("idUsuario") Long idUsuario,
                         @Param("etiquetas") List<String> etiquetas);
 
-        @Query("MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
+        @Query("MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR|MODERADA_POR]-(c:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
                         "WHERE id(u) = $idUsuario " +
                         "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
                         "WITH c, collect(etiqueta.nombre) AS etiquetasComunidad " +
@@ -326,7 +341,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                             MATCH (c:Comunidad)
                             WHERE toUpper(c.nombre) CONTAINS toUpper($nombre)
                               AND NOT (c)<-[:MIEMBRO]-(u)
-                              AND NOT (c)-[:CREADA_POR|ADMINISTRADA_POR]->(u)
+                              AND NOT (c)-[:CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]->(u)
                               AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c)
 
                             RETURN DISTINCT c
@@ -334,7 +349,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         List<Comunidad> comunidadesNombreDisponibles(String nombre, @Param("usuarioId") Long usuarioId);
 
         @Query("""
-                        MATCH (c:Comunidad)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(u)
+                        MATCH (c:Comunidad)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR|MODERADA_POR]-(u)
                         WHERE toUpper(c.nombre) CONTAINS toUpper($nombre)
                         AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c)
                         AND id(u) = $usuarioId
@@ -353,7 +368,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                             WITH c, count(DISTINCT u) AS totalUsuarios, us
                             WHERE totalUsuarios >= $min AND totalUsuarios <= $max
                             AND NOT EXISTS {
-                                MATCH (c)-[:CREADA_POR|ADMINISTRADA_POR|MIEMBRO]-(us)
+                                MATCH (c)-[:CREADA_POR|ADMINISTRADA_POR|MIEMBRO|MODERADA_POR]-(us)
                             }
                             RETURN DISTINCT c
                         """)
@@ -369,7 +384,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                             WHERE type(r) <> 'SOLICITUD_DE_INGRESO' AND type(r) <> 'NOTIFICACION' AND type(r) <> 'EXPULSADO_COMUNIDAD'
                             WITH c, count(DISTINCT u) AS totalUsuarios, us
                             WHERE totalUsuarios >= $min AND totalUsuarios <= $max
-                            AND (c)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(us) // Verifica si el usuario es miembro de la comunidad
+                            AND (c)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR|MODERADA_POR]-(us) // Verifica si el usuario es miembro de la comunidad
                             RETURN DISTINCT c
                         """)
         List<Comunidad> comunidadesCantidadParticipantesMiembro(@Param("usuarioId") Long usuarioId,
@@ -389,7 +404,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         + "RETURN COUNT(c) > 0")
         boolean esMiembro(Long idUsuario, Long idComunidad);
 
-        @Query("MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c:Comunidad)" +
+        @Query("MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR|MODERADA_POR]-(c:Comunidad)" +
                         "WHERE id(c) = $idComunidad " +
                         "WITH c, COUNT(DISTINCT u) AS ocupados " +
                         "RETURN (c.cantidadMaximaMiembros - ocupados ) AS cantidad")
@@ -446,7 +461,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
    @Query("""
         MATCH (u:Usuario) WHERE id(u)=$idUsuario
         MATCH (c:Comunidad) WHERE id(c)=$idComunidad
-        MATCH (u)-[r:MIEMBRO|ADMINISTRADA_POR]->(c) DELETE r
+        MATCH (u)-[r:MIEMBRO|ADMINISTRADA_POR|MODERADA_POR]->(c) DELETE r
         CREATE (u)-[:EXPULSADO_COMUNIDAD {motivoExpulsion: $motivoExpulsion, tipo: $tipo, fechaHoraExpulsion: $fechaHoraExpulsion, fechaExpulsado: $fechaExpulsado}]->(c)
         """)
 void eliminarUsuario(Long idComunidad, Long idUsuario, String motivoExpulsion, String tipo, LocalDateTime fechaHoraExpulsion, LocalDateTime fechaExpulsado);

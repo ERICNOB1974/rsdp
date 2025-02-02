@@ -19,7 +19,7 @@ html {
   grid-template-columns: repeat(2, 1fr); /* 2 columnas */
   gap: 20px; /* Espacio entre las tarjetas */
 
-  max-height: 35vh; /* Tamaño máximo para evitar desbordes */
+  max-height: 75vh; /* Tamaño máximo para evitar desbordes */
   min-height: 30vh; /* Altura mínima para evitar saltos */
   overflow-y: auto; /* Habilita el scroll interno */
 
