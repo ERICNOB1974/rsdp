@@ -2,20 +2,36 @@
 
 <div class="wrapper">
   <section class="carousel">
-    <div class="carousel-container">
-      <div class="card" *ngFor="let usuario of obtenerUsuariosParaMostrar()" 
-           [style.background-image]="'url(' + (usuario.fotoPerfil ? usuario.fotoPerfil : '../../assets/usuario.png') + ')'">
+<!--     <div class="carousel-container">
+      <div class="card" *ngFor="let usuario of obtenerUsuariosParaMostrar()" [routerLink]="['/perfil', usuario.id]"
+        [style.background-image]="'url(' + (usuario.fotoPerfil ? usuario.fotoPerfil : '../../assets/usuario.png') + ')'" >
         <div class="evento-details">
           <h3>{{ usuario.nombreReal }}</h3>
           <p>{{ usuario.nombreUsuario }}</p>
-<!--           <p>{{ usuario.descripcion }}</p>
- -->          <div class="motivo-container" *ngIf="motivos[usuario.id]">
+          <div class="motivo-container" *ngIf="motivos[usuario.id]">
             <i class="fa fa-search motivo-icon" (click)="openMotivoModal(usuario.id)"></i>
             <p class="motivo-text">Motivo: "{{ motivos[usuario.id] }}"</p>
           </div>
         </div>
       </div>
+    </div> -->
+
+
+    <div *ngFor="let usuario of obtenerUsuariosParaMostrar()" class="event-item">
+      <div class="event-card" >
+        <img [src]="usuario.fotoPerfil ? usuario.fotoPerfil : '../../assets/usuario.png'" alt="{{ usuario.nombreUsuario }}" class="event-image" [routerLink]="['/perfil', usuario.id]"/>
+        <div class="event-content">
+          <h3>{{ usuario.nombreReal }}</h3>
+          <p>{{ usuario.nombreUsuario }}</p>
+          <p class="event-motive" *ngIf="motivos[usuario.id]">
+            <i class="fa fa-search event-icon" (click)="openMotivoModal(usuario.id)"></i>
+            Motivo: "{{ motivos[usuario.id]?.toString() }}"
+          </p>
+          <p class="event-motive" *ngIf="!motivos[usuario.id]">Motivo no disponible</p>
+        </div>
+      </div>
     </div>
+  
   </section>
 
   <div *ngIf="isModalOpen" class="modal-overlay" (click)="closeMotivoModal()">
@@ -25,7 +41,7 @@
       <button class="close-btn" (click)="closeMotivoModal()">Cerrar</button>
     </div>
   </div>
-  
+
   <!-- Controles del carrusel debajo -->
   <div class="carousel-controls">
     <button class="carousel-control prev" (click)="usuarioAnterior()" [disabled]="results.length === 0">‹</button>

@@ -65,4 +65,7 @@ public class EtiquetaService {
     public List<Etiqueta> etiquetasEnComunidad(Long idComunidad) {
         return etiquetaRepository.etiquetasEnComunidad(idComunidad);
     }
+    public List<Etiqueta> etiquetasEnEvento(Long idEvento) {
+        return etiquetaRepository.etiquetasEnEvento(idEvento);
+    }
 }

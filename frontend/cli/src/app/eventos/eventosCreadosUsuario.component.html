@@ -18,6 +18,12 @@
         <p class="fecha-hora">
           <span class="material-icons">calendar_today</span> {{ evento.fechaHora | date: 'EEEE, dd MMMM yyyy, h:mm a' }}
         </p>
+        <div class="etiquetas-container">
+          <h4 class="etiquetas-title">Etiquetas:</h4>
+          <span *ngFor="let etiqueta of evento.etiquetas" class="etiqueta">
+            {{ etiqueta.nombre }}
+          </span>
+        </div>
         <button class="detalles-btn" (click)="irADetallesDelEvento(evento.id)">Ver Detalles</button>
       </div>
     </div>

@@ -1,3 +1,5 @@
+import { Etiqueta } from "../etiqueta/etiqueta";
+
 export interface Evento {
     id: number;
     nombre: string;
@@ -12,4 +14,5 @@ export interface Evento {
     longitud: number;
     ubicacion: string;
     imagen: string;
+    etiquetas?: Etiqueta[]
 }

@@ -126,15 +126,6 @@ export class ComunidadService {
     return this.http.post<DataPackage>(` ${this.comunidadesUrl}/quitarRolAdministrador/${idCreador}/${idMiembro}/${idComunidad}`, body);
   }
 
-  otorgarRolModerador(idCreador: number, idMiembro: number, idComunidad: number): Observable<DataPackage> {
-    const body = {}
-    return this.http.post<DataPackage>(` ${this.comunidadesUrl}/otorgarRolModerador/${idCreador}/${idMiembro}/${idComunidad}`, body);
-  }
-  
-  quitarRolModerador(idCreador: number, idMiembro: number, idComunidad: number): Observable<DataPackage> {
-    const body = {}
-    return this.http.post<DataPackage>(` ${this.comunidadesUrl}/quitarRolModerador/${idCreador}/${idMiembro}/${idComunidad}`, body);
-  }
 
   eliminarMiembro(idSuperUsuario: number, idMiembro: number, idComunidad: number): Observable<DataPackage> {
     const body = {}

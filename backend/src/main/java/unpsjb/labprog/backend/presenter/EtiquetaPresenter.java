@@ -1,6 +1,5 @@
 package unpsjb.labprog.backend.presenter;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,6 +55,11 @@ public class EtiquetaPresenter {
     @GetMapping("/etiquetasComunidad/{idComunidad}")
     public ResponseEntity<Object> etiquetasEnComunidad(@PathVariable Long idComunidad) {
         return Response.ok(etiquetaService.etiquetasEnComunidad(idComunidad));
+    }
+
+    @GetMapping("/etiquetasEvento/{idEvento}")
+    public ResponseEntity<Object> etiquetasEnEvento(@PathVariable Long idEvento) {
+        return Response.ok(etiquetaService.etiquetasEnEvento(idEvento));
     }
 
 }

@@ -16,13 +16,14 @@ import { ComunidadService } from '../comunidades/comunidad.service';
 import { RutinaService } from '../rutinas/rutina.service';
 import { debounceTime, Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { EtiquetaService } from '../etiqueta/etiqueta.service';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, NgIf],
   templateUrl: 'perfil.component.html',
-  styleUrls: ['perfil.component.css']
+  styleUrls: ['perfil.component.css', '../css/etiquetas.css']
 })
 export class PerfilComponent implements OnInit {
   usuario!: Usuario;  // Objeto para almacenar los datos del perfil que se está viendo
@@ -68,7 +69,8 @@ export class PerfilComponent implements OnInit {
     private authService: AuthService,  // Inyecta el AuthService
     private router: Router,
     private snackBar: MatSnackBar,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private etiquetaService: EtiquetaService,
   ) { }
 
   ngOnInit(): void {
@@ -559,13 +561,7 @@ export class PerfilComponent implements OnInit {
         const responseData = dataPackage.data;
         if (Array.isArray(responseData) && responseData.length > 0) {
           this.traerParticipantes(responseData);
-          // for (const evento of this.historicoEventos) {
-          //   if (evento.latitud && evento.longitud) {
-          //     evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
-          //   } else {
-          //     evento.ubicacion = 'Ubicación desconocida';
-          //   }
-          // }
+  this.traerEtiquetasEvento(responseData);
           this.historicoEventos = [...this.historicoEventos, ...responseData];  // Agregamos las nuevas rutinas
           this.currentIndexEventos++;  // Incrementamos el índice para la siguiente carga
           if (responseData.length < this.cantidadPorPagina) {
@@ -596,13 +592,7 @@ export class PerfilComponent implements OnInit {
         const responseData = dataPackage.data;
         if (Array.isArray(responseData) && responseData.length > 0) {
           this.traerParticipantes(responseData);
-          // for (const evento of this.historicoEventos) {
-          //   if (evento.latitud && evento.longitud) {
-          //     evento.ubicacion = await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud);
-          //   } else {
-          //     evento.ubicacion = 'Ubicación desconocida';
-          //   }
-          // }
+          this.traerEtiquetasEvento(responseData);
           this.historicoEventos = [...this.historicoEventos, ...responseData];  // Agregamos las nuevas rutinas
           this.currentIndexEventos++;  // Incrementamos el índice para la siguiente carga
           if (responseData.length < this.cantidadPorPagina) {
@@ -849,5 +839,22 @@ export class PerfilComponent implements OnInit {
   
   irAPublicar() {
     this.router.navigate(['/publicacion']);
+}
+
+
+
+traerEtiquetasEvento(eventos: Evento[]): void {
+  for (let evento of eventos) {
+    this.etiquetaService.obtenerEtiquetasDeEvento(evento.id!).subscribe(
+      (dataPackage) => {
+        if (dataPackage && Array.isArray(dataPackage.data)) {
+          evento.etiquetas = dataPackage.data; // Asignar el número de días
+        }
+      },
+      (error) => {
+        console.error(`Error al traer las Etiquetas del evento ${evento.id}:`, error);
+      }
+    );
+  }
 }
 }
