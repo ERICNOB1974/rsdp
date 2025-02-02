@@ -97,6 +97,17 @@ export class MuroComunidadComponent implements OnInit {
 
     publicacionesPorAprobar: Publicacion[] = [];
 
+    misPublicacionesPendientes: Publicacion[] = [];
+    currentIndexMisPublicacionesPendientes: number = 0;
+    noMasMisPublicacionesPendientes: boolean = false;
+    loandingMisPublicacionesPendientes: boolean = false;
+
+    misPublicacionesRechazadas: Publicacion[] = [];
+    currentIndexMisPublicacionesRechazadas: number = 0;
+    noMasMisPublicacionesRechazadas: boolean = false;
+    loandingMisPublicacionesRechazadas: boolean = false;
+
+
 
     constructor(
         private route: ActivatedRoute,
@@ -128,9 +139,12 @@ export class MuroComunidadComponent implements OnInit {
                 await this.traerAdministradores();
 
             }
-            if (this.esAdministrador || this.esCreador) {
+            if (this.comunidad.esModerada && (this.esAdministrador || this.esCreador)) {
                 this.getPublicacionesPorAprobar();
-
+            }
+            if (this.comunidad.esModerada && !this.esCreador) {
+                this.getPublicacionesPendientesUsuario();
+                this.getPublicacionesRechazadasUsuario();
             }
             this.checkExpulsion();
             this.contarUsuariosAnonimos();
@@ -520,10 +534,11 @@ export class MuroComunidadComponent implements OnInit {
     seleccionarTab(tab: string): void {
         this.tabSeleccionada = tab;
     }
+
     seleccionarSubTabAdministrador(tab: string): void {
         this.subTabSeleccionada = tab;
     }
-  
+
 
     irADetallePublicacion(idPublicacion: number): void {
         this.router.navigate(['/publicacion', idPublicacion]);
@@ -657,6 +672,12 @@ export class MuroComunidadComponent implements OnInit {
                     case 'publicacionesPorAprobar':
                         this.getPublicacionesPorAprobar();
                         break;
+                    case 'publicacionesPendientes':
+                        this.getPublicacionesPendientesUsuario();
+                        break;
+                    case 'publicacionesRechazadas':
+                        this.getPublicacionesRechazadasUsuario();
+                        break;
                     default:
                         console.error('Vista no reconocida:', tabName);
                 }
@@ -768,5 +789,58 @@ export class MuroComunidadComponent implements OnInit {
             this.publicacionesPorAprobar = this.publicacionesPorAprobar.filter(p => p.id !== publicacion.id);
         });
 
+    }
+
+
+
+    getPublicacionesPendientesUsuario(): void {
+        if (this.loandingMisPublicacionesPendientes || this.noMasMisPublicacionesPendientes) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
+        this.loandingMisPublicacionesPendientes = true;
+        // Suponiendo que tienes un método que obtiene más comunidades con paginación
+        this.publicacionService
+            .publicacionesPendientesUsuarioComunidad(this.idComunidad, this.currentIndexMisPublicacionesPendientes, this.cantidadPorPagina)
+            .subscribe(
+                async (dataPackage) => {
+                    const resultados = dataPackage.data as Publicacion[]
+                    if (resultados && resultados.length > 0) {
+                        this.loadUsuariosPublicadores(resultados); // Cargar datos de los usuarios publicadores
+                        this.misPublicacionesPendientes = [...this.misPublicacionesPendientes, ...resultados,];
+                        this.currentIndexMisPublicacionesPendientes++; // Aumentar el índice para la siguiente carga
+
+                    } else {
+                        this.noMasMisPublicacionesPendientes = true; // No hay más comunidades por cargar
+                    }
+                    this.loandingMisPublicacionesPendientes = false; // Desactivar el indicador de carga
+                },
+                (error) => {
+                    console.error('Error al cargar las publicaciones:', error);
+                    this.loandingMisPublicacionesPendientes = false;
+                }
+            );
+    }
+    getPublicacionesRechazadasUsuario(): void {
+        if (this.loandingMisPublicacionesRechazadas || this.noMasMisPublicacionesRechazadas) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
+        this.loandingMisPublicacionesRechazadas = true;
+        // Suponiendo que tienes un método que obtiene más comunidades con paginación
+        this.publicacionService
+            .publicacionesRechazadasUsuarioComunidad(this.idComunidad, this.currentIndexMisPublicacionesRechazadas, this.cantidadPorPagina)
+            .subscribe(
+                async (dataPackage) => {
+                    const resultados = dataPackage.data as Publicacion[]
+                    if (resultados && resultados.length > 0) {
+                        this.loadUsuariosPublicadores(resultados); // Cargar datos de los usuarios publicadores
+                        this.misPublicacionesRechazadas = [...this.misPublicacionesRechazadas, ...resultados,];
+                        this.currentIndexMisPublicacionesRechazadas++; // Aumentar el índice para la siguiente carga
+
+                    } else {
+                        this.noMasMisPublicacionesRechazadas = true; // No hay más comunidades por cargar
+                    }
+                    this.loandingMisPublicacionesRechazadas = false; // Desactivar el indicador de carga
+                },
+                (error) => {
+                    console.error('Error al cargar las publicaciones:', error);
+                    this.loandingMisPublicacionesRechazadas = false;
+                }
+            );
     }
 }

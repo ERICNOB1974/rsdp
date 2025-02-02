@@ -43,4 +43,9 @@ public interface EtiquetaRepository extends Neo4jRepository<Etiqueta, Long> {
             "RETURN COLLECT(DISTINCT e) AS etiquetas")
     List<Etiqueta> etiquetasEnEvento(Long idEvento);
 
+    @Query("MATCH (c:Comunidad)-[:ETIQUETADA_CON]->(e:Etiqueta) " +
+            "WHERE id(c) = $idComunidad " +
+            "RETURN COLLECT(DISTINCT e) AS etiquetas")
+    List<Etiqueta> etiquetasEnComunidad(Long idComunidad);
+
 }

@@ -428,7 +428,6 @@ cargarMasResultadosFiltrados(): void {
           if (resultados && resultados.length > 0) {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerMiembros(resultados); // Llamar a traerParticipantes después de cargar los eventos
-
             // for (const evento of resultados) {
             //   evento.ubicacion = evento.latitud && evento.longitud
             //     ? await this.comunidadService.obtenerUbicacion(evento.latitud, evento.longitud)
