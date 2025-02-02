@@ -56,7 +56,7 @@
     <!-- Buscar Etiquetas -->
     <mat-form-field appearance="outline" class="form-group">
       <mat-label>Buscar Etiquetas:</mat-label>
-      <input matInput id="etiquetas" [ngbTypeahead]="searchEtiqueta" [resultFormatter]="resultFormatEtiqueta"
+      <input #etiquetasInput matInput id="etiquetas" [ngbTypeahead]="searchEtiqueta" [resultFormatter]="resultFormatEtiqueta"
         [inputFormatter]="inputFormatEtiqueta" (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada"
         placeholder="Buscar etiqueta" [(ngModel)]="etiquetaSeleccionada" />
 
