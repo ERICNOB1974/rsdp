@@ -338,7 +338,7 @@ public class UsuarioComunidadService {
         return "Rol moderador otorgado a: " + usuario.getNombreUsuario() + " correctamente";
     }
 
-    public String quitarRolAdministrador(Long idCreador, Long idAdministrador, Long idComunidad) throws Exception {
+    public String quitarRolModerador(Long idCreador, Long idAdministrador, Long idComunidad) throws Exception {
         // Verificar la existencia de la comunidad
         Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
         if (comunidadOpt.isEmpty()) {
@@ -375,7 +375,7 @@ public class UsuarioComunidadService {
         }
 
         // Realizar la operación en la base de datos
-        comunidadRepository.quitarRolModerador(idAdministrador, idComunidad, fechaIngreso);
+        comunidadRepository.quitarRolModerador(idAdministrador, idComunidad, fechaIngreso, LocalDateTime.now());
 
         return "Rol moderador quitado a: " + usuario.getNombreUsuario() + " correctamente.";
     }
