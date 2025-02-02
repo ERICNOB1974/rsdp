@@ -61,4 +61,8 @@ public class EtiquetaService {
         return etiquetaRepository.existsByNombre(nombre);
     }
 
+
+    public List<Etiqueta> etiquetasEnComunidad(Long idComunidad) {
+        return etiquetaRepository.etiquetasEnComunidad(idComunidad);
+    }
 }

@@ -158,6 +158,11 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "MERGE (c)-[:ETIQUETADA_CON]->(e)")
         void etiquetarComunidad(Long comunidadId, Long etiquetaId);
 
+        @Query("MATCH (c:Comunidad)-[r:ETIQUETADA_CON]->(e:Etiqueta) " +
+              "WHERE id(c) = $comunidadId AND id(e) = $etiquetaId " +
+              "DELETE r")
+       void desetiquetarComunidad(Long comunidadId, Long etiquetaId);
+
         @Query("MATCH (c:Comunidad)-[r:ADMINISTRADA_POR]->(u:Usuario) " +
                         "WHERE id(c) = $idComunidad AND id(u) = $idMiembro " +
                         "DELETE r " +
@@ -182,13 +187,14 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         @Query("MATCH (u:Usuario)-[r:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c:Comunidad) " +
                         "WHERE id(u) = $idUsuario " +
                         "AND (toLower(c.nombre) CONTAINS toLower($nombreComunidad) OR $nombreComunidad = '') " +
-                        "RETURN c ORDER BY r.fechaIngreso ASC " +
+                        "RETURN c ORDER BY r.fechaIngreso ASC, c.nombre DESC " +
                         "SKIP $skip " +
                         "LIMIT $limit")
         List<Comunidad> miembroUsuario(@Param("idUsuario") Long idUsuario,
                         @Param("nombreComunidad") String nombreComunidad,
                         @Param("skip") int skip,
                         @Param("limit") int limit);
+
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario) " +
                         "MATCH (amigo)-[:MIEMBRO]->(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +

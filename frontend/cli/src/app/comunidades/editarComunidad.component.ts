@@ -1,6 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms'; // Importa FormsModule
+import { FormArray, FormBuilder, FormControl, FormGroup, FormsModule, NgModel, ReactiveFormsModule, Validators } from '@angular/forms'; // Importa FormsModule
 import { ComunidadService } from './comunidad.service';
 import { Comunidad } from './comunidad';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -13,7 +13,7 @@ import { MatInputModule } from '@angular/material/input';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { cantidadParticipantesValidator } from '../eventos/validacionesEvento';
 import { Etiqueta } from '../etiqueta/etiqueta';
-import { catchError, debounceTime, distinctUntilChanged, filter, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 import { EtiquetaPopularidadDTO } from '../etiqueta/etiquetaPopularidadDTO';
 import { DataPackage } from '../data-package';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
@@ -28,7 +28,7 @@ import { EtiquetaService } from '../etiqueta/etiqueta.service';
     MatFormFieldModule, ReactiveFormsModule,
     NgIf],
   templateUrl: './editarComunidad.component.html',
-  styleUrls: ['./editarComunidad.component.css', '../css/crear.component.css', '../css/registro.component.css']
+  styleUrls: ['./editarComunidad.component.css', '../css/crear.component.css', '../css/registro.component.css', '../css/etiquetas.css']
 })
 export class EditarComunidadComponent implements OnInit {
   comunidad!: Comunidad; // Comunidad que se va a editar
@@ -41,7 +41,12 @@ export class EditarComunidadComponent implements OnInit {
   searching: boolean = false;
   searchFailed: boolean = false;
   etiquetasSeleccionadas: Etiqueta[] = [];
+  etiquetasOriginales: Etiqueta[] = [];
   etiquetaSeleccionada: Etiqueta | null = null;
+  mostrarTooltip: boolean = false;
+  mostrarTooltipPrivada: boolean = false;
+  @ViewChild('etiquetasInput') etiquetasInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('etiquetasModel') etiquetasModel!: NgModel;
 
 
   constructor(
@@ -53,6 +58,7 @@ export class EditarComunidadComponent implements OnInit {
     private etiquetaService: EtiquetaService,
     private snackBar: MatSnackBar
   ) {
+
     this.formComunidad = this.formBuilder.group(
       {
         nombre: ['', [Validators.required]],
@@ -67,7 +73,12 @@ export class EditarComunidadComponent implements OnInit {
           [Validators.required]
         ],
         longitud: ['', [Validators.required]],
-        descripcion: [''] // Esta línea ahora no tiene validación
+        descripcion: [''],
+        imagen: [''],
+        esPrivada: [false],  // Inicializar con false
+        esModerada: [false],
+        etiquetas: this.formBuilder.array([], Validators.required) // Agregar FormArray para etiquetas
+
       }
 
     );
@@ -87,15 +98,59 @@ export class EditarComunidadComponent implements OnInit {
       } else {
         console.error(dataPackage.message);
       }
+      this.formComunidad.patchValue({
+        nombre: this.comunidad.nombre,
+        cantidadMaximaMiembros: this.comunidad.cantidadMaximaMiembros,
+        latitud: this.comunidad.latitud,
+        longitud: this.comunidad.longitud,
+        imagen: this.comunidad.imagen,
+        descripcion: this.comunidad.descripcion,
+        esPrivada: this.comunidad.esPrivada,
+        esModerada: this.comunidad.esModerada,
+        etiquetas: this.etiquetasSeleccionadas
+      });
+      this.cargarEtiquetas();
     });
   }
 
   guardarCambios(): void {
-    this.comunidadService.save(this.comunidad).subscribe(() => {
+
+    this.comunidad = { ...this.comunidad, ...this.formComunidad.value };
+    this.etiquetasSeleccionadas = this.etiquetas.value;
+    this.comunidadService.save(this.comunidad).subscribe(async () => {
       this.snackBar.open('Comunidad actualizada con éxito', 'Cerrar', {
-        duration: 3000,
+        duration: 3000
       });
-      this.router.navigate(['/comunidades']); // Volver a la vista de comunidades
+
+      // Verificar y crear etiquetas si es necesario
+      for (const etiqueta of this.etiquetasSeleccionadas) {
+        const existe = await this.etiquetaService.verificarExistencia(etiqueta.nombre).toPromise();
+        let etiquetaFinal = etiqueta;
+
+        if (!existe) {
+          const nuevaEtiqueta = { id: 0, nombre: etiqueta.nombre };
+          etiquetaFinal = await firstValueFrom(this.etiquetaService.crearEtiqueta(nuevaEtiqueta));
+        }
+
+        // Realizar la etiquetación con la etiqueta final
+        if (!this.etiquetasOriginales.some(e => e.id === etiquetaFinal.id)) {
+          await this.comunidadService.etiquetar(this.comunidad, etiquetaFinal.id).toPromise();
+        }
+      }
+      // Desetiquetar etiquetas removidas
+      for (const etiqueta of this.etiquetasOriginales) {
+        if (!this.etiquetasSeleccionadas.some(e => e.id === etiqueta.id)) {
+          await this.comunidadService.desetiquetar(this.comunidad.id, etiqueta.id).toPromise();
+        }
+      }
+
+      //por cada uno tengo que etiquetarlo si es que no esta etiquetado de antes.
+      //si esta en etiquetasOriginales y no en etiquetasSeleccionadas, entonces tengo que mandar a desetiquetar
+      //si no esta en etiquetasOriginales y si en etiquetasSeleccionadas, entonces tengo que mandar a etiquetar
+      //si esta en los dos no hago nada
+
+
+      this.router.navigate(['/comunidad-muro', this.idComunidad]);
     }, error => {
       console.error('Error al actualizar la comunidad', error);
       this.snackBar.open('Error al actualizar la comunidad', 'Cerrar', {
@@ -170,19 +225,80 @@ export class EditarComunidadComponent implements OnInit {
 
   }
 
-  agregarEtiqueta(event: any): void {
-    const etiqueta: Etiqueta = event.item;
+  /*   agregarEtiqueta(event: any): void {
+      const etiqueta: Etiqueta = event.item;
+  
+      // Verificar por nombre en lugar de por ID para evitar duplicados
+      if (!this.etiquetasSeleccionadas.some(e => e.nombre === etiqueta.nombre)) {
+        this.etiquetasSeleccionadas.push(etiqueta);
+      }
+  
+      // Restablecer la etiqueta seleccionada
+      this.etiquetaSeleccionada = null;
+      
+      // Forzar actualización visual del input
+      this.cdr.detectChanges();
+    }
+    
+    eliminarEtiqueta(etiqueta: Etiqueta): void {
+      this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(
+        e => e.nombre !== etiqueta.nombre
+      );
+    } */
 
-    // Verificar por nombre en lugar de por ID para evitar duplicados
-    if (!this.etiquetasSeleccionadas.some(e => e.nombre === etiqueta.nombre)) {
-      this.etiquetasSeleccionadas.push(etiqueta);
+
+  cargarEtiquetas2() {
+    this.etiquetaService.etiquetasEnComunidad(this.comunidad.id).subscribe(dataPackage => {
+      this.etiquetasSeleccionadas = dataPackage.data as Etiqueta[]
+    });
+  }
+
+
+  cargarEtiquetas() {
+    this.etiquetaService.etiquetasEnComunidad(this.comunidad.id).subscribe(dataPackage => {
+      this.etiquetasSeleccionadas = dataPackage.data as Etiqueta[];
+      this.etiquetasOriginales = dataPackage.data as Etiqueta[];
+
+      // Accedemos al FormArray y lo llenamos con las etiquetas obtenidas
+      const etiquetasFormArray = this.formComunidad.get('etiquetas') as FormArray;
+      etiquetasFormArray.clear(); // Limpiar antes de agregar nuevas etiquetas
+
+      this.etiquetasSeleccionadas.forEach(etiqueta => {
+        etiquetasFormArray.push(new FormControl(etiqueta));
+      });
+
+      this.cdr.detectChanges(); // Forzar actualización de la vista si es necesario
+    });
+  }
+
+
+
+  get etiquetas(): FormArray {
+    return this.formComunidad.get('etiquetas') as FormArray;
+  }
+
+
+  agregarEtiqueta(event: any) {
+    const etiqueta = event.item;
+    const etiquetasArray = this.etiquetas as FormArray; // Aseguramos que es un FormArray
+
+    // Verificamos si la etiqueta ya existe comparando por ID
+    if (!etiquetasArray.controls.some(control => control.value.id === etiqueta.id)) {
+      etiquetasArray.push(new FormControl(etiqueta));
     }
 
-    // Restablecer la etiqueta seleccionada
-    this.etiquetaSeleccionada = null;
+    setTimeout(() => {
+      this.etiquetasInput.nativeElement.value = '';
+      this.etiquetasModel.control.setValue('');
+    });
+  }
 
-    // Forzar actualización visual del input
-    this.cdr.detectChanges();
+
+  eliminarEtiqueta(etiqueta: any) {
+    const index = this.etiquetas.value.findIndex((e: any) => e.id === etiqueta.id);
+    if (index !== -1) {
+      this.etiquetas.removeAt(index);
+    }
   }
 
 
@@ -205,11 +321,6 @@ export class EditarComunidadComponent implements OnInit {
       tap(() => (this.searching = false))
     );
 
-  eliminarEtiqueta(etiqueta: Etiqueta): void {
-    this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(
-      e => e.nombre !== etiqueta.nombre
-    );
-  }
 
 
   resultFormatEtiqueta(value: EtiquetaPopularidadDTO): string {
@@ -218,5 +329,25 @@ export class EditarComunidadComponent implements OnInit {
 
   inputFormatEtiqueta(value: Etiqueta): string {
     return value ? value.nombre : '';
+  }
+
+  toggleTooltip(event: Event): void {
+    event.stopPropagation(); // Evita que el click en el ícono cierre el tooltip
+    this.mostrarTooltip = !this.mostrarTooltip;
+  }
+
+  @HostListener('document:click')
+  cerrarTooltip(): void {
+    this.mostrarTooltip = false;
+  }
+
+  toggleTooltipPrivada(event: Event): void {
+    event.stopPropagation(); // Evita que el click en el ícono cierre el tooltip
+    this.mostrarTooltipPrivada = !this.mostrarTooltipPrivada;
+  }
+
+  @HostListener('document:click')
+  cerrarTooltipPrivada(): void {
+    this.mostrarTooltipPrivada = false;
   }
 }

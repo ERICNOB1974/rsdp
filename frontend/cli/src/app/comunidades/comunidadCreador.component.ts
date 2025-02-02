@@ -308,23 +308,26 @@ export class ComunidadCreadorComponent implements OnInit {
 
     // Método para otorgar el rol de organizador a un miembro
     otorgarRolOrganizador(idMiembro: number): void {
+        const admin = this.miembros.find(s => s.id === idMiembro);
+        this.administradores.push(admin);
         this.comunidadService.otorgarRolAdministrador(this.idUsuarioAutenticado, idMiembro, this.comunidad.id).subscribe(dataPackage => {
             let mensaje = dataPackage.message;
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000,
             });
-            this.traerMiembrosYAdministradores(); // Actualiza la lista de miembros
         });
     }
 
     // Método para remover el rol de organizador a un miembro
     quitarRolOrganizador(idMiembro: number): void {
+        //const admin = this.administradores.find(s => s.id === idMiembro);
+        this.administradores = this.administradores.filter(s => s.id !== idMiembro);
+        //this.miembros.push(admin);
         this.comunidadService.quitarRolAdministrador(this.idUsuarioAutenticado, idMiembro, this.comunidad.id).subscribe(dataPackage => {
             let mensaje = dataPackage.message;
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000,
             });
-            this.traerMiembrosYAdministradores(); // Actualiza la lista de miembros
         });
     }
 
