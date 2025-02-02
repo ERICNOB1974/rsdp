@@ -140,6 +140,10 @@ export class UsuarioService {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/administradoresComunidad/${idComunidad}`);
   }
 
+  moderadoresComunidad(idComunidad: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/moderadoresComunidad/${idComunidad}`);
+  }
+
   getCreadorComunidad(idUsuario: number, idComunidad: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.usuariosUrl}/esCreador/${idUsuario}/${idComunidad}`);
   }
