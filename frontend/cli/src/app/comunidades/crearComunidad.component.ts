@@ -72,7 +72,6 @@ export class CrearComunidadComponent {
     private etiquetaService: EtiquetaService,
     private router: Router,
     private ubicacionService: UbicacionService,
-    private cdr: ChangeDetectorRef,
     private snackBar: MatSnackBar
   ) {
     this.formComunidad = this.formBuilder.group(

@@ -299,4 +299,11 @@ public class EventoPresenter {
         return Response.ok(estado, mensaje);
     }
 
+    @PostMapping("/desetiquetar/{idEtiqueta}")
+    public ResponseEntity<Object> desetiquetarComunidad(@RequestBody Long idEvento, @PathVariable Long idEtiqueta) {
+        eventoService.desetiquetarEvento(idEvento, idEtiqueta);
+        return Response.ok("ok");
+    }
+
+
 }

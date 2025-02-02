@@ -67,8 +67,7 @@ public class UsuarioComunidadService {
             throw new Exception("El usuario no existe.");
         }
         Comunidad comunidad = comunidadOpt.get();
-        Usuario usuario = usuarioOpt.get();
-        // Verificar si ya existe una solicitud de ingreso pendiente o enviada
+            // Verificar si ya existe una solicitud de ingreso pendiente o enviada
         if (!usuarioRepository.solicitudIngresoExiste(idUsuario, idComunidad)) {
             throw new Exception("No existe una solicitud de ingreso para la comunidad: "+ comunidad.getNombre());
         }
@@ -295,8 +294,12 @@ public class UsuarioComunidadService {
         if (usuarioRepository.solicitudIngresoExiste(idUsuario, idComunidad)) {
             return "Pendiente";
         }
+        if (usuarioRepository.esModerador(idUsuario, idComunidad)) {
+            return "Moderador";
+        }
         return "Vacio";
     }
+
 
    
 }

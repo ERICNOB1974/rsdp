@@ -216,4 +216,9 @@ export class EventoService {
   verificarExpulsion(idUsuarioAutenticado: number, idEvento: number) {
     return this.http.get<DataPackage>(`${this.eventosUrl}/estaExpulsado/${idUsuarioAutenticado}/${idEvento}`);
   }
+
+  desetiquetar(evento: number, idEtiqueta: number): Observable<DataPackage> {
+    return this.http.post<DataPackage>(` ${this.eventosUrl}/desetiquetar/${idEtiqueta}`, evento);
+  }
+
 }
