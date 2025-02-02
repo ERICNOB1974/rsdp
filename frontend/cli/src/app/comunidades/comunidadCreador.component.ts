@@ -297,6 +297,7 @@ export class ComunidadCreadorComponent implements OnInit {
 
     // Método para eliminar la comunidad
     eliminarComunidad(): void {
+        
         this.comunidadService.remove(this.comunidad.id).subscribe(dataPackage => {
             let mensaje = dataPackage.message;
             this.snackBar.open(mensaje, 'Cerrar', {
@@ -374,6 +375,10 @@ export class ComunidadCreadorComponent implements OnInit {
         this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
     }
 
+    abrirModal(modal: any) {
+        this.modalService.open(modal, { centered: true });
+      }
+      
     // Método que se llama al enviar la notificación
     enviarNotificacion() {
         if (this.mensaje && this.motivo) {

@@ -17,7 +17,7 @@ import { AuthService } from '../autenticacion/auth.service';
 export class ComunidadesCreadasUsuarioComponent implements OnInit {
   comunidadesUsuario: Comunidad[] = []; // Arreglo para almacenar las comunidades creadas por el usuario
   offset: number = 0; // Inicializar el offset
-  limit: number = 4; // Número de comunidades a cargar por solicitud
+  limit: number = 8; // Número de comunidades a cargar por solicitud
   loading: boolean = false; // Para manejar el estado de carga
   noMasComunidades = false;
 

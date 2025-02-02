@@ -101,6 +101,8 @@ public class ComunidadPresenter {
         }
     }
 
+
+
     @PostMapping("/gestionarSolicitudIngreso/{idSuperUsuario}/{idMiembro}/{idComunidad}")
     public ResponseEntity<Object> gestionarSolicitudIngreso(@PathVariable Long idSuperUsuario,
             @PathVariable Long idMiembro, @PathVariable Long idComunidad, @RequestParam boolean aceptada) {
@@ -373,4 +375,25 @@ public ResponseEntity<Object> editarExpulsion(@PathVariable Long idComunidad,
         return Response.ok("OK");
     }
 
+  @PostMapping("/otorgarRolModerador/{idCreador}/{idMiembro}/{idComunidad}")
+    public ResponseEntity<Object> otorgarRolModerador(@PathVariable Long idCreador, @PathVariable Long idMiembro,
+            @PathVariable Long idComunidad) {
+        try {
+            String respuesta = usuarioComunidadService.otorgarRolModerador(idCreador, idMiembro, idComunidad);
+            return Response.ok(respuesta);
+        } catch (Exception e) {
+            return Response.error("", "Error al otorgar rol: " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/quitarRolModerador/{idCreador}/{idMiembro}/{idComunidad}")
+    public ResponseEntity<Object> quitarRolModerador(@PathVariable Long idCreador, @PathVariable Long idMiembro,
+            @PathVariable Long idComunidad) {
+        try {
+            String respuesta = usuarioComunidadService.quitarRolModerador(idCreador, idMiembro, idComunidad);
+            return Response.ok(respuesta);
+        } catch (Exception e) {
+            return Response.error("", "Error al quitar rol: " + e.getMessage());
+        }
+    }
 }
