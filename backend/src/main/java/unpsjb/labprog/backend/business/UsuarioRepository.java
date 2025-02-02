@@ -162,7 +162,7 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
   @Query("MATCH (u:Usuario)-[r:SOLICITUD_DE_INGRESO]->(c:Comunidad) "
             + "WHERE id(c) = $idComunidad "
             + "RETURN u "
-            + "ORDER BY r.fechaSolicitud DESC, u.nombreUsuario ASC")
+            + "ORDER BY r.fechaSolicitud ASC, u.nombreUsuario ASC")
     List<Usuario> solicititudesPendientes(Long idComunidad);
 
 @Query("MATCH (u:Usuario)-[r:SOLICITUD_DE_INGRESO]->(c:Comunidad) "

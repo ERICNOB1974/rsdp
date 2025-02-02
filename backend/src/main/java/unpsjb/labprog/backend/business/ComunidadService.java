@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.threeten.bp.ZonedDateTime;
 
 import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Publicacion;
@@ -25,6 +26,8 @@ public class ComunidadService {
     ComunidadRepository comunidadRepository;
     @Autowired
     UsuarioRepository usuarioRepository;
+    @Autowired
+    PublicacionRepository publicacionRepository;
     @Autowired
     @Lazy
     UsuarioService usuarioService;
@@ -66,6 +69,10 @@ public class ComunidadService {
                 comunidadRepository.save(comunidad);
                 cambioAPublico(comVieja.getId());
             }
+            if (comVieja.isEsModerada() && !comunidad.isEsModerada()) {
+                comunidadRepository.save(comunidad);
+                cambioANoModerada(comVieja.getId());
+            }
         }
         return comunidadRepository.save(comunidad);
     }
@@ -83,6 +90,11 @@ public class ComunidadService {
                 comunidadRepository.eliminarSolicitudIngreso(solicitudes.get(i).getId(), idComunidad);
             }
         }
+    }
+
+    public void cambioANoModerada(Long idComunidad) {
+        publicacionRepository.aprobarTodasPublicacionesComunidad(idComunidad, java.time.ZonedDateTime.now());
+     
     }
 
     public void aceptarSolicitud(Long idUsuario, Long idComunidad) {
@@ -103,6 +115,9 @@ public class ComunidadService {
 
     public void etiquetarComunidad(Comunidad comunidad, Long etiqueta) {
         comunidadRepository.etiquetarComunidad(comunidad.getId(), etiqueta);
+    }
+    public void desetiquetarComunidad(Long comunidadId, Long etiqueta) {
+        comunidadRepository.desetiquetarComunidad(comunidadId, etiqueta);
     }
 
     public String miembroSale(Long idComunidad, Long idUsuario) {
@@ -395,11 +410,11 @@ public class ComunidadService {
         } else {
             expulsionDTO.setEstaExpulsado(false); // Opcional: Establecer en falso si tipo es null
         }
-
-        if (tipo.equals("temporal")) {
+        if (tipo!=null && tipo.equals("temporal")) {
             LocalDateTime fechaHoraExpulsion = comunidadRepository.findFechaHoraExpulsion(idUsuario, idComunidad);
             expulsionDTO.setFechaHoraExpulsion(fechaHoraExpulsion); // Establecer la fecha de expulsión
         }
+
 
         // Establecer los valores obtenidos en el DTO
         expulsionDTO.setMotivoExpulsion(motivoExpulsion); // Establecer el motivo de expulsión

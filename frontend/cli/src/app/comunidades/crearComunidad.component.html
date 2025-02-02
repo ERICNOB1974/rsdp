@@ -38,7 +38,7 @@
 
         <mat-form-field appearance="outline" class="form-group">
             <mat-label>Descripción</mat-label>
-            <input matInput [(ngModel)]="comunidad.descripcion" name="descripcion">
+            <input matInput formControlName="descripcion" name="descripcion">
         </mat-form-field>
 
 
@@ -54,7 +54,7 @@
 
         <mat-form-field appearance="outline" class="form-group">
             <mat-label>Buscar Etiquetas:</mat-label>
-            <input matInput id="etiquetas" [ngbTypeahead]="searchEtiqueta" [resultFormatter]="resultFormatEtiqueta"
+            <input #etiquetasInput matInput id="etiquetas" [ngbTypeahead]="searchEtiqueta" [resultFormatter]="resultFormatEtiqueta"
                 [inputFormatter]="inputFormatEtiqueta" (selectItem)="agregarEtiqueta($event)"
                 name="etiquetaSeleccionada" placeholder="Buscar etiqueta" [(ngModel)]="etiquetaSeleccionada"
                 [ngModelOptions]="{standalone: true}" [container]="'body'" />
@@ -100,7 +100,7 @@
         <div class="form-group d-flex align-items-center">
             <!-- Checkbox con su label -->
             <label class="mb-0 me-2">
-                <input type="checkbox" [(ngModel)]="comunidad.esPrivada" name="esPrivada">
+                <input type="checkbox" formControlName="esPrivada">
                 ¿La Comunidad es privada?
             </label>
 
@@ -120,7 +120,7 @@
         <div class="form-group d-flex align-items-center">
             <!-- Checkbox con su label -->
             <label class="mb-0 me-2">
-                <input type="checkbox" [(ngModel)]="comunidad.esModerada" name="esModerada">
+                <input type="checkbox" formControlName="esModerada">
                 ¿La Comunidad es moderada?
             </label>
 

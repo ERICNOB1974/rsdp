@@ -192,5 +192,17 @@ public interface PublicacionRepository extends Neo4jRepository<Publicacion, Long
                         RETURN p
                                                """)
         Publicacion actualizarEstado(Long idComunidad, Long idPublicacion, String nuevoEstado, ZonedDateTime ahora);
+        
+        @Query("""
+                        MATCH (c:Comunidad)
+                        WHERE id(c) = $idComunidad 
+                        WITH c
+                        MATCH (p:Publicacion)-[r:PUBLICADO_DENTRO_DE]->(c)
+                        WHERE r.estado = 'Pendiente'
+                        SET p.fechaDeCreacion=$ahora
+                        SET r.estado = 'Aprobada'
+                        RETURN p
+                                               """)
+        List<Publicacion> aprobarTodasPublicacionesComunidad(Long idComunidad, ZonedDateTime ahora);
 
 }
