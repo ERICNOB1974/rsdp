@@ -686,7 +686,7 @@ export class PublicacionDetailComponent implements OnInit {
           map((dataPackage: DataPackage) => {
             let idUsuario: number | null = null;  // Inicializamos idUsuario como null
             if (dataPackage.status === 200) {
-              idUsuario = dataPackage.data as unknown as number;
+              idUsuario = (dataPackage.data as any)?.id ?? null;
             }
             return { username, idUsuario };
           }),
@@ -701,12 +701,14 @@ export class PublicacionDetailComponent implements OnInit {
     return forkJoin(verificaciones).pipe(
       map((resultados) => {
         // Reemplazamos las menciones por enlaces
-        return texto.replace(regex, (match, username) => {
+        return texto.replace(regex, (match) => {
+          const username = match.substring(1); // Quitamos el '@'
           const usuario = resultados.find((r) => r.username === username);
           const idUsuario = usuario?.idUsuario;
-
+          console.info("usuario",usuario);
+          console.info("idUsuario",idUsuario);
           return idUsuario !== null
-            ? `<a href="/perfil/${idUsuario}" class="mention-link">${match}</a>`  // Usamos idUsuario como número
+            ? `<a href="/perfil/${idUsuario}" class="mention-link">${match}</a>`
             : match;
         });
       })

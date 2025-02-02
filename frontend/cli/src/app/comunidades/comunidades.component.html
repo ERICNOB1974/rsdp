@@ -118,6 +118,11 @@
             {{ { masculino: 'Masculino', femenino: 'Femenino', sinGenero: 'Sin Género' }[comunidad.genero] || comunidad.genero
             }}
           </p>
+          <p>
+            Moderación:
+            <i class="fa" [ngClass]="comunidad.esModerada ? 'fa-shield text-danger' : 'fa-check-circle text-success'"></i>
+            {{ comunidad.esModerada ? 'Moderada' : 'No moderada' }}
+          </p>
         </div>
       </div>
       <div *ngIf="comunidadesDisponiblesAMostrar.length==0">
@@ -143,6 +148,11 @@
           <p>Género:
             {{ { masculino: 'Masculino', femenino: 'Femenino', sinGenero: 'Sin Género' }[comunidad.genero] || comunidad.genero
             }}
+          </p>
+          <p>
+            Moderación:
+            <i class="fa" [ngClass]="comunidad.esModerada ? 'fa-shield text-danger' : 'fa-check-circle text-success'"></i>
+            {{ comunidad.esModerada ? 'Moderada' : 'No moderada' }}
           </p>
         </div>
       </div>
