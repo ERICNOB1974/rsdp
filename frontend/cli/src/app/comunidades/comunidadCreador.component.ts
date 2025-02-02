@@ -24,10 +24,13 @@ export class ComunidadCreadorComponent implements OnInit {
     solicitudesPendientes: any[] = []; // Lista de solicitudes pendientes para comunidades privadas
     miembros: any[] = []; // Lista de miembros de la comunidad
     administradores: any[] = []; // Lista de miembros de la comunidad
+    moderadores: any[] = []; // Lista de miembros de la comunidad
     idUsuarioAutenticado!: number;  // ID del usuario autenticado
     creadorComunidad!: Usuario;
     esCreador: boolean = false;
     esAdmin: boolean = false;
+    esMod: boolean = false;
+
     motivo: string = '';
     mensaje: string = '';
     expulsados: Usuario[] = []; // Miembros visibles actualmente
@@ -167,6 +170,7 @@ export class ComunidadCreadorComponent implements OnInit {
                 }
                 this.traerMiembros();
                 this.traerAdministradores();
+                this.traerModeradores();
                 this.getExpulsados();
             });
         }
@@ -236,6 +240,11 @@ export class ComunidadCreadorComponent implements OnInit {
         if (this.administradores.some(admin => admin.id == this.idUsuarioAutenticado)) {
             this.esAdmin = true;
         }
+
+        // Si el usuario autenticado está en la lista de administradores, también es un admin
+        if (this.moderadores.some(moderador => moderador.id == this.idUsuarioAutenticado)) {
+            this.esMod = true;
+        }
     }
 
     traerMiembrosYAdministradores(): void {
@@ -275,6 +284,16 @@ export class ComunidadCreadorComponent implements OnInit {
         });
     }
 
+    traerModeradores(): void {
+        this.usuarioService.moderadoresComunidad(this.comunidad.id).subscribe(dataPackage => {
+            if (Array.isArray(dataPackage.data)) {
+                this.moderadores = dataPackage.data;
+                this.verificarRoles();
+            }
+        });
+    }
+
+
 
     // Método para rechazar una solicitud de ingreso
     gestionarSolicitud(idUsuario: number, aceptada: boolean): void {
@@ -297,7 +316,7 @@ export class ComunidadCreadorComponent implements OnInit {
 
     // Método para eliminar la comunidad
     eliminarComunidad(): void {
-        
+
         this.comunidadService.remove(this.comunidad.id).subscribe(dataPackage => {
             let mensaje = dataPackage.message;
             this.snackBar.open(mensaje, 'Cerrar', {
@@ -316,6 +335,7 @@ export class ComunidadCreadorComponent implements OnInit {
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000,
             });
+
         });
     }
 
@@ -323,8 +343,35 @@ export class ComunidadCreadorComponent implements OnInit {
     quitarRolOrganizador(idMiembro: number): void {
         //const admin = this.administradores.find(s => s.id === idMiembro);
         this.administradores = this.administradores.filter(s => s.id !== idMiembro);
+        this.moderadores = this.moderadores.filter(s => s.id !== idMiembro);
+
         //this.miembros.push(admin);
         this.comunidadService.quitarRolAdministrador(this.idUsuarioAutenticado, idMiembro, this.comunidad.id).subscribe(dataPackage => {
+            let mensaje = dataPackage.message;
+            this.snackBar.open(mensaje, 'Cerrar', {
+                duration: 3000,
+            });
+        });
+    }
+
+
+    otorgarRolModerador(idMiembro: number): void {
+        const moderador = this.miembros.find(s => s.id === idMiembro);
+        this.moderadores.push(moderador);
+        this.comunidadService.otorgarRolModerador(this.idUsuarioAutenticado, idMiembro, this.comunidad.id).subscribe(dataPackage => {
+            let mensaje = dataPackage.message;
+            this.snackBar.open(mensaje, 'Cerrar', {
+                duration: 3000,
+            });
+        });
+    }
+
+    // Método para remover el rol de organizador a un miembro
+    quitarRolModerador(idMiembro: number): void {
+        //const admin = this.administradores.find(s => s.id === idMiembro);
+        this.moderadores = this.moderadores.filter(s => s.id !== idMiembro);
+        //this.miembros.push(admin);
+        this.comunidadService.quitarRolModerador(this.idUsuarioAutenticado, idMiembro, this.comunidad.id).subscribe(dataPackage => {
             let mensaje = dataPackage.message;
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000,
@@ -345,6 +392,12 @@ export class ComunidadCreadorComponent implements OnInit {
     esAdministrador(idMiembro: number): boolean {
         return this.administradores.some(admin => admin.id === idMiembro);
     }
+
+
+    esModerador(idMiembro: number): boolean {
+        return this.moderadores.some(moderador => moderador.id === idMiembro);
+    }
+
 
     eliminarMiembro(idUsuario: number, motivo: string, fechaHoraExpulsion: Date): void {
         const expulsado = this.miembros.find(s => s.id === idUsuario);
@@ -377,8 +430,8 @@ export class ComunidadCreadorComponent implements OnInit {
 
     abrirModal(modal: any) {
         this.modalService.open(modal, { centered: true });
-      }
-      
+    }
+
     // Método que se llama al enviar la notificación
     enviarNotificacion() {
         if (this.mensaje && this.motivo) {

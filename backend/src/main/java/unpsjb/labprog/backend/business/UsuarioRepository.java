@@ -263,6 +263,12 @@ List<Usuario> obtenerExpulsadosActivos(@Param("idComunidad") Long idComunidad,
             + "RETURN u")
     List<Usuario> administradores(Long idComunidad);
 
+        @Query("MATCH (u:Usuario)<-[:MODERADA_POR]-(c:Comunidad) "
+            + "WHERE id(c) = $idComunidad "
+            + "RETURN u")
+    List<Usuario> moderadores(Long idComunidad);
+
+
     @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(amigo)-[:ES_AMIGO_DE]->(usuario) "
             + "WHERE usuario <> u AND NOT (u)-[:ES_AMIGO_DE]-(usuario) "
             + "WITH usuario, COUNT(amigo) AS amigosEnComun "
