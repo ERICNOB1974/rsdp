@@ -21,6 +21,7 @@ import unpsjb.labprog.backend.business.ComunidadService;
 import unpsjb.labprog.backend.business.ScoreComunidad;
 import unpsjb.labprog.backend.business.UsuarioComunidadService;
 import unpsjb.labprog.backend.model.Comunidad;
+import unpsjb.labprog.backend.model.DTO.ExpulsionDTO;
 
 
 @RestController
