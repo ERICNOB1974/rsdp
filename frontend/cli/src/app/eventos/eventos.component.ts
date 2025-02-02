@@ -17,7 +17,7 @@ import { AuthService } from '../autenticacion/auth.service';
   imports: [CommonModule, FormsModule, RouterModule, HttpClientModule, NgbTypeaheadModule],
 
   templateUrl: 'eventos.component.html',
-  styleUrls: ['eventos.component.css', '../css/filtros.css']
+  styleUrls: ['eventos.component.css', '../css/filtros.css', '../css/etiquetas.css']
 })
 export class EventosComponent implements OnInit {
   eventos: Evento[] = []; // Arreglo para almacenar los eventos que provienen del backend
@@ -80,6 +80,7 @@ export class EventosComponent implements OnInit {
     const usuarioId = this.authService.getUsuarioId();
     this.idUsuarioAutenticado = Number(usuarioId);
     this.cargarEventosParticipante();
+    
   }
   
   toggleFilters() {
@@ -337,12 +338,8 @@ export class EventosComponent implements OnInit {
           if (resultados && resultados.length > 0) {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerParticipantes(resultados); // Llamar a traerParticipantes después de cargar los eventos
-            
-            // for (const evento of resultados) {
-            //   evento.ubicacion = evento.latitud && evento.longitud 
-            //   ? await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud)
-            //   : 'Ubicación desconocida';
-            // }
+            this.traerEtiquetas(resultados);
+          
             this.eventosDisponiblesAMostrar = [
               ...this.eventosDisponiblesAMostrar,
               ...resultados,
@@ -375,11 +372,7 @@ export class EventosComponent implements OnInit {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerParticipantes(resultados); // Llamar a traerParticipantes después de cargar los eventos
             
-            // for (const evento of resultados) {
-            //   evento.ubicacion = evento.latitud && evento.longitud 
-            //   ? await this.eventoService.obtenerUbicacion(evento.latitud, evento.longitud)
-            //   : 'Ubicación desconocida';
-            // }
+            this.traerEtiquetas(resultados);
             this.eventosParticipaUsuario = [
               ...this.eventosParticipaUsuario,
               ...resultados,
@@ -504,6 +497,20 @@ export class EventosComponent implements OnInit {
   }
 }
 
+traerEtiquetas(eventos: Evento[]): void {
+  for (let evento of eventos) {
+    this.etiquetaService.obtenerEtiquetasDeEvento(evento.id!).subscribe(
+      (dataPackage) => {
+        if (dataPackage && Array.isArray(dataPackage.data)) {
+          evento.etiquetas = dataPackage.data; 
+        }
+      },
+      (error) => {
+        console.error(`Error al traer las Etiquetas del evento ${evento.id}:`, error);
+      }
+    );
+  }
+}
 
 
   // private async actualizarInformacionAdicional(): Promise<void> {

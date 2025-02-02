@@ -47,5 +47,6 @@ public interface EtiquetaRepository extends Neo4jRepository<Etiqueta, Long> {
             "WHERE id(c) = $idComunidad " +
             "RETURN COLLECT(DISTINCT e) AS etiquetas")
     List<Etiqueta> etiquetasEnComunidad(Long idComunidad);
+ 
 
 }
