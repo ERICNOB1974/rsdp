@@ -43,7 +43,6 @@ export class EventoDetailComponent implements OnInit {
   creadorEvento!: Usuario;
   cargaInicial: number = 5; // Número inicial de elementos visibles
   cargaIncremento: number = 5; // Número de elementos adicionales cargados en cada scroll
-  @ViewChild('modalInvitarAmigos') modalInvitarAmigos!: TemplateRef<any>;
   marcador!: L.Marker; // Agregar una propiedad para el marcador
   @ViewChild('modalExpulsion') modalExpulsion!: TemplateRef<any>; // Referencia al modal
   searchTimeout: any // Variable para almacenar el timer
@@ -317,10 +316,6 @@ export class EventoDetailComponent implements OnInit {
 
   }
 
-  abrirModalInvitarAmigos(): void {
-    this.cargarAmigos();
-    this.dialog.open(this.modalInvitarAmigos);
-  }
 
   cerrarModal(): void {
     this.buscador = '';

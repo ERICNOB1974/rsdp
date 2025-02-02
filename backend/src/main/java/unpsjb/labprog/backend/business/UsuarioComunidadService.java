@@ -379,6 +379,7 @@ public class UsuarioComunidadService {
         }
 
         // Realizar la operación en la base de datos
+
         comunidadRepository.quitarRolModerador(idAdministrador, idComunidad, fechaIngreso,LocalDateTime.now());
 
         return "Rol moderador quitado a: " + usuario.getNombreUsuario() + " correctamente.";
