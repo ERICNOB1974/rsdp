@@ -90,6 +90,9 @@ export class ComunidadService {
   etiquetar(comunidad: Comunidad, idEtiqueta: number): Observable<DataPackage> {
     return this.http.post<DataPackage>(` ${this.comunidadesUrl}/etiquetar/${idEtiqueta}`, comunidad);
   }
+  desetiquetar(comunidad: number, idEtiqueta: number): Observable<DataPackage> {
+    return this.http.post<DataPackage>(` ${this.comunidadesUrl}/desetiquetar/${idEtiqueta}`, comunidad);
+  }
 
   estadoSolicitud(idComunidad: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/participa/${idComunidad}/${this.idUsuario}`);

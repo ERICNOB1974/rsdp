@@ -174,6 +174,11 @@ public class ComunidadPresenter {
         comunidadService.etiquetarComunidad(comunidad, idEtiqueta);
         return Response.ok("ok");
     }
+    @PostMapping("/desetiquetar/{idEtiqueta}")
+    public ResponseEntity<Object> desetiquetarComunidad(@RequestBody Long comunidad, @PathVariable Long idEtiqueta) {
+        comunidadService.desetiquetarComunidad(comunidad, idEtiqueta);
+        return Response.ok("ok");
+    }
 
     @GetMapping("/participa/{idComunidad}/{idUsuario}")
     public ResponseEntity<Object> estadoParticipacion(@PathVariable Long idComunidad, @PathVariable Long idUsuario) {

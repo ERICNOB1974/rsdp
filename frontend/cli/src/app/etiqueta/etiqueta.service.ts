@@ -35,4 +35,10 @@ export class EtiquetaService {
     return this.http.post<Etiqueta>(this.etiquetasUrl, etiqueta);
   }
 
+
+  etiquetasEnComunidad(idComunidad: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.etiquetasUrl}/etiquetasComunidad/${idComunidad}`);
+  }
+
+
 }

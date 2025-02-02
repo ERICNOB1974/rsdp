@@ -45,7 +45,7 @@
       <strong>Has sido expulsado permanentemente.</strong>
     </div>
   </div>
-  <div *ngIf="comunidad.cantidadMaximaMiembros<=comunidad.miembros" class="alert alert-warning mt-4">
+  <div *ngIf="comunidad.cantidadMaximaMiembros<=comunidad.miembros && !esParte" class="alert alert-warning mt-4">
     <p>No hay mas espacio en la comunidad.</p>
 
   </div>
@@ -73,12 +73,24 @@
         <h3>Publicaciones</h3>
 
 
-        <div *ngIf="esAdministrador || esCreador" class="tabs">
-          <button class="tab-button" [ngClass]="{ active: subTabSeleccionada === 'publicacionesAprobadas' }"
-            (click)="seleccionarSubTabAdministrador('publicacionesAprobadas')">Publicaciones aprobadas</button>
-          <button class="tab-button" [ngClass]="{ active: subTabSeleccionada === 'publicacionesPorAprobar' }"
+        <div class="tabs">
+          <button *ngIf="comunidad.esModerada" class="tab-button"
+            [ngClass]="{ active: subTabSeleccionada === 'publicacionesAprobadas' }"
+            (click)="seleccionarSubTabAdministrador('publicacionesAprobadas')">Publicaciones</button>
+          <button *ngIf="comunidad.esModerada && (esAdministrador || esCreador)" class="tab-button"
+            [ngClass]="{ active: subTabSeleccionada === 'publicacionesPorAprobar' }"
             (click)="seleccionarSubTabAdministrador('publicacionesPorAprobar')">Publicaciones por aprobar</button>
+
+          <button *ngIf="comunidad.esModerada && (!esCreador)" class="tab-button"
+            [ngClass]="{ active: subTabSeleccionada === 'publicacionesPendientes' }"
+            (click)="seleccionarSubTabAdministrador('publicacionesPendientes')">Mis publicaciones pendientes</button>
+          <button *ngIf="comunidad.esModerada && (!esCreador)" class="tab-button"
+            [ngClass]="{ active: subTabSeleccionada === 'publicacionesRechazadas' }"
+            (click)="seleccionarSubTabAdministrador('publicacionesRechazadas')">Mis publicaciones rechazadas</button>
+
         </div>
+
+
 
 
         <button *ngIf="esParte" class="btn2 primary" (click)="publicarEnComunidad()">
@@ -165,16 +177,105 @@
                   </div>
 
                 </div>
-                  <!-- Botones Aprobar y Rechazar -->
-                  <div class="publicacion-acciones">
-                    <button class="btn aprobar" (click)="aprobarPublicacion(publicacion)">Aprobar</button>
-                    <button class="btn rechazar" (click)="rechazarPublicacion(publicacion)">Rechazar</button>
-                  </div>
+                <!-- Botones Aprobar y Rechazar -->
+                <div class="publicacion-acciones">
+                  <button class="btn aprobar" (click)="aprobarPublicacion(publicacion)">Aprobar</button>
+                  <button class="btn rechazar" (click)="rechazarPublicacion(publicacion)">Rechazar</button>
+                </div>
 
               </div>
             </div>
           </div>
         </div>
+
+
+
+
+        <!--tab pendientes-->
+        <div class="tab-content">
+          <div *ngIf="subTabSeleccionada === 'publicacionesPendientes'" class="perfil-publicaciones">
+            <div class="publicaciones-grid" (scroll)="onScroll('publicacionesPendientes')">
+              <div class="publicacion-item" *ngFor="let publicacion of misPublicacionesPendientes">
+                <div class="publicacion-container">
+                  <div class="publicacion-header">
+                    <!-- Foto de perfil del usuario -->
+                    <div class="usuario-info">
+                      <img *ngIf="usuariosPublicadores[publicacion.id]?.fotoPerfil"
+                        [src]="usuariosPublicadores[publicacion.id].fotoPerfil" alt="Foto de perfil"
+                        class="foto-perfil" />
+                      <p *ngIf="usuariosPublicadores[publicacion.id]" class="usuario-publicador">
+                        Publicado por:
+                        <a (click)="goToPerfil(usuariosPublicadores[publicacion.id].id); $event.stopPropagation();"
+                          class="publicacion-usuario">
+                          {{ usuariosPublicadores[publicacion.id].nombreUsuario }}
+                        </a>
+                      </p>
+                    </div>
+                    <!-- Fecha de creación -->
+                    <div class="publicacion-fecha">
+                      {{ publicacion.fechaDeCreacion | date:'medium' }}
+                    </div>
+                  </div>
+                  <!-- Contenido de la publicación -->
+                  <p class="publicacion-texto">{{ publicacion.texto }}</p>
+                  <!-- Imagen de la publicación -->
+                  <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
+                    <img [src]="publicacion.file" alt="Imagen de la publicación" class="publicacion-imagen" />
+                  </div>
+                  <!-- Video de la publicación -->
+                  <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
+                    <video [src]="publicacion.file" controls class="publicacion-video"></video>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--tab rechazadas-->
+        <div class="tab-content">
+          <div *ngIf="subTabSeleccionada === 'publicacionesRechazadas'" class="perfil-publicaciones">
+            <div class="publicaciones-grid" (scroll)="onScroll('publicacionesRechazadas')">
+              <div class="publicacion-item" *ngFor="let publicacion of misPublicacionesRechazadas">
+                <div class="publicacion-container">
+                  <div class="publicacion-header">
+                    <!-- Foto de perfil del usuario -->
+                    <div class="usuario-info">
+                      <img *ngIf="usuariosPublicadores[publicacion.id]?.fotoPerfil"
+                        [src]="usuariosPublicadores[publicacion.id].fotoPerfil" alt="Foto de perfil"
+                        class="foto-perfil" />
+                      <p *ngIf="usuariosPublicadores[publicacion.id]" class="usuario-publicador">
+                        Publicado por:
+                        <a (click)="goToPerfil(usuariosPublicadores[publicacion.id].id); $event.stopPropagation();"
+                          class="publicacion-usuario">
+                          {{ usuariosPublicadores[publicacion.id].nombreUsuario }}
+                        </a>
+                      </p>
+                    </div>
+                    <!-- Fecha de creación -->
+                    <div class="publicacion-fecha">
+                      {{ publicacion.fechaDeCreacion | date:'medium' }}
+                    </div>
+                  </div>
+                  <!-- Contenido de la publicación -->
+                  <p class="publicacion-texto">{{ publicacion.texto }}</p>
+                  <!-- Imagen de la publicación -->
+                  <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
+                    <img [src]="publicacion.file" alt="Imagen de la publicación" class="publicacion-imagen" />
+                  </div>
+                  <!-- Video de la publicación -->
+                  <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
+                    <video [src]="publicacion.file" controls class="publicacion-video"></video>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
 
 
 
