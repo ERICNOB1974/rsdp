@@ -67,7 +67,6 @@ export class PerfilComponent implements OnInit {
     private comunidadService: ComunidadService,
     private rutinaService: RutinaService,
     private authService: AuthService,  // Inyecta el AuthService
-    private etiquetaService: EtiquetaService,
     private router: Router,
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef,

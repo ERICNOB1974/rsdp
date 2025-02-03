@@ -318,18 +318,24 @@
 }
 
 .comunidad-card {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro para el texto */
-  color: white;
-  padding: 20px;
-  border-radius: 8px;
-  margin: 10px;
-  transition: transform 0.2s;
-  border: 1px solid #ccc;
-}
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #ffffff;
+    border-radius: 0 0 12px 12px;
+    flex-direction: column;
+    gap: 8px;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 10px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    transition: transform 0.2s;
+    border: 1px solid #ccc;
+    max-height: 300px; /* Ajusta el tamaño según tu diseño */
+    overflow: hidden;
+    justify-content: space-between;
+  }
 
 
 .comunidad-card h3 {

@@ -1,9 +1,32 @@
 .boton-flotante {
-    position: fixed;
-    z-index: 1000;
-    transition: top 0.5s ease, left 0.5s ease; /* Animación suave al moverse */
+  position: fixed;
+  bottom: 20px; /* Lo mantiene visible en móviles */
+  right: 10px;
+  left: 300px; /* Posición para computadoras */
+  z-index: 1000;
+}
+
+.btn-actualizar {
+  padding: 10px 15px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .boton-flotante {
+    left: auto; /* Quita la propiedad */
+    right: 10px; /* Opcional: lo puedes mover a la derecha */
   }
-  
+
+  .btn-actualizar {
+    font-size: 14px; /* Texto más pequeño */
+    padding: 8px 12px;
+  }
+}
   .btn-actualizar {
     background-color: #007bff;
     color: white;
