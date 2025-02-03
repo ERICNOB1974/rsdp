@@ -15,6 +15,12 @@ import unpsjb.labprog.backend.model.Usuario;
 @Repository
 public interface EventoRepository extends Neo4jRepository<Evento, Long> {
 
+        @Query("MATCH (evento:Evento) WHERE id(evento) = $idEvento RETURN evento.genero")
+        String generoDeUnEvento(Long idEvento);
+
+        @Query("MATCH (evento:Evento) WHERE id(evento) = $id AND evento.eliminado = false RETURN evento")
+        Optional<Evento> findById(Long id);
+
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(e:Evento)-[:ETIQUETADO_CON]->(et:Etiqueta) "
                         +
                         "MATCH (e2:Evento)-[:ETIQUETADO_CON]->(et) " +
@@ -191,61 +197,91 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         " MATCH (u)-[r:PARTICIPA_EN]->(e) DELETE r")
         void desinscribirse(Long idEvento, Long idUsuario);
 
-        @Query("MATCH (e:Evento)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta) " +
-                        "WITH e, collect(etiqueta.nombre) AS etiquetasEvento " +
+        @Query("MATCH (u:Usuario) WHERE id(u) = $usuarioId " +
+                        "MATCH (e:Evento)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta) " +
+                        "WITH u, e, collect(etiqueta.nombre) AS etiquetasEvento " +
                         "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasEvento) " +
-                        "AND NOT EXISTS { " +
-                        "  MATCH (u:Usuario)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
-                        "  WHERE id(u) = $usuarioId " +
-                        "} " +
+                        "AND NOT EXISTS { MATCH (u)-[:PARTICIPA_EN|CREADO_POR]-(e) } " +
                         "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
-        List<Evento> eventosEtiquetasDisponibles(Long usuarioId, @Param("etiquetas") List<String> etiquetas);
+        List<Evento> eventosEtiquetasDisponibles(@Param("usuarioId") Long usuarioId,
+                        @Param("etiquetas") List<String> etiquetas);
 
         @Query("MATCH (e:Evento)<-[:PARTICIPA_EN]-(u:Usuario), (e)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta) " +
                         "WHERE id(u) = $usuarioId " +
                         "WITH e, collect(etiqueta.nombre) AS etiquetasEvento " +
                         "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasEvento) " +
                         "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
         List<Evento> eventosEtiquetasParticipante(Long usuarioId, @Param("etiquetas") List<String> etiquetas);
 
-        @Query("MATCH (e:Evento)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta) " +
-                        "WITH e, collect(etiqueta.nombre) AS etiquetasEvento " +
+        @Query("MATCH (u:Usuario) WHERE id(u) = $usuarioId " +
+                        "MATCH (e:Evento)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta) " +
+                        "WITH e, collect(etiqueta.nombre) AS etiquetasEvento, u " +
                         "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasEvento) " +
                         "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
-        List<Evento> eventosEtiquetas(@Param("etiquetas") List<String> etiquetas);
+        List<Evento> eventosEtiquetas(@Param("etiquetas") List<String> etiquetas, @Param("usuarioId") Long usuarioId);
 
-        @Query("MATCH (e:Evento) " +
+        @Query("MATCH (u:Usuario) WHERE id(u) = $usuarioId " +
+                        "MATCH (e:Evento) " +
                         "WHERE toUpper(e.nombre) CONTAINS toUpper($nombre) " +
                         "AND NOT EXISTS { " +
-                        "  MATCH (u:Usuario)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
-                        "  WHERE id(u) = $usuarioId " +
-                        "AND NOT (u)-[:EXPULSADO_EVENTO]-(e) " +
+                        "  MATCH (u)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
+                        "  WHERE NOT (u)-[:EXPULSADO_EVENTO]-(e) " +
                         "} " +
                         "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
         List<Evento> eventosNombreDisponibles(String nombre, Long usuarioId);
 
         @Query("MATCH (e:Evento)<-[:PARTICIPA_EN]-(u:Usuario) " +
                         "WHERE id(u) = $usuarioId AND toUpper(e.nombre) CONTAINS toUpper($nombre) " +
                         "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
         List<Evento> eventosNombreParticipante(String nombre, Long usuarioId);
 
-        @Query("MATCH (e:Evento) WHERE toUpper(e.nombre) CONTAINS toUpper($nombre) " +
+        @Query("MATCH (u:Usuario) WHERE id(u) = $idUsuario " +
+                        "MATCH (e:Evento) " +
+                        "WHERE toUpper(e.nombre) CONTAINS toUpper($nombre) " +
                         "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
-        List<Evento> eventosNombre(String nombre);
+        List<Evento> eventosNombre(@Param("nombre") String nombre, @Param("idUsuario") Long idUsuario);
 
-        @Query("MATCH (e:Evento) " +
+        @Query("MATCH (u:Usuario) WHERE id(u) = $usuarioId " +
+                        "MATCH (e:Evento) " +
                         "WHERE e.fechaHora >= $fechaInicio AND e.fechaHora <= $fechaFin " +
                         "AND NOT EXISTS { " +
-                        "  MATCH (u:Usuario)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
-                        "  WHERE id(u) = $usuarioId " +
+                        "  MATCH (u)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
                         "} " +
                         "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
         List<Evento> eventosFechaDisponible(Long usuarioId, @Param("fechaInicio") ZonedDateTime fechaInicio,
                         @Param("fechaFin") ZonedDateTime fechaFin);
@@ -253,31 +289,52 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
         @Query("MATCH (e:Evento)<-[:PARTICIPA_EN]-(u:Usuario) " +
                         "WHERE id(u) = $usuarioId AND e.fechaHora >= $fechaInicio AND e.fechaHora <= $fechaFin " +
                         "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
         List<Evento> eventosFechaParticipante(Long usuarioId, @Param("fechaInicio") ZonedDateTime fechaInicio,
                         @Param("fechaFin") ZonedDateTime fechaFin);
 
-        @Query("MATCH (e:Evento) " +
+        @Query("MATCH (u:Usuario) WHERE id(u) = $usuarioId " +
+                        "MATCH (e:Evento) " +
                         "WHERE e.fechaHora >= $fechaInicio " +
                         "AND e.fechaHora <= $fechaFin " +
                         "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
         List<Evento> eventosFecha(@Param("fechaInicio") ZonedDateTime fechaInicio,
-                        @Param("fechaFin") ZonedDateTime fechaFin);
+                        @Param("fechaFin") ZonedDateTime fechaFin, @Param("usuarioId") Long usuarioId);
 
-        @Query("MATCH (e:Evento) " +
-                        "WHERE e.cantidadMaximaParticipantes <= $max AND e.cantidadMaximaParticipantes >= $min " +
+        @Query("MATCH (u:Usuario) WHERE id(u) = $usuarioId " +
+                        "MATCH (e:Evento) " +
+                        "WHERE e.cantidadMaximaParticipantes <= $max " +
+                        "AND e.cantidadMaximaParticipantes >= $min " +
                         "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
-        List<Evento> eventosCantidadParticipantes(int min, int max);
+        List<Evento> eventosCantidadParticipantes(int min, int max, Long usuarioId);
 
-        @Query("MATCH (e:Evento) " +
-                        "WHERE e.cantidadMaximaParticipantes <= $max AND e.cantidadMaximaParticipantes >= $min " +
+        @Query("MATCH (u:Usuario) WHERE id(u) = $usuarioId " +
+                        "MATCH (e:Evento) " +
+                        "WHERE e.cantidadMaximaParticipantes <= $max " +
+                        "AND e.cantidadMaximaParticipantes >= $min " +
                         "AND NOT EXISTS { " +
-                        "  MATCH (u:Usuario)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
-                        "  WHERE id(u) = $usuarioId " +
+                        "  MATCH (u2:Usuario)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
+                        "  WHERE id(u2) = $usuarioId " +
                         "} " +
                         "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
         List<Evento> eventosCantidadParticipantesDisponible(Long usuarioId, int min, int max);
 
@@ -285,6 +342,10 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "WHERE id(u) = $usuarioId " +
                         "AND e.cantidadMaximaParticipantes <= $max AND e.cantidadMaximaParticipantes >= $min " +
                         "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
         List<Evento> eventosCantidadParticipantesParticipante(Long usuarioId, int min, int max);
 
@@ -294,6 +355,10 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "AND date(e.fechaHora) > date(datetime()) " +
                         "AND NOT e.esPrivadoParaLaComunidad " +
                         "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "WITH e, COUNT { (e)<-[:PARTICIPA_EN]-() } AS numParticipantes " +
                         "WHERE numParticipantes < e.cantidadMaximaParticipantes " +
                         "RETURN e " +

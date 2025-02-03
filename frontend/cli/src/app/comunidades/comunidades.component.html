@@ -111,10 +111,6 @@
           <p>{{ comunidad.descripcion }}</p>
           <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
           <p>Ubicación: {{comunidad.ubicacion}}</p>
-          <p>Género:
-            {{ { masculino: 'Masculino', femenino: 'Femenino', sinGenero: 'Sin Género' }[comunidad.genero] || comunidad.genero
-            }}
-          </p>
         </div>
       </div>
       <div *ngIf="comunidadesDisponiblesAMostrar.length==0">
@@ -137,10 +133,6 @@
           <p>{{ comunidad.descripcion }}</p>
           <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
           <p>Ubicación: {{comunidad.ubicacion}}</p>
-          <p>Género:
-            {{ { masculino: 'Masculino', femenino: 'Femenino', sinGenero: 'Sin Género' }[comunidad.genero] || comunidad.genero
-            }}
-          </p>
         </div>
       </div>
     </div>

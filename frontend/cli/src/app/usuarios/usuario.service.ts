@@ -25,6 +25,11 @@ export class UsuarioService {
     return this.http.put<DataPackage>(`${this.usuariosUrl}/actualizarCorreo/${idUsuario}`, nuevoCorreo);
   }
 
+  generoUsuario(): Observable<DataPackage>{
+    const idUsuario = this.authService.getUsuarioId();
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/generoUsuario/${idUsuario}`);
+  }
+
   all(): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.usuariosUrl}/findAll`);
   }
@@ -53,6 +58,13 @@ export class UsuarioService {
 
   existeNombreUsuario(nombreUsuario: string): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.usuariosUrl}/existeNombreUsuario/${nombreUsuario}`);
+  }
+
+  findByNombreUsuario(nombreUsuario: string): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/findByNombreUsuario/${nombreUsuario}`);
+  }
+  idDadoNombreUsuario(nombreUsuario: string): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/idDadoNombreUsuario/${nombreUsuario}`);
   }
 
   existeNombreUsuarioMenosElActual(nombreUsuarioIngresado: string, nombreUsuarioActual: string): Observable<DataPackage> {

@@ -140,9 +140,6 @@
           <p>Participantes: {{ evento.participantes }}/{{evento.cantidadMaximaParticipantes}}</p>
           <p>Ubicación: {{evento.ubicacion}}</p>
           <p>{{ evento.fechaHora | date: 'MMM d, y, h:mm a' }}</p> <!-- Formato de fecha -->
-          <p>Género:
-            {{ { masculino: 'Masculino', femenino: 'Femenino', sinGenero: 'Sin Género' }[evento.genero] || evento.genero }}
-          </p>
         </div>
       </div>
       <div *ngIf="eventosDisponiblesAMostrar.length==0">
@@ -162,9 +159,6 @@
           <p>Participantes: {{ evento.participantes }}/{{evento.cantidadMaximaParticipantes}}</p>
           <p>Ubicación: {{evento.ubicacion}}</p>
           <p>{{ evento.fechaHora | date: 'MMM d, y, h:mm a' }}</p> <!-- Formato de fecha -->
-          <p>Género: 
-            {{ { masculino: 'Masculino', femenino: 'Femenino', sinGenero: 'Sin Género' }[evento.genero] || evento.genero }}
-          </p>
         </div>
       </div>
       <div *ngIf="eventosParticipaUsuario.length==0">

@@ -40,7 +40,6 @@ export class HomeComponent implements OnInit {
     private router: Router,
     private authService: AuthService,
     private webSocketService: WebSocketService // Inyectar el servicio
-
   ) { }
 
   ngOnInit() {
@@ -48,6 +47,7 @@ export class HomeComponent implements OnInit {
 
     // Suscribirse a nuevas publicaciones
     this.webSocketService.nuevasPublicaciones$.subscribe(() => {
+      
       this.mostrarBotonActualizar = true; // Mostrar botón cuando haya una nueva publicación
       //this.moverBoton(); // Activar movimiento cuando aparezca
 
@@ -93,13 +93,16 @@ export class HomeComponent implements OnInit {
       console.warn('No se encontró el ID del usuario autenticado.');
       this.loading = false;
     }
-    this.mostrarBotonActualizar = false; // Ocultar el botón después de cargar
 
   }
 
   actualizarPublicaciones(): void {
-    window.location.reload()
-    //this.loadPublicaciones(); // Recargar publicaciones
+    //window.location.reload()
+    this.currentIndexPublicacionesHome=0;
+    this.publicaciones = [];
+    this.loadPublicaciones(); // Recargar publicaciones
+    this.mostrarBotonActualizar = false; // Ocultar el botón después de cargar
+
   }
 
  /*  moverBoton(): void {

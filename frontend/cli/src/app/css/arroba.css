@@ -1,4 +1,4 @@
-.suggestions {
+/* .suggestions {
   border: 1px solid #ccc;
   max-height: 150px;
   overflow-y: auto;
@@ -20,7 +20,7 @@
 
 .suggestions li:hover {
   background: #f0f0f0;
-}
+} */
 
 .friend-label {
   color: green;
@@ -30,4 +30,14 @@
 .non-friend-label {
   color: red;
   font-size: 12px;
+}
+
+.mention-link {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.mention-link:hover {
+  text-decoration: underline;
 }

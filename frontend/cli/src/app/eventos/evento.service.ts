@@ -28,6 +28,7 @@ export class EventoService {
   get(id: string): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.eventosUrl}/findById/${id}`);
   }
+
   etiquetasDelEvento(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.eventosUrl}/etiquetas/${id}`);
   }

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Location } from '@angular/common';
 import { CommonModule } from '@angular/common'; // Para permitir navegar de vuelta
@@ -15,7 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ComentarioService } from '../comentarios/comentario.service';
 import { UsuarioEsAmigoDTO } from '../arrobar/UsuarioEsAmigoDTO';
 import { ArrobarService } from '../arrobar/arrobar.service';
-import { catchError, debounceTime, distinctUntilChanged, filter, map, Observable, of, switchMap, tap } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, filter, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
 
 
 
@@ -23,7 +23,7 @@ import { catchError, debounceTime, distinctUntilChanged, filter, map, Observable
   selector: 'app-publicaciones',
   templateUrl: './publicacion-detail.component.html',
   imports: [CommonModule, FormsModule, RouterModule],
-  styleUrls: ['./publicacion-detail.component.css', '../css/arroba.css'],
+  styleUrls: ['./publicacion-detail.component.css', '../css/arroba.css','crearPublicacion.component.css'],
   standalone: true
 })
 export class PublicacionDetailComponent implements OnInit {
@@ -42,6 +42,7 @@ export class PublicacionDetailComponent implements OnInit {
   searchingArroba = false;
   searchFailedArroba = false;
   isReplying = false; // Para saber si está respondiendo a un comentario
+  textoConMenciones$: Observable<string> = undefined!;
 
 
   constructor(
@@ -54,7 +55,8 @@ export class PublicacionDetailComponent implements OnInit {
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     private authService: AuthService,
-    private arrobaService: ArrobarService
+    private arrobaService: ArrobarService,
+    private cdr: ChangeDetectorRef
   ) { }
 
   isLiked: boolean = false;
@@ -217,7 +219,7 @@ export class PublicacionDetailComponent implements OnInit {
               genero: '',
               latitud: 0,
               longitud: 0,
-              fotoPerfil: ''
+              fotoPerfil: this.usuario?.fotoPerfil || ''
             },
             cantidadLikes: 0,
             estaLikeado: false,
@@ -229,7 +231,7 @@ export class PublicacionDetailComponent implements OnInit {
           // Añadir el nuevo comentario al principio de la lista
           this.comentarios.unshift(newComment);
 
-          this.comment='';
+          this.comment = '';
 
           // Actualizar los comentarios mostrados
           this.updateDisplayedComments();
@@ -330,6 +332,8 @@ export class PublicacionDetailComponent implements OnInit {
           this.checkIfOwnPublication();
           this.cargarComentarios();
           this.cantidadLikes();
+          this.textoConMenciones$ = this.getTextoConMenciones(this.publicacion.texto);
+
         });
       });
     }
@@ -369,7 +373,7 @@ export class PublicacionDetailComponent implements OnInit {
         (response: any) => {
           const usuarioId = this.authService.getUsuarioId();
           const idUsuarioAutenticado = Number(usuarioId);
-  
+
           const nuevaRespuesta: Comentario = {
             id: response.data.id, // ID de la respuesta desde el backend
             texto: this.replyText,
@@ -386,7 +390,7 @@ export class PublicacionDetailComponent implements OnInit {
               genero: '',
               latitud: 0,
               longitud: 0,
-              fotoPerfil: ''
+              fotoPerfil: this.usuario?.fotoPerfil || ''
             },
             respuestas: [], // Las respuestas no tienen sub-respuestas por defecto
             cantidadLikes: 0,
@@ -397,20 +401,20 @@ export class PublicacionDetailComponent implements OnInit {
 
           // Encuentra el comentario original
           const comentarioOriginal = this.comentarios.find(c => c.id === commentId);
-  
+
           if (!comentarioOriginal) {
             console.error(`No se encontró el comentario con ID: ${commentId}`);
             return; // Salir si no se encuentra
           }
-  
+
           // Asegúrate de que 'respuestas' esté inicializado
           if (!comentarioOriginal.respuestas) {
             comentarioOriginal.respuestas = [];
           }
-  
+
           // Agrega la nueva respuesta al array
           comentarioOriginal.respuestas.unshift(nuevaRespuesta);
-  
+
           // Inicializa o actualiza la estructura de paginación
           if (!this.respuestaPaginacion[commentId]) {
             this.respuestaPaginacion[commentId] = {
@@ -425,11 +429,11 @@ export class PublicacionDetailComponent implements OnInit {
             this.respuestaPaginacion[commentId].respuestas.unshift(nuevaRespuesta);
             this.respuestaPaginacion[commentId].totalRespuestas++;
           }
-  
+
           // Limpiar el campo de texto y ocultar el input de respuesta
           this.replyText = '';
           this.showReplyInput = false;
-  
+
           // Opcional: mostrar una notificación
           this.snackBar.open('Respuesta agregada con éxito', 'Cerrar', { duration: 3000 });
         },
@@ -440,7 +444,7 @@ export class PublicacionDetailComponent implements OnInit {
       );
     }
   }
-  
+
 
   /*  cargarRespuestas(comentario: Comentario) {
     this.comentarioService.getRespuestas(comentario.id, 0, this.pageSize)
@@ -542,24 +546,22 @@ export class PublicacionDetailComponent implements OnInit {
       () => {
         // Filtrar comentarios principales
         this.comentarios = this.comentarios.filter(c => c.id !== comentarioId);
-  
+
         // Filtrar respuestas en los comentarios existentes
         this.comentarios.forEach(comentario => {
           if (comentario.respuestas) {
             // Eliminar respuesta si existe
             comentario.respuestas = comentario.respuestas.filter(respuesta => respuesta.id !== comentarioId);
-  
-            // Si se utiliza paginación, actualizar el mapa de respuestas
-            if (this.respuestaPaginacion[comentario.id]) {
-              // Filtrar respuesta eliminada en el mapa de respuestas paginadas
-              this.respuestaPaginacion[comentario.id].respuestas = this.respuestaPaginacion[comentario.id].respuestas.filter(r => r.id !== comentarioId);
-  
-              // Actualizar el contador de respuestas restantes
-              this.respuestaPaginacion[comentario.id].totalRespuestas--;
-            }
+
+          }
+          if (this.respuestaPaginacion[comentario.id]) {
+            // Filtrar respuesta eliminada en el mapa de respuestas paginadas
+            this.respuestaPaginacion[comentario.id].respuestas = this.respuestaPaginacion[comentario.id].respuestas.filter(r => r.id !== comentarioId);
+            // Actualizar el contador de respuestas restantes
+            this.respuestaPaginacion[comentario.id].totalRespuestas--;
           }
         });
-  
+
         // Mostrar mensaje de éxito
         this.snackBar.open('Comentario eliminado con éxito', 'Cerrar', { duration: 3000 });
       },
@@ -569,7 +571,9 @@ export class PublicacionDetailComponent implements OnInit {
       }
     );
   }
-  
+
+
+
 
   private extraerUsuariosEtiquetados(texto: string): Usuario[] {
     const regex = /@(\w+)/g;
@@ -658,4 +662,124 @@ export class PublicacionDetailComponent implements OnInit {
     }
 
   }
+
+  getTextoConMenciones(texto: string): Observable<string> {
+    if (!texto) {
+      return of('');
+    }
+
+    // Expresión regular para encontrar menciones
+    const regex = /@(\w+)/g;
+    const menciones = texto.match(regex) || [];
+
+    // Si no hay menciones, devolvemos el texto original
+    if (menciones.length === 0) {
+      return of(texto);  // Devolvemos el texto tal cual sin cambios
+    }
+
+    const verificaciones: Observable<{ username: string; idUsuario: number | null }>[] = [];
+
+    // Verificamos la existencia de los usuarios mencionados
+    menciones.forEach((match) => {
+      const username = match.substring(1); // Quita el '@'
+
+      verificaciones.push(
+        this.usuarioService.findByNombreUsuario(username).pipe(
+          map((dataPackage: DataPackage) => {
+            let idUsuario: number | null = null;  // Inicializamos idUsuario como null
+            if (dataPackage.status === 200) {
+              idUsuario = dataPackage.data as unknown as number;
+            }
+            return { username, idUsuario };
+          }),
+          catchError(() => {
+            return of({ username, idUsuario: null }); // Si hay error, asumimos que no existe
+          })
+        )
+      );
+    });
+
+    // Ejecutamos todas las verificaciones en paralelo y transformamos el texto
+    return forkJoin(verificaciones).pipe(
+      map((resultados) => {
+        // Reemplazamos las menciones por enlaces
+        return texto.replace(regex, (match, username) => {
+          const usuario = resultados.find((r) => r.username === username);
+          const idUsuario = usuario?.idUsuario;
+
+          return idUsuario !== null
+            ? `<a href="/perfil/${idUsuario}" class="mention-link">${match}</a>`  // Usamos idUsuario como número
+            : match;
+        });
+      })
+    );
+  }
+
+
+
+/* 
+  getTextoConMenciones2(texto: string): Observable<string> {
+    if (!texto) {
+      console.log("Texto vacío, retornando observable vacío.");
+      return of('');
+    }
+
+    // Expresión regular para encontrar menciones
+    const regex = /@(\w+)/g;
+    const menciones = texto.match(regex) || [];
+    console.log("Menciones encontradas:", menciones);
+
+    // Si no hay menciones, devolvemos el texto original
+    if (menciones.length === 0) {
+      return of(texto);  // Devolvemos el texto tal cual sin cambios
+    }
+
+    const verificaciones: Observable<{ username: string; idUsuario: number | null }>[] = [];
+
+    // Verificamos la existencia de los usuarios mencionados
+    menciones.forEach((match) => {
+      const username = match.substring(1); // Quita el '@'
+      console.log("Verificando existencia de usuario:", username);
+
+      verificaciones.push(
+        this.usuarioService.findByNombreUsuario(username).pipe(
+          map((dataPackage: DataPackage) => {
+            let idUsuario: number | null = null;  // Inicializamos idUsuario como null
+            if (dataPackage.status === 200) {
+              const usuario: Usuario = dataPackage.data as Usuario;
+              if (usuario.nombreUsuario === username) {
+                idUsuario = usuario.id;  // Asignamos el idUsuario del objeto Usuario
+              }
+            }
+
+            console.log(`Usuario ${username} tiene id:`, idUsuario);
+            return { username, idUsuario };
+          }),
+          catchError(() => {
+            console.error(`Error al verificar el usuario: ${username}`);
+            return of({ username, idUsuario: null }); // Si hay error, asumimos que no existe
+          })
+        )
+      );
+    });
+
+    // Ejecutamos todas las verificaciones en paralelo y transformamos el texto
+    return forkJoin(verificaciones).pipe(
+      map((resultados) => {
+        console.log("Resultados de la verificación:", resultados);
+
+        // Reemplazamos las menciones por enlaces
+        return texto.replace(regex, (match, username) => {
+          const usuario = resultados.find((r) => r.username === username);
+          const idUsuario = usuario?.idUsuario;
+          console.log(`¿El usuario ${username} tiene id?`, idUsuario);
+
+          return idUsuario !== null
+            ? `<a href="/perfil/${idUsuario}" class="mention-link">${match}</a>`  // Usamos idUsuario como número
+            : match;
+        });
+      })
+    );
+  } */
+
 }

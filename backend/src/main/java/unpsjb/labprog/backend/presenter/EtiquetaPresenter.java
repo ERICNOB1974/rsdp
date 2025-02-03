@@ -53,4 +53,9 @@ public class EtiquetaPresenter {
         return etiquetaService.save(etiqueta);
     }
 
+    @GetMapping("/etiquetasComunidad/{idComunidad}")
+    public ResponseEntity<Object> etiquetasEnComunidad(@PathVariable Long idComunidad) {
+        return Response.ok(etiquetaService.etiquetasEnComunidad(idComunidad));
+    }
+
 }

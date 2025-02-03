@@ -34,8 +34,8 @@ public class PublicacionPresenter {
     public ResponseEntity<Object> publicarEnComunidad(@RequestBody Publicacion publicacion,
             @PathVariable Long idUsuario, @PathVariable Long idComunidad)
             throws Exception {
-        publicacionService.publicarEnComunidad(idComunidad, idUsuario, publicacion);
-        return Response.ok("OK");
+
+        return Response.ok(publicacionService.publicarEnComunidad(idComunidad, idUsuario, publicacion), "OK");
     }
 
     @DeleteMapping(path = "/eliminar/{idPublicacion}")
@@ -70,8 +70,6 @@ public class PublicacionPresenter {
         boolean like = publicacionService.estaLikeada(idUsuario, idPublicacion);
         return Response.ok(like, "OK");
     }
-
-   
 
     @GetMapping("/publicaciones/usuario/{idUsuario}")
     public ResponseEntity<Object> publicacionesUsuario(@PathVariable Long idUsuario,
@@ -114,14 +112,20 @@ public class PublicacionPresenter {
         return Response.ok(publicaciones, "OK");
     }
 
-/*     @GetMapping("/comentarios/{idPublicacion}")
-    public ResponseEntity<Object> obtenerNotificaciones(@PathVariable Long idPublicacion) {
-        try {
-            return Response.ok(publicacionService.obtenerComentariosPorPublicacion(idPublicacion));
-        } catch (Exception e) {
-            return Response.error("", "Error al obtener los comentarios: " + e.getMessage());
-        }
-    } */
+    /*
+     * @GetMapping("/comentarios/{idPublicacion}")
+     * public ResponseEntity<Object> obtenerNotificaciones(@PathVariable Long
+     * idPublicacion) {
+     * try {
+     * return
+     * Response.ok(publicacionService.obtenerComentariosPorPublicacion(idPublicacion
+     * ));
+     * } catch (Exception e) {
+     * return Response.error("", "Error al obtener los comentarios: " +
+     * e.getMessage());
+     * }
+     * }
+     */
 
     @GetMapping("/cantidadLikes/{idPublicacion}")
     public ResponseEntity<Object> cantidadLikes(@PathVariable Long idPublicacion) {
@@ -141,5 +145,43 @@ public class PublicacionPresenter {
         } catch (Exception e) {
             return Response.error("", "Error al obtener las publicaciones: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/publicacionesPorAprobar/comunidad/{idComunidad}")
+    public ResponseEntity<Object> publicacionesComunidadPorAprobar(@PathVariable Long idComunidad,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
+            throws Exception {
+        List<Publicacion> publicaciones = publicacionService.publicacionesComunidadPorAprobar(idComunidad, page, size);
+        return Response.ok(publicaciones, "OK");
+    }
+
+    @GetMapping("/publicacionesPendientesUsuarioComunidad/comunidad/{idComunidad}/{idUsuario}")
+    public ResponseEntity<Object> publicacionesPendientesUsuarioComunidad(@PathVariable Long idComunidad,
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
+            throws Exception {
+        List<Publicacion> publicaciones = publicacionService.publicacionesPendientesUsuarioComunidad(idComunidad,
+                idUsuario, page, size);
+        return Response.ok(publicaciones, "OK");
+    }
+
+    @GetMapping("/publicacionesRechazadasUsuarioComunidad/comunidad/{idComunidad}/{idUsuario}")
+    public ResponseEntity<Object> publicacionesRechazadasUsuarioComunidad(@PathVariable Long idComunidad,
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size)
+            throws Exception {
+        List<Publicacion> publicaciones = publicacionService.publicacionesRechazadasUsuarioComunidad(idComunidad,
+                idUsuario, page, size);
+        return Response.ok(publicaciones, "OK");
+    }
+
+    @RequestMapping(path = "/actualizarEstadoPublicacion/{idComunidad}/{idPublicacion}", method = RequestMethod.PUT)
+    public ResponseEntity<Object> actualizarEstadoPublicacion(@PathVariable Long idComunidad,
+            @PathVariable Long idPublicacion, @RequestBody String nuevoEstado) {
+        Publicacion p = publicacionService.actualizarEstado(idComunidad, idPublicacion, nuevoEstado);
+        return Response.ok(p, "OK");
     }
 }
