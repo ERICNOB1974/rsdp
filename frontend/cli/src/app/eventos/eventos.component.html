@@ -134,7 +134,7 @@
     <div class="grid" (scroll)="onScroll()">
       <div class="grid-item" *ngFor="let evento of eventosDisponiblesAMostrar" (click)="irADetallesDelEvento(evento.id)"
         [ngStyle]="{'background-image': 'url(' + (evento.imagen || '../../assets/evento.webp') + ')'}">
-        <div class="evento-card clickable">
+        <div class="evento-card clickable" [ngClass]="{ 'colapsado': esContenidoLargo(evento) }">
           <h3>{{ evento.nombre }}</h3>
           <p>{{ evento.descripcion }}</p>
           <p>Participantes: {{ evento.participantes }}/{{evento.cantidadMaximaParticipantes}}</p>

@@ -512,24 +512,11 @@ traerEtiquetas(eventos: Evento[]): void {
   }
 }
 
+esContenidoLargo(evento: { descripcion: string; ubicacion: string; etiquetas?: { nombre: string }[] }): boolean {
+  const etiquetasTexto = evento.etiquetas?.map((e: { nombre: string }) => e.nombre).join(', ') || ''; 
+  const texto = `${evento.descripcion} ${evento.ubicacion} ${etiquetasTexto}`;
+  return texto.length > 150; // Ajusta este valor según lo necesario
+}
 
-  // private async actualizarInformacionAdicional(): Promise<void> {
-  //   this.traerParticipantes(this.results); // Llamar a traerParticipantes después de cargar los eventos
-
-  //   for (const comunidad of this.results) {
-  //     if (comunidad.latitud && comunidad.longitud) {
-  //       try {
-  //         comunidad.ubicacion = await this.eventoService.obtenerUbicacion(
-  //           comunidad.latitud,
-  //           comunidad.longitud
-  //         );
-  //       } catch (error) {
-  //         comunidad.ubicacion = 'Ubicación desconocida';
-  //       }
-  //     } else {
-  //       comunidad.ubicacion = 'Ubicación desconocida';
-  //     }
-  //   }
-  // }
 }
 

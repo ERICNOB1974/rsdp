@@ -1,8 +1,11 @@
-<div class="boton-flotante" *ngIf="mostrarBotonActualizar" [style.top.px]="posicionBoton.top" [style.left.px]="posicionBoton.left">
+<div class="boton-flotante" *ngIf="mostrarBotonActualizar" [style.top.px]="posicionBoton.top">
   <button (click)="actualizarPublicaciones()" class="btn-actualizar">
     Nuevas publicaciones disponibles
   </button>
 </div>
+
+
+
 <div class="publicaciones-container" (scroll)="onScroll()">
 
 
@@ -16,11 +19,14 @@
               <!-- Foto de la comunidad -->
               <div *ngIf="publicacion.comunidad" class="foto-comunidad"
                 (click)="goToComunidad(publicacion.comunidad.id); $event.stopPropagation()">
-                <img [src]="publicacion.comunidad.imagen ? publicacion.comunidad.imagen : '../../assets/comunidad.jpg'" alt="Comunidad">
+                <img [src]="publicacion.comunidad.imagen ? publicacion.comunidad.imagen : '../../assets/comunidad.jpg'"
+                  alt="Comunidad">
               </div>
               <!-- Foto del usuario -->
               <div class="foto-usuario" (click)="goToPerfil(publicacion.creador.id); $event.stopPropagation()">
-                <img [src]="publicacion.creador.fotoPerfil ? publicacion.creador.fotoPerfil : '../../assets/usuario.png'" alt="Usuario">
+                <img
+                  [src]="publicacion.creador.fotoPerfil ? publicacion.creador.fotoPerfil : '../../assets/usuario.png'"
+                  alt="Usuario">
               </div>
               <p class="nombre-usuario" (click)="goToPerfil(publicacion.creador.id); $event.stopPropagation()">
                 {{ publicacion.creador.nombreUsuario }}
@@ -43,8 +49,8 @@
           <!-- Contenido existente -->
           <div class="publicacion-content">
             <p class="publicacion-texto">{{ publicacion.publicacion.texto }}</p>
-            <div *ngIf="publicacion.publicacion.file && publicacion.publicacion.file.startsWith('data:image')" 
-                 class="publicacion-imagen-container">
+            <div *ngIf="publicacion.publicacion.file && publicacion.publicacion.file.startsWith('data:image')"
+              class="publicacion-imagen-container">
               <img [src]="publicacion.publicacion.file" alt="Imagen de la publicación" class="publicacion-imagen">
             </div>
             <div *ngIf="publicacion.publicacion.file && publicacion.publicacion.file.startsWith('data:video')">
@@ -58,8 +64,7 @@
             <div class="likes-section">
               <button class="like-button" (click)="toggleLike(publicacion, $event)"
                 [class.liked]="publicacion.estaLikeada">
-                <i class="heart"
-                  [ngClass]="publicacion.estaLikeada ? 'fas fa-heart liked' : 'far fa-heart'">
+                <i class="heart" [ngClass]="publicacion.estaLikeada ? 'fas fa-heart liked' : 'far fa-heart'">
                 </i>
               </button>
               <span class="likes-count">{{ publicacion.likes || 0 }} likes</span>
