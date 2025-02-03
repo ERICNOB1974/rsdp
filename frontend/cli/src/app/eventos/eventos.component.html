@@ -135,16 +135,12 @@
     <div class="grid" (scroll)="onScroll()">
       <div class="grid-item" *ngFor="let evento of eventosDisponiblesAMostrar" (click)="irADetallesDelEvento(evento.id)"
         [ngStyle]="{'background-image': 'url(' + (evento.imagen || '../../assets/evento.webp') + ')'}">
-        <div class="evento-card clickable">
+        <div class="evento-card clickable" [ngClass]="{ 'colapsado': esContenidoLargo(evento) }">
           <h3>{{ evento.nombre }}</h3>
           <p>{{ evento.descripcion }}</p>
           <p>Participantes: {{ evento.participantes }}/{{evento.cantidadMaximaParticipantes}}</p>
           <p>Ubicación: {{evento.ubicacion}}</p>
           <p>{{ evento.fechaHora | date: 'MMM d, y, h:mm a' }}</p> <!-- Formato de fecha -->
-          <p>Género:
-            {{ { masculino: 'Masculino', femenino: 'Femenino', sinGenero: 'Sin Género' }[evento.genero] || evento.genero
-            }}
-          </p>
           <div class="etiquetas-container">
             <h4 class="etiquetas-title">Etiquetas:</h4>
             <span *ngFor="let etiqueta of evento.etiquetas" class="etiqueta">
