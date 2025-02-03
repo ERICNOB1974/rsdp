@@ -14,13 +14,13 @@
   [ngClass]="{'fadeIn': filtersVisible, 'fadeOut': !filtersVisible && filtersAnimating}" class="filtros-container">
   <!-- Filtro por nombre -->
   <div class="filtro-container filtro-nombre">
-    <label class="container">
+    <label class="filtro-label">
       <input type="checkbox" [(ngModel)]="filtroNombreActivo" (change)="aplicarTodosLosFiltros()">
-      <div class="checkmark"></div>
+      <span class="checkmark"></span>
+      <button (click)="toggleFiltroNombre()" class="filtro-toggle">
+        Filtrar por nombre <i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
+      </button>
     </label>
-    <button (click)="toggleFiltroNombre()" class="filtro-toggle">
-      Filtrar por nombre <i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
-    </button>
     <div *ngIf="filtroNombreAbierto" class="filtro-content">
       <div class="input-group">
         <div class="input-container">
@@ -34,87 +34,86 @@
       </div>
     </div>
   </div>
-
+  
   <!-- Filtro por participantes -->
-  <div class="filtro-container filtro-participantes">
-    <label class="container">
-      <input type="checkbox" [(ngModel)]="filtroParticipantesActivo" (change)="aplicarTodosLosFiltros()">
-      <div class="checkmark"></div>
-    </label>
+<div class="filtro-container filtro-participantes">
+  <label class="filtro-label">
+    <input type="checkbox" [(ngModel)]="filtroParticipantesActivo" (change)="aplicarTodosLosFiltros()">
+    <span class="checkmark"></span>
     <button (click)="toggleFiltroParticipantes()" class="filtro-toggle">
       Filtrar por participantes <i [class]="filtroParticipantesAbierto ? 'arrow up' : 'arrow down'"></i>
     </button>
-    <div *ngIf="filtroParticipantesAbierto" class="filtro-content">
-      <div class="input-group">
-        <div class="input-container">
-          <label for="minParticipantes">Mínimo:</label>
-          <input type="number" id="minParticipantes" [(ngModel)]="minParticipantes">
-        </div>
-        <div class="input-container">
-          <label for="maxParticipantes">Máximo:</label>
-          <input type="number" id="maxParticipantes" [(ngModel)]="maxParticipantes">
-        </div>
+  </label>
+  <div *ngIf="filtroParticipantesAbierto" class="filtro-content">
+    <div class="input-group">
+      <div class="input-container">
+        <label for="minParticipantes">Mínimo:</label>
+        <input type="number" id="minParticipantes" [(ngModel)]="minParticipantes">
       </div>
-      <div class="button-group">
-        <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar Filtro</button>
-        <button (click)="limpiarFiltroParticipantes()" class="limpiar-filtro">Limpiar Filtro</button>
+      <div class="input-container">
+        <label for="maxParticipantes">Máximo:</label>
+        <input type="number" id="maxParticipantes" [(ngModel)]="maxParticipantes">
       </div>
     </div>
+    <div class="button-group">
+      <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar Filtro</button>
+      <button (click)="limpiarFiltroParticipantes()" class="limpiar-filtro">Limpiar Filtro</button>
+    </div>
   </div>
+</div>
 
-  <!-- Filtro por fecha -->
-  <div class="filtro-container filtro-participantes">
-    <label class="container">
-      <input type="checkbox" [(ngModel)]="filtroFechaActivo" (change)="aplicarTodosLosFiltros()">
-      <div class="checkmark"></div>
-    </label>
+<!-- Filtro por fecha -->
+<div class="filtro-container filtro-fecha">
+  <label class="filtro-label">
+    <input type="checkbox" [(ngModel)]="filtroFechaActivo" (change)="aplicarTodosLosFiltros()">
+    <span class="checkmark"></span>
     <button (click)="toggleFiltroFecha()" class="filtro-toggle">
       Filtrar por fecha <i [class]="filtroFechaAbierto ? 'arrow up' : 'arrow down'"></i>
     </button>
-    <div *ngIf="filtroFechaAbierto" class="filtro-content">
-      <div class="input-group">
-        <div class="input-container">
-          <label for="fechaMin">Fecha mínima:</label>
-          <input type="date" id="fechaMin" [(ngModel)]="fechaMinFiltro">
-        </div>
-        <div class="input-container">
-          <label for="fechaMax">Fecha máxima:</label>
-          <input type="date" id="fechaMax" [(ngModel)]="fechaMaxFiltro">
-        </div>
+  </label>
+  <div *ngIf="filtroFechaAbierto" class="filtro-content">
+    <div class="input-group">
+      <div class="input-container">
+        <label for="fechaMin">Fecha mínima:</label>
+        <input type="date" id="fechaMin" [(ngModel)]="fechaMinFiltro">
       </div>
-      <div class="button-group">
-        <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar</button>
-        <button (click)="limpiarFiltroFecha()" class="limpiar-filtro">Limpiar</button>
+      <div class="input-container">
+        <label for="fechaMax">Fecha máxima:</label>
+        <input type="date" id="fechaMax" [(ngModel)]="fechaMaxFiltro">
       </div>
-
+    </div>
+    <div class="button-group">
+      <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar</button>
+      <button (click)="limpiarFiltroFecha()" class="limpiar-filtro">Limpiar</button>
     </div>
   </div>
+</div>
 
-  <div class="filtro-container filtro-etiquetas">
-    <label class="container">
-      <input type="checkbox" [(ngModel)]="filtroEtiquetasActivo" (change)="aplicarTodosLosFiltros()">
-      <div class="checkmark"></div>
-    </label>
+<!-- Filtro por etiquetas -->
+<div class="filtro-container filtro-etiquetas">
+  <label class="filtro-label">
+    <input type="checkbox" [(ngModel)]="filtroEtiquetasActivo" (change)="aplicarTodosLosFiltros()">
+    <span class="checkmark"></span>
     <button (click)="toggleFiltroEtiquetas()" class="filtro-toggle">
       Filtrar por etiquetas <i [class]="filtroEtiquetasAbierto ? 'arrow up' : 'arrow down'"></i>
     </button>
-    <div *ngIf="filtroEtiquetasAbierto" class="filtro-content">
-      <input id="etiquetas" class="form-control" [(ngModel)]="etiquetaSeleccionada" [ngbTypeahead]="searchEtiqueta"
-        [resultFormatter]="resultFormatEtiqueta" [inputFormatter]="inputFormatEtiqueta"
-        (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada" placeholder="Buscar etiqueta" />
-      <div class="selected-tags">
-        <span *ngFor="let etiqueta of etiquetasSeleccionadas" class="tag">
-          {{ etiqueta.nombre }}
-          <button (click)="removerEtiqueta(etiqueta)" class="remove-tag">&times;</button>
-        </span>
-      </div>
-      <div class="button-group">
-        <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar Filtro</button>
-        <button (click)="limpiarFiltroEtiquetas()" class="limpiar-filtro">Limpiar Filtro</button>
-      </div>
+  </label>
+  <div *ngIf="filtroEtiquetasAbierto" class="filtro-content">
+    <input id="etiquetas" class="form-control" [(ngModel)]="etiquetaSeleccionada" [ngbTypeahead]="searchEtiqueta"
+      [resultFormatter]="resultFormatEtiqueta" [inputFormatter]="inputFormatEtiqueta"
+      (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada" placeholder="Buscar etiqueta" />
+    <div class="selected-tags">
+      <span *ngFor="let etiqueta of etiquetasSeleccionadas" class="tag">
+        {{ etiqueta.nombre }}
+        <button (click)="removerEtiqueta(etiqueta)" class="remove-tag">&times;</button>
+      </span>
+    </div>
+    <div class="button-group">
+      <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar Filtro</button>
+      <button (click)="limpiarFiltroEtiquetas()" class="limpiar-filtro">Limpiar Filtro</button>
     </div>
   </div>
-
+</div>
 
 </div>
 
@@ -141,10 +140,6 @@
           <p>Participantes: {{ evento.participantes }}/{{evento.cantidadMaximaParticipantes}}</p>
           <p>Ubicación: {{evento.ubicacion}}</p>
           <p>{{ evento.fechaHora | date: 'MMM d, y, h:mm a' }}</p> <!-- Formato de fecha -->
-          <p>Género:
-            {{ { masculino: 'Masculino', femenino: 'Femenino', sinGenero: 'Sin Género' }[evento.genero] || evento.genero
-            }}
-          </p>
           <div class="etiquetas-container">
             <h4 class="etiquetas-title">Etiquetas:</h4>
             <span *ngFor="let etiqueta of evento.etiquetas" class="etiqueta">
@@ -170,10 +165,7 @@
           <p>Participantes: {{ evento.participantes }}/{{evento.cantidadMaximaParticipantes}}</p>
           <p>Ubicación: {{evento.ubicacion}}</p>
           <p>{{ evento.fechaHora | date: 'MMM d, y, h:mm a' }}</p> <!-- Formato de fecha -->
-          <p>Género:
-            {{ { masculino: 'Masculino', femenino: 'Femenino', sinGenero: 'Sin Género' }[evento.genero] || evento.genero
-            }}
-          </p>
+
           <div class="etiquetas-container">
             <h4 class="etiquetas-title">Etiquetas:</h4>
             <span *ngFor="let etiqueta of evento.etiquetas" class="etiqueta">

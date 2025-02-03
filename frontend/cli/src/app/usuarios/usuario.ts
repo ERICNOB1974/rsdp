@@ -7,6 +7,7 @@ export interface Usuario {
     correoElectronico: string;
     contrasena: string;
     descripcion: string;
+    genero: string;
     latitud: number;
     longitud: number;
     fotoPerfil: string;

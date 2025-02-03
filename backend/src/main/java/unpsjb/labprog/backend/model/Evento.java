@@ -30,6 +30,7 @@ public class Evento {
 
     private String genero;
     private String descripcion;
+    private boolean eliminado;
     private int cantidadMaximaParticipantes;
     private boolean esPrivadoParaLaComunidad;
 

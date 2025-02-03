@@ -15,12 +15,19 @@ import unpsjb.labprog.backend.model.Usuario;
 @Repository
 public interface EventoRepository extends Neo4jRepository<Evento, Long> {
 
+        @Query("MATCH (evento:Evento) WHERE id(evento) = $idEvento RETURN evento.genero")
+        String generoDeUnEvento(Long idEvento);
+
+        @Query("MATCH (evento:Evento) WHERE id(evento) = $id AND evento.eliminado = false RETURN evento")
+        Optional<Evento> findById(Long id);
+
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(e:Evento)-[:ETIQUETADO_CON]->(et:Etiqueta) "
                         +
                         "MATCH (e2:Evento)-[:ETIQUETADO_CON]->(et) " +
                         "WHERE NOT (u)-[:PARTICIPA_EN]->(e2) " +
                         "AND NOT (u)<-[:CREADO_POR]-(e2) " +
                         "AND NOT e2.esPrivadoParaLaComunidad " +
+                        "AND (e2.eliminado = false OR e2.eliminado = true) " +
                         "WITH e2, COUNT(DISTINCT et) AS etiquetasComunes, " +
                         "point({latitude: e2.latitud, longitude: e2.longitud}) AS eventoUbicacion, " +
                         "point({latitude: u.latitud, longitude: u.longitud}) AS usuarioUbicacion " +
@@ -32,6 +39,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "WITH e2, score, COUNT(DISTINCT participante) AS cantidadParticipantes " +
                         "WHERE cantidadParticipantes < e2.cantidadMaximaParticipantes " +
                         "AND e2.fechaHora > datetime() + duration({hours: 1}) " +
+                        "AND e2.eliminado = false" +
                         "RETURN e2 " +
                         "ORDER BY score DESC, e2.fechaHora ASC " +
                         "LIMIT 3")
@@ -42,6 +50,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "WHERE NOT (u)-[:PARTICIPA_EN]->(ev) " +
                         "AND NOT (u)<-[:CREADO_POR]-(ev) " +
                         "AND NOT ev.esPrivadoParaLaComunidad " +
+                        "AND (ev.eliminado = false OR ev.eliminado = true) " +
                         "WITH ev, COUNT(DISTINCT e) AS etiquetasCompartidas, " +
                         "point({latitude: ev.latitud, longitude: ev.longitud}) AS eventoUbicacion, " +
                         "point({latitude: u.latitud, longitude: u.longitud}) AS usuarioUbicacion " +
@@ -53,6 +62,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "WITH ev, score, COUNT(DISTINCT participante) AS cantidadParticipantes " +
                         "WHERE cantidadParticipantes < ev.cantidadMaximaParticipantes " +
                         "AND ev.fechaHora > datetime() + duration({hours: 1}) " +
+                        "AND ev.eliminado = false " +
                         "RETURN ev " +
                         "ORDER BY score DESC, ev.fechaHora ASC " +
                         "LIMIT 3")
@@ -65,6 +75,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "WITH etiqueta, u, COLLECT(DISTINCT amigo) AS amigos " +
                         "MATCH (evento:Evento)-[:ETIQUETADO_CON]->(etiqueta) " +
                         "WHERE NOT evento.esPrivadoParaLaComunidad " +
+                        "AND (evento.eliminado = false OR evento.eliminado = true) " +
                         "WITH evento, COUNT(etiqueta) AS coincidencias, amigos, " +
                         "point({latitude: evento.latitud, longitude: evento.longitud}) AS eventoUbicacion, " +
                         "point({latitude: u.latitud, longitude: u.longitud}) AS usuarioUbicacion, u " + // Pasamos 'u'
@@ -81,6 +92,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "AND NOT (u)-[:PARTICIPA_EN]->(evento) " +
                         "AND NOT (u)<-[:CREADO_POR]-(evento) " +
                         "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
+                        "AND evento.eliminado = false " +
                         "RETURN evento " +
                         "ORDER BY score DESC, amigosParticipando DESC, evento.fechaHora ASC " +
                         "LIMIT 3")
@@ -91,6 +103,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "WHERE NOT (u)-[:PARTICIPA_EN]->(ev) " +
                         "AND NOT (u)<-[:CREADO_POR]-(ev) " +
                         "AND NOT ev.esPrivadoParaLaComunidad " +
+                        "AND (ev.eliminado = false OR ev.eliminado = true) " +
                         "WITH ev, COUNT(DISTINCT e) AS etiquetasCompartidas, " +
                         "point({latitude: ev.latitud, longitude: ev.longitud}) AS eventoUbicacion, " +
                         "point({latitude: u.latitud, longitude: u.longitud}) AS usuarioUbicacion " +
@@ -104,6 +117,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "WHERE cantidadParticipantes < ev.cantidadMaximaParticipantes " + // Verificamos que haya cupos
                                                                                           // disponibles
                         "AND ev.fechaHora > datetime() + duration({hours: 1}) " +
+                        "AND ev.eliminado = false " +
                         "RETURN ev " +
                         "ORDER BY score DESC, ev.fechaHora ASC " +
                         "LIMIT 3")
@@ -115,16 +129,18 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
         int participantesDeEvento(Long idEvento);
 
         @Query("MATCH (e:Evento)-[:EVENTO_INTERNO]->(c:Comunidad) " +
-                        "WHERE id(c) = $comunidadId " +
+                        "WHERE id(c) = $comunidadId AND NOT e.eliminado " +
                         "RETURN e")
         List<Evento> eventosDeUnaComunidad(Long comunidadId);
 
-        @Query("MATCH (e:Evento) " + "WHERE date(e.fechaHora) = date(datetime()) + duration({days: 1}) "
-                        + " RETURN e ORDER BY e.fechaHora ASC")
+        @Query("MATCH (e:Evento) " +
+                        "WHERE date(e.fechaHora) = date(datetime()) + duration({days: 1}) " +
+                        "AND NOT e.eliminado " +
+                        "RETURN e ORDER BY e.fechaHora ASC")
         List<Evento> eventosProximos();
 
         @Query("MATCH (e:Evento)-[:CREADO_POR]->(u:Usuario) " +
-                        "WHERE id(u) = $idUsuario " +
+                        "WHERE id(u) = $idUsuario AND NOT e.eliminado " +
                         "RETURN e " +
                         "ORDER BY abs(duration.between(date(), e.fechaHora).days) ASC " +
                         "SKIP $offset LIMIT $limit")
@@ -153,9 +169,9 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
         boolean esOrganizadoPorComunidad(Evento ev);
 
         @Query("MATCH (e:Evento) " +
-                        " WHERE (u)-[:MIEMBRO]->(c:Comunidad)<-[ORGANIZADO_POR]-(e)" +
-                        " WHERE date(e.fechaHora) = date(datetime()) - duration({days: 1}) " +
-                        " RETURN e ORDER BY e.fechaHora ASC")
+                        "WHERE (u)-[:MIEMBRO]->(c:Comunidad)<-[ORGANIZADO_POR]-(e) " +
+                        "WHERE date(e.fechaHora) = date(datetime()) - duration({days: 1}) AND NOT e.eliminado " +
+                        "RETURN e ORDER BY e.fechaHora ASC")
         List<Evento> eventosNuevosComunidad(Usuario u);
 
         @Query("MATCH (e:Evento), (u:Usuario) " +
@@ -168,7 +184,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "MERGE (e)-[:EVENTO_INTERNO]->(c)")
         void establecerEventoInterno(Long idEvento, Long comunidadId);
 
-        @Query("MATCH (e:Evento) WHERE id(e) = $ide RETURN e")
+        @Query("MATCH (e:Evento) WHERE id(e) = $ide AND NOT e.eliminado RETURN e")
         Optional<Evento> encontrarEventoPorId(Long ide);
 
         @Query("MATCH (e:Evento), (t:Etiqueta) " +
@@ -181,85 +197,155 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         " MATCH (u)-[r:PARTICIPA_EN]->(e) DELETE r")
         void desinscribirse(Long idEvento, Long idUsuario);
 
-        @Query("MATCH (e:Evento)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta) " +
-                        "WITH e, collect(etiqueta.nombre) AS etiquetasEvento " +
+        @Query("MATCH (u:Usuario) WHERE id(u) = $usuarioId " +
+                        "MATCH (e:Evento)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta) " +
+                        "WITH u, e, collect(etiqueta.nombre) AS etiquetasEvento " +
                         "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasEvento) " +
-                        "AND NOT EXISTS { " +
-                        "  MATCH (u:Usuario)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
-                        "  WHERE id(u) = $usuarioId " +
-                        "} " +
+                        "AND NOT EXISTS { MATCH (u)-[:PARTICIPA_EN|CREADO_POR]-(e) } " +
+                        "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
-        List<Evento> eventosEtiquetasDisponibles(Long usuarioId, @Param("etiquetas") List<String> etiquetas);
+        List<Evento> eventosEtiquetasDisponibles(@Param("usuarioId") Long usuarioId,
+                        @Param("etiquetas") List<String> etiquetas);
 
         @Query("MATCH (e:Evento)<-[:PARTICIPA_EN]-(u:Usuario), (e)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta) " +
                         "WHERE id(u) = $usuarioId " +
                         "WITH e, collect(etiqueta.nombre) AS etiquetasEvento " +
                         "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasEvento) " +
+                        "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
         List<Evento> eventosEtiquetasParticipante(Long usuarioId, @Param("etiquetas") List<String> etiquetas);
 
-        @Query("MATCH (e:Evento)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta) " +
-                        "WITH e, collect(etiqueta.nombre) AS etiquetasEvento " +
+        @Query("MATCH (u:Usuario) WHERE id(u) = $usuarioId " +
+                        "MATCH (e:Evento)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta) " +
+                        "WITH e, collect(etiqueta.nombre) AS etiquetasEvento, u " +
                         "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasEvento) " +
+                        "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
-        List<Evento> eventosEtiquetas(@Param("etiquetas") List<String> etiquetas);
+        List<Evento> eventosEtiquetas(@Param("etiquetas") List<String> etiquetas, @Param("usuarioId") Long usuarioId);
 
-        @Query("MATCH (e:Evento) " +
+        @Query("MATCH (u:Usuario) WHERE id(u) = $usuarioId " +
+                        "MATCH (e:Evento) " +
                         "WHERE toUpper(e.nombre) CONTAINS toUpper($nombre) " +
                         "AND NOT EXISTS { " +
-                        "  MATCH (u:Usuario)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
-                        "  WHERE id(u) = $usuarioId " +
-                        "AND NOT (u)-[:EXPULSADO_EVENTO]-(e) " +
+                        "  MATCH (u)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
+                        "  WHERE NOT (u)-[:EXPULSADO_EVENTO]-(e) " +
                         "} " +
+                        "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
         List<Evento> eventosNombreDisponibles(String nombre, Long usuarioId);
 
         @Query("MATCH (e:Evento)<-[:PARTICIPA_EN]-(u:Usuario) " +
                         "WHERE id(u) = $usuarioId AND toUpper(e.nombre) CONTAINS toUpper($nombre) " +
+                        "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
         List<Evento> eventosNombreParticipante(String nombre, Long usuarioId);
 
-        @Query("MATCH (e:Evento) WHERE toUpper(e.nombre) CONTAINS toUpper($nombre) RETURN e")
-        List<Evento> eventosNombre(String nombre);
+        @Query("MATCH (u:Usuario) WHERE id(u) = $idUsuario " +
+                        "MATCH (e:Evento) " +
+                        "WHERE toUpper(e.nombre) CONTAINS toUpper($nombre) " +
+                        "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
+                        "RETURN e")
+        List<Evento> eventosNombre(@Param("nombre") String nombre, @Param("idUsuario") Long idUsuario);
 
-        @Query("MATCH (e:Evento) " +
+        @Query("MATCH (u:Usuario) WHERE id(u) = $usuarioId " +
+                        "MATCH (e:Evento) " +
                         "WHERE e.fechaHora >= $fechaInicio AND e.fechaHora <= $fechaFin " +
                         "AND NOT EXISTS { " +
-                        "  MATCH (u:Usuario)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
-                        "  WHERE id(u) = $usuarioId " +
+                        "  MATCH (u)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
                         "} " +
+                        "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
         List<Evento> eventosFechaDisponible(Long usuarioId, @Param("fechaInicio") ZonedDateTime fechaInicio,
                         @Param("fechaFin") ZonedDateTime fechaFin);
 
         @Query("MATCH (e:Evento)<-[:PARTICIPA_EN]-(u:Usuario) " +
                         "WHERE id(u) = $usuarioId AND e.fechaHora >= $fechaInicio AND e.fechaHora <= $fechaFin " +
+                        "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
         List<Evento> eventosFechaParticipante(Long usuarioId, @Param("fechaInicio") ZonedDateTime fechaInicio,
                         @Param("fechaFin") ZonedDateTime fechaFin);
 
-        @Query("MATCH (e:Evento) " +
+        @Query("MATCH (u:Usuario) WHERE id(u) = $usuarioId " +
+                        "MATCH (e:Evento) " +
                         "WHERE e.fechaHora >= $fechaInicio " +
                         "AND e.fechaHora <= $fechaFin " +
+                        "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
         List<Evento> eventosFecha(@Param("fechaInicio") ZonedDateTime fechaInicio,
-                        @Param("fechaFin") ZonedDateTime fechaFin);
+                        @Param("fechaFin") ZonedDateTime fechaFin, @Param("usuarioId") Long usuarioId);
 
-        @Query("MATCH (e:Evento) WHERE e.cantidadMaximaParticipantes <= $max AND e.cantidadMaximaParticipantes >= $min RETURN e")
-        List<Evento> eventosCantidadParticipantes(int min, int max);
+        @Query("MATCH (u:Usuario) WHERE id(u) = $usuarioId " +
+                        "MATCH (e:Evento) " +
+                        "WHERE e.cantidadMaximaParticipantes <= $max " +
+                        "AND e.cantidadMaximaParticipantes >= $min " +
+                        "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
+                        "RETURN e")
+        List<Evento> eventosCantidadParticipantes(int min, int max, Long usuarioId);
 
-        @Query("MATCH (e:Evento) " +
-                        "WHERE e.cantidadMaximaParticipantes <= $max AND e.cantidadMaximaParticipantes >= $min " +
+        @Query("MATCH (u:Usuario) WHERE id(u) = $usuarioId " +
+                        "MATCH (e:Evento) " +
+                        "WHERE e.cantidadMaximaParticipantes <= $max " +
+                        "AND e.cantidadMaximaParticipantes >= $min " +
                         "AND NOT EXISTS { " +
-                        "  MATCH (u:Usuario)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
-                        "  WHERE id(u) = $usuarioId " +
+                        "  MATCH (u2:Usuario)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
+                        "  WHERE id(u2) = $usuarioId " +
                         "} " +
+                        "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
         List<Evento> eventosCantidadParticipantesDisponible(Long usuarioId, int min, int max);
 
         @Query("MATCH (e:Evento)<-[:PARTICIPA_EN]-(u:Usuario) " +
                         "WHERE id(u) = $usuarioId " +
                         "AND e.cantidadMaximaParticipantes <= $max AND e.cantidadMaximaParticipantes >= $min " +
+                        "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "RETURN e")
         List<Evento> eventosCantidadParticipantesParticipante(Long usuarioId, int min, int max);
 
@@ -268,6 +354,11 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "AND NOT (u)-[:EXPULSADO_EVENTO]-(e) " +
                         "AND date(e.fechaHora) > date(datetime()) " +
                         "AND NOT e.esPrivadoParaLaComunidad " +
+                        "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (CASE u.genero " +
+                        "     WHEN 'masculino' THEN e.genero IN ['masculino', 'sinGenero'] " +
+                        "     WHEN 'femenino' THEN e.genero IN ['femenino', 'sinGenero'] " +
+                        "     ELSE e.genero IN ['otros', 'sinGenero'] END) " +
                         "WITH e, COUNT { (e)<-[:PARTICIPA_EN]-() } AS numParticipantes " +
                         "WHERE numParticipantes < e.cantidadMaximaParticipantes " +
                         "RETURN e " +
@@ -280,6 +371,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
         @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento) " +
                         "WHERE id(u) = $idUsuario " +
                         "AND (toLower(e.nombre) CONTAINS toLower($nombreEvento) OR $nombreEvento = '') " +
+                        "AND COALESCE(e.eliminado, false) = false " +
                         "RETURN e " +
                         "ORDER BY abs(duration.between(date(), e.fechaHora).days) ASC " +
                         "SKIP $skip " +
@@ -310,6 +402,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         + "WITH evento, score, etiquetasComunes, COUNT(DISTINCT participante) AS cantidadParticipantes "
                         + "WHERE cantidadParticipantes < evento.cantidadMaximaParticipantes "
                         + "AND evento.fechaHora > datetime() + duration({hours: 1}) "
+                        + "AND COALESCE(evento.eliminado, false) = false "
                         + "RETURN evento, score, 'Es similar a los eventos en los que te inscribiste' AS motivo "
                         + "ORDER BY score DESC, evento.fechaHora ASC")
         List<ScoreEvento> sugerenciasDeEventosBasadosEnEventos2(String nombreUsuario, String generoUsuario);
@@ -322,9 +415,12 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "MATCH (evento:Evento)-[:ETIQUETADO_CON]->(etiqueta) " +
                         "WHERE NOT evento.esPrivadoParaLaComunidad " +
                         "AND (" +
-                        "    ($generoUsuario = 'masculino' AND (evento.genero = 'masculino' OR evento.genero = 'sinGenero')) OR " +
-                        "    ($generoUsuario = 'femenino' AND (evento.genero = 'femenino' OR evento.genero = 'sinGenero')) OR " +
-                        "    ($generoUsuario = 'otros' AND (evento.genero = 'masculino' OR evento.genero = 'femenino' OR evento.genero = 'sinGenero'))" +
+                        "    ($generoUsuario = 'masculino' AND (evento.genero = 'masculino' OR evento.genero = 'sinGenero')) OR "
+                        +
+                        "    ($generoUsuario = 'femenino' AND (evento.genero = 'femenino' OR evento.genero = 'sinGenero')) OR "
+                        +
+                        "    ($generoUsuario = 'otros' AND (evento.genero = 'masculino' OR evento.genero = 'femenino' OR evento.genero = 'sinGenero'))"
+                        +
                         ") " +
                         "WITH evento, COUNT(etiqueta) AS coincidencias, amigos, " +
                         "point({latitude: evento.latitud, longitude: evento.longitud}) AS eventoUbicacion, " +
@@ -343,6 +439,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "AND NOT (u)<-[:CREADO_POR]-(evento) " +
                         "AND NOT (u)-[:EXPULSADO_EVENTO]-(evento) " +
                         "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
+                        "AND COALESCE(evento.eliminado, false) = false " +
                         "RETURN evento, score, 'Es similar con eventos en los que participan tus amigos' AS motivo " +
                         "ORDER BY score DESC, amigosParticipando DESC, evento.fechaHora ASC")
         List<ScoreEvento> sugerenciasDeEventosBasadosEnAmigos2(String nombreUsuario, String generoUsuario);
@@ -354,9 +451,12 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "AND NOT (u)-[:EXPULSADO_EVENTO]-(evento) " +
                         "AND NOT evento.esPrivadoParaLaComunidad " +
                         "AND (" +
-                        "    ($generoUsuario = 'masculino' AND (evento.genero = 'masculino' OR evento.genero = 'sinGenero')) OR " +
-                        "    ($generoUsuario = 'femenino' AND (evento.genero = 'femenino' OR evento.genero = 'sinGenero')) OR " +
-                        "    ($generoUsuario = 'otros' AND (evento.genero = 'masculino' OR evento.genero = 'femenino' OR evento.genero = 'sinGenero'))" +
+                        "    ($generoUsuario = 'masculino' AND (evento.genero = 'masculino' OR evento.genero = 'sinGenero')) OR "
+                        +
+                        "    ($generoUsuario = 'femenino' AND (evento.genero = 'femenino' OR evento.genero = 'sinGenero')) OR "
+                        +
+                        "    ($generoUsuario = 'otros' AND (evento.genero = 'masculino' OR evento.genero = 'femenino' OR evento.genero = 'sinGenero'))"
+                        +
                         ") " +
                         "WITH evento, COUNT(DISTINCT e) AS etiquetasCompartidas, " +
                         "point({latitude: evento.latitud, longitude: evento.longitud}) AS eventoUbicacion, " +
@@ -373,6 +473,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                                                                                               // cupos
                                                                                               // disponibles
                         "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
+                        "AND COALESCE(evento.eliminado, false) = false " +
                         "RETURN evento, score, 'Es similar a las comunidades a las que perteneces' AS motivo  "
                         +
                         "ORDER BY score DESC, evento.fechaHora ASC")
@@ -385,9 +486,12 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "AND NOT (u)-[:EXPULSADO_EVENTO]-(evento) " +
                         "AND NOT evento.esPrivadoParaLaComunidad " +
                         "AND (" +
-                        "    ($generoUsuario = 'masculino' AND (evento.genero = 'masculino' OR evento.genero = 'sinGenero')) OR " +
-                        "    ($generoUsuario = 'femenino' AND (evento.genero = 'femenino' OR evento.genero = 'sinGenero')) OR " +
-                        "    ($generoUsuario = 'otros' AND (evento.genero = 'masculino' OR evento.genero = 'femenino' OR evento.genero = 'sinGenero'))" +
+                        "    ($generoUsuario = 'masculino' AND (evento.genero = 'masculino' OR evento.genero = 'sinGenero')) OR "
+                        +
+                        "    ($generoUsuario = 'femenino' AND (evento.genero = 'femenino' OR evento.genero = 'sinGenero')) OR "
+                        +
+                        "    ($generoUsuario = 'otros' AND (evento.genero = 'masculino' OR evento.genero = 'femenino' OR evento.genero = 'sinGenero'))"
+                        +
                         ") " +
                         "WITH evento, COUNT(DISTINCT e) AS etiquetasCompartidas, " +
                         "point({latitude: evento.latitud, longitude: evento.longitud}) AS eventoUbicacion, " +
@@ -401,6 +505,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         +
                         "WHERE cantidadParticipantes < evento.cantidadMaximaParticipantes " +
                         "AND evento.fechaHora > datetime() + duration({hours: 1}) " +
+                        "AND COALESCE(evento.eliminado, false) = false " +
                         "RETURN evento, score, 'Es similar a las rutinas que realizas' AS motivo "
                         +
                         "ORDER BY score DESC, evento.fechaHora ASC ")
@@ -408,6 +513,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN|CREADO_POR]-(e:Evento) " +
                         "WHERE e.fechaHora > datetime() " +
+                        "AND COALESCE(evento.eliminado, false) = false " +
                         "RETURN DISTINCT e")
         List<Evento> eventosFuturosPertenecientesAUnUsuario(String nombreUsuario);
 
@@ -418,6 +524,12 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         CREATE (u)-[:EXPULSADO_EVENTO {motivoExpulsion: $motivoExpulsion}]->(e)
                                    """)
         void eliminarUsuario(Long idEvento, Long idUsuario, String motivoExpulsion);
+
+        @Query("""
+                        MATCH (e:Evento) WHERE id(e) = $idEvento
+                        SET e.eliminado = true
+                        """)
+        void eliminar(Long idEvento);
 
         @Query("""
                         MATCH (u:Usuario) WHERE id(u)=$idUsuario

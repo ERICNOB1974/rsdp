@@ -24,6 +24,7 @@ public class Comunidad {
     private LocalDate fechaDeCreacion;
     private String genero;
     private String descripcion;
+    private boolean eliminada;
     private int cantidadMaximaMiembros;
     private boolean esPrivada;
     private boolean esModerada;

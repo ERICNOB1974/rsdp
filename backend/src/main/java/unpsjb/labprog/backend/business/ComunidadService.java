@@ -12,10 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.threeten.bp.ZonedDateTime;
 
 import unpsjb.labprog.backend.model.Comunidad;
-import unpsjb.labprog.backend.model.Publicacion;
 import unpsjb.labprog.backend.model.Usuario;
 import unpsjb.labprog.backend.model.DTO.ExpulsionDTO;
 
@@ -106,7 +104,7 @@ public class ComunidadService {
 
     @Transactional
     public void deleteById(Long id) {
-        comunidadRepository.deleteById(id);
+        comunidadRepository.eliminar(id);
     }
 
     public Comunidad findById(Long id) {
@@ -275,7 +273,7 @@ public class ComunidadService {
         } else if ("miembro".equalsIgnoreCase(tipo)) {
             return comunidadRepository.comunidadesEtiquetasMiembro(usuarioId, etiquetas);
         } else {
-            return comunidadRepository.comunidadesEtiquetas(etiquetas);
+            return comunidadRepository.comunidadesEtiquetas(usuarioId, etiquetas);
         }
     }
 
@@ -285,7 +283,7 @@ public class ComunidadService {
         } else if ("miembro".equalsIgnoreCase(tipo)) {
             return comunidadRepository.comunidadesNombreMiembro(nombre, usuarioId);
         } else {
-            return comunidadRepository.comunidadesNombre(nombre);
+            return comunidadRepository.comunidadesNombre(nombre, usuarioId);
         }
     }
 
@@ -295,7 +293,7 @@ public class ComunidadService {
         } else if ("miembro".equalsIgnoreCase(tipo)) {
             return comunidadRepository.comunidadesCantidadParticipantesMiembro(usuarioId, min, max);
         } else {
-            return comunidadRepository.comunidadesCantidadParticipantes(min, max);
+            return comunidadRepository.comunidadesCantidadParticipantes(usuarioId, min, max);
         }
     }
 
@@ -450,7 +448,6 @@ public class ComunidadService {
                 }
             }
         }
-
     }
 
     public void eliminarBan(Long idComunidad, Long idUsuario) {
