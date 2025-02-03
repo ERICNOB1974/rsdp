@@ -154,6 +154,11 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
             + "RETURN COUNT(r) > 0")
     boolean esAdministrador(Long idMiembro, Long idComunidad);
 
+    @Query("MATCH (u:Usuario)-[r:MODERADA_POR]-(c:Comunidad) "
+            + "WHERE id(u) = $idMiembro AND id(c) = $idComunidad "
+            + "RETURN COUNT(r) > 0")
+    boolean esModerador(Long idMiembro, Long idComunidad);
+
     @Query("MATCH (u:Usuario), (c:Comunidad) WHERE id(u) = $idUsuario AND id(c) = $idComunidad "
             + "CREATE (u)-[:SOLICITUD_DE_INGRESO {estado: $estado, fechaEnvio: $fechaEnvio}]->(c)")
     void enviarSolicitudIngreso(Long idUsuario, Long idComunidad, String estado, LocalDateTime fechaEnvio);
@@ -260,6 +265,12 @@ List<Usuario> obtenerExpulsadosActivos(@Param("idComunidad") Long idComunidad,
             + "WHERE id(c) = $idComunidad "
             + "RETURN u")
     List<Usuario> administradores(Long idComunidad);
+
+        @Query("MATCH (u:Usuario)<-[:MODERADA_POR]-(c:Comunidad) "
+            + "WHERE id(c) = $idComunidad "
+            + "RETURN u")
+    List<Usuario> moderadores(Long idComunidad);
+
 
     @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(amigo)-[:ES_AMIGO_DE]->(usuario) "
             + "WHERE usuario <> u AND NOT (u)-[:ES_AMIGO_DE]-(usuario) "
@@ -447,7 +458,7 @@ Usuario findUsuarioByComentarioId(@Param("id") Long id);
 @Query("""
     MATCH (c:Comunidad) 
     WHERE id(c) = $idComunidad
-    MATCH (c)-[rel:CREADA_POR|ADMINISTRADA_POR|MIEMBRO]-(miembro:Usuario) 
+    MATCH (c)-[rel:CREADA_POR|ADMINISTRADA_POR|MODERADA_POR|MIEMBRO]-(miembro:Usuario) 
     WHERE toUpper(miembro.nombreUsuario) CONTAINS toUpper($term)
 
     // Verificar si el usuario solicitante es creador o administrador
@@ -467,7 +478,7 @@ Usuario findUsuarioByComentarioId(@Param("id") Long id);
         esAdminOCreador
     OR (
         // Si el solicitante es un miembro normal, aplicar reglas de privacidad
-        (rel:CREADA_POR OR rel:ADMINISTRADA_POR) // Siempre mostrar creadores y administradores
+        (rel:CREADA_POR OR rel:ADMINISTRADA_POR OR rel:MODERADA_POR) // Siempre mostrar creadores y administradores
         OR (rel:MIEMBRO AND privacidad IN ['Pública', 'Solo amigos'] AND esAmigo) // Mostrar amigos con privacidad adecuada
         OR (rel:MIEMBRO AND privacidad = 'Pública' AND NOT esAmigo) // Mostrar no amigos con privacidad pública
     )
@@ -476,8 +487,9 @@ Usuario findUsuarioByComentarioId(@Param("id") Long id);
            CASE 
                WHEN rel:CREADA_POR THEN 1
                WHEN rel:ADMINISTRADA_POR THEN 2
-               WHEN rel:MIEMBRO THEN 3
-               ELSE 4
+               WHEN rel:MODERADA_POR THEN 3
+               WHEN rel:MIEMBRO THEN 4
+               ELSE 5
            END AS prioridad,
            esAmigo, 
            privacidad
@@ -507,7 +519,7 @@ List<Usuario> buscarMiembrosComunidad(
 @Query("""
     MATCH (c:Comunidad)
     WHERE id(c) = $idComunidad
-    MATCH (c)-[rel:CREADA_POR|ADMINISTRADA_POR|MIEMBRO]-(miembro:Usuario)
+    MATCH (c)-[rel:CREADA_POR|ADMINISTRADA_POR|MODERADA_POR|MIEMBRO]-(miembro:Usuario)
 
     // Verificar si el usuario solicitante es creador o administrador
     OPTIONAL MATCH (solicitante:Usuario {nombreUsuario: $nombreUsuario})
@@ -526,7 +538,7 @@ List<Usuario> buscarMiembrosComunidad(
         esAdminOCreador
         OR (
             // Si el solicitante es un miembro normal, aplicar reglas de privacidad
-            (rel:CREADA_POR OR rel:ADMINISTRADA_POR) // Siempre mostrar creadores y administradores
+            (rel:CREADA_POR OR rel:ADMINISTRADA_POR OR rel:MODERADA_POR) // Siempre mostrar creadores y administradores
             OR (rel:MIEMBRO AND privacidad IN ['Pública', 'Solo amigos'] AND esAmigo) // Mostrar amigos con privacidad adecuada
             OR (rel:MIEMBRO AND privacidad = 'Pública' AND NOT esAmigo) // Mostrar no amigos con privacidad pública
         )

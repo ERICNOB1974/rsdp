@@ -1,3 +1,41 @@
+
+.etiquetas-container {
+  margin-top: 10px;
+}
+
+.etiqueta {
+  display: inline-block;
+  padding: 5px 12px;
+  margin: 5px 5px 0 0;
+  background-color: #a1a1a1;
+  color: white;
+  border-radius: 15px;
+  font-size: 14px;
+  text-transform: capitalize;
+  transition: background-color 0.3s ease;
+}
+.etiquetas-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+
+.etiqueta:hover {
+  background-color: #0056b3;
+}
+
+.comunidad-card .fa {
+  margin-left: 5px;
+}
+.text-danger {
+  color: rgb(0, 0, 0);
+}
+
+.text-success {
+    color: rgb(2, 2, 2);
+  }
+  
 .carousel {
   position: relative;
   width: 100%;

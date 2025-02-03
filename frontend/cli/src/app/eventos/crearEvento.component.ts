@@ -1,11 +1,15 @@
-import { CommonModule, Location, NgIf } from '@angular/common'; // Asegúrate de que está importado desde aquí
-import { ChangeDetectorRef, Component } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, FormsModule, NgForm, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { CommonModule, NgIf } from '@angular/common'; // Asegúrate de que está importado desde aquí
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, NgModel, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatOptionModule } from '@angular/material/core';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import axios from 'axios'; // Asegúrate de tener axios instalado
@@ -18,11 +22,7 @@ import { EtiquetaPopularidadDTO } from '../etiqueta/etiquetaPopularidadDTO';
 import { UbicacionService } from '../ubicacion.service'; // Importa tu servicio de ubicación
 import { Evento } from './evento';
 import { EventoService } from './evento.service';
-import { cantidadParticipantesValidator, dateValidator, minimoUnaEtiqueta } from './validacionesEvento';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { MatOptionModule } from '@angular/material/core';
-import { MatSelectModule } from '@angular/material/select';
+import { cantidadParticipantesValidator, dateValidator } from './validacionesEvento';
 
 @Component({
   selector: 'app-crear-evento',
@@ -64,6 +64,9 @@ export class CrearEventoComponent {
 
   comunidadId: string | null = null;
   formEvento: FormGroup;
+  @ViewChild('etiquetasInput') etiquetasInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('etiquetasModel') etiquetasModel!: NgModel;
+
 
 
 
@@ -72,9 +75,7 @@ export class CrearEventoComponent {
     private formBuilder: FormBuilder,
     private etiquetaService: EtiquetaService,
     private router: Router,
-    private location: Location,
     private ubicacionService: UbicacionService,
-    private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar
   ) {
@@ -294,11 +295,10 @@ export class CrearEventoComponent {
       if (!this.etiquetasSeleccionadas.some(e => e.nombre === etiqueta.nombre)) {
         this.etiquetasSeleccionadas.push(etiqueta);
       }
-
-      this.etiquetaSeleccionada = null;
-    
-      // Limpiar el campo
-      this.cdr.detectChanges(); // Forzar la actualización de la vista
+      setTimeout(() => {
+        this.etiquetasInput.nativeElement.value = '';
+        this.etiquetasModel.control.setValue('');
+      });
     }
     
 

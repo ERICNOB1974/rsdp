@@ -121,6 +121,7 @@ public class ComunidadService {
     public String miembroSale(Long idComunidad, Long idUsuario) {
         if (!usuarioRepository.esMiembro(idUsuario, idComunidad)
                 && !usuarioRepository.esAdministrador(idUsuario, idComunidad)
+                && !usuarioRepository.esModerador(idUsuario, idComunidad)
                 && !usuarioRepository.esCreador(idUsuario, idComunidad)) {
             return "El usuario no pertenece a la comunidad.";
         }
@@ -316,6 +317,9 @@ public class ComunidadService {
                 return true;
             }
             if (usuarioRepository.esCreador(idUsuario, idComunidad)) {
+                return true;
+            }
+            if (usuarioRepository.esModerador(idUsuario, idComunidad)) {
                 return true;
             }
 

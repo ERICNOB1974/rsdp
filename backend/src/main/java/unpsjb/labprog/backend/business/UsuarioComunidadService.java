@@ -67,7 +67,7 @@ public class UsuarioComunidadService {
             throw new Exception("El usuario no existe.");
         }
         Comunidad comunidad = comunidadOpt.get();
-        // Verificar si ya existe una solicitud de ingreso pendiente o enviada
+            // Verificar si ya existe una solicitud de ingreso pendiente o enviada
         if (!usuarioRepository.solicitudIngresoExiste(idUsuario, idComunidad)) {
             throw new Exception("No existe una solicitud de ingreso para la comunidad: "+ comunidad.getNombre());
         }
@@ -93,7 +93,7 @@ public class UsuarioComunidadService {
         Usuario usuario = miembroOpt.get();
 
         // Verificar si el usuario es miembro de la comunidad
-        if (!usuarioRepository.esMiembro(idMiembro, idComunidad)) {
+        if (!usuarioRepository.esMiembro(idMiembro, idComunidad) && !usuarioRepository.esModerador(idMiembro, idComunidad)) {
             throw new Exception("El usuario al que se le quiere asignar el rol no es miembro de la comunidad.");
         }
 
@@ -109,6 +109,10 @@ public class UsuarioComunidadService {
         LocalDateTime fechaIngreso = comunidadRepository.obtenerFechaIngreso(idMiembro, idComunidad);
         if (fechaIngreso == null) {
             throw new Exception("No se pudo obtener la fecha de ingreso.");
+        }
+
+        if(usuarioRepository.esModerador(idMiembro,idComunidad)){
+            quitarRolModerador(idCreador, idMiembro, idComunidad);
         }
         comunidadRepository.otorgarRolAdministrador(idMiembro, idComunidad, fechaIngreso, LocalDateTime.now());
         return "Rol administrador otorgado a: " + usuario.getNombreUsuario() + " correctamente";
@@ -295,8 +299,91 @@ public class UsuarioComunidadService {
         if (usuarioRepository.solicitudIngresoExiste(idUsuario, idComunidad)) {
             return "Pendiente";
         }
+        if (usuarioRepository.esModerador(idUsuario, idComunidad)) {
+            return "Moderador";
+        }
         return "Vacio";
     }
 
-   
+       public String otorgarRolModerador(Long idCreador, Long idMiembro, Long idComunidad) throws Exception {
+        Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
+        if (comunidadOpt.isEmpty()) {
+            throw new Exception("La comunidad no existe.");
+        }
+        Optional<Usuario> creadorOpt = usuarioRepository.findById(idCreador);
+        if (creadorOpt.isEmpty()) {
+            throw new Exception("El usuario dueño de la comunidad no existe.");
+        }
+
+        Optional<Usuario> miembroOpt = usuarioRepository.findById(idMiembro);
+        if (miembroOpt.isEmpty()) {
+            throw new Exception("El usuario al que se le quiere asignar el rol administrador no existe.");
+        }
+        Usuario usuario = miembroOpt.get();
+
+        // Verificar si el usuario es miembro de la comunidad
+        if (!usuarioRepository.esMiembro(idMiembro, idComunidad) && !usuarioRepository.esAdministrador(idMiembro, idComunidad)) {
+            throw new Exception("El usuario al que se le quiere asignar el rol no es miembro de la comunidad.");
+        }
+
+        // Verificar si el usuario no posee ya el rol administrador
+        if (usuarioRepository.esModerador(idMiembro, idComunidad)) {
+            throw new Exception("El usuario al que se le quiere asignar el rol ya es moderador.");
+        }
+
+        // Verificar si el usuario que quiere otorgar rol es el dueño de la comunidad
+        if (!usuarioRepository.esCreador(idCreador, idComunidad)) {
+            throw new Exception("No posee los permisos para otorgar el rol");
+        }
+        LocalDateTime fechaIngreso = comunidadRepository.obtenerFechaIngreso(idMiembro, idComunidad);
+        if (fechaIngreso == null) {
+            throw new Exception("No se pudo obtener la fecha de ingreso.");
+        }
+        comunidadRepository.otorgarRolModerador(idMiembro, idComunidad, fechaIngreso, LocalDateTime.now());
+        return "Rol moderador otorgado a: " + usuario.getNombreUsuario() + " correctamente";
+    }
+
+    public String quitarRolModerador(Long idCreador, Long idAdministrador, Long idComunidad) throws Exception {
+        // Verificar la existencia de la comunidad
+        Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
+        if (comunidadOpt.isEmpty()) {
+            throw new Exception("La comunidad no existe.");
+        }
+
+        // Verificar la existencia del creador
+        Optional<Usuario> creadorOpt = usuarioRepository.findById(idCreador);
+        if (creadorOpt.isEmpty()) {
+            throw new Exception("El usuario creador no existe.");
+        }
+
+        // Verificar la existencia del administrador
+        Optional<Usuario> miembroOpt = usuarioRepository.findById(idAdministrador);
+        if (miembroOpt.isEmpty()) {
+            throw new Exception("El usuario administrador no existe.");
+        }
+        Usuario usuario = miembroOpt.get();
+
+        // Verificar permisos
+        if (!usuarioRepository.esCreador(idCreador, idComunidad)) {
+            throw new Exception("No posee los permisos para otorgar el rol.");
+        }
+
+        // Verificar si el usuario es realmente un administrador
+        if (!usuarioRepository.esModerador(idAdministrador, idComunidad)) {
+            throw new Exception("El usuario al que se le quiere quitar el rol no es moderador.");
+        }
+
+        // Obtener la fecha de ingreso
+        LocalDateTime fechaIngreso = comunidadRepository.obtenerFechaIngreso(idAdministrador, idComunidad);
+        if (fechaIngreso == null) {
+            throw new Exception("No se pudo obtener la fecha de ingreso del moderador.");
+        }
+
+        // Realizar la operación en la base de datos
+
+        comunidadRepository.quitarRolModerador(idAdministrador, idComunidad, fechaIngreso,LocalDateTime.now());
+
+        return "Rol moderador quitado a: " + usuario.getNombreUsuario() + " correctamente.";
+    }
+
 }

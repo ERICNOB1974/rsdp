@@ -27,6 +27,13 @@
           <span><strong>{{ comunidad.cantidadMaximaMiembros }}</strong> Máx. Miembros</span>
         </p>
         <p class="fecha-hora">{{ comunidad.fechaDeCreacion | date: 'dd/MM/yyyy' }}</p>
+        <div class="etiquetas-container">
+          <h4 class="etiquetas-title">Etiquetas:</h4>
+          <span *ngFor="let etiqueta of comunidad.etiquetas" class="etiqueta">
+            {{ etiqueta.nombre }}
+          </span>
+        </div>
+        <p style="margin-bottom: 15px;"></p>
         <button class="detalles-btn" (click)="irADetallesDeComunidad(comunidad.id)">Ver Detalles</button>
       </div>
     </div>

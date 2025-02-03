@@ -462,3 +462,23 @@ body {
   padding: 20px;
   border-radius: 10px;
 }
+
+.custom-modal {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.modal-header {
+  border-bottom: none;
+}
+.modal-content{
+  background: white;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.modal-footer {
+  border-top: none;
+}
