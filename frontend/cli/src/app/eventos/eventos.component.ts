@@ -80,14 +80,14 @@ export class EventosComponent implements OnInit {
     const usuarioId = this.authService.getUsuarioId();
     this.idUsuarioAutenticado = Number(usuarioId);
     this.cargarEventosParticipante();
-    
+
   }
-  
+
   toggleFilters() {
     if (this.filtersAnimating) return;
-  
+
     this.filtersAnimating = true;
-  
+
     if (this.filtersVisible) {
       this.filtersVisible = false;
       setTimeout(() => {
@@ -100,7 +100,7 @@ export class EventosComponent implements OnInit {
       }, 500);
     }
   }
-  
+
 
   agregarEtiqueta(event: any): void {
     const etiqueta = event.item;
@@ -119,7 +119,7 @@ export class EventosComponent implements OnInit {
   async aplicarFiltroEtiquetas2(): Promise<Evento[]> {
     try {
       const etiquetasIds = this.etiquetasSeleccionadas.map(e => e.nombre);
-      const dataPackage = await lastValueFrom(this.eventoService.filtrarEtiqueta(etiquetasIds,this.tabSeleccionada,this.idUsuarioAutenticado));
+      const dataPackage = await lastValueFrom(this.eventoService.filtrarEtiqueta(etiquetasIds, this.tabSeleccionada, this.idUsuarioAutenticado));
       if (Array.isArray(dataPackage.data)) {
         return dataPackage.data;
       }
@@ -185,7 +185,7 @@ export class EventosComponent implements OnInit {
   async aplicarFiltroNombre2(): Promise<Evento[]> {
     try {
       const dataPackage = await lastValueFrom(
-        this.eventoService.filtrarNombre(this.nombreEventoFiltro, this.tabSeleccionada,this.idUsuarioAutenticado)
+        this.eventoService.filtrarNombre(this.nombreEventoFiltro, this.tabSeleccionada, this.idUsuarioAutenticado)
       );
       return dataPackage.data as Evento[];
     } catch (error) {
@@ -200,7 +200,7 @@ export class EventosComponent implements OnInit {
     this.aplicarTodosLosFiltros();
   }
 
-  
+
 
   // Métodos para el filtro por participantes
   toggleFiltroParticipantes(): void {
@@ -211,7 +211,7 @@ export class EventosComponent implements OnInit {
   async aplicarFiltroParticipantes2(): Promise<Evento[]> {
     try {
       const dataPackage = await lastValueFrom(
-        this.eventoService.filtrarParticipantes(this.tabSeleccionada,this.idUsuarioAutenticado,
+        this.eventoService.filtrarParticipantes(this.tabSeleccionada, this.idUsuarioAutenticado,
           this.minParticipantes || 0,
           this.maxParticipantes || Number.MAX_SAFE_INTEGER
         )
@@ -225,7 +225,7 @@ export class EventosComponent implements OnInit {
       return []; // Manejo de errores devolviendo una lista vacía
     }
   }
- 
+
   limpiarFiltroParticipantes(): void {
     this.minParticipantes = null;
     this.maxParticipantes = null;
@@ -243,8 +243,8 @@ export class EventosComponent implements OnInit {
       let minDate = new Date(this.fechaMinFiltro);
       let maxDate = new Date(this.fechaMaxFiltro);
 
-        const dataPackage = await lastValueFrom(
-          this.eventoService.filtrarFecha(this.tabSeleccionada,this.idUsuarioAutenticado, minDate.toISOString(), maxDate.toISOString()
+      const dataPackage = await lastValueFrom(
+        this.eventoService.filtrarFecha(this.tabSeleccionada, this.idUsuarioAutenticado, minDate.toISOString(), maxDate.toISOString()
         )
       );
       if (Array.isArray(dataPackage.data)) {
@@ -278,7 +278,7 @@ export class EventosComponent implements OnInit {
 
     // Restaurar todos los resultados
     this.currentIndexEventosDisponibles = 0;
-    this.currentIndexEventosParticipante =0;
+    this.currentIndexEventosParticipante = 0;
   }
 
   traerParticipantes(eventos: Evento[]): void {
@@ -308,15 +308,15 @@ export class EventosComponent implements OnInit {
       this.tabSeleccionada = tab;
       this.filtroParticipantesActivo = false;
       this.filtroEtiquetasActivo = false;
-      this.filtroNombreActivo =false
-      if(this.tabSeleccionada==='disponibles'){
-        this.loadingDisponibles=false;
+      this.filtroNombreActivo = false
+      if (this.tabSeleccionada === 'disponibles') {
+        this.loadingDisponibles = false;
         this.cargarEventosDisponibles();
-      }else if (this.tabSeleccionada==='participante'){
-        this.loadingParticipante=false;
+      } else if (this.tabSeleccionada === 'participante') {
+        this.loadingParticipante = false;
         this.cargarEventosParticipante();
-      }  else if (this.tabSeleccionada === 'filtros') {
-        
+      } else if (this.tabSeleccionada === 'filtros') {
+
       }
     }
   }
@@ -339,7 +339,7 @@ export class EventosComponent implements OnInit {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerParticipantes(resultados); // Llamar a traerParticipantes después de cargar los eventos
             this.traerEtiquetas(resultados);
-          
+
             this.eventosDisponiblesAMostrar = [
               ...this.eventosDisponiblesAMostrar,
               ...resultados,
@@ -364,14 +364,14 @@ export class EventosComponent implements OnInit {
     this.loadingParticipante = true;
     // Suponiendo que tienes un método que obtiene más comunidades con paginación
     this.eventoService
-    .participaUsuario(this.idUsuarioAutenticado,"",this.currentIndexEventosParticipante, this.cantidadPorPagina)
-    .subscribe(
-      async (dataPackage) => {
-        const resultados = dataPackage.data as Evento[]
+      .participaUsuario(this.idUsuarioAutenticado, "", this.currentIndexEventosParticipante, this.cantidadPorPagina)
+      .subscribe(
+        async (dataPackage) => {
+          const resultados = dataPackage.data as Evento[]
           if (resultados && resultados.length > 0) {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerParticipantes(resultados); // Llamar a traerParticipantes después de cargar los eventos
-            
+
             this.traerEtiquetas(resultados);
             this.eventosParticipaUsuario = [
               ...this.eventosParticipaUsuario,
@@ -393,13 +393,13 @@ export class EventosComponent implements OnInit {
 
   cargarMasResultadosFiltrados(): void {
     if (this.loadingFiltrados || this.noMasResultadosFiltrados) return;
-  
+
     this.loadingFiltrados = true;
     const inicio = this.currentIndexFiltrados * this.cantidadPorPagina;
     const fin = inicio + this.cantidadPorPagina;
-  
+
     const nuevosResultados = this.resultadosFiltrados.slice(inicio, fin);
-  
+
     if (nuevosResultados.length > 0) {
       this.traerParticipantes(nuevosResultados); // Agregar datos adicionales como ubicación y miembros
       if (this.tabSeleccionada === 'disponibles') {
@@ -417,17 +417,17 @@ export class EventosComponent implements OnInit {
     } else {
       this.noMasResultadosFiltrados = true;
     }
-  
+
     this.loadingFiltrados = false;
   }
 
 
   onScroll(): void {
     const element = document.querySelector('.grid') as HTMLElement;
-    if (element.scrollTop + element.clientHeight >= element.scrollHeight-10) {
-      if(this.hayResultadosFiltrados){
+    if (element.scrollTop + element.clientHeight >= element.scrollHeight - 10) {
+      if (this.hayResultadosFiltrados) {
         this.cargarMasResultadosFiltrados();
-      }else{
+      } else {
         if (this.tabSeleccionada === 'disponibles') {
           this.cargarEventosDisponibles();
         } else if (this.tabSeleccionada === 'participante') {
@@ -450,9 +450,9 @@ export class EventosComponent implements OnInit {
     this.hayResultadosFiltrados = false; // Inicializar en false
 
     if (this.filtroNombreActivo && this.nombreEventoFiltro) {
-        lista1 = await this.aplicarFiltroNombre2();
-        this.hayResultadosFiltrados = true; // Entró en el if
-      }
+      lista1 = await this.aplicarFiltroNombre2();
+      this.hayResultadosFiltrados = true; // Entró en el if
+    }
     if (this.filtroParticipantesActivo && (this.minParticipantes !== null || this.maxParticipantes !== null)) {
       lista2 = await this.aplicarFiltroParticipantes2();
       this.hayResultadosFiltrados = true; // Entró en el if
@@ -465,52 +465,54 @@ export class EventosComponent implements OnInit {
       lista4 = await this.aplicarFiltroFecha();
       this.hayResultadosFiltrados = true; // Entró en el if
     }
-    this.eventosDisponiblesAMostrar=[];
-    this.eventosParticipaUsuario=[]
-    if(this.hayResultadosFiltrados){
-      
-      
+    this.eventosDisponiblesAMostrar = [];
+    this.eventosParticipaUsuario = []
+    if (this.hayResultadosFiltrados) {      
       let listasActivas = [lista1, lista2, lista3, lista4].filter(lista => lista.length > 0);
-
+      
       if (listasActivas.length > 0) {
         // Realizamos la intersección de las listas
         this.resultadosFiltrados = listasActivas.reduce((interseccion, listaActual) => {
-        return interseccion.filter(item => 
-          listaActual.some(actualItem => actualItem.id === item.id)
-        );
-      });
-    } else {
-      this.resultadosFiltrados = [];
-    }
-    this.currentIndexFiltrados = 0;
-    this.noMasResultadosFiltrados = false;
-    //await this.actualizarInformacionAdicional();
-    this.cargarMasResultadosFiltrados(); // Cargar la primera página de resultados
-  }else{
-    this.currentIndexEventosDisponibles=0;
-    this.currentIndexEventosParticipante=0;
-    if (this.tabSeleccionada === 'disponibles') {
-      this.cargarEventosDisponibles();
-    } else if (this.tabSeleccionada === 'participante') {
-      this.cargarEventosParticipante();
-    }
-  }
-}
+          
+          let aux= interseccion.filter(item =>
+            listaActual.some(actualItem => actualItem.id === item.id)
+          );
+          return aux;
+        });
+        this.traerEtiquetas(this.resultadosFiltrados);
 
-traerEtiquetas(eventos: Evento[]): void {
-  for (let evento of eventos) {
-    this.etiquetaService.obtenerEtiquetasDeEvento(evento.id!).subscribe(
-      (dataPackage) => {
-        if (dataPackage && Array.isArray(dataPackage.data)) {
-          evento.etiquetas = dataPackage.data; 
-        }
-      },
-      (error) => {
-        console.error(`Error al traer las Etiquetas del evento ${evento.id}:`, error);
+      } else {
+        this.resultadosFiltrados = [];
       }
-    );
+      this.currentIndexFiltrados = 0;
+      this.noMasResultadosFiltrados = false;
+      //await this.actualizarInformacionAdicional();
+      this.cargarMasResultadosFiltrados(); // Cargar la primera página de resultados
+    } else {
+      this.currentIndexEventosDisponibles = 0;
+      this.currentIndexEventosParticipante = 0;
+      if (this.tabSeleccionada === 'disponibles') {
+        this.cargarEventosDisponibles();
+      } else if (this.tabSeleccionada === 'participante') {
+        this.cargarEventosParticipante();
+      }
+    }
   }
-}
+
+  traerEtiquetas(eventos: Evento[]): void {
+    for (let evento of eventos) {
+      this.etiquetaService.obtenerEtiquetasDeEvento(evento.id!).subscribe(
+        (dataPackage) => {
+          if (dataPackage && Array.isArray(dataPackage.data)) {
+            evento.etiquetas = dataPackage.data;
+          }
+        },
+        (error) => {
+          console.error(`Error al traer las Etiquetas del evento ${evento.id}:`, error);
+        }
+      );
+    }
+  }
 
 
   // private async actualizarInformacionAdicional(): Promise<void> {
