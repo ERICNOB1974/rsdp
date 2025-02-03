@@ -15,6 +15,9 @@ import unpsjb.labprog.backend.model.Usuario;
 @Repository
 public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
 
+    @Query("MATCH (u:Usuario) WHERE id(u) = $idUsuario RETURN u.genero")
+    String generoUsuario(Long idUsuario);
+
     @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(amigos) " +
             "RETURN amigos")
     List<Usuario> amigos(String nombreUsuario);
@@ -315,15 +318,23 @@ Usuario findUsuarioByComentarioId(@Param("id") Long id);
 
     @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario)-[:PARTICIPA_EN]->(evento:Evento) " +
             "WHERE id(u) = $idUsuario AND id(evento) = $idEvento " +
+            "AND (CASE $generoEvento " +
+            "     WHEN 'masculino' THEN amigo.genero = 'masculino' " +
+            "     WHEN 'femenino' THEN amigo.genero = 'femenino' " +
+            "     ELSE amigo.genero IN ['masculino', 'femenino', 'otros'] END) " +
             "RETURN amigo")
-    List<Usuario> todosLosAmigosDeUnUsuarioPertenecientesAUnEvento(Long idUsuario, Long idEvento);
+    List<Usuario> todosLosAmigosDeUnUsuarioPertenecientesAUnEvento(Long idUsuario, Long idEvento, String generoEvento);
 
     @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario), " +
             "(amigo)-[rel]->(comunidad:Comunidad) " +
             "WHERE id(u) = $idUsuario AND id(comunidad) = $idComunidad " +
             "AND type(rel) IN ['MIEMBRO', 'ADMINISTRADA_POR', 'CREADA_POR'] " +
+            "AND (CASE $generoComunidad " +
+            "     WHEN 'masculino' THEN amigo.genero = 'masculino' " +
+            "     WHEN 'femenino' THEN amigo.genero = 'femenino' " +
+            "     ELSE amigo.genero IN ['masculino', 'femenino', 'otros'] END) " +
             "RETURN amigo")
-    List<Usuario> todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad);
+    List<Usuario> todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad, String generoComunidad);
 
     @Query("MATCH (u:Usuario), (ev:Evento) " +
             "WHERE id(u) = $idUsuario AND id(ev) = $idEvento " +
@@ -332,8 +343,12 @@ Usuario findUsuarioByComentarioId(@Param("id") Long id);
             "WHERE NOT EXISTS { MATCH (amigo)-[:PARTICIPA_EN]->(ev) } " +
             "AND NOT EXISTS { MATCH (ev)-[:EXPULSADO_EVENTO]-(amigo) } " +
             "AND NOT EXISTS { MATCH (ev)-[:CREADO_POR]->(amigo) } " +
+            "AND (CASE $generoEvento " +
+            "     WHEN 'masculino' THEN amigo.genero = 'masculino' " +
+            "     WHEN 'femenino' THEN amigo.genero = 'femenino' " +
+            "     ELSE amigo.genero IN ['masculino', 'femenino', 'otros'] END) " +
             "RETURN amigo")
-    List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(Long idUsuario, Long idEvento);
+    List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(Long idUsuario, Long idEvento, String generoEvento);
 
     @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario), " +
             "      (ev:Evento), " +
@@ -346,11 +361,16 @@ Usuario findUsuarioByComentarioId(@Param("id") Long id);
             "    EXISTS { MATCH (amigo)-[:MIEMBRO]->(com) } " +
             "    OR EXISTS { MATCH (amigo)<-[:CREADA_POR]-(com) } " +
             ") " +
+            "AND (CASE $generoEvento " +
+            "     WHEN 'masculino' THEN amigo.genero = 'masculino' " +
+            "     WHEN 'femenino' THEN amigo.genero = 'femenino' " +
+            "     ELSE amigo.genero IN ['masculino', 'femenino', 'otros'] END) " +
             "RETURN amigo")
     List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEventoPrivadoPeroSiALaComunidad(
             @Param("idUsuario") Long idUsuario,
             @Param("idEvento") Long idEvento,
-            @Param("idComunidad") Long idComunidad);
+            @Param("idComunidad") Long idComunidad,
+            @Param("generoEvento") String generoEvento);
 
     @Query("MATCH (u:Usuario), (com:Comunidad) " +
             "WHERE id(u) = $idUsuario AND id(com) = $idComunidad " +
@@ -359,20 +379,32 @@ Usuario findUsuarioByComentarioId(@Param("id") Long id);
             "WHERE NOT EXISTS { MATCH (amigo)-[:MIEMBRO]->(com) } " +
             "AND NOT EXISTS { MATCH (com)-[:EXPULSADO_COMUNIDAD]-(amigo) } " +
             "AND NOT EXISTS { MATCH (com)-[:ADMINISTRADA_POR|CREADA_POR]->(amigo) } " +
+            "AND (CASE $generoComunidad " +
+            "     WHEN 'masculino' THEN amigo.genero = 'masculino' " +
+            "     WHEN 'femenino' THEN amigo.genero = 'femenino' " +
+            "     ELSE amigo.genero IN ['masculino', 'femenino', 'otros'] END) " +
             "RETURN amigo")
-    List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad);
+    List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad, String generoComunidad);
 
     @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
             "MATCH (u)-[inv:INVITACION_EVENTO]->(amigo) " +
             "WHERE id(u) = $idUsuario AND inv.idEvento = $idEvento " +
+            "AND (CASE $generoEvento " +
+            "     WHEN 'masculino' THEN amigo.genero = 'masculino' " +
+            "     WHEN 'femenino' THEN amigo.genero = 'femenino' " +
+            "     ELSE amigo.genero IN ['masculino', 'femenino', 'otros'] END) " +
             "RETURN amigo")
-    List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(Long idUsuario, Long idEvento);
+    List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(Long idUsuario, Long idEvento, String generoEvento);
 
     @Query("MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario) " +
             "MATCH (u)-[inv:INVITACION_COMUNIDAD]->(amigo) " +
             "WHERE id(u) = $idUsuario AND inv.idComunidad = $idComunidad " +
+            "AND (CASE $generoComunidad " +
+            "     WHEN 'masculino' THEN amigo.genero = 'masculino' " +
+            "     WHEN 'femenino' THEN amigo.genero = 'femenino' " +
+            "     ELSE amigo.genero IN ['masculino', 'femenino', 'otros'] END) " +
             "RETURN amigo")
-    List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(Long idUsuario, Long idComunidad);
+    List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(Long idUsuario, Long idComunidad, String generoComunidad);
 
     @Query("MATCH (u:Usuario)-[r]->(otro:Usuario) " +
           "WHERE id(u) = $idUsuario " + 

@@ -216,6 +216,7 @@ export class PublicacionDetailComponent implements OnInit {
               correoElectronico: '',
               contrasena: '',
               descripcion: '',
+              genero: '',
               latitud: 0,
               longitud: 0,
               fotoPerfil: this.usuario?.fotoPerfil || ''
@@ -386,6 +387,7 @@ export class PublicacionDetailComponent implements OnInit {
               correoElectronico: '',
               contrasena: '',
               descripcion: '',
+              genero: '',
               latitud: 0,
               longitud: 0,
               fotoPerfil: this.usuario?.fotoPerfil || ''

@@ -140,7 +140,7 @@ export class CrearComunidadComponent {
             this.comunidad.descripcion = this.formComunidad.get('descripcion')?.value;
             this.comunidad.nombre = this.formComunidad.get('nombre')?.value;
             this.comunidad.cantidadMaximaMiembros = this.formComunidad.get('cantidadMaximaMiembros')?.value;
-      
+            this.comunidad.eliminada = false;
        */
       this.comunidad = { ...this.comunidad, ...this.formComunidad.value };
       // Guardar la comunidad y obtener su ID

@@ -10,7 +10,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import unpsjb.labprog.backend.model.Usuario;
 
 @Data
 @Getter

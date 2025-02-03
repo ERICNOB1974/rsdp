@@ -25,6 +25,11 @@ export class UsuarioService {
     return this.http.put<DataPackage>(`${this.usuariosUrl}/actualizarCorreo/${idUsuario}`, nuevoCorreo);
   }
 
+  generoUsuario(): Observable<DataPackage>{
+    const idUsuario = this.authService.getUsuarioId();
+    return this.http.get<DataPackage>(`${this.usuariosUrl}/generoUsuario/${idUsuario}`);
+  }
+
   all(): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.usuariosUrl}/findAll`);
   }

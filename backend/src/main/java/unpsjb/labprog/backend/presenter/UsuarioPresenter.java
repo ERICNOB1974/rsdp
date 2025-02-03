@@ -212,6 +212,11 @@ public class UsuarioPresenter {
         return Response.ok(usuarioService.existeMail(correoElectronico));
     }
 
+    @GetMapping("/generoUsuario/{idUsuario}")
+    public ResponseEntity<Object> generoUsuario(@PathVariable Long idUsuario) {
+        return Response.ok(usuarioService.generoUsuario(idUsuario));
+    }
+
     @GetMapping("/existeNombreUsuario/{nombreUsuario}")
     public ResponseEntity<Object> existeNombreUsuario(@PathVariable String nombreUsuario) {
         return Response.ok(usuarioService.existeNombreUsuario(nombreUsuario));

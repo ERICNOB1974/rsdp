@@ -7,6 +7,7 @@ export interface Evento {
     fechaHora: string | Date;
     genero: string;
     descripcion: string;
+    eliminado: boolean;
     cantidadMaximaParticipantes: number;
     esPrivadoParaLaComunidad: boolean;
     participantes: number;

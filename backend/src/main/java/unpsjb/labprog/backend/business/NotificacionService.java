@@ -37,8 +37,6 @@ public class NotificacionService {
                 "Inscripción a evento",
                 LocalDateTime.now());
         enviarEventoTiempoReal(idUsuario, "Inscripción a evento");
-
-        String mensaje = "Te has inscrito al evento: " + idEvento;
     }
 
     public void notificarAceptacionAmistad(Long idUsuario, Long idAmigo) {
@@ -48,8 +46,6 @@ public class NotificacionService {
                 "Aceptación de solicitud de amistad",
                 LocalDateTime.now());
         enviarEventoTiempoReal(idUsuario, "Aceptación de solicitud de amistad");
-
-        String mensaje = "Tu solicitud de amistad ha sido aceptada por el usuario: " + idAmigo;
     }
 
     public List<Notificacion> obtenerNotificacionesPorUsuario(Long usuarioId) throws Exception {

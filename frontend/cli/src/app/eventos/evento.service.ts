@@ -28,6 +28,7 @@ export class EventoService {
   get(id: string): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.eventosUrl}/findById/${id}`);
   }
+
   etiquetasDelEvento(id: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.eventosUrl}/etiquetas/${id}`);
   }
@@ -181,6 +182,7 @@ export class EventoService {
   eliminar(idEvento: number): Observable<DataPackage> {
     return this.http.delete<DataPackage>(` ${this.eventosUrl}/eliminar/${idEvento}`);
   }
+  
   eliminarMiembro(idEvento: number, idUsuario:number, motivo:string): Observable<DataPackage> {
     return this.http.put<DataPackage>(` ${this.eventosUrl}/eliminarParticipante/${idEvento}/${idUsuario}`, motivo);
   } 
