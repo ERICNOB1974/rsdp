@@ -1,17 +1,39 @@
-<div class="perfil-container">
-  <div *ngIf="comunidad.imagen && comunidad.imagen.startsWith('data:image')">
-    <img [src]="comunidad.imagen" class="muro-imagen">
-  </div>
-  <div *ngIf="!comunidad.imagen">
-    <img src="../../assets/comunidad.jpg" class="muro-imagen">
+<div class="perfil-container card shadow-lg">
+  <div class="muro-imagen-container">
+    <img *ngIf="comunidad.imagen && comunidad.imagen.startsWith('data:image')" 
+         [src]="comunidad.imagen" 
+         class="muro-imagen">
+    <img *ngIf="!comunidad.imagen" 
+         src="../../assets/comunidad.jpg" 
+         class="muro-imagen">
   </div>
 
-  <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
-    <h1 style="text-align: center; margin: 0;">{{ comunidad.nombre }}</h1>
-    <i *ngIf="esParte" class="bi" [ngClass]="{'bi-star-fill': esFavorito, 'bi-star': !esFavorito}"
-      [ngStyle]="{'color': esFavorito ? 'gold' : 'gray', 'font-size': '8dvh', 'cursor': 'pointer'}"
-      (click)="toggleFavorito()">
-    </i>
+  <!-- Datos de la Comunidad -->
+  <div class="comunidad-info">
+    <div class="titulo-container">
+      <h1>{{ comunidad.nombre }}</h1>
+      <i *ngIf="esParte" class="bi" 
+         [ngClass]="{'bi-star-fill': esFavorito, 'bi-star': !esFavorito}" 
+         [ngStyle]="{'color': esFavorito ? 'gold' : 'gray', 'cursor': 'pointer'}" 
+         (click)="toggleFavorito()">
+      </i>
+    </div>
+
+    <p class="descripcion">{{ comunidad.descripcion }}</p>
+
+    <div class="info-grid">
+      <div><i class="bi bi-calendar3"></i> Creada el: {{ comunidad.fechaDeCreacion | date: 'longDate' }}</div>
+      <div><i class="bi bi-people-fill"></i> Miembros: {{ comunidad.miembros }}/{{ comunidad.cantidadMaximaMiembros }}</div>
+      <div><i class="bi" [ngClass]="comunidad.esPrivada ? 'bi-lock-fill' : 'bi-unlock-fill'"></i> 
+        {{ comunidad.esPrivada ? 'Privada' : 'Pública' }}
+      </div>
+      <div><i class="bi" [ngClass]="comunidad.esModerada ? 'bi-shield-lock-fill' : 'bi-shield-check'"></i> 
+        {{ comunidad.esModerada ? 'Moderada' : 'Abierta' }}
+      </div>
+      <div *ngIf="comunidad.ubicacion">
+        <i class="bi bi-geo-alt-fill"></i> Ubicación: {{ comunidad.ubicacion }}
+      </div>
+    </div>
   </div>
 
   <button *ngIf="!esCreador && !expulsado && !(comunidad.cantidadMaximaMiembros <= comunidad.miembros)"
@@ -23,6 +45,8 @@
       : haSolicitadoIngreso ? 'Cancelar solicitud de ingreso' 
       : (comunidad.esPrivada ? 'Solicitar ingreso' : 'Ingresar') }}
 </button>
+<p style="margin-bottom: 15px;"></p>
+
 
   <div *ngIf="expulsado?.estaExpulsado" class="alert alert-warning mt-4">
     <p>Has sido expulsado de la comunidad.</p>
@@ -57,7 +81,6 @@
     (click)="gestionarComunidad()">
     Gestionar
   </button>
-
   <div class="tabs">
     <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'publicaciones' }"
       (click)="seleccionarTab('publicaciones')">Publicaciones</button>
@@ -77,7 +100,7 @@
           <button *ngIf="comunidad.esModerada" class="tab-button"
             [ngClass]="{ active: subTabSeleccionada === 'publicacionesAprobadas' }"
             (click)="seleccionarSubTabAdministrador('publicacionesAprobadas')">Publicaciones</button>
-          <button *ngIf="comunidad.esModerada && (esAdministrador || esCreador)" class="tab-button"
+          <button *ngIf="comunidad.esModerada && (esAdministrador || esCreador || esModerador)" class="tab-button"
             [ngClass]="{ active: subTabSeleccionada === 'publicacionesPorAprobar' }"
             (click)="seleccionarSubTabAdministrador('publicacionesPorAprobar')">Publicaciones por aprobar</button>
 

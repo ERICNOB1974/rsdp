@@ -12,7 +12,7 @@ import { Usuario } from '../usuarios/usuario';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: 'sugerenciasAmigos.component.html',
-  styleUrls: ['sugerencias.component.css']
+  styleUrls: ['sugerencias.component.css', 'sugerenciasEventos.component.css']
 })
 export class SugerenciasAmigosComponent implements OnInit {
   currentIndex: number = 0; // Índice actual del carrusel

@@ -6,6 +6,7 @@ import { Router, RouterModule } from '@angular/router';
 import { Comunidad } from './comunidad'; // Asegúrate de tener un modelo Comunidad
 import { ComunidadService } from './comunidad.service'; // Crea este servicio
 import { AuthService } from '../autenticacion/auth.service';
+import { EtiquetaService } from '../etiqueta/etiqueta.service';
 
 @Component({
   selector: 'app-comunidades-usuario',
@@ -17,12 +18,13 @@ import { AuthService } from '../autenticacion/auth.service';
 export class ComunidadesCreadasUsuarioComponent implements OnInit {
   comunidadesUsuario: Comunidad[] = []; // Arreglo para almacenar las comunidades creadas por el usuario
   offset: number = 0; // Inicializar el offset
-  limit: number = 4; // Número de comunidades a cargar por solicitud
+  limit: number = 8; // Número de comunidades a cargar por solicitud
   loading: boolean = false; // Para manejar el estado de carga
   noMasComunidades = false;
 
   constructor(
     private comunidadService: ComunidadService,
+    private etiquetaService: EtiquetaService,
     private router: Router,
   ) { }
 
@@ -47,7 +49,7 @@ export class ComunidadesCreadasUsuarioComponent implements OnInit {
           if (resultados && resultados.length > 0) {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerMiembros(resultados); // Llamar a traerParticipantes después de cargar los eventos
-          
+            this.traerEtiquetas(resultados);
             this.comunidadesUsuario = [
               ...this.comunidadesUsuario,
               ...resultados,
@@ -91,6 +93,21 @@ export class ComunidadesCreadasUsuarioComponent implements OnInit {
     const element = document.querySelector('.comunidades-list') as HTMLElement;
     if (element.scrollTop + element.clientHeight >= element.scrollHeight-10 && !this.loading) {
       this.getComunidadesUsuario();
+    }
+  }
+
+  traerEtiquetas(comunidades: Comunidad[]): void {
+    for (let comunidad of comunidades) {
+      this.etiquetaService.etiquetasEnComunidad(comunidad.id!).subscribe(
+        (dataPackage) => {
+          if (dataPackage && Array.isArray(dataPackage.data)) {
+            comunidad.etiquetas = dataPackage.data; // Asignar el número de días
+          }
+        },
+        (error) => {
+          console.error(`Error al traer las Etiquetas de la comunidad ${comunidad.id}:`, error);
+        }
+      );
     }
   }
 }

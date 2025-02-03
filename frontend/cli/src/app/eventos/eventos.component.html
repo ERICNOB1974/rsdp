@@ -140,6 +140,12 @@
           <p>Participantes: {{ evento.participantes }}/{{evento.cantidadMaximaParticipantes}}</p>
           <p>Ubicación: {{evento.ubicacion}}</p>
           <p>{{ evento.fechaHora | date: 'MMM d, y, h:mm a' }}</p> <!-- Formato de fecha -->
+          <div class="etiquetas-container">
+            <h4 class="etiquetas-title">Etiquetas:</h4>
+            <span *ngFor="let etiqueta of evento.etiquetas" class="etiqueta">
+              {{ etiqueta.nombre }}
+            </span>
+          </div>
         </div>
       </div>
       <div *ngIf="eventosDisponiblesAMostrar.length==0">
@@ -159,6 +165,13 @@
           <p>Participantes: {{ evento.participantes }}/{{evento.cantidadMaximaParticipantes}}</p>
           <p>Ubicación: {{evento.ubicacion}}</p>
           <p>{{ evento.fechaHora | date: 'MMM d, y, h:mm a' }}</p> <!-- Formato de fecha -->
+
+          <div class="etiquetas-container">
+            <h4 class="etiquetas-title">Etiquetas:</h4>
+            <span *ngFor="let etiqueta of evento.etiquetas" class="etiqueta">
+              {{ etiqueta.nombre }}
+            </span>
+          </div>
         </div>
       </div>
       <div *ngIf="eventosParticipaUsuario.length==0">

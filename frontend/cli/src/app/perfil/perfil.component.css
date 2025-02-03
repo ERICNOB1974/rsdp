@@ -1,5 +1,41 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
+.etiquetas-container {
+    margin-top: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+  
+  .etiquetas-title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+  }
+  
+  .etiquetas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .etiqueta {
+    padding: 6px 12px;
+    background-color: #28a745;
+    color: white;
+    border-radius: 15px;
+    font-size: 12px;
+    text-transform: capitalize;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .etiqueta:hover {
+    background-color: #218838;
+    transform: translateY(-2px);
+  }
+    
 /* Asegura que todo el contenedor del perfil esté centrado y con un diseño elegante */
 .perfil-container {
     margin: 0 auto;

@@ -229,6 +229,11 @@ public class UsuarioService {
         return usuarioRepository.administradores(idComunidad);
     }
 
+    public List<Usuario> moderadoresComunidad(Long idComunidad) {
+        return usuarioRepository.moderadores(idComunidad);
+    }
+
+
     public List<ScoreAmigo> sugerenciaDeAmigosBasadaEnAmigos2(String nombreUsuario) {
         List<ScoreAmigo> sugerencias = usuarioRepository.sugerenciaDeAmigosBasadaEnAmigos2(nombreUsuario);
         return sugerencias;

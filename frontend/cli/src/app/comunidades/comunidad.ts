@@ -1,3 +1,5 @@
+import { Etiqueta } from "../etiqueta/etiqueta";
+
 export interface Comunidad {
     id: number;
     nombre: string;
@@ -14,4 +16,5 @@ export interface Comunidad {
     miembros: number;
     ubicacion: any;
     imagen:string;
+    etiquetas?: Etiqueta[]
 }

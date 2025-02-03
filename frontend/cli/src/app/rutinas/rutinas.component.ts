@@ -119,7 +119,7 @@ export class RutinasComponent implements OnInit {
           }
         },
         (error) => {
-          console.error(`Error al traer las Etiqeutas días de la rutina ${rutina.id}:`, error);
+          console.error(`Error al traer las Etiqeutas de la rutina ${rutina.id}:`, error);
         }
       );
     }

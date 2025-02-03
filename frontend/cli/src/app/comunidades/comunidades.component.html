@@ -111,6 +111,19 @@
           <p>{{ comunidad.descripcion }}</p>
           <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
           <p>Ubicación: {{comunidad.ubicacion}}</p>
+
+          <p>
+            Moderación:
+            <i class="fa"
+              [ngClass]="comunidad.esModerada ? 'fa-shield text-danger' : 'fa-check-circle text-success'"></i>
+            {{ comunidad.esModerada ? 'Moderada' : 'No moderada' }}
+          </p>
+          <div class="etiquetas-container">
+            <h4 class="etiquetas-title">Etiquetas:</h4>
+            <span *ngFor="let etiqueta of comunidad.etiquetas" class="etiqueta">
+              {{ etiqueta.nombre }}
+            </span>
+          </div>
         </div>
       </div>
       <div *ngIf="comunidadesDisponiblesAMostrar.length==0">
@@ -133,6 +146,19 @@
           <p>{{ comunidad.descripcion }}</p>
           <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
           <p>Ubicación: {{comunidad.ubicacion}}</p>
+
+          <p>
+            Moderación:
+            <i class="fa"
+              [ngClass]="comunidad.esModerada ? 'fa-shield text-danger' : 'fa-check-circle text-success'"></i>
+            {{ comunidad.esModerada ? 'Moderada' : 'No moderada' }}
+          </p>
+          <div class="etiquetas-container">
+            <h4 class="etiquetas-title">Etiquetas:</h4>
+            <span *ngFor="let etiqueta of comunidad.etiquetas" class="etiqueta">
+              {{ etiqueta.nombre }}
+            </span>
+          </div>
         </div>
       </div>
     </div>

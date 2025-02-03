@@ -48,6 +48,8 @@ export class EditarComunidadComponent implements OnInit {
   @ViewChild('etiquetasInput') etiquetasInput!: ElementRef<HTMLInputElement>;
   @ViewChild('etiquetasModel') etiquetasModel!: NgModel;
 
+  mostrarTooltipAdvertenciaModeracion = false
+  mostrarTooltipAdvertenciaPrivada = false
 
   constructor(
     private route: ActivatedRoute,
@@ -144,12 +146,6 @@ export class EditarComunidadComponent implements OnInit {
         }
       }
 
-      //por cada uno tengo que etiquetarlo si es que no esta etiquetado de antes.
-      //si esta en etiquetasOriginales y no en etiquetasSeleccionadas, entonces tengo que mandar a desetiquetar
-      //si no esta en etiquetasOriginales y si en etiquetasSeleccionadas, entonces tengo que mandar a etiquetar
-      //si esta en los dos no hago nada
-
-
       this.router.navigate(['/comunidad-muro', this.idComunidad]);
     }, error => {
       console.error('Error al actualizar la comunidad', error);
@@ -224,28 +220,6 @@ export class EditarComunidadComponent implements OnInit {
     this.comunidad.imagen = '';
 
   }
-
-  /*   agregarEtiqueta(event: any): void {
-      const etiqueta: Etiqueta = event.item;
-  
-      // Verificar por nombre en lugar de por ID para evitar duplicados
-      if (!this.etiquetasSeleccionadas.some(e => e.nombre === etiqueta.nombre)) {
-        this.etiquetasSeleccionadas.push(etiqueta);
-      }
-  
-      // Restablecer la etiqueta seleccionada
-      this.etiquetaSeleccionada = null;
-      
-      // Forzar actualización visual del input
-      this.cdr.detectChanges();
-    }
-    
-    eliminarEtiqueta(etiqueta: Etiqueta): void {
-      this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(
-        e => e.nombre !== etiqueta.nombre
-      );
-    } */
-
 
   cargarEtiquetas2() {
     this.etiquetaService.etiquetasEnComunidad(this.comunidad.id).subscribe(dataPackage => {
@@ -350,4 +324,24 @@ export class EditarComunidadComponent implements OnInit {
   cerrarTooltipPrivada(): void {
     this.mostrarTooltipPrivada = false;
   }
+  toggleTooltipAdvertenciaModeracion(event: Event): void {
+    event.stopPropagation(); // Evita que el click en el ícono cierre el tooltip
+    this.mostrarTooltipAdvertenciaModeracion = !this.mostrarTooltipAdvertenciaModeracion;
+  }
+
+  @HostListener('document:click')
+  cerrarTooltipAdvertenciaModeracion(): void {
+    this.mostrarTooltipAdvertenciaModeracion = false;
+  }
+  toggleTooltipAdvertenciaPrivada(event: Event): void {
+    event.stopPropagation(); // Evita que el click en el ícono cierre el tooltip
+    this.mostrarTooltipAdvertenciaPrivada = !this.mostrarTooltipAdvertenciaPrivada;
+  }
+
+  @HostListener('document:click')
+  cerrarTooltipAdvertenciaPrivada(): void {
+    this.mostrarTooltipAdvertenciaPrivada = false;
+  }
+
+
 }

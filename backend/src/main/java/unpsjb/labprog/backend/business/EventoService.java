@@ -520,4 +520,8 @@ public class EventoService {
     public String motivoExpulsion(Long idUsuario, Long idEvento) {
         return this.eventoRepository.motivoExpulsion(idUsuario, idEvento);
     }
+
+    public void desetiquetarEvento(Long idEvento, Long etiqueta) {
+        eventoRepository.desetiquetarEvento(idEvento, etiqueta);
+    }
 }
