@@ -27,6 +27,9 @@ public class UsuarioService {
     EventoRepository eventoRepository;
 
     @Autowired
+    ComunidadRepository comunidadRepository;
+
+    @Autowired
     NotificacionRepository notificacionRepository;
 
     @Lazy
@@ -41,6 +44,10 @@ public class UsuarioService {
 
     public List<Usuario> findAll() {
         return usuarioRepository.findAll();
+    }
+
+    public String generoUsuario(Long idUsuario) {
+        return usuarioRepository.generoUsuario(idUsuario);
     }
 
     public List<Usuario> amigos(String nombreUsuario) {
@@ -303,35 +310,42 @@ public class UsuarioService {
     }
 
     public List<Usuario> todosLosAmigosDeUnUsuarioPertenecientesAUnEvento(Long idUsuario, Long idEvento) {
-        return usuarioRepository.todosLosAmigosDeUnUsuarioPertenecientesAUnEvento(idUsuario, idEvento);
+        String generoEvento = eventoRepository.generoDeUnEvento(idEvento);
+        return usuarioRepository.todosLosAmigosDeUnUsuarioPertenecientesAUnEvento(idUsuario, idEvento, generoEvento);
     }
 
     public List<Usuario> todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad) {
-        return usuarioRepository.todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(idUsuario, idComunidad);
+        String generoComunidad = comunidadRepository.generoDeUnaComunidad(idComunidad);
+        return usuarioRepository.todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(idUsuario, idComunidad, generoComunidad);
     }
 
     public List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(Long idUsuario, Long idEvento) {
-        return usuarioRepository.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(idUsuario, idEvento);
+        String generoEvento = eventoRepository.generoDeUnEvento(idEvento);
+        return usuarioRepository.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(idUsuario, idEvento, generoEvento);
     }
 
     public List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEventoPrivadoPeroSiALaComunidad(Long idUsuario,
             Long idEvento) {
+        String generoEvento = eventoRepository.generoDeUnEvento(idEvento);
         Comunidad comunidad = comunidadService.buscarComunidadPorEventoInterno(idEvento);
         return usuarioRepository.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEventoPrivadoPeroSiALaComunidad(idUsuario,
-                idEvento, comunidad.getId());
+                idEvento, comunidad.getId(),generoEvento);
     }
 
     public List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad) {
-        return usuarioRepository.todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(idUsuario, idComunidad);
+        String generoComunidad = comunidadRepository.generoDeUnaComunidad(idComunidad);
+        return usuarioRepository.todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(idUsuario, idComunidad, generoComunidad);
     }
 
     public List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(Long idUsuario, Long idEvento) {
-        return usuarioRepository.todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(idUsuario, idEvento);
+        String generoEvento = eventoRepository.generoDeUnEvento(idEvento);
+        return usuarioRepository.todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(idUsuario, idEvento, generoEvento);
     }
 
     public List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(Long idUsuario,
             Long idComunidad) {
-        return usuarioRepository.todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(idUsuario, idComunidad);
+        String generoComunidad = comunidadRepository.generoDeUnaComunidad(idComunidad);
+        return usuarioRepository.todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(idUsuario, idComunidad, generoComunidad);
     }
 
     public List<Usuario> usuariosConMasInteracciones(Long idUsuario) {
@@ -397,6 +411,11 @@ public class UsuarioService {
             usuariosAnonimos--;
         }
         return usuariosAnonimos;
+    }
+    
+    public Long idDadoNombreUsuario(String nombreUsuario) {
+        Long idUsuario = usuarioRepository.findByNombreUsuario(nombreUsuario).get().getId();
+        return idUsuario;
     }
 
 }

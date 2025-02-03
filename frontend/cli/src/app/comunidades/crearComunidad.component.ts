@@ -1,7 +1,7 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, HostListener, ViewChild } from '@angular/core';
 import { CommonModule, NgIf } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, NgModel, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ComunidadService } from './comunidad.service';
 import { Comunidad } from './comunidad';
 import { Location } from '@angular/common'; // Asegúrate de que está importado desde aquí
@@ -58,6 +58,11 @@ export class CrearComunidadComponent {
   tipoArchivo: string = ''; // Para distinguir entre imagen o video
   vistaPreviaArchivo: string | ArrayBuffer | null = null;
   formComunidad: FormGroup;
+  mostrarTooltip: boolean = false;
+  mostrarTooltipPrivada: boolean = false;
+  @ViewChild('etiquetasInput') etiquetasInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('etiquetasModel') etiquetasModel!: NgModel;
+
 
   constructor(
     private route: ActivatedRoute,
@@ -85,7 +90,9 @@ export class CrearComunidadComponent {
         ],
         longitud: ['', [Validators.required]],
         genero: ['', [Validators.required]],
-        descripcion: [''] 
+        descripcion: [''],
+        esPrivada: [false],  // Inicializar con false
+        esModerada: [false]  // Inicializar con false 
       }
 
     );
@@ -129,7 +136,14 @@ export class CrearComunidadComponent {
 
   async saveComunidad(): Promise<void> {
     try {
-      this.comunidad.eliminada = false;
+      /*       this.comunidad.esPrivada = this.formComunidad.get('esPrivada')?.value;
+            this.comunidad.esModerada = this.formComunidad.get('esModerada')?.value;
+            this.comunidad.descripcion = this.formComunidad.get('descripcion')?.value;
+            this.comunidad.nombre = this.formComunidad.get('nombre')?.value;
+            this.comunidad.cantidadMaximaMiembros = this.formComunidad.get('cantidadMaximaMiembros')?.value;
+            this.comunidad.eliminada = false;
+       */
+      this.comunidad = { ...this.comunidad, ...this.formComunidad.value };
       // Guardar la comunidad y obtener su ID
       const dataPackage = await firstValueFrom(this.comunidadService.save(this.comunidad));
       this.comunidad = <Comunidad>dataPackage.data;
@@ -189,20 +203,20 @@ export class CrearComunidadComponent {
       tap(() => (this.searching = false))
     );
 
-    agregarEtiqueta(event: any): void {
-      const etiqueta: Etiqueta = event.item;
-    
-      // Verificar si la etiqueta ya está seleccionada
-      if (!this.etiquetasSeleccionadas.some(e => e.nombre === etiqueta.nombre)) {
-        this.etiquetasSeleccionadas.push(etiqueta);
-      }
+  agregarEtiqueta(event: any): void {
+    const etiqueta: Etiqueta = event.item;
 
-      this.etiquetaSeleccionada = null;
-    
-      // Limpiar el campo
-      this.cdr.detectChanges(); // Forzar la actualización de la vista
+    // Verificar si la etiqueta ya está seleccionada
+    if (!this.etiquetasSeleccionadas.some(e => e.nombre === etiqueta.nombre)) {
+      this.etiquetasSeleccionadas.push(etiqueta);
     }
-    
+
+    setTimeout(() => {
+      this.etiquetasInput.nativeElement.value = '';
+      this.etiquetasModel.control.setValue('');
+    });
+  }
+
 
   eliminarEtiqueta(etiqueta: Etiqueta): void {
     this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(
@@ -435,5 +449,26 @@ export class CrearComunidadComponent {
     this.formatoValido = false;
     this.comunidad.imagen = '';
 
+  }
+
+
+  toggleTooltip(event: Event): void {
+    event.stopPropagation(); // Evita que el click en el ícono cierre el tooltip
+    this.mostrarTooltip = !this.mostrarTooltip;
+  }
+
+  @HostListener('document:click')
+  cerrarTooltip(): void {
+    this.mostrarTooltip = false;
+  }
+
+  toggleTooltipPrivada(event: Event): void {
+    event.stopPropagation(); // Evita que el click en el ícono cierre el tooltip
+    this.mostrarTooltipPrivada = !this.mostrarTooltipPrivada;
+  }
+
+  @HostListener('document:click')
+  cerrarTooltipPrivada(): void {
+    this.mostrarTooltipPrivada = false;
   }
 }

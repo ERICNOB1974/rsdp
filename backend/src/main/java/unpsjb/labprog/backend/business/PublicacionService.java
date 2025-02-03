@@ -1,6 +1,7 @@
 package unpsjb.labprog.backend.business;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Comparator;
@@ -37,6 +38,19 @@ public class PublicacionService {
             publicacionRepository.establecerCreador(idUsuario, p.getId());
         }
         // Enviar notificación al frontend
+
+        if (usuarioRepository.findById(idUsuario).get().getPrivacidadPerfil().equals("Privada")) {
+            return p; // No se envía notificación
+        }
+        // Obtener la lista de amigos del usuario
+        List<Long> amigosIds = usuarioRepository.amigos(
+                usuarioRepository.findById(idUsuario).get().getNombreUsuario()).stream()
+                .map(Usuario::getId) // Suponiendo que getId() devuelve el ID de tipo Long
+                .collect(Collectors.toList());
+
+        // Enviar la publicación solo a los amigos
+        amigosIds.forEach(amigoId -> messagingTemplate.convertAndSend("/queue/publicaciones/" + amigoId, publicacion));
+
         messagingTemplate.convertAndSend("/topic/publicaciones", publicacion);
         return p;
     }
@@ -95,41 +109,6 @@ public class PublicacionService {
         return publicacionRepository.publicacionesComunidad(comunidadId, skip, size);
     }
 
-    /*
-     * public List<Comentario> obtenerComentariosPorPublicacion(Long idPublicacion)
-     * throws Exception {
-     * List<Long> comentariosId =
-     * publicacionRepository.idComentarios(idPublicacion);
-     * 
-     * List<Comentario> comentarios = new ArrayList<>();
-     * for (Long id : comentariosId) {
-     * Comentario comentario = obtenerComentariosPorId(id);
-     * if (comentario != null) {
-     * comentarios.add(comentario);
-     * }
-     * }
-     * // Collections.sort(comentarios, Collections.reverseOrder());
-     * 
-     * return comentarios;
-     * }
-     * 
-     * private Comentario obtenerComentariosPorId(Long id) throws Exception {
-     * String texto = publicacionRepository.findTextoById(id);
-     * ZonedDateTime fecha = publicacionRepository.findFechaById(id);
-     * Usuario usuario = usuarioRepository.findUsuarioById(id);
-     * if (texto == null || fecha == null || usuario == null) {
-     * throw new Exception("Comentario no encontrado con ID: " + id);
-     * }
-     * 
-     * Comentario comentario = new Comentario();
-     * comentario.setTexto(texto);
-     * comentario.setFecha(fecha);
-     * comentario.setUsuario(usuario);
-     * 
-     * return comentario;
-     * }
-     */
-
     public Long cantidadLikes(Long idPublicacion) {
         return publicacionRepository.cantidadLikes(idPublicacion);
     }
@@ -138,9 +117,41 @@ public class PublicacionService {
         return publicacionRepository.findPublicacionIdByComentarioId(idComentarioPadre);
     }
 
-    public void publicarEnComunidad(Long idComunidad, Long idUsuario, Publicacion publicacion) {
-        this.save(publicacion, idUsuario);
-        publicacionRepository.publicarEnComunidad(publicacion.getId(), idComunidad);
+    public Publicacion publicarEnComunidad(Long idComunidad, Long idUsuario, Publicacion publicacion) {
+        Publicacion p = publicacionRepository.save(publicacion);
+        Comunidad c = comunidadRepository.findById(idComunidad).orElse(null);
+        boolean aprobada = !c.isEsModerada();
+
+        String estado;
+        if (c.isEsModerada()) {
+            estado = "Pendiente";
+        } else {
+            estado = "Aprobada";
+        }
+
+        if (usuarioRepository.esCreador(idUsuario, idComunidad)
+                || usuarioRepository.esAdministrador(idUsuario, idComunidad)) {
+            estado = "Aprobada";
+        }
+
+        publicacionRepository.publicarEnComunidad(publicacion.getId(), idComunidad, estado);
+        if (p.getId() != null) {
+            publicacionRepository.establecerCreador(idUsuario, p.getId());
+        }
+        // Obtener la lista de participantes de la comunidad
+        List<Long> participantes = usuarioRepository.miembros(idComunidad).stream()
+                .map(Usuario::getId) // Suponiendo que getId() devuelve el ID de tipo Long
+                .collect(Collectors.toList());
+
+        // Enviar la publicación solo a los participantes
+        if (aprobada) {
+
+            participantes
+                    .forEach(amigoId -> messagingTemplate.convertAndSend("/queue/publicaciones/" + amigoId,
+                            publicacion));
+            messagingTemplate.convertAndSend("/topic/publicaciones", publicacion);
+        }
+        return p;
     }
 
     public List<PublicacionesDTO> obtenerTodasLasPublicaciones(Long idUsuario, int page, int size) {
@@ -171,4 +182,24 @@ public class PublicacionService {
                 .collect(Collectors.toList());
     }
 
+    public List<Publicacion> publicacionesComunidadPorAprobar(Long comunidadId, int page, int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
+        return publicacionRepository.publicacionesParaAprobar(comunidadId, skip, size);
+    }
+
+    public List<Publicacion> publicacionesRechazadasUsuarioComunidad(Long comunidadId, Long idUsuario, int page,
+            int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
+        return publicacionRepository.publicacionesRechazadasUsuarioComunidad(comunidadId, idUsuario, skip, size);
+    }
+
+    public List<Publicacion> publicacionesPendientesUsuarioComunidad(Long comunidadId, Long idUsuario, int page,
+            int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
+        return publicacionRepository.publicacionesPendientesUsuarioComunidad(comunidadId, idUsuario, skip, size);
+    }
+
+    public Publicacion actualizarEstado(Long idComunidad, Long idPublicacion, String nuevoEstado) {
+        return publicacionRepository.actualizarEstado(idComunidad, idPublicacion, nuevoEstado, ZonedDateTime.now());
+    }
 }

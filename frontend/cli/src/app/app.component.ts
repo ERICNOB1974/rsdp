@@ -10,6 +10,7 @@ import { Notificacion } from './notificaciones/notificacion';
 import { ThemeService } from './themeservice';
 import { UsuarioService } from './usuarios/usuario.service';
 import { Usuario } from './usuarios/usuario';
+import { WebSocketService } from './tiempoReal/webSocketService';
 
 
 //import { ToastrService } from 'ngx-toastr';
@@ -53,18 +54,28 @@ export class AppComponent {
   fotoPerfil: string = '';
   isCollapsed: boolean = false; // Estado por defecto
   loading: boolean = false;
+  mostrarBotonActualizar: boolean = false; // Controlar visibilidad del botón
+
+  posicionBoton = { top: 100, left: 500 }; // Posición inicial del botón
 
   constructor(private router: Router,
     private ubicacionService: UbicacionService,
     private usuarioService: UsuarioService,
     private authService: AuthService,
-    private notificacionService: NotificacionService
-    // private toastr: ToastrService,
-    //private webSocketService: WebSocketService
+    private notificacionService: NotificacionService,
+    private webSocketService: WebSocketService, // Inyectar el servicio
+
   ) { }
 
   setLoading(isLoading: boolean) {
     this.loading = isLoading;
+  }
+
+  actualizarNotificaciones(): void {
+    //window.location.reload()
+    //this.loadPublicaciones(); // Recargar publicaciones
+    this.cargarNotificaciones();
+    this.mostrarBotonActualizar=false;
   }
 
   ngOnInit(): void {
@@ -83,6 +94,11 @@ export class AppComponent {
     this.getUsuario();
     this.actualizarUbicacion();
     this.cargarNotificaciones();
+    this.webSocketService.connect(); // Establecer conexión con WebSocket
+    this.webSocketService.nuevasNotificaciones$.subscribe(() => {
+      this.mostrarBotonActualizar = true; // Mostrar botón cuando haya una nueva publicación
+      console.log('Nueva notificación recibida');
+    });
   }
 
 

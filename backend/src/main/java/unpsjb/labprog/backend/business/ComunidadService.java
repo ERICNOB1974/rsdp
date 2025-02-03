@@ -1,6 +1,7 @@
 package unpsjb.labprog.backend.business;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Usuario;
+import unpsjb.labprog.backend.model.DTO.ExpulsionDTO;
 
 @Service
 public class ComunidadService {
@@ -22,6 +24,8 @@ public class ComunidadService {
     ComunidadRepository comunidadRepository;
     @Autowired
     UsuarioRepository usuarioRepository;
+    @Autowired
+    PublicacionRepository publicacionRepository;
     @Autowired
     @Lazy
     UsuarioService usuarioService;
@@ -63,6 +67,10 @@ public class ComunidadService {
                 comunidadRepository.save(comunidad);
                 cambioAPublico(comVieja.getId());
             }
+            if (comVieja.isEsModerada() && !comunidad.isEsModerada()) {
+                comunidadRepository.save(comunidad);
+                cambioANoModerada(comVieja.getId());
+            }
         }
         return comunidadRepository.save(comunidad);
     }
@@ -80,6 +88,11 @@ public class ComunidadService {
                 comunidadRepository.eliminarSolicitudIngreso(solicitudes.get(i).getId(), idComunidad);
             }
         }
+    }
+
+    public void cambioANoModerada(Long idComunidad) {
+        publicacionRepository.aprobarTodasPublicacionesComunidad(idComunidad, java.time.ZonedDateTime.now());
+     
     }
 
     public void aceptarSolicitud(Long idUsuario, Long idComunidad) {
@@ -100,6 +113,9 @@ public class ComunidadService {
 
     public void etiquetarComunidad(Comunidad comunidad, Long etiqueta) {
         comunidadRepository.etiquetarComunidad(comunidad.getId(), etiqueta);
+    }
+    public void desetiquetarComunidad(Long comunidadId, Long etiqueta) {
+        comunidadRepository.desetiquetarComunidad(comunidadId, etiqueta);
     }
 
     public String miembroSale(Long idComunidad, Long idUsuario) {
@@ -256,7 +272,7 @@ public class ComunidadService {
         } else if ("miembro".equalsIgnoreCase(tipo)) {
             return comunidadRepository.comunidadesEtiquetasMiembro(usuarioId, etiquetas);
         } else {
-            return comunidadRepository.comunidadesEtiquetas(etiquetas);
+            return comunidadRepository.comunidadesEtiquetas(usuarioId, etiquetas);
         }
     }
 
@@ -266,7 +282,7 @@ public class ComunidadService {
         } else if ("miembro".equalsIgnoreCase(tipo)) {
             return comunidadRepository.comunidadesNombreMiembro(nombre, usuarioId);
         } else {
-            return comunidadRepository.comunidadesNombre(nombre);
+            return comunidadRepository.comunidadesNombre(nombre, usuarioId);
         }
     }
 
@@ -276,7 +292,7 @@ public class ComunidadService {
         } else if ("miembro".equalsIgnoreCase(tipo)) {
             return comunidadRepository.comunidadesCantidadParticipantesMiembro(usuarioId, min, max);
         } else {
-            return comunidadRepository.comunidadesCantidadParticipantes(min, max);
+            return comunidadRepository.comunidadesCantidadParticipantes(usuarioId, min, max);
         }
     }
 
@@ -331,19 +347,78 @@ public class ComunidadService {
         return comunidadRepository.buscarComunidadPorEventoInterno(idEvento);
     }
 
-    public void eliminarUsuario(String mensaje, Long idComunidad, Long idUsuario) {
+    /*
+     * public void eliminarUsuario(String mensaje, Long idComunidad, Long idUsuario)
+     * {
+     * Comunidad c = comunidadRepository.findById(idComunidad).get();
+     * String notificacion = "Has sido eliminado de la comunidad " + c.getNombre();
+     * this.notificacionService.notificarExpulsionComunidad(notificacion,
+     * idComunidad, idUsuario);
+     * this.comunidadRepository.eliminarUsuario(idComunidad, idUsuario, mensaje);
+     * }
+     */
+    public void eliminarUsuario(String motivo, String tipo, String fechaHoraExpulsion, Long idComunidad,
+            Long idUsuario) {
+        // Convertir la fechaHoraExpulsion en un objeto LocalDateTime
+        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+        LocalDateTime fechaExpulsion = LocalDateTime.parse(fechaHoraExpulsion, formatter);
+
         Comunidad c = comunidadRepository.findById(idComunidad).get();
         String notificacion = "Has sido eliminado de la comunidad " + c.getNombre();
+
+        // Aquí, notificar la expulsión
         this.notificacionService.notificarExpulsionComunidad(notificacion, idComunidad, idUsuario);
-        this.comunidadRepository.eliminarUsuario(idComunidad, idUsuario, mensaje);
+
+        // Eliminar el usuario con el mensaje y la fecha de expulsión
+        this.comunidadRepository.eliminarUsuario(idComunidad, idUsuario, motivo, tipo, fechaExpulsion,
+                LocalDateTime.now());
     }
 
-    public boolean estaExpulsado(Long idUsuario, Long idComunidad) {
-        return this.comunidadRepository.estaExpulsado(idUsuario, idComunidad);
+    public void editarExpulsion(String motivo, String tipo, String fechaHoraExpulsion, Long idComunidad,
+            Long idUsuario) {
+        // Lógica para editar la expulsión
+        // 1. Recuperar el usuario y la comunidad
+        usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        comunidadRepository.findById(idComunidad)
+                .orElseThrow(() -> new RuntimeException("Comunidad no encontrada"));
+        String expulsado = comunidadRepository.findTipoExpulsion(idUsuario, idComunidad);
+        if (expulsado != null) {
+            // Si la expulsión ya existe, actualizar los datos
+            DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+            LocalDateTime fechaExpulsion = LocalDateTime.parse(fechaHoraExpulsion, formatter);
+            comunidadRepository.actualizarExpulsion(idUsuario, idComunidad, motivo, tipo, fechaExpulsion);
+        } else {
+            eliminarUsuario(motivo, tipo, fechaHoraExpulsion, idComunidad, idUsuario);
+        }
     }
 
-    public String motivoExpulsion(Long idUsuario, Long idComunidad) {
-        return this.comunidadRepository.motivoExpulsion(idUsuario, idComunidad);
+    public ExpulsionDTO obtenerExpulsionDTO(Long idUsuario, Long idComunidad) {
+        // Crear un nuevo objeto ExpulsionDTO
+        ExpulsionDTO expulsionDTO = new ExpulsionDTO();
+
+        // Obtener los atributos de la base de datos o lógica
+        String motivoExpulsion = comunidadRepository.findMotivoExpulsion(idUsuario, idComunidad); // Suponiendo que esta
+                                                                                                  // es la lógica
+                                                                                                  // correcta
+        String tipo = comunidadRepository.findTipoExpulsion(idUsuario, idComunidad); // Asegúrate de que este valor se
+                                                                                     // obtiene correctamente
+        if (tipo != null) {
+            expulsionDTO.setEstaExpulsado(true); // Usar el setter correcto
+        } else {
+            expulsionDTO.setEstaExpulsado(false); // Opcional: Establecer en falso si tipo es null
+        }
+        if (tipo!=null && tipo.equals("temporal")) {
+            LocalDateTime fechaHoraExpulsion = comunidadRepository.findFechaHoraExpulsion(idUsuario, idComunidad);
+            expulsionDTO.setFechaHoraExpulsion(fechaHoraExpulsion); // Establecer la fecha de expulsión
+        }
+
+
+        // Establecer los valores obtenidos en el DTO
+        expulsionDTO.setMotivoExpulsion(motivoExpulsion); // Establecer el motivo de expulsión
+        expulsionDTO.setTipo(tipo); // Establecer el tipo
+
+        return expulsionDTO; // Retornar el DTO con los datos establecidos
     }
 
     @Transactional
@@ -359,9 +434,7 @@ public class ComunidadService {
 
                     if (latitud != null && longitud != null) {
                         String ubicacion = locationService.getCityAndCountry(latitud, longitud);
-
                         comunidad.setUbicacion(ubicacion);
-
                         comunidadRepository.save(comunidad);
                     }
                 } catch (Exception e) {
@@ -371,6 +444,11 @@ public class ComunidadService {
                 }
             }
         }
-
     }
+
+    public void eliminarBan(Long idComunidad, Long idUsuario) {
+        comunidadRepository.eliminarBan(idComunidad, idUsuario);
+    }
+
+
 }

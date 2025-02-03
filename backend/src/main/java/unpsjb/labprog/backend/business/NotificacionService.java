@@ -6,11 +6,11 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import unpsjb.labprog.backend.model.Evento;
 import unpsjb.labprog.backend.model.Usuario;
-import unpsjb.labprog.backend.presenter.WebSocketController;
 
 @Service
 public class NotificacionService {
@@ -22,10 +22,13 @@ public class NotificacionService {
     private EventoRepository eventoRepository;
 
     @Autowired
+    private PublicacionRepository publicacionRepository;
+
+    @Autowired
     private UsuarioRepository usuarioRepository;
 
     @Autowired
-    private WebSocketController webSocketController;
+    private SimpMessagingTemplate messagingTemplate;
 
     public void notificarInscripcionEvento(Long idUsuario, Long idEvento) {
         notificacionRepository.crearNotificacion(
@@ -33,9 +36,7 @@ public class NotificacionService {
                 idEvento,
                 "Inscripción a evento",
                 LocalDateTime.now());
-
-        String mensaje = "Te has inscrito al evento: " + idEvento;
-        webSocketController.enviarNotificacion(idUsuario, mensaje);
+        enviarEventoTiempoReal(idUsuario, "Inscripción a evento");
     }
 
     public void notificarAceptacionAmistad(Long idUsuario, Long idAmigo) {
@@ -44,9 +45,7 @@ public class NotificacionService {
                 idAmigo,
                 "Aceptación de solicitud de amistad",
                 LocalDateTime.now());
-
-        String mensaje = "Tu solicitud de amistad ha sido aceptada por el usuario: " + idAmigo;
-        webSocketController.enviarNotificacion(idUsuario, mensaje);
+        enviarEventoTiempoReal(idUsuario, "Aceptación de solicitud de amistad");
     }
 
     public List<Notificacion> obtenerNotificacionesPorUsuario(Long usuarioId) throws Exception {
@@ -94,15 +93,20 @@ public class NotificacionService {
     public void crearNotificacion(Long idUsuario, Long idEntidad, String tipo, LocalDateTime fecha) {
         // Crea la notificación en la base de datos
         notificacionRepository.crearNotificacion(idUsuario, idEntidad, tipo, fecha);
-        webSocketController.enviarNotificacion(idUsuario, "has recibido una notificacion.");
+        enviarEventoTiempoReal(idUsuario, tipo);
 
     }
 
     public void crearNotificacionPublicacion(Long idUsuarioReceptor, Long idUsuarioEmisor, Long idEntidad, String tipo,
             LocalDateTime fecha) {
-                if(idUsuarioReceptor!=idUsuarioEmisor){
-        notificacionRepository.crearNotificacionPublicacion(idUsuarioReceptor, idUsuarioEmisor, idEntidad, tipo, fecha);
-                }
+        if (idUsuarioReceptor != idUsuarioEmisor) {
+            if (publicacionRepository.publicadaYNoAprobada(idEntidad)) {
+                return;
+            }
+            notificacionRepository.crearNotificacionPublicacion(idUsuarioReceptor, idUsuarioEmisor, idEntidad, tipo,
+                    fecha);
+            enviarEventoTiempoReal(idUsuarioReceptor, tipo);
+        }
     }
 
     public void eliminarNotificacionSolicitudEntrante(Long idReceptor, Long idEmisor) {
@@ -115,6 +119,8 @@ public class NotificacionService {
             List<Usuario> inscriptos = usuarioRepository.inscriptosEvento(ev.getId());
             for (Usuario u : inscriptos) {
                 this.crearNotificacion(u.getId(), ev.getId(), "RECORDATORIO_EVENTO_PROXIMO", LocalDateTime.now());
+                enviarEventoTiempoReal(u.getId(), "RECORDATORIO_EVENTO_PROXIMO");
+
             }
         }
     }
@@ -124,6 +130,8 @@ public class NotificacionService {
         for (Usuario u : inscriptos) {
             notificacionRepository.crearNotificacionCambioEvento(u.getId(), evento.getId(),
                     "MODIFICACION_EVENTO", LocalDateTime.now(), mensaje);
+            enviarEventoTiempoReal(u.getId(), "MODIFICACION_EVENTO");
+
         }
 
     }
@@ -139,10 +147,23 @@ public class NotificacionService {
     }
     // Otros métodos para diferentes tipos de notificaciones
 
-    public void notificarExpulsionEvento(String mensaje, Long idEvento, Long idUsuario){
-        this.notificacionRepository.crearNotificacionMotivoExpulsion(idUsuario, idEvento, "EXPULSION_EVENTO", LocalDateTime.now(), mensaje);
+    public void notificarExpulsionEvento(String mensaje, Long idEvento, Long idUsuario) {
+        this.notificacionRepository.crearNotificacionMotivoExpulsion(idUsuario, idEvento, "EXPULSION_EVENTO",
+                LocalDateTime.now(), mensaje);
+        enviarEventoTiempoReal(idUsuario, "EXPULSION_EVENTO");
+
     }
-    public void notificarExpulsionComunidad(String mensaje, Long idComunidad, Long idUsuario){
-        this.notificacionRepository.crearNotificacionMotivoExpulsion(idUsuario, idComunidad, "EXPULSION_COMUNIDAD", LocalDateTime.now(), mensaje);
+
+    public void notificarExpulsionComunidad(String mensaje, Long idComunidad, Long idUsuario) {
+        this.notificacionRepository.crearNotificacionMotivoExpulsion(idUsuario, idComunidad, "EXPULSION_COMUNIDAD",
+                LocalDateTime.now(), mensaje);
+        enviarEventoTiempoReal(idUsuario, "EXPULSION_COMUNIDAD");
+
+    }
+
+    public void enviarEventoTiempoReal(Long idUsuario, String tipo) {
+        messagingTemplate.convertAndSend("/queue/notificaciones/" + idUsuario, tipo);
+        messagingTemplate.convertAndSend("/topic/notificaciones", tipo);
+
     }
 }

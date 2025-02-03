@@ -9,38 +9,52 @@
 }
 
 .drag-drop-area {
-    max-width: 100%; /* Para que no sobresalga del contenedor */
-    max-height: 400px; /* Altura máxima ajustada */
-    overflow: hidden; /* Oculta contenido que sobresalga */
-    border: 2px dashed #ccc; /* Borde decorativo */
+    max-width: 100%;
+    /* Para que no sobresalga del contenedor */
+    max-height: 400px;
+    /* Altura máxima ajustada */
+    overflow: hidden;
+    /* Oculta contenido que sobresalga */
+    border: 2px dashed #ccc;
+    /* Borde decorativo */
     border-radius: 8px;
-    text-align: center; /* Centrar contenido */
-    padding: 20px; /* Espaciado interno */
-    box-sizing: border-box; /* Incluye padding y border en el tamaño total */
-    background-color: #f9f9f9; /* Fondo ligero */
+    text-align: center;
+    /* Centrar contenido */
+    padding: 20px;
+    /* Espaciado interno */
+    box-sizing: border-box;
+    /* Incluye padding y border en el tamaño total */
+    background-color: #f9f9f9;
+    /* Fondo ligero */
     position: relative;
 }
+
 .drag-drop-area img,
 .drag-drop-area video {
-    max-width: 60%; /* Ajusta al ancho disponible */
-    max-height: 60%; /* Ajusta al alto disponible */
-    object-fit: contain; /* Ajusta el contenido sin recortar ni distorsionar */
-    margin: auto; /* Centra el contenido */
-    display: block; /* Evita problemas con márgenes colapsados */
+    max-width: 60%;
+    /* Ajusta al ancho disponible */
+    max-height: 60%;
+    /* Ajusta al alto disponible */
+    object-fit: contain;
+    /* Ajusta el contenido sin recortar ni distorsionar */
+    margin: auto;
+    /* Centra el contenido */
+    display: block;
+    /* Evita problemas con márgenes colapsados */
 }
 
 
 
 .vista-previa-imagen {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     max-width: 100%;
     height: auto;
-  }
-  
+}
+
 
 
 .form-container {
@@ -184,14 +198,32 @@ button.btn-secondary {
 }
 
 .mat-error-custom {
-    font-size: 1em; /* Tamaño de fuente por defecto */
+    font-size: 1em;
+    /* Tamaño de fuente por defecto */
 }
-  
-  @media (max-width: 600px) {
+
+@media (max-width: 600px) {
     .mat-error-custom {
-      font-size: 0.8em; /* Tamaño de fuente más pequeño en pantallas pequeñas */
-      padding: 5px; /* Menos espaciado */
+        font-size: 0.8em;
+        /* Tamaño de fuente más pequeño en pantallas pequeñas */
+        padding: 5px;
+        /* Menos espaciado */
     }
+}
+
+.tooltip-bootstrap {
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    max-width: 80vw;
+    font-size: 0.875rem;
+    z-index: 1050;
   }
-
-
+  
+  /* Estilos cuando el tooltip está activo */
+  .fa-question-circle.text-danger {
+    transition: color 0.2s ease-in-out;
+  }
+  

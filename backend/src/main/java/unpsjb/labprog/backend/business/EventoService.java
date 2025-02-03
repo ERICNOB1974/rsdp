@@ -291,7 +291,7 @@ public class EventoService {
         } else if ("participante".equalsIgnoreCase(tipo)) {
             return eventoRepository.eventosEtiquetasParticipante(usuarioId, etiquetas);
         } else {
-            return eventoRepository.eventosEtiquetas(etiquetas);
+            return eventoRepository.eventosEtiquetas(etiquetas, usuarioId);
         }
     }
 
@@ -301,7 +301,7 @@ public class EventoService {
         } else if ("participante".equalsIgnoreCase(tipo)) {
             return eventoRepository.eventosNombreParticipante(nombre, usuarioId);
         } else {
-            return eventoRepository.eventosNombre(nombre);
+            return eventoRepository.eventosNombre(nombre, usuarioId);
         }
     }
 
@@ -311,7 +311,7 @@ public class EventoService {
         } else if ("participante".equalsIgnoreCase(tipo)) {
             return eventoRepository.eventosFechaParticipante(usuarioId, min, max);
         } else {
-            return eventoRepository.eventosFecha(min, max);
+            return eventoRepository.eventosFecha(min, max, usuarioId);
         }
     }
 
@@ -321,7 +321,7 @@ public class EventoService {
         } else if ("participante".equalsIgnoreCase(tipo)) {
             return eventoRepository.eventosCantidadParticipantesParticipante(usuarioId, min, max);
         } else {
-            return eventoRepository.eventosCantidadParticipantes(min, max);
+            return eventoRepository.eventosCantidadParticipantes(min, max, usuarioId);
         }
     }
 

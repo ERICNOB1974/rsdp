@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Client, IMessage } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { Subject } from 'rxjs';
+import { AuthService } from '../autenticacion/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -9,9 +10,18 @@ import { Subject } from 'rxjs';
 export class WebSocketService {
   private stompClient: Client | null = null;
   public nuevasPublicaciones$ = new Subject<void>(); // Notificar nuevas publicaciones
+  public nuevasNotificaciones$ = new Subject<void>(); // Notificar nuevas notificaciones
+
+
+  constructor(
+    private authService: AuthService
+  ) { }
 
   connect(): void {
     const socket = new SockJS('http://localhost:8080/ws'); // URL del endpoint
+    /*configuracion del servidor*/
+    //const socket = new SockJS('http://if012rsdp.fi.mdn.unp.edu.ar:28004/ws'); 
+    /*fin configuracion del servidor*/
     this.stompClient = new Client({
       webSocketFactory: () => socket,
       reconnectDelay: 5000,
@@ -19,10 +29,15 @@ export class WebSocketService {
 
     this.stompClient.onConnect = () => {
       console.log('Conexión establecida con WebSocket.');
-
-      this.stompClient?.subscribe('/topic/publicaciones', () => {
+      this.stompClient?.subscribe(`/queue/publicaciones/${this.authService.getUsuarioId()}`, () => {
         this.nuevasPublicaciones$.next(); // Emitir evento
       });
+      
+      // Suscribirse a las notificaciones personales del usuario
+      this.stompClient?.subscribe(`/queue/notificaciones/${this.authService.getUsuarioId()}`, () => {
+        this.nuevasNotificaciones$.next(); // Emitir evento
+      });
+      
     };
 
     this.stompClient.onStompError = (frame) => {

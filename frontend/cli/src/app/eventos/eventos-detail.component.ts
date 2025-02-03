@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { EventoService } from './evento.service';
 import { Evento } from './evento';
@@ -17,6 +17,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, NgForm } from '@angular/forms';
 import * as L from 'leaflet';
 import { DataPackage } from '../data-package';
+declare var bootstrap: any;  // Importa Bootstrap de forma global
 
 @Component({
   selector: 'app-evento-detail',
@@ -26,7 +27,7 @@ import { DataPackage } from '../data-package';
     CommonModule, FormsModule, RouterModule],
   standalone: true
 })
-export class EventoDetailComponent implements OnInit {
+export class EventoDetailComponent implements OnInit, AfterViewInit {
 
   motivo: string = '';
   mensaje: string = '';
@@ -65,6 +66,7 @@ export class EventoDetailComponent implements OnInit {
   amigosEnEventoFiltrados: any[] = [];
   amigosYaInvitadosFiltrados: any[] = [];
   listaReferencia: any[] = [];
+  generoUsuario!: string;
   mostrarAmigosNoEnEvento: boolean = true;
   mostrarAmigosEnEvento: boolean = true;
   mostrarAmigosYaInvitados: boolean = true;
@@ -94,6 +96,9 @@ export class EventoDetailComponent implements OnInit {
     }
     this.idUsuarioAutenticado = Number(this.authService.getUsuarioId());
     this.getEvento();
+    this.usuarioService.generoUsuario().subscribe((response: DataPackage) => {
+      this.generoUsuario = response.data as unknown as string; // Extrae el string del objeto `data`
+    });
   }
   toggleMotivo() {
     this.mostrarMotivo = !this.mostrarMotivo;
@@ -261,6 +266,30 @@ export class EventoDetailComponent implements OnInit {
 
   salirValid(): boolean {
     return this.participa;
+  }
+
+  @ViewChild('tooltipContainer', { static: false }) tooltipContainer!: ElementRef;
+
+  ngAfterViewInit() {
+    // Inicializar los tooltips de Bootstrap
+    setTimeout(() => { // Esperar a que Angular renderice el DOM
+      const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+      tooltipTriggerList.forEach((tooltipTriggerEl) => {
+        new bootstrap.Tooltip(tooltipTriggerEl);
+      });
+    }, 500);
+  }
+
+  generoCompatible(): boolean {
+    if (!this.evento || !this.generoUsuario) {
+      return false; // Si no hay datos aún, deshabilita el botón por defecto
+    }
+    const generoEvento = this.evento.genero; // Asume que `this.evento.genero` contiene el género del evento
+    return !(
+      (this.generoUsuario === "masculino" && (generoEvento === "femenino" || generoEvento === "otros")) ||
+      (this.generoUsuario === "femenino" && (generoEvento === "masculino" || generoEvento === "otros")) ||
+      (this.generoUsuario === "otros" && (generoEvento === "masculino" || generoEvento === "femenino"))
+    );
   }
 
   botonInvitar(): boolean {
