@@ -44,14 +44,6 @@ export class PublicacionDetailComponent implements OnInit {
   isReplying = false; // Para saber si está respondiendo a un comentario
   textoConMenciones$: Observable<string> = undefined!;
 
-
-
-  loadingLikesComentario: boolean = false; // Estado de carga
-  currentPageLikesComentario: number = 0; // Página actual para paginación
-  //@ViewChild('modalLikesComentario') modalLikesComentario!: TemplateRef<any>;
-  usuariosLikesComentario: Usuario[] = [];
-  noMasUsuariosComentario = false;
-
   constructor(
     private route: ActivatedRoute,
     private publicacionService: PublicacionService,
@@ -71,7 +63,6 @@ export class PublicacionDetailComponent implements OnInit {
   comment: string = '';
   comments: string[] = [];
   comentarios: Comentario[] = [];
-  usuariosLike: Usuario[] = [];
   displayedComments: Comentario[] = [];
   commentsToShow: number = 4; // Número de comentarios a mostrar inicialmente
   isOwnPublication: boolean = false;
