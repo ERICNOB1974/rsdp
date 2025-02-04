@@ -197,7 +197,6 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
       });
       this.usuarioService.usuarioCreadorEvento(this.evento.id).subscribe(dataPackage => {
         this.creadorEvento = dataPackage.data as Usuario;
-        console.log('Creador del evento:', this.creadorEvento); // Añadir log para verificar el valor
         if (this.creadorEvento.id == this.idUsuarioAutenticado) {
           this.creador = true;  // El usuario es el creador
         }
@@ -249,6 +248,7 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
         });
         this.participa = false;
         this.evento.participantes--;
+        this.participantesVisibles = this.participantesVisibles.filter(s => s.id != this.idUsuarioAutenticado)
         this.isLoading = false;
       },
       error => {
