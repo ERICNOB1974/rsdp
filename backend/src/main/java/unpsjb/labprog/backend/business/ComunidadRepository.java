@@ -208,10 +208,10 @@ LocalDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
             "WHERE numParticipantes < c.cantidadMaximaMiembros " +
             "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c) " +
             "AND c.eliminada = false " +
-            "AND (CASE u.genero " +
-            "     WHEN 'masculino' THEN c.genero IN ['masculino', 'sinGenero'] " +
-            "     WHEN 'femenino' THEN c.genero IN ['femenino', 'sinGenero'] " +
-            "     ELSE c.genero IN ['otros', 'sinGenero'] END) " +
+            "AND ( " +
+            "    (u.genero = 'masculino' AND c.genero IN ['masculino', 'sinGenero']) OR " +
+            "    (u.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR " +
+            "    (u.genero = 'otros' AND c.genero IN ['otros', 'sinGenero']) " +
             "RETURN c " +
             "ORDER BY c.nombre ASC " +
             "SKIP $skip " + // Paginación: omite el número de resultados especificado
@@ -235,13 +235,10 @@ LocalDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
             "MATCH (amigo)-[:MIEMBRO]->(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
             "WHERE NOT (u)-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR|:MODERADA_POR]-(comunidad) " +
             "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
-            "AND (" +
-            "   ($generoUsuario = 'masculino' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'sinGenero')) OR "
-            +
-            "   ($generoUsuario = 'femenino' AND (comunidad.genero = 'femenino' OR comunidad.genero = 'sinGenero')) OR "
-            +
-            "   ($generoUsuario = 'otros' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'femenino' OR comunidad.genero = 'sinGenero'))"
-            +
+            "AND ( " +
+            "    (u.genero = 'masculino' AND comunidad.genero IN ['masculino', 'sinGenero']) OR " +
+            "    (u.genero = 'femenino' AND comunidad.genero IN ['femenino', 'sinGenero']) OR " +
+            "    (u.genero = 'otros' AND comunidad.genero IN ['otros', 'sinGenero']) " +
             ") " +
             "OPTIONAL MATCH (comunidad)<-[:MIEMBRO]-(miembro) " +
             "WITH u, comunidad, COUNT(DISTINCT etiqueta) AS etiquetasEnComun, COUNT(miembro) AS cantidadMiembros "
@@ -256,19 +253,16 @@ LocalDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
             "RETURN comunidad, (etiquetasEnComun / (distancia + 1500000)) AS score, 'A tus amigos le gustan eventos de este tipo' AS motivo "
             + // Cambiar aquí
             "ORDER BY score DESC ")
-    List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario, String generoUsuario);
+    List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario);
 
     @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario) " +
             "MATCH (amigo)-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR|:MODERADA_POR]-(comunidad:Comunidad) " +
             "WHERE NOT (u)-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR|:MODERADA_POR]-(comunidad) " +
             "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
-            "AND (" +
-            "   ($generoUsuario = 'masculino' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'sinGenero')) OR "
-            +
-            "   ($generoUsuario = 'femenino' AND (comunidad.genero = 'femenino' OR comunidad.genero = 'sinGenero')) OR "
-            +
-            "   ($generoUsuario = 'otros' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'femenino' OR comunidad.genero = 'sinGenero'))"
-            +
+            "AND ( " +
+            "    (u.genero = 'masculino' AND comunidad.genero IN ['masculino', 'sinGenero']) OR " +
+            "    (u.genero = 'femenino' AND comunidad.genero IN ['femenino', 'sinGenero']) OR " +
+            "    (u.genero = 'otros' AND comunidad.genero IN ['otros', 'sinGenero']) " +
             ") " +
             "OPTIONAL MATCH (comunidad)-[:MIEMBRO|:ADMINISTRADA_POR|:CREADA_POR|:MODERADA_POR]-(miembro) " +
             "WITH u, comunidad, COUNT(DISTINCT amigo) AS cantidadAmigosEnComunidad, COUNT(DISTINCT miembro) AS cantidadMiembros "
@@ -278,21 +272,17 @@ LocalDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
             "RETURN comunidad, (cantidadAmigosEnComunidad) AS score, 'Tienes amigos en esta comunidad' AS motivo "
             +
             "ORDER BY score DESC ")
-    List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos2SinEtiquetas(String nombreUsuario,
-            String generoUsuario);
+    List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos2SinEtiquetas(String nombreUsuario);
 
     @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(evento:Evento)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta), "
             +
             "(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta) " +
             "WHERE NOT (u)<-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR|:MODERADA_POR]-(comunidad) " +
             "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
-            "AND (" +
-            "   ($generoUsuario = 'masculino' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'sinGenero')) OR "
-            +
-            "   ($generoUsuario = 'femenino' AND (comunidad.genero = 'femenino' OR comunidad.genero = 'sinGenero')) OR "
-            +
-            "   ($generoUsuario = 'otros' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'femenino' OR comunidad.genero = 'sinGenero'))"
-            +
+            "AND ( " +
+            "    (u.genero = 'masculino' AND comunidad.genero IN ['masculino', 'sinGenero']) OR " +
+            "    (u.genero = 'femenino' AND comunidad.genero IN ['femenino', 'sinGenero']) OR " +
+            "    (u.genero = 'otros' AND comunidad.genero IN ['otros', 'sinGenero']) " +
             ") " +
             "OPTIONAL MATCH (comunidad)<-[:MIEMBRO]-(miembro) " +
             "WITH u, comunidad, COUNT(DISTINCT etiqueta) AS etiquetasEnComun, COUNT(miembro) AS cantidadMiembros "
@@ -309,20 +299,17 @@ LocalDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
             "RETURN comunidad, score, 'Es similar a los eventos en los que participas' AS motivo  "
             +
             "ORDER BY score DESC ")
-    List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnEventos2(String nombreUsuario, String generoUsuario);
+    List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnEventos2(String nombreUsuario);
 
     @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:MIEMBRO]->(c1:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta), "
             +
             "(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta) " +
             "WHERE NOT (u)<-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR|:MODERADA_POR]->(comunidad) " +
             "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
-            "AND (" +
-            "   ($generoUsuario = 'masculino' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'sinGenero')) OR "
-            +
-            "   ($generoUsuario = 'femenino' AND (comunidad.genero = 'femenino' OR comunidad.genero = 'sinGenero')) OR "
-            +
-            "   ($generoUsuario = 'otros' AND (comunidad.genero = 'masculino' OR comunidad.genero = 'femenino' OR comunidad.genero = 'sinGenero'))"
-            +
+            "AND ( " +
+            "    (u.genero = 'masculino' AND comunidad.genero IN ['masculino', 'sinGenero']) OR " +
+            "    (u.genero = 'femenino' AND comunidad.genero IN ['femenino', 'sinGenero']) OR " +
+            "    (u.genero = 'otros' AND comunidad.genero IN ['otros', 'sinGenero']) " +
             ") " +
             "OPTIONAL MATCH (comunidad)<-[:MIEMBRO]-(miembro) " +
             "WITH u, comunidad, COUNT(DISTINCT etiqueta) AS etiquetasEnComun, COUNT(miembro) AS cantidadMiembros "
@@ -340,17 +327,18 @@ LocalDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
             +
             "ORDER BY score DESC ")
     List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnComunidades2(
-            @Param("nombreUsuario") String nombreUsuario, String generoUsuario);
+            @Param("nombreUsuario") String nombreUsuario);
 
     @Query("MATCH (c:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta), (u:Usuario {id: $idUsuario}) " +
             "WHERE NOT (u)-[:EXPULSADO_COMUNIDAD]-(c) " +
             "WITH c, collect(etiqueta.nombre) AS etiquetasComunidad, c.eliminada AS eliminada, u " +
             "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasComunidad) " +
             "AND eliminada = false " +
-            "AND (CASE u.genero " +
-            "     WHEN 'masculino' THEN c.genero IN ['masculino', 'sinGenero'] " +
-            "     WHEN 'femenino' THEN c.genero IN ['femenino', 'sinGenero'] " +
-            "     ELSE c.genero IN ['otros', 'sinGenero'] END) " +
+            "AND ( " +
+            "    (u.genero = 'masculino' AND c.genero IN ['masculino', 'sinGenero']) OR " +
+            "    (u.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR " +
+            "    (u.genero = 'otros' AND c.genero IN ['otros', 'sinGenero']) " +
+            ") " +
             "RETURN c")
     List<Comunidad> comunidadesEtiquetas(@Param("idUsuario") Long idUsuario,
             @Param("etiquetas") List<String> etiquetas);
@@ -363,10 +351,11 @@ LocalDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
             "WITH c, collect(etiqueta.nombre) AS etiquetasComunidad, c.eliminada AS eliminada, u " +
             "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasComunidad) " +
             "AND eliminada = false " +
-            "AND (CASE u.genero " +
-            "     WHEN 'masculino' THEN c.genero IN ['masculino', 'sinGenero'] " +
-            "     WHEN 'femenino' THEN c.genero IN ['femenino', 'sinGenero'] " +
-            "     ELSE c.genero IN ['otros', 'sinGenero'] END) " +
+            "AND ( " +
+            "    (u.genero = 'masculino' AND c.genero IN ['masculino', 'sinGenero']) OR " +
+            "    (u.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR " +
+            "    (u.genero = 'otros' AND c.genero IN ['otros', 'sinGenero']) " +
+            ") " +
             "RETURN c")
     List<Comunidad> comunidadesEtiquetasDisponibles(@Param("idUsuario") Long idUsuario,
             @Param("etiquetas") List<String> etiquetas);
@@ -378,10 +367,11 @@ LocalDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
             "WITH c, collect(etiqueta.nombre) AS etiquetasComunidad, c.eliminada AS eliminada " +
             "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasComunidad) " +
             "AND eliminada = false " +
-            "AND (CASE u.genero " +
-            "     WHEN 'masculino' THEN c.genero IN ['masculino', 'sinGenero'] " +
-            "     WHEN 'femenino' THEN c.genero IN ['femenino', 'sinGenero'] " +
-            "     ELSE c.genero IN ['otros', 'sinGenero'] END) " +
+            "AND ( " +
+            "    (u.genero = 'masculino' AND c.genero IN ['masculino', 'sinGenero']) OR " +
+            "    (u.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR " +
+            "    (u.genero = 'otros' AND c.genero IN ['otros', 'sinGenero']) " +
+            ") " +
             "RETURN c")
     List<Comunidad> comunidadesEtiquetasMiembro(@Param("idUsuario") Long idUsuario,
             @Param("etiquetas") List<String> etiquetas);
@@ -389,10 +379,11 @@ LocalDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
     @Query("MATCH (c:Comunidad), (u:Usuario {id: $idUsuario}) " +
             "WHERE toUpper(c.nombre) CONTAINS toUpper($nombre) " +
             "AND c.eliminada = false " +
-            "AND (CASE u.genero " +
-            "     WHEN 'masculino' THEN c.genero IN ['masculino', 'sinGenero'] " +
-            "     WHEN 'femenino' THEN c.genero IN ['femenino', 'sinGenero'] " +
-            "     ELSE c.genero IN ['otros', 'sinGenero'] END) " +
+            "AND ( " +
+            "    (u.genero = 'masculino' AND c.genero IN ['masculino', 'sinGenero']) OR " +
+            "    (u.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR " +
+            "    (u.genero = 'otros' AND c.genero IN ['otros', 'sinGenero']) " +
+            ") " +
             "RETURN c")
     List<Comunidad> comunidadesNombre(@Param("nombre") String nombre,
             @Param("idUsuario") Long idUsuario);
@@ -407,10 +398,11 @@ LocalDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
               AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c)
             WITH c, u
             WHERE NOT c.eliminada
-            AND (CASE u.genero
-                 WHEN 'masculino' THEN c.genero IN ['masculino', 'sinGenero']
-                 WHEN 'femenino' THEN c.genero IN ['femenino', 'sinGenero']
-                 ELSE c.genero IN ['otros', 'sinGenero'] END)
+            AND (
+                (u.genero = 'masculino' AND c.genero IN ['masculino', 'sinGenero']) OR
+                (u.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR
+                (u.genero = 'otros' AND c.genero IN ['otros', 'sinGenero'])
+            )
             RETURN DISTINCT c
             """)
     List<Comunidad> comunidadesNombreDisponibles(@Param("nombre") String nombre,
@@ -423,10 +415,11 @@ LocalDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
             AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c)
             WITH c, u
             WHERE NOT c.eliminada
-            AND (CASE u.genero
-                 WHEN 'masculino' THEN c.genero IN ['masculino', 'sinGenero']
-                 WHEN 'femenino' THEN c.genero IN ['femenino', 'sinGenero']
-                 ELSE c.genero IN ['otros', 'sinGenero'] END)
+            AND (
+                (u.genero = 'masculino' AND c.genero IN ['masculino', 'sinGenero']) OR
+                (u.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR
+                (u.genero = 'otros' AND c.genero IN ['otros', 'sinGenero'])
+            )
             RETURN c
             """)
     List<Comunidad> comunidadesNombreMiembro(@Param("nombre") String nombre,
@@ -437,12 +430,11 @@ LocalDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
                 MATCH (us:Usuario)
                 WHERE id(us) = $usuarioId
                 AND NOT (us)-[:EXPULSADO_COMUNIDAD]-(c)
-                AND (CASE us.genero
-                     WHEN 'masculino' THEN c.genero IN ['masculino', 'sinGenero']
-                     WHEN 'femenino' THEN c.genero IN ['femenino', 'sinGenero']
-                     ELSE c.genero IN ['otros', 'sinGenero']
-                END)
-
+                AND (
+                        (us.genero = 'masculino' AND c.genero IN ['masculino', 'sinGenero']) OR
+                        (us.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR
+                        (us.genero = 'otros' AND c.genero IN ['otros', 'sinGenero'])
+                )
                 OPTIONAL MATCH (u:Usuario)-[r]-(c)
                 WHERE type(r) <> 'SOLICITUD_DE_INGRESO' AND type(r) <> 'NOTIFICACION' AND type(r) <> 'EXPULSADO_COMUNIDAD'
                 WITH c, count(DISTINCT u) AS totalUsuarios, us
@@ -457,16 +449,14 @@ LocalDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
             @Param("min") int min, @Param("max") int max);
 
     @Query("""
-                MATCH (c:Comunidad)
-                MATCH (us:Usuario)
+                MATCH (c:Comunidad), (us:Usuario)
                 WHERE id(us) = $usuarioId
                 AND NOT (us)-[:EXPULSADO_COMUNIDAD]-(c)
-                AND (CASE us.genero
-                     WHEN 'masculino' THEN c.genero IN ['masculino', 'sinGenero']
-                     WHEN 'femenino' THEN c.genero IN ['femenino', 'sinGenero']
-                     ELSE c.genero IN ['otros', 'sinGenero']
-                END)
-
+                AND (
+                        (us.genero = 'masculino' AND c.genero IN ['masculino', 'sinGenero']) OR
+                        (us.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR
+                        (us.genero = 'otros' AND c.genero IN ['otros', 'sinGenero'])
+                )
                 OPTIONAL MATCH (u:Usuario)-[r]-(c)
                 WHERE type(r) <> 'SOLICITUD_DE_INGRESO' AND type(r) <> 'NOTIFICACION' AND type(r) <> 'EXPULSADO_COMUNIDAD'
                 WITH c, count(DISTINCT u) AS totalUsuarios, us
@@ -479,15 +469,13 @@ LocalDateTime obtenerFechaIngreso(Long idMiembro, Long idComunidad);
             @Param("min") int min, @Param("max") int max);
 
     @Query("""
-                MATCH (c:Comunidad)
-                MATCH (us:Usuario)
+                MATCH (c:Comunidad), (us:Usuario)
                 WHERE id(us) = $usuarioId
-                AND (CASE us.genero
-                     WHEN 'masculino' THEN c.genero IN ['masculino', 'sinGenero']
-                     WHEN 'femenino' THEN c.genero IN ['femenino', 'sinGenero']
-                     ELSE c.genero IN ['otros', 'sinGenero']
-                END)
-
+                AND (
+                        (us.genero = 'masculino' AND c.genero IN ['masculino', 'sinGenero']) OR
+                        (us.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR
+                        (us.genero = 'otros' AND c.genero IN ['otros', 'sinGenero'])
+                )
                 OPTIONAL MATCH (u:Usuario)-[r]-(c)
                 WHERE type(r) <> 'SOLICITUD_DE_INGRESO' AND type(r) <> 'NOTIFICACION' AND type(r) <> 'EXPULSADO_COMUNIDAD'
                 WITH c, count(DISTINCT u) AS totalUsuarios

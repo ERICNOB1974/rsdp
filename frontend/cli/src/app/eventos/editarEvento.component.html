@@ -95,9 +95,13 @@
     </div>
 
     <div class="form-buttons">
-      <button type="button" (click)="saveEvento()" class="btn btn-success" [disabled]="!isFormValid()">Guardar
-        Evento</button>
+      <button type="button" (click)="saveEvento()" class="btn btn-success d-flex align-items-center" 
+        [disabled]="!isFormValid() || isLoading">
+        <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+        Guardar Evento
+      </button>
       <button type="button" (click)="cancel()" class="btn btn-secondary">Cancelar</button>
     </div>
+    
   </form>
 </div>

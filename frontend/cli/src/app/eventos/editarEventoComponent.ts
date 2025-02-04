@@ -57,6 +57,7 @@ export class EditarEventoComponent {
   participantes: number = 0;
   maxParticipantes: number = 1; // Inicializar con 1
   formatoValido: boolean = true;
+  isLoading: boolean = false;
   archivoSeleccionado!: File; // Para almacenar la imagen o video seleccionado
   tipoArchivo: string = ''; // Para distinguir entre imagen o video
   vistaPreviaArchivo: string | ArrayBuffer | null = null;
@@ -73,7 +74,8 @@ export class EditarEventoComponent {
     private router: Router,
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private location: Location
   ) {
     this.formEvento = this.formBuilder.group(
       {
@@ -364,36 +366,46 @@ export class EditarEventoComponent {
   }
 
   async saveEvento() {
+    this.isLoading = true; 
+  
+    setTimeout(() => {
+      this.isLoading = false; 
+      this.location.back();
+    }, 1000);
+  
     try {
       // Formatear la fecha antes de guardar el evento
       this.evento.fechaHora = new Date(this.evento.fechaHora).toISOString();
-
+  
       // Guardar el evento y obtener su ID
       const eventoGuardado = await firstValueFrom(this.eventoService.saveConCreador(this.evento));
       this.evento = <Evento>eventoGuardado.data;
-
+  
       // Verificar y crear etiquetas si es necesario
       for (const etiqueta of this.etiquetasSeleccionadas) {
         const existe = await this.etiquetaService.verificarExistencia(etiqueta.nombre).toPromise();
         let etiquetaFinal = etiqueta;
-
+  
         if (!existe) {
           const nuevaEtiqueta = { id: 0, nombre: etiqueta.nombre };
           etiquetaFinal = await firstValueFrom(this.etiquetaService.crearEtiqueta(nuevaEtiqueta));
         }
-
+  
         // Realizar la etiquetación con la etiqueta final
         await this.eventoService.etiquetar(this.evento, etiquetaFinal.id).toPromise();
       }
+  
       // Desetiquetar etiquetas removidas
       for (const etiqueta of this.etiquetasOriginales) {
         if (!this.etiquetasSeleccionadas.some(e => e.id === etiqueta.id)) {
           await this.eventoService.desetiquetar(this.evento.id, etiqueta.id).toPromise();
         }
       }
-
-      this.router.navigate([`eventos/${this.evento.id}`]);
-
+  
+      this.snackBar.open('Evento editado con éxito', 'Cerrar', {
+        duration: 3000,
+      });
+  
     } catch (error) {
       console.error('Error al guardar el evento:', error);
       this.snackBar.open('Error al guardar el evento.', 'Cerrar', {
@@ -401,6 +413,7 @@ export class EditarEventoComponent {
       });
     }
   }
+  
 
 
 
