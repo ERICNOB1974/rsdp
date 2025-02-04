@@ -157,9 +157,9 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
         boolean eventoCreadoPor(@Param("idUsuario") Long idUsuario,
                         @Param("idEvento") Long idEvento);
 
-        @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento) " +
+        @Query("MATCH (u:Usuario)-[r:PARTICIPA_EN]->(e:Evento) " +
                         "WHERE id(u) = $idUsuario AND id(e) = $idEvento " +
-                        "RETURN COUNT(e) > 0")
+                        "RETURN COUNT(r) > 0")
         boolean participa(Long idUsuario, Long idEvento);
 
         @Query("MATCH (e:Evento), (c:Comunidad) " +
