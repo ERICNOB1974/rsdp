@@ -107,3 +107,33 @@
   border: 1px solid #ffeeba;
   border-radius: 8px;
 }
+/*BUSCADOR CSS */
+.search-container {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+
+.search-input {
+  width: 100%;
+  padding: 15px 20px;
+  padding-right: 40px;
+  border-radius: 25px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+.search-icon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 18px;
+} 

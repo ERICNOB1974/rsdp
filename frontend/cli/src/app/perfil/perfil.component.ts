@@ -714,6 +714,7 @@ export class PerfilComponent implements OnInit {
         if (Array.isArray(responseData) && responseData.length > 0) {
 
           this.traerMiembros(responseData); // Llamar a traerParticipantes después de cargar los eventos
+
           // for (const comunidad of responseData) {
           //   if (comunidad.latitud && comunidad.longitud) {
           //     comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
