@@ -509,4 +509,10 @@ public class EventoService {
     public void desetiquetarEvento(Long idEvento, Long etiqueta) {
         eventoRepository.desetiquetarEvento(idEvento, etiqueta);
     }
+
+       public List<Evento> eventosCreadosPorUsuarioFiltrados(Long idUsuario, String nombreEvento, int page, int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
+        String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
+        return eventoRepository.eventosCreadosPorUsuarioFiltrados(idUsuario, filtroNombre, skip, size);
+    }
 }

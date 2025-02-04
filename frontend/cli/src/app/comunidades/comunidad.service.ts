@@ -284,5 +284,12 @@ quitarRolModerador(idCreador: number, idMiembro: number, idComunidad: number): O
 }
 
 
+comunidadesCreadasPorUsuarioFiltradas(nombreComunidad: string, page: number, size: number): Observable<DataPackage> {
+  // Si nombreRutina está vacío, no lo incluimos en la URL
+  const url = `${this.comunidadesUrl}/creadasFiltradas/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
+    (nombreComunidad ? `&nombreComunidad=${nombreComunidad}` : '');  // Agregar solo si no está vacío
+  return this.http.get<DataPackage>(url);
+}
+
 
 }
