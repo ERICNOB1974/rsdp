@@ -72,6 +72,7 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
   mostrarMasAmigosNoEnEvento: number = 4;
   mostrarMasAmigosEnEvento: number = 4;
   mostrarMasAmigosYaInvitados: number = 4;
+  @ViewChild('tooltipContainer', { static: false }) tooltipContainer!: ElementRef;
 
   constructor(
     private route: ActivatedRoute,
@@ -220,6 +221,12 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
           duration: 3000,
         });
         this.evento.participantes++;
+        let nombre = this.authService.getNombreUsuario()!;
+        let usuario: Usuario;
+        this.usuarioService.findByNombreUsuario(nombre).subscribe(dataPackage => {
+          usuario = dataPackage.data as Usuario;
+          this.participantesVisibles.push(usuario);
+        })
       } catch (error) {
         console.error('Error al inscribirse:', error);
         this.snackBar.open('Error al inscribirse', 'Cerrar', {
@@ -267,7 +274,6 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
     return this.participa;
   }
 
-  @ViewChild('tooltipContainer', { static: false }) tooltipContainer!: ElementRef;
 
   ngAfterViewInit() {
     // Inicializar los tooltips de Bootstrap
@@ -345,11 +351,6 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
 
   }
 
-
-  cerrarModal(): void {
-    this.buscador = '';
-    this.dialog.closeAll();
-  }
 
   cargarAmigos(): void {
     const idEvento = this.evento.id;
@@ -555,7 +556,8 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
     }
    */
 
-  abrirModalExpulsion(usuario: any): void {
+  abrirModalExpulsion(usuario: any, event: Event): void {
+    event.stopPropagation(); // Evita que el clic se propague al `div` con `routerLink`
     this.usuarioEliminar = usuario; // Asigna el usuario al abrir el modal
     this.modalService.open(this.modalExpulsion, {
       centered: true, // Centra el modal
@@ -563,10 +565,11 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
       keyboard: false, // Desactiva el cierre con teclado
     });
   }
+
   eliminarMiembro(idUsuario: number, motivo: string) {
     this.eventoService.eliminarMiembro(this.evento.id, idUsuario, motivo).subscribe(dataPackage => {
-
-      this.traerMiembros();
+      this.participantesVisibles = this.participantesVisibles.filter(m => m.id !== idUsuario);
+      this.evento.participantes = this.evento.participantes - 1;
     });
   }
 

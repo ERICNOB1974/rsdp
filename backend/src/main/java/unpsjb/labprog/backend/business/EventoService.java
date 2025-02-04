@@ -2,6 +2,7 @@ package unpsjb.labprog.backend.business;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -164,12 +165,13 @@ public class EventoService {
     public void mail(Evento evento) throws MessagingException {
         Optional<Evento> eventoViejo = eventoRepository.findById(evento.getId());
         if (!eventoViejo.isEmpty()) {
-            boolean cambioFecha = evento.getFechaHora() != eventoViejo.get().getFechaHora();
-            boolean cambioUbicacion = eventoViejo.get().getUbicacion() != evento.getUbicacion();
-            emailService.enviarMailCambio(cambioFecha, cambioUbicacion, evento);
-        }
-        if (eventoViejo.isEmpty() && evento.isEsPrivadoParaLaComunidad()) {
-            // emailService.enviarMail();
+            boolean cambioUbicacion= (eventoViejo.get().getLatitud()!=evento.getLatitud()) || (eventoViejo.get().getLongitud()!=evento.getLongitud());
+            boolean cambioFecha = !evento.getFechaHora()
+                    .truncatedTo(ChronoUnit.SECONDS) // Elimina nanosegundos
+                    .equals(eventoViejo.get().getFechaHora().truncatedTo(ChronoUnit.SECONDS)); 
+            if (cambioFecha || cambioUbicacion) {
+                emailService.enviarMailCambio(cambioFecha, cambioUbicacion, evento);
+            }
         }
     }
 
@@ -213,30 +215,13 @@ public class EventoService {
 
     @Transactional
     public Evento actualizar(Evento evento) throws MessagingException, EventoException {
-        mail(evento);
-        notificar(evento);
-
         if (evento.getFechaHora().isBefore(ZonedDateTime.now()) ||
                 evento.getFechaHora().isEqual(ZonedDateTime.now())) {
             throw new EventoException("El evento no puede tener una fecha anterior a ahora");
         }
+        mail(evento);
+        notificar(evento);
         return eventoRepository.save(evento);
-        // suponiendo que se crea ahora mismo
-        /*
-         * 
-         * if (evento.getFechaDeCreacion().isAfter(LocalDate.now())) {
-         * throw new EventoException("El evento no puede crearse en el futuro");
-         * 
-         * }
-         */
-
-        // opciones para cuando hay una relacion
-        /*
-         * 1. establecer la relacion aca obligatoriamente si es nuevo el evento.
-         * si es viejo la busco. si quiero actualizar esa relacion no permitir que la
-         * actualice mal
-         * 
-         */
     }
 
     @Transactional

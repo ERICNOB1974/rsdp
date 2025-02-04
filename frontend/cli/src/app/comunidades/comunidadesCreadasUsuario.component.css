@@ -157,15 +157,7 @@ body, html {
   transform: scale(1.05);
 }
 
-.no-comunidades {
-  text-align: center;
-  font-size: 1.5em;
-  color: #666;
-  padding: 40px;
-  background: #fff3cd;
-  border: 1px solid #ffeeba;
-  border-radius: 8px;
-}
+
 
 @media (max-width: 28.75em) {
   html {

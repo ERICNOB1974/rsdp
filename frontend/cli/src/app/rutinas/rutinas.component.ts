@@ -266,6 +266,8 @@ export class RutinasComponent implements OnInit {
           listaActual.some(actualItem => actualItem.id === item.id)
         );
       });
+      this.traerEtiquetas(this.resultadosFiltrados);
+
     } else {
       this.resultadosFiltrados = [];
     }
