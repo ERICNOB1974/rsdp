@@ -305,5 +305,15 @@ public class EventoPresenter {
         return Response.ok("ok");
     }
 
+           @RequestMapping(path = "/eventosCreadosPorUsuarioFiltrados/{idUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> eventosCreadosPorUsuarioFiltrados(
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String nombreEvento) {
+        return Response.ok(eventoService.eventosCreadosPorUsuarioFiltrados(idUsuario, nombreEvento, page, size));
+    }
+
+
 
 }

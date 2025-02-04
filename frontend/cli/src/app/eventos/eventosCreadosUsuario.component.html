@@ -1,6 +1,12 @@
-<div class="eventos-container" *ngIf="eventosUsuario.length > 0; else noEventos">
+<div class="eventos-container" >
   <h2 class="titulo-eventos"> Eventos Creados por Ti</h2>
-  <div class="eventos-list" (scroll)="onScroll()">
+  <div class="search-container">
+    <input type="text" placeholder="Buscar eventos por nombre" #searchInput
+        (input)="onSearchInputEventos(searchInput.value)" class="form-control search-input"
+        [(ngModel)]="searchText" />
+    <i class="fas fa-search search-icon"></i>
+</div>
+  <div class="eventos-list" (scroll)="onScroll()" *ngIf="eventosUsuario.length > 0; else noEventos">
     <div class="evento-card" *ngFor="let evento of eventosUsuario">
       <div class="imagen-container">
         <img 

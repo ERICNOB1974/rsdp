@@ -7,6 +7,7 @@ import { Evento } from './evento';
 import { EventoService } from './evento.service';
 import { AuthService } from '../autenticacion/auth.service';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
+import { debounceTime, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-eventos-usuario',
@@ -22,6 +23,8 @@ export class EventosCreadosUsuarioComponent implements OnInit {
   limit: number = 4; // Número de eventos a cargar por solicitud
   loading: boolean = false; // Para manejar el estado de carga
   noMasEventos = false;
+    searchSubjectEventos: Subject<string> = new Subject<string>();
+  searchText: string = ""
   constructor(
     private eventoService: EventoService,
     private authService: AuthService,
@@ -32,9 +35,29 @@ export class EventosCreadosUsuarioComponent implements OnInit {
 
   ngOnInit(): void {
     this.getEventosCreadosUsuario(); // Cargar las comunidades creadas por el usuario al inicializar el componente
+    this.searchSubjectEventos
+    .pipe(debounceTime(500)) // Espera 0,5 segundo
+    .subscribe((nombre: string) => {
+      this.buscarEventos(nombre); // Cargar las comunidades creadas por el usuario al inicializar el componente
+    });
   }
 
 
+  buscarEventos(nombre: string): void {
+    if (nombre != "") {
+      this.loading = false; // Indicamos que estamos buscando
+      this.offset = 0;  // Reiniciamos la paginación al buscar
+      this.noMasEventos = false;  // Permitimos que se carguen más resultados
+      this.eventosUsuario = [];  // Limpiamos los resultados previos
+      this.getEventosCreadosUsuarioFiltrados(nombre); // Llamamos al método que carga las rutinas filtradas
+    } else {
+      this.loading = false;  // Si no hay filtro, indicamos que no estamos buscando
+      this.offset = 0;  // Reiniciamos la paginación
+      this.noMasEventos = false;  // Permitimos cargar más resultados
+      this.eventosUsuario = [];  // Limpiamos los resultados previos
+      this.getEventosCreadosUsuario(); // Llamamos al método que carga todas las rutinas
+    }
+  }
 
   getEventosCreadosUsuario(): void {
     if (this.loading || this.noMasEventos) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
@@ -77,6 +100,48 @@ export class EventosCreadosUsuarioComponent implements OnInit {
       );
   }
 
+  getEventosCreadosUsuarioFiltrados(nombre: string): void {
+    if (this.loading || this.noMasEventos) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
+    
+    this.loading = true;
+  
+    this.eventoService
+      .eventosCreadosPorUsuarioFiltrados(nombre,this.offset, this.limit)
+      .subscribe(
+        async (dataPackage) => {
+          const resultados = dataPackage.data as Evento[];
+
+          if (resultados && resultados.length > 0) {
+            // Filtrar los resultados para evitar duplicados
+            const nuevosEventos = resultados.filter(
+              (eventoNuevo) =>
+                !this.eventosUsuario.some(
+                  (eventoExistente) => eventoExistente.id === eventoNuevo.id
+                )
+            );
+
+            if (nuevosEventos.length > 0) {
+              this.traerParticipantes(nuevosEventos); // Llamar a traerParticipantes después de cargar los eventos
+              this.traerEtiquetas(nuevosEventos);
+              this.eventosUsuario = [...this.eventosUsuario, ...nuevosEventos];
+              this.offset += this.limit;
+            } else {
+              this.noMasEventos = true; // No hay más eventos nuevos
+            }
+          } else {
+            this.noMasEventos = true; // No hay más eventos por cargar
+          }
+  
+          this.loading = false; // Desactivar el indicador de carga
+        },
+        (error) => {
+          console.error('Error al cargar más eventos:', error);
+          this.loading = false;
+        }
+      );
+  }
+
+
   traerParticipantes(eventos: Evento[]): void {
     // Recorrer todos los eventos y obtener el número de participantes
     for (let evento of eventos) {
@@ -118,5 +183,9 @@ export class EventosCreadosUsuarioComponent implements OnInit {
         }
       );
     }
+  }
+
+  onSearchInputEventos(nombre: string): void {
+    this.searchSubjectEventos.next(nombre); // Emite el texto ingresado
   }
 }

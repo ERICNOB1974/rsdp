@@ -330,7 +330,7 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
             // Si no es la primera página, agrega los nuevos miembros a la lista
             this.participantesVisibles = [...this.participantesVisibles, ...dataPackage.data];
           }
-
+          console.info(this.participantesVisibles);
 
         }
         this.loadingScroll = false;
@@ -444,52 +444,6 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
     });
   }
 
-  /*  filtrarParticipantesVisibles(): void {
-     // Verificamos que los datos requeridos estén definidos
-     if (!this.amigosEnEvento || !this.miembros) {
-       console.error("Amigos o miembros no están definidos.");
-       return;
-     }
- 
-     const amigosIds = this.amigosEnEvento.map(amigo => amigo.id);
-     this.participantesVisibles = []; // Reiniciamos la lista de miembros visibles
-     this.usuariosAnonimos = 0; // Reiniciamos el conteo de usuarios anónimos
- 
- 
- 
-     // Iterar sobre los miembros y añadir solo aquellos que sean visibles
-     this.miembros.forEach(miembro => {
-       if (miembro.id === this.idUsuarioAutenticado) {
-         // Siempre mostrar el usuario que está viendo la lista
-         if (!this.participantesVisibles.some(m => m.id === miembro.id)) {
-           this.participantesVisibles.push(miembro);
-         }
-       } else if (miembro.id == this.creadorEvento.id) {
-         if (!this.participantesVisibles.some(m => m.id === miembro.id)) {
-           this.participantesVisibles.push(miembro);
-         }
-       } else if (this.creador) {
-         // Si es el creador , añadir todos los miembros
-         if (!this.participantesVisibles.some(m => m.id === miembro.id)) {
-           this.participantesVisibles.push(miembro);
-         }
-       } else {
-         // Para miembros normales, aplicar la lógica de privacidad
-         if (miembro.privacidadEventos === 'Pública') {
-           if (!this.participantesVisibles.some(m => m.id === miembro.id)) {
-             this.participantesVisibles.push(miembro);
-           }
-         } else if (miembro.privacidadEventos === 'Solo amigos' && amigosIds.includes(miembro.id)) {
-           if (!this.participantesVisibles.some(m => m.id === miembro.id)) {
-             this.participantesVisibles.push(miembro);
-           }
-         } else {
-           this.usuariosAnonimos++; // Aumentar el conteo de anónimos si no se muestra
-         }
-       }
-     });
-     this.participantesVisiblesPaginados = this.participantesVisibles.slice(0, this.cargaInicial);
-   } */
 
   openModal(content: any) {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
@@ -528,12 +482,7 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
     this.modalService.dismissAll();
   }
 
-  /*   onScroll(): void {
-      const element = document.querySelector('.members-list') as HTMLElement;
-      if (element.scrollTop + element.clientHeight >= element.scrollHeight - 10) {
-        this.cargarMasParticipantes();
-      }
-    } */
+ 
   onScroll(): void {
     const element = document.querySelector('.members-list') as HTMLElement;
     if (!this.loadingScroll && element.scrollTop + element.clientHeight >= element.scrollHeight - 10) {
@@ -543,17 +492,7 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
     }
   }
 
-  /*   cargarMasParticipantes(): void {
-      const totalCargados = this.participantesVisiblesPaginados.length;
-      const nuevosMiembros = this.participantesVisibles.slice(totalCargados, totalCargados + this.cargaIncremento);
-  
-      if (nuevosMiembros.length > 0) {
-        this.participantesVisiblesPaginados = [...this.participantesVisiblesPaginados, ...nuevosMiembros];
-      } else {
-        console.log('No hay más participantes por cargar');
-      }
-    }
-   */
+
 
   abrirModalExpulsion(usuario: any): void {
     this.usuarioEliminar = usuario; // Asigna el usuario al abrir el modal
@@ -641,6 +580,12 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
       this.page = 0; // Reinicia la página cuando cambia el término de búsqueda
       this.traerParticipantes(); // Trae los miembros con el nuevo término
     }, 1000); // Retraso de 2 segundos
+  }
+
+  eventoEsAntiguo(): boolean {
+    const hoy = new Date();
+    const fechaEvento = new Date(this.evento.fechaHora); // Asegúrate de que `this.evento.fecha` es un string válido para `Date`
+    return fechaEvento < hoy;
   }
 
 }

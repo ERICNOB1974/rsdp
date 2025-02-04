@@ -386,25 +386,6 @@ public class UsuarioService {
         String filtroNombre = (term == null || term.trim().isEmpty()) ? "" : term;
         List<Usuario> usuarios = new ArrayList<>();
 
-        if (page == 0) {
-
-            // Verificar si el solicitante es miembro de la comunidad
-            Optional<Usuario> solicitante = usuarioRepository.findByNombreUsuario(nombreUsuario);
-            solicitante.ifPresent(s -> {
-                // Verificar si el solicitante ya está en los resultados
-                boolean solicitanteYaIncluido = usuarios.stream()
-                        .anyMatch(usuario -> usuario.getId().equals(s.getId()));
-
-                // Si el solicitante no está en los resultados, agregarlo
-                if (!solicitanteYaIncluido) {
-                    // Verificar si es miembro de la comunidad
-                    boolean esMiembro = eventoRepository.participa(s.getId(), idEvento);
-                    if (esMiembro) {
-                        usuarios.add(s);
-                    }
-                }
-            });
-        }
 
         usuarios.addAll(usuarioRepository.buscarParticipanteEvento(nombreUsuario, idEvento, filtroNombre, skip, size));
         return usuarios;
