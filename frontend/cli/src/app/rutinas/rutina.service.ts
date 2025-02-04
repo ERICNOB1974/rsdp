@@ -183,6 +183,14 @@ export class RutinaService {
     return this.http.get<DataPackage>(`${this.rutinasUrl}/rutinasCreadasPorUsuario/${userId}?offset=${offset}&limit=${limit}`);
   }
 
+  rutinasCreadasPorUsuarioFiltradas(nombreRutina: string,page: number, size: number): Observable<DataPackage> {
+    const url = `${this.rutinasUrl}/rutinasCreadasPorUsuarioFiltradas/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
+    (nombreRutina ? `&nombreRutina=${nombreRutina}` : '');  // Agregar solo si no está vacío
+  return this.http.get<DataPackage>(url);
+
+  }
+  
+
   rutinasRealizaUsuario(idUsuario: number, nombreRutina: string, page: number, size: number): Observable<DataPackage> {
     // Si nombreRutina está vacío, no lo incluimos en la URL
     const url = `${this.rutinasUrl}/rutinasRealizaUsuario/${idUsuario}?page=${page}&size=${size}` +

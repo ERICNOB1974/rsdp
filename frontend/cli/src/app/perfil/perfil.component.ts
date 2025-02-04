@@ -714,13 +714,7 @@ export class PerfilComponent implements OnInit {
         if (Array.isArray(responseData) && responseData.length > 0) {
 
           this.traerMiembros(responseData); // Llamar a traerParticipantes después de cargar los eventos
-          // for (const comunidad of responseData) {
-          //   if (comunidad.latitud && comunidad.longitud) {
-          //     comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
-          //   } else {
-          //     comunidad.ubicacion = 'Ubicación desconocida';
-          //   }
-          // }
+    
           this.historicoComunidades = [...this.historicoComunidades, ...responseData];  // Agregamos las nuevas rutinas
           this.currentIndexComunidades++;  // Incrementamos el índice para la siguiente carga
           if (responseData.length < this.cantidadPorPagina) {

@@ -7,6 +7,7 @@ import { Comunidad } from './comunidad'; // Asegúrate de tener un modelo Comuni
 import { ComunidadService } from './comunidad.service'; // Crea este servicio
 import { AuthService } from '../autenticacion/auth.service';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
+import { debounceTime, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-comunidades-usuario',
@@ -21,6 +22,12 @@ export class ComunidadesCreadasUsuarioComponent implements OnInit {
   limit: number = 8; // Número de comunidades a cargar por solicitud
   loading: boolean = false; // Para manejar el estado de carga
   noMasComunidades = false;
+  currentIndexComunidades: number = 0; // Índice actual de la página
+  loadingRutinas: boolean = false; // Indicador de carga
+  noMasRutinas: boolean = false; // Indicador de fin de publicaciones
+  isSearching: boolean = false;  // Variable para indicar si estamos buscando
+  searchSubjectComunidades: Subject<string> = new Subject<string>();
+  searchText: string = ""
 
   constructor(
     private comunidadService: ComunidadService,
@@ -29,10 +36,30 @@ export class ComunidadesCreadasUsuarioComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.info("pepepepepe");
-    this.getComunidadesUsuario(); // Cargar las comunidades creadas por el usuario al inicializar el componente
+    this.getComunidadesUsuario();
+    this.searchSubjectComunidades
+    .pipe(debounceTime(500)) // Espera 0,5 segundo
+    .subscribe((nombre: string) => {
+      this.buscarComunidades(nombre); // Cargar las comunidades creadas por el usuario al inicializar el componente
+    });
   }
 
+
+  buscarComunidades(nombre: string): void {
+    if (nombre != "") {
+      this.isSearching = true; // Indicamos que estamos buscando
+      this.currentIndexComunidades = 0;  // Reiniciamos la paginación al buscar
+      this.noMasComunidades = false;  // Permitimos que se carguen más resultados
+      this.comunidadesUsuario = [];  // Limpiamos los resultados previos
+      this.cargarComunidadesFiltradas(nombre); // Llamamos al método que carga las rutinas filtradas
+    } else {
+      this.isSearching = false;  // Si no hay filtro, indicamos que no estamos buscando
+      this.currentIndexComunidades = 0;  // Reiniciamos la paginación
+      this.noMasComunidades = false;  // Permitimos cargar más resultados
+      this.comunidadesUsuario = [];  // Limpiamos los resultados previos
+      this.getComunidadesUsuario(); // Llamamos al método que carga todas las rutinas
+    }
+  }
 
 
   getComunidadesUsuario(): void {
@@ -50,12 +77,12 @@ export class ComunidadesCreadasUsuarioComponent implements OnInit {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerMiembros(resultados); // Llamar a traerParticipantes después de cargar los eventos
             this.traerEtiquetas(resultados);
+            
             this.comunidadesUsuario = [
               ...this.comunidadesUsuario,
               ...resultados,
             ];
             this.offset += this.limit;
-            console.info(this.comunidadesUsuario);
           } else {
             this.noMasComunidades = true; // No hay más comunidades por cargar
           }
@@ -67,6 +94,46 @@ export class ComunidadesCreadasUsuarioComponent implements OnInit {
         }
       );
   }
+
+  cargarComunidadesFiltradas(nombre: string): void {
+   
+    if (this.loading || this.noMasComunidades) return;  // Si ya estamos cargando o no hay más resultados, no hacemos nada
+
+    this.loading = true;
+
+
+    this.comunidadService
+      .comunidadesCreadasPorUsuarioFiltradas(nombre, this.currentIndexComunidades,this.limit)
+      .subscribe(
+        async (dataPackage) => {
+          const resultados = dataPackage.data as Comunidad[]
+          if (resultados && resultados.length > 0) {
+            // Agregar las comunidades obtenidas a la lista que se muestra
+            this.traerMiembros(resultados); // Llamar a traerParticipantes después de cargar los eventos
+            this.traerEtiquetas(resultados);
+            
+            this.comunidadesUsuario = [
+              ...this.comunidadesUsuario,
+              ...resultados,
+            ];
+            this.currentIndexComunidades++;  // Incrementamos el índice para la siguiente carga
+            if (resultados.length < this.limit) {
+              this.noMasComunidades = true;
+            }
+          } else {
+            this.noMasComunidades = true; // No hay más comunidades por cargar
+          }
+          this.loading = false; // Desactivar el indicador de carga
+        },
+        (error) => {
+          console.error('Error al cargar más comunidades:', error);
+          this.loading = false;
+        }
+      );
+  }
+
+
+
   
   traerMiembros(comunidades: Comunidad[]): void {
     for (let comunidad of comunidades) {
@@ -109,5 +176,9 @@ export class ComunidadesCreadasUsuarioComponent implements OnInit {
         }
       );
     }
+  }
+
+  onSearchInputComunidades(nombre: string): void {
+    this.searchSubjectComunidades.next(nombre); // Emite el texto ingresado
   }
 }

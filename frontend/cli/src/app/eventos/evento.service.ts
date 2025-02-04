@@ -168,6 +168,14 @@ export class EventoService {
     const userId = this.authService.getUsuarioId();
     return this.http.get<DataPackage>(`${this.eventosUrl}/eventosCreadosPorUsuario/${userId}?offset=${offset}&limit=${limit}`);
   }
+
+  eventosCreadosPorUsuarioFiltrados(nombreEvento: string,page: number, size: number): Observable<DataPackage> {
+    const url = `${this.eventosUrl}/eventosCreadosPorUsuarioFiltrados/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
+    (nombreEvento ? `&nombreEvento=${nombreEvento}` : '');  // Agregar solo si no está vacío
+  return this.http.get<DataPackage>(url);
+
+  }
+  
   
  
   participaUsuario(idUsuario: number, nombreEvento: string, page: number, size: number): Observable<DataPackage> {

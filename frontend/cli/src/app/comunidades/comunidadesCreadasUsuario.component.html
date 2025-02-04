@@ -7,9 +7,15 @@
 </head>
 
 <body class="comunidades-orne">
-<div class="comunidades-container" *ngIf="comunidadesUsuario.length > 0; else noComunidades">
+<div class="comunidades-container" >
   <h2>Comunidades Creadas por Ti</h2>
-  <div class="comunidades-list" (scroll)="onScroll()">
+  <div class="search-container">
+    <input type="text" placeholder="Buscar comunidad por nombre" #searchInput
+        (input)="onSearchInputComunidades(searchInput.value)" class="form-control search-input"
+        [(ngModel)]="searchText" />
+    <i class="fas fa-search search-icon"></i>
+</div>
+  <div class="comunidades-list" (scroll)="onScroll()" *ngIf="comunidadesUsuario.length > 0; else noComunidades">
     <div class="comunidad-card" *ngFor="let comunidad of comunidadesUsuario">
       <div class="background-image" 
            [ngStyle]="{'background-image': 'url(' + (comunidad.imagen || '../../assets/comunidad.jpg') + ')'}">

@@ -144,6 +144,13 @@ public class ComunidadService {
         return comunidadRepository.miembroUsuario(idUsuario, filtroNombre, skip, size);
     }
 
+    public List<Comunidad> creadasFiltradas(Long idUsuario, String nombreComunidad, int page, int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
+        String filtroNombre = (nombreComunidad == null || nombreComunidad.trim().isEmpty()) ? "" : nombreComunidad;
+        return comunidadRepository.creadasFiltradas(idUsuario, filtroNombre, skip, size);
+    }
+
+
     public List<ScoreComunidad> obtenerSugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario) {
         Usuario usuario = usuarioService.findByNombreUsuario(nombreUsuario);
 
