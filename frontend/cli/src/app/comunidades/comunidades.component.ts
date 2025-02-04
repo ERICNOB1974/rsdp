@@ -72,9 +72,9 @@ export class ComunidadesComponent implements OnInit {
 
   toggleFilters() {
     if (this.filtersAnimating) return;
-  
+
     this.filtersAnimating = true;
-  
+
     if (this.filtersVisible) {
       this.filtersVisible = false;
       setTimeout(() => {
@@ -87,7 +87,7 @@ export class ComunidadesComponent implements OnInit {
       }, 500);
     }
   }
-  
+
 
   traerMiembros(comunidades: Comunidad[]): void {
     for (let comunidad of comunidades) {
@@ -125,7 +125,7 @@ export class ComunidadesComponent implements OnInit {
   async aplicarFiltroEtiquetas2(): Promise<Comunidad[]> {
     try {
       const etiquetasIds = this.etiquetasSeleccionadas.map(e => e.nombre);
-      const dataPackage = await lastValueFrom(this.comunidadService.filtrarEtiqueta(etiquetasIds,this.tabSeleccionada,this.idUsuarioAutenticado));
+      const dataPackage = await lastValueFrom(this.comunidadService.filtrarEtiqueta(etiquetasIds, this.tabSeleccionada, this.idUsuarioAutenticado));
       if (Array.isArray(dataPackage.data)) {
         return dataPackage.data;
       }
@@ -135,11 +135,11 @@ export class ComunidadesComponent implements OnInit {
       return []; // Manejo de errores devolviendo una lista vacía
     }
   }
-  
+
   async aplicarFiltroParticipantes2(): Promise<Comunidad[]> {
     try {
       const dataPackage = await lastValueFrom(
-        this.comunidadService.filtrarParticipantes( this.tabSeleccionada,this.idUsuarioAutenticado,
+        this.comunidadService.filtrarParticipantes(this.tabSeleccionada, this.idUsuarioAutenticado,
           this.minParticipantes || 0,
           this.maxParticipantes || Number.MAX_SAFE_INTEGER
         )
@@ -157,7 +157,7 @@ export class ComunidadesComponent implements OnInit {
   async aplicarFiltroNombre2(): Promise<Comunidad[]> {
     try {
       const dataPackage = await lastValueFrom(
-        this.comunidadService.filtrarNombre(this.nombreEventoFiltro, this.tabSeleccionada,this.idUsuarioAutenticado)
+        this.comunidadService.filtrarNombre(this.nombreEventoFiltro, this.tabSeleccionada, this.idUsuarioAutenticado)
       );
       return dataPackage.data as Comunidad[];
     } catch (error) {
@@ -255,7 +255,7 @@ export class ComunidadesComponent implements OnInit {
 
     // Restaurar todos los resultados
     this.currentIndexComunidadesDisponibles = 0;
-    this.currentIndexComunidadesMiembro=0;
+    this.currentIndexComunidadesMiembro = 0;
 
   }
 
@@ -267,9 +267,9 @@ export class ComunidadesComponent implements OnInit {
     this.hayResultadosFiltrados = false; // Inicializar en false
 
     if (this.filtroNombreActivo && this.nombreEventoFiltro) {
-        lista1 = await this.aplicarFiltroNombre2();
-        this.hayResultadosFiltrados = true; // Entró en el if
-      }
+      lista1 = await this.aplicarFiltroNombre2();
+      this.hayResultadosFiltrados = true; // Entró en el if
+    }
     if (this.filtroParticipantesActivo && (this.minParticipantes !== null || this.maxParticipantes !== null)) {
       lista2 = await this.aplicarFiltroParticipantes2();
       this.hayResultadosFiltrados = true; // Entró en el if
@@ -278,67 +278,69 @@ export class ComunidadesComponent implements OnInit {
       lista3 = await this.aplicarFiltroEtiquetas2();
       this.hayResultadosFiltrados = true; // Entró en el if
     }
-    this.comunidadesDisponiblesAMostrar=[];
-    this.comunidadesMiembroUsuarioAMostrar=[]
-    if(this.hayResultadosFiltrados){
-      
-      
+    this.comunidadesDisponiblesAMostrar = [];
+    this.comunidadesMiembroUsuarioAMostrar = []
+    if (this.hayResultadosFiltrados) {
+
+
       let listasActivas = [lista1, lista2, lista3].filter(lista => lista.length > 0);
 
       if (listasActivas.length > 0) {
         // Realizamos la intersección de las listas
         this.resultadosFiltrados = listasActivas.reduce((interseccion, listaActual) => {
-        return interseccion.filter(item => 
-          listaActual.some(actualItem => actualItem.id === item.id)
-        );
-      });
+          return interseccion.filter(item =>
+            listaActual.some(actualItem => actualItem.id === item.id)
+          );
+        });
+        this.traerEtiquetas(this.resultadosFiltrados);
+
+      } else {
+        this.resultadosFiltrados = [];
+      }
+      this.currentIndexFiltrados = 0;
+      this.noMasResultadosFiltrados = false;
+      //await this.actualizarInformacionAdicional();
+      this.cargarMasResultadosFiltrados(); // Cargar la primera página de resultados
     } else {
-      this.resultadosFiltrados = [];
-    }
-    this.currentIndexFiltrados = 0;
-    this.noMasResultadosFiltrados = false;
-    //await this.actualizarInformacionAdicional();
-    this.cargarMasResultadosFiltrados(); // Cargar la primera página de resultados
-  }else{
-    this.currentIndexComunidadesDisponibles=0;
-    this.currentIndexComunidadesMiembro=0;
-    if (this.tabSeleccionada === 'disponibles') {
-      this.cargarComunidadesDisponibles();
-    } else if (this.tabSeleccionada === 'miembro') {
-      this.cargarComunidadesMiembro();
+      this.currentIndexComunidadesDisponibles = 0;
+      this.currentIndexComunidadesMiembro = 0;
+      if (this.tabSeleccionada === 'disponibles') {
+        this.cargarComunidadesDisponibles();
+      } else if (this.tabSeleccionada === 'miembro') {
+        this.cargarComunidadesMiembro();
+      }
     }
   }
-}
 
-cargarMasResultadosFiltrados(): void {
-  if (this.loadingFiltrados || this.noMasResultadosFiltrados) return;
+  cargarMasResultadosFiltrados(): void {
+    if (this.loadingFiltrados || this.noMasResultadosFiltrados) return;
 
-  this.loadingFiltrados = true;
-  const inicio = this.currentIndexFiltrados * this.cantidadPorPagina;
-  const fin = inicio + this.cantidadPorPagina;
+    this.loadingFiltrados = true;
+    const inicio = this.currentIndexFiltrados * this.cantidadPorPagina;
+    const fin = inicio + this.cantidadPorPagina;
 
-  const nuevosResultados = this.resultadosFiltrados.slice(inicio, fin);
+    const nuevosResultados = this.resultadosFiltrados.slice(inicio, fin);
 
-  if (nuevosResultados.length > 0) {
-    this.traerMiembros(nuevosResultados); // Agregar datos adicionales como ubicación y miembros
-    if (this.tabSeleccionada === 'disponibles') {
-      this.comunidadesDisponiblesAMostrar = [
-        ...this.comunidadesDisponiblesAMostrar,
-        ...nuevosResultados
-      ];
-    } else if (this.tabSeleccionada === 'miembro') {
-      this.comunidadesMiembroUsuarioAMostrar = [
-        ...this.comunidadesMiembroUsuarioAMostrar,
-        ...nuevosResultados
-      ];
+    if (nuevosResultados.length > 0) {
+      this.traerMiembros(nuevosResultados); // Agregar datos adicionales como ubicación y miembros
+      if (this.tabSeleccionada === 'disponibles') {
+        this.comunidadesDisponiblesAMostrar = [
+          ...this.comunidadesDisponiblesAMostrar,
+          ...nuevosResultados
+        ];
+      } else if (this.tabSeleccionada === 'miembro') {
+        this.comunidadesMiembroUsuarioAMostrar = [
+          ...this.comunidadesMiembroUsuarioAMostrar,
+          ...nuevosResultados
+        ];
+      }
+      this.currentIndexFiltrados++;
+    } else {
+      this.noMasResultadosFiltrados = true;
     }
-    this.currentIndexFiltrados++;
-  } else {
-    this.noMasResultadosFiltrados = true;
-  }
 
-  this.loadingFiltrados = false;
-}
+    this.loadingFiltrados = false;
+  }
 
   private async actualizarInformacionAdicional(): Promise<void> {
     this.traerMiembros(this.resultadosFiltrados);
@@ -365,16 +367,16 @@ cargarMasResultadosFiltrados(): void {
       this.tabSeleccionada = tab;
       this.filtroParticipantesActivo = false;
       this.filtroEtiquetasActivo = false;
-      this.filtroNombreActivo =false
-      if(this.tabSeleccionada==='disponibles'){
-        this.loadingDisponibles=false;
+      this.filtroNombreActivo = false
+      if (this.tabSeleccionada === 'disponibles') {
+        this.loadingDisponibles = false;
         this.cargarComunidadesDisponibles();
-      }else if (this.tabSeleccionada==='miembro'){
-        this.loadingMiembro=false;
+      } else if (this.tabSeleccionada === 'miembro') {
+        this.loadingMiembro = false;
 
         this.cargarComunidadesMiembro();
       } else if (this.tabSeleccionada === 'filtros') {
-        
+
       }
     }
   }
@@ -383,17 +385,17 @@ cargarMasResultadosFiltrados(): void {
   cargarComunidadesDisponibles(): void {
     if (this.loadingDisponibles || this.noMasComunidadesDisponibles) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
     this.loadingDisponibles = true;
-    
+
     // Suponiendo que tienes un método que obtiene más comunidades con paginación
     this.comunidadService
-    .disponibles(this.currentIndexComunidadesDisponibles, this.cantidadPorPagina)
-    .subscribe(
-      async (dataPackage) => {
-        const resultados = dataPackage.data as Comunidad[]
-        if (resultados && resultados.length > 0) {
-          // Agregar las comunidades obtenidas a la lista que se muestra
-          this.traerMiembros(resultados); // Llamar a traerParticipantes después de cargar los eventos
-          this.traerEtiquetas(resultados);
+      .disponibles(this.currentIndexComunidadesDisponibles, this.cantidadPorPagina)
+      .subscribe(
+        async (dataPackage) => {
+          const resultados = dataPackage.data as Comunidad[]
+          if (resultados && resultados.length > 0) {
+            // Agregar las comunidades obtenidas a la lista que se muestra
+            this.traerMiembros(resultados); // Llamar a traerParticipantes después de cargar los eventos
+            this.traerEtiquetas(resultados);
             this.comunidadesDisponiblesAMostrar = [...this.comunidadesDisponiblesAMostrar, ...resultados,];
             this.currentIndexComunidadesDisponibles++; // Aumentar el índice para la siguiente carga
 
@@ -416,7 +418,7 @@ cargarMasResultadosFiltrados(): void {
 
     // Suponiendo que tienes un método que obtiene más comunidades con paginación
     this.comunidadService
-      .miembroUsuario(this.idUsuarioAutenticado,"", this.currentIndexComunidadesMiembro, this.cantidadPorPagina)
+      .miembroUsuario(this.idUsuarioAutenticado, "", this.currentIndexComunidadesMiembro, this.cantidadPorPagina)
       .subscribe(
         async (dataPackage) => {
           const resultados = dataPackage.data as Comunidad[]
@@ -462,10 +464,10 @@ cargarMasResultadosFiltrados(): void {
 
   onScroll(): void {
     const element = document.querySelector('.grid') as HTMLElement;
-    if (element.scrollTop + element.clientHeight >= element.scrollHeight-1) {
-      if(this.hayResultadosFiltrados){
+    if (element.scrollTop + element.clientHeight >= element.scrollHeight - 1) {
+      if (this.hayResultadosFiltrados) {
         this.cargarMasResultadosFiltrados();
-      }else{
+      } else {
         if (this.tabSeleccionada === 'disponibles') {
           this.cargarComunidadesDisponibles();
         } else if (this.tabSeleccionada === 'miembro') {

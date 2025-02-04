@@ -397,7 +397,7 @@ public class UsuarioService {
 
                 // Si el solicitante no está en los resultados, agregarlo
                 if (!solicitanteYaIncluido) {
-                    // Verificar si es miembro de la comunidad
+                    //OJO ACA
                     boolean esMiembro = eventoRepository.participa(s.getId(), idEvento);
                     if (esMiembro) {
                         usuarios.add(s);
