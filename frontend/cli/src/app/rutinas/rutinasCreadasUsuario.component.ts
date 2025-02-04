@@ -13,7 +13,7 @@ import { RutinaService } from './rutina.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, HttpClientModule],
   templateUrl: 'rutinasCreadasUsuario.component.html',
-  styleUrls: ['rutinasCreadasUsuario.component.css']
+  styleUrls: ['rutinasCreadasUsuario.component.css', '../css/noCreados.css']
 })
 export class RutinasCreadasUsuarioComponent implements OnInit, OnDestroy {
   rutinasUsuario: Rutina[] = []; // Arreglo para almacenar las comunidades creadas por el usuario
@@ -101,4 +101,10 @@ export class RutinasCreadasUsuarioComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     window.removeEventListener('scroll', this.onScroll.bind(this)); // Limpiar el listener
   }
+
+
+  irACrearRutina(): void {
+    this.router.navigate(['/rutinas/crearRutina']);
+  }
 }
+

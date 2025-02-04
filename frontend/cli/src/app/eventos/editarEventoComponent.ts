@@ -112,6 +112,7 @@ export class EditarEventoComponent {
           const hours = String(fecha.getHours()).padStart(2, '0');
           const minutes = String(fecha.getMinutes()).padStart(2, '0');
 
+
           this.evento.fechaHora = `${year}-${month}-${day}T${hours}:${minutes}`;
           this.eventoService.etiquetasDelEvento(this.evento.id).subscribe(dataPackage => {
             this.etiquetasSeleccionadas = <Etiqueta[]>dataPackage.data;
