@@ -223,7 +223,7 @@ export class RutinaService {
 
   rutinasFavoritas(idUsuario: number, nombreRutina: string, page: number, size: number): Observable<DataPackage> {
     const url = `${this.rutinasUrl}/rutinasFavoritas/${idUsuario}?page=${page}&size=${size}` +
-      (nombreRutina ? `&nombreComunidad=${nombreRutina}` : '');  // Agregar solo si no está vacío
+      (nombreRutina ? `&nombreRutina=${nombreRutina}` : '');  // Agregar solo si no está vacío
     return this.http.get<DataPackage>(url);
   }
 }
