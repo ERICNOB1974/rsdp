@@ -45,6 +45,13 @@ export class PublicacionDetailComponent implements OnInit {
   textoConMenciones$: Observable<string> = undefined!;
 
 
+
+  loadingLikesComentario: boolean = false; // Estado de carga
+  currentPageLikesComentario: number = 0; // Página actual para paginación
+  //@ViewChild('modalLikesComentario') modalLikesComentario!: TemplateRef<any>;
+  usuariosLikesComentario: Usuario[] = [];
+  noMasUsuariosComentario = false;
+
   constructor(
     private route: ActivatedRoute,
     private publicacionService: PublicacionService,
@@ -130,6 +137,7 @@ export class PublicacionDetailComponent implements OnInit {
     });
   }
 
+
   cargarUsuariosLikes(): void {
     if (this.loadingLikes || this.noMasUsuarios) {
       return; // Evita duplicar peticiones si ya está cargando o no hay más usuarios
@@ -159,6 +167,51 @@ export class PublicacionDetailComponent implements OnInit {
       ,);
   }
 
+
+  abrirModalLikesComentario(comentarioId:number): void {
+    this.currentPageLikes = 0;
+    this.usuariosLikes = [];
+    this.noMasUsuarios= false;
+    this.cargarUsuariosLikesComentario(comentarioId);
+
+    this.dialog.open(this.modalLikes, {
+      width: '500px',
+      height: '400px', // Limita la altura del modal
+      data: {
+        usuariosLikes: this.usuariosLikes,
+        cargarUsuariosLikesComentario: this.cargarUsuariosLikesComentario.bind(this),
+      },
+    });
+  }
+
+  cargarUsuariosLikesComentario(comentarioId:number): void {
+    if (this.loadingLikes || this.noMasUsuarios) {
+      return; // Evita duplicar peticiones si ya está cargando o no hay más usuarios
+    }
+
+    this.loadingLikes = true;
+    this.usuarioService.usuariosLikeComentario(comentarioId, this.currentPageLikes, this.cantidadPorPagina).subscribe(
+      (response) => {
+        const usuarios = response.data as Usuario[]; // Aquí "data" es el array esperado
+        if (Array.isArray(usuarios) && usuarios.length > 0) {
+
+          this.usuariosLikes = [...this.usuariosLikes, ...usuarios];
+          this.currentPageLikes++;
+          this.loadingLikes = false;
+          if (usuarios.length < this.cantidadPorPagina) {
+            this.noMasUsuarios = true;
+          }
+        } else {
+          this.noMasUsuarios = true;  // No hay más resultados
+        }
+        this.loadingLikes = false;  // Desactivamos el indicador de carga
+      },
+      (error) => {
+        console.error('Error al cargar todas las rutinas:', error);
+        this.loadingLikes = false;
+      }
+      ,);
+  }
 
   onScroll(event: any): void {
     const element = event.target as HTMLElement;

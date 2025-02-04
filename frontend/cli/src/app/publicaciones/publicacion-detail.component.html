@@ -102,7 +102,8 @@
             <i class="heart" [ngClass]="com.estaLikeado ? 'fas fa-heart liked' : 'far fa-heart'"
               (click)="toggleLikeComentario(com)" style="cursor: pointer; font-size: 16px; color: #ff4757;">
             </i>
-            <span class="likes-count" style="font-size: 14px; color: #555;">{{ com.cantidadLikes || 0 }} likes</span>
+            <span class="likes-count" (click)="abrirModalLikesComentario(com.id)" style="font-size: 14px; color: #555;">{{ com.cantidadLikes || 0 }} likes</span>
+
           </div>
         </div>
         <!-- Botón para responder -->
@@ -162,7 +163,7 @@
               <i class="heart" [ngClass]="reply.estaLikeado ? 'fas fa-heart liked' : 'far fa-heart'"
                 (click)="toggleLikeComentario(reply)" style="cursor: pointer; font-size: 16px; color: #ff4757;">
               </i>
-              <span class="likes-count" style="font-size: 14px; color: #555;">{{ reply.cantidadLikes || 0 }} likes</span>
+              <span class="likes-count" (click)="abrirModalLikesComentario(reply.id)" style="font-size: 14px; color: #555;">{{ reply.cantidadLikes || 0 }} likes</span>
             </div>
           </div>
 
@@ -231,17 +232,17 @@
       <button class="btn btn-primary" (click)="cargarUsuariosLikes()">Cargar más</button>
     </div>
 
-    <div *ngIf="noMasUsuarios" class="text-muted text-center mt-3">
+    <div *ngIf="noMasUsuarios && !(usuariosLikes.length === 0)" class="text-muted text-center mt-3">
       No hay más likes para mostrar.
     </div>
   </div>
 
 
-
   <div *ngIf="usuariosLikes.length === 0 && !loadingLikes" class="text-muted text-center mt-3">
-    No hay likes en esta publicación.
+    No hay likes.
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
   </div>
 </ng-template>
+

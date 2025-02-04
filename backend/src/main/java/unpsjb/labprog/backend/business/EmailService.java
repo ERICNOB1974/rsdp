@@ -1,8 +1,10 @@
 package unpsjb.labprog.backend.business;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,26 +73,27 @@ public class EmailService {
         }
     }
 
-    public void invitacionEvento(Long idUsuarioEmisor, Long idUsuarioReceptor, Long idEvento){
+    public void invitacionEvento(Long idUsuarioEmisor, Long idUsuarioReceptor, Long idEvento) {
         Usuario usuarioEmisor = usuarioRepository.findById(idUsuarioEmisor).orElse(null);
         Usuario usuarioReceptor = usuarioRepository.findById(idUsuarioReceptor).orElse(null);
         Email email = new Email();
         email.setAsunto("Invitación a evento");
         email.setDestinatario(usuarioReceptor.getCorreoElectronico());
-        email.setMensaje("El usuario " + usuarioEmisor.getNombreUsuario() + " te ha invitado al evento: " + eventoService.findById(idEvento).getNombre());
+        email.setMensaje("El usuario " + usuarioEmisor.getNombreUsuario() + " te ha invitado al evento: "
+                + eventoService.findById(idEvento).getNombre());
         this.enviarMailGenerico(email);
     }
 
-    public void invitacionComunidad(Long idUsuarioEmisor, Long idUsuarioReceptor, Long idComunidad){
+    public void invitacionComunidad(Long idUsuarioEmisor, Long idUsuarioReceptor, Long idComunidad) {
         Usuario usuarioEmisor = usuarioRepository.findById(idUsuarioEmisor).orElse(null);
         Usuario usuarioReceptor = usuarioRepository.findById(idUsuarioReceptor).orElse(null);
         Email email = new Email();
         email.setAsunto("Invitación a comunidad");
         email.setDestinatario(usuarioReceptor.getCorreoElectronico());
-        email.setMensaje("El usuario " + usuarioEmisor.getNombreUsuario() + " te ha invitado a la comunidad: " + comunidadService.findById(idComunidad).getNombre());
+        email.setMensaje("El usuario " + usuarioEmisor.getNombreUsuario() + " te ha invitado a la comunidad: "
+                + comunidadService.findById(idComunidad).getNombre());
         this.enviarMailGenerico(email);
     }
-
 
     public void enviarMailCambio(boolean cambioFecha, boolean cambioUbicacion, Evento evento)
             throws MessagingException {
@@ -100,15 +103,17 @@ public class EmailService {
         String mensajeParte1 = " el evento " + evento.getNombre() + ", al que estás inscripto, sufrió un cambio en ";
 
         StringBuilder mensajeParte2 = new StringBuilder();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE d 'de' MMMM 'de' yyyy 'a las' HH:mm z",
+                new Locale("es", "AR"));
 
         String ubicacion = evento.getUbicacion();
         if (cambioFecha && cambioUbicacion) {
             mensajeParte2.append("la fecha y la ubicación.");
-            mensajeParte2.append("\nNueva fecha: ").append(evento.getFechaHora());
+            mensajeParte2.append("\nNueva fecha: ").append(evento.getFechaHora().format(formatter));
             mensajeParte2.append("\nNueva ubicación: ").append(ubicacion);
         } else if (cambioFecha) {
             mensajeParte2.append("la fecha.");
-            mensajeParte2.append("\nNueva fecha: ").append(evento.getFechaHora());
+            mensajeParte2.append("\nNueva fecha: ").append(evento.getFechaHora().format(formatter));
         } else if (cambioUbicacion) {
             mensajeParte2.append("la ubicación.");
             mensajeParte2.append("\nNueva ubicación: ").append(ubicacion);
@@ -199,18 +204,20 @@ public class EmailService {
         }
     }
 
-    public void enviarMailNotificacionEvento(Email email, String nombreUsuario, List<Usuario> usuarios, String nombreActividad) throws MessagingException {
-        String mensajeConCreador = "El creador, "  + nombreUsuario + ", " + nombreActividad + ", ha notificado:\n\n" + email.getMensaje();
+    public void enviarMailNotificacionEvento(Email email, String nombreUsuario, List<Usuario> usuarios,
+            String nombreActividad) throws MessagingException {
+        String mensajeConCreador = "El creador, " + nombreUsuario + ", " + nombreActividad + ", ha notificado:\n\n"
+                + email.getMensaje();
 
         for (Usuario usuario : usuarios) {
             String mensajeFinal = "Hola " + usuario.getNombreReal() + ".\n\n" + mensajeConCreador;
 
             email.setMensaje(mensajeFinal);
             email.setDestinatario(usuario.getCorreoElectronico());
-            email.setAsunto(email.getAsunto()); 
+            email.setAsunto(email.getAsunto());
 
             enviarMailGenerico(email);
         }
     }
-    
+
 }
