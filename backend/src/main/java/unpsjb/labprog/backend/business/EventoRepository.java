@@ -517,7 +517,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
 
         @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN|CREADO_POR]-(e:Evento) " +
                         "WHERE e.fechaHora > datetime() " +
-                        "AND COALESCE(evento.eliminado, false) = false " +
+                        "AND COALESCE(e.eliminado, false) = false " +
                         "RETURN DISTINCT e")
         List<Evento> eventosFuturosPertenecientesAUnUsuario(String nombreUsuario);
 
