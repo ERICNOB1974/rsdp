@@ -29,10 +29,14 @@
                 <mat-option value="" disabled>Seleccione un género</mat-option>
                 <mat-option value="masculino">Masculino</mat-option>
                 <mat-option value="femenino">Femenino</mat-option>
+                <mat-option value="otros">Otros</mat-option>
                 <mat-option value="sinGenero">Sin género</mat-option>
             </mat-select>
             <mat-error *ngIf="formComunidad.get('genero')?.hasError('required')">
                 El género es requerido
+            </mat-error>
+            <mat-error>
+                El género no se podrá cambiar.
             </mat-error>
         </mat-form-field>
 
