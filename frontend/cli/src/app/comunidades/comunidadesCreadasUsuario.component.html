@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
+
+<head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Comunidades</title>
 </head>
 
@@ -26,30 +27,35 @@
           <span class="badge" [ngClass]="{'private': comunidad.esPrivada, 'public': !comunidad.esPrivada}">
             {{ comunidad.esPrivada ? 'Privada' : 'Pública' }}
           </span>
+
+          </div>
+          <p class="descripcion">{{ comunidad.descripcion }}</p>
+          <p class="info">
+            <span><strong>{{ comunidad.miembros }}</strong> Participantes</span>
+            <span><strong>{{ comunidad.cantidadMaximaMiembros }}</strong> Máx. Miembros</span>
+          </p>
+          <p class="fecha-hora">{{ comunidad.fechaDeCreacion | date: 'dd/MM/yyyy' }}</p>
+          <div class="etiquetas-container">
+            <h4 class="etiquetas-title">Etiquetas:</h4>
+            <span *ngFor="let etiqueta of comunidad.etiquetas" class="etiqueta">
+              {{ etiqueta.nombre }}
+            </span>
+          </div>
+          <p style="margin-bottom: 15px;"></p>
+          <button class="detalles-btn" (click)="irADetallesDeComunidad(comunidad.id)">Ver Detalles</button>
         </div>
-        <p class="descripcion">{{ comunidad.descripcion }}</p>
-        <p class="info">
-          <span><strong>{{ comunidad.miembros }}</strong> Participantes</span>
-          <span><strong>{{ comunidad.cantidadMaximaMiembros }}</strong> Máx. Miembros</span>
-        </p>
-        <p class="fecha-hora">{{ comunidad.fechaDeCreacion | date: 'dd/MM/yyyy' }}</p>
-        <div class="etiquetas-container">
-          <h4 class="etiquetas-title">Etiquetas:</h4>
-          <span *ngFor="let etiqueta of comunidad.etiquetas" class="etiqueta">
-            {{ etiqueta.nombre }}
-          </span>
-        </div>
-        <p style="margin-bottom: 15px;"></p>
-        <button class="detalles-btn" (click)="irADetallesDeComunidad(comunidad.id)">Ver Detalles</button>
       </div>
     </div>
   </div>
-</div>
 
-<ng-template #noComunidades>
-  <div class="no-comunidades">
-    <p>No tienes comunidades creadas.</p>
-  </div>
-</ng-template>
+
+  <ng-template #noComunidades>
+    <div class="no-creado">
+      <p class="mensaje-no-creado">No tienes comunidades creadas. ¡Anímate a crear una! 🚀</p>
+      <button class="btn-crear-comunidad" (click)="irACrearComunidad()">Crear comunidad</button>
+    </div>
+  </ng-template>
+
 </body>
+
 </html>

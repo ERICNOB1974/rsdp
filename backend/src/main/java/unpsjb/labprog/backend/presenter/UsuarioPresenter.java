@@ -221,6 +221,7 @@ public class UsuarioPresenter {
     public ResponseEntity<Object> existeNombreUsuario(@PathVariable String nombreUsuario) {
         return Response.ok(usuarioService.existeNombreUsuario(nombreUsuario));
     }
+
     @GetMapping("/idDadoNombreUsuario/{nombreUsuario}")
     public ResponseEntity<Object> idDadoNombreUsuario(@PathVariable String nombreUsuario) {
         return Response.ok(usuarioService.idDadoNombreUsuario(nombreUsuario));
@@ -362,10 +363,12 @@ public class UsuarioPresenter {
     }
 
     @GetMapping("/todosLosAmigosDeUnUsuarioNoPertenecientesAUnEventoPrivadoPeroSiALaComunidad/{idUsuario}/{idEvento}")
-    public ResponseEntity<Object> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEventoPrivadoPeroSiALaComunidad(@PathVariable Long idUsuario,
+    public ResponseEntity<Object> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEventoPrivadoPeroSiALaComunidad(
+            @PathVariable Long idUsuario,
             @PathVariable Long idEvento) {
-        return Response.ok(usuarioService.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEventoPrivadoPeroSiALaComunidad(idUsuario, idEvento));
-    }    
+        return Response.ok(usuarioService
+                .todosLosAmigosDeUnUsuarioNoPertenecientesAUnEventoPrivadoPeroSiALaComunidad(idUsuario, idEvento));
+    }
 
     @GetMapping("/todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad/{idUsuario}/{idComunidad}")
     public ResponseEntity<Object> todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(@PathVariable Long idUsuario,
@@ -402,20 +405,17 @@ public class UsuarioPresenter {
         return Response.ok(usuarioService.buscarUsuarios(nombreUsuario, term, page, size));
     }
 
-
-
     @GetMapping("/miembros/{idComunidad}/{nombreUsuario}")
-        public ResponseEntity<Object> buscarMiembrosComunidad(
+    public ResponseEntity<Object> buscarMiembrosComunidad(
             @PathVariable Long idComunidad,
             @PathVariable String nombreUsuario,
             @RequestParam(required = false) String term,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-        ) {
-       
-                return Response.ok(usuarioService.buscarMiembrosComunidad(nombreUsuario, idComunidad, term, page, size));
-            
-        }
+            @RequestParam(defaultValue = "10") int size) {
+
+        return Response.ok(usuarioService.buscarMiembrosComunidad(nombreUsuario, idComunidad, term, page, size));
+
+    }
 
     @GetMapping("/likesPublicacion/{idPublicacion}")
     public ResponseEntity<Object> likesPublicacion(@PathVariable Long idPublicacion,
@@ -424,27 +424,27 @@ public class UsuarioPresenter {
         return Response.ok(usuarioService.likesPublicacion(idPublicacion, page, size));
     }
 
-        @GetMapping("/contarUsuariosAnonimos/{nombreUsuario}/{idComunidad}")
-    public ResponseEntity<Object> contarUsuariosAnonimos(@PathVariable String nombreUsuario, @PathVariable Long idComunidad) {
+    @GetMapping("/contarUsuariosAnonimos/{nombreUsuario}/{idComunidad}")
+    public ResponseEntity<Object> contarUsuariosAnonimos(@PathVariable String nombreUsuario,
+            @PathVariable Long idComunidad) {
         return Response.ok(usuarioService.contarUsuariosAnonimos(nombreUsuario, idComunidad));
     }
 
-
-   @GetMapping("/participantes/{idEvento}/{nombreUsuario}")
-        public ResponseEntity<Object> buscarParticipantesEvento(
+    @GetMapping("/participantes/{idEvento}/{nombreUsuario}")
+    public ResponseEntity<Object> buscarParticipantesEvento(
             @PathVariable Long idEvento,
             @PathVariable String nombreUsuario,
             @RequestParam(required = false) String term,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-        ) {
-       
-                return Response.ok(usuarioService.buscarParticipantesEvento(nombreUsuario, idEvento, term, page, size));
-            
-        }
+            @RequestParam(defaultValue = "10") int size) {
 
-               @GetMapping("/contarParticipantesAnonimos/{nombreUsuario}/{idEvento}")
-    public ResponseEntity<Object> contarParticipantesAnonimos(@PathVariable String nombreUsuario, @PathVariable Long idEvento) {
+        return Response.ok(usuarioService.buscarParticipantesEvento(nombreUsuario, idEvento, term, page, size));
+
+    }
+
+    @GetMapping("/contarParticipantesAnonimos/{nombreUsuario}/{idEvento}")
+    public ResponseEntity<Object> contarParticipantesAnonimos(@PathVariable String nombreUsuario,
+            @PathVariable Long idEvento) {
         return Response.ok(usuarioService.contarParticipantesAnonimos(nombreUsuario, idEvento));
     }
 
@@ -452,10 +452,17 @@ public class UsuarioPresenter {
     public ResponseEntity<Object> moderadoresComunidad(@PathVariable Long idComunidad) {
         try {
             return Response.ok(usuarioService.moderadoresComunidad(idComunidad)); // Enviamos el resultado (true o
-                                                                                      // false)
+                                                                                  // false)
         } catch (Exception e) {
             return Response.error("", "Error al visualizar los moderadores de la comunidad: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/likesComentario/{idComentario}")
+    public ResponseEntity<Object> likesComentario(@PathVariable Long idComentario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return Response.ok(usuarioService.likesComentario(idComentario, page, size));
     }
 
 }

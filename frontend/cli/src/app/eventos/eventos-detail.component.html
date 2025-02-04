@@ -95,7 +95,7 @@
                     <span>{{ participante.nombreUsuario }}</span>
                     <!-- Botón para eliminar participantes si es creador -->
                     <button *ngIf="creador && participante.id !== idUsuarioAutenticado"
-                      class="btn btn-danger btn-sm mt-2" (click)="abrirModalExpulsion(participante)">
+                      class="btn btn-danger btn-sm mt-2" (click)="abrirModalExpulsion(participante, $event)">
                       Eliminar
                     </button>
                   </div>
@@ -251,7 +251,7 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary btn-personalizado" (click)="cerrarModal()">
+    <button type="button" class="btn btn-secondary btn-personalizado" (click)="closeModal()">
       Cerrar
     </button>
   </div>

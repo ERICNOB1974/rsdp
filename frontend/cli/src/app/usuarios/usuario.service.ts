@@ -25,7 +25,7 @@ export class UsuarioService {
     return this.http.put<DataPackage>(`${this.usuariosUrl}/actualizarCorreo/${idUsuario}`, nuevoCorreo);
   }
 
-  generoUsuario(): Observable<DataPackage>{
+  generoUsuario(): Observable<DataPackage> {
     const idUsuario = this.authService.getUsuarioId();
     return this.http.get<DataPackage>(`${this.usuariosUrl}/generoUsuario/${idUsuario}`);
   }
@@ -99,7 +99,7 @@ export class UsuarioService {
       (nombreUsuarioFiltrar ? `&nombreUsuarioFiltrar=${nombreUsuarioFiltrar}` : '');  // Agregar solo si no está vacío
     return this.http.get<DataPackage>(url);
   }
- 
+
 
   eliminarAmigo(idAmigo: number): Observable<DataPackage> {
     const body = {};
@@ -223,8 +223,13 @@ export class UsuarioService {
   invitacionComunidad(idUsuarioReceptor: number, idComunidad: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.emailUrl}/invitacionComunidad/${this.idUsuarioAutenticado}/${idUsuarioReceptor}/${idComunidad}`);
   }
-  usuariosLikePublicacion(idPublicacion: number,page: number, size: number): Observable<DataPackage> {
+  
+  usuariosLikePublicacion(idPublicacion: number, page: number, size: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(` ${this.usuariosUrl}/likesPublicacion/${idPublicacion}?page=${page}&size=${size}`);
+  }
+
+  usuariosLikeComentario(idComentario: number, page: number, size: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.usuariosUrl}/likesComentario/${idComentario}?page=${page}&size=${size}`);
   }
 
   contarUsuariosAnonimos(idComunidad: number): Observable<DataPackage> {

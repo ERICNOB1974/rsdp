@@ -152,48 +152,30 @@ public class ComunidadService {
 
 
     public List<ScoreComunidad> obtenerSugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario) {
-        Usuario usuario = usuarioService.findByNombreUsuario(nombreUsuario);
-
-        String generoUsuario = usuario.getGenero();
-
-        List<ScoreComunidad> sugerencias = comunidadRepository.sugerenciasDeComunidadesBasadasEnAmigos2(nombreUsuario,
-                generoUsuario);
+        List<ScoreComunidad> sugerencias = comunidadRepository.sugerenciasDeComunidadesBasadasEnAmigos2(nombreUsuario);
         sugerencias.forEach(
                 s -> System.out.println("Comunidad: " + s.getComunidad().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
     public List<ScoreComunidad> obtenerSugerenciasDeComunidadesBasadasEnAmigosSinEtiquetas2(String nombreUsuario) {
-        Usuario usuario = usuarioService.findByNombreUsuario(nombreUsuario);
-
-        String generoUsuario = usuario.getGenero();
-
         List<ScoreComunidad> sugerencias = comunidadRepository
-                .sugerenciasDeComunidadesBasadasEnAmigos2SinEtiquetas(nombreUsuario, generoUsuario);
+                .sugerenciasDeComunidadesBasadasEnAmigos2SinEtiquetas(nombreUsuario);
         sugerencias.forEach(
                 s -> System.out.println("Comunidad: " + s.getComunidad().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
     public List<ScoreComunidad> obtenerSugerenciasDeComunidadesBasadasEnEventos2(String nombreUsuario) {
-        Usuario usuario = usuarioService.findByNombreUsuario(nombreUsuario);
-
-        String generoUsuario = usuario.getGenero();
-
-        List<ScoreComunidad> sugerencias = comunidadRepository.sugerenciasDeComunidadesBasadasEnEventos2(nombreUsuario,
-                generoUsuario);
+        List<ScoreComunidad> sugerencias = comunidadRepository.sugerenciasDeComunidadesBasadasEnEventos2(nombreUsuario);
         sugerencias.forEach(
                 s -> System.out.println("Comunidad: " + s.getComunidad().getId() + ", Score: " + s.getScore()));
         return sugerencias;
     }
 
     public List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnComunidades2(String nombreUsuario) {
-        Usuario usuario = usuarioService.findByNombreUsuario(nombreUsuario);
-
-        String generoUsuario = usuario.getGenero();
-
         List<ScoreComunidad> sugerencias = comunidadRepository
-                .sugerenciasDeComunidadesBasadasEnComunidades2(nombreUsuario, generoUsuario);
+                .sugerenciasDeComunidadesBasadasEnComunidades2(nombreUsuario);
         sugerencias.forEach(
                 s -> System.out.println("Comunidad: " + s.getComunidad().getId() + ", Score: " + s.getScore()));
         return sugerencias;
@@ -201,20 +183,15 @@ public class ComunidadService {
 
     public Map<String, Object> obtenerSugerenciasComunidadesConTotalPaginas(String nombreUsuario, int page,
             int pageSize) {
-
-        Usuario usuario = usuarioService.findByNombreUsuario(nombreUsuario);
-
-        String generoUsuario = usuario.getGenero();
-
         // Obtener todas las sugerencias de comunidades desde las tres consultas
         List<ScoreComunidad> sugerenciasAmigos = comunidadRepository
-                .sugerenciasDeComunidadesBasadasEnAmigos2(nombreUsuario, generoUsuario);
+                .sugerenciasDeComunidadesBasadasEnAmigos2(nombreUsuario);
         List<ScoreComunidad> sugerenciasEventos = comunidadRepository
-                .sugerenciasDeComunidadesBasadasEnEventos2(nombreUsuario, generoUsuario);
+                .sugerenciasDeComunidadesBasadasEnEventos2(nombreUsuario);
         List<ScoreComunidad> sugerenciasComunidades = comunidadRepository
-                .sugerenciasDeComunidadesBasadasEnComunidades2(nombreUsuario, generoUsuario);
+                .sugerenciasDeComunidadesBasadasEnComunidades2(nombreUsuario);
         List<ScoreComunidad> sugerenciasAmigosSinEtiquetas = comunidadRepository
-                .sugerenciasDeComunidadesBasadasEnAmigos2SinEtiquetas(nombreUsuario, generoUsuario);
+                .sugerenciasDeComunidadesBasadasEnAmigos2SinEtiquetas(nombreUsuario);
 
         // Combinar todas las sugerencias en una sola lista
         List<ScoreComunidad> todasLasSugerencias = new ArrayList<>();
