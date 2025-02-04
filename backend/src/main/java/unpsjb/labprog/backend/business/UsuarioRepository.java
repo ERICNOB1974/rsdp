@@ -423,6 +423,7 @@ Usuario findUsuarioByComentarioId(@Param("id") Long id);
         List<Usuario> likesPublicacion(@Param("publicacionId") Long publicacionId, @Param("skip") int skip,
             @Param("limit") int limit);
 
+
         @Query("""
                 MATCH (c:Comentario)
                 WHERE id(c) = $comentarioId

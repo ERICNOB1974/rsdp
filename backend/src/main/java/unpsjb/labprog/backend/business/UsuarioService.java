@@ -451,4 +451,10 @@ public class UsuarioService {
         return idUsuario;
     }
 
+    public List<Usuario> likesComentario(Long idComentario, int page,
+            int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
+
+        return usuarioRepository.likesComentario(idComentario, skip, size);
+    }
 }
