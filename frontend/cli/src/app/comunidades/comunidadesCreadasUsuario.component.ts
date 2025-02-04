@@ -13,7 +13,7 @@ import { EtiquetaService } from '../etiqueta/etiqueta.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, HttpClientModule],
   templateUrl: 'comunidadesCreadasUsuario.component.html',
-  styleUrls: ['comunidadesCreadasUsuarioOrne.css']
+  styleUrls: ['comunidadesCreadasUsuarioOrne.css', '../css/noCreados.css']
 })
 export class ComunidadesCreadasUsuarioComponent implements OnInit {
   comunidadesUsuario: Comunidad[] = []; // Arreglo para almacenar las comunidades creadas por el usuario
@@ -110,4 +110,9 @@ export class ComunidadesCreadasUsuarioComponent implements OnInit {
       );
     }
   }
+
+  irACrearComunidad(): void {
+    this.router.navigate(['/comunidades/crearComunidad']);
+  }
+
 }

@@ -30,8 +30,11 @@
   </div>
 </div>
 
+
+
 <ng-template #noEventos>
-  <div class="no-eventos">
-    <p class="mensaje-no-eventos">No tienes eventos creados. ¡Anímate a crear uno! 🚀</p>
+  <div class="no-creado">
+    <p class="mensaje-no-creado">No tienes eventos creados. ¡Anímate a crear uno! 🚀</p>
+    <button class="btn-crear-comunidad" (click)="irACrearEvento()">Crear evento</button>
   </div>
 </ng-template>
