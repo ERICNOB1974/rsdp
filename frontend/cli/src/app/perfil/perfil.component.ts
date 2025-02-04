@@ -233,7 +233,7 @@ export class PerfilComponent implements OnInit {
       error: (error) => {
         this.snackBar.open('Error al enviar la solicitud de amistad.', 'Cerrar', {
           duration: 3000,
-        }); 
+        });
       }
     });
   }
@@ -252,13 +252,13 @@ export class PerfilComponent implements OnInit {
         } else {
           this.snackBar.open('Error: ' + dataPackage.message, 'Cerrar', {
             duration: 3000,
-          }); 
+          });
         }
       },
       error: (error) => {
         this.snackBar.open('Error al eliminar amigo.', 'Cerrar', {
           duration: 3000,
-        }); 
+        });
       }
     });
   }
@@ -276,13 +276,13 @@ export class PerfilComponent implements OnInit {
         } else {
           this.snackBar.open('Error: ' + dataPackage.message, 'Cerrar', {
             duration: 3000,
-          });           
+          });
         }
       },
       error: (error) => {
         this.snackBar.open('Error al cancelar solicitud de amistad.', 'Cerrar', {
           duration: 3000,
-        }); 
+        });
       }
     });
   }
@@ -294,7 +294,7 @@ export class PerfilComponent implements OnInit {
       // Si el usuario está viendo su propio perfil, mostrar todas las publicaciones
       this.getPublicacionesPaginadas(); // Cargar todas las publicaciones del usuario
     } else if (this.usuario.privacidadPerfil === 'Privada') {
-      console.info("entreporaca1111",this.noMasPublicaciones);
+      console.info("entreporaca1111", this.noMasPublicaciones);
       this.publicaciones = []; // No mostrar publicaciones
     } else if (this.usuario.privacidadPerfil === 'Solo amigos') {
       if (this.relacion === 'amigos') {
@@ -322,7 +322,7 @@ export class PerfilComponent implements OnInit {
             if (nuevasPublicaciones.length > 0) {
               this.publicaciones = [...this.publicaciones, ...nuevasPublicaciones]; // Añadir las nuevas publicaciones
               this.currentIndexPublicaciones++;
-              if(nuevasPublicaciones.length<this.cantidadPorPagina){
+              if (nuevasPublicaciones.length < this.cantidadPorPagina) {
                 this.noMasPublicaciones = true;
               }
             } else {
@@ -346,32 +346,32 @@ export class PerfilComponent implements OnInit {
       next: (dataPackage: DataPackage) => {
         if (dataPackage.status === 200) {
           const mensaje = aceptar ? 'Solicitud de amistad aceptada exitosamente.' : 'Solicitud de amistad rechazada exitosamente.';
-          if (aceptar){
+          if (aceptar) {
             this.relacion = 'amigos';
             this.cargarPerfil();
             this.cdr.detectChanges();
             this.snackBar.open(mensaje, 'Cerrar', {
               duration: 3000,
-            });           
+            });
           } else {
             this.relacion = '';
             this.cargarPerfil();
             this.cdr.detectChanges();
             this.snackBar.open(mensaje, 'Cerrar', {
               duration: 3000,
-            });           
+            });
           }
         } else {
           this.snackBar.open('Error: ' + dataPackage.message, 'Cerrar', {
             duration: 3000,
-          }); 
+          });
         }
       },
       error: (error) => {
         const mensaje = aceptar ? 'Error al aceptar la solicitud de amistad.' : 'Error al rechazar la solicitud de amistad.';
         this.snackBar.open(mensaje, 'Cerrar', {
           duration: 3000,
-        }); 
+        });
       }
     });
   }
@@ -388,21 +388,21 @@ export class PerfilComponent implements OnInit {
         if (dataPackage.status === 200) {
           this.snackBar.open('Publicación eliminada exitosamente.', 'Cerrar', {
             duration: 3000,
-          }); 
+          });
           // Actualizar la lista de publicaciones
           //this.getPublicacionesPaginadas();
-          this.publicaciones = this.publicaciones.filter(pub => pub.id !== idPublicacion);  
+          this.publicaciones = this.publicaciones.filter(pub => pub.id !== idPublicacion);
         } else {
           this.snackBar.open('Error: ' + dataPackage.message, 'Cerrar', {
             duration: 3000,
-          }); 
+          });
         }
       },
       error: (error) => {
         console.error('Error al eliminar la publicación:', error);
         this.snackBar.open('Error al eliminar la publicación.', 'Cerrar', {
           duration: 3000,
-        }); 
+        });
       }
     });
   }
@@ -561,7 +561,7 @@ export class PerfilComponent implements OnInit {
         const responseData = dataPackage.data;
         if (Array.isArray(responseData) && responseData.length > 0) {
           this.traerParticipantes(responseData);
-  this.traerEtiquetasEvento(responseData);
+          this.traerEtiquetasEvento(responseData);
           this.historicoEventos = [...this.historicoEventos, ...responseData];  // Agregamos las nuevas rutinas
           this.currentIndexEventos++;  // Incrementamos el índice para la siguiente carga
           if (responseData.length < this.cantidadPorPagina) {
@@ -656,42 +656,42 @@ export class PerfilComponent implements OnInit {
 
     if (this.loadingComunidades || this.noMasComunidades) return;  // Si ya estamos cargando o no hay más resultados, no hacemos nada
     this.loadingComunidades = true;
-    
+
     const serviceCall =
-    this.subTabSeleccionada === 'todas'
-    ? this.comunidadService.miembroUsuario(this.idUsuario, "", this.currentIndexComunidades, this.cantidadPorPagina)
-    : this.comunidadService.comunidadesFavoritas(this.idUsuario, "", this.currentIndexComunidades, this.cantidadPorPagina);
-    
+      this.subTabSeleccionada === 'todas'
+        ? this.comunidadService.miembroUsuario(this.idUsuario, "", this.currentIndexComunidades, this.cantidadPorPagina)
+        : this.comunidadService.comunidadesFavoritas(this.idUsuario, "", this.currentIndexComunidades, this.cantidadPorPagina);
+
     serviceCall.subscribe(
       async (dataPackage) => {
         const responseData = dataPackage.data;
         if (Array.isArray(responseData) && responseData.length > 0) {
           this.traerMiembros(responseData); // Llamar a traerParticipantes después de cargar los eventos
-          
+
           // for (const comunidad of responseData) {
-            //   if (comunidad.latitud && comunidad.longitud) {
-              //     comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
-              //   } else {
-                //     comunidad.ubicacion = 'Ubicación desconocida';
-                //   }
-                // }
-                this.traerEtiquetasComunidades(responseData);
-                this.historicoComunidades = [...this.historicoComunidades, ...responseData];  // Agregamos las nuevas rutinas
-                this.currentIndexComunidades++;  // Incrementamos el índice para la siguiente carga
-                if (responseData.length < this.cantidadPorPagina) {
-                  this.noMasComunidades = true;
-                }
-              } else {
-                this.noMasComunidades = true;  // No hay más resultados
-              }
-              this.loadingComunidades = false;  // Desactivamos el indicador de carga
-              console.info(this.loadingComunidades);
-              console.info(this.noMasComunidades);
-              console.info(this.historicoComunidades);
-            },
-            (error) => {
-              console.error('Error al cargar todas las rutinas:', error);
-              this.loadingComunidades = false;
+          //   if (comunidad.latitud && comunidad.longitud) {
+          //     comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
+          //   } else {
+          //     comunidad.ubicacion = 'Ubicación desconocida';
+          //   }
+          // }
+          this.traerEtiquetasComunidades(responseData);
+          this.historicoComunidades = [...this.historicoComunidades, ...responseData];  // Agregamos las nuevas rutinas
+          this.currentIndexComunidades++;  // Incrementamos el índice para la siguiente carga
+          if (responseData.length < this.cantidadPorPagina) {
+            this.noMasComunidades = true;
+          }
+        } else {
+          this.noMasComunidades = true;  // No hay más resultados
+        }
+        this.loadingComunidades = false;  // Desactivamos el indicador de carga
+        console.info(this.loadingComunidades);
+        console.info(this.noMasComunidades);
+        console.info(this.historicoComunidades);
+      },
+      (error) => {
+        console.error('Error al cargar todas las rutinas:', error);
+        this.loadingComunidades = false;
       }
     );
   }
@@ -721,6 +721,7 @@ export class PerfilComponent implements OnInit {
           //     comunidad.ubicacion = 'Ubicación desconocida';
           //   }
           // }
+          this.traerEtiquetasComunidades(responseData);
           this.historicoComunidades = [...this.historicoComunidades, ...responseData];  // Agregamos las nuevas rutinas
           this.currentIndexComunidades++;  // Incrementamos el índice para la siguiente carga
           if (responseData.length < this.cantidadPorPagina) {
@@ -837,38 +838,38 @@ export class PerfilComponent implements OnInit {
       this.cargarComunidades();  // Si no estamos buscando o el texto está vacío, cargamos eventos sin filtro
     }
   }
-  
+
   irAPublicar() {
     this.router.navigate(['/publicacion']);
-}
+  }
 
 
-traerEtiquetasEvento(eventos: Evento[]): void {
-  for (let evento of eventos) {
-    this.etiquetaService.obtenerEtiquetasDeEvento(evento.id!).subscribe(
-      (dataPackage) => {
-        if (dataPackage && Array.isArray(dataPackage.data)) {
-          evento.etiquetas = dataPackage.data; // Asignar el número de días
-        }
-      },
-      (error) => {
-        console.error(`Error al traer las Etiquetas del evento ${evento.id}:`, error);
+  traerEtiquetasEvento(eventos: Evento[]): void {
+    for (let evento of eventos) {
+      this.etiquetaService.obtenerEtiquetasDeEvento(evento.id!).subscribe(
+        (dataPackage) => {
+          if (dataPackage && Array.isArray(dataPackage.data)) {
+            evento.etiquetas = dataPackage.data; // Asignar el número de días
+          }
+        },
+        (error) => {
+          console.error(`Error al traer las Etiquetas del evento ${evento.id}:`, error);
         }
       );
+    }
   }
-}
-traerEtiquetasComunidades(comunidades: Comunidad[]): void {
-  for (let comunidad of comunidades) {
-    this.etiquetaService.etiquetasEnComunidad(comunidad.id!).subscribe(
-      (dataPackage) => {
-        if (dataPackage && Array.isArray(dataPackage.data)) {
-          comunidad.etiquetas = dataPackage.data; // Asignar el número de días
+  traerEtiquetasComunidades(comunidades: Comunidad[]): void {
+    for (let comunidad of comunidades) {
+      this.etiquetaService.etiquetasEnComunidad(comunidad.id!).subscribe(
+        (dataPackage) => {
+          if (dataPackage && Array.isArray(dataPackage.data)) {
+            comunidad.etiquetas = dataPackage.data; // Asignar el número de días
+          }
+        },
+        (error) => {
+          console.error(`Error al traer las Etiquetas de la comunidad ${comunidad.id}:`, error);
         }
-      },
-      (error) => {
-        console.error(`Error al traer las Etiquetas de la comunidad ${comunidad.id}:`, error);
-      }
-    );
+      );
+    }
   }
-}
 }

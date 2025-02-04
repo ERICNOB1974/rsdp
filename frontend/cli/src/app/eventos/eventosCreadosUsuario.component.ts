@@ -13,7 +13,7 @@ import { EtiquetaService } from '../etiqueta/etiqueta.service';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, HttpClientModule],
   templateUrl: 'eventosCreadosUsuario.component.html',
-  styleUrls: ['eventosCreadosUsuario.component.css', '../css/etiquetas.css']
+  styleUrls: ['eventosCreadosUsuario.component.css', '../css/etiquetas.css',  '../css/noCreados.css']
 })
 export class EventosCreadosUsuarioComponent implements OnInit {
   eventosUsuario: Evento[] = []; // Arreglo para almacenar los eventos creados por el usuario
@@ -118,5 +118,9 @@ export class EventosCreadosUsuarioComponent implements OnInit {
         }
       );
     }
+  }
+
+  irACrearEvento(): void {
+    this.router.navigate(['/eventos/crearEvento']);
   }
 }

@@ -137,17 +137,3 @@
   transform: scale(1.05);
 }
 
-/* Sin eventos */
-.no-eventos {
-  text-align: center;
-  padding: 50px;
-  background: #f5f5f5;
-  border-radius: 15px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.mensaje-no-eventos {
-  font-size: 1.2rem;
-  color: #7f8c8d;
-  font-style: italic;
-}

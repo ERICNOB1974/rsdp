@@ -199,11 +199,24 @@
 .nav-items {
     display: flex;
     align-items: center;
-    margin-left: auto;
-    /* Esto empuja los elementos hacia la derecha */
-    gap: 2vw; 
+    flex-wrap: wrap; /* Permite que los elementos bajen de línea si no caben */
+    justify-content: flex-end; /* Asegura que los elementos sigan alineados a la derecha */
+    gap: 1rem;
 }
 
+@media (max-width: 768px) {
+    .nav-items {
+        align-items: flex-end; /* Para que se mantengan alineados a la derecha */
+        gap: 0.5rem;
+    }
+
+    .boton-flotante {
+        position: absolute;
+        right: 10px;
+        top: 50px;
+        width: auto; /* Asegura que no se expanda demasiado */
+    }
+}
 
 /* color del logo */
 .sidebar ul li.logo {
