@@ -497,21 +497,22 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
 
   enviarNotificacion() {
     if (this.mensaje && this.motivo) {
-      this.isLoading = true; // Activa el estado de carga
+      this.isLoading = true;
+      setTimeout(() => {
+        this.isLoading = false; 
+        this.closeModal();
+      }, 1000);
+  
       const nombreActividad = "del evento, " + this.evento.nombre;
-
       this.eventoService.enviarNotificacionEvento(this.mensaje, this.motivo, this.miembros, nombreActividad).subscribe(
         () => {
-          this.isLoading = false; // Desactiva el estado de carga
           this.motivo = '';
           this.mensaje = '';
           this.snackBar.open('Notificación enviada con éxito', 'Cerrar', {
             duration: 3000,
           });
-          this.closeModal();
         },
         () => {
-          this.isLoading = false; // Desactiva el estado de carga
           this.snackBar.open('Error al enviar notificación', 'Cerrar', {
             duration: 3000,
           });
@@ -521,6 +522,7 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
       console.log('Ambos campos son obligatorios');
     }
   }
+  
 
 
   // Método para cerrar el modal

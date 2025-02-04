@@ -117,7 +117,7 @@
     align-items: center;
     position: fixed;
     transition: width 0.3s;
-    z-index: 1000;
+    z-index: 1001;
     transition: width 0.3s ease;
     top: 56px; /* Coincide con la altura de la navbar */
     left: 0;
