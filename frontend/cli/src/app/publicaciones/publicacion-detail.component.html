@@ -41,35 +41,36 @@
       <input [(ngModel)]="comment" name="descripcion" class="form-control" (input)="onTextChange($event)"
         placeholder="Escribe tu comentario con @ para mencionar usuarios..." (focus)="isReplying = false" />
 
-  <!--     <ul *ngIf=" !isReplying && usuariosFiltrados.length > 0" class="suggestions">
+      <!--     <ul *ngIf=" !isReplying && usuariosFiltrados.length > 0" class="suggestions">
         <li *ngFor="let usuario of usuariosFiltrados" (click)="addUsuarioComentario(usuario)">
           {{ usuario.usuario.nombreUsuario }}
         </li>
       </ul> -->
       <div *ngIf="!isReplying && usuariosFiltrados.length > 0" class="suggestions-container">
         <ul class="suggestions">
-          <li *ngFor="let usuario of usuariosFiltrados" 
-              (click)="addUsuarioComentario(usuario)" 
-              class="suggestion-item">
-            
+          <li *ngFor="let usuario of usuariosFiltrados" (click)="addUsuarioComentario(usuario)" class="suggestion-item">
+
             <div class="user-avatar">
               <img [src]="usuario.usuario.fotoPerfil || '../assets/usuario.png'" alt="Avatar">
             </div>
-            
+
             <div class="user-info">
-              <span class="username" >{{ usuario.usuario.nombreUsuario }}</span>
-              <span class="real-name">    {{ usuario.usuario.nombreReal }}</span>
+              <span class="username">{{ usuario.usuario.nombreUsuario }}</span>
+              <span class="real-name"> {{ usuario.usuario.nombreReal }}</span>
             </div>
-            
+
             <div class="user-status">
               <span *ngIf="usuario.esAmigo" class="friend-label">✔ Amigo</span>
               <span *ngIf="!usuario.esAmigo" class="non-friend-label">➖ No es tu amigo</span>
             </div>
-    
+
           </li>
         </ul>
       </div>
-      <button class="btn btn-success" (click)="submitComment()">Enviar</button>
+      <button class="btn btn-success" (click)="submitComment()" [disabled]="enviandoComentario">
+        <span *ngIf="enviandoComentario" class="spinner-border spinner-border-sm me-2" role="status"
+          aria-hidden="true"></span>
+        Enviar</button>
     </div>
 
 
@@ -86,7 +87,8 @@
           </a>
           <div>
             <a [routerLink]="['/perfil', com.usuario.id]" style="text-decoration: none; color: #007bff;">
-              <span class="username" style="font-size: 14px; font-weight: bold; padding: 10px;">{{ com.usuario.nombreUsuario }}</span>
+              <span class="username" style="font-size: 14px; font-weight: bold; padding: 10px;">{{
+                com.usuario.nombreUsuario }}</span>
             </a>
             <span class="date" style="font-size: 12px; color: #888; display: block;">{{ com.fecha | date:'short'
               }}</span>
@@ -94,7 +96,8 @@
         </div>
 
         <!-- Texto del comentario -->
-        <div class="likes-container" style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;">
+        <div class="likes-container"
+          style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;">
           <p class="comment-text" style="font-size: 14px; margin: 0; color: #333; flex: 1;">
             {{ com.texto }}
           </p>
@@ -102,7 +105,9 @@
             <i class="heart" [ngClass]="com.estaLikeado ? 'fas fa-heart liked' : 'far fa-heart'"
               (click)="toggleLikeComentario(com)" style="cursor: pointer; font-size: 16px; color: #ff4757;">
             </i>
-            <span class="likes-count" style="font-size: 14px; color: #555;">{{ com.cantidadLikes || 0 }} likes</span>
+            <span class="likes-count" (click)="abrirModalLikesComentario(com.id)"
+              style="font-size: 14px; color: #555;">{{ com.cantidadLikes || 0 }} likes</span>
+
           </div>
         </div>
         <!-- Botón para responder -->
@@ -112,10 +117,9 @@
         </button>
 
 
-        <!-- Botón de eliminar comentario -->
+        <!--Botón de eliminar comentario -->
         <i *ngIf="puedeEliminarComentario(com)" class="fa fa-trash delete-icon"
-          (click)="eliminarComentario(com.id); $event.stopPropagation()"
-          style="position: absolute; top: 5px; right: 10px; font-size: 20px; color: red; cursor: pointer;">
+          (click)="eliminarComentario(com.id); $event.stopPropagation()" style="position: absolute; top: 5px;">
         </i>
 
         <!-- Campo para ingresar la respuesta -->
@@ -129,8 +133,17 @@
               {{ usuario.usuario.nombreUsuario }}
             </li>
           </ul>
-          <button class="btn btn-primary" (click)="submitReply(com.id)"
-            style="margin-top: 5px; float: right;">Enviar</button>
+          <div class="reply-button-container">
+
+            <button class="btn btn-primary" (click)="submitReply(com.id)" style="margin-top: 5px; float: right;"
+              [disabled]="enviandoRespuesta">
+              <span *ngIf="enviandoRespuesta" class="spinner-border spinner-border-sm me-2" role="status"
+                aria-hidden="true"></span>
+              Enviar
+            </button>
+          </div>
+
+
         </div>
 
         <!-- Mostrar respuestas -->
@@ -151,10 +164,11 @@
               <span class="date" style="font-size: 10px; color: #666; display: block;">{{ reply.fecha | date:'short'
                 }}</span>
             </div>
-  
+
           </div>
 
-          <div class="likes-container" style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;">
+          <div class="likes-container"
+            style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;">
             <p class="reply-text" style="font-size: 14px; margin: 0; color: #333; flex: 1;">
               {{ reply.texto }}
             </p>
@@ -162,12 +176,13 @@
               <i class="heart" [ngClass]="reply.estaLikeado ? 'fas fa-heart liked' : 'far fa-heart'"
                 (click)="toggleLikeComentario(reply)" style="cursor: pointer; font-size: 16px; color: #ff4757;">
               </i>
-              <span class="likes-count" style="font-size: 14px; color: #555;">{{ reply.cantidadLikes || 0 }} likes</span>
+              <span class="likes-count" (click)="abrirModalLikesComentario(reply.id)"
+                style="font-size: 14px; color: #555;">{{ reply.cantidadLikes || 0 }} likes</span>
             </div>
           </div>
 
 
-  
+
           <!-- Botón de eliminar respuesta -->
           <i *ngIf="puedeEliminarComentario(reply)" class="fa fa-trash delete-icon"
             (click)="eliminarComentario(reply.id); $event.stopPropagation()"
@@ -231,15 +246,14 @@
       <button class="btn btn-primary" (click)="cargarUsuariosLikes()">Cargar más</button>
     </div>
 
-    <div *ngIf="noMasUsuarios" class="text-muted text-center mt-3">
+    <div *ngIf="noMasUsuarios && !(usuariosLikes.length === 0)" class="text-muted text-center mt-3">
       No hay más likes para mostrar.
     </div>
   </div>
 
 
-
   <div *ngIf="usuariosLikes.length === 0 && !loadingLikes" class="text-muted text-center mt-3">
-    No hay likes en esta publicación.
+    No hay likes.
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>

@@ -423,6 +423,7 @@ Usuario findUsuarioByComentarioId(@Param("id") Long id);
         List<Usuario> likesPublicacion(@Param("publicacionId") Long publicacionId, @Param("skip") int skip,
             @Param("limit") int limit);
 
+
         @Query("""
                 MATCH (c:Comentario)
                 WHERE id(c) = $comentarioId
@@ -599,41 +600,45 @@ List<Usuario> buscarParticipanteEvento(
         @Param("limit") int limit);
 
 
-@Query("""
-    MATCH (e:Evento)
-    WHERE id(e) = $idEvento
-    MATCH (e)-[rel:PARTICIPA_EN]-(participante:Usuario)
-
-    // Verificar si el usuario solicitante es creador o administrador
-    OPTIONAL MATCH (solicitante:Usuario {nombreUsuario: $nombreUsuario})
-    OPTIONAL MATCH (solicitante)-[rol:CREADO_POR]-(e)
-    WITH e, participante, rel, solicitante, rol IS NOT NULL AS esAdminOCreador
-
-    // Verificar si el participante es amigo del solicitante
-    OPTIONAL MATCH (solicitante)-[:ES_AMIGO_DE]-(participante)
-    WITH e, participante, rel, esAdminOCreador, 
-         CASE WHEN (solicitante)-[:ES_AMIGO_DE]-(participante) THEN true ELSE false END AS esAmigo,
-         participante.privacidadEventos AS privacidad
-
-    // Contar usuarios anónimos
-    WHERE NOT (
-        // Si el solicitante es creador o administrador, ver todos los participantes
-        esAdminOCreador
-        OR (
-            // Si el solicitante es un participante normal, aplicar reglas de privacidad
-        
-            (rel:PARTICIPA_EN AND privacidad IN ['Pública', 'Solo amigos'] AND esAmigo) // Mostrar amigos con privacidad adecuada
-            OR (rel:PARTICIPA_EN AND privacidad = 'Pública' AND NOT esAmigo) // Mostrar no amigos con privacidad pública
-        )
-    )
-
-    RETURN COUNT(DISTINCT participante) AS usuariosAnonimos
-""")
-Long contarParticipantesAnonimos(
-        @Param("nombreUsuario") String nombreUsuario,
-        @Param("idEvento") Long idEvento);
 
         @Query("MATCH (u:Usuario)-[:HIZO]-(c:Comentario) WHERE id(c) = $idComentario RETURN u AS usuario")
         Usuario comentadoPor(@Param("idComentario") Long idComentario);
     
+
+
+
+
+        @Query("""
+                MATCH (e:Evento)
+                WHERE id(e) = $idEvento
+                MATCH (e)-[rel:PARTICIPA_EN]-(participante:Usuario)
+            
+                // Verificar si el usuario solicitante es creador o administrador
+                OPTIONAL MATCH (solicitante:Usuario {nombreUsuario: $nombreUsuario})
+                OPTIONAL MATCH (solicitante)-[rol:CREADO_POR]-(e)
+                WITH e, participante, rel, solicitante, 
+                     CASE WHEN rol IS NOT NULL THEN true ELSE false END AS esAdminOCreador
+            
+                // Verificar si el participante es amigo del solicitante
+                OPTIONAL MATCH (solicitante)-[:ES_AMIGO_DE]-(participante)
+                WITH e, participante, rel, solicitante, esAdminOCreador, 
+                     CASE WHEN (solicitante)-[:ES_AMIGO_DE]-(participante) THEN true ELSE false END AS esAmigo,
+                     participante.privacidadEventos AS privacidad
+            
+                // Contar usuarios anónimos correctamente, excluyendo al solicitante
+                WHERE participante <> solicitante // 👈 Excluir al solicitante
+                  AND NOT (
+                    esAdminOCreador // Si el solicitante es admin/creador, ve a todos
+                    OR (
+                        (privacidad = 'Pública') // Todos los eventos públicos son visibles
+                        OR (privacidad = 'Solo amigos' AND esAmigo) // Solo amigos pueden ver si es "Solo amigos"
+                    )
+                )
+            
+                RETURN COUNT(DISTINCT participante) AS usuariosAnonimos
+            """)
+            Long contarParticipantesAnonimos(
+                    @Param("nombreUsuario") String nombreUsuario,
+                    @Param("idEvento") Long idEvento);
+            
 }

@@ -356,4 +356,17 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                         @Param("skip") int skip,
                         @Param("limit") int limit);
 
+        @Query("MATCH (u:Usuario)-[rel:CREADA_POR]-(r:Rutina) " +
+            "WHERE id(u) = $idUsuario " +
+            "AND (toLower(r.nombre) CONTAINS toLower($nombreRutina) OR $nombreRutina = '') " +
+            "RETURN r ORDER BY r.nombre ASC " +
+            "SKIP $skip " +
+            "LIMIT $limit")
+    List<Rutina> rutinasCreadasPorUsuarioFiltradas(@Param("idUsuario") Long idUsuario,
+            @Param("nombreRutina") String nombreRutina,
+            @Param("skip") int skip,
+            @Param("limit") int limit);
+
+
+
 }

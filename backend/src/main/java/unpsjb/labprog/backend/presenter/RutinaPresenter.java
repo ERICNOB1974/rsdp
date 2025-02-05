@@ -319,4 +319,14 @@ public class RutinaPresenter {
         return Response.ok(rutinas);
     }
 
+               @RequestMapping(path = "/rutinasCreadasPorUsuarioFiltradas/{idUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> rutinasCreadasPorUsuarioFiltradas(
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String nombreRutina) {
+        return Response.ok(rutinaService.rutinasCreadasPorUsuarioFiltradas(idUsuario, nombreRutina, page, size));
+    }
+
+
 }

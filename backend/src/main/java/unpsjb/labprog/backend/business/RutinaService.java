@@ -629,4 +629,10 @@ public class RutinaService {
         String filtroNombre = (nombreRutina == null || nombreRutina.trim().isEmpty()) ? "" : nombreRutina;
         return rutinaRepository.listaFavoritas(idUsuario, filtroNombre, skip, size);
     }
+
+       public List<Rutina> rutinasCreadasPorUsuarioFiltradas(Long idUsuario, String nombreRutina, int page, int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
+        String filtroNombre = (nombreRutina == null || nombreRutina.trim().isEmpty()) ? "" : nombreRutina;
+        return rutinaRepository.rutinasCreadasPorUsuarioFiltradas(idUsuario, filtroNombre, skip, size);
+    }
 }

@@ -232,7 +232,19 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         @Param("skip") int skip,
                         @Param("limit") int limit);
 
-        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario) " +
+        @Query("MATCH (u:Usuario)-[r:CREADA_POR]-(c:Comunidad) " +
+            "WHERE id(u) = $idUsuario " +
+            "AND (toLower(c.nombre) CONTAINS toLower($nombreComunidad) OR $nombreComunidad = '') " +
+            "AND c.eliminada = false " +
+            "RETURN c ORDER BY r.fechaDeCreacion ASC, c.nombre DESC " +
+            "SKIP $skip " +
+            "LIMIT $limit")
+    List<Comunidad> creadasFiltradas(@Param("idUsuario") Long idUsuario,
+            @Param("nombreComunidad") String nombreComunidad,
+            @Param("skip") int skip,
+            @Param("limit") int limit);
+
+    @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario) " +
                         "MATCH (amigo)-[:MIEMBRO]->(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
                         "WHERE NOT (u)-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR|:MODERADA_POR]-(comunidad) " +
                         "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
