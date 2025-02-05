@@ -347,6 +347,7 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
   contarUsuariosAnonimos(): void {
     this.usuarioService.contarParticipantesAnonimos(this.evento.id).subscribe((dataPackage: DataPackage) => {
       this.usuariosAnonimos = Number(dataPackage.data); // Convierte explícitamente a number
+      console.info(this.usuariosAnonimos);
     });
 
   }
