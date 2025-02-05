@@ -115,7 +115,6 @@ export class ComunidadService {
     return this.http.get<DataPackage>(` ${this.comunidadesUrl}/${nombreUsuario}/disponibles?page=${page}&size=${size}`);
   }
 
-
   otorgarRolAdministrador(idCreador: number, idMiembro: number, idComunidad: number): Observable<DataPackage> {
     const body = {}
     return this.http.post<DataPackage>(` ${this.comunidadesUrl}/otorgarRolAdministrador/${idCreador}/${idMiembro}/${idComunidad}`, body);
@@ -213,8 +212,11 @@ editarExpulsionConMotivo(motivo: string, tipo: string, fechaHoraExpulsion: strin
 
 
   filtrarEtiqueta(etiquetas: string[], tipo: string, usuarioId: number): Observable<DataPackage> {
-    let params = new HttpParams().set('etiquetas', etiquetas.join(',')); // convierte el array a una cadena separada por comas
-
+    let params = new HttpParams();
+    etiquetas.forEach(etiqueta => {
+      params = params.append('etiquetas', etiqueta);
+    });
+    
     if (tipo) {
       params = params.set('tipo', tipo); // agrega el tipo si está definido
     }

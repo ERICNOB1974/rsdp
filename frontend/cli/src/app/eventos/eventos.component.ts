@@ -461,10 +461,10 @@ export class EventosComponent implements OnInit {
       lista3 = await this.aplicarFiltroEtiquetas2();
       this.hayResultadosFiltrados = true; // Entró en el if
     }
-    if (this.filtroEtiquetasActivo && this.etiquetasSeleccionadas.length > 0) {
+    if (this.filtroFechaActivo && this.fechaMinFiltro && this.fechaMaxFiltro) {
       lista4 = await this.aplicarFiltroFecha();
-      this.hayResultadosFiltrados = true; // Entró en el if
-    }
+      this.hayResultadosFiltrados = true;
+    }    
     this.eventosDisponiblesAMostrar = [];
     this.eventosParticipaUsuario = []
     if (this.hayResultadosFiltrados) {      
