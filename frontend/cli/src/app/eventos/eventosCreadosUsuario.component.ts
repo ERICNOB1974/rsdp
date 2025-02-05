@@ -14,7 +14,7 @@ import { debounceTime, Subject } from 'rxjs';
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule, HttpClientModule],
   templateUrl: 'eventosCreadosUsuario.component.html',
-  styleUrls: ['eventosCreadosUsuario.component.css', '../css/etiquetas.css',  '../css/noCreados.css']
+  styleUrls: ['eventosCreadosUsuario.component.css', '../css/etiquetas.css', '../css/noCreados.css']
 })
 export class EventosCreadosUsuarioComponent implements OnInit {
   eventosUsuario: Evento[] = []; // Arreglo para almacenar los eventos creados por el usuario
@@ -23,7 +23,7 @@ export class EventosCreadosUsuarioComponent implements OnInit {
   limit: number = 4; // Número de eventos a cargar por solicitud
   loading: boolean = false; // Para manejar el estado de carga
   noMasEventos = false;
-    searchSubjectEventos: Subject<string> = new Subject<string>();
+  searchSubjectEventos: Subject<string> = new Subject<string>();
   searchText: string = ""
   constructor(
     private eventoService: EventoService,
@@ -36,10 +36,10 @@ export class EventosCreadosUsuarioComponent implements OnInit {
   ngOnInit(): void {
     this.getEventosCreadosUsuario(); // Cargar las comunidades creadas por el usuario al inicializar el componente
     this.searchSubjectEventos
-    .pipe(debounceTime(500)) // Espera 0,5 segundo
-    .subscribe((nombre: string) => {
-      this.buscarEventos(nombre); // Cargar las comunidades creadas por el usuario al inicializar el componente
-    });
+      .pipe(debounceTime(500)) // Espera 0,5 segundo
+      .subscribe((nombre: string) => {
+        this.buscarEventos(nombre); // Cargar las comunidades creadas por el usuario al inicializar el componente
+      });
   }
 
 
@@ -61,15 +61,15 @@ export class EventosCreadosUsuarioComponent implements OnInit {
 
   getEventosCreadosUsuario(): void {
     if (this.loading || this.noMasEventos) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
-  
+
     this.loading = true;
-  
+
     this.eventoService
       .eventosCreadosPorUsuario(this.offset, this.limit)
       .subscribe(
         async (dataPackage) => {
           const resultados = dataPackage.data as Evento[];
-  
+
           if (resultados && resultados.length > 0) {
             // Filtrar los resultados para evitar duplicados
             const nuevosEventos = resultados.filter(
@@ -78,7 +78,7 @@ export class EventosCreadosUsuarioComponent implements OnInit {
                   (eventoExistente) => eventoExistente.id === eventoNuevo.id
                 )
             );
-  
+
             if (nuevosEventos.length > 0) {
               this.traerParticipantes(nuevosEventos); // Llamar a traerParticipantes después de cargar los eventos
               this.traerEtiquetas(nuevosEventos);
@@ -90,7 +90,7 @@ export class EventosCreadosUsuarioComponent implements OnInit {
           } else {
             this.noMasEventos = true; // No hay más eventos por cargar
           }
-  
+
           this.loading = false; // Desactivar el indicador de carga
         },
         (error) => {
@@ -102,11 +102,11 @@ export class EventosCreadosUsuarioComponent implements OnInit {
 
   getEventosCreadosUsuarioFiltrados(nombre: string): void {
     if (this.loading || this.noMasEventos) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
-    
+
     this.loading = true;
-  
+
     this.eventoService
-      .eventosCreadosPorUsuarioFiltrados(nombre,this.offset, this.limit)
+      .eventosCreadosPorUsuarioFiltrados(nombre, this.offset, this.limit)
       .subscribe(
         async (dataPackage) => {
           const resultados = dataPackage.data as Evento[];
@@ -131,7 +131,7 @@ export class EventosCreadosUsuarioComponent implements OnInit {
           } else {
             this.noMasEventos = true; // No hay más eventos por cargar
           }
-  
+
           this.loading = false; // Desactivar el indicador de carga
         },
         (error) => {
@@ -165,7 +165,7 @@ export class EventosCreadosUsuarioComponent implements OnInit {
 
   onScroll(): void {
     const element = document.querySelector('.eventos-list') as HTMLElement;
-    if (element.scrollTop + element.clientHeight >= element.scrollHeight-1 && !this.loading) {
+    if (element.scrollTop + element.clientHeight >= element.scrollHeight - 1 && !this.loading) {
       this.getEventosCreadosUsuario();
     }
   }
@@ -187,8 +187,9 @@ export class EventosCreadosUsuarioComponent implements OnInit {
 
   onSearchInputEventos(nombre: string): void {
     this.searchSubjectEventos.next(nombre); // Emite el texto ingresado
-
+  }
   irACrearEvento(): void {
     this.router.navigate(['/eventos/crearEvento']);
   }
+
 }

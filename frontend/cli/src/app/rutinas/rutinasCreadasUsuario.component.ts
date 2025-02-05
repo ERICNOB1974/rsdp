@@ -157,6 +157,7 @@ export class RutinasCreadasUsuarioComponent implements OnInit, OnDestroy {
   onSearchInputRutinas(nombre: string): void {
     this.searchSubjectRutinas.next(nombre); // Emite el texto ingresado
 
+  }
 
   irACrearRutina(): void {
     this.router.navigate(['/rutinas/crearRutina']);

@@ -15,6 +15,7 @@ import {
   tap,
   catchError,
   map,
+  concatMap,
 } from 'rxjs/operators';
 import { ArrobarService } from '../arrobar/arrobar.service';
 import { Usuario } from '../usuarios/usuario';
@@ -39,6 +40,7 @@ export class CrearPublicacionComponent implements OnInit {
   searchingArroba = false;
   searchFailedArroba = false;
   usuariosMencionados: Usuario[] = [];
+  isLoading=false;
 
 
 
@@ -72,8 +74,8 @@ export class CrearPublicacionComponent implements OnInit {
     this.location.back()
   }
 
-
-  savePublicacion(): void {
+/* 
+  savePublicacion2(): void {
     this.publicacion.fechaDeCreacion = new Date().toISOString();
 
     // Guardar publicación dependiendo del tipo
@@ -109,6 +111,52 @@ export class CrearPublicacionComponent implements OnInit {
       }
     });
   }
+ */
+
+  savePublicacion(): void {
+    this.isLoading = true;
+  
+    // Establecer la fecha de creación
+    this.publicacion.fechaDeCreacion = new Date().toISOString();
+  
+    // Elegir la operación de guardado según el tipo de publicación
+    const saveObservable = this.tipo === 'comunidad' && this.idComunidad
+      ? this.publicacionService.publicarEnComunidad(this.publicacion, this.idComunidad)
+      : this.publicacionService.saveConCreador(this.publicacion);
+  
+    saveObservable.pipe(
+      concatMap((publicacionGuardada) => {
+        const p = publicacionGuardada.data as unknown as Publicacion;
+        const idPublicacion = p.id;
+  
+        // Extraer usuarios etiquetados del texto
+        const usuariosEtiquetados = this.extraerUsuariosEtiquetados(this.publicacion.texto);
+  
+        // Si no hay usuarios etiquetados, devolver un observable vacío y continuar
+        if (usuariosEtiquetados.length === 0) {
+          return of(null);
+        }
+  
+        // Llamar al servicio de arrobar para cada usuario
+        const etiquetadoObservables = usuariosEtiquetados.map(usuario =>
+          this.arrobaService.arrobarEnPublicacion(usuario.id, idPublicacion)
+        );
+  
+        // Esperar a que todas las solicitudes de etiquetado finalicen antes de continuar
+        return forkJoin(etiquetadoObservables);
+      })
+    ).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.location.back(); // Ahora se ejecuta solo cuando TODO ha finalizado
+      },
+      error: (err) => {
+        console.error('Error al guardar la publicación:', err);
+        this.isLoading = false;
+      }
+    });
+  }
+  
 
     private extraerUsuariosEtiquetados(texto: string): Usuario[] {
       const regex = /@(\w+)/g;
