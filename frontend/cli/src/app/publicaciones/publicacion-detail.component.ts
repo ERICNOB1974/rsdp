@@ -23,7 +23,7 @@ import { catchError, debounceTime, distinctUntilChanged, filter, forkJoin, map, 
   selector: 'app-publicaciones',
   templateUrl: './publicacion-detail.component.html',
   imports: [CommonModule, FormsModule, RouterModule],
-  styleUrls: ['./publicacion-detail.component.css', '../css/arroba.css','crearPublicacion.component.css'],
+  styleUrls: ['./publicacion-detail.component.css', '../css/arroba.css', 'crearPublicacion.component.css'],
   standalone: true
 })
 export class PublicacionDetailComponent implements OnInit {
@@ -43,6 +43,8 @@ export class PublicacionDetailComponent implements OnInit {
   searchFailedArroba = false;
   isReplying = false; // Para saber si está respondiendo a un comentario
   textoConMenciones$: Observable<string> = undefined!;
+  enviandoComentario: boolean = false;
+  enviandoRespuesta: boolean = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -159,10 +161,10 @@ export class PublicacionDetailComponent implements OnInit {
   }
 
 
-  abrirModalLikesComentario(comentarioId:number): void {
+  abrirModalLikesComentario(comentarioId: number): void {
     this.currentPageLikes = 0;
     this.usuariosLikes = [];
-    this.noMasUsuarios= false;
+    this.noMasUsuarios = false;
     this.cargarUsuariosLikesComentario(comentarioId);
 
     this.dialog.open(this.modalLikes, {
@@ -175,7 +177,7 @@ export class PublicacionDetailComponent implements OnInit {
     });
   }
 
-  cargarUsuariosLikesComentario(comentarioId:number): void {
+  cargarUsuariosLikesComentario(comentarioId: number): void {
     if (this.loadingLikes || this.noMasUsuarios) {
       return; // Evita duplicar peticiones si ya está cargando o no hay más usuarios
     }
@@ -239,20 +241,19 @@ export class PublicacionDetailComponent implements OnInit {
 
   submitComment() {
     if (this.comment.trim()) {
-      //console.info(this.publicacion.id, this.comment);
-      this.comentarioService.comentar(this.publicacion.id, this.comment).subscribe(
-        (response: any) => {
+      this.enviandoComentario = true; // Activar indicador de carga
+
+      this.comentarioService.comentar(this.publicacion.id, this.comment).subscribe({
+        next: (response: any) => {
           const usuarioId = this.authService.getUsuarioId();
           const idUsuarioAutenticado = Number(usuarioId);
-          //console.info("ID comentario ",  response.data.id);
-          const comentarioAux = response.data as Comentario
-          console.info(comentarioAux)
+
           const newComment: Comentario = {
             id: response.data.id,
             texto: this.comment,
             fecha: new Date(),
             usuario: {
-              id: idUsuarioAutenticado /* ID del usuario actual */,
+              id: idUsuarioAutenticado,
               nombreUsuario: this.authService.getNombreUsuario() || '',
               nombreReal: '',
               fechaNacimiento: new Date(),
@@ -271,24 +272,19 @@ export class PublicacionDetailComponent implements OnInit {
           };
 
           this.arrobar(this.comment, response.data.id);
-
-          // Añadir el nuevo comentario al principio de la lista
           this.comentarios.unshift(newComment);
-
           this.comment = '';
-
-          // Actualizar los comentarios mostrados
           this.updateDisplayedComments();
         },
-        error => {
+        error: (error) => {
           console.error('Error al enviar el comentario:', error);
-          // Aquí puedes añadir lógica para manejar el error, como mostrar un mensaje al usuario
+        },
+        complete: () => {
+          this.enviandoComentario = false; // Desactivar indicador de carga
         }
-      );
+      });
     }
   }
-
-
 
 
 
@@ -341,6 +337,7 @@ export class PublicacionDetailComponent implements OnInit {
     comentario.estaLikeado = !estabaLikeado;
     comentario.cantidadLikes += estabaLikeado ? -1 : 1;
   }
+
   deletePublicacion(): void {
     if (confirm('¿Estás seguro de que quieres eliminar esta publicación?')) {
       this.publicacionService.eliminar(this.publicacion.id).subscribe(
@@ -413,8 +410,11 @@ export class PublicacionDetailComponent implements OnInit {
   // Función para enviar la respuesta
   submitReply(commentId: number): void {
     if (this.replyText.trim()) {
-      this.comentarioService.responderComentario(commentId, this.replyText).subscribe(
-        (response: any) => {
+      this.enviandoRespuesta = true
+      this.comentarioService.responderComentario(commentId, this.replyText).subscribe({
+
+
+        next: (response: any) => {
           const usuarioId = this.authService.getUsuarioId();
           const idUsuarioAutenticado = Number(usuarioId);
 
@@ -481,10 +481,14 @@ export class PublicacionDetailComponent implements OnInit {
           // Opcional: mostrar una notificación
           this.snackBar.open('Respuesta agregada con éxito', 'Cerrar', { duration: 3000 });
         },
-        error => {
+        error: (error) => {
           console.error('Error al responder al comentario:', error);
           this.snackBar.open('Error al agregar la respuesta', 'Cerrar', { duration: 3000 });
+        },
+        complete: () => {
+          this.enviandoRespuesta = false; // Desactivar indicador de carga
         }
+      }
       );
     }
   }
@@ -751,8 +755,8 @@ export class PublicacionDetailComponent implements OnInit {
           const username = match.substring(1); // Quitamos el '@'
           const usuario = resultados.find((r) => r.username === username);
           const idUsuario = usuario?.idUsuario;
-          console.info("usuario",usuario);
-          console.info("idUsuario",idUsuario);
+          console.info("usuario", usuario);
+          console.info("idUsuario", idUsuario);
           return idUsuario !== null
             ? `<a href="/perfil/${idUsuario}" class="mention-link">${match}</a>`
             : match;
@@ -763,69 +767,69 @@ export class PublicacionDetailComponent implements OnInit {
 
 
 
-/* 
-  getTextoConMenciones2(texto: string): Observable<string> {
-    if (!texto) {
-      console.log("Texto vacío, retornando observable vacío.");
-      return of('');
-    }
-
-    // Expresión regular para encontrar menciones
-    const regex = /@(\w+)/g;
-    const menciones = texto.match(regex) || [];
-    console.log("Menciones encontradas:", menciones);
-
-    // Si no hay menciones, devolvemos el texto original
-    if (menciones.length === 0) {
-      return of(texto);  // Devolvemos el texto tal cual sin cambios
-    }
-
-    const verificaciones: Observable<{ username: string; idUsuario: number | null }>[] = [];
-
-    // Verificamos la existencia de los usuarios mencionados
-    menciones.forEach((match) => {
-      const username = match.substring(1); // Quita el '@'
-      console.log("Verificando existencia de usuario:", username);
-
-      verificaciones.push(
-        this.usuarioService.findByNombreUsuario(username).pipe(
-          map((dataPackage: DataPackage) => {
-            let idUsuario: number | null = null;  // Inicializamos idUsuario como null
-            if (dataPackage.status === 200) {
-              const usuario: Usuario = dataPackage.data as Usuario;
-              if (usuario.nombreUsuario === username) {
-                idUsuario = usuario.id;  // Asignamos el idUsuario del objeto Usuario
+  /* 
+    getTextoConMenciones2(texto: string): Observable<string> {
+      if (!texto) {
+        console.log("Texto vacío, retornando observable vacío.");
+        return of('');
+      }
+  
+      // Expresión regular para encontrar menciones
+      const regex = /@(\w+)/g;
+      const menciones = texto.match(regex) || [];
+      console.log("Menciones encontradas:", menciones);
+  
+      // Si no hay menciones, devolvemos el texto original
+      if (menciones.length === 0) {
+        return of(texto);  // Devolvemos el texto tal cual sin cambios
+      }
+  
+      const verificaciones: Observable<{ username: string; idUsuario: number | null }>[] = [];
+  
+      // Verificamos la existencia de los usuarios mencionados
+      menciones.forEach((match) => {
+        const username = match.substring(1); // Quita el '@'
+        console.log("Verificando existencia de usuario:", username);
+  
+        verificaciones.push(
+          this.usuarioService.findByNombreUsuario(username).pipe(
+            map((dataPackage: DataPackage) => {
+              let idUsuario: number | null = null;  // Inicializamos idUsuario como null
+              if (dataPackage.status === 200) {
+                const usuario: Usuario = dataPackage.data as Usuario;
+                if (usuario.nombreUsuario === username) {
+                  idUsuario = usuario.id;  // Asignamos el idUsuario del objeto Usuario
+                }
               }
-            }
-
-            console.log(`Usuario ${username} tiene id:`, idUsuario);
-            return { username, idUsuario };
-          }),
-          catchError(() => {
-            console.error(`Error al verificar el usuario: ${username}`);
-            return of({ username, idUsuario: null }); // Si hay error, asumimos que no existe
-          })
-        )
+  
+              console.log(`Usuario ${username} tiene id:`, idUsuario);
+              return { username, idUsuario };
+            }),
+            catchError(() => {
+              console.error(`Error al verificar el usuario: ${username}`);
+              return of({ username, idUsuario: null }); // Si hay error, asumimos que no existe
+            })
+          )
+        );
+      });
+  
+      // Ejecutamos todas las verificaciones en paralelo y transformamos el texto
+      return forkJoin(verificaciones).pipe(
+        map((resultados) => {
+          console.log("Resultados de la verificación:", resultados);
+  
+          // Reemplazamos las menciones por enlaces
+          return texto.replace(regex, (match, username) => {
+            const usuario = resultados.find((r) => r.username === username);
+            const idUsuario = usuario?.idUsuario;
+            console.log(`¿El usuario ${username} tiene id?`, idUsuario);
+  
+            return idUsuario !== null
+              ? `<a href="/perfil/${idUsuario}" class="mention-link">${match}</a>`  // Usamos idUsuario como número
+              : match;
+          });
+        })
       );
-    });
-
-    // Ejecutamos todas las verificaciones en paralelo y transformamos el texto
-    return forkJoin(verificaciones).pipe(
-      map((resultados) => {
-        console.log("Resultados de la verificación:", resultados);
-
-        // Reemplazamos las menciones por enlaces
-        return texto.replace(regex, (match, username) => {
-          const usuario = resultados.find((r) => r.username === username);
-          const idUsuario = usuario?.idUsuario;
-          console.log(`¿El usuario ${username} tiene id?`, idUsuario);
-
-          return idUsuario !== null
-            ? `<a href="/perfil/${idUsuario}" class="mention-link">${match}</a>`  // Usamos idUsuario como número
-            : match;
-        });
-      })
-    );
-  } */
+    } */
 
 }
