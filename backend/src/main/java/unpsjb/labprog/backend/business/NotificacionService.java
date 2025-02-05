@@ -99,14 +99,17 @@ public class NotificacionService {
 
     public void crearNotificacionPublicacion(Long idUsuarioReceptor, Long idUsuarioEmisor, Long idEntidad, String tipo,
             LocalDateTime fecha) {
-        if (idUsuarioReceptor != idUsuarioEmisor) {
-            if (publicacionRepository.publicadaYNoAprobada(idEntidad)) {
-                return;
-            }
-            notificacionRepository.crearNotificacionPublicacion(idUsuarioReceptor, idUsuarioEmisor, idEntidad, tipo,
-                    fecha);
-            enviarEventoTiempoReal(idUsuarioReceptor, tipo);
+        if (idUsuarioEmisor.equals(idUsuarioReceptor)) {
+            return;
         }
+
+        if (publicacionRepository.publicadaYNoAprobada(idEntidad)) {
+            return;
+        }
+        notificacionRepository.crearNotificacionPublicacion(idUsuarioReceptor, idUsuarioEmisor, idEntidad, tipo,
+                fecha);
+        enviarEventoTiempoReal(idUsuarioReceptor, tipo);
+
     }
 
     public void eliminarNotificacionSolicitudEntrante(Long idReceptor, Long idEmisor) {
