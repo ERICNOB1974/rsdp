@@ -245,6 +245,10 @@ public class ComunidadService {
     }
 
     public List<Comunidad> comunidadesEtiquetas(List<String> etiquetas, String tipo, Long usuarioId) {
+        System.out.println("Tipo: " + tipo);
+        System.out.println("Usuario ID: " + usuarioId);
+        System.out.println("Etiquetas: " + etiquetas);
+        
         if ("disponibles".equalsIgnoreCase(tipo)) {
             return comunidadRepository.comunidadesEtiquetasDisponibles(usuarioId, etiquetas);
         } else if ("miembro".equalsIgnoreCase(tipo)) {
@@ -253,6 +257,7 @@ public class ComunidadService {
             return comunidadRepository.comunidadesEtiquetas(usuarioId, etiquetas);
         }
     }
+    
 
     public List<Comunidad> comunidadesPorNombreYTipo(String nombre, String tipo, Long usuarioId) {
         if ("disponibles".equalsIgnoreCase(tipo)) {

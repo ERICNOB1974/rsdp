@@ -142,22 +142,16 @@ export class EventoService {
     });
   }
 
-
   filtrarEtiqueta(etiquetas: string[], tipo: string, usuarioId: number): Observable<DataPackage> {
-    let params = new HttpParams().set('etiquetas', etiquetas.join(',')); // convierte el array a una cadena separada por comas
-    
-    if (tipo) {
-      params = params.set('tipo', tipo); // agrega el tipo si está definido
-    }
-    
-    if (usuarioId) {
-      params = params.set('usuarioId', usuarioId.toString()); // agrega el idUsuario si está definido
-    }
-  
+    let params = new HttpParams({
+      fromObject: {
+        etiquetas: etiquetas.join(','), // convierte el array a una cadena separada por comas
+        tipo: tipo || '', // si tipo está vacío, lo setea como string vacío
+        usuarioId: usuarioId.toString() // convierte el ID a string
+      }
+    });
     return this.http.get<DataPackage>(`${this.eventosUrl}/filtrar/etiquetas`, { params });
   }
-  
-
   
   disponibles(page: number, size: number): Observable<DataPackage> {
     const nombreUsuario = this.authService.getNombreUsuario();

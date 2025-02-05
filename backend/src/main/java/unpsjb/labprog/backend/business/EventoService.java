@@ -1,6 +1,7 @@
 package unpsjb.labprog.backend.business;
 
 import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.HashSet;
@@ -291,12 +292,14 @@ public class EventoService {
     }
 
     public List<Evento> eventosFecha(String tipo, Long usuarioId, ZonedDateTime min, ZonedDateTime max) {
+        ZonedDateTime fechaInicioUtc = min.withZoneSameInstant(ZoneOffset.UTC);
+        ZonedDateTime fechaFinUtc = max.withZoneSameInstant(ZoneOffset.UTC);
         if ("disponibles".equalsIgnoreCase(tipo)) {
-            return eventoRepository.eventosFechaDisponible(usuarioId, min, max);
+            return eventoRepository.eventosFechaDisponible(usuarioId, fechaInicioUtc, fechaFinUtc);
         } else if ("participante".equalsIgnoreCase(tipo)) {
-            return eventoRepository.eventosFechaParticipante(usuarioId, min, max);
+            return eventoRepository.eventosFechaParticipante(usuarioId, fechaInicioUtc, fechaFinUtc);
         } else {
-            return eventoRepository.eventosFecha(min, max, usuarioId);
+            return eventoRepository.eventosFecha(fechaInicioUtc, fechaFinUtc, usuarioId);
         }
     }
 

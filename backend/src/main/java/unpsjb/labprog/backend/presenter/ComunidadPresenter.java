@@ -287,11 +287,12 @@ public class ComunidadPresenter {
     }
 
     @GetMapping("/filtrar/etiquetas")
-    public ResponseEntity<Object> comunidadesPorEtiquetas(@RequestParam List<String> etiquetas,
-            @RequestParam(required = false) String tipo,
-            @RequestParam(required = false) Long usuarioId) {
+    public ResponseEntity<Object> comunidadesPorEtiquetas(
+            @RequestParam(name = "etiquetas") List<String> etiquetas,
+            @RequestParam(name = "tipo", required = false) String tipo,
+            @RequestParam(name = "usuarioId", required = false) Long usuarioId) {
         return Response.ok(comunidadService.comunidadesEtiquetas(etiquetas, tipo, usuarioId));
-    }
+    }    
 
     @GetMapping("/filtrar/nombre")
     public ResponseEntity<Object> comunidadesPorNombre(
