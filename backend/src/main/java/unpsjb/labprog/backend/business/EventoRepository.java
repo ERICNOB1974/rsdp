@@ -214,7 +214,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
 
         @Query("MATCH (e:Evento)<-[:PARTICIPA_EN]-(u:Usuario), (e)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta) " +
                         "WHERE id(u) = $usuarioId " +
-                        "WITH e, collect(etiqueta.nombre) AS etiquetasEvento " +
+                        "WITH u, e, collect(etiqueta.nombre) AS etiquetasEvento " +
                         "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasEvento) " +
                         "AND COALESCE(e.eliminado, false) = false " +
                         "AND (" +
@@ -227,7 +227,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
 
         @Query("MATCH (u:Usuario) WHERE id(u) = $usuarioId " +
                         "MATCH (e:Evento)-[:ETIQUETADO_CON]->(etiqueta:Etiqueta) " +
-                        "WITH e, collect(etiqueta.nombre) AS etiquetasEvento, u " +
+                        "WITH u, e, collect(etiqueta.nombre) AS etiquetasEvento, u " +
                         "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasEvento) " +
                         "AND COALESCE(e.eliminado, false) = false " +
                         "AND (" +
@@ -281,7 +281,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "MATCH (e:Evento) " +
                         "WHERE e.fechaHora >= $fechaInicio AND e.fechaHora <= $fechaFin " +
                         "AND NOT EXISTS { " +
-                        "  MATCH (u)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
+                        "  MATCH (u)-[:PARTICIPA_EN]-(e) " +
                         "} " +
                         "AND COALESCE(e.eliminado, false) = false " +
                         "AND (" +
@@ -321,8 +321,9 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
 
         @Query("MATCH (u:Usuario) WHERE id(u) = $usuarioId " +
                         "MATCH (e:Evento) " +
-                        "WHERE e.cantidadMaximaParticipantes <= $max " +
-                        "AND e.cantidadMaximaParticipantes >= $min " +
+                        "OPTIONAL MATCH (e)<-[r:PARTICIPA_EN]-(:Usuario) " +
+                        "WITH u, e, count(r) AS inscriptos " +
+                        "WHERE inscriptos >= $min AND inscriptos <= $max " +
                         "AND COALESCE(e.eliminado, false) = false " +
                         "AND (" +
                         "    (u.genero = 'masculino' AND e.genero IN ['masculino', 'sinGenero']) OR " +
@@ -334,11 +335,11 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
 
         @Query("MATCH (u:Usuario) WHERE id(u) = $usuarioId " +
                         "MATCH (e:Evento) " +
-                        "WHERE e.cantidadMaximaParticipantes <= $max " +
-                        "AND e.cantidadMaximaParticipantes >= $min " +
+                        "OPTIONAL MATCH (e)<-[r:PARTICIPA_EN]-(:Usuario) " +
+                        "WITH u, e, count(r) AS inscriptos " +
+                        "WHERE inscriptos >= $min AND inscriptos <= $max " +
                         "AND NOT EXISTS { " +
-                        "  MATCH (u2:Usuario)-[:PARTICIPA_EN|CREADO_POR]-(e) " +
-                        "  WHERE id(u2) = $usuarioId " +
+                        "  MATCH (u)-[:PARTICIPA_EN]-(e) " +
                         "} " +
                         "AND COALESCE(e.eliminado, false) = false " +
                         "AND (" +
@@ -351,7 +352,10 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
 
         @Query("MATCH (e:Evento)<-[:PARTICIPA_EN]-(u:Usuario) " +
                         "WHERE id(u) = $usuarioId " +
-                        "AND e.cantidadMaximaParticipantes <= $max AND e.cantidadMaximaParticipantes >= $min " +
+                        "MATCH (e) " +
+                        "OPTIONAL MATCH (e)<-[r:PARTICIPA_EN]-(:Usuario) " +
+                        "WITH u, e, count(r) AS inscriptos " +
+                        "WHERE inscriptos >= $min AND inscriptos <= $max " +
                         "AND COALESCE(e.eliminado, false) = false " +
                         "AND (" +
                         "    (u.genero = 'masculino' AND e.genero IN ['masculino', 'sinGenero']) OR " +
@@ -384,6 +388,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
         @Query("MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento) " +
                         "WHERE id(u) = $idUsuario " +
                         "AND (toLower(e.nombre) CONTAINS toLower($nombreEvento) OR $nombreEvento = '') " +
+                        "AND date(e.fechaHora) > date(datetime()) " +
                         "AND COALESCE(e.eliminado, false) = false " +
                         "RETURN e " +
                         "ORDER BY abs(duration.between(date(), e.fechaHora).days) ASC " +
@@ -400,10 +405,13 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         + "AND NOT (u)-[:EXPULSADO_EVENTO]-(evento) "
                         + "AND NOT evento.esPrivadoParaLaComunidad "
                         + "AND (" +
-                        "    ($generoUsuario = 'masculino' AND (evento.genero = 'masculino' OR evento.genero = 'sinGenero')) OR " +
-                        "    ($generoUsuario = 'femenino' AND (evento.genero = 'femenino' OR evento.genero = 'sinGenero')) OR " +
-                        "    ($generoUsuario = 'otros' AND (evento.genero = 'masculino' OR evento.genero = 'femenino' OR evento.genero = 'sinGenero'))" +
-                        ") " 
+                        "    ($generoUsuario = 'masculino' AND (evento.genero = 'masculino' OR evento.genero = 'sinGenero')) OR "
+                        +
+                        "    ($generoUsuario = 'femenino' AND (evento.genero = 'femenino' OR evento.genero = 'sinGenero')) OR "
+                        +
+                        "    ($generoUsuario = 'otros' AND (evento.genero = 'masculino' OR evento.genero = 'femenino' OR evento.genero = 'sinGenero'))"
+                        +
+                        ") "
                         + "WITH evento, COUNT(DISTINCT et) AS etiquetasComunes, "
                         + "point({latitude: evento.latitud, longitude: evento.longitud}) AS eventoUbicacion, "
                         + "point({latitude: u.latitud, longitude: u.longitud}) AS usuarioUbicacion "
@@ -428,9 +436,12 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "MATCH (evento:Evento)-[:ETIQUETADO_CON]->(etiqueta) " +
                         "WHERE NOT evento.esPrivadoParaLaComunidad " +
                         "AND (" +
-                        "    ($generoUsuario = 'masculino' AND (evento.genero = 'masculino' OR evento.genero = 'sinGenero')) OR " +
-                        "    ($generoUsuario = 'femenino' AND (evento.genero = 'femenino' OR evento.genero = 'sinGenero')) OR " +
-                        "    ($generoUsuario = 'otros' AND (evento.genero = 'masculino' OR evento.genero = 'femenino' OR evento.genero = 'sinGenero'))" +
+                        "    ($generoUsuario = 'masculino' AND (evento.genero = 'masculino' OR evento.genero = 'sinGenero')) OR "
+                        +
+                        "    ($generoUsuario = 'femenino' AND (evento.genero = 'femenino' OR evento.genero = 'sinGenero')) OR "
+                        +
+                        "    ($generoUsuario = 'otros' AND (evento.genero = 'masculino' OR evento.genero = 'femenino' OR evento.genero = 'sinGenero'))"
+                        +
                         ") " +
                         "WITH evento, COUNT(etiqueta) AS coincidencias, amigos, " +
                         "point({latitude: evento.latitud, longitude: evento.longitud}) AS eventoUbicacion, " +
@@ -461,9 +472,12 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "AND NOT (u)-[:EXPULSADO_EVENTO]-(evento) " +
                         "AND NOT evento.esPrivadoParaLaComunidad " +
                         "AND (" +
-                        "    ($generoUsuario = 'masculino' AND (evento.genero = 'masculino' OR evento.genero = 'sinGenero')) OR " +
-                        "    ($generoUsuario = 'femenino' AND (evento.genero = 'femenino' OR evento.genero = 'sinGenero')) OR " +
-                        "    ($generoUsuario = 'otros' AND (evento.genero = 'masculino' OR evento.genero = 'femenino' OR evento.genero = 'sinGenero'))" +
+                        "    ($generoUsuario = 'masculino' AND (evento.genero = 'masculino' OR evento.genero = 'sinGenero')) OR "
+                        +
+                        "    ($generoUsuario = 'femenino' AND (evento.genero = 'femenino' OR evento.genero = 'sinGenero')) OR "
+                        +
+                        "    ($generoUsuario = 'otros' AND (evento.genero = 'masculino' OR evento.genero = 'femenino' OR evento.genero = 'sinGenero'))"
+                        +
                         ") " +
                         "WITH evento, COUNT(DISTINCT e) AS etiquetasCompartidas, " +
                         "point({latitude: evento.latitud, longitude: evento.longitud}) AS eventoUbicacion, " +
@@ -493,9 +507,12 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "AND NOT (u)-[:EXPULSADO_EVENTO]-(evento) " +
                         "AND NOT evento.esPrivadoParaLaComunidad " +
                         "AND (" +
-                        "    ($generoUsuario = 'masculino' AND (evento.genero = 'masculino' OR evento.genero = 'sinGenero')) OR " +
-                        "    ($generoUsuario = 'femenino' AND (evento.genero = 'femenino' OR evento.genero = 'sinGenero')) OR " +
-                        "    ($generoUsuario = 'otros' AND (evento.genero = 'masculino' OR evento.genero = 'femenino' OR evento.genero = 'sinGenero'))" +
+                        "    ($generoUsuario = 'masculino' AND (evento.genero = 'masculino' OR evento.genero = 'sinGenero')) OR "
+                        +
+                        "    ($generoUsuario = 'femenino' AND (evento.genero = 'femenino' OR evento.genero = 'sinGenero')) OR "
+                        +
+                        "    ($generoUsuario = 'otros' AND (evento.genero = 'masculino' OR evento.genero = 'femenino' OR evento.genero = 'sinGenero'))"
+                        +
                         ") " +
                         "WITH evento, COUNT(DISTINCT e) AS etiquetasCompartidas, " +
                         "point({latitude: evento.latitud, longitude: evento.longitud}) AS eventoUbicacion, " +
@@ -551,10 +568,9 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         """)
         String motivoExpulsion(Long idUsuario, Long idEvento);
 
-
         @Query("MATCH (ev:Evento)-[r:ETIQUETADO_CON]->(e:Etiqueta) " +
-        "WHERE id(ev) = $idEvento AND id(e) = $etiquetaId " +
-        "DELETE r")
+                        "WHERE id(ev) = $idEvento AND id(e) = $etiquetaId " +
+                        "DELETE r")
         void desetiquetarEvento(Long idEvento, Long etiquetaId);
 
 }
