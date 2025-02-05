@@ -148,6 +148,18 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         @Param("offset") int offset,
                         @Param("limit") int limit);
 
+        @Query("MATCH (u:Usuario)-[r:CREADO_POR]-(e:Evento) " +
+            "WHERE id(u) = $idUsuario " +
+            "AND (toLower(e.nombre) CONTAINS toLower($nombreEvento) OR $nombreEvento = '') " +
+            "AND e.eliminado = false " +
+            "RETURN e ORDER BY abs(duration.between(date(), e.fechaHora).days) ASC, e.nombre DESC " +
+            "SKIP $skip " +
+            "LIMIT $limit")
+    List<Evento> eventosCreadosPorUsuarioFiltrados(@Param("idUsuario") Long idUsuario,
+            @Param("nombreEvento") String nombreEvento,
+            @Param("skip") int skip,
+            @Param("limit") int limit);
+
         @Query("""
                         MATCH (e:Evento) WHERE id(e)=$idEvento
                         MATCH (u:Usuario) WHERE id(u) = $idUsuario
@@ -156,6 +168,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                                 """)
         boolean eventoCreadoPor(@Param("idUsuario") Long idUsuario,
                         @Param("idEvento") Long idEvento);
+
 
         @Query("MATCH (u:Usuario)-[r:PARTICIPA_EN]->(e:Evento) " +
                         "WHERE id(u) = $idUsuario AND id(e) = $idEvento " +
@@ -572,5 +585,6 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                         "WHERE id(ev) = $idEvento AND id(e) = $etiquetaId " +
                         "DELETE r")
         void desetiquetarEvento(Long idEvento, Long etiquetaId);
+
 
 }

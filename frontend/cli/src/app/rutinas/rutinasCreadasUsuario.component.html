@@ -1,6 +1,12 @@
-<div class="rutinas-container" *ngIf="rutinasUsuario.length > 0; else noRutinas">
+<div class="rutinas-container" >
   <h2>Rutinas Creadas por Ti</h2>
-  <div class="rutinas-list">
+  <div class="search-container">
+    <input type="text" placeholder="Buscar rutina por nombre" #searchInput
+        (input)="onSearchInputRutinas(searchInput.value)" class="form-control search-input"
+        [(ngModel)]="searchText" />
+    <i class="fas fa-search search-icon"></i>
+</div>
+  <div class="rutinas-list" *ngIf="rutinasUsuario.length > 0; else noRutinas">
     <div class="rutina-card" *ngFor="let rutina of rutinasUsuario">
       <div class="rutina-header">
         <h3>{{ rutina.nombre }}</h3>

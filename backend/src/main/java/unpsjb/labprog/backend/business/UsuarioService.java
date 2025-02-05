@@ -233,7 +233,6 @@ public class UsuarioService {
         return usuarioRepository.moderadores(idComunidad);
     }
 
-
     public List<ScoreAmigo> sugerenciaDeAmigosBasadaEnAmigos2(String nombreUsuario) {
         List<ScoreAmigo> sugerencias = usuarioRepository.sugerenciaDeAmigosBasadaEnAmigos2(nombreUsuario);
         return sugerencias;
@@ -321,7 +320,8 @@ public class UsuarioService {
 
     public List<Usuario> todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad) {
         String generoComunidad = comunidadRepository.generoDeUnaComunidad(idComunidad);
-        return usuarioRepository.todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(idUsuario, idComunidad, generoComunidad);
+        return usuarioRepository.todosLosAmigosDeUnUsuarioPertenecientesAUnaComunidad(idUsuario, idComunidad,
+                generoComunidad);
     }
 
     public List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnEvento(Long idUsuario, Long idEvento) {
@@ -334,23 +334,26 @@ public class UsuarioService {
         String generoEvento = eventoRepository.generoDeUnEvento(idEvento);
         Comunidad comunidad = comunidadService.buscarComunidadPorEventoInterno(idEvento);
         return usuarioRepository.todosLosAmigosDeUnUsuarioNoPertenecientesAUnEventoPrivadoPeroSiALaComunidad(idUsuario,
-                idEvento, comunidad.getId(),generoEvento);
+                idEvento, comunidad.getId(), generoEvento);
     }
 
     public List<Usuario> todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(Long idUsuario, Long idComunidad) {
         String generoComunidad = comunidadRepository.generoDeUnaComunidad(idComunidad);
-        return usuarioRepository.todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(idUsuario, idComunidad, generoComunidad);
+        return usuarioRepository.todosLosAmigosDeUnUsuarioNoPertenecientesAUnaComunidad(idUsuario, idComunidad,
+                generoComunidad);
     }
 
     public List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(Long idUsuario, Long idEvento) {
         String generoEvento = eventoRepository.generoDeUnEvento(idEvento);
-        return usuarioRepository.todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(idUsuario, idEvento, generoEvento);
+        return usuarioRepository.todosLosAmigosDeUnUsuarioYaInvitadosAUnEventoPorElUsuario(idUsuario, idEvento,
+                generoEvento);
     }
 
     public List<Usuario> todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(Long idUsuario,
             Long idComunidad) {
         String generoComunidad = comunidadRepository.generoDeUnaComunidad(idComunidad);
-        return usuarioRepository.todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(idUsuario, idComunidad, generoComunidad);
+        return usuarioRepository.todosLosAmigosDeUnUsuarioYaInvitadosAUnaComunidadPorElUsuario(idUsuario, idComunidad,
+                generoComunidad);
     }
 
     public List<Usuario> usuariosConMasInteracciones(Long idUsuario) {
@@ -376,7 +379,7 @@ public class UsuarioService {
         return usuariosAnonimos;
     }
 
-    public List<Usuario> buscarParticipantesEvento(String nombreUsuario, Long idEvento, String term, int page,
+    public List<Usuario> buscarParticipantesEvento2(String nombreUsuario, Long idEvento, String term, int page,
             int size) {
         if (page < 0 || size <= 0) {
             throw new IllegalArgumentException("Los parámetros de paginación no son válidos.");
@@ -386,41 +389,53 @@ public class UsuarioService {
         String filtroNombre = (term == null || term.trim().isEmpty()) ? "" : term;
         List<Usuario> usuarios = new ArrayList<>();
 
-        if (page == 0) {
-
-            // Verificar si el solicitante es miembro de la comunidad
-            Optional<Usuario> solicitante = usuarioRepository.findByNombreUsuario(nombreUsuario);
-            solicitante.ifPresent(s -> {
-                // Verificar si el solicitante ya está en los resultados
-                boolean solicitanteYaIncluido = usuarios.stream()
-                        .anyMatch(usuario -> usuario.getId().equals(s.getId()));
-
-                // Si el solicitante no está en los resultados, agregarlo
-                if (!solicitanteYaIncluido) {
-                    //OJO ACA
-                    boolean esMiembro = eventoRepository.participa(s.getId(), idEvento);
-                    if (esMiembro) {
-                        usuarios.add(s);
-                    }
-                }
-            });
-        }
 
         usuarios.addAll(usuarioRepository.buscarParticipanteEvento(nombreUsuario, idEvento, filtroNombre, skip, size));
         return usuarios;
     }
 
+    public List<Usuario> buscarParticipantesEvento(String nombreUsuario, Long idEvento, String term, int page,
+            int size) {
+        if (page < 0 || size <= 0) {
+            throw new IllegalArgumentException("Los parámetros de paginación no son válidos.");
+        }
+
+        int skip = page * size;
+        String filtroNombre = (term == null || term.trim().isEmpty()) ? "" : term;
+
+        // Obtener resultados de la query
+        List<Usuario> usuarios = usuarioRepository.buscarParticipanteEvento(nombreUsuario, idEvento, filtroNombre, skip,
+                size);
+
+        if (page == 0) {
+            usuarioRepository.findByNombreUsuario(nombreUsuario).ifPresent(solicitante -> {
+                boolean esMiembro = eventoRepository.participa(solicitante.getId(), idEvento);
+                boolean yaIncluido = usuarios.stream().anyMatch(u -> u.getId().equals(solicitante.getId()));
+
+                // Solo agregar si no está ya en los resultados de la query
+                if (esMiembro && !yaIncluido) {
+                    usuarios.add(solicitante);
+                }
+            });
+        }
+
+        return usuarios;
+    }
+
     public Long contarParticipantesAnonimos(String nombreUsuario, Long idEvento) {
         Long usuariosAnonimos = usuarioRepository.contarParticipantesAnonimos(nombreUsuario, idEvento);
-        if (usuariosAnonimos != 0) {
-            usuariosAnonimos--;
-        }
         return usuariosAnonimos;
     }
-    
+
     public Long idDadoNombreUsuario(String nombreUsuario) {
         Long idUsuario = usuarioRepository.findByNombreUsuario(nombreUsuario).get().getId();
         return idUsuario;
     }
 
+    public List<Usuario> likesComentario(Long idComentario, int page,
+            int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
+
+        return usuarioRepository.likesComentario(idComentario, skip, size);
+    }
 }
