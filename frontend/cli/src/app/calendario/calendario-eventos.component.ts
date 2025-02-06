@@ -29,9 +29,11 @@ export class CalendarioEventosComponent implements OnInit {
   showRutinas = true;
   showRecomendados = true;
   allEvents: any[] = []; // Variable para almacenar todos los eventos
+  indiceActual: number = 0;
+  disablePrev: boolean = false;
+  disableNext: boolean = false;
 
-
-  @ViewChild('fullcalendar') fullcalendar?: FullCalendarComponent;
+  @ViewChild('fullcalendar') fullcalendar!: FullCalendarComponent;
 
   constructor(
     private eventosService: EventoService,
@@ -44,7 +46,7 @@ export class CalendarioEventosComponent implements OnInit {
       locales: [esLocale],
       locale: 'es',
       headerToolbar: {
-        left: 'prev,next today',
+        left: 'customPrev,customNext today',
         center: 'title',
         right: ''
       },
@@ -84,7 +86,150 @@ export class CalendarioEventosComponent implements OnInit {
       contentHeight: 'auto', // Ajusta dinámicamente según el contenido
       aspectRatio: 1.8, // Relación de aspecto entre ancho y alto (ajusta este valor según el diseño)
     };
+    this.calendarOptions.customButtons = {
+      customPrev: {
+        text: '<',
+        click: () => this.navigateToPreviousActivity()
+      },
+      customNext: {
+        text: '>',
+        click: () => this.navigateToNextActivity()
+      },
+      today: {
+        text: 'Hoy',
+        click: () => this.goToToday()
+      }
+    };
+    this.updateNavigationButtons();
   }
+
+  updateNavigationButtons(): void {
+    if (!this.fullcalendar || !this.fullcalendar.getApi()) return; // Asegurar que el calendario esté listo
+  
+    const calendarApi = this.fullcalendar.getApi();
+    const currentDate = calendarApi.getDate(); // Fecha actual en la vista
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    currentDate.setHours(0, 0, 0, 0);
+  
+    const prevButton = document.querySelector('.fc-customPrev-button');
+    const nextButton = document.querySelector('.fc-customNext-button');
+  
+    const isMonthView = calendarApi.view.type === 'dayGridMonth';
+    const isDayView = calendarApi.view.type === 'dayGridDay';
+  
+    const previousActivityDate = this.getPreviousActivityDate();
+    this.disablePrev = !previousActivityDate;
+    
+  
+    // 🔹 Habilitar "siguiente" solo si hay una actividad futura
+    this.disableNext = !this.getNextActivityDate();
+  
+    if (prevButton) {
+      prevButton.classList.toggle('disabled', this.disablePrev);
+      this.disablePrev ? prevButton.setAttribute('disabled', 'true') : prevButton.removeAttribute('disabled');
+    }
+  
+    if (nextButton) {
+      nextButton.classList.toggle('disabled', this.disableNext);
+      this.disableNext ? nextButton.setAttribute('disabled', 'true') : nextButton.removeAttribute('disabled');
+    }
+  }
+  
+  
+  
+  
+
+
+  getFilteredEventDates(): string[] {
+    if (!this.calendarOptions.events) return [];
+  
+    // Filtra solo los eventos visibles según los filtros activados
+    const filteredEvents = (this.calendarOptions.events as any[]).filter(event => {
+      return (
+        (event.extendedProps.type === 'evento' && this.showEventos) ||
+        (event.extendedProps.type === 'rutina' && this.showRutinas) ||
+        (event.extendedProps.type === 'recomendado' && this.showRecomendados)
+      );
+    });
+  
+    // Obtener fechas únicas ordenadas en formato YYYY-MM-DD
+    const uniqueDates = Array.from(
+      new Set(filteredEvents.map(event => new Date(event.start).toISOString().split('T')[0]))
+    ).sort();
+    
+    return uniqueDates;
+  }
+  
+
+
+  navigateToNextActivity(): void {
+    const calendarApi = this.fullcalendar?.getApi();
+    if (!calendarApi || this.disableNext) return;  // Evita la ejecución si el botón está deshabilitado
+  
+    const currentView = calendarApi.view.type;
+  
+    if (currentView === 'dayGridDay') {
+      const nextActivityDate = this.getNextActivityDate();
+      if (nextActivityDate) {
+        calendarApi.gotoDate(nextActivityDate);
+      }
+    } else {
+      calendarApi.next();
+    }
+  
+    this.updateNavigationButtons(); // Actualizar botones después de la navegación
+  }
+  
+  navigateToPreviousActivity(): void {
+    const calendarApi = this.fullcalendar?.getApi();
+    if (!calendarApi || this.disablePrev) return;  // Evita la ejecución si el botón está deshabilitado
+  
+    const currentView = calendarApi.view.type;
+  
+    if (currentView === 'dayGridDay') {
+      const previousActivityDate = this.getPreviousActivityDate();
+      if (previousActivityDate) {
+        calendarApi.gotoDate(previousActivityDate);
+      }
+    } else {
+      calendarApi.prev();
+    }
+  
+    this.updateNavigationButtons(); // Actualizar botones después de la navegación
+  }
+  
+
+  getNextActivityDate(): string | null {
+    const eventDates = this.getFilteredEventDates();
+    if (eventDates.length === 0) return null;  // No hay fechas de actividad
+  
+    const calendarApi = this.fullcalendar?.getApi();
+    if (!calendarApi) return null;
+  
+    const currentDate = new Date(calendarApi.getDate()).toISOString().split('T')[0]; // Obtener la fecha actual desde el calendario
+  
+    // Buscar la primera fecha futura disponible en el calendario
+    const nextDate = eventDates.find(date => date > currentDate) || null;
+    return nextDate;
+  }
+  
+  getPreviousActivityDate(): string | null {
+    const eventDates = this.getFilteredEventDates();
+    if (eventDates.length === 0) return null;  // No hay fechas de actividad
+  
+    const calendarApi = this.fullcalendar?.getApi();
+    if (!calendarApi) return null;
+  
+    const currentDate = new Date(calendarApi.getDate()).toISOString().split('T')[0]; // Fecha actual en vista
+  
+    // Buscar la última fecha anterior a la actual
+    const previousDate = [...eventDates].reverse().find(date => date < currentDate) || null;
+    return previousDate;
+}
+
+  
+
 
   // Asegúrate de que el código de la lupa se quede dentro de esta función
   openMotivoModal(motivo: string, event: Event) {
@@ -98,6 +243,15 @@ export class CalendarioEventosComponent implements OnInit {
       modal.style.display = 'block'; // Mostrar el modal
     }
   }
+
+  goToToday(): void {
+    const calendarApi = this.fullcalendar?.getApi();
+    if (!calendarApi) return;
+  
+    calendarApi.today(); // Mueve el calendario a la fecha actual
+    this.updateNavigationButtons(); // Asegurar que los botones se actualicen correctamente
+  }
+  
 
   ngOnInit() {
 
@@ -117,7 +271,6 @@ export class CalendarioEventosComponent implements OnInit {
     this.rutinaService.rutinasRealizaUsuarioSinPaginacion().subscribe(
       (dataPackage: DataPackage[]) => {
         const rutinas = dataPackage as unknown as Rutina[];
-        console.log('Rutinas recibidas y procesadas:', rutinas);
 
         rutinas.forEach((rutina, rutinaIndex) => {
           const color = colorMap.rutina[rutinaIndex % colorMap.rutina.length]; // Color cíclico para rutinas
@@ -150,8 +303,8 @@ export class CalendarioEventosComponent implements OnInit {
           }
         });
 
-        console.log('Eventos de rutinas generados:', calendarEvents);
         this.loadEventos(calendarEvents, colorMap);
+        this.updateNavigationButtons();
         setTimeout(() => {
           if (Array.isArray(this.calendarOptions.events)) {
             this.allEvents = [...this.calendarOptions.events];
@@ -159,14 +312,15 @@ export class CalendarioEventosComponent implements OnInit {
             this.allEvents = []; // Asignar un valor predeterminado si no es un array
           }
         }, 0);
-
+        this.updateNavigationButtons();
       },
       (error) => console.error('Error al cargar rutinas:', error)
     );
+    this.updateNavigationButtons();
   }
 
   toggleFilters() {
-    if (this.filtersAnimating) return; 
+    if (this.filtersAnimating) return;
 
     this.filtersAnimating = true;
 
@@ -176,15 +330,18 @@ export class CalendarioEventosComponent implements OnInit {
 
       setTimeout(() => {
         this.filtersAnimating = false;
-      }, 500); 
+      }, 500);
     } else {
 
       this.filtersVisible = true;
 
       setTimeout(() => {
         this.filtersAnimating = false;
-      }, 500); 
+      }, 500);
     }
+
+    this.updateNavigationButtons();
+
   }
 
   updateCalendar() {
@@ -192,22 +349,25 @@ export class CalendarioEventosComponent implements OnInit {
     const filteredEvents = this.allEvents.filter((event: any) => {
       const showEvento = event.extendedProps.type === 'evento' && this.showEventos;
       const showRutina = event.extendedProps.type === 'rutina' && this.showRutinas;
-      const showRecomendados = event.extendedProps.type === 'recomendado' && this.showRecomendados;      
+      const showRecomendados = event.extendedProps.type === 'recomendado' && this.showRecomendados;
       return showEvento || showRutina || showRecomendados; // Solo mostramos eventos que cumplan con los filtros
     });
-  
+
     // Actualizar la lista de eventos que se muestra en el calendario
     if (this.fullcalendar) {
       const calendarApi = this.fullcalendar.getApi();
       calendarApi.removeAllEvents(); // Eliminar todos los eventos actuales
       this.addEvents(filteredEvents); // Añadir los eventos filtrados
     }
+
+    this.updateNavigationButtons(); // Actualizar botones después de la navegación
+
   }
-  
+
   addEvents(filteredEvents: any[]) {
     this.calendarOptions.events = filteredEvents;
   }
-  
+
   loadEventos(calendarEvents: any[], colorMap: any) {
     this.allEvents = calendarEvents;
 
@@ -215,7 +375,6 @@ export class CalendarioEventosComponent implements OnInit {
     this.eventosService.eventosFuturosPertenecientesAUnUsuario().subscribe(
       (dataPackage: DataPackage) => {
         const eventos = dataPackage.data as Evento[];
-        console.log('Eventos recibidos del backend:', eventos);
 
         eventos.forEach(evento => {
           const startDate = new Date(evento.fechaHora);
@@ -241,7 +400,8 @@ export class CalendarioEventosComponent implements OnInit {
 
         this.updateCalendar();
 
-        console.log('Eventos deportivos generados:', calendarEvents);
+        this.updateNavigationButtons();
+
         this.calendarOptions.events = calendarEvents;
 
         // Cargar eventos recomendados
@@ -269,8 +429,6 @@ export class CalendarioEventosComponent implements OnInit {
             });
           });
 
-          console.log('Eventos recomendados generados:', calendarEvents);
-
           setTimeout(() => {
             this.calendarOptions.events = [...calendarEvents];
           }, 0);
@@ -278,7 +436,7 @@ export class CalendarioEventosComponent implements OnInit {
           this.allEvents = [...calendarEvents]; // Asegúrate de que allEvents se actualice aquí
 
           this.updateCalendar();
-          
+
         }, (error) => console.error('Error al cargar eventos recomendados:', error));
       },
       (error) => console.error('Error al cargar eventos:', error)
