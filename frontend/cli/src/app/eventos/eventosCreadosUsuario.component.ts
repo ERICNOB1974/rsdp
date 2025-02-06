@@ -188,6 +188,7 @@ export class EventosCreadosUsuarioComponent implements OnInit {
   onSearchInputEventos(nombre: string): void {
     this.searchSubjectEventos.next(nombre); // Emite el texto ingresado
   }
+
   irACrearEvento(): void {
     this.router.navigate(['/eventos/crearEvento']);
   }
