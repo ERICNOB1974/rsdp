@@ -442,7 +442,8 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
       this.snackBar.open(mensaje, 'Cerrar', {
         duration: 3000,
       });
-      this.router.navigate(['/eventos']);
+      this.location.back()
+      //this.router.navigate(['/eventos']);
     });
   }
 

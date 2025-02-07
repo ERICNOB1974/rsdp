@@ -75,9 +75,12 @@ export class PublicacionDetailComponent implements OnInit {
   pageSizeComentario = 5;
   noMasComentarios = false;
   loandingComentarios = false;
+  cargandoComentarios = false;
   @ViewChild('modalLikes') modalLikes!: TemplateRef<any>;
   cantidadComentarios: number = 0;
   @ViewChild('commentInput') commentInput!: ElementRef;
+
+  private scrollDebounce: any;
 
 
   constructor(
@@ -99,6 +102,7 @@ export class PublicacionDetailComponent implements OnInit {
     this.getPublicacion();
     this.getUsuario();
     this.checkIfOwnPublication();
+
   }
 
 
@@ -333,12 +337,13 @@ export class PublicacionDetailComponent implements OnInit {
         this.publicacionService.estaLikeada(this.publicacion.id).subscribe(dataPackage => {
           this.isLiked = <boolean><unknown>dataPackage.data;
           this.checkIfOwnPublication();
-          this.cargarComentariosPaginados();
           this.cantidadLikes();
           this.textoConMenciones$ = this.getTextoConMenciones(this.publicacion.texto);
           this.comentarioService.cantidadComentariosPublicacion(this.publicacion.id).subscribe(dataPackage => {
             this.cantidadComentarios = dataPackage.data as unknown as number;
           });
+          this.cargarComentariosPaginados();
+          //this.onScrollComentarios();
 
         });
       });
@@ -719,58 +724,11 @@ export class PublicacionDetailComponent implements OnInit {
 
 
 
-  cargarComentariosPaginados2(): void {
-    if (this.loandingComentarios || this.noMasComentarios) return; // Evitar solicitudes innecesarias
-
-    this.loandingComentarios = true; // Iniciar indicador de carga
-
-    this.comentarioService.obtenerComentariosPaginados(this.publicacion.id, this.paginaActual, this.pageSizeComentario)
-      .subscribe({
-        next: (dataPackage: DataPackage) => {
-          if (dataPackage && dataPackage.status === 200 && Array.isArray(dataPackage.data)) {
-            const nuevosComentarios = dataPackage.data as ComentarioDTO[];
-
-            if (nuevosComentarios.length > 0) {
-              this.comentarios = [...this.comentarios, ...nuevosComentarios.map(c => c.comentario)];
-              this.paginaActual++;
-
-              nuevosComentarios.forEach((comentarioDTO: ComentarioDTO) => {
-                const comentario = comentarioDTO.comentario;
-
-                this.respuestaPaginacion[comentario.id] = {
-                  paginaActual: 0,
-                  totalRespuestas: 0,
-                  respuestas: [],
-                  mostrarRespuestas: true,
-                  estaLikeado: comentarioDTO.estaLikeado,
-                  cantidadLikes: comentarioDTO.cantidadLikes
-                };
-
-                this.contarRespuestas(comentario);
-                this.cargarRespuestas(comentario);
-              });
-            } else {
-              this.noMasComentarios = true; // No hay más comentarios por cargar
-            }
-          } else {
-            console.error('Error al cargar comentarios paginados:', dataPackage?.message);
-          }
-          this.loandingComentarios = false; // Finalizar indicador de carga
-        },
-        error: (error) => {
-          console.error('Error al comunicarse con el servicio de comentarios:', error);
-          this.loandingComentarios = false;
-        }
-      });
-  }
-
-
-
-
-
   cargarComentariosPaginados(): void {
-    if (this.loandingComentarios || this.noMasComentarios) return; // Evitar solicitudes innecesarias
+    if (this.loandingComentarios || this.noMasComentarios) {
 
+      return; // Evitar solicitudes innecesarias
+    }
     this.loandingComentarios = true; // Iniciar indicador de carga
 
     this.comentarioService.obtenerComentariosPaginados(this.publicacion.id, this.paginaActual, this.pageSizeComentario)
@@ -821,14 +779,17 @@ export class PublicacionDetailComponent implements OnInit {
 
   @HostListener('window:scroll', [])
   onScrollComentarios(): void {
-    const scrollTop = window.scrollY;
-    const windowHeight = window.innerHeight;
-    const documentHeight = document.documentElement.scrollHeight;
-    const isAtBottom = scrollTop + windowHeight >= documentHeight - 1;
+    clearTimeout(this.scrollDebounce);
+    this.scrollDebounce = setTimeout(() => {
+      const scrollTop = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const isAtBottom = scrollTop + windowHeight >= documentHeight - 1;
 
-    if (isAtBottom) {
-      this.cargarComentariosPaginados();
-    }
+      if (isAtBottom) {
+        this.cargarComentariosPaginados();
+      }
+    }, 200); // Ajusta el tiempo según lo necesario
   }
 
 
