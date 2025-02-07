@@ -59,6 +59,8 @@ export class ComentarioService {
   }
 
   obtenerComentariosPaginados(idPublicacion: number, page: number, size: number): Observable<DataPackage> {
+    console.log(`Llamando a la API con publicacionId=${idPublicacion}, pagina=${page}, pageSize=${size}`);
+
     return this.http.get<DataPackage>(`${this.comentariosUrl}/comentariosPaginados/${idPublicacion}/${this.authService.getUsuarioId()}?page=${page}&size=${size}`);
   }
   cantidadComentariosPublicacion(idPublicacion: number): Observable<DataPackage> {
