@@ -9,7 +9,7 @@
         <p class="event-date">Fecha: {{ evento.fechaHora | date: 'medium' }}</p>
         <p class="event-motive" *ngIf="motivos[evento.id]">
           <i class="fa fa-search event-icon" (click)="openMotivoModal(evento.id)"></i>
-          Motivo: "{{ motivos[evento.id]?.toString() }}"
+          Motivo: "{{ formatMotivo(motivos[evento.id].toString()) }}"
         </p>
         <p class="event-motive" *ngIf="!motivos[evento.id]">Motivo no disponible</p>
       </div>
@@ -23,7 +23,7 @@
 <div *ngIf="isModalOpen" class="modal-overlay" (click)="closeMotivoModal()">
   <div class="modal-content" (click)="$event.stopPropagation()">
     <h3>Motivo de {{ eventoSeleccionado?.nombre }}</h3>
-    <p>{{ motivos[eventoSeleccionado?.id]?.toString() }}</p>
+    <p><span [innerHTML]="formatMotivo(motivos[eventoSeleccionado?.id].toString())"></span></p>
     <button class="close-btn" (click)="closeMotivoModal()">Cerrar</button>
   </div>
 </div>
