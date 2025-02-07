@@ -34,6 +34,24 @@ export class SugerenciasRutinasComponent implements OnInit {
     this.getRutinas()
   }
 
+  formatMotivo(motivo: string): string {
+    if (!motivo) return "Motivo no disponible";
+  
+    const frasesUnicas = Array.from(new Set(motivo.split(" --- ")))
+      .map(frase => {
+        if (/\d/.test(frase) && !frase.includes("1")) {
+          return frase.replace(/\//g, ""); // Eliminar todas las barras "/"
+        }
+        if (frase.includes("1")) {
+          return frase.replace(/\/s|\/n|\/es/g, ""); // Eliminar "/s", "/n" y "/es"
+        }
+        return frase;
+      });
+  
+    return frasesUnicas.map(frase => `• ${frase}`).join("<br>");
+  }
+  
+  
 
   getRutinas(): void {
     this.rutinaService.sugerencias(this.page, this.size).subscribe((dataPackage: DataPackage) => {

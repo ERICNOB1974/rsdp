@@ -51,6 +51,13 @@ export class SugerenciasEventosComponent implements OnInit {
     });
   }
 
+  formatMotivo(motivo: string): string {
+    if (!motivo) return "Motivo no disponible";
+    
+    const frasesUnicas = Array.from(new Set(motivo.split(" --- ")));
+    return frasesUnicas.map(frase => `• ${frase}`).join("<br>");
+  }
+  
 
   // Método para manejar el cambio de página solicitado desde la paginación
   onPageChangeRequested(newPage: number): void {
