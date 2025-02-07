@@ -263,7 +263,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "point({latitude: u.latitud, longitude: u.longitud}) AS ubicacionUsuario " +
                         "WITH comunidad, etiquetasEnComun, " +
                         "point.distance(ubicacionComunidad, ubicacionUsuario) AS distancia " +
-                        "RETURN comunidad, (etiquetasEnComun / (distancia + 1500000)) AS score, 'A tus amigos le gustan eventos de este tipo' AS motivo "
+                        "RETURN comunidad, (etiquetasEnComun / (distancia + 1500000)) AS score, 'A tus amigos les gustan los eventos de este tipo' AS motivo "
                         + // Cambiar aquí
                         "ORDER BY score DESC ")
         List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario);

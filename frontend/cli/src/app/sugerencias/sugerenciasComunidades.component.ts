@@ -51,7 +51,12 @@ export class SugerenciasComunidadesComponent implements OnInit {
         });
       }
 
-    
+      formatMotivo(motivo: string): string {
+        if (!motivo) return "Motivo no disponible";
+        
+        const frasesUnicas = Array.from(new Set(motivo.split(" --- ")));
+        return frasesUnicas.map(frase => `• ${frase}`).join("<br>");
+      }
 
       onPageChangeRequested(newPage: number): void {
         // Convertir la página del frontend (base 1) a base 0

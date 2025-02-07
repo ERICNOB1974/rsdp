@@ -44,8 +44,23 @@ export class SugerenciasAmigosComponent implements OnInit {
     });
   }
   
-
-
+  formatMotivo(motivo: string): string {
+    if (!motivo) return "Motivo no disponible";
+  
+    const frasesUnicas = Array.from(new Set(motivo.split(" --- ")))
+      .map(frase => {
+        if (/\d/.test(frase) && !frase.includes("1")) {
+          return frase.replace(/\//g, ""); // Eliminar todas las barras "/"
+        }
+        if (frase.includes("1")) {
+          return frase.replace(/\/s|\/n|\/es/g, ""); // Eliminar "/s", "/n" y "/es"
+        }
+        return frase;
+      });
+  
+    return frasesUnicas.map(frase => `• ${frase}`).join("<br>");
+  }
+  
   // Método para mover al siguiente grupo de eventos en el carrusel
   siguienteUsuario(): void {
     this.currentIndex = (this.currentIndex + 1) % this.results.length; // Incrementa el índice
