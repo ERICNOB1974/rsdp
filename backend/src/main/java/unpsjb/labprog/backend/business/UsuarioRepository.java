@@ -275,7 +275,7 @@ List<Usuario> obtenerExpulsadosActivos(@Param("idComunidad") Long idComunidad,
     @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]->(amigo)-[:ES_AMIGO_DE]->(usuario) "
             + "WHERE usuario <> u AND NOT (u)-[:ES_AMIGO_DE]-(usuario) "
             + "WITH usuario, COUNT(amigo) AS amigosEnComun "
-            + "RETURN usuario, (amigosEnComun * 5) AS score, amigosEnComun+' amigo/s tuyos participan' AS motivo "
+            + "RETURN usuario, (amigosEnComun * 5) AS score, 'Tienen ' + amigosEnComun+' amigo/s en común' AS motivo "
             + "ORDER BY score DESC")
     List<ScoreAmigo> sugerenciaDeAmigosBasadaEnAmigos2(String nombreUsuario);
 
@@ -286,7 +286,7 @@ List<Usuario> obtenerExpulsadosActivos(@Param("idComunidad") Long idComunidad,
             + // Asegura que no sean amigos
             "WITH usuario, COUNT(evento) AS eventosCompartidos "
             + "WHERE eventosCompartidos >= 1 " // volver a poner 2
-            + "RETURN usuario, (eventosCompartidos * 4) AS score, 'Compartis '+eventosCompartidos+' evento/s' AS motivo "
+            + "RETURN usuario, (eventosCompartidos * 4) AS score, 'Compartis '+eventosCompartidos+' evento/s deportivo/s' AS motivo "
             + "ORDER BY score DESC, usuario.nombreUsuario ASC")
     List<ScoreAmigo> sugerenciasDeAmigosBasadosEnEventos2(String nombreUsuario);
 
@@ -295,7 +295,7 @@ List<Usuario> obtenerExpulsadosActivos(@Param("idComunidad") Long idComunidad,
             + "WHERE usuario <> u "
             + "WITH u, usuario, COUNT(comunidad) AS comunidadesEnComun "
             + "WHERE NOT (u)-[:ES_AMIGO_DE]-(usuario) AND comunidadesEnComun >= 1 " // volver a poner 2
-            + "RETURN usuario, (comunidadesEnComun * 3) AS score, 'Participas en '+comunidadesEnComun+' comunidade/s en comun' AS motivo "
+            + "RETURN usuario, (comunidadesEnComun * 3) AS score, 'Tienen '+comunidadesEnComun+' comunidad/es deportiva/s en común' AS motivo "
             + "ORDER BY score DESC, usuario.nombreUsuario ASC")
     List<ScoreAmigo> sugerenciasDeAmigosBasadosEnComunidades2(String nombreUsuario);
 
