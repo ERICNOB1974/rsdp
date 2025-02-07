@@ -4,12 +4,14 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import unpsjb.labprog.backend.model.Comentario;
 import unpsjb.labprog.backend.model.Usuario;
+import unpsjb.labprog.backend.model.DTO.ComentarioLikesDTO;
 
 @Service
 public class ComentarioService {
@@ -51,6 +53,7 @@ public class ComentarioService {
     public Usuario obtenerCreadorPublicacion(Long idPublicacion) {
         return usuarioRepository.publicadoPor(idPublicacion);
     }
+
     public Usuario obtenerCreadorComentario(Long idPublicacion) {
         return usuarioRepository.comentadoPor(idPublicacion);
     }
@@ -61,7 +64,7 @@ public class ComentarioService {
         if (comentarioPadre.isEmpty()) {
             throw new Exception("Comentario no encontrado.");
         }
-     
+
         // Crear la respuesta
         Comentario comentario = comentarioRepository.responderComentario(comentarioPadreId, texto, ZonedDateTime.now(),
                 usuarioId);
@@ -69,8 +72,9 @@ public class ComentarioService {
         long idUsuarioComentarioPadre = comentarioRepository.creadorComentarioByComentarioId(comentarioPadreId);
         comentario.setUsuario(
                 usuarioRepository.findById(usuarioId).orElseThrow(() -> new Exception("Usuario no encontrado.")));
-            notificacionService.crearNotificacionPublicacion( idUsuarioComentarioPadre, usuarioId, idPublicacion, "RESPUESTA",
-            LocalDateTime.now());
+        notificacionService.crearNotificacionPublicacion(idUsuarioComentarioPadre, usuarioId, idPublicacion,
+                "RESPUESTA",
+                LocalDateTime.now());
         return comentario;
     }
 
@@ -99,11 +103,11 @@ public class ComentarioService {
     }
 
     public String likear(Long usuarioId, Long comentarioId) {
-        if(this.estaLikeado(usuarioId, comentarioId)){
+        if (this.estaLikeado(usuarioId, comentarioId)) {
             return "Error. El comentario ya estaba likeado";
         }
         Long idCreador = this.obtenerCreadorComentario(comentarioId).getId();
-        Long idPublicacion=comentarioRepository.idPublicacionDadoComentario(comentarioId);
+        Long idPublicacion = comentarioRepository.idPublicacionDadoComentario(comentarioId);
         notificacionService.crearNotificacionPublicacion(idCreador, usuarioId, idPublicacion, "LIKE_COMENTARIO",
                 LocalDateTime.now());
         comentarioRepository.likearComentario(usuarioId, comentarioId);
@@ -111,7 +115,7 @@ public class ComentarioService {
     }
 
     public String sacarLike(Long usuarioId, Long comentarioId) {
-        if(!this.estaLikeado(usuarioId, comentarioId)){
+        if (!this.estaLikeado(usuarioId, comentarioId)) {
             return "Error. El comentario no estaba likeado";
         }
         comentarioRepository.sacarLike(usuarioId, comentarioId);
@@ -125,5 +129,23 @@ public class ComentarioService {
     public Long cantidadLikes(Long comentarioId) {
         return comentarioRepository.cantidadLikes(comentarioId);
     }
+
+public List<ComentarioLikesDTO> comentariosPaginados(Long idPublicacion, Long idUsuario, int page, int size) {
+    int skip = page * size; // Cálculo de los resultados a omitir
+
+    return comentarioRepository.comentariosPaginados(idPublicacion, skip, size).stream()
+        .peek(comentario -> comentario.setUsuario(usuarioRepository.findUsuarioByComentarioId(comentario.getId())))
+        .map(comentario -> new ComentarioLikesDTO(
+            comentario,
+            comentarioRepository.cantidadLikes(comentario.getId()),
+            comentarioRepository.estaLikeada(idUsuario, comentario.getId())
+        ))
+        .collect(Collectors.toList());
+}
+
+
+public Long cantidadComentariosPublicacion(Long idPublicacion){
+    return comentarioRepository.cantidadComentariosPublicacion(idPublicacion);
+}
 
 }

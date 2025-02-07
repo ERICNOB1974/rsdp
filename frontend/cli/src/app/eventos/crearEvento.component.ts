@@ -66,7 +66,7 @@ export class CrearEventoComponent {
   formEvento: FormGroup;
   @ViewChild('etiquetasInput') etiquetasInput!: ElementRef<HTMLInputElement>;
   @ViewChild('etiquetasModel') etiquetasModel!: NgModel;
-
+  guardandoEvento:boolean=false;
 
 
 
@@ -288,19 +288,19 @@ export class CrearEventoComponent {
       tap(() => (this.searching = false))
     );
 
-    agregarEtiqueta(event: any): void {
-      const etiqueta: Etiqueta = event.item;
-    
-      // Verificar si la etiqueta ya está seleccionada
-      if (!this.etiquetasSeleccionadas.some(e => e.nombre === etiqueta.nombre)) {
-        this.etiquetasSeleccionadas.push(etiqueta);
-      }
-      setTimeout(() => {
-        this.etiquetasInput.nativeElement.value = '';
-        this.etiquetasModel.control.setValue('');
-      });
+  agregarEtiqueta(event: any): void {
+    const etiqueta: Etiqueta = event.item;
+
+    // Verificar si la etiqueta ya está seleccionada
+    if (!this.etiquetasSeleccionadas.some(e => e.nombre === etiqueta.nombre)) {
+      this.etiquetasSeleccionadas.push(etiqueta);
     }
-    
+    setTimeout(() => {
+      this.etiquetasInput.nativeElement.value = '';
+      this.etiquetasModel.control.setValue('');
+    });
+  }
+
 
   eliminarEtiqueta(etiqueta: Etiqueta): void {
     this.etiquetasSeleccionadas = this.etiquetasSeleccionadas.filter(
@@ -325,9 +325,13 @@ export class CrearEventoComponent {
 
   async saveEvento() {
     try {
-      // Formatear la fecha antes de guardar el evento
-      this.evento.fechaHora = new Date(this.evento.fechaHora).toISOString();
+      this.guardandoEvento=true;
+      const fechaUsuario = new Date(this.evento.fechaHora);
 
+      // Ajustar a la zona horaria local del usuario
+      const fechaISO = new Date(fechaUsuario.getTime() - fechaUsuario.getTimezoneOffset() * 60000).toISOString();
+      this.evento.fechaHora = fechaISO;
+      
       // Guardar el evento y obtener su ID
       if (this.comunidadId) {
         const eventoGuardado = await firstValueFrom(this.eventoService.saveConCreadorComunidad(this.evento, <number><unknown>this.comunidadId));
@@ -349,12 +353,13 @@ export class CrearEventoComponent {
 
         // Realizar la etiquetación con la etiqueta final
         await this.eventoService.etiquetar(this.evento, etiquetaFinal.id).toPromise();
+        this.guardandoEvento=false;
       }
 
       this.router.navigate([`eventos/${this.evento.id}`], {
         state: { mensajeSnackBar: 'Evento creado correctamente.' }
       });
-      
+
 
     } catch (error) {
       console.error('Error al guardar el evento:', error);

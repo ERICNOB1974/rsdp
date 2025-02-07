@@ -67,7 +67,14 @@
   color: rgb(0, 0, 0);
   cursor: pointer;
   margin-left: 15px;
+  display: flex;
+  align-items: center;
+  gap: 5px; /* Espacio entre el icono y el número */
+}
 
+.comment-count {
+  font-size: 14px;
+  font-weight: bold;
 }
 
 .comment-input-container {
@@ -168,3 +175,4 @@
   padding: 8px 12px;
   font-size: 14px;
 }
+
