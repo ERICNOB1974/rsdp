@@ -79,10 +79,10 @@
     <!-- Buscar Etiquetas -->
     <mat-form-field appearance="outline" class="form-group">
       <mat-label>Buscar Etiquetas:</mat-label>
-      <input #etiquetasInput matInput id="etiquetas" [ngbTypeahead]="searchEtiqueta" [resultFormatter]="resultFormatEtiqueta"
-        [inputFormatter]="inputFormatEtiqueta" (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada"
-        placeholder="Buscar etiqueta" [(ngModel)]="etiquetaSeleccionada" [ngModelOptions]="{standalone: true}"
-        [container]="'body'" />
+      <input #etiquetasInput matInput id="etiquetas" [ngbTypeahead]="searchEtiqueta"
+        [resultFormatter]="resultFormatEtiqueta" [inputFormatter]="inputFormatEtiqueta"
+        (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada" placeholder="Buscar etiqueta"
+        [(ngModel)]="etiquetaSeleccionada" [ngModelOptions]="{standalone: true}" [container]="'body'" />
 
       <footer *ngIf="etiquetasSeleccionadas.length==0" class="mat-error-custom">
         Al menos una etiqueta es requerida
@@ -127,8 +127,12 @@
     <!-- Botones -->
     <div class="form-buttons">
       <button type="button" (click)="cancel()" class="btn btn-secondary">Cancelar</button>
-      <button type="button" (click)="saveEvento()" [disabled]="!isFormValid()" class="btn btn-success">Guardar
-        Evento</button>
+      <button type="button" (click)="saveEvento()" [disabled]="!isFormValid() || guardandoEvento"
+        class="btn btn-success">
+        <span *ngIf="guardandoEvento" class="spinner-border spinner-border-sm me-2" role="status"
+          aria-hidden="true"></span>
+        Guardar Evento
+      </button>
     </div>
 
   </form>

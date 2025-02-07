@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ElementRef, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Location } from '@angular/common';
 import { CommonModule } from '@angular/common'; // Para permitir navegar de vuelta
@@ -7,7 +7,7 @@ import { PublicacionService } from './publicacion.service';
 import { Publicacion } from './publicacion';
 import { FormsModule } from '@angular/forms';
 import { DataPackage } from '../data-package';
-import { Comentario } from '../comentarios/Comentario';
+import { Comentario, } from '../comentarios/Comentario';
 import { AuthService } from '../autenticacion/auth.service';
 import { Usuario } from '../usuarios/usuario';
 import { UsuarioService } from '../usuarios/usuario.service';
@@ -16,8 +16,8 @@ import { ComentarioService } from '../comentarios/comentario.service';
 import { UsuarioEsAmigoDTO } from '../arrobar/UsuarioEsAmigoDTO';
 import { ArrobarService } from '../arrobar/arrobar.service';
 import { catchError, debounceTime, distinctUntilChanged, filter, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
-
-
+import { ComentarioDTO } from '../comentarios/ComentarioDTO';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-publicaciones',
@@ -29,13 +29,11 @@ import { catchError, debounceTime, distinctUntilChanged, filter, forkJoin, map, 
 export class PublicacionDetailComponent implements OnInit {
 
   publicacion!: Publicacion;
-  isActive: boolean = false;
   publicadoPor!: Usuario;
   numeroLikes!: number;
   usuariosLikes: any[] = []; // Lista de usuarios que dieron like
   loadingLikes: boolean = false; // Estado de carga
   currentPageLikes: number = 0; // Página actual para paginación
-  @ViewChild('modalLikes') modalLikes!: TemplateRef<any>;
   usuario: Usuario | null = null;
   usuariosMencionados: Usuario[] = [];
   usuariosFiltrados: UsuarioEsAmigoDTO[] = [];
@@ -45,32 +43,15 @@ export class PublicacionDetailComponent implements OnInit {
   textoConMenciones$: Observable<string> = undefined!;
   enviandoComentario: boolean = false;
   enviandoRespuesta: boolean = false;
-
-  constructor(
-    private route: ActivatedRoute,
-    private publicacionService: PublicacionService,
-    private usuarioService: UsuarioService,
-    private location: Location,
-    private comentarioService: ComentarioService,
-    private router: Router,
-    private snackBar: MatSnackBar,
-    private dialog: MatDialog,
-    private authService: AuthService,
-    private arrobaService: ArrobarService,
-    private cdr: ChangeDetectorRef
-  ) { }
-
   isLiked: boolean = false;
-  showCommentInput: boolean = true;
   comment: string = '';
   comments: string[] = [];
   comentarios: Comentario[] = [];
-  displayedComments: Comentario[] = [];
-  commentsToShow: number = 4; // Número de comentarios a mostrar inicialmente
   isOwnPublication: boolean = false;
   cantidadPorPagina: number = 10;
   noMasUsuarios = false;
   pageSize: number = 2;
+  comentariosPaginacion: ComentarioDTO[] = [];
 
   currentCommentId: number | null = null;
   showReplyInput: boolean = false; // Para mostrar u ocultar el campo de respuesta
@@ -89,14 +70,35 @@ export class PublicacionDetailComponent implements OnInit {
     }
   } = {};
 
+  paginaActual: number = 0;
+  loadedMoreComments: boolean = false;
+  pageSizeComentario = 5;
+  noMasComentarios = false;
+  loandingComentarios = false;
+  @ViewChild('modalLikes') modalLikes!: TemplateRef<any>;
+  cantidadComentarios: number = 0;
+  @ViewChild('commentInput') commentInput!: ElementRef;
+
+
+  constructor(
+    private route: ActivatedRoute,
+    private publicacionService: PublicacionService,
+    private usuarioService: UsuarioService,
+    private location: Location,
+    private comentarioService: ComentarioService,
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
+    private authService: AuthService,
+    private arrobaService: ArrobarService,
+    private modalService: NgbModal
+
+  ) { }
+
   ngOnInit(): void {
     this.getPublicacion();
     this.getUsuario();
-    //this.cargarComentarios();
-    //this.traerParticipantes();
-    this.updateDisplayedComments();
     this.checkIfOwnPublication();
-
   }
 
 
@@ -107,28 +109,10 @@ export class PublicacionDetailComponent implements OnInit {
     } else {
       this.publicacionService.darLike(this.publicacion.id).subscribe();
       this.numeroLikes++;
-      // this.cantidadLikes();
     }
     this.isLiked = !this.isLiked;
   }
 
-
-
-  abrirModalLikes(): void {
-    this.currentPageLikes = 0;
-    this.usuariosLikes = [];
-    this.noMasUsuarios = false;
-    this.cargarUsuariosLikes();
-
-    this.dialog.open(this.modalLikes, {
-      width: '500px',
-      height: '400px', // Limita la altura del modal
-      data: {
-        usuariosLikes: this.usuariosLikes,
-        cargarUsuariosLikes: this.cargarUsuariosLikes.bind(this),
-      },
-    });
-  }
 
 
   cargarUsuariosLikes(): void {
@@ -161,21 +145,6 @@ export class PublicacionDetailComponent implements OnInit {
   }
 
 
-  abrirModalLikesComentario(comentarioId: number): void {
-    this.currentPageLikes = 0;
-    this.usuariosLikes = [];
-    this.noMasUsuarios = false;
-    this.cargarUsuariosLikesComentario(comentarioId);
-
-    this.dialog.open(this.modalLikes, {
-      width: '500px',
-      height: '400px', // Limita la altura del modal
-      data: {
-        usuariosLikes: this.usuariosLikes,
-        cargarUsuariosLikesComentario: this.cargarUsuariosLikesComentario.bind(this),
-      },
-    });
-  }
 
   cargarUsuariosLikesComentario(comentarioId: number): void {
     if (this.loadingLikes || this.noMasUsuarios) {
@@ -274,7 +243,7 @@ export class PublicacionDetailComponent implements OnInit {
           this.arrobar(this.comment, response.data.id);
           this.comentarios.unshift(newComment);
           this.comment = '';
-          this.updateDisplayedComments();
+          this.cantidadComentarios++;
         },
         error: (error) => {
           console.error('Error al enviar el comentario:', error);
@@ -352,14 +321,7 @@ export class PublicacionDetailComponent implements OnInit {
       );
     }
   }
-  updateDisplayedComments() {
-    this.displayedComments = this.comentarios.slice(0, this.commentsToShow);
-  }
 
-  loadMoreComments() {
-    this.commentsToShow += 4;
-    this.updateDisplayedComments();
-  }
   getPublicacion(): void {
     const id = this.route.snapshot.paramMap.get('id')!;
     if (!id || isNaN(parseInt(id, 10)) || id === 'new') {
@@ -371,9 +333,12 @@ export class PublicacionDetailComponent implements OnInit {
         this.publicacionService.estaLikeada(this.publicacion.id).subscribe(dataPackage => {
           this.isLiked = <boolean><unknown>dataPackage.data;
           this.checkIfOwnPublication();
-          this.cargarComentarios();
+          this.cargarComentariosPaginados();
           this.cantidadLikes();
           this.textoConMenciones$ = this.getTextoConMenciones(this.publicacion.texto);
+          this.comentarioService.cantidadComentariosPublicacion(this.publicacion.id).subscribe(dataPackage => {
+            this.cantidadComentarios = dataPackage.data as unknown as number;
+          });
 
         });
       });
@@ -494,14 +459,6 @@ export class PublicacionDetailComponent implements OnInit {
   }
 
 
-  /*  cargarRespuestas(comentario: Comentario) {
-    this.comentarioService.getRespuestas(comentario.id, 0, this.pageSize)
-      .subscribe(dataPackage => {
-        comentario.respuestas = dataPackage.data as Comentario[]; // Asegúrate de que `data` sea de tipo `Respuesta[]`
-        console.log("Respuestas recibidas:", dataPackage.data);
-      });
-  }  */
-
   cargarRespuestas(comentario: Comentario): void {
     const paginacion = this.respuestaPaginacion[comentario.id];
     if (paginacion.paginaActual != 0) {
@@ -550,9 +507,6 @@ export class PublicacionDetailComponent implements OnInit {
       this.cargarRespuestas(comentario);
     }
   }
-
-
-
 
   respuestasRestantes(comentarioId: number): number {
     const paginacion = this.respuestaPaginacion[comentarioId];
@@ -619,8 +573,6 @@ export class PublicacionDetailComponent implements OnInit {
       }
     );
   }
-
-
 
 
   private extraerUsuariosEtiquetados(texto: string): Usuario[] {
@@ -767,69 +719,156 @@ export class PublicacionDetailComponent implements OnInit {
 
 
 
-  /* 
-    getTextoConMenciones2(texto: string): Observable<string> {
-      if (!texto) {
-        console.log("Texto vacío, retornando observable vacío.");
-        return of('');
-      }
-  
-      // Expresión regular para encontrar menciones
-      const regex = /@(\w+)/g;
-      const menciones = texto.match(regex) || [];
-      console.log("Menciones encontradas:", menciones);
-  
-      // Si no hay menciones, devolvemos el texto original
-      if (menciones.length === 0) {
-        return of(texto);  // Devolvemos el texto tal cual sin cambios
-      }
-  
-      const verificaciones: Observable<{ username: string; idUsuario: number | null }>[] = [];
-  
-      // Verificamos la existencia de los usuarios mencionados
-      menciones.forEach((match) => {
-        const username = match.substring(1); // Quita el '@'
-        console.log("Verificando existencia de usuario:", username);
-  
-        verificaciones.push(
-          this.usuarioService.findByNombreUsuario(username).pipe(
-            map((dataPackage: DataPackage) => {
-              let idUsuario: number | null = null;  // Inicializamos idUsuario como null
-              if (dataPackage.status === 200) {
-                const usuario: Usuario = dataPackage.data as Usuario;
-                if (usuario.nombreUsuario === username) {
-                  idUsuario = usuario.id;  // Asignamos el idUsuario del objeto Usuario
-                }
-              }
-  
-              console.log(`Usuario ${username} tiene id:`, idUsuario);
-              return { username, idUsuario };
-            }),
-            catchError(() => {
-              console.error(`Error al verificar el usuario: ${username}`);
-              return of({ username, idUsuario: null }); // Si hay error, asumimos que no existe
-            })
-          )
-        );
+  cargarComentariosPaginados2(): void {
+    if (this.loandingComentarios || this.noMasComentarios) return; // Evitar solicitudes innecesarias
+
+    this.loandingComentarios = true; // Iniciar indicador de carga
+
+    this.comentarioService.obtenerComentariosPaginados(this.publicacion.id, this.paginaActual, this.pageSizeComentario)
+      .subscribe({
+        next: (dataPackage: DataPackage) => {
+          if (dataPackage && dataPackage.status === 200 && Array.isArray(dataPackage.data)) {
+            const nuevosComentarios = dataPackage.data as ComentarioDTO[];
+
+            if (nuevosComentarios.length > 0) {
+              this.comentarios = [...this.comentarios, ...nuevosComentarios.map(c => c.comentario)];
+              this.paginaActual++;
+
+              nuevosComentarios.forEach((comentarioDTO: ComentarioDTO) => {
+                const comentario = comentarioDTO.comentario;
+
+                this.respuestaPaginacion[comentario.id] = {
+                  paginaActual: 0,
+                  totalRespuestas: 0,
+                  respuestas: [],
+                  mostrarRespuestas: true,
+                  estaLikeado: comentarioDTO.estaLikeado,
+                  cantidadLikes: comentarioDTO.cantidadLikes
+                };
+
+                this.contarRespuestas(comentario);
+                this.cargarRespuestas(comentario);
+              });
+            } else {
+              this.noMasComentarios = true; // No hay más comentarios por cargar
+            }
+          } else {
+            console.error('Error al cargar comentarios paginados:', dataPackage?.message);
+          }
+          this.loandingComentarios = false; // Finalizar indicador de carga
+        },
+        error: (error) => {
+          console.error('Error al comunicarse con el servicio de comentarios:', error);
+          this.loandingComentarios = false;
+        }
       });
-  
-      // Ejecutamos todas las verificaciones en paralelo y transformamos el texto
-      return forkJoin(verificaciones).pipe(
-        map((resultados) => {
-          console.log("Resultados de la verificación:", resultados);
-  
-          // Reemplazamos las menciones por enlaces
-          return texto.replace(regex, (match, username) => {
-            const usuario = resultados.find((r) => r.username === username);
-            const idUsuario = usuario?.idUsuario;
-            console.log(`¿El usuario ${username} tiene id?`, idUsuario);
-  
-            return idUsuario !== null
-              ? `<a href="/perfil/${idUsuario}" class="mention-link">${match}</a>`  // Usamos idUsuario como número
-              : match;
-          });
-        })
-      );
-    } */
+  }
+
+
+
+
+
+  cargarComentariosPaginados(): void {
+    if (this.loandingComentarios || this.noMasComentarios) return; // Evitar solicitudes innecesarias
+
+    this.loandingComentarios = true; // Iniciar indicador de carga
+
+    this.comentarioService.obtenerComentariosPaginados(this.publicacion.id, this.paginaActual, this.pageSizeComentario)
+      .subscribe({
+        next: (dataPackage: DataPackage) => {
+          if (dataPackage && dataPackage.status === 200 && Array.isArray(dataPackage.data)) {
+            const nuevosComentarios = dataPackage.data as ComentarioDTO[];
+
+            if (nuevosComentarios.length > 0) {
+              nuevosComentarios.forEach((comentarioDTO: ComentarioDTO) => {
+                const comentario = comentarioDTO.comentario;
+
+                // Agregar directamente los datos de like al comentario
+                comentario.estaLikeado = comentarioDTO.estaLikeado;
+                comentario.cantidadLikes = comentarioDTO.cantidadLikes;
+
+                this.respuestaPaginacion[comentario.id] = {
+                  paginaActual: 0,
+                  totalRespuestas: 0,
+                  respuestas: [],
+                  mostrarRespuestas: true,
+                  estaLikeado: comentarioDTO.estaLikeado,
+                  cantidadLikes: comentarioDTO.cantidadLikes
+                };
+
+                this.contarRespuestas(comentario);
+                this.cargarRespuestas(comentario);
+              });
+
+              // Agregar los comentarios con likes incluidos
+              this.comentarios = [...this.comentarios, ...nuevosComentarios.map(c => c.comentario)];
+              this.paginaActual++;
+            } else {
+              this.noMasComentarios = true; // No hay más comentarios por cargar
+            }
+          } else {
+            console.error('Error al cargar comentarios paginados:', dataPackage?.message);
+          }
+          this.loandingComentarios = false; // Finalizar indicador de carga
+        },
+        error: (error) => {
+          console.error('Error al comunicarse con el servicio de comentarios:', error);
+          this.loandingComentarios = false;
+        }
+      });
+  }
+
+
+  @HostListener('window:scroll', [])
+  onScrollComentarios(): void {
+    const scrollTop = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    const isAtBottom = scrollTop + windowHeight >= documentHeight - 1;
+
+    if (isAtBottom) {
+      this.cargarComentariosPaginados();
+    }
+  }
+
+
+
+
+  abrirModalLikesComentario(comentarioId: number): void {
+    this.currentPageLikes = 0;
+    this.usuariosLikes = [];
+    this.noMasUsuarios = false;
+    this.cargarUsuariosLikesComentario(comentarioId);
+    this.modalService.open(this.modalLikes, {
+      centered: true, // Centra el modal
+      backdrop: 'static', // Impide cerrar al hacer clic fuera
+      keyboard: false, // Desactiva el cierre con teclado
+
+    });
+  }
+
+  abrirModalLikes(): void {
+    this.currentPageLikes = 0;
+    this.usuariosLikes = [];
+    this.noMasUsuarios = false;
+    this.cargarUsuariosLikes();
+    this.modalService.open(this.modalLikes, {
+      centered: true, // Centra el modal
+      backdrop: 'static', // Impide cerrar al hacer clic fuera
+      keyboard: false, // Desactiva el cierre con teclado
+
+    });
+  }
+
+
+
+  // Método para cerrar el modal
+  closeModal() {
+    this.modalService.dismissAll();
+  }
+
+  focusInput() {
+    this.commentInput.nativeElement.focus();
+  }
 
 }

@@ -1,18 +1,23 @@
 <div class="form-container">
   <div class="header" style="display: flex; align-items: center; margin-bottom: 20px;">
-    <a [routerLink]="['/perfil', publicadoPor.id]" style="text-decoration: none; display: flex; align-items: center;">
-      <img [src]="publicadoPor.fotoPerfil ? publicadoPor.fotoPerfil : '../../assets/usuario.png' "
+    <a *ngIf="publicadoPor" [routerLink]="['/perfil', publicadoPor.id]"
+      style="text-decoration: none; display: flex; align-items: center;">
+      <img [src]="publicadoPor.fotoPerfil ? publicadoPor.fotoPerfil : '../../assets/usuario.png'"
         style="width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-      >
     </a>
+
     <div>
-      <a [routerLink]="['/perfil', publicadoPor.id]"
+      <a *ngIf="publicadoPor" [routerLink]="['/perfil', publicadoPor.id]"
         style="text-decoration: none; color: #333; font-weight: bold; font-size: 16px;">
         {{ publicadoPor.nombreUsuario }}
       </a>
       <p style="margin: 0; font-size: 12px; color: #999;">Publicado el {{ publicacion.fechaDeCreacion |
         date:'mediumDate' }}</p>
     </div>
+    <button *ngIf="isOwnPublication" (click)="deletePublicacion()" class="btn btn-danger" style="margin-left: auto;">
+      Eliminar publicación
+    </button>
+
   </div>
 
   <p [innerHTML]="textoConMenciones$ | async"></p>
@@ -31,21 +36,17 @@
       </i>
       <span class="likes-count" (click)="abrirModalLikes()">{{ numeroLikes }} Usuarios le dieron like</span>
 
-      <div class="comment-icon">
+      <div class="comment-icon" (click)="focusInput()">
         <i class="fa fa-comment"></i>
+        <span class="comment-count">{{ cantidadComentarios }}</span>
       </div>
     </div>
 
 
-    <div *ngIf="showCommentInput" class="comment-input-container">
-      <input [(ngModel)]="comment" name="descripcion" class="form-control" (input)="onTextChange($event)"
+    <div class="comment-input-container">
+      <input #commentInput [(ngModel)]="comment" name="descripcion" class="form-control" (input)="onTextChange($event)"
         placeholder="Escribe tu comentario con @ para mencionar usuarios..." (focus)="isReplying = false" />
 
-      <!--     <ul *ngIf=" !isReplying && usuariosFiltrados.length > 0" class="suggestions">
-        <li *ngFor="let usuario of usuariosFiltrados" (click)="addUsuarioComentario(usuario)">
-          {{ usuario.usuario.nombreUsuario }}
-        </li>
-      </ul> -->
       <div *ngIf="!isReplying && usuariosFiltrados.length > 0" class="suggestions-container">
         <ul class="suggestions">
           <li *ngFor="let usuario of usuariosFiltrados" (click)="addUsuarioComentario(usuario)" class="suggestion-item">
@@ -74,7 +75,7 @@
     </div>
 
 
-    <div class="comments-section" style="font-family: Arial, sans-serif;">
+    <div class="comments-section" style="font-family: Arial, sans-serif;" (scroll)="onScrollComentarios()">
       <div *ngFor="let com of comentarios" class="comment"
         style="margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: relative;">
 
@@ -204,16 +205,6 @@
       </div>
     </div>
 
-
-
-
-
-
-
-    <button *ngIf="isOwnPublication" (click)="deletePublicacion()" class="btn btn-danger">
-      Eliminar publicación
-    </button>
-
   </div>
 
 </div>
@@ -222,7 +213,7 @@
 <ng-template #modalLikes>
   <div class="modal-header">
     <h5 class="modal-title">Usuarios que dieron like</h5>
-    <button type="button" class="close btn-close" (click)="cerrarModal()" aria-label="Close"></button>
+    <button type="button" class="close btn-close" (click)="closeModal()" aria-label="Close"></button>
   </div>
 
   <div class="modal-body likes-list-container" (scroll)="onScroll($event)">
@@ -233,7 +224,7 @@
         <img [src]="usuario.fotoPerfil ? usuario.fotoPerfil : '../../assets/usuario.png' "
           style="width: 30px; height: 30px; border-radius: 50%; margin-right: 8px;">
       </a>
-      <a [routerLink]="['/perfil', usuario.id]" style="text-decoration: none; color: #000000;" (click)="cerrarModal()">
+      <a [routerLink]="['/perfil', usuario.id]" style="text-decoration: none; color: #000000;" (click)="closeModal()">
         >
         <span class="username" style="font-size: 12px; font-weight: bold;">{{ usuario.nombreUsuario }}</span>
       </a>
@@ -256,6 +247,6 @@
     No hay likes.
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
+    <button type="button" class="btn btn-secondary" (click)="closeModal()">Cerrar</button>
   </div>
 </ng-template>
