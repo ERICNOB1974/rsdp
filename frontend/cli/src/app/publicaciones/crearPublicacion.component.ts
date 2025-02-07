@@ -24,7 +24,7 @@ import { Usuario } from '../usuarios/usuario';
   selector: 'app-publicaciones',
   standalone: true,
   imports: [CommonModule, FormsModule, RouterModule],
-  styleUrls: ['../css/crear.component.css', '../css/arroba.css','crearPublicacion.component.css'],
+  styleUrls: ['../css/crear.component.css', '../css/arroba.css', 'crearPublicacion.component.css'],
   templateUrl: 'crearPublicacion.component.html'
 })
 export class CrearPublicacionComponent implements OnInit {
@@ -40,12 +40,11 @@ export class CrearPublicacionComponent implements OnInit {
   searchingArroba = false;
   searchFailedArroba = false;
   usuariosMencionados: Usuario[] = [];
-  isLoading=false;
+  isLoading = false;
 
 
 
-  constructor(private router: Router,
-    private publicacionService: PublicacionService,
+  constructor(private publicacionService: PublicacionService,
     private arrobaService: ArrobarService,
     private route: ActivatedRoute,
     private location: Location,
@@ -53,7 +52,6 @@ export class CrearPublicacionComponent implements OnInit {
   ) {
     const tipoParam = this.route.snapshot.queryParamMap.get('tipo') as 'comunidad' | 'publicacion';
     this.tipo = tipoParam;
-
   }
 
   ngOnInit(): void {
@@ -74,74 +72,35 @@ export class CrearPublicacionComponent implements OnInit {
     this.location.back()
   }
 
-/* 
-  savePublicacion2(): void {
-    this.publicacion.fechaDeCreacion = new Date().toISOString();
-
-    // Guardar publicación dependiendo del tipo
-    const saveObservable = this.tipo === 'comunidad' && this.idComunidad
-      ? this.publicacionService.publicarEnComunidad(this.publicacion, this.idComunidad)
-      : this.publicacionService.saveConCreador(this.publicacion);
-
-    saveObservable.subscribe({
-      next: (publicacionGuardada) => {
-        // Suponiendo que el id de la publicación se retorna en la respuesta
-        const p = publicacionGuardada.data as unknown as Publicacion;
-        const idPublicacion = p.id;
-
-        // Extraer usuarios etiquetados del texto
-        const usuariosEtiquetados = this.extraerUsuariosEtiquetados(this.publicacion.texto);
-
-        // Llamar al servicio de arrobar para cada usuario etiquetado
-        usuariosEtiquetados.forEach((usuario) => {
-          this.arrobaService.arrobarEnPublicacion(usuario.id, idPublicacion).subscribe({
-            next: () => {
-              console.log(`Usuario ${usuario.nombreUsuario} etiquetado en la publicación.`);
-            },
-            error: (err) => {
-              console.error(`Error al etiquetar a ${usuario.nombreUsuario}:`, err);
-            }
-          });
-        });
-
-        this.location.back();
-      },
-      error: (err) => {
-        console.error('Error al guardar la publicación:', err);
-      }
-    });
-  }
- */
-
   savePublicacion(): void {
     this.isLoading = true;
-  
+
     // Establecer la fecha de creación
     this.publicacion.fechaDeCreacion = new Date().toISOString();
-  
+
     // Elegir la operación de guardado según el tipo de publicación
     const saveObservable = this.tipo === 'comunidad' && this.idComunidad
       ? this.publicacionService.publicarEnComunidad(this.publicacion, this.idComunidad)
       : this.publicacionService.saveConCreador(this.publicacion);
-  
+
     saveObservable.pipe(
       concatMap((publicacionGuardada) => {
         const p = publicacionGuardada.data as unknown as Publicacion;
         const idPublicacion = p.id;
-  
+
         // Extraer usuarios etiquetados del texto
         const usuariosEtiquetados = this.extraerUsuariosEtiquetados(this.publicacion.texto);
-  
+
         // Si no hay usuarios etiquetados, devolver un observable vacío y continuar
         if (usuariosEtiquetados.length === 0) {
           return of(null);
         }
-  
+
         // Llamar al servicio de arrobar para cada usuario
         const etiquetadoObservables = usuariosEtiquetados.map(usuario =>
           this.arrobaService.arrobarEnPublicacion(usuario.id, idPublicacion)
         );
-  
+
         // Esperar a que todas las solicitudes de etiquetado finalicen antes de continuar
         return forkJoin(etiquetadoObservables);
       })
@@ -156,24 +115,24 @@ export class CrearPublicacionComponent implements OnInit {
       }
     });
   }
-  
 
-    private extraerUsuariosEtiquetados(texto: string): Usuario[] {
-      const regex = /@(\w+)/g;
-  
-      const usuariosEtiquetados = [];
-      let match;
-  
-      while ((match = regex.exec(texto)) !== null) {
-        const nombreUsuario = match[1];
-        const usuario = this.usuariosMencionados.find(u => u.nombreUsuario === nombreUsuario);
-  
-        if (usuario) {
-          usuariosEtiquetados.push(usuario); // Agregar el usuario encontrado
-        }
+
+  private extraerUsuariosEtiquetados(texto: string): Usuario[] {
+    const regex = /@(\w+)/g;
+
+    const usuariosEtiquetados = [];
+    let match;
+
+    while ((match = regex.exec(texto)) !== null) {
+      const nombreUsuario = match[1];
+      const usuario = this.usuariosMencionados.find(u => u.nombreUsuario === nombreUsuario);
+
+      if (usuario) {
+        usuariosEtiquetados.push(usuario); // Agregar el usuario encontrado
       }
-      return usuariosEtiquetados;
-    } 
+    }
+    return usuariosEtiquetados;
+  }
 
 
   // Método para agregar un usuario mencionado
@@ -275,6 +234,9 @@ export class CrearPublicacionComponent implements OnInit {
     );
 
   onTextChange(event: Event): void {
+    const textarea = event.target as HTMLTextAreaElement;
+    textarea.style.height = "auto"; // Reinicia la altura
+    textarea.style.height = `${textarea.scrollHeight}px`; // Ajusta según el contenido
     const input = (event.target as HTMLInputElement).value;
     const words = input.split(' ');
     const lastWord = words[words.length - 1];
@@ -287,8 +249,8 @@ export class CrearPublicacionComponent implements OnInit {
     else {
       this.usuariosFiltrados = [];
     }
-
   }
+
 
   resultFormatUsuario(value: Usuario) {
     return value.nombreUsuario;

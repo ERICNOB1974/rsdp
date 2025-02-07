@@ -82,7 +82,6 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
     private snackBar: MatSnackBar,
     private usuarioService: UsuarioService,
     private authService: AuthService,
-    private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
     private modalService: NgbModal
   ) { }
@@ -161,7 +160,8 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
         // }
         if (this.evento) {
           this.evento.fechaDeCreacion = new Date(this.evento.fechaDeCreacion);
-          this.evento.fechaHora = new Date(this.evento.fechaHora);
+          const fechaUTC = new Date(this.evento.fechaHora);
+          this.evento.fechaHora = new Date(fechaUTC.getTime() + (3 * 60 * 60 * 1000));
         }
         await this.getCreadorEvento();
         this.traerNumeroParticipantes();
@@ -455,10 +455,10 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
     if (this.mensaje && this.motivo) {
       this.isLoading = true;
       setTimeout(() => {
-        this.isLoading = false; 
+        this.isLoading = false;
         this.closeModal();
       }, 1000);
-  
+
       const nombreActividad = "del evento, " + this.evento.nombre;
       this.eventoService.enviarNotificacionEvento(this.mensaje, this.motivo, this.miembros, nombreActividad).subscribe(
         () => {
@@ -478,7 +478,7 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
       console.log('Ambos campos son obligatorios');
     }
   }
-  
+
 
 
   // Método para cerrar el modal
@@ -486,7 +486,7 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
     this.modalService.dismissAll();
   }
 
- 
+
   onScroll(): void {
     const element = document.querySelector('.members-list') as HTMLElement;
     if (!this.loadingScroll && element.scrollTop + element.clientHeight >= element.scrollHeight - 10) {

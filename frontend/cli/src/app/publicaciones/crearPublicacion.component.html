@@ -2,9 +2,19 @@
   <h2>{{ tipo === 'comunidad' ? 'Nueva publicación en comunidad' : 'Nueva publicación' }}</h2>
   <form #form="ngForm" class="evento-form">
     <div class="form-group">
+
+      <!--      
       <label for="descripcion">Descripción</label>
+
+
       <input [(ngModel)]="publicacion.texto" name="descripcion" (input)="onTextChange($event)"
         placeholder="Escribe tu publicación con @ para mencionar usuarios..." class="input-publicacion" />
+ -->
+
+      <label for="descripcion">Descripción</label>
+      <textarea [(ngModel)]="publicacion.texto" name="descripcion" (input)="onTextChange($event)"
+        placeholder="Escribe tu publicación con @ para mencionar usuarios..." class="input-publicacion"
+        rows="1"></textarea>
 
       <!-- Lista de usuarios sugeridos -->
       <div *ngIf="usuariosFiltrados.length > 0" class="suggestions-container">

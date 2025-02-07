@@ -22,7 +22,7 @@
             </div>
           </div>
 
-          <!-- Detalles del evento -->
+          <!-- Detalles del evento-->
           <p><strong>Fecha de creación:</strong> {{ evento.fechaDeCreacion | date:'dd-MM-yyyy' : '+00:00'}}</p>
           <p><strong>Fecha y hora:</strong> {{ evento.fechaHora | date:'short' }}</p>
           <p><strong>Descripción:</strong> {{ evento.descripcion }}</p>
@@ -36,14 +36,14 @@
 
           <!-- Div envolvente con tooltip -->
           <div [attr.data-bs-toggle]="!generoCompatible() ? 'tooltip' : null"
-          [attr.title]="!generoCompatible() ? 'No puedes inscribirte porque no es acorde a tu género' : null"
-          class="d-inline-block w-100">
-          <button *ngIf="!expulsado" class="btn btn-primary btn-block mx-auto"
-            [disabled]="eventoEsAntiguo() || !generoCompatible() || !(inscribirseValid() || salirValid()) || isLoading"
-            (click)="salirValid() ? salir() : inscribirse()">
-            {{ salirValid() ? 'Desinscribirse' : 'Inscribirse' }}
-          </button>
-        </div>
+            [attr.title]="!generoCompatible() ? 'No puedes inscribirte porque no es acorde a tu género' : null"
+            class="d-inline-block w-100">
+            <button *ngIf="!expulsado" class="btn btn-primary btn-block mx-auto"
+              [disabled]="eventoEsAntiguo() || !generoCompatible() || !(inscribirseValid() || salirValid()) || isLoading"
+              (click)="salirValid() ? salir() : inscribirse()">
+              {{ salirValid() ? 'Desinscribirse' : 'Inscribirse' }}
+            </button>
+          </div>
 
           <!-- Mensaje de expulsión -->
           <div *ngIf="expulsado" class="alert alert-warning mt-4">
@@ -60,17 +60,15 @@
           <!-- Botón de regresar centrado -->
 
           <!-- Botón Invitar Amigos centrado, visible solo si el usuario ya está inscrito -->
-          <button *ngIf="botonInvitar() || creador" (click)="openModal(modalInvitarAmigos)" 
-          [disabled]="eventoEsAntiguo() || isLoading"
-          class="btn btn-success btn-block mx-auto mt-3">
-          Invitar amigos
-        </button>
+          <button *ngIf="botonInvitar() || creador" (click)="openModal(modalInvitarAmigos)"
+            [disabled]="eventoEsAntiguo() || isLoading" class="btn btn-success btn-block mx-auto mt-3">
+            Invitar amigos
+          </button>
 
-          <button *ngIf="creador" class="btn btn-success btn-block mx-auto mt-3"
-          [disabled]="eventoEsAntiguo()"
-          (click)="openModal(modalNotificacion)">
-          Notificar a todos los usuarios
-        </button>
+          <button *ngIf="creador" class="btn btn-success btn-block mx-auto mt-3" [disabled]="eventoEsAntiguo()"
+            (click)="openModal(modalNotificacion)">
+            Notificar a todos los usuarios
+          </button>
 
           <!-- Participantes -->
           <div class="mt-4 container-fluid">
