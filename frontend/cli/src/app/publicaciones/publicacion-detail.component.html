@@ -42,7 +42,6 @@
       </div>
     </div>
 
-
     <div class="comment-input-container">
       <input #commentInput [(ngModel)]="comment" name="descripcion" class="form-control" (input)="onTextChange($event)"
         placeholder="Escribe tu comentario con @ para mencionar usuarios..." (focus)="isReplying = false" />
@@ -73,6 +72,15 @@
           aria-hidden="true"></span>
         Enviar</button>
     </div>
+
+
+
+
+
+
+
+
+
 
 
     <div class="comments-section" style="font-family: Arial, sans-serif;" (scroll)="onScrollComentarios()">
@@ -203,7 +211,19 @@
           Ocultar respuestas
         </button>
       </div>
+      <div *ngIf="loandingComentarios" class="loading-message">
+        Cargando más comentarios...
+      </div>
+      <div *ngIf="noMasComentarios" class="no-more-comments">
+        No hay más comentarios.
+      </div>
+
     </div>
+
+
+    
+
+
 
   </div>
 
