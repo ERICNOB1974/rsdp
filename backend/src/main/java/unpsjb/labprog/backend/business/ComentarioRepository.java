@@ -38,7 +38,7 @@ public interface ComentarioRepository extends Neo4jRepository<Comentario, Long> 
        @Query("MATCH (u:Usuario), (p:Publicacion) " +
                      "WHERE id(u) = $usuarioId AND id(p) = $publicacionId " +
                      "CREATE (c:Comentario {texto: $texto, fecha: $fecha}) " +
-                     "CREATE (u)-[:HIZO]->(c)-[:PERTENECE_A]->(p) "+
+                     "CREATE (u)-[:HIZO]->(c)-[:PERTENECE_A]->(p) " +
                      "RETURN c")
        Comentario comentar(Long usuarioId, Long publicacionId, String texto, ZonedDateTime fecha);
 
@@ -77,19 +77,40 @@ public interface ComentarioRepository extends Neo4jRepository<Comentario, Long> 
                      "Where id(c) = $idComentario " +
                      "DETACH DELETE c")
        void eliminarComentario(Long idComentario);
+
        @Query("""
-              MATCH (c:Comentario) 
-              WHERE id(c) = $idComentario 
-              OPTIONAL MATCH (c)-[:RESPONDE_A]->(parent:Comentario) 
-              WITH parent, c
-              MATCH (finalComment:Comentario)-[:PERTENECE_A]->(p:Publicacion)
-              WHERE finalComment = COALESCE(parent, c)
-              RETURN id(p)
-              """)
+                     MATCH (c:Comentario)
+                     WHERE id(c) = $idComentario
+                     OPTIONAL MATCH (c)-[:RESPONDE_A]->(parent:Comentario)
+                     WITH parent, c
+                     MATCH (finalComment:Comentario)-[:PERTENECE_A]->(p:Publicacion)
+                     WHERE finalComment = COALESCE(parent, c)
+                     RETURN id(p)
+                     """)
        Long idPublicacionDadoComentario(Long idComentario);
-       
+
        @Query("MATCH (u:Usuario)-[:HIZO]->(c:Comentario) " +
-       "WHERE id(c) = $comentarioPadreId " +
-       "RETURN id(u)")
+                     "WHERE id(c) = $comentarioPadreId " +
+                     "RETURN id(u)")
        Long creadorComentarioByComentarioId(@Param("comentarioPadreId") Long comentarioPadreId);
+
+       @Query("""
+                     MATCH (c:Comentario)-[:PERTENECE_A]->(p:Publicacion)
+                     WHERE id(p) = $idPublicacion
+                     RETURN c
+                     ORDER BY c.fecha DESC
+                     SKIP $skip
+                     LIMIT $limit
+                     """)
+       List<Comentario> comentariosPaginados(
+                     @Param("idPublicacion") Long idPublicacion,
+                     @Param("skip") int skip,
+                     @Param("limit") int limit);
+
+       @Query("""
+                     MATCH (c:Comentario)-[r:PERTENECE_A]->(p:Publicacion)
+                     WHERE id(p) = $idPublicacion
+                     RETURN count(r)
+                     """)
+       Long cantidadComentariosPublicacion(@Param("idPublicacion") Long idPublicacion);
 }

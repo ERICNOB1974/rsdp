@@ -69,11 +69,10 @@ public class ComentarioPresenter {
         return Response.ok("OK");
     }
 
-
     @GetMapping("/likear/{idUsuario}/{idComentaro}")
     public ResponseEntity<Object> likear(@PathVariable Long idUsuario, @PathVariable Long idComentaro)
             throws Exception {
-        
+
         return Response.ok(null, comentarioService.likear(idUsuario, idComentaro));
     }
 
@@ -90,7 +89,6 @@ public class ComentarioPresenter {
         return Response.ok(like, "OK");
     }
 
-
     @GetMapping("/cantidadLikes/{idComentaro}")
     public ResponseEntity<Object> cantidadLikes(@PathVariable Long idComentaro) {
         try {
@@ -99,6 +97,21 @@ public class ComentarioPresenter {
             return Response.error("", "Error al obtener los comentarios: " + e.getMessage());
         }
     }
-   
+
+    @GetMapping("/comentariosPaginados/{idPublicacion}/{idUsuario}")
+    public ResponseEntity<Object> comentariosPaginados(
+            @PathVariable Long idPublicacion,
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        return Response.ok(comentarioService.comentariosPaginados(idPublicacion, idUsuario, page, size));
+    }
+
+    @GetMapping("/cantidadComentariosPublicacion/{idPublicacion}")
+    public ResponseEntity<Object> cantidadComentariosPublicacion(
+            @PathVariable Long idPublicacion) {
+        return Response.ok(comentarioService.cantidadComentariosPublicacion(idPublicacion));
+    }
 
 }

@@ -57,7 +57,12 @@ export class ComentarioService {
   darLike(comentarioId: number) {
     return this.http.get<DataPackage>(` ${this.comentariosUrl}/likear/${this.authService.getUsuarioId()}/${comentarioId}`);
   }
-  
-  
+
+  obtenerComentariosPaginados(idPublicacion: number, page: number, size: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.comentariosUrl}/comentariosPaginados/${idPublicacion}/${this.authService.getUsuarioId()}?page=${page}&size=${size}`);
+  }
+  cantidadComentariosPublicacion(idPublicacion: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(`${this.comentariosUrl}/cantidadComentariosPublicacion/${idPublicacion}`);
+  }
 
 }
