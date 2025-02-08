@@ -201,9 +201,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
 
         @Query("MATCH (c:Comunidad),(u:Usuario {nombreUsuario:$nombreUsuario})" +
                         "WHERE NOT (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(u) " +
-                        "MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h) " + // Encontramos los demás
-                                                                                               // miembros de
-                        // la comunidad
+                        "MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h) " +
                         "WITH c, COUNT(DISTINCT h) AS numParticipantes, u " +
                         "WHERE numParticipantes < c.cantidadMaximaMiembros " +
                         "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c) " +
@@ -214,7 +212,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "    (u.genero = 'otros' AND c.genero IN ['otros', 'sinGenero']) " +
                         ") " +
                         "RETURN c " +
-                        "ORDER BY c.nombre ASC " +
+                        "ORDER BY numParticipantes DESC, c.nombre ASC " +
                         "SKIP $skip " + // Paginación: omite el número de resultados especificado
                         "LIMIT $limit") // Paginación: limita la cantidad de resultados devueltos
         List<Comunidad> disponibles(@Param("nombreUsuario") String nombreUsuario, @Param("skip") int skip,
@@ -233,18 +231,18 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         @Param("limit") int limit);
 
         @Query("MATCH (u:Usuario)-[r:CREADA_POR]-(c:Comunidad) " +
-            "WHERE id(u) = $idUsuario " +
-            "AND (toLower(c.nombre) CONTAINS toLower($nombreComunidad) OR $nombreComunidad = '') " +
-            "AND c.eliminada = false " +
-            "RETURN c ORDER BY r.fechaDeCreacion ASC, c.nombre DESC " +
-            "SKIP $skip " +
-            "LIMIT $limit")
-    List<Comunidad> creadasFiltradas(@Param("idUsuario") Long idUsuario,
-            @Param("nombreComunidad") String nombreComunidad,
-            @Param("skip") int skip,
-            @Param("limit") int limit);
+                        "WHERE id(u) = $idUsuario " +
+                        "AND (toLower(c.nombre) CONTAINS toLower($nombreComunidad) OR $nombreComunidad = '') " +
+                        "AND c.eliminada = false " +
+                        "RETURN c ORDER BY r.fechaDeCreacion ASC, c.nombre DESC " +
+                        "SKIP $skip " +
+                        "LIMIT $limit")
+        List<Comunidad> creadasFiltradas(@Param("idUsuario") Long idUsuario,
+                        @Param("nombreComunidad") String nombreComunidad,
+                        @Param("skip") int skip,
+                        @Param("limit") int limit);
 
-    @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario) " +
+        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:ES_AMIGO_DE]-(amigo:Usuario) " +
                         "MATCH (amigo)-[:MIEMBRO]->(comunidad:Comunidad)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
                         "WHERE NOT (u)-[:MIEMBRO|:CREADA_POR|:ADMINISTRADA_POR|:MODERADA_POR]-(comunidad) " +
                         "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(comunidad) " +
@@ -361,6 +359,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "WHERE NOT EXISTS { " +
                         "    MATCH (u)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR|MODERADA_POR]-(c) " +
                         "} " +
+
                         "AND id(u) = $idUsuario " +
                         "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c) " +
                         "WITH c, collect(etiqueta.nombre) AS etiquetasComunidad, c.eliminada AS eliminada, u " +
@@ -371,7 +370,10 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "    (u.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR " +
                         "    (u.genero = 'otros' AND c.genero IN ['otros', 'sinGenero']) " +
                         ") " +
-                        "RETURN c")
+                        "MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h) " +
+                        "WITH c, COUNT(DISTINCT h) AS numParticipantes " +
+                        "RETURN c " +
+                        "ORDER BY numParticipantes DESC")
         List<Comunidad> comunidadesEtiquetasDisponibles(@Param("idUsuario") Long idUsuario,
                         @Param("etiquetas") List<String> etiquetas);
 
@@ -387,7 +389,10 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "    (u.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR " +
                         "    (u.genero = 'otros' AND c.genero IN ['otros', 'sinGenero']) " +
                         ") " +
-                        "RETURN c")
+                        "MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h) " +
+                        "WITH c, COUNT(DISTINCT h) AS numParticipantes " +
+                        "RETURN c " +
+                        "ORDER BY numParticipantes DESC")
         List<Comunidad> comunidadesEtiquetasMiembro(@Param("idUsuario") Long idUsuario,
                         @Param("etiquetas") List<String> etiquetas);
 
@@ -399,7 +404,10 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "    (u.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR " +
                         "    (u.genero = 'otros' AND c.genero IN ['otros', 'sinGenero']) " +
                         ") " +
-                        "RETURN c")
+                        "MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h) " +
+                        "WITH c, COUNT(DISTINCT h) AS numParticipantes " +
+                        "RETURN c " +
+                        "ORDER BY numParticipantes DESC")
         List<Comunidad> comunidadesNombre(@Param("nombre") String nombre,
                         @Param("idUsuario") Long idUsuario);
 
@@ -418,8 +426,10 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                             (u.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR
                             (u.genero = 'otros' AND c.genero IN ['otros', 'sinGenero'])
                         )
+                        MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h)
+                        WITH c, COUNT(DISTINCT h) AS numParticipantes
                         RETURN DISTINCT c
-                        """)
+                        ORDER BY numParticipantes DESC                      """)
         List<Comunidad> comunidadesNombreDisponibles(@Param("nombre") String nombre,
                         @Param("usuarioId") Long usuarioId);
 
@@ -435,8 +445,10 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                             (u.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR
                             (u.genero = 'otros' AND c.genero IN ['otros', 'sinGenero'])
                         )
-                        RETURN c
-                        """)
+                        MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h)
+                        WITH c, COUNT(DISTINCT h) AS numParticipantes
+                        RETURN  c
+                        ORDER BY numParticipantes DESC                         """)
         List<Comunidad> comunidadesNombreMiembro(@Param("nombre") String nombre,
                         @Param("usuarioId") Long usuarioId);
 
@@ -458,7 +470,10 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                                 MATCH (c)-[:CREADA_POR|ADMINISTRADA_POR|MIEMBRO|MODERADA_POR]-(us)
                             }
                             AND NOT c.eliminada
-                            RETURN DISTINCT c
+                        MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h)
+                        WITH c, COUNT(DISTINCT h) AS numParticipantes 
+                        RETURN DISTINCT c 
+                        ORDER BY numParticipantes DESC 
                         """)
         List<Comunidad> comunidadesCantidadParticipantesDisponibles(@Param("usuarioId") Long usuarioId,
                         @Param("min") int min, @Param("max") int max);
@@ -478,7 +493,10 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                             WHERE totalUsuarios >= $min AND totalUsuarios <= $max
                             AND (c)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR|MODERADA_POR]-(us)
                             AND NOT c.eliminada
-                            RETURN DISTINCT c
+                              MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h)
+                        WITH c, COUNT(DISTINCT h) AS numParticipantes 
+                        RETURN DISTINCT c 
+                        ORDER BY numParticipantes DESC 
                         """)
         List<Comunidad> comunidadesCantidadParticipantesMiembro(@Param("usuarioId") Long usuarioId,
                         @Param("min") int min, @Param("max") int max);
@@ -496,8 +514,10 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                             WITH c, count(DISTINCT u) AS totalUsuarios
                             WHERE totalUsuarios >= $min AND totalUsuarios <= $max
                             AND NOT c.eliminada
-                            RETURN c
-                        """)
+                         MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h)
+                        WITH c, COUNT(DISTINCT h) AS numParticipantes 
+                        RETURN DISTINCT c 
+                        ORDER BY numParticipantes DESC                         """)
         List<Comunidad> comunidadesCantidadParticipantes(@Param("usuarioId") Long usuarioId,
                         @Param("min") int min, @Param("max") int max);
 
