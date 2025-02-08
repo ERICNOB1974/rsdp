@@ -339,7 +339,11 @@ export class EventosComponent implements OnInit {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerParticipantes(resultados); // Llamar a traerParticipantes después de cargar los eventos
             this.traerEtiquetas(resultados);
-
+            resultados.forEach((evento) => {
+              evento.fechaDeCreacion = new Date(evento.fechaDeCreacion);
+              const fechaUTC = new Date(evento.fechaHora);
+              evento.fechaHora = new Date(fechaUTC.getTime() + 3 * 60 * 60 * 1000);
+            });
             this.eventosDisponiblesAMostrar = [
               ...this.eventosDisponiblesAMostrar,
               ...resultados,
@@ -371,7 +375,11 @@ export class EventosComponent implements OnInit {
           if (resultados && resultados.length > 0) {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerParticipantes(resultados); // Llamar a traerParticipantes después de cargar los eventos
-
+            resultados.forEach((evento) => {
+              evento.fechaDeCreacion = new Date(evento.fechaDeCreacion);
+              const fechaUTC = new Date(evento.fechaHora);
+              evento.fechaHora = new Date(fechaUTC.getTime() + 3 * 60 * 60 * 1000);
+            });
             this.traerEtiquetas(resultados);
             this.eventosParticipaUsuario = [
               ...this.eventosParticipaUsuario,
@@ -401,6 +409,11 @@ export class EventosComponent implements OnInit {
     const nuevosResultados = this.resultadosFiltrados.slice(inicio, fin);
 
     if (nuevosResultados.length > 0) {
+      nuevosResultados.forEach((evento) => {
+        evento.fechaDeCreacion = new Date(evento.fechaDeCreacion);
+        const fechaUTC = new Date(evento.fechaHora);
+        evento.fechaHora = new Date(fechaUTC.getTime() + 3 * 60 * 60 * 1000);
+      });
       this.traerParticipantes(nuevosResultados); // Agregar datos adicionales como ubicación y miembros
       if (this.tabSeleccionada === 'disponibles') {
         this.eventosDisponiblesAMostrar = [
@@ -480,6 +493,11 @@ export class EventosComponent implements OnInit {
           return aux;
         });
         this.traerEtiquetas(this.resultadosFiltrados);
+        this.resultadosFiltrados.forEach((evento) => {
+          evento.fechaDeCreacion = new Date(evento.fechaDeCreacion);
+          const fechaUTC = new Date(evento.fechaHora);
+          evento.fechaHora = new Date(fechaUTC.getTime() + 3 * 60 * 60 * 1000);
+        });
 
       } else {
         this.resultadosFiltrados = [];

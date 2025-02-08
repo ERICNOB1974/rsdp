@@ -62,18 +62,17 @@ button:hover {
   text-align: center;
 }
 
+
+.vista-previa-contenedor {
+  margin-bottom: 15px;
+}
 .vista-previa-imagen {
   max-width: 40%;
   height: auto;
 }
 
-.vista-previa-contenedor {
-  margin-bottom: 15px;
-}
-
 .vista-previa-imagen {
   max-width: 150px;
-  max-height: 150px;
   border-radius: 50%;
   margin-bottom: 10px;
 }
