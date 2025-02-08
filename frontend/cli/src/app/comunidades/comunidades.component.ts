@@ -138,12 +138,20 @@ export class ComunidadesComponent implements OnInit {
 
   async aplicarFiltroParticipantes2(): Promise<Comunidad[]> {
     try {
+      const params: any = {
+        tipo: this.tabSeleccionada,
+        usuarioId: this.idUsuarioAutenticado,
+        min: this.minParticipantes || 0,
+      };
+  
+      if (this.maxParticipantes !== undefined && this.maxParticipantes !== null) {
+        params.max = this.maxParticipantes;
+      }
+  
       const dataPackage = await lastValueFrom(
-        this.comunidadService.filtrarParticipantes(this.tabSeleccionada, this.idUsuarioAutenticado,
-          this.minParticipantes || 0,
-          this.maxParticipantes || Number.MAX_SAFE_INTEGER
-        )
+        this.comunidadService.filtrarParticipantes(params)
       );
+  
       if (Array.isArray(dataPackage.data)) {
         return dataPackage.data;
       }
