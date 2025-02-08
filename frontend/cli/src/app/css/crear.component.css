@@ -10,8 +10,9 @@
 
 .drag-drop-area {
     max-width: 100%;
-    /* Para que no sobresalga del contenedor */
+    /* Para que no sobresalga del contenedor
     max-height: 400px;
+    */
     /* Altura máxima ajustada */
     overflow: hidden;
     /* Oculta contenido que sobresalga */
@@ -33,7 +34,6 @@
 .drag-drop-area video {
     max-width: 60%;
     /* Ajusta al ancho disponible */
-    max-height: 60%;
     /* Ajusta al alto disponible */
     object-fit: contain;
     /* Ajusta el contenido sin recortar ni distorsionar */

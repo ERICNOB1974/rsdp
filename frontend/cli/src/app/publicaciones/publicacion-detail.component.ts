@@ -712,8 +712,6 @@ export class PublicacionDetailComponent implements OnInit {
           const username = match.substring(1); // Quitamos el '@'
           const usuario = resultados.find((r) => r.username === username);
           const idUsuario = usuario?.idUsuario;
-          console.info("usuario", usuario);
-          console.info("idUsuario", idUsuario);
           return idUsuario !== null
             ? `<a href="/perfil/${idUsuario}" class="mention-link">${match}</a>`
             : match;

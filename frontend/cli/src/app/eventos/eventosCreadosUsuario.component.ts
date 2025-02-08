@@ -1,11 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { Evento } from './evento';
 import { EventoService } from './evento.service';
-import { AuthService } from '../autenticacion/auth.service';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
 import { debounceTime, Subject } from 'rxjs';
 
@@ -27,10 +26,8 @@ export class EventosCreadosUsuarioComponent implements OnInit {
   searchText: string = ""
   constructor(
     private eventoService: EventoService,
-    private authService: AuthService,
     private etiquetaService: EtiquetaService,
-    private router: Router,
-    private cdr: ChangeDetectorRef
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -80,6 +77,11 @@ export class EventosCreadosUsuarioComponent implements OnInit {
             );
 
             if (nuevosEventos.length > 0) {
+              nuevosEventos.forEach((evento) => {
+                evento.fechaDeCreacion = new Date(evento.fechaDeCreacion);
+                const fechaUTC = new Date(evento.fechaHora);
+                evento.fechaHora = new Date(fechaUTC.getTime() + 3 * 60 * 60 * 1000);
+              });
               this.traerParticipantes(nuevosEventos); // Llamar a traerParticipantes después de cargar los eventos
               this.traerEtiquetas(nuevosEventos);
               this.eventosUsuario = [...this.eventosUsuario, ...nuevosEventos];
@@ -121,6 +123,11 @@ export class EventosCreadosUsuarioComponent implements OnInit {
             );
 
             if (nuevosEventos.length > 0) {
+              nuevosEventos.forEach((evento) => {
+                evento.fechaDeCreacion = new Date(evento.fechaDeCreacion);
+                const fechaUTC = new Date(evento.fechaHora);
+                evento.fechaHora = new Date(fechaUTC.getTime() + 3 * 60 * 60 * 1000);
+              });
               this.traerParticipantes(nuevosEventos); // Llamar a traerParticipantes después de cargar los eventos
               this.traerEtiquetas(nuevosEventos);
               this.eventosUsuario = [...this.eventosUsuario, ...nuevosEventos];
@@ -192,5 +199,7 @@ export class EventosCreadosUsuarioComponent implements OnInit {
   irACrearEvento(): void {
     this.router.navigate(['/eventos/crearEvento']);
   }
+
+
 
 }
