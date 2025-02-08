@@ -562,6 +562,11 @@ export class PerfilComponent implements OnInit {
         if (Array.isArray(responseData) && responseData.length > 0) {
           this.traerParticipantes(responseData);
           this.traerEtiquetasEvento(responseData);
+          responseData.forEach((evento) => {
+            evento.fechaDeCreacion = new Date(evento.fechaDeCreacion);
+            const fechaUTC = new Date(evento.fechaHora);
+            evento.fechaHora = new Date(fechaUTC.getTime() + 3 * 60 * 60 * 1000);
+          });
           this.historicoEventos = [...this.historicoEventos, ...responseData];  // Agregamos las nuevas rutinas
           this.currentIndexEventos++;  // Incrementamos el índice para la siguiente carga
           if (responseData.length < this.cantidadPorPagina) {
@@ -591,6 +596,11 @@ export class PerfilComponent implements OnInit {
       async (dataPackage) => {
         const responseData = dataPackage.data;
         if (Array.isArray(responseData) && responseData.length > 0) {
+          responseData.forEach((evento) => {
+            evento.fechaDeCreacion = new Date(evento.fechaDeCreacion);
+            const fechaUTC = new Date(evento.fechaHora);
+            evento.fechaHora = new Date(fechaUTC.getTime() + 3 * 60 * 60 * 1000);
+          });
           this.traerParticipantes(responseData);
           this.traerEtiquetasEvento(responseData);
           this.historicoEventos = [...this.historicoEventos, ...responseData];  // Agregamos las nuevas rutinas
