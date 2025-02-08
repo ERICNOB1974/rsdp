@@ -187,15 +187,9 @@ editarExpulsionConMotivo(motivo: string, tipo: string, fechaHoraExpulsion: strin
     return this.http.delete<DataPackage>(`${this.comunidadesUrl}/${id}`)
   }
 
-  filtrarParticipantes(tipoTab: string, usuarioId: number, min: number, max: number): Observable<DataPackage> {
-    // Agregamos los parámetros min y max a la URL
+  filtrarParticipantes(params: any): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/filtrar/participantes`, {
-      params: {
-        tipo: tipoTab,
-        usuarioId: usuarioId,
-        min: min.toString(),  // Convertimos a string porque los parámetros de URL deben ser strings
-        max: max.toString()
-      }
+      params: params,
     });
   }
 
