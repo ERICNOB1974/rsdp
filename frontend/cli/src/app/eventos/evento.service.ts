@@ -110,17 +110,12 @@ export class EventoService {
     return this.http.get<DataPackage>(`${this.eventosUrl}/desinscribirse/${idEvento}/${idUsuario}`);
   }
 
-  filtrarParticipantes(tipoTab: string, usuarioId: number, min: number, max: number): Observable<DataPackage> {
-    // Agregamos los parámetros min y max a la URL
+  filtrarParticipantes(params: any): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.eventosUrl}/filtrar/participantes`, {
-      params: {
-        tipo:tipoTab,
-        usuarioId: usuarioId,
-        min: min.toString(),  // Convertimos a string porque los parámetros de URL deben ser strings
-        max: max.toString()
-      }
+      params: params,
     });
   }
+  
   filtrarNombre(nombre: string, tipoTab: string, usuarioId: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.eventosUrl}/filtrar/nombre`, 
       { params: {

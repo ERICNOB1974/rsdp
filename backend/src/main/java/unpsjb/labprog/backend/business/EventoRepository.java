@@ -332,6 +332,48 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
         List<Evento> eventosFecha(@Param("fechaInicio") ZonedDateTime fechaInicio,
                         @Param("fechaFin") ZonedDateTime fechaFin, @Param("usuarioId") Long usuarioId);
 
+                        @Query("MATCH (u:Usuario) WHERE id(u) = $usuarioId " +
+                        "MATCH (e:Evento) " +
+                        "WHERE e.fechaHora >= $fechaInicio " +
+                        "AND NOT EXISTS { " +
+                        "  MATCH (u)-[:PARTICIPA_EN]-(e) " +
+                        "} " +
+                        "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (" +
+                        "    (u.genero = 'masculino' AND e.genero IN ['masculino', 'sinGenero']) OR " +
+                        "    (u.genero = 'femenino' AND e.genero IN ['femenino', 'sinGenero']) OR " +
+                        "    (u.genero = 'otros' AND e.genero IN ['otros', 'sinGenero']) " +
+                        ") " +
+                        "RETURN e")
+                 List<Evento> eventosDesdeFechaDisponible(@Param("usuarioId") Long usuarioId, 
+                                                          @Param("fechaInicio") ZonedDateTime fechaInicio);
+                 
+                 @Query("MATCH (e:Evento)<-[:PARTICIPA_EN]-(u:Usuario) " +
+                        "WHERE id(u) = $usuarioId AND e.fechaHora >= $fechaInicio " +
+                        "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (" +
+                        "    (u.genero = 'masculino' AND e.genero IN ['masculino', 'sinGenero']) OR " +
+                        "    (u.genero = 'femenino' AND e.genero IN ['femenino', 'sinGenero']) OR " +
+                        "    (u.genero = 'otros' AND e.genero IN ['otros', 'sinGenero']) " +
+                        ") " +
+                        "RETURN e")
+                 List<Evento> eventosDesdeFechaParticipante(@Param("usuarioId") Long usuarioId, 
+                                                            @Param("fechaInicio") ZonedDateTime fechaInicio);
+                 
+                 @Query("MATCH (u:Usuario) WHERE id(u) = $usuarioId " +
+                        "MATCH (e:Evento) " +
+                        "WHERE e.fechaHora >= $fechaInicio " +
+                        "AND COALESCE(e.eliminado, false) = false " +
+                        "AND (" +
+                        "    (u.genero = 'masculino' AND e.genero IN ['masculino', 'sinGenero']) OR " +
+                        "    (u.genero = 'femenino' AND e.genero IN ['femenino', 'sinGenero']) OR " +
+                        "    (u.genero = 'otros' AND e.genero IN ['otros', 'sinGenero']) " +
+                        ") " +
+                        "RETURN e")
+                 List<Evento> eventosDesdeFecha(@Param("fechaInicio") ZonedDateTime fechaInicio, 
+                                                @Param("usuarioId") Long usuarioId);
+                 
+
         @Query("MATCH (u:Usuario) WHERE id(u) = $usuarioId " +
                         "MATCH (e:Evento) " +
                         "OPTIONAL MATCH (e)<-[r:PARTICIPA_EN]-(:Usuario) " +

@@ -174,18 +174,34 @@ public class EventoPresenter {
     }
 
     @GetMapping("/filtrar/fecha")
-    public ResponseEntity<Object> eventosPorFecha(@RequestParam(required = false) String tipo,
-            @RequestParam(required = false) Long usuarioId, @RequestParam ZonedDateTime min,
-            @RequestParam ZonedDateTime max) {
+    public ResponseEntity<Object> eventosPorFecha(
+            @RequestParam(required = false) String tipo,
+            @RequestParam(required = false) Long usuarioId,
+            @RequestParam ZonedDateTime min,
+            @RequestParam(required = false) ZonedDateTime max) {
+    
+        // Si max es null, filtrar solo por fecha mínima en adelante
+        if (max == null) {
+            return Response.ok(eventoService.eventosDesdeFecha(tipo, usuarioId, min));
+        }
+    
         return Response.ok(eventoService.eventosFecha(tipo, usuarioId, min, max));
-    }
+    }    
 
     @GetMapping("/filtrar/participantes")
-    public ResponseEntity<Object> eventosPorParticipantes(@RequestParam(required = false) String tipo,
+    public ResponseEntity<Object> eventosPorParticipantes(
+            @RequestParam(required = false) String tipo,
             @RequestParam(required = false) Long usuarioId,
-            @RequestParam int min, @RequestParam int max) {
+            @RequestParam int min,
+            @RequestParam(required = false) Integer max) {
+    
+        if (max == null) {
+            max = Integer.MAX_VALUE; // Si no se pasa max, usamos el valor máximo posible
+        }
+    
         return Response.ok(eventoService.eventosParticipantes(tipo, usuarioId, min, max));
     }
+    
 
     @RequestMapping(path = "/{nombreUsuario}/disponibles", method = RequestMethod.GET)
     public ResponseEntity<Object> eventosDisponibles(@PathVariable String nombreUsuario,
