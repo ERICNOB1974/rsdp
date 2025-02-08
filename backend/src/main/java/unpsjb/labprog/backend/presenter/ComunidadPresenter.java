@@ -312,9 +312,16 @@ public class ComunidadPresenter {
     }
 
     @GetMapping("/filtrar/participantes")
-    public ResponseEntity<Object> comunidadesPorParticipantes(@RequestParam(required = false) String tipo,
+    public ResponseEntity<Object> comunidadesPorParticipantes(
+            @RequestParam(required = false) String tipo,
             @RequestParam(required = false) Long usuarioId,
-            @RequestParam int min, @RequestParam int max) {
+            @RequestParam int min,
+            @RequestParam(required = false) Integer max) {
+    
+        if (max == null) {
+            max = Integer.MAX_VALUE; // Si no se pasa max, usamos el valor máximo posible
+        }
+    
         return Response.ok(comunidadService.comunidadesParticipantes(tipo, usuarioId, min, max));
     }
 

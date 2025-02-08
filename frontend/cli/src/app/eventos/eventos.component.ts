@@ -210,12 +210,20 @@ export class EventosComponent implements OnInit {
 
   async aplicarFiltroParticipantes2(): Promise<Evento[]> {
     try {
+      const params: any = {
+        tipo: this.tabSeleccionada,
+        usuarioId: this.idUsuarioAutenticado,
+        min: this.minParticipantes || 0,
+      };
+  
+      if (this.maxParticipantes !== undefined && this.maxParticipantes !== null) {
+        params.max = this.maxParticipantes;
+      }
+  
       const dataPackage = await lastValueFrom(
-        this.eventoService.filtrarParticipantes(this.tabSeleccionada, this.idUsuarioAutenticado,
-          this.minParticipantes || 0,
-          this.maxParticipantes || Number.MAX_SAFE_INTEGER
-        )
+        this.eventoService.filtrarParticipantes(params)
       );
+  
       if (Array.isArray(dataPackage.data)) {
         return dataPackage.data;
       }
@@ -225,6 +233,7 @@ export class EventosComponent implements OnInit {
       return []; // Manejo de errores devolviendo una lista vacía
     }
   }
+  
 
   limpiarFiltroParticipantes(): void {
     this.minParticipantes = null;
@@ -240,13 +249,18 @@ export class EventosComponent implements OnInit {
 
   async aplicarFiltroFecha(): Promise<Evento[]> {
     try {
-      let minDate = new Date(this.fechaMinFiltro);
-      let maxDate = new Date(this.fechaMaxFiltro);
-
+      let minDate = this.fechaMinFiltro ? new Date(this.fechaMinFiltro).toISOString() : null;
+      let maxDate = this.fechaMaxFiltro ? new Date(this.fechaMaxFiltro).toISOString() : null;
+  
       const dataPackage = await lastValueFrom(
-        this.eventoService.filtrarFecha(this.tabSeleccionada, this.idUsuarioAutenticado, minDate.toISOString(), maxDate.toISOString()
+        this.eventoService.filtrarFecha(
+          this.tabSeleccionada,
+          this.idUsuarioAutenticado,
+          minDate ?? "", // Si minDate es null, envía una cadena vacía
+          maxDate ?? ""  // Si maxDate es null, envía una cadena vacía
         )
       );
+  
       if (Array.isArray(dataPackage.data)) {
         return dataPackage.data;
       }
@@ -256,6 +270,8 @@ export class EventosComponent implements OnInit {
       return []; // Manejo de errores devolviendo una lista vacía
     }
   }
+  
+
 
 
   limpiarFiltroFecha(): void {
@@ -461,7 +477,7 @@ export class EventosComponent implements OnInit {
       lista3 = await this.aplicarFiltroEtiquetas2();
       this.hayResultadosFiltrados = true; // Entró en el if
     }
-    if (this.filtroFechaActivo && this.fechaMinFiltro && this.fechaMaxFiltro) {
+    if (this.filtroFechaActivo && this.fechaMinFiltro) {
       lista4 = await this.aplicarFiltroFecha();
       this.hayResultadosFiltrados = true;
     }    

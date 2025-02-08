@@ -303,6 +303,19 @@ public class EventoService {
         }
     }
 
+    public List<Evento> eventosDesdeFecha(String tipo, Long usuarioId, ZonedDateTime min) {
+        ZonedDateTime fechaInicioUtc = min.withZoneSameInstant(ZoneOffset.UTC);
+        
+        if ("disponibles".equalsIgnoreCase(tipo)) {
+            return eventoRepository.eventosDesdeFechaDisponible(usuarioId, fechaInicioUtc);
+        } else if ("participante".equalsIgnoreCase(tipo)) {
+            return eventoRepository.eventosDesdeFechaParticipante(usuarioId, fechaInicioUtc);
+        } else {
+            return eventoRepository.eventosDesdeFecha(fechaInicioUtc, usuarioId);
+        }
+    }
+    
+
     public List<Evento> eventosParticipantes(String tipo, Long usuarioId, int min, int max) {
         if ("disponibles".equalsIgnoreCase(tipo)) {
             return eventoRepository.eventosCantidadParticipantesDisponible(usuarioId, min, max);
