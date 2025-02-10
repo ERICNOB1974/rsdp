@@ -466,30 +466,52 @@ export class PublicacionDetailComponent implements OnInit {
 
   cargarRespuestas(comentario: Comentario): void {
     const paginacion = this.respuestaPaginacion[comentario.id];
-    if (paginacion.paginaActual != 0) {
+    
+    if (paginacion.paginaActual !== 0) {
       this.loadedMoreReplies[comentario.id] = true;  // Marca que se ha cargado más respuestas
     }
+  
     this.comentarioService.getRespuestas(comentario.id, paginacion.paginaActual, this.pageSize)
-      .subscribe(dataPackage => {
-        // Asegúrate de que `data` contiene las respuestas como un array
-        const respuestas = dataPackage.data as Comentario[]; // Cast para acceder como un array de Respuesta
-        if (Array.isArray(respuestas) && respuestas.length > 0) {
-          paginacion.respuestas.push(...respuestas);
-          paginacion.paginaActual = paginacion.paginaActual + 1;
-          respuestas.forEach(respuesta => {
-            // Inicializar valores en las respuestas
-            this.comentarioService.cantidadLikes(respuesta.id).subscribe(dataPackage => {
-              respuesta.cantidadLikes = dataPackage.data as unknown as number;
+      .subscribe({
+        next: (dataPackage: DataPackage) => {
+          const respuestas = dataPackage.data as Comentario[]; // Cast para acceder como un array de respuestas
+  
+          if (Array.isArray(respuestas) && respuestas.length > 0) {
+            const observablesMenciones: Observable<void>[] = [];
+  
+            respuestas.forEach(respuesta => {
+              // Obtener menciones en el texto de la respuesta
+              const obs = this.getTextoConMenciones(respuesta.texto).pipe(
+                map(textoConMenciones => {
+                  respuesta.texto = textoConMenciones;
+                })
+              );
+  
+              observablesMenciones.push(obs);
+  
+              // Cargar datos de likes para cada respuesta
+              this.comentarioService.cantidadLikes(respuesta.id).subscribe(dataPackage => {
+                respuesta.cantidadLikes = dataPackage.data as unknown as number;
+              });
+  
+              this.comentarioService.estaLikeada(respuesta.id).subscribe(dataPackage => {
+                respuesta.estaLikeado = dataPackage.data as unknown as boolean;
+              });
             });
-            this.comentarioService.estaLikeada(respuesta.id).subscribe(dataPackage => {
-              respuesta.estaLikeado = dataPackage.data as unknown as boolean;
+  
+            // Esperamos que todas las menciones sean procesadas antes de actualizar las respuestas
+            forkJoin(observablesMenciones).subscribe(() => {
+              paginacion.respuestas.push(...respuestas);
+              paginacion.paginaActual += 1;
             });
-          });
+          }
+        },
+        error: (error) => {
+          console.error(`Error al cargar respuestas para el comentario ${comentario.id}:`, error);
         }
-      }, error => {
-        console.error(`Error al cargar respuestas para el comentario ${comentario.id}:`, error);
       });
   }
+  
 
   contarRespuestas(comentario: Comentario) {
     this.comentarioService.contarRespuestas(comentario.id)
@@ -704,6 +726,8 @@ export class PublicacionDetailComponent implements OnInit {
       );
     });
 
+    console.info("entreaca3",texto);
+
     // Ejecutamos todas las verificaciones en paralelo y transformamos el texto
     return forkJoin(verificaciones).pipe(
       map((resultados) => {
@@ -724,25 +748,36 @@ export class PublicacionDetailComponent implements OnInit {
 
   cargarComentariosPaginados(): void {
     if (this.loandingComentarios || this.noMasComentarios) {
-
       return; // Evitar solicitudes innecesarias
     }
     this.loandingComentarios = true; // Iniciar indicador de carga
-
+  
     this.comentarioService.obtenerComentariosPaginados(this.publicacion.id, this.paginaActual, this.pageSizeComentario)
       .subscribe({
         next: (dataPackage: DataPackage) => {
           if (dataPackage && dataPackage.status === 200 && Array.isArray(dataPackage.data)) {
             const nuevosComentarios = dataPackage.data as ComentarioDTO[];
-
+  
             if (nuevosComentarios.length > 0) {
+              const observablesMenciones: Observable<void>[] = [];
+  
               nuevosComentarios.forEach((comentarioDTO: ComentarioDTO) => {
                 const comentario = comentarioDTO.comentario;
-
+                console.info("entreaca", comentario.texto);
+  
                 // Agregar directamente los datos de like al comentario
                 comentario.estaLikeado = comentarioDTO.estaLikeado;
                 comentario.cantidadLikes = comentarioDTO.cantidadLikes;
-
+  
+                const obs = this.getTextoConMenciones(comentario.texto).pipe(
+                  map((textoConMenciones) => {
+                    console.info("entreac2"); // Ahora sí debería aparecer
+                    comentario.texto = textoConMenciones;
+                  })
+                );
+  
+                observablesMenciones.push(obs);
+  
                 this.respuestaPaginacion[comentario.id] = {
                   paginaActual: 0,
                   totalRespuestas: 0,
@@ -751,21 +786,25 @@ export class PublicacionDetailComponent implements OnInit {
                   estaLikeado: comentarioDTO.estaLikeado,
                   cantidadLikes: comentarioDTO.cantidadLikes
                 };
-
+  
                 this.contarRespuestas(comentario);
                 this.cargarRespuestas(comentario);
               });
-
-              // Agregar los comentarios con likes incluidos
-              this.comentarios = [...this.comentarios, ...nuevosComentarios.map(c => c.comentario)];
-              this.paginaActual++;
+  
+              // Esperar a que todos los observables de menciones terminen antes de actualizar la lista de comentarios
+              forkJoin(observablesMenciones).subscribe(() => {
+                this.comentarios = [...this.comentarios, ...nuevosComentarios.map(c => c.comentario)];
+                this.paginaActual++;
+                this.loandingComentarios = false; // Finalizar indicador de carga
+              });
             } else {
               this.noMasComentarios = true; // No hay más comentarios por cargar
+              this.loandingComentarios = false;
             }
           } else {
             console.error('Error al cargar comentarios paginados:', dataPackage?.message);
+            this.loandingComentarios = false; // Finalizar indicador de carga
           }
-          this.loandingComentarios = false; // Finalizar indicador de carga
         },
         error: (error) => {
           console.error('Error al comunicarse con el servicio de comentarios:', error);
@@ -773,6 +812,7 @@ export class PublicacionDetailComponent implements OnInit {
         }
       });
   }
+  
 
 
   @HostListener('window:scroll', [])

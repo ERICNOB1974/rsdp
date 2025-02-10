@@ -74,15 +74,6 @@
     </div>
 
 
-
-
-
-
-
-
-
-
-
     <div class="comments-section" style="font-family: Arial, sans-serif;" (scroll)="onScrollComentarios()">
       <div *ngFor="let com of comentarios" class="comment"
         style="margin-bottom: 20px; padding: 15px; background-color: #f9f9f9; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); position: relative;">
@@ -107,9 +98,7 @@
         <!-- Texto del comentario -->
         <div class="likes-container"
           style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;">
-          <p class="comment-text" style="font-size: 14px; margin: 0; color: #333; flex: 1;">
-            {{ com.texto }}
-          </p>
+          <p [innerHTML]="com.texto"></p> 
           <div style="display: flex; align-items: center; gap: 8px;">
             <i class="heart" [ngClass]="com.estaLikeado ? 'fas fa-heart liked' : 'far fa-heart'"
               (click)="toggleLikeComentario(com)" style="cursor: pointer; font-size: 16px; color: #ff4757;">
@@ -131,29 +120,40 @@
           (click)="eliminarComentario(com.id); $event.stopPropagation()" style="position: absolute; top: 5px;">
         </i>
 
+
         <!-- Campo para ingresar la respuesta -->
-        <div *ngIf="com.id === currentCommentId && showReplyInput" class="comment-input-container"
-          style="margin-top: 10px; padding: 10px; background-color: #f1f1f1; border-radius: 8px;">
-          <input [(ngModel)]="replyText" style="width: 100%; border-radius: 5px; padding: 10px; border: 1px solid #ddd;"
-            name="descripcion" class="form-control" (input)="onTextChange($event)"
-            placeholder="Escribe tu respuesta con @ para mencionar usuarios..." (focus)="isReplying = true" />
-          <ul *ngIf="isReplying && usuariosFiltrados.length > 0" class="suggestions">
-            <li *ngFor="let usuario of usuariosFiltrados" (click)="addUsuarioRespuesta(usuario)">
-              {{ usuario.usuario.nombreUsuario }}
-            </li>
-          </ul>
-          <div class="reply-button-container">
+        <div *ngIf="com.id === currentCommentId && showReplyInput" class="comment-input-container" style="margin-top: 10px; padding: 10px; background-color: #f1f1f1; border-radius: 8px;">
 
-            <button class="btn btn-primary" (click)="submitReply(com.id)" style="margin-top: 5px; float: right;"
-              [disabled]="enviandoRespuesta">
-              <span *ngIf="enviandoRespuesta" class="spinner-border spinner-border-sm me-2" role="status"
-                aria-hidden="true"></span>
-              Enviar
-            </button>
+          <input [(ngModel)]="replyText" name="descripcion" class="form-control" (input)="onTextChange($event)"
+            placeholder="Escribe tu comentario con @ para mencionar usuarios..." (focus)="isReplying = true" />
+    
+          <div *ngIf="isReplying && usuariosFiltrados.length > 0" class="suggestions-container">
+            <ul class="suggestions">
+              <li *ngFor="let usuario of usuariosFiltrados" (click)="addUsuarioRespuesta(usuario)" class="suggestion-item">
+    
+                <div class="user-avatar">
+                  <img [src]="usuario.usuario.fotoPerfil || '../assets/usuario.png'" alt="Avatar">
+                </div>
+    
+                <div class="user-info">
+                  <span class="username">{{ usuario.usuario.nombreUsuario }}</span>
+                  <span class="real-name"> {{ usuario.usuario.nombreReal }}</span>
+                </div>
+    
+                <div class="user-status">
+                  <span *ngIf="usuario.esAmigo" class="friend-label">✔ Amigo</span>
+                  <span *ngIf="!usuario.esAmigo" class="non-friend-label">➖ No es tu amigo</span>
+                </div>
+    
+              </li>
+            </ul>
           </div>
-
-
+          <button class="btn btn-primary" (click)="submitReply(com.id)" [disabled]="enviandoRespuesta">
+            <span *ngIf="enviandoComentario" class="spinner-border spinner-border-sm me-2" role="status"
+              aria-hidden="true"></span>
+            Enviar</button>
         </div>
+
 
         <!-- Mostrar respuestas -->
         <div *ngFor="let reply of respuestaPaginacion[com.id]?.respuestas" class="reply"
@@ -178,9 +178,7 @@
 
           <div class="likes-container"
             style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;">
-            <p class="reply-text" style="font-size: 14px; margin: 0; color: #333; flex: 1;">
-              {{ reply.texto }}
-            </p>
+            <p [innerHTML]="reply.texto"></p> 
             <div style="display: flex; align-items: center; gap: 8px;">
               <i class="heart" [ngClass]="reply.estaLikeado ? 'fas fa-heart liked' : 'far fa-heart'"
                 (click)="toggleLikeComentario(reply)" style="cursor: pointer; font-size: 16px; color: #ff4757;">
