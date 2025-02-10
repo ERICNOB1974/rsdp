@@ -218,6 +218,14 @@ public class EventoPresenter {
             @RequestParam(required = false, defaultValue = "") String nombreEvento) {
         return Response.ok(eventoService.participaUsuario(idUsuario, nombreEvento, page, size));
     }
+    @RequestMapping(path = "/participaUsuarioAFuturo/{idUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> participaUsuarioAFuturo(
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String nombreEvento) {
+        return Response.ok(eventoService.participaUsuarioAFuturo(idUsuario, nombreEvento, page, size));
+    }
 
     @GetMapping("/sugerenciasDeEventosBasadosEnEventos2/{nombreUsuario}")
     public ResponseEntity<Object> sugerenciasDeEventosBasadosEnEventos2(@PathVariable String nombreUsuario) {
@@ -279,14 +287,14 @@ public class EventoPresenter {
     @DeleteMapping("/eliminar/{idEvento}")
     public ResponseEntity<Object> eliminar(@PathVariable Long idEvento) {
         eventoService.eliminar(idEvento);
-        return Response.ok("OK");
+        return Response.ok("Evento eliminado exitosamente");
     }
 
     @PutMapping("/eliminarParticipante/{idEvento}/{idUsuario}")
     public ResponseEntity<Object> eliminarParticipante(@PathVariable Long idEvento, @PathVariable Long idUsuario,
             @RequestBody String motivo) {
         eventoService.eliminarUsuario(motivo, idEvento, idUsuario);
-        return Response.ok("OK");
+        return Response.ok("Participante eliminado exitosamente");
     }
 
     @GetMapping("/listaParticipantes/{idEvento}")
@@ -318,7 +326,7 @@ public class EventoPresenter {
     @PostMapping("/desetiquetar/{idEtiqueta}")
     public ResponseEntity<Object> desetiquetarComunidad(@RequestBody Long idEvento, @PathVariable Long idEtiqueta) {
         eventoService.desetiquetarEvento(idEvento, idEtiqueta);
-        return Response.ok("ok");
+        return Response.ok("Etiqueta eliminada exitosamente");
     }
 
            @RequestMapping(path = "/eventosCreadosPorUsuarioFiltrados/{idUsuario}", method = RequestMethod.GET)
