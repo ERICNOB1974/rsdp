@@ -647,6 +647,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         MATCH (u:Usuario) WHERE id(u)=$idUsuario
                         MATCH (e:Comunidad) WHERE id(e)=$idComunidad
                         MATCH (u)-[r:EXPULSADO_COMUNIDAD]-(e)
+                        
                         RETURN COUNT(r)>0
                         """)
         boolean estaExpulsado(Long idUsuario, Long idComunidad);

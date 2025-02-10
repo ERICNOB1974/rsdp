@@ -90,9 +90,8 @@ public interface PublicacionRepository extends Neo4jRepository<Publicacion, Long
                         "      AND NOT EXISTS { MATCH (p)-[:PUBLICADO_DENTRO_DE]->(:Comunidad) } " +
                         "    RETURN p " +
                         "    UNION " +
-                        "    MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c:Comunidad)<-[r:PUBLICADO_DENTRO_DE]-(p:Publicacion) "
-                        +
-                        "    WHERE id(u) = $usuarioId AND r.aprobada=true " +
+                        "    MATCH (u:Usuario)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR]-(c:Comunidad)<-[r:PUBLICADO_DENTRO_DE]-(p:Publicacion) "+
+                        "    WHERE id(u) = $usuarioId AND r.estado = 'Aprobada' " +
                         "    RETURN p " +
                         "} " +
                         "RETURN p " +
