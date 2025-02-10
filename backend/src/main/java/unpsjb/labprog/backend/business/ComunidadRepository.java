@@ -406,7 +406,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         ") " +
                         "MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h) " +
                         "WITH c, COUNT(DISTINCT h) AS numParticipantes " +
-                        "RETURN c " +
+                        "RETURN c, numParticipantes " +
                         "ORDER BY numParticipantes DESC")
         List<Comunidad> comunidadesNombre(@Param("nombre") String nombre,
                         @Param("idUsuario") Long idUsuario);
@@ -428,7 +428,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         )
                         MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h)
                         WITH c, COUNT(DISTINCT h) AS numParticipantes
-                        RETURN DISTINCT c
+                        RETURN DISTINCT c, numParticipantes
                         ORDER BY numParticipantes DESC                      """)
         List<Comunidad> comunidadesNombreDisponibles(@Param("nombre") String nombre,
                         @Param("usuarioId") Long usuarioId);
@@ -447,7 +447,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         )
                         MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h)
                         WITH c, COUNT(DISTINCT h) AS numParticipantes
-                        RETURN  c
+                        RETURN  c, numParticipantes
                         ORDER BY numParticipantes DESC                         """)
         List<Comunidad> comunidadesNombreMiembro(@Param("nombre") String nombre,
                         @Param("usuarioId") Long usuarioId);
