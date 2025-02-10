@@ -240,7 +240,6 @@ export class CrearEventoComponent {
     // Limpiar las sugerencias y el campo de texto
     this.sugerencias = [];
     console.log(this.evento);
-    console.log("etiquetas ", this.etiquetasSeleccionadas);
 
     (document.querySelector('input[type="text"]') as HTMLInputElement).value = '';
   }
@@ -256,6 +255,7 @@ export class CrearEventoComponent {
       .bindPopup(`Ubicación: ${latlng.lat.toFixed(5)}, ${latlng.lng.toFixed(5)}`)
       .openPopup();
     this.mapa.setView(latlng, 16);
+    console.info(this.evento);
   }
 
   setMinFechaHora(): void {

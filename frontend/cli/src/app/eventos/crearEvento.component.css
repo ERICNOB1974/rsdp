@@ -112,6 +112,7 @@ button.btn-secondary {
     box-sizing: border-box; /* Incluye padding y border en el tamaño total */
     background-color: #f9f9f9; /* Fondo ligero */
     position: relative;
+    margin-bottom: 8%;
 }
 .drag-drop-area img,
 .drag-drop-area video {
