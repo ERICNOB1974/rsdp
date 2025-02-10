@@ -280,7 +280,7 @@ public class ComunidadPresenter {
     public ResponseEntity<Object> delete(@PathVariable("id") Long id) {
         Comunidad aComunidad = comunidadService.findById(id);
         if (aComunidad == null) {
-            return Response.notFound("comunidad id " + id + " no encontrada");
+            return Response.notFound("Comunidad id " + id + " no encontrada");
         }
         try {
             comunidadService.deleteById(id);
