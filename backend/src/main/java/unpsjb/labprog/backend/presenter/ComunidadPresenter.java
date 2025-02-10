@@ -21,6 +21,7 @@ import unpsjb.labprog.backend.business.ComunidadService;
 import unpsjb.labprog.backend.business.ScoreComunidad;
 import unpsjb.labprog.backend.business.UsuarioComunidadService;
 import unpsjb.labprog.backend.model.Comunidad;
+import unpsjb.labprog.backend.model.DTO.ExpulsionDTO;
 
 @RestController
 @RequestMapping("comunidades")
@@ -411,5 +412,16 @@ public ResponseEntity<Object> editarExpulsion(@PathVariable Long idComunidad,
         } catch (Exception e) {
             return Response.error("", "Error al quitar rol: " + e.getMessage());
         }
+    }
+
+
+
+    @GetMapping("/estaExpulsado/{idUsuario}/{idComunidad}")
+    public ResponseEntity<Object> comunidadesFuturosPertenecientesAUnUsuario(@PathVariable Long idUsuario,
+            @PathVariable Long idComunidad) {
+
+        ExpulsionDTO expulsion= comunidadService.expulsionUsuario(idUsuario, idComunidad);
+
+        return Response.ok(expulsion);
     }
 }
