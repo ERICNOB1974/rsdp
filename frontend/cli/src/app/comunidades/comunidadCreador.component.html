@@ -39,7 +39,7 @@
               class="btn btn-warning btn-sm" (click)="quitarRolModerador(miembro.id)">Quitar Rol de Moderador</button>
 
             <button
-              *ngIf="esCreador && miembro.id !== idUsuarioAutenticado && !esModerador(miembro.id) && !esAdministrador(miembro.id)"
+              *ngIf="esCreador && comunidad.esModerada && miembro.id !== idUsuarioAutenticado && !esModerador(miembro.id) && !esAdministrador(miembro.id)"
               class="btn btn-success btn-sm" (click)="otorgarRolModerador(miembro.id)">Hacer Moderador</button>
 
 
