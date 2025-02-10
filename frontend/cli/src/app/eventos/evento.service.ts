@@ -173,6 +173,12 @@ export class EventoService {
                 (nombreEvento ? `&nombreEvento=${nombreEvento}` : '');  // Agregar solo si no está vacío
     return this.http.get<DataPackage>(url);
 }
+participaUsuarioAFuturo(idUsuario: number, nombreEvento: string, page: number, size: number): Observable<DataPackage> {
+    // Si nombreRutina está vacío, no lo incluimos en la URL
+    const url = `${this.eventosUrl}/participaUsuarioAFuturo/${idUsuario}?page=${page}&size=${size}` +
+                (nombreEvento ? `&nombreEvento=${nombreEvento}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+}
 
 
 

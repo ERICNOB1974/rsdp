@@ -287,7 +287,7 @@ public class ComunidadPresenter {
         } catch (RuntimeException e) {
             return Response.error(aComunidad, e.getMessage());
         }
-        return Response.ok("comunidad borrada con exito");
+        return Response.ok("Comunidad borrada con exito");
     }
 
     @RequestMapping(path = "/actualizar", method = RequestMethod.PUT)
@@ -366,7 +366,7 @@ public ResponseEntity<Object> eliminarParticipante(@PathVariable Long idComunida
                                                    @RequestParam String tipo,
                                                    @RequestParam String fechaHoraExpulsion) {
     comunidadService.eliminarUsuario(motivo, tipo, fechaHoraExpulsion, idComunidad, idUsuario);
-    return Response.ok("OK");
+    return Response.ok("Participante eliminado con exito.");
 }
 
 @PutMapping("/editarExpulsion/{idComunidad}/{idUsuario}")
@@ -388,7 +388,7 @@ public ResponseEntity<Object> editarExpulsion(@PathVariable Long idComunidad,
  @DeleteMapping("/eliminarBan/{idComunidad}/{idUsuario}")
     public ResponseEntity<Object> eliminarBan(@PathVariable Long idComunidad,@PathVariable Long idUsuario) {
         comunidadService.eliminarBan(idComunidad,idUsuario);
-        return Response.ok("OK");
+        return Response.ok("Expulsion eliminada correctamente");
     }
 
   @PostMapping("/otorgarRolModerador/{idCreador}/{idMiembro}/{idComunidad}")
