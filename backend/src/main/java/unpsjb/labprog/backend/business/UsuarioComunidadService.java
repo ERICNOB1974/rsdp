@@ -51,13 +51,13 @@ public class UsuarioComunidadService {
 
         // Verificar si ya existe una solicitud de ingreso pendiente o enviada
         if (usuarioRepository.solicitudIngresoExiste(idUsuario, idComunidad)) {
-            throw new Exception("Ya existe una solicitud de ingreso para la comunidad: "+ comunidad.getNombre());
+            throw new Exception("Ya existe una solicitud de ingreso para la comunidad: " + comunidad.getNombre());
         }
         usuarioRepository.enviarSolicitudIngreso(idUsuario, idComunidad, "pendiente", LocalDateTime.now());
-        return "Solicitud de ingreso a la comunidad: "+comunidad.getNombre()+" enviada correctamente";
+        return "Solicitud de ingreso a la comunidad: " + comunidad.getNombre() + " enviada correctamente";
     }
 
-      public String eliminarSolicitudIngreso(Long idUsuario, Long idComunidad) throws Exception {
+    public String eliminarSolicitudIngreso(Long idUsuario, Long idComunidad) throws Exception {
         Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
         if (comunidadOpt.isEmpty()) {
             throw new Exception("La comunidad no existe.");
@@ -67,14 +67,13 @@ public class UsuarioComunidadService {
             throw new Exception("El usuario no existe.");
         }
         Comunidad comunidad = comunidadOpt.get();
-            // Verificar si ya existe una solicitud de ingreso pendiente o enviada
+        // Verificar si ya existe una solicitud de ingreso pendiente o enviada
         if (!usuarioRepository.solicitudIngresoExiste(idUsuario, idComunidad)) {
-            throw new Exception("No existe una solicitud de ingreso para la comunidad: "+ comunidad.getNombre());
+            throw new Exception("No existe una solicitud de ingreso para la comunidad: " + comunidad.getNombre());
         }
         comunidadRepository.eliminarSolicitudIngreso(idUsuario, idComunidad);
-        return "Solicitud de ingreso a la comunidad: "+comunidad.getNombre()+" eliminada correctamente";
+        return "Solicitud de ingreso a la comunidad: " + comunidad.getNombre() + " eliminada correctamente";
     }
-
 
     public String otorgarRolAdministrador(Long idCreador, Long idMiembro, Long idComunidad) throws Exception {
         Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
@@ -93,7 +92,8 @@ public class UsuarioComunidadService {
         Usuario usuario = miembroOpt.get();
 
         // Verificar si el usuario es miembro de la comunidad
-        if (!usuarioRepository.esMiembro(idMiembro, idComunidad) && !usuarioRepository.esModerador(idMiembro, idComunidad)) {
+        if (!usuarioRepository.esMiembro(idMiembro, idComunidad)
+                && !usuarioRepository.esModerador(idMiembro, idComunidad)) {
             throw new Exception("El usuario al que se le quiere asignar el rol no es miembro de la comunidad.");
         }
 
@@ -111,7 +111,7 @@ public class UsuarioComunidadService {
             throw new Exception("No se pudo obtener la fecha de ingreso.");
         }
 
-        if(usuarioRepository.esModerador(idMiembro,idComunidad)){
+        if (usuarioRepository.esModerador(idMiembro, idComunidad)) {
             quitarRolModerador(idCreador, idMiembro, idComunidad);
         }
         comunidadRepository.otorgarRolAdministrador(idMiembro, idComunidad, fechaIngreso, LocalDateTime.now());
@@ -170,9 +170,12 @@ public class UsuarioComunidadService {
             throw new Exception("El usuario no existe.");
         }
         comunidad.setFechaDeCreacion(LocalDate.now()); // Establece la fecha aquí
-        return comunidadRepository.guardarComunidadYCreador(comunidad.getNombre(), comunidad.getGenero(), comunidad.getDescripcion(),
-                comunidad.getCantidadMaximaMiembros(), comunidad.isEsPrivada(), comunidad.isEliminada(), comunidad.isEsModerada(), idUsuario,
-                comunidad.getFechaDeCreacion(), comunidad.getLatitud(), comunidad.getLongitud(), comunidad.getImagen(), comunidad.getUbicacion());
+        return comunidadRepository.guardarComunidadYCreador(comunidad.getNombre(), comunidad.getGenero(),
+                comunidad.getDescripcion(),
+                comunidad.getCantidadMaximaMiembros(), comunidad.isEsPrivada(), comunidad.isEliminada(),
+                comunidad.isEsModerada(), idUsuario,
+                comunidad.getFechaDeCreacion(), comunidad.getLatitud(), comunidad.getLongitud(), comunidad.getImagen(),
+                comunidad.getUbicacion());
     }
 
     public String gestionarSolicitudes(Long idSuperUsuario, Long idUsuario, Long idComunidad, boolean aceptar)
@@ -190,7 +193,7 @@ public class UsuarioComunidadService {
         if (comunidadOpt.isEmpty()) {
             throw new Exception("La comunidad no existe.");
         }
-        
+
         Comunidad comunidad = comunidadOpt.get();
         if (!usuarioRepository.solicitudIngresoExiste(idUsuario, idComunidad)) {
             throw new Exception("No hay solicitud de ingreso pendiente");
@@ -241,7 +244,8 @@ public class UsuarioComunidadService {
         return "Miembro eliminado de la comunidad correctamente";
     }
 
-    public List<Usuario> visualizarSolicitudes(Long idSuperUsuario, Long idComunidad, String term, int page, int size) throws Exception {
+    public List<Usuario> visualizarSolicitudes(Long idSuperUsuario, Long idComunidad, String term, int page, int size)
+            throws Exception {
 
         Optional<Usuario> superUsuario = usuarioRepository.findById(idSuperUsuario);
         if (superUsuario.isEmpty()) {
@@ -260,10 +264,11 @@ public class UsuarioComunidadService {
         int skip = page * size; // Cálculo de los resultados a omitir
         String filtroNombre = (term == null || term.trim().isEmpty()) ? "" : term;
 
-        return usuarioRepository.solicititudesPendientesPaginadas(idComunidad,filtroNombre, skip, size);
+        return usuarioRepository.solicititudesPendientesPaginadas(idComunidad, filtroNombre, skip, size);
     }
 
-        public List<Usuario> obtenerExpulsadosActivos(Long idSuperUsuario, Long idComunidad, String term, int page, int size) throws Exception {
+    public List<Usuario> obtenerExpulsadosActivos(Long idSuperUsuario, Long idComunidad, String term, int page,
+            int size) throws Exception {
 
         Optional<Usuario> superUsuario = usuarioRepository.findById(idSuperUsuario);
         if (superUsuario.isEmpty()) {
@@ -282,9 +287,8 @@ public class UsuarioComunidadService {
         int skip = page * size; // Cálculo de los resultados a omitir
         String filtroNombre = (term == null || term.trim().isEmpty()) ? "" : term;
 
-        return usuarioRepository.obtenerExpulsadosActivos(idComunidad,filtroNombre, skip, size);
+        return usuarioRepository.obtenerExpulsadosActivos(idComunidad, filtroNombre, skip, size);
     }
-
 
     public String verEstado(Long idComunidad, Long idUsuario) {
         if (usuarioRepository.esCreador(idUsuario, idComunidad)) {
@@ -305,7 +309,7 @@ public class UsuarioComunidadService {
         return "Vacio";
     }
 
-       public String otorgarRolModerador(Long idCreador, Long idMiembro, Long idComunidad) throws Exception {
+    public String otorgarRolModerador(Long idCreador, Long idMiembro, Long idComunidad) throws Exception {
         Optional<Comunidad> comunidadOpt = comunidadRepository.findById(idComunidad);
         if (comunidadOpt.isEmpty()) {
             throw new Exception("La comunidad no existe.");
@@ -322,7 +326,8 @@ public class UsuarioComunidadService {
         Usuario usuario = miembroOpt.get();
 
         // Verificar si el usuario es miembro de la comunidad
-        if (!usuarioRepository.esMiembro(idMiembro, idComunidad) && !usuarioRepository.esAdministrador(idMiembro, idComunidad)) {
+        if (!usuarioRepository.esMiembro(idMiembro, idComunidad)
+                && !usuarioRepository.esAdministrador(idMiembro, idComunidad)) {
             throw new Exception("El usuario al que se le quiere asignar el rol no es miembro de la comunidad.");
         }
 
@@ -381,7 +386,7 @@ public class UsuarioComunidadService {
 
         // Realizar la operación en la base de datos
 
-        comunidadRepository.quitarRolModerador(idAdministrador, idComunidad, fechaIngreso,LocalDateTime.now());
+        comunidadRepository.quitarRolModerador(idAdministrador, idComunidad, fechaIngreso, LocalDateTime.now());
 
         return "Rol moderador quitado a: " + usuario.getNombreUsuario() + " correctamente.";
     }

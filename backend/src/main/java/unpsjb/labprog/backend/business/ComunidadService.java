@@ -92,7 +92,7 @@ public class ComunidadService {
 
     public void cambioANoModerada(Long idComunidad) {
         publicacionRepository.aprobarTodasPublicacionesComunidad(idComunidad, java.time.ZonedDateTime.now());
-     
+
     }
 
     public void aceptarSolicitud(Long idUsuario, Long idComunidad) {
@@ -114,6 +114,7 @@ public class ComunidadService {
     public void etiquetarComunidad(Comunidad comunidad, Long etiqueta) {
         comunidadRepository.etiquetarComunidad(comunidad.getId(), etiqueta);
     }
+
     public void desetiquetarComunidad(Long comunidadId, Long etiqueta) {
         comunidadRepository.desetiquetarComunidad(comunidadId, etiqueta);
     }
@@ -149,7 +150,6 @@ public class ComunidadService {
         String filtroNombre = (nombreComunidad == null || nombreComunidad.trim().isEmpty()) ? "" : nombreComunidad;
         return comunidadRepository.creadasFiltradas(idUsuario, filtroNombre, skip, size);
     }
-
 
     public List<ScoreComunidad> obtenerSugerenciasDeComunidadesBasadasEnAmigos2(String nombreUsuario) {
         List<ScoreComunidad> sugerencias = comunidadRepository.sugerenciasDeComunidadesBasadasEnAmigos2(nombreUsuario);
@@ -252,10 +252,7 @@ public class ComunidadService {
     }
 
     public List<Comunidad> comunidadesEtiquetas(List<String> etiquetas, String tipo, Long usuarioId) {
-        System.out.println("Tipo: " + tipo);
-        System.out.println("Usuario ID: " + usuarioId);
-        System.out.println("Etiquetas: " + etiquetas);
-        
+
         if ("disponibles".equalsIgnoreCase(tipo)) {
             return comunidadRepository.comunidadesEtiquetasDisponibles(usuarioId, etiquetas);
         } else if ("miembro".equalsIgnoreCase(tipo)) {
@@ -264,7 +261,6 @@ public class ComunidadService {
             return comunidadRepository.comunidadesEtiquetas(usuarioId, etiquetas);
         }
     }
-    
 
     public List<Comunidad> comunidadesPorNombreYTipo(String nombre, String tipo, Long usuarioId) {
         if ("disponibles".equalsIgnoreCase(tipo)) {
@@ -401,11 +397,10 @@ public class ComunidadService {
         } else {
             expulsionDTO.setEstaExpulsado(false); // Opcional: Establecer en falso si tipo es null
         }
-        if (tipo!=null && tipo.equals("temporal")) {
+        if (tipo != null && tipo.equals("temporal")) {
             LocalDateTime fechaHoraExpulsion = comunidadRepository.findFechaHoraExpulsion(idUsuario, idComunidad);
             expulsionDTO.setFechaHoraExpulsion(fechaHoraExpulsion); // Establecer la fecha de expulsión
         }
-
 
         // Establecer los valores obtenidos en el DTO
         expulsionDTO.setMotivoExpulsion(motivoExpulsion); // Establecer el motivo de expulsión
@@ -443,5 +438,21 @@ public class ComunidadService {
         comunidadRepository.eliminarBan(idComunidad, idUsuario);
     }
 
+    public boolean estaExpulsado(Long idUsuario, Long idComunidad) {
+        return this.comunidadRepository.estaExpulsado(idUsuario, idComunidad);
+    }
 
+    public String motivoExpulsion(Long idUsuario, Long idComunidad) {
+        return this.comunidadRepository.motivoExpulsion(idUsuario, idComunidad);
+    }
+
+    public ExpulsionDTO expulsionUsuario(Long idUsuario, Long idComunidad) {
+        ExpulsionDTO expulsado = new ExpulsionDTO();
+        expulsado.setEstaExpulsado(this.comunidadRepository.estaExpulsado(idUsuario, idComunidad));
+        expulsado.setMotivoExpulsion(this.comunidadRepository.motivoExpulsion(idUsuario, idComunidad));
+        expulsado.setFechaHoraExpulsion(this.comunidadRepository.findFechaHoraExpulsion(idUsuario, idComunidad));
+        expulsado.setTipo(this.comunidadRepository.findTipoExpulsion(idUsuario, idComunidad));
+        
+        return expulsado;
+    }
 }

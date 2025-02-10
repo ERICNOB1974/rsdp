@@ -10,6 +10,7 @@ import { AuthService } from '../autenticacion/auth.service';
 import { Usuario } from '../usuarios/usuario';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
+import { Expulsado } from './expulsado';
 
 @Component({
     selector: 'app-comunidad-admin',
@@ -42,7 +43,7 @@ export class ComunidadCreadorComponent implements OnInit {
     fechaExpulsion: Date | null = null;
     horaExpulsion: Date | null = null;
     tipoExpulsion: string = 'permanente'; // Valor predeterminado
-    expulsado: boolean = false; // Indica si el usuario fue expulsado
+    //expulsado: boolean = false; // Indica si el usuario fue expulsado
     estadoActual: string = 'miembros'; // Por defecto, se muestra la sección de Miembros
     loading: boolean = false;  // Para manejar el estado de carga
     loadingScroll: boolean = false;
@@ -55,7 +56,7 @@ export class ComunidadCreadorComponent implements OnInit {
     size: number = 5;
     searchTimeout: any // Variable para almacenar el timer
     @ViewChild('modalExpulsion') modalExpulsion!: TemplateRef<any>; // Referencia al modal
-
+    expulsado: Expulsado | undefined;
     constructor(
         private route: ActivatedRoute, // Para obtener el parámetro de la URL
         private comunidadService: ComunidadService, // Servicio para obtener la comunidad por ID
@@ -145,14 +146,55 @@ export class ComunidadCreadorComponent implements OnInit {
     }
 
 
+    /*     abrirModalExpulsion(usuario: any): void {
+            this.usuarioEliminar = usuario; // Asigna el usuario al abrir el modal
+            this.modalService.open(this.modalExpulsion, {
+                centered: true, // Centra el modal
+                backdrop: 'static', // Impide cerrar al hacer clic fuera
+                keyboard: false, // Desactiva el cierre con teclado
+            });
+        }
+     */
+
+
+
+
+
     abrirModalExpulsion(usuario: any): void {
         this.usuarioEliminar = usuario; // Asigna el usuario al abrir el modal
+
+        this.checkExpulsion(usuario.id);
+
+        if (this.expulsado) {
+            // Si el usuario está expulsado, muestra la información en el modal
+            this.motivoExpulsion = this.expulsado.motivoExpulsion;
+            this.fechaExpulsion = this.expulsado.fechaHoraExpulsion;
+            // Si la expulsión es permanente, la manejamos como fecha lejana
+            if (this.expulsado.tipo === 'permanente') {
+                this.tipoExpulsion = 'permanente';
+            } else {
+                this.tipoExpulsion = 'temporal';
+            }
+        }
+
         this.modalService.open(this.modalExpulsion, {
             centered: true, // Centra el modal
             backdrop: 'static', // Impide cerrar al hacer clic fuera
             keyboard: false, // Desactiva el cierre con teclado
         });
     }
+
+    checkExpulsion(idUsuario: number) {
+        this.comunidadService.verificarExpulsion(idUsuario, this.comunidad.id)
+            .subscribe(response => {
+                this.expulsado = response.data as Expulsado;
+                console.info(this.expulsado);
+            });
+    }
+
+
+
+
 
     getComunidad(): void {
         const id = this.route.snapshot.paramMap.get('id');

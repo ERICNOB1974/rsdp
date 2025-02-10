@@ -81,7 +81,7 @@ export class MuroComunidadComponent implements OnInit {
     //expulsado: boolean = false; // Indica si el usuario fue expulsado
     motivoExpulsion: string = '';
     rolesCalculados: { [id: string]: string } = {};
-    expulsado: Expulsado | undefined
+    expulsado!: Expulsado;
     usuariosPublicadores: { [key: number]: Usuario } = {};
     searchTimeout: any // Variable para almacenar el timer
     haSolicitadoIngreso: boolean = false; // Estado inicial
@@ -169,7 +169,6 @@ export class MuroComunidadComponent implements OnInit {
         this.comunidadService.verificarExpulsion(this.idUsuarioAutenticado, this.comunidad.id)
             .subscribe(response => {
                 this.expulsado = response.data as Expulsado;
-
             });
     }
 
@@ -481,7 +480,7 @@ export class MuroComunidadComponent implements OnInit {
         return new Promise((resolve) => {
             this.comunidadService.estadoSolicitud(this.comunidad.id).subscribe(dataPackage => {
                 let estado = <String>dataPackage.data;
-        
+
                 if (estado == "Vacio") {
                     this.pendiente = false;
                     this.esParte = false;
@@ -508,14 +507,14 @@ export class MuroComunidadComponent implements OnInit {
                     this.esModerador = true;
                     this.esParte = true;
                 }
-    
-      
-    
+
+
+
                 resolve();
             });
         });
     }
-    
+
 
     getComunidad(): Promise<void> {
         return new Promise((resolve) => {
@@ -527,7 +526,6 @@ export class MuroComunidadComponent implements OnInit {
                 this.comunidadService.get(parseInt(id)).subscribe(async dataPackage => {
                     this.comunidadService.puedeVer(parseInt(id)).subscribe(dataP => {
                         this.visible = <boolean><unknown>dataP.data
-                        console.info(this.visible);
                     });
                     this.visible = true
                     this.comunidad = <Comunidad>dataPackage.data;
@@ -628,7 +626,7 @@ export class MuroComunidadComponent implements OnInit {
             this.isLoading = false;
         });
     }
-    
+
 
     salir(): void {
         this.isLoading = true; // Activar el estado de carga

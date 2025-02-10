@@ -107,7 +107,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "WHERE id(u) = $idUsuario " +
                         "AND c.eliminada = false " +
                         "RETURN c " +
-                        "ORDER BY c.fechaDeCreacion ASC " +
+                        "ORDER BY c.fechaDeCreacion ASC, c.nombre ASC " +
                         "SKIP $offset LIMIT $limit")
         List<Comunidad> comunidadesCreadasPorUsuario(@Param("idUsuario") Long idUsuario, @Param("offset") int offset,
                         @Param("limit") int limit);
@@ -471,9 +471,9 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                             }
                             AND NOT c.eliminada
                         MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h)
-                        WITH c, COUNT(DISTINCT h) AS numParticipantes 
-                        RETURN DISTINCT c 
-                        ORDER BY numParticipantes DESC 
+                        WITH c, COUNT(DISTINCT h) AS numParticipantes
+                        RETURN DISTINCT c
+                        ORDER BY numParticipantes DESC
                         """)
         List<Comunidad> comunidadesCantidadParticipantesDisponibles(@Param("usuarioId") Long usuarioId,
                         @Param("min") int min, @Param("max") int max);
@@ -494,9 +494,9 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                             AND (c)-[:MIEMBRO|ADMINISTRADA_POR|CREADA_POR|MODERADA_POR]-(us)
                             AND NOT c.eliminada
                               MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h)
-                        WITH c, COUNT(DISTINCT h) AS numParticipantes 
-                        RETURN DISTINCT c 
-                        ORDER BY numParticipantes DESC 
+                        WITH c, COUNT(DISTINCT h) AS numParticipantes
+                        RETURN DISTINCT c
+                        ORDER BY numParticipantes DESC
                         """)
         List<Comunidad> comunidadesCantidadParticipantesMiembro(@Param("usuarioId") Long usuarioId,
                         @Param("min") int min, @Param("max") int max);
@@ -515,8 +515,8 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                             WHERE totalUsuarios >= $min AND totalUsuarios <= $max
                             AND NOT c.eliminada
                          MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h)
-                        WITH c, COUNT(DISTINCT h) AS numParticipantes 
-                        RETURN DISTINCT c 
+                        WITH c, COUNT(DISTINCT h) AS numParticipantes
+                        RETURN DISTINCT c
                         ORDER BY numParticipantes DESC                         """)
         List<Comunidad> comunidadesCantidadParticipantes(@Param("usuarioId") Long usuarioId,
                         @Param("min") int min, @Param("max") int max);
@@ -642,5 +642,13 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         DELETE r
                         """)
         void eliminarBan(Long idComunidad, Long idUsuario);
+
+        @Query("""
+                        MATCH (u:Usuario) WHERE id(u)=$idUsuario
+                        MATCH (e:Comunidad) WHERE id(e)=$idComunidad
+                        MATCH (u)-[r:EXPULSADO_COMUNIDAD]-(e)
+                        RETURN COUNT(r)>0
+                        """)
+        boolean estaExpulsado(Long idUsuario, Long idComunidad);
 
 }
