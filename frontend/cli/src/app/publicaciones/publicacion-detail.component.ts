@@ -723,6 +723,7 @@ export class PublicacionDetailComponent implements OnInit {
 
 
   cargarComentariosPaginados(): void {
+    console.info(this.publicacion.id);
     if (this.loandingComentarios || this.noMasComentarios) {
 
       return; // Evitar solicitudes innecesarias

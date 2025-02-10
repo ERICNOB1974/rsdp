@@ -32,7 +32,7 @@
     </div>
   </div>
 
-  <button *ngIf="!esCreador && !expulsado && !(comunidad.cantidadMaximaMiembros <= comunidad.miembros)"
+  <button *ngIf="!esCreador && !expulsado.estaExpulsado && !(comunidad.cantidadMaximaMiembros <= comunidad.miembros)"
     class="btn btn-primary btn-block ingresar-button" [disabled]="isLoading || !(salirValid() || inscribirseValid())"
     (click)="salirValid() ? salir() : (haSolicitadoIngreso ? cancelarSolicitud() : ingresar())">
 
