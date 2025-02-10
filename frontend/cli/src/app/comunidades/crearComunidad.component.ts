@@ -135,14 +135,13 @@ export class CrearComunidadComponent {
 
   async saveComunidad(): Promise<void> {
     try {
-      /*       this.comunidad.esPrivada = this.formComunidad.get('esPrivada')?.value;
-            this.comunidad.esModerada = this.formComunidad.get('esModerada')?.value;
-            this.comunidad.descripcion = this.formComunidad.get('descripcion')?.value;
-            this.comunidad.nombre = this.formComunidad.get('nombre')?.value;
-            this.comunidad.cantidadMaximaMiembros = this.formComunidad.get('cantidadMaximaMiembros')?.value;
-            this.comunidad.eliminada = false;
-       */
-      this.comunidad = { ...this.comunidad, ...this.formComunidad.value };
+      this.comunidad.esPrivada = this.formComunidad.get('esPrivada')?.value;
+      this.comunidad.esModerada = this.formComunidad.get('esModerada')?.value;
+      this.comunidad.descripcion = this.formComunidad.get('descripcion')?.value;
+      this.comunidad.nombre = this.formComunidad.get('nombre')?.value;
+      this.comunidad.cantidadMaximaMiembros = this.formComunidad.get('cantidadMaximaMiembros')?.value;
+      this.comunidad.eliminada = false;
+
       // Guardar la comunidad y obtener su ID
       const dataPackage = await firstValueFrom(this.comunidadService.save(this.comunidad));
       this.comunidad = <Comunidad>dataPackage.data;

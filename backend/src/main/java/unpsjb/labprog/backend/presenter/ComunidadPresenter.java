@@ -21,6 +21,7 @@ import unpsjb.labprog.backend.business.ComunidadService;
 import unpsjb.labprog.backend.business.ScoreComunidad;
 import unpsjb.labprog.backend.business.UsuarioComunidadService;
 import unpsjb.labprog.backend.model.Comunidad;
+import unpsjb.labprog.backend.model.DTO.ExpulsionDTO;
 
 @RestController
 @RequestMapping("comunidades")
@@ -366,7 +367,7 @@ public ResponseEntity<Object> eliminarParticipante(@PathVariable Long idComunida
                                                    @RequestParam String tipo,
                                                    @RequestParam String fechaHoraExpulsion) {
     comunidadService.eliminarUsuario(motivo, tipo, fechaHoraExpulsion, idComunidad, idUsuario);
-    return Response.ok("Participante eliminado con exito.");
+    return Response.ok(null, "Participante eliminado con exito.");
 }
 
 @PutMapping("/editarExpulsion/{idComunidad}/{idUsuario}")
@@ -376,7 +377,7 @@ public ResponseEntity<Object> editarExpulsion(@PathVariable Long idComunidad,
                                               @RequestParam String tipo,
                                               @RequestParam String fechaHoraExpulsion) {
     comunidadService.editarExpulsion(motivo, tipo, fechaHoraExpulsion, idComunidad, idUsuario);
-    return Response.ok("Expulsión editada con éxito");
+    return Response.ok(null, "Expulsión editada con éxito");
 }
 
     @PostMapping("/actualizarUbicaciones")
@@ -411,5 +412,16 @@ public ResponseEntity<Object> editarExpulsion(@PathVariable Long idComunidad,
         } catch (Exception e) {
             return Response.error("", "Error al quitar rol: " + e.getMessage());
         }
+    }
+
+
+
+    @GetMapping("/estaExpulsado/{idUsuario}/{idComunidad}")
+    public ResponseEntity<Object> comunidadesFuturosPertenecientesAUnUsuario(@PathVariable Long idUsuario,
+            @PathVariable Long idComunidad) {
+
+        ExpulsionDTO expulsion= comunidadService.expulsionUsuario(idUsuario, idComunidad);
+
+        return Response.ok(expulsion);
     }
 }
