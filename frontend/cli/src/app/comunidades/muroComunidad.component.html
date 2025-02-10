@@ -33,6 +33,19 @@
       <div *ngIf="comunidad.ubicacion">
         <i class="bi bi-geo-alt-fill"></i> Ubicación: {{ comunidad.ubicacion }}
       </div>
+      <div>
+        <i class="bi" 
+          [ngClass]="comunidad.genero === 'femenino' ? 'bi-gender-female' :
+                    comunidad.genero === 'masculino' ? 'bi-gender-male' :
+                    comunidad.genero === 'sinGenero' ? 'bi-gender-ambiguous' :
+                    comunidad.genero === 'otros' ? 'bi-gender-trans' : 'bi-question-circle'">
+        </i> 
+        Género: 
+        {{ comunidad.genero === 'femenino' ? 'Femenino' :
+           comunidad.genero === 'masculino' ? 'Masculino' :
+           comunidad.genero === 'sinGenero' ? 'Sin género' :
+           comunidad.genero === 'otros' ? 'Otros' : 'Desconocido' }}
+      </div>
     </div>
   </div>
 
