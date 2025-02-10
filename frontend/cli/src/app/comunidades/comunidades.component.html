@@ -111,7 +111,12 @@
           <p>{{ comunidad.descripcion }}</p>
           <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
           <p>Ubicación: {{comunidad.ubicacion}}</p>
-
+          <p>Género: 
+            {{ comunidad.genero === 'femenino' ? 'Femenino' :
+               comunidad.genero === 'masculino' ? 'Masculino' :
+               comunidad.genero === 'sinGenero' ? 'Sin género' :
+               comunidad.genero === 'otros' ? 'Otros' : 'Desconocido' }}
+          </p>  
           <p>
             Moderación:
             <i class="fa"
@@ -146,7 +151,12 @@
           <p>{{ comunidad.descripcion }}</p>
           <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
           <p>Ubicación: {{comunidad.ubicacion}}</p>
-
+          <p>Género: 
+            {{ comunidad.genero === 'femenino' ? 'Femenino' :
+               comunidad.genero === 'masculino' ? 'Masculino' :
+               comunidad.genero === 'sinGenero' ? 'Sin género' :
+               comunidad.genero === 'otros' ? 'Otros' : 'Desconocido' }}
+          </p>       
           <p>
             Moderación:
             <i class="fa"

@@ -28,6 +28,12 @@
           <p><strong>Descripción:</strong> {{ evento.descripcion }}</p>
           <p><strong>Cantidad máxima de participantes:</strong> {{ evento.cantidadMaximaParticipantes }}</p>
           <p><strong>Ubicación:</strong> {{ evento.ubicacion }}</p>
+          <p><strong>Género:</strong>
+            {{ evento.genero === 'femenino' ? 'Femenino' :
+               evento.genero === 'masculino' ? 'Masculino' :
+               evento.genero === 'sinGenero' ? 'Sin género' :
+               evento.genero === 'otros' ? 'Otros' : 'Desconocido' }}
+          </p>          
 
           <!-- Mapa -->
           <div class="map-container py-3">
