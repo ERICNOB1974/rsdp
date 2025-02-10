@@ -1,21 +1,16 @@
 <div class="perfil-container card shadow-lg">
   <div class="muro-imagen-container">
-    <img *ngIf="comunidad.imagen && comunidad.imagen.startsWith('data:image')" 
-         [src]="comunidad.imagen" 
-         class="muro-imagen">
-    <img *ngIf="!comunidad.imagen" 
-         src="../../assets/comunidad.jpg" 
-         class="muro-imagen">
+    <img *ngIf="comunidad.imagen && comunidad.imagen.startsWith('data:image')" [src]="comunidad.imagen"
+      class="muro-imagen">
+    <img *ngIf="!comunidad.imagen" src="../../assets/comunidad.jpg" class="muro-imagen">
   </div>
 
   <!-- Datos de la Comunidad -->
   <div class="comunidad-info">
     <div class="titulo-container">
       <h1>{{ comunidad.nombre }}</h1>
-      <i *ngIf="esParte" class="bi" 
-         [ngClass]="{'bi-star-fill': esFavorito, 'bi-star': !esFavorito}" 
-         [ngStyle]="{'color': esFavorito ? 'gold' : 'gray', 'cursor': 'pointer'}" 
-         (click)="toggleFavorito()">
+      <i *ngIf="esParte" class="bi" [ngClass]="{'bi-star-fill': esFavorito, 'bi-star': !esFavorito}"
+        [ngStyle]="{'color': esFavorito ? 'gold' : 'gray', 'cursor': 'pointer'}" (click)="toggleFavorito()">
       </i>
     </div>
 
@@ -23,11 +18,12 @@
 
     <div class="info-grid">
       <div><i class="bi bi-calendar3"></i> Creada el: {{ comunidad.fechaDeCreacion | date: 'longDate' }}</div>
-      <div><i class="bi bi-people-fill"></i> Miembros: {{ comunidad.miembros }}/{{ comunidad.cantidadMaximaMiembros }}</div>
-      <div><i class="bi" [ngClass]="comunidad.esPrivada ? 'bi-lock-fill' : 'bi-unlock-fill'"></i> 
+      <div><i class="bi bi-people-fill"></i> Miembros: {{ comunidad.miembros }}/{{ comunidad.cantidadMaximaMiembros }}
+      </div>
+      <div><i class="bi" [ngClass]="comunidad.esPrivada ? 'bi-lock-fill' : 'bi-unlock-fill'"></i>
         {{ comunidad.esPrivada ? 'Privada' : 'Pública' }}
       </div>
-      <div><i class="bi" [ngClass]="comunidad.esModerada ? 'bi-shield-lock-fill' : 'bi-shield-check'"></i> 
+      <div><i class="bi" [ngClass]="comunidad.esModerada ? 'bi-shield-lock-fill' : 'bi-shield-check'"></i>
         {{ comunidad.esModerada ? 'Moderada' : 'Abierta' }}
       </div>
       <div *ngIf="comunidad.ubicacion">
@@ -49,16 +45,15 @@
     </div>
   </div>
 
-  <button *ngIf="!esCreador && !expulsado && !(comunidad.cantidadMaximaMiembros <= comunidad.miembros)"
-  class="btn btn-primary btn-block ingresar-button" 
-  [disabled]="isLoading || !(salirValid() || inscribirseValid())"
-  (click)="salirValid() ? salir() : (haSolicitadoIngreso ? cancelarSolicitud() : ingresar())">
-  
-  {{ salirValid() ? 'Abandonar comunidad' 
-      : haSolicitadoIngreso ? 'Cancelar solicitud de ingreso' 
-      : (comunidad.esPrivada ? 'Solicitar ingreso' : 'Ingresar') }}
-</button>
-<p style="margin-bottom: 15px;"></p>
+  <button *ngIf="!esCreador && !expulsado.estaExpulsado && !(comunidad.cantidadMaximaMiembros <= comunidad.miembros)"
+    class="btn btn-primary btn-block ingresar-button" [disabled]="isLoading || !(salirValid() || inscribirseValid())"
+    (click)="salirValid() ? salir() : (haSolicitadoIngreso ? cancelarSolicitud() : ingresar())">
+
+    {{ salirValid() ? 'Abandonar comunidad'
+    : haSolicitadoIngreso ? 'Cancelar solicitud de ingreso'
+    : (comunidad.esPrivada ? 'Solicitar ingreso' : 'Ingresar') }}
+  </button>
+  <p style="margin-bottom: 15px;"></p>
 
 
   <div *ngIf="expulsado?.estaExpulsado" class="alert alert-warning mt-4">
@@ -69,12 +64,12 @@
       ¿Por qué? <span [class]="mostrarMotivo ? 'arrow-up' : 'arrow-down'"></span>
     </button>
     <div *ngIf="mostrarMotivo" class="mt-2">
-      <strong>Motivo de expulsión:</strong> {{ expulsado?.motivoExpulsion }}
+      <strong>Motivo de expulsión:</strong> {{ expulsado.motivoExpulsion }}
     </div>
 
     <!-- Mostrar la fecha hasta que se considera expulsado, o si es permanente -->
     <div class="mt-2" *ngIf="expulsado?.tipo === 'temporal'">
-      <strong>Expulsado hasta:</strong> {{ expulsado?.fechaHoraExpulsion | date:'short' }}<br>
+      <strong>Expulsado hasta:</strong> {{ expulsado.fechaHoraExpulsion | date:'short' }}<br>
     </div>
 
     <!-- Mostrar que la expulsión es permanente -->

@@ -9,6 +9,9 @@
     <button [class.active]="estadoActual === 'expulsiones'" (click)="cambiarVista('expulsiones')">Expulsiones</button>
   </div>
 
+
+
+
   <!-- Contenido de los tabs -->
   <div class="tab-content">
     <!-- Tab de Miembros -->
@@ -31,10 +34,12 @@
               class="btn btn-success btn-sm" (click)="otorgarRolOrganizador(miembro.id)">Hacer Admin</button>
 
 
-            <button *ngIf="esCreador && miembro.id !== idUsuarioAutenticado && esModerador(miembro.id) && !esAdministrador(miembro.id)"
+            <button
+              *ngIf="esCreador && miembro.id !== idUsuarioAutenticado && esModerador(miembro.id) && !esAdministrador(miembro.id)"
               class="btn btn-warning btn-sm" (click)="quitarRolModerador(miembro.id)">Quitar Rol de Moderador</button>
 
-            <button *ngIf="esCreador && miembro.id !== idUsuarioAutenticado && !esModerador(miembro.id) && !esAdministrador(miembro.id)"
+            <button
+              *ngIf="esCreador && miembro.id !== idUsuarioAutenticado && !esModerador(miembro.id) && !esAdministrador(miembro.id)"
               class="btn btn-success btn-sm" (click)="otorgarRolModerador(miembro.id)">Hacer Moderador</button>
 
 
@@ -47,6 +52,11 @@
         </li>
       </ul>
     </div>
+
+
+
+
+
 
     <!-- Tab de Solicitudes -->
     <div *ngIf="estadoActual === 'solicitudes'" class="tab solicitudes-tab">
@@ -193,7 +203,7 @@
     <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancelar</button>
     <button type="button" class="btn btn-danger" (click)="confirmarExpulsion(); modal.close()"
       [disabled]="!motivoExpulsion || (tipoExpulsion === 'temporal' && (!fechaExpulsion || !horaExpulsion))">
-      Eliminar usuario
+      {{ expulsado?.estaExpulsado ? 'Editar expulsión' : 'Eliminar usuario' }}
     </button>
   </div>
 </ng-template>
