@@ -203,7 +203,7 @@
     <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancelar</button>
     <button type="button" class="btn btn-danger" (click)="confirmarExpulsion(); modal.close()"
       [disabled]="!motivoExpulsion || (tipoExpulsion === 'temporal' && (!fechaExpulsion || !horaExpulsion))">
-      Eliminar usuario
+      {{ expulsado?.estaExpulsado ? 'Editar expulsión' : 'Eliminar usuario' }}
     </button>
   </div>
 </ng-template>

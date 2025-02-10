@@ -40,8 +40,8 @@ export class ComunidadCreadorComponent implements OnInit {
     motivoExpulsion: string = '';
     usuarioEliminar: any;
     mostrarMotivo: boolean = false;
-    fechaExpulsion: Date | null = null;
-    horaExpulsion: Date | null = null;
+    fechaExpulsion: Date | string = '';
+    horaExpulsion: Date | string = '';
     tipoExpulsion: string = 'permanente'; // Valor predeterminado
     //expulsado: boolean = false; // Indica si el usuario fue expulsado
     estadoActual: string = 'miembros'; // Por defecto, se muestra la sección de Miembros
@@ -140,58 +140,53 @@ export class ComunidadCreadorComponent implements OnInit {
         }
         // Limpia los datos
         this.motivoExpulsion = '';
-        this.fechaExpulsion = null;
-        this.horaExpulsion = null;
+        this.fechaExpulsion = '';
+        this.horaExpulsion = '';
         this.usuarioEliminar = null;
     }
 
 
-    /*     abrirModalExpulsion(usuario: any): void {
-            this.usuarioEliminar = usuario; // Asigna el usuario al abrir el modal
-            this.modalService.open(this.modalExpulsion, {
-                centered: true, // Centra el modal
-                backdrop: 'static', // Impide cerrar al hacer clic fuera
-                keyboard: false, // Desactiva el cierre con teclado
-            });
-        }
-     */
+    async abrirModalExpulsion(usuario: any): Promise<void> {
+        this.usuarioEliminar = usuario;
 
+        await this.checkExpulsion(usuario.id); // Espera a que se complete la verificación
 
-
-
-
-    abrirModalExpulsion(usuario: any): void {
-        this.usuarioEliminar = usuario; // Asigna el usuario al abrir el modal
-
-        this.checkExpulsion(usuario.id);
-
-        if (this.expulsado) {
-            // Si el usuario está expulsado, muestra la información en el modal
+        if (this.expulsado?.estaExpulsado) {
             this.motivoExpulsion = this.expulsado.motivoExpulsion;
             this.fechaExpulsion = this.expulsado.fechaHoraExpulsion;
-            // Si la expulsión es permanente, la manejamos como fecha lejana
-            if (this.expulsado.tipo === 'permanente') {
-                this.tipoExpulsion = 'permanente';
-            } else {
-                this.tipoExpulsion = 'temporal';
-            }
+            this.tipoExpulsion = this.expulsado.tipo === 'permanente' ? 'permanente' : 'temporal';
+            const fechaHora = new Date(this.expulsado.fechaHoraExpulsion); // Asegurar que es un objeto Date
+
+            this.fechaExpulsion = fechaHora.toISOString().split('T')[0]; // "YYYY-MM-DD"
+            this.horaExpulsion = fechaHora.toTimeString().substring(0, 5); // "HH:mm"
+
+        } else {
+            this.motivoExpulsion = '';
+            this.tipoExpulsion = 'temporal';
+            this.fechaExpulsion = '';
+            this.horaExpulsion = '';
+        }
+        if (this.tipoExpulsion === 'permanente') {
+            this.fechaExpulsion = '';
+            this.horaExpulsion = '';
         }
 
         this.modalService.open(this.modalExpulsion, {
-            centered: true, // Centra el modal
-            backdrop: 'static', // Impide cerrar al hacer clic fuera
-            keyboard: false, // Desactiva el cierre con teclado
+            centered: true,
+            backdrop: 'static',
+            keyboard: false,
         });
     }
 
-    checkExpulsion(idUsuario: number) {
-        this.comunidadService.verificarExpulsion(idUsuario, this.comunidad.id)
-            .subscribe(response => {
-                this.expulsado = response.data as Expulsado;
-                console.info(this.expulsado);
-            });
+    checkExpulsion(idUsuario: number): Promise<void> {
+        return new Promise((resolve) => {
+            this.comunidadService.verificarExpulsion(idUsuario, this.comunidad.id)
+                .subscribe(response => {
+                    this.expulsado = response.data as Expulsado;
+                    resolve(); // Marca la promesa como completada
+                });
+        });
     }
-
 
 
 
@@ -447,7 +442,7 @@ export class ComunidadCreadorComponent implements OnInit {
         this.expulsados.push(expulsado);
         this.comunidadService.eliminarMiembroConMotivo(motivo, this.tipoExpulsion, fechaHoraExpulsion.toISOString(), idUsuario, this.comunidad.id)
             .subscribe(dataPackage => {
-                let mensaje = JSON.stringify(dataPackage.data); // Convierte a string
+                let mensaje = dataPackage.message;
                 this.snackBar.open(mensaje, 'Cerrar', {
                     duration: 3000,
                 });
@@ -457,7 +452,7 @@ export class ComunidadCreadorComponent implements OnInit {
     editarExpulsion(idUsuario: number, motivo: string, fechaHoraExpulsion: Date): void {
         this.comunidadService.editarExpulsionConMotivo(motivo, this.tipoExpulsion, fechaHoraExpulsion.toISOString(), idUsuario, this.comunidad.id)
             .subscribe(dataPackage => {
-                let mensaje = JSON.stringify(dataPackage.data); // Convierte a string
+                let mensaje = dataPackage.message; // Convierte a string
                 this.snackBar.open(mensaje, 'Cerrar', {
                     duration: 3000,
                 });
