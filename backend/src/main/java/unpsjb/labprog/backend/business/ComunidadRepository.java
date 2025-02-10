@@ -199,24 +199,27 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                         "CREATE (u)-[:MIEMBRO {fechaIngreso: $fechaIngreso}]->(c)")
         void quitarRolAdministrador(Long idMiembro, Long idComunidad, LocalDateTime fechaIngreso);
 
-        @Query("MATCH (c:Comunidad),(u:Usuario {nombreUsuario:$nombreUsuario})" +
-                        "WHERE NOT (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(u) " +
-                        "MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h) " +
-                        "WITH c, COUNT(DISTINCT h) AS numParticipantes, u " +
-                        "WHERE numParticipantes < c.cantidadMaximaMiembros " +
-                        "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c) " +
-                        "AND c.eliminada = false " +
-                        "AND ( " +
-                        "    (u.genero = 'masculino' AND c.genero IN ['masculino', 'sinGenero']) OR " +
-                        "    (u.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR " +
-                        "    (u.genero = 'otros' AND c.genero IN ['otros', 'sinGenero']) " +
-                        ") " +
-                        "RETURN c " +
-                        "ORDER BY numParticipantes DESC, c.nombre ASC " +
-                        "SKIP $skip " + // Paginación: omite el número de resultados especificado
-                        "LIMIT $limit") // Paginación: limita la cantidad de resultados devueltos
-        List<Comunidad> disponibles(@Param("nombreUsuario") String nombreUsuario, @Param("skip") int skip,
-                        @Param("limit") int limit);
+@Query("MATCH (c:Comunidad),(u:Usuario {nombreUsuario:$nombreUsuario}) " +
+       "WHERE NOT (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(u) " +
+       "MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h) " +
+       "WITH c, COUNT(DISTINCT h) AS numParticipantes, u " +
+       "WHERE numParticipantes < c.cantidadMaximaMiembros " +
+       "AND c.eliminada = false " +
+       "AND ( " +
+       "    (u.genero = 'masculino' AND c.genero IN ['masculino', 'sinGenero']) OR " +
+       "    (u.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR " +
+       "    (u.genero = 'otros' AND c.genero IN ['otros', 'sinGenero']) " +
+       ") " +
+       "OPTIONAL MATCH (u)-[r:EXPULSADO_COMUNIDAD]->(c) " +  // Usamos OPTIONAL MATCH para manejar la ausencia o presencia de la expulsión
+       "WHERE r IS NULL OR r.fechaHoraExpulsion < localdatetime() " +  // Verifica que la expulsión haya pasado si existe
+       "RETURN c " +
+       "ORDER BY numParticipantes DESC, c.nombre ASC " +
+       "SKIP $skip " +
+       "LIMIT $limit")
+List<Comunidad> disponibles(@Param("nombreUsuario") String nombreUsuario, @Param("skip") int skip,
+                            @Param("limit") int limit);
+
+
 
         @Query("MATCH (u:Usuario)-[r:MIEMBRO|ADMINISTRADA_POR|CREADA_POR|MODERADA_POR]-(c:Comunidad) " +
                         "WHERE id(u) = $idUsuario " +
@@ -646,8 +649,8 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
         @Query("""
                         MATCH (u:Usuario) WHERE id(u)=$idUsuario
                         MATCH (e:Comunidad) WHERE id(e)=$idComunidad
-                        MATCH (u)-[r:EXPULSADO_COMUNIDAD]-(e)
-                        
+                        MATCH (u)-[r:EXPULSADO_COMUNIDAD]-(e)                        
+                        WHERE r.fechaHoraExpulsion > localdatetime() - duration({hours: 3})
                         RETURN COUNT(r)>0
                         """)
         boolean estaExpulsado(Long idUsuario, Long idComunidad);
