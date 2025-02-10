@@ -438,7 +438,7 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
 
   eliminarEvento(): void {
     this.eventoService.eliminar(this.evento.id).subscribe(dataPackage => {
-      let mensaje = dataPackage.message;
+      let mensaje = <string><unknown>dataPackage.data
       this.snackBar.open(mensaje, 'Cerrar', {
         duration: 3000,
       });
