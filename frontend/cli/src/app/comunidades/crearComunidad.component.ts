@@ -370,6 +370,7 @@ export class CrearComunidadComponent {
       .openPopup();
 
     this.mapa.setView(latlng, 16);
+    console.info(this.comunidad);
   }
 
   isFormValid(): boolean {

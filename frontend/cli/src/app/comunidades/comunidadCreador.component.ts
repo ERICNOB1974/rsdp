@@ -300,7 +300,7 @@ export class ComunidadCreadorComponent implements OnInit {
         const nuevoMiembro = this.solicitudesPendientes.find(s => s.id === idUsuario);
         this.solicitudesPendientes = this.solicitudesPendientes.filter(s => s.id !== idUsuario);
         this.comunidadService.gestionarSolicitudIngreso(this.idUsuarioAutenticado, idUsuario, this.comunidad.id, aceptada).subscribe(dataPackage => {
-            let mensaje = dataPackage.message;
+            let mensaje = <string><unknown>dataPackage.data;
             this.getSolicitudesPendientes(); // Actualiza la lista de solicitudes pendientes
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000,
@@ -318,7 +318,7 @@ export class ComunidadCreadorComponent implements OnInit {
     eliminarComunidad(): void {
 
         this.comunidadService.remove(this.comunidad.id).subscribe(dataPackage => {
-            let mensaje = dataPackage.message;
+            let mensaje = <string><unknown>dataPackage.data;
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000,
             });
@@ -331,7 +331,7 @@ export class ComunidadCreadorComponent implements OnInit {
         const admin = this.miembros.find(s => s.id === idMiembro);
         this.administradores.push(admin);
         this.comunidadService.otorgarRolAdministrador(this.idUsuarioAutenticado, idMiembro, this.comunidad.id).subscribe(dataPackage => {
-            let mensaje = dataPackage.message;
+            let mensaje = <string><unknown>dataPackage.data;
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000,
             });
@@ -347,7 +347,7 @@ export class ComunidadCreadorComponent implements OnInit {
 
         //this.miembros.push(admin);
         this.comunidadService.quitarRolAdministrador(this.idUsuarioAutenticado, idMiembro, this.comunidad.id).subscribe(dataPackage => {
-            let mensaje = dataPackage.message;
+            let mensaje = <string><unknown>dataPackage.data;
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000,
             });
@@ -359,7 +359,7 @@ export class ComunidadCreadorComponent implements OnInit {
         const moderador = this.miembros.find(s => s.id === idMiembro);
         this.moderadores.push(moderador);
         this.comunidadService.otorgarRolModerador(this.idUsuarioAutenticado, idMiembro, this.comunidad.id).subscribe(dataPackage => {
-            let mensaje = dataPackage.message;
+            let mensaje = <string><unknown>dataPackage.data;
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000,
             });
@@ -372,7 +372,7 @@ export class ComunidadCreadorComponent implements OnInit {
         this.moderadores = this.moderadores.filter(s => s.id !== idMiembro);
         //this.miembros.push(admin);
         this.comunidadService.quitarRolModerador(this.idUsuarioAutenticado, idMiembro, this.comunidad.id).subscribe(dataPackage => {
-            let mensaje = dataPackage.message;
+            let mensaje = <string><unknown>dataPackage.data;
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000,
             });
@@ -523,7 +523,7 @@ export class ComunidadCreadorComponent implements OnInit {
     sacarExpulsion(idExpulsado: number): void {
         this.expulsados = this.expulsados.filter(s => s.id !== idExpulsado);
         this.comunidadService.eliminarBan(this.comunidad.id, idExpulsado).subscribe(dataPackage => {
-            let mensaje = dataPackage.message;
+            let mensaje = <string><unknown>dataPackage.data;
             this.snackBar.open(mensaje, 'Cerrar', {
                 duration: 3000,
             });
