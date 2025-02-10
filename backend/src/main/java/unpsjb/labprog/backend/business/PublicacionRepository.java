@@ -83,6 +83,9 @@ public interface PublicacionRepository extends Neo4jRepository<Publicacion, Long
         @Query("CALL { " +
                         "    MATCH (u:Usuario)-[:POSTEO]->(p:Publicacion) " +
                         "    WHERE id(u) = $usuarioId " +
+                        "      AND (NOT EXISTS { MATCH (p)-[:PUBLICADO_DENTRO_DE]->(:Comunidad) } " +
+                        "           OR EXISTS { MATCH (p)-[r:PUBLICADO_DENTRO_DE]->(:Comunidad) WHERE r.estado = 'Aprobada' }) " +
+                     
                         "    RETURN p " +
                         "    UNION " +
                         "    MATCH (u:Usuario)-[:ES_AMIGO_DE]->(amigo:Usuario)-[:POSTEO]->(p:Publicacion) " +
