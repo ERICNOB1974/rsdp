@@ -232,7 +232,7 @@ export class EditarComunidadComponent implements OnInit {
     this.etiquetaService.etiquetasEnComunidad(this.comunidad.id).subscribe(dataPackage => {
       this.etiquetasSeleccionadas = dataPackage.data as Etiqueta[];
       this.etiquetasOriginales = dataPackage.data as Etiqueta[];
-
+      console.info(this.etiquetasOriginales);
       // Accedemos al FormArray y lo llenamos con las etiquetas obtenidas
       const etiquetasFormArray = this.formComunidad.get('etiquetas') as FormArray;
       etiquetasFormArray.clear(); // Limpiar antes de agregar nuevas etiquetas

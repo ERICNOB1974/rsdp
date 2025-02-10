@@ -649,7 +649,7 @@ List<Comunidad> disponibles(@Param("nombreUsuario") String nombreUsuario, @Param
         @Query("""
                         MATCH (u:Usuario) WHERE id(u)=$idUsuario
                         MATCH (e:Comunidad) WHERE id(e)=$idComunidad
-                        MATCH (u)-[r:EXPULSADO_COMUNIDAD]-(e)
+                        MATCH (u)-[r:EXPULSADO_COMUNIDAD]-(e)                        
                         WHERE r.fechaHoraExpulsion > localdatetime() - duration({hours: 3})
                         RETURN COUNT(r)>0
                         """)
