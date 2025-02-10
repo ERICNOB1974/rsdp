@@ -384,7 +384,7 @@ export class EventosComponent implements OnInit {
     this.loadingParticipante = true;
     // Suponiendo que tienes un método que obtiene más comunidades con paginación
     this.eventoService
-      .participaUsuario(this.idUsuarioAutenticado, "", this.currentIndexEventosParticipante, this.cantidadPorPagina)
+      .participaUsuarioAFuturo(this.idUsuarioAutenticado, "", this.currentIndexEventosParticipante, this.cantidadPorPagina)
       .subscribe(
         async (dataPackage) => {
           const resultados = dataPackage.data as Evento[]

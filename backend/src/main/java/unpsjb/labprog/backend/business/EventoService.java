@@ -336,6 +336,11 @@ public class EventoService {
         String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
         return eventoRepository.participaUsuario(idUsuario, filtroNombre, skip, size);
     }
+    public List<Evento> participaUsuarioAFuturo(Long idUsuario, String nombreEvento, int page, int size) {
+        int skip = page * size; // Cálculo de los resultados a omitir
+        String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
+        return eventoRepository.participaUsuarioAFuturo(idUsuario, filtroNombre, skip, size);
+    }
 
     public List<ScoreEvento> sugerenciasDeEventosBasadosEnEventos2(String nombreUsuario) {
         Usuario usuario = usuarioService.findByNombreUsuario(nombreUsuario);
