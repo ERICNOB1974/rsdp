@@ -169,4 +169,17 @@ public class NotificacionService {
         messagingTemplate.convertAndSend("/topic/notificaciones", tipo);
 
     }
+
+    public String marcarLeidasTodasLasNotificaciones(Long idUsuario){
+        notificacionRepository.marcarLeidasTodasLasNotificaciones(idUsuario);
+        return "Notificaciones marcadas como leida correctamente";
+    }
+
+    public void eliminarTodasLasNotificaciones(Long idUsuario){
+        notificacionRepository.eliminarTodasLasNotificaciones(idUsuario);
+    }
+
+    public void eliminarNotificacionesEventosPasados(){
+        notificacionRepository.eliminarNotificacionesEventosPasados();
+    }
 }

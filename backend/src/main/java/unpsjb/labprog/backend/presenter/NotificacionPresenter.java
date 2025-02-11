@@ -45,4 +45,22 @@ public class NotificacionPresenter {
         }
         return Response.ok("notificacion ", +id + " borrada con exito");
     }
+
+      @RequestMapping(value = "/eliminarTodas/{idUsuario}", method = RequestMethod.DELETE)
+    public ResponseEntity<Object> eliminarTodasLasNotificaciones(@PathVariable("idUsuario") Long idUsuario) {
+        notificacionService.eliminarTodasLasNotificaciones(idUsuario);
+        return Response.ok("notificaciones del usuario ", +idUsuario + " borradas con exito");
+    }
+
+    @PostMapping("/marcarTodasLeidas/{idUsuario}")
+        public ResponseEntity<Object> marcarLeidasTodasLasNotificaciones(@PathVariable Long idUsuario) {
+        return Response.ok(notificacionService.marcarLeidasTodasLasNotificaciones(idUsuario));
+        }
+
+          @RequestMapping(value = "/eliminarEventosPasado", method = RequestMethod.DELETE)
+    public ResponseEntity<Object> eliminarNotificacionesEventosPasados() {
+        notificacionService.eliminarNotificacionesEventosPasados();
+        return Response.ok(null,"ok");
+    } 
+
 }
