@@ -70,5 +70,4 @@ public interface DiaRepository extends Neo4jRepository<Dia, Long> {
     "LIMIT 1")
     Long obtenerUltimoDiaDeRutina(Long rutinaId);
 
-
 }
