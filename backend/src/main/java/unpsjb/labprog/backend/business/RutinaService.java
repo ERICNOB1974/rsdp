@@ -408,23 +408,67 @@ public class RutinaService {
     }
 
     public List<Rutina> rutinasEtiquetas(List<String> etiquetas, String tipo, Long usuarioId) {
+        List<Rutina> rutinas;
+
         if ("disponibles".equalsIgnoreCase(tipo)) {
-            return rutinaRepository.rutinasEtiquetasDisponible(usuarioId, etiquetas);
+            rutinas = rutinaRepository.rutinasEtiquetasDisponible(usuarioId, etiquetas);
+            rutinas.removeIf(rutina -> {
+                if (diaRepository.verificarRelacionDiaFinalizado(rutina.getId(), usuarioId)) {
+                    Long idUltimoDia = diaRepository.obtenerUltimoDiaDeRutina(rutina.getId());
+                    Long idDiaActual = diaRepository.obtenerProgresoActual(rutina.getId(), usuarioId);
+                    return idUltimoDia == null || idDiaActual == null || !idUltimoDia.equals(idDiaActual);
+                }
+                return false;
+            });
+            return rutinas;
         } else if ("realizaRutina".equalsIgnoreCase(tipo)) {
-            return rutinaRepository.rutinasEtiquetasRealizaRutina(usuarioId, etiquetas);
+            rutinas = rutinaRepository.rutinasEtiquetasRealizaRutina(usuarioId, etiquetas);
+            rutinas.removeIf(rutina -> {
+                if (diaRepository.verificarRelacionDiaFinalizado(rutina.getId(), usuarioId)) {
+                    Long idUltimoDia = diaRepository.obtenerUltimoDiaDeRutina(rutina.getId());
+                    Long idDiaActual = diaRepository.obtenerProgresoActual(rutina.getId(), usuarioId);
+                    return idUltimoDia.equals(idDiaActual);
+                }
+                return false;
+            });
+            return rutinas;
         } else {
             return rutinaRepository.rutinasEtiquetas(etiquetas);
         }
     }
 
     public List<Rutina> rutinasNombre(String nombre, String tipo, Long usuarioId) {
+        List<Rutina> rutinas;
+    
         if ("disponibles".equalsIgnoreCase(tipo)) {
-            return rutinaRepository.rutinasNombreDisponibles(nombre, usuarioId);
+            rutinas = rutinaRepository.rutinasNombreDisponibles(nombre, usuarioId);
+            // Filtrar rutinas que no cumplan con la condición
+            rutinas.removeIf(rutina -> {
+                if (diaRepository.verificarRelacionDiaFinalizado(rutina.getId(), usuarioId)) {
+                    Long idUltimoDia = diaRepository.obtenerUltimoDiaDeRutina(rutina.getId());
+                    Long idDiaActual = diaRepository.obtenerProgresoActual(rutina.getId(), usuarioId);
+                    return idUltimoDia == null || idDiaActual == null || !idUltimoDia.equals(idDiaActual);
+                }
+                return false;
+            });
+            return rutinas;
         } else if ("realizaRutina".equalsIgnoreCase(tipo)) {
-            return rutinaRepository.rutinasNombreRealizaRutina(nombre, usuarioId);
+            rutinas = rutinaRepository.rutinasNombreRealizaRutina(nombre, usuarioId);
+            rutinas.removeIf(rutina -> {
+                if (diaRepository.verificarRelacionDiaFinalizado(rutina.getId(), usuarioId)) {
+                    Long idUltimoDia = diaRepository.obtenerUltimoDiaDeRutina(rutina.getId());
+                    Long idDiaActual = diaRepository.obtenerProgresoActual(rutina.getId(), usuarioId);
+                    return idUltimoDia.equals(idDiaActual);
+                }
+                return false;
+            });
+            return rutinas;
         } else {
-            return rutinaRepository.rutinasNombre(nombre);
+            rutinas = rutinaRepository.rutinasNombre(nombre);
+            return rutinas;
         }
+    
+    
     }
 
     public List<Rutina> rutinasCreadasPorUsuario(Long idUsuario, int offset, int limit) {

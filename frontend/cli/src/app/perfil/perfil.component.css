@@ -27,7 +27,7 @@
     color: white;
     border-radius: 15px;
     font-size: 12px;
-    text-transform: capitalize;
+    text-transform: none;
     transition: background-color 0.3s ease, transform 0.3s ease;
   }
   
