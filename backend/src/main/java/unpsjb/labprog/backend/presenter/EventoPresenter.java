@@ -179,14 +179,14 @@ public class EventoPresenter {
             @RequestParam(required = false) Long usuarioId,
             @RequestParam ZonedDateTime min,
             @RequestParam(required = false) ZonedDateTime max) {
-    
+
         // Si max es null, filtrar solo por fecha mínima en adelante
         if (max == null) {
             return Response.ok(eventoService.eventosDesdeFecha(tipo, usuarioId, min));
         }
-    
+
         return Response.ok(eventoService.eventosFecha(tipo, usuarioId, min, max));
-    }    
+    }
 
     @GetMapping("/filtrar/participantes")
     public ResponseEntity<Object> eventosPorParticipantes(
@@ -194,14 +194,13 @@ public class EventoPresenter {
             @RequestParam(required = false) Long usuarioId,
             @RequestParam int min,
             @RequestParam(required = false) Integer max) {
-    
+
         if (max == null) {
             max = Integer.MAX_VALUE; // Si no se pasa max, usamos el valor máximo posible
         }
-    
+
         return Response.ok(eventoService.eventosParticipantes(tipo, usuarioId, min, max));
     }
-    
 
     @RequestMapping(path = "/{nombreUsuario}/disponibles", method = RequestMethod.GET)
     public ResponseEntity<Object> eventosDisponibles(@PathVariable String nombreUsuario,
@@ -218,6 +217,7 @@ public class EventoPresenter {
             @RequestParam(required = false, defaultValue = "") String nombreEvento) {
         return Response.ok(eventoService.participaUsuario(idUsuario, nombreEvento, page, size));
     }
+
     @RequestMapping(path = "/participaUsuarioAFuturo/{idUsuario}", method = RequestMethod.GET)
     public ResponseEntity<Object> participaUsuarioAFuturo(
             @PathVariable Long idUsuario,
@@ -329,7 +329,7 @@ public class EventoPresenter {
         return Response.ok("Etiqueta eliminada exitosamente");
     }
 
-           @RequestMapping(path = "/eventosCreadosPorUsuarioFiltrados/{idUsuario}", method = RequestMethod.GET)
+    @RequestMapping(path = "/eventosCreadosPorUsuarioFiltrados/{idUsuario}", method = RequestMethod.GET)
     public ResponseEntity<Object> eventosCreadosPorUsuarioFiltrados(
             @PathVariable Long idUsuario,
             @RequestParam(defaultValue = "0") int page,
@@ -338,6 +338,13 @@ public class EventoPresenter {
         return Response.ok(eventoService.eventosCreadosPorUsuarioFiltrados(idUsuario, nombreEvento, page, size));
     }
 
-
+    @RequestMapping(path = "/busquedaEventosCreadosPorUsuarioGoogle/{idUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> busquedaEventosCreadosPorUsuarioGoogle(
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String nombreEvento) {
+        return Response.ok(eventoService.busquedaEventosCreadosPorUsuarioGoogle(idUsuario, nombreEvento, page, size));
+    }
 
 }
