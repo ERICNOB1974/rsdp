@@ -201,6 +201,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
 
 @Query("MATCH (c:Comunidad),(u:Usuario {nombreUsuario:$nombreUsuario}) " +
        "WHERE NOT (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(u) " +
+       "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c) " +
        "MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h) " +
        "WITH c, COUNT(DISTINCT h) AS numParticipantes, u " +
        "WHERE numParticipantes < c.cantidadMaximaMiembros " +
@@ -225,6 +226,7 @@ List<Comunidad> disponibles(@Param("nombreUsuario") String nombreUsuario, @Param
                         "WHERE id(u) = $idUsuario " +
                         "AND (toLower(c.nombre) CONTAINS toLower($nombreComunidad) OR $nombreComunidad = '') " +
                         "AND c.eliminada = false " +
+                        "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c) " +
                         "RETURN c ORDER BY r.fechaIngreso ASC, c.nombre DESC " +
                         "SKIP $skip " +
                         "LIMIT $limit")
@@ -475,7 +477,7 @@ List<Comunidad> disponibles(@Param("nombreUsuario") String nombreUsuario, @Param
                             AND NOT c.eliminada
                         MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h)
                         WITH c, COUNT(DISTINCT h) AS numParticipantes
-                        RETURN DISTINCT c
+                        RETURN DISTINCT c, numParticipantes
                         ORDER BY numParticipantes DESC
                         """)
         List<Comunidad> comunidadesCantidadParticipantesDisponibles(@Param("usuarioId") Long usuarioId,
@@ -498,7 +500,7 @@ List<Comunidad> disponibles(@Param("nombreUsuario") String nombreUsuario, @Param
                             AND NOT c.eliminada
                               MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h)
                         WITH c, COUNT(DISTINCT h) AS numParticipantes
-                        RETURN DISTINCT c
+                        RETURN DISTINCT c, numParticipantes
                         ORDER BY numParticipantes DESC
                         """)
         List<Comunidad> comunidadesCantidadParticipantesMiembro(@Param("usuarioId") Long usuarioId,
@@ -519,7 +521,7 @@ List<Comunidad> disponibles(@Param("nombreUsuario") String nombreUsuario, @Param
                             AND NOT c.eliminada
                          MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h)
                         WITH c, COUNT(DISTINCT h) AS numParticipantes
-                        RETURN DISTINCT c
+                        RETURN DISTINCT c, numParticipantes
                         ORDER BY numParticipantes DESC                         """)
         List<Comunidad> comunidadesCantidadParticipantes(@Param("usuarioId") Long usuarioId,
                         @Param("min") int min, @Param("max") int max);

@@ -229,10 +229,6 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
         @Query("MATCH (r:Rutina)-[:ETIQUETADA_CON]->(etiqueta:Etiqueta) " +
                         "WITH r, collect(etiqueta.nombre) AS etiquetasRutina " +
                         "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasRutina) " +
-                        "AND NOT EXISTS { " +
-                        "  MATCH (u:Usuario)-[:REALIZA_RUTINA]->(r) " +
-                        "  WHERE id(u) = $usuarioId " +
-                        "} " +
                         "RETURN r")
         List<Rutina> rutinasEtiquetasDisponible(@Param("usuarioId") Long usuarioId,
                         @Param("etiquetas") List<String> etiquetas);
@@ -251,23 +247,33 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
                         "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasRutina) " +
                         "RETURN c")
         List<Rutina> rutinasEtiquetas(@Param("etiquetas") List<String> etiquetas);
+        
+        @Query("MATCH (r:Rutina) WHERE toLower(r.nombre) CONTAINS toLower($nombre) " +
+        "AND NOT EXISTS { " +
+        "   MATCH (:Usuario {id: $usuarioId})-[rel:REALIZA_RUTINA]->(r) " +
+        "} RETURN r")
+ List<Rutina> rutinasNombreDisponibles(@Param("nombre") String nombre, @Param("usuarioId") Long usuarioId);
 
-        @Query("MATCH (r:Rutina) " +
-                        "WHERE toUpper(r.nombre) CONTAINS toUpper($nombre) " +
-                        "AND NOT EXISTS { " +
-                        "  MATCH (u:Usuario)-[:REALIZA_RUTINA]->(r) " +
-                        "  WHERE id(u) = $usuarioId " +
-                        "} " +
-                        "RETURN r")
-        List<Rutina> rutinasNombreDisponibles(String nombre, Long usuarioId);
+ @Query("MATCH (:Usuario {id: $usuarioId})-[rel:REALIZA_RUTINA]->(r:Rutina) " +
+        "WHERE toLower(r.nombre) CONTAINS toLower($nombre) RETURN r")
+ List<Rutina> rutinasNombreRealizaRutina(@Param("nombre") String nombre, @Param("usuarioId") Long usuarioId);
 
-        @Query("MATCH (r:Rutina)<-[:REALIZA_RUTINA]-(u:Usuario) " +
-                        "WHERE id(u) = $usuarioId AND toUpper(r.nombre) CONTAINS toUpper($nombre) " +
-                        "RETURN r")
-        List<Rutina> rutinasNombreRealizaRutina(String nombre, Long usuarioId);
+ @Query("MATCH (r:Rutina) WHERE toLower(r.nombre) CONTAINS toLower($nombre) RETURN r")
+ List<Rutina> rutinasNombre(@Param("nombre") String nombre);
 
-        @Query("MATCH (c:Rutina) WHERE toUpper(c.nombre) CONTAINS toUpper($nombre) RETURN c")
-        List<Rutina> rutinasNombre(String nombre);
+ @Query("MATCH (r:Rutina) " +
+        "WHERE toLower(r.nombre) CONTAINS toLower($nombre) " +
+        "AND EXISTS { " +
+        "   MATCH (:Usuario {id: $usuarioId})-[rel:REALIZA_RUTINA]->(r) " +
+        "   WITH r " +
+        "   MATCH (d:Dia) WHERE d.id = $idUltimoDia " +
+        "   MATCH (d2:Dia) WHERE d2.id = $idDiaActual " +
+        "   RETURN d.id = d2.id " +
+        "} RETURN r")
+ List<Rutina> rutinasConProgresoCompleto(@Param("nombre") String nombre, 
+                                         @Param("usuarioId") Long usuarioId, 
+                                         @Param("idUltimoDia") Long idUltimoDia, 
+                                         @Param("idDiaActual") Long idDiaActual);
 
         @Query("MATCH (r:Rutina), (u:Usuario) " +
                         "WHERE id(u) = $usuarioId AND id(r) = $rutinaId " +
