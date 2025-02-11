@@ -11,6 +11,8 @@
   font-family: 'Poppins', sans-serif;
 }
 
+
+
 body {
   min-height: 100%;
   background: #e9e6e6;
@@ -91,193 +93,6 @@ body {
   font-size: 1rem;
 }
 
-.notificacion-count {
-  position: absolute;
-  /* Posiciona el contador sobre el icono */
-  top: -10px;
-  /* Ajusta según sea necesario */
-  right: -9px;
-  /* Ajusta según sea necesario */
-  background-color: red;
-  /* Color de fondo rojo */
-  color: white;
-  /* Color de texto blanco */
-  border-radius: 50%;
-  /* Hace que el contador sea circular */
-  padding: 2px 5px;
-  /* Espaciado dentro del contador */
-  font-size: 12px;
-  /* Tamaño de fuente para el número */
-  min-width: 20px;
-  /* Ancho mínimo para que el contador tenga un buen aspecto */
-  text-align: center;
-  /* Centra el texto */
-}
-
-
-.notification-content {
-  display: flex;
-  align-items: center;
-}
-
-
-.notificacion-item:last-child {
-  border-bottom: none;
-  /* Sin borde en el último elemento */
-}
-
-.notification-icon {
-  font-size: 20px;
-  color: #ffffff;
-  cursor: pointer;
-}
-
-
-.notification-item p {
-  margin: 0;
-  flex: 1;
-}
-
-.delete-icon {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  cursor: pointer;
-  color: #f40c0c;
-  font-size: larger;
-}
-
-
-
-
-
-.new-notification-dot {
-  width: 8px;
-  height: 8px;
-  background-color: red;
-  border-radius: 50%;
-  margin-right: 8px;
-}
-
-
-/*flecha de notifiaciones*/
-.notifications-dropdown {
-  position: relative;
-  padding: 0 25px;
-  margin-left: auto;
-  /* Esto empuja las notificaciones hacia la derecha 
-  */
-  color: white;
-  
-}
-
-.notification-item.leida {
-  background-color: #e0e0e0;
-  /* Fondo gris más oscuro para leídas */
-}
-
-.notification-badge {
-  position: absolute;
-  top: -8px;
-  right: 10px;
-  padding: 2px 6px; 
-  background-color: #ff4444;
-  color: white;
-  border-radius: 50%;
-  font-size: 12px;
-  min-width: 18px;
-  text-align: center;
-}
-
-.notifications-menu {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  left: 0;
-  width: 300px;
-  background-color: white;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-  display: none;
-  max-height: 400px;
-  overflow-y: auto;
-  z-index: 1002;
-  color: rgb(0, 0, 0);
-  
-  /* Asegura que el menú desplegable esté por encima de otros elementos */
-}
-
-
-.fa-bell {
-  font-size: 20px;
-  color: #ffffff;
-  margin-right: 12px;
-  /* Esto moverá la campana más a la izquierda */
-  position: relative;
-  left: 0px;
-  /* Ajusta este valor para mover la campana más a la izquierda */
-}
-
-.notifications-menu {
-  display: block;
-}
-
-.notification-item {
-  padding: 10px 15px;
-  border-bottom: 1px solid #eee;
-  cursor: pointer;
-  position: relative;
-  
-}
-.notification-item {
-  background-color: #f5f5f5;
-  /* Fondo claro para no leídas */
-  padding: 10px;
-  margin: 5px 0;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-}
-
-.notification-item:not(.leida):hover {
-  background-color: #d0f0d0;
-  /* Verde claro para destacar no leídas */
-  transform: scale(0.98);
-  /* Ligeramente más grande */
-}
-
-/* Hover para leídas */
-.notification-item.leida:hover {
-  background-color: #c0c0c0;
-  /* Gris más claro para leídas */
-  transform: scale(1.01);
-  /* Ligeramente más grande */
-}
-
-.new-notification-dot {
-  width: 8px;
-  height: 8px;
-  background-color: #ff4444;
-  border-radius: 50%;
-  display: inline-block;
-  margin-left: 5px;
-}
-
-.nav-link {
-  position: relative;
-  /* Importante para posicionar el badge */
-  display: inline-block;
-}
-
-.no-notifications {
-  padding: 15px;
-  text-align: center;
-  font-size: 14px;
-  color: #666;
-}
 
 
 /* Ajustar el main-content para la nueva navbar */
@@ -351,81 +166,297 @@ body {
     align-items: center;
 
 }
-@media (max-width: 768px) {
-  .notifications-menu {
-      width: 90%; /* Ajusta el ancho en pantallas pequeñas */
-      left: 5%;
-  }
 
-  .notification-item p {
-      font-size: 14px; /* Aumenta la legibilidad en dispositivos móviles */
-  }
-
-  .notification-badge {
-      top: 0;
-      right: 0;
-      font-size: 10px; /* Ajusta el tamaño del badge en pantallas pequeñas */
-  }
+.notifications-header {
+  background: #f5f5f5;
+  padding: 5px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+  font-size: 16px;
 }
 
+.notifications-header .actions {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin-top: 5px;
+}
+
+.notifications-header .action-link {
+  color: #2196f3; /* Azul brillante */
+  font-size: 14px;
+  font-weight: 600; /* Fuente un poco más gruesa */
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  transition: all 0.3s ease; /* Transición suave */
+  padding: 5px 0; /* Un poco de espacio alrededor */
+}
+
+.notifications-header .action-link:hover {
+  color: #1976d2; /* Color más oscuro al pasar el mouse */
+}
+
+.notifications-header .action-link:before {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 50%;
+  background-color: #1976d2;
+  transition: width 0.3s ease, left 0.3s ease; /* Efecto suave de expansión */
+  transform: translateX(-50%);
+}
+
+.notifications-header .action-link:hover:before {
+  width: 100%; /* Expande la línea cuando se pasa el mouse */
+  
+}
+
+.notifications-header .action-link:active {
+  color: #1565c0;
+  transform: translateY(1px); /* Desplazamiento al hacer clic */
+}
+
+.notifications-header .action-link:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.5); /* Contorno sutil al hacer foco */
+}
+
+
+
+
 @media (max-width: 768px) {
   .notifications-menu {
-      width: 80%; /* Ocupa el 80% del ancho disponible */
-      left: 15%; /* Centra el menú */
-      right: auto; /* Elimina ajustes desde el borde derecho */
-      max-height: 50vh; /* Limita la altura en pantallas pequeñas */
-      overflow-y: auto; /* Permite desplazamiento si hay muchas notificaciones */
+    width: 70%; /* Ocupa el 80% del ancho disponible */
+    left: -20%; /* Centra el menú */
+    right: auto; /* Elimina ajustes desde el borde derecho */
+    max-height: 50vh; /* Limita la altura en pantallas pequeñas */
+    overflow-y: auto; /* Permite desplazamiento si hay muchas notificaciones */
   }
 
   .notification-item p {
-      font-size: 14px; /* Tamaño de fuente más pequeño para mejor legibilidad */
-      margin-right: 20px; /* Espacio suficiente para evitar solapamiento con íconos */
+    font-size: 14px; /* Tamaño de fuente más pequeño para mejor legibilidad */
+    margin-right: 20px; /* Espacio suficiente para evitar solapamiento con íconos */
   }
 
   .notification-badge {
-      top: 5px; /* Ajusta la posición superior del badge */
-      right: 10px; /* Ajusta la posición derecha del badge */
-      font-size: 10px; /* Tamaño de fuente reducido */
-      min-width: 15px; /* Reduce el tamaño mínimo del badge */
+    top: 5px; /* Ajusta la posición superior del badge */
+    right: 10px; /* Ajusta la posición derecha del badge */
+    font-size: 10px; /* Tamaño de fuente reducido */
+    min-width: 15px; /* Reduce el tamaño mínimo del badge */
   }
 
   .delete-icon {
-      font-size: 18px; /* Reduce el tamaño del ícono de eliminación */
-      right: 8px; /* Ajusta la posición para pantallas pequeñas */
-      top: 50%; /* Centra verticalmente */
-      transform: translateY(-50%); /* Mantiene el centro vertical */
+    font-size: 18px; /* Reduce el tamaño del ícono de eliminación */
+    right: 8px; /* Ajusta la posición para pantallas pequeñas */
+    top: 50%; /* Centra verticalmente */
+    transform: translateY(-50%); /* Mantiene el centro vertical */
   }
 
   .notification-item {
-      padding: 8px 40px 8px 10px; /* Espacio adecuado para íconos y texto */
-      border-radius: 5px; /* Mantiene bordes suaves */
+    padding: 8px 40px 8px 10px; /* Espacio adecuado para íconos y texto */
+    border-radius: 5px; /* Mantiene bordes suaves */
   }
 }
 
-
-.notification-content {
-  display: flex;
-  align-items: center;
-}
-
-.notifications-list {
-  max-height: 300px; /* Ajusta según el espacio disponible */
-  overflow-y: auto; /* Habilita el scroll vertical */
-}
 .notifications-menu {
   position: absolute;
   top: 100%;
   right: 0;
-  width: 250px; /* Ajusta el tamaño según tu preferencia */
+  width: 250px;
   background-color: #fff;
   border: 1px solid #ddd;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   padding: 10px;
-  max-height: 400px; /* Limita la altura de las notificaciones */
-  overflow-y: auto; /* Permite el scroll vertical */
+  max-height: 400px;
+  overflow-y: auto;
   border-radius: 4px;
-}
-.notifications-dropdown {
-  position: relative;
+  display: block;
+  color: rgb(0, 0, 0);
 }
 
+.notifications-dropdown {
+  position: relative;
+  padding: 0 25px;
+  margin-left: auto;
+  color: white;
+}
+
+.notification-item {
+  padding: 10px 15px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  position: relative;
+  background-color: #f5f5f5;
+  /* Fondo claro para no leídas */
+  margin: 5px 0;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+
+.notification-item:not(.leida):hover {
+  background-color: #d0f0d0;
+  /* Verde claro para destacar no leídas */
+  transform: scale(0.98);
+  /* Ligeramente más grande */
+}
+
+.notification-item.leida {
+  background-color: #e0e0e0;
+  /* Fondo gris más oscuro para leídas */
+}
+
+.notification-item.leida:hover {
+  background-color: #c0c0c0;
+  /* Gris más claro para leídas */
+  transform: scale(1.01);
+  /* Ligeramente más grande */
+}
+
+/* .new-notification-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #ff4444;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 5px;
+  margin-right: 8px;
+} */
+
+.new-notification-dot {
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.nav-link {
+  position: relative;
+  display: inline-block;
+}
+
+.no-notifications {
+  padding: 15px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+}
+
+.notificacion-count {
+  position: absolute;
+  top: -10px;
+  right: -9px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 5px;
+  font-size: 12px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.notificacion-item:last-child {
+  border-bottom: none;
+}
+
+.notification-icon {
+  font-size: 20px;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.notification-item p {
+  margin: 0;
+  flex: 1;
+}
+
+.delete-icon {
+  cursor: pointer;
+  color: #f40c0c;
+  font-size: 20px;
+  margin-top: 5px;
+  align-self: flex-end; /* Alinea el ícono a la izquierda */
+  margin-bottom: 5px; /* Añade un pequeño margen para que no quede pegado al borde inferior */
+}
+
+.notification-badge {
+  position: absolute;
+  top: -8px;
+  right: 10px;
+  padding: 2px 6px;
+  background-color: #ff4444;
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.fa-bell {
+  font-size: 20px;
+  color: #ffffff;
+  margin-right: 12px;
+  position: relative;
+  left: 0px;
+}
+
+.mark-all-read-button,
+.delete-all-button {
+  padding: 10px;
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 5px;
+  margin-top: 10px;
+  width: 100%;
+  text-align: center;
+}
+
+.mark-all-read-button:hover,
+.delete-all-button:hover {
+  background-color: #cc3333;
+}
+
+.mark-all-read-button:active,
+.delete-all-button:active {
+  transform: scale(0.98);
+}
+
+.new-notifications {
+  animation: shake 2s ease-in-out infinite alternate;
+  color: #f6b554;
+}
+
+@keyframes shake {
+  0% { transform: rotate(0); }
+  20% { transform: rotate(-5deg); }
+  40% { transform: rotate(5deg); }
+  60% { transform: rotate(-5deg); }
+  80% { transform: rotate(5deg); }
+  100% { transform: rotate(0); }
+}
+
+.notification-content {
+  flex: 1; /* Asegura que el contenido ocupe el espacio disponible */
+  margin-bottom: 20px; /* Para dejar espacio para el ícono */
+}
+
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+}
