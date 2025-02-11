@@ -9,26 +9,40 @@
 
             <div class="notifications-dropdown">
                 <a class="nav-link dropdown-toggle" style="cursor: pointer;" (click)="toggleMenu()">
-                    <span class="icon"><i class="fa fa-bell"></i></span>
+                    <span class="icon">
+                        <i class="fa fa-bell" [ngClass]="{'new-notifications': getNotificacionesNoLeidas().length > 0}"></i>
+                    </span>
                     <span *ngIf="getNotificacionesNoLeidas().length > 0" class="notification-badge">
                         {{ getNotificacionesNoLeidas().length }}
                     </span>
                 </a>
+            
                 <div class="notifications-menu" *ngIf="menuAbierto">
-                    <div class="notifications-list">
-                        <div *ngFor="let notificacion of notificaciones" class="notification-item"
-                        [ngClass]="{'leida': notificacion.leida}" (click)="manejarClickNotificacion(notificacion)">
-                        <div class="notification-content">
-                            <span *ngIf="!notificacion.leida" class="new-notification-dot"></span>
-                            <p>{{ notificacion.mensaje }}</p>
+                    <div class="notifications-header">
+                        <span>Notificaciones</span>
+                        <div class="actions">
+                            <a *ngIf="notificaciones.length > 0" (click)="marcarTodasLeidas()" class="action-link">Leer todas</a>
+                            <a *ngIf="notificaciones.length > 0" (click)="eliminarTodasLasNotificaciones()" class="action-link">Eliminar todas</a>
                         </div>
-                        <i class="fa fa-trash delete-icon"
-                        (click)="eliminarNotificacion(notificacion); $event.stopPropagation()"></i>
-                    </div>
                     </div>
                     
-                    <div *ngIf="getNotificacionesNoLeidas().length === 0" class="no-notifications">
-                        No hay notificaciones nuevas
+            
+                    <div class="notifications-list">
+                        <div *ngFor="let notificacion of notificaciones" 
+                             class="notification-item" 
+                             [ngClass]="{'leida': notificacion.leida}" 
+                             (click)="manejarClickNotificacion(notificacion)">                             
+                            <div class="notification-content">
+                                <span *ngIf="!notificacion.leida" class="new-notification-dot"></span>
+                                <p>{{ notificacion.mensaje }}</p>
+                            </div>
+                            <i class="fa fa-trash delete-icon" (click)="eliminarNotificacion(notificacion); $event.stopPropagation()"></i>
+                        </div>
+                    </div>
+                    
+            
+                    <div *ngIf="notificaciones.length === 0" class="no-notifications">
+                        No hay notificaciones
                     </div>
                 </div>
             </div>

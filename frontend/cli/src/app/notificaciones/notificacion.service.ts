@@ -28,4 +28,13 @@ export class NotificacionService {
     return this.http.delete<DataPackage>(`${this.notificacionesUrl}/eliminarNotififacion/${idNotificacion}`);
   }
 
+  marcarLeidasTodasLasNotificaciones(idUsuario: number): Observable<DataPackage> {
+    return this.http.post<DataPackage>(`${this.notificacionesUrl}/marcarTodasLeidas/${idUsuario}`, {});
+  }
+
+  eliminarTodas(idUsuario: number): Observable<DataPackage> {
+    return this.http.delete<DataPackage>(`${this.notificacionesUrl}/eliminarTodas/${idUsuario}`);
+  }
+
+  
 }
