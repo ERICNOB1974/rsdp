@@ -290,7 +290,6 @@ export class AppComponent {
     return new Promise((resolve, reject) => {
       this.notificacionService.marcarLeida(idNotificacion).subscribe(
         (dataPackage: DataPackage) => {
-          console.info("entre aca");
           if (dataPackage.status === 200) {
             // Encuentra y actualiza el estado de la notificación a "leída"
             const notificacionIndex = this.notificaciones.findIndex(n => n.id === idNotificacion);
@@ -311,6 +310,28 @@ export class AppComponent {
     });
   }
 
+  marcarTodasLeidas(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.notificacionService.marcarLeidasTodasLasNotificaciones(this.idUsuarioAutenticado).subscribe(
+        (dataPackage: DataPackage) => {
+          if (dataPackage.status === 200) {
+            // Marcar todas las notificaciones como leídas en la lista local
+            this.notificaciones.forEach(n => n.leida = true);
+            // Reordenar la lista después de actualizar las notificaciones
+            this.actualizarOrdenNotificaciones();
+            resolve();
+          } else {
+            reject(new Error('No se pudieron marcar todas las notificaciones como leídas'));
+          }
+        },
+        error => {
+          reject(error);
+        }
+      );
+    });
+  }
+  
+
   eliminarNotificacion(notificacion: Notificacion): Promise<void> {
     return new Promise((resolve, reject) => {
       this.notificacionService.eliminarNotificacion(notificacion.id).subscribe(
@@ -329,6 +350,26 @@ export class AppComponent {
       );
     });
   }
+
+  eliminarTodasLasNotificaciones(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.notificacionService.eliminarTodas(this.idUsuarioAutenticado).subscribe(
+        (dataPackage: DataPackage) => {
+          if (dataPackage.status === 200) {
+            // Vaciar la lista de notificaciones
+            this.notificaciones = [];
+            resolve();
+          } else {
+            reject(new Error('No se pudieron eliminar todas las notificaciones'));
+          }
+        },
+        error => {
+          reject(error);
+        }
+      );
+    });
+  }
+  
 
   // Reordenar las notificaciones para mantener las no leídas al inicio y las más recientes primero
   private actualizarOrdenNotificaciones(): void {

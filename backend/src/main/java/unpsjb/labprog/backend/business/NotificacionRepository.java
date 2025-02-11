@@ -153,4 +153,30 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
             "WHERE id(n) = $idNotificacion " +
             "DELETE n")
     void deleteById(Long idNotificacion);
+
+    @Query("MATCH (u:Usuario)-[n:NOTIFICACION]-() "+
+            "WHERE id(u) = $idUsuario "+
+            "AND n.leida = false "+
+            "SET n.leida = true")
+    void marcarLeidasTodasLasNotificaciones(Long idUsuario);
+
+        @Query("MATCH (u:Usuario)-[n:NOTIFICACION]-() "+
+            "WHERE id(u) = $idUsuario "+
+            "DELETE n")
+    void eliminarTodasLasNotificaciones(Long idUsuario);
+
+@Query("MATCH (e:Evento) "+ 
+       "WHERE e.fechaHora < localdatetime() "+
+    
+    // Eliminar notificaciones de eventos pasados
+    "MATCH (u:Usuario)-[n:NOTIFICACION]->(e) "+ 
+    "DELETE n "+
+    
+    // Eliminar invitaciones a eventos pasados
+    "WITH e "+
+    "MATCH (u1:Usuario)-[inv:INVITACION_EVENTO]-(u2:Usuario) "+
+    "WHERE inv.idEvento = id(e) "+
+    "DELETE inv")
+void eliminarNotificacionesEventosPasados();
+
 }

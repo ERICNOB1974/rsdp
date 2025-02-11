@@ -717,4 +717,27 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                      "DELETE r")
        void desetiquetarEvento(Long idEvento, Long etiquetaId);
 
+
+
+
+
+       @Query("MATCH (u:Usuario)-[:CREADO_POR]-(e:Evento) " +
+       "WHERE id(u) = $idUsuario " +
+       "AND e.eliminado = false " +
+       "MATCH (e)-[:ETIQUETADO_CON]->(t:Etiqueta) " +
+       "WHERE  (toLower(e.nombre) CONTAINS toLower($query) " +
+       "     OR toLower(u.nombre) CONTAINS toLower($query) " +
+       "     OR toLower(e.ubicacion) CONTAINS toLower($query) " +
+       "     OR toLower(e.descripcion) CONTAINS toLower($query) " +
+       "     OR toLower(t.nombre) CONTAINS toLower($query) " +
+       "     OR $query = '') " +
+       "RETURN DISTINCT e " +
+       "ORDER BY abs(duration.between(date(), e.fechaHora).days) ASC, e.nombre DESC " +
+       "SKIP $skip " +
+       "LIMIT $limit")
+List<Evento> busquedaEventosCreadosPorUsuarioGoogle(@Param("idUsuario") Long idUsuario,
+                                               @Param("query") String query,
+                                               @Param("skip") int skip,
+                                               @Param("limit") int limit);
+
 }
