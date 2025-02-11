@@ -46,6 +46,9 @@ export class RutinaDetailComponent implements OnInit {
       this.rutinaService.obtenerProgresoActual(<number><unknown>id).subscribe((response: DataPackage) => {
         this.progresoActual = response.data as unknown as number;
       });
+      this.rutinaService.esFavorita(this.rutina.id).subscribe(dataPackage => {
+        this.esFavorito = dataPackage.data as unknown as boolean;
+    });
     });
   }
 
