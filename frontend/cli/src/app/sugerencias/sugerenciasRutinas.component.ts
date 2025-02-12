@@ -7,6 +7,7 @@ import { RutinaService } from '../rutinas/rutina.service';
 import { AuthService } from '../autenticacion/auth.service';
 import { DataPackage } from '../data-package';
 import { PaginationComponent } from '../pagination/pagination.component';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
   selector: 'app-sugerencias',
@@ -26,7 +27,7 @@ export class SugerenciasRutinasComponent implements OnInit {
 
   constructor(
     private rutinaService: RutinaService,
-    private authService: AuthService,
+    private idEncryptorService: IdEncryptorService,
     private router: Router
   ) { }
 
@@ -115,6 +116,6 @@ export class SugerenciasRutinasComponent implements OnInit {
   }
 
   irADetallesDeLaRutina(id: number | undefined): void {
-    this.router.navigate(['/rutinas', id]); // Navega a la ruta /rutinas/:id
+    this.router.navigate(['/rutinas', this.idEncryptorService.encodeId(id!)]); // Navega a la ruta /rutinas/:id
   }
 }

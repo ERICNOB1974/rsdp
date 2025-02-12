@@ -8,6 +8,7 @@ import { Rutina } from './rutina';
 import { ComunidadService } from '../comunidades/comunidad.service';
 import { RutinaService } from './rutina.service';
 import { debounceTime, Subject } from 'rxjs';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
   selector: 'app-comunidades-usuario',
@@ -26,9 +27,8 @@ export class RutinasCreadasUsuarioComponent implements OnInit, OnDestroy {
   searchText: string = ""
   constructor(
     private rutinaService: RutinaService,
-    private authService: AuthService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private idEncryptorService: IdEncryptorService
   ) { }
 
   ngOnInit(): void {
@@ -140,7 +140,7 @@ export class RutinasCreadasUsuarioComponent implements OnInit, OnDestroy {
   
 
   irADetallesDeComunidad(id: number): void {
-    this.router.navigate(['/rutinas', id]); // Navega a la ruta /comunidades/:id
+    this.router.navigate(['/rutinas', this.idEncryptorService.encodeId(id)]); // Navega a la ruta /comunidades/:id
   }
 
   onScroll(): void {

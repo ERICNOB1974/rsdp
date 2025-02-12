@@ -23,6 +23,7 @@ import { cantidadParticipantesValidator } from '../eventos/validacionesEvento';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatOptionModule } from '@angular/material/core';
 import { MatSelectModule } from '@angular/material/select';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
   selector: 'app-crear-comunidad',
@@ -72,7 +73,9 @@ export class CrearComunidadComponent {
     private etiquetaService: EtiquetaService,
     private router: Router,
     private ubicacionService: UbicacionService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private idEncryptorService: IdEncryptorService
+
   ) {
     this.formComunidad = this.formBuilder.group(
       {
@@ -172,8 +175,9 @@ export class CrearComunidadComponent {
         this.showMessage = false;
       }, 10000);
     }
+    const idCifrado = this.idEncryptorService.encodeId(this.comunidad.id);
 
-    this.router.navigate([`comunidad-muro/${this.comunidad.id}`], {
+    this.router.navigate([`comunidad-muro`, idCifrado], {
       state: { mensajeSnackBar: 'Comunidad creada correctamente.' }
     });
 

@@ -9,6 +9,7 @@ import { Comentario } from '../comentarios/Comentario';
 import { PublicacionDto } from './PublicacionesDto';
 import { ComentarioService } from '../comentarios/comentario.service';
 import { WebSocketService } from '../tiempoReal/webSocketService';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
   selector: 'app-home',
@@ -39,7 +40,9 @@ export class HomeComponent implements OnInit {
     private comentarioService: ComentarioService,
     private router: Router,
     private authService: AuthService,
-    private webSocketService: WebSocketService // Inyectar el servicio
+    private webSocketService: WebSocketService,
+    private idEncryptorService: IdEncryptorService
+
   ) { }
 
   ngOnInit() {
@@ -168,17 +171,23 @@ export class HomeComponent implements OnInit {
 
 
   goToPublicacionDetail(id: number) {
-    this.router.navigate(['/publicacion', id]);
+    const idCifrado = this.idEncryptorService.encodeId(id);
+
+    this.router.navigate(['/publicacion', idCifrado]);
   }
 
 
   goToPerfil(usuarioId: number) {
-    this.router.navigate(['/perfil', usuarioId]); // Ajusta la ruta según tu configuración de enrutamiento
+    const idCifrado = this.idEncryptorService.encodeId(usuarioId);
+
+    this.router.navigate(['/perfil', idCifrado]); // Ajusta la ruta según tu configuración de enrutamiento
   }
 
   goToComunidad(comunidadId: number): void {
     // Lógica para redirigir a la comunidad
-    this.router.navigate(['/comunidad-muro', comunidadId]);
+    const idCifrado = this.idEncryptorService.encodeId(comunidadId);
+
+    this.router.navigate(['/comunidad-muro', idCifrado]);
   }
 
   onScroll(): void {

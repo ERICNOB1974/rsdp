@@ -6,6 +6,7 @@ import { EventoService } from '../eventos/evento.service';
 import { Evento } from '../eventos/evento';
 import { PaginationComponent } from '../pagination/pagination.component';
 import { DataPackage } from '../data-package';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
   selector: 'app-sugerencias',
@@ -26,7 +27,8 @@ export class SugerenciasEventosComponent implements OnInit {
   isModalOpen: boolean = false; // Controla si el modal está abierto
   eventoSeleccionado: any = null; // Almacena la comunidad seleccionada
   constructor(private eventoService: EventoService,
-    private router: Router) { }
+    protected idEncryptorService: IdEncryptorService
+  ) { }
 
   ngOnInit(): void {
     this.getEventos();
