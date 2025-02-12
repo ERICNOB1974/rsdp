@@ -108,45 +108,45 @@ export class CalendarioEventosComponent implements OnInit {
 
   updateNavigationButtons(): void {
     if (!this.fullcalendar || !this.fullcalendar.getApi()) return; // Asegurar que el calendario esté listo
-  
+
     const calendarApi = this.fullcalendar.getApi();
     const currentDate = calendarApi.getDate(); // Fecha actual en la vista
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     currentDate.setHours(0, 0, 0, 0);
-  
+
     const prevButton = document.querySelector('.fc-customPrev-button');
     const nextButton = document.querySelector('.fc-customNext-button');
-  
+
     const isMonthView = calendarApi.view.type === 'dayGridMonth';
     const isDayView = calendarApi.view.type === 'dayGridDay';
-  
+
     const previousActivityDate = this.getPreviousActivityDate();
     this.disablePrev = !previousActivityDate;
-    
-  
+
+
     // 🔹 Habilitar "siguiente" solo si hay una actividad futura
     this.disableNext = !this.getNextActivityDate();
-  
+
     if (prevButton) {
       prevButton.classList.toggle('disabled', this.disablePrev);
       this.disablePrev ? prevButton.setAttribute('disabled', 'true') : prevButton.removeAttribute('disabled');
     }
-  
+
     if (nextButton) {
       nextButton.classList.toggle('disabled', this.disableNext);
       this.disableNext ? nextButton.setAttribute('disabled', 'true') : nextButton.removeAttribute('disabled');
     }
   }
-  
-  
-  
-  
+
+
+
+
 
 
   getFilteredEventDates(): string[] {
     if (!this.calendarOptions.events) return [];
-  
+
     // Filtra solo los eventos visibles según los filtros activados
     const filteredEvents = (this.calendarOptions.events as any[]).filter(event => {
       return (
@@ -155,23 +155,23 @@ export class CalendarioEventosComponent implements OnInit {
         (event.extendedProps.type === 'recomendado' && this.showRecomendados)
       );
     });
-  
+
     // Obtener fechas únicas ordenadas en formato YYYY-MM-DD
     const uniqueDates = Array.from(
       new Set(filteredEvents.map(event => new Date(event.start).toISOString().split('T')[0]))
     ).sort();
-    
+
     return uniqueDates;
   }
-  
+
 
 
   navigateToNextActivity(): void {
     const calendarApi = this.fullcalendar?.getApi();
     if (!calendarApi || this.disableNext) return;  // Evita la ejecución si el botón está deshabilitado
-  
+
     const currentView = calendarApi.view.type;
-  
+
     if (currentView === 'dayGridDay') {
       const nextActivityDate = this.getNextActivityDate();
       if (nextActivityDate) {
@@ -180,16 +180,16 @@ export class CalendarioEventosComponent implements OnInit {
     } else {
       calendarApi.next();
     }
-  
+
     this.updateNavigationButtons(); // Actualizar botones después de la navegación
   }
-  
+
   navigateToPreviousActivity(): void {
     const calendarApi = this.fullcalendar?.getApi();
     if (!calendarApi || this.disablePrev) return;  // Evita la ejecución si el botón está deshabilitado
-  
+
     const currentView = calendarApi.view.type;
-  
+
     if (currentView === 'dayGridDay') {
       const previousActivityDate = this.getPreviousActivityDate();
       if (previousActivityDate) {
@@ -198,40 +198,40 @@ export class CalendarioEventosComponent implements OnInit {
     } else {
       calendarApi.prev();
     }
-  
+
     this.updateNavigationButtons(); // Actualizar botones después de la navegación
   }
-  
+
 
   getNextActivityDate(): string | null {
     const eventDates = this.getFilteredEventDates();
     if (eventDates.length === 0) return null;  // No hay fechas de actividad
-  
+
     const calendarApi = this.fullcalendar?.getApi();
     if (!calendarApi) return null;
-  
+
     const currentDate = new Date(calendarApi.getDate()).toISOString().split('T')[0]; // Obtener la fecha actual desde el calendario
-  
+
     // Buscar la primera fecha futura disponible en el calendario
     const nextDate = eventDates.find(date => date > currentDate) || null;
     return nextDate;
   }
-  
+
   getPreviousActivityDate(): string | null {
     const eventDates = this.getFilteredEventDates();
     if (eventDates.length === 0) return null;  // No hay fechas de actividad
-  
+
     const calendarApi = this.fullcalendar?.getApi();
     if (!calendarApi) return null;
-  
+
     const currentDate = new Date(calendarApi.getDate()).toISOString().split('T')[0]; // Fecha actual en vista
-  
+
     // Buscar la última fecha anterior a la actual
     const previousDate = [...eventDates].reverse().find(date => date < currentDate) || null;
     return previousDate;
-}
+  }
 
-  
+
 
 
   // Asegúrate de que el código de la lupa se quede dentro de esta función
@@ -250,11 +250,11 @@ export class CalendarioEventosComponent implements OnInit {
   goToToday(): void {
     const calendarApi = this.fullcalendar?.getApi();
     if (!calendarApi) return;
-  
+
     calendarApi.today(); // Mueve el calendario a la fecha actual
     this.updateNavigationButtons(); // Asegurar que los botones se actualicen correctamente
   }
-  
+
 
   ngOnInit() {
 
@@ -380,11 +380,21 @@ export class CalendarioEventosComponent implements OnInit {
         const eventos = dataPackage.data as Evento[];
 
         eventos.forEach(evento => {
+          //esto hice yo para poner bien la fecha eric, hay que adaptar lo del endDate
+          evento.fechaDeCreacion = new Date(evento.fechaDeCreacion);
+          const fechaUTC = new Date(evento.fechaHora);
+          evento.fechaHora = new Date(fechaUTC.getTime() + 3 * 60 * 60 * 1000);
+
+
           const startDate = new Date(evento.fechaHora);
           startDate.setHours(0, 0, 0, 0);
           const endDate = new Date(startDate);
           endDate.setDate(endDate.getDate() + 1);
           endDate.setMilliseconds(endDate.getMilliseconds() - 1);
+
+
+
+
 
           calendarEvents.push({
             title: evento.nombre,
@@ -412,11 +422,19 @@ export class CalendarioEventosComponent implements OnInit {
           const data = dataPackage.data as { data: any[], totalPaginas: number };
           data.data.forEach(item => {
             const evento = item.evento;
+
+            //esto hice yo para poner bien la fecha eric
+            evento.fechaDeCreacion = new Date(evento.fechaDeCreacion);
+            const fechaUTC = new Date(evento.fechaHora);
+            evento.fechaHora = new Date(fechaUTC.getTime() + 3 * 60 * 60 * 1000);
+
             const startDate = new Date(evento.fechaHora);
             startDate.setHours(0, 0, 0, 0);
             const endDate = new Date(startDate);
             endDate.setDate(endDate.getDate() + 1);
             endDate.setMilliseconds(endDate.getMilliseconds() - 1);
+
+
 
             calendarEvents.push({
               title: evento.nombre,
@@ -472,11 +490,11 @@ export class CalendarioEventosComponent implements OnInit {
     if (type === 'rutina') {
       const idCifrado = this.idEncryptorService.encodeId(rutinaId);
 
-      this.router.navigate([`/rutinas`,idCifrado]);
+      this.router.navigate([`/rutinas`, idCifrado]);
     } else if (type === 'evento' || type === 'recomendado') {
       const idCifrado = this.idEncryptorService.encodeId(id);
 
-      this.router.navigate([`/eventos`,idCifrado]);
+      this.router.navigate([`/eventos`, idCifrado]);
     }
   }
 }
