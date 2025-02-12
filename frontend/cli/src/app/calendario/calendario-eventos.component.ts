@@ -12,6 +12,7 @@ import { RutinaService } from '../rutinas/rutina.service';
 import { Rutina } from '../rutinas/rutina';
 import { FormsModule } from '@angular/forms';
 import { NgClass, NgIf } from '@angular/common';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
   selector: 'app-calendario',
@@ -38,7 +39,9 @@ export class CalendarioEventosComponent implements OnInit {
   constructor(
     private eventosService: EventoService,
     private router: Router,
-    private rutinaService: RutinaService
+    private rutinaService: RutinaService,
+    private idEncryptorService: IdEncryptorService
+
   ) {
     this.calendarOptions = {
       plugins: [dayGridPlugin, interactionPlugin],
@@ -467,9 +470,13 @@ export class CalendarioEventosComponent implements OnInit {
     const { type, rutinaId, id } = arg.event.extendedProps;
 
     if (type === 'rutina') {
-      this.router.navigate([`/rutinas/${rutinaId}`]);
+      const idCifrado = this.idEncryptorService.encodeId(rutinaId);
+
+      this.router.navigate([`/rutinas`,idCifrado]);
     } else if (type === 'evento' || type === 'recomendado') {
-      this.router.navigate([`/eventos/${id}`]);
+      const idCifrado = this.idEncryptorService.encodeId(id);
+
+      this.router.navigate([`/eventos`,idCifrado]);
     }
   }
 }

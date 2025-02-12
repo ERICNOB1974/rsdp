@@ -1,13 +1,13 @@
 <div class="form-container">
   <div class="header" style="display: flex; align-items: center; margin-bottom: 20px;">
-    <a *ngIf="publicadoPor" [routerLink]="['/perfil', publicadoPor.id]"
+    <a *ngIf="publicadoPor" [routerLink]="['/perfil',  idEncryptorService.encodeId(publicadoPor.id)]"
       style="text-decoration: none; display: flex; align-items: center;">
       <img [src]="publicadoPor.fotoPerfil ? publicadoPor.fotoPerfil : '../../assets/usuario.png'"
         style="width: 50px; height: 50px; border-radius: 50%; margin-right: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
     </a>
 
     <div>
-      <a *ngIf="publicadoPor" [routerLink]="['/perfil', publicadoPor.id]"
+      <a *ngIf="publicadoPor" [routerLink]="['/perfil',  idEncryptorService.encodeId(publicadoPor.id)]"
         style="text-decoration: none; color: #333; font-weight: bold; font-size: 16px;">
         {{ publicadoPor.nombreUsuario }}
       </a>
@@ -80,13 +80,13 @@
 
         <!-- Encabezado del comentario -->
         <div class="comment-header" style="display: flex; align-items: center; margin-bottom: 10px;">
-          <a [routerLink]="['/perfil', com.usuario.id]"
+          <a [routerLink]="['/perfil',  idEncryptorService.encodeId(com.usuario.id)]"
             style="text-decoration: none; display: flex; align-items: center;">
             <img [src]="com.usuario.fotoPerfil ? com.usuario.fotoPerfil : '../../assets/usuario.png'"
               style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px; border: 2px solid #ddd;">
           </a>
           <div>
-            <a [routerLink]="['/perfil', com.usuario.id]" style="text-decoration: none; color: #007bff;">
+            <a [routerLink]="['/perfil',  idEncryptorService.encodeId(com.usuario.id)]" style="text-decoration: none; color: #007bff;">
               <span class="username" style="font-size: 14px; font-weight: bold; padding: 10px;">{{
                 com.usuario.nombreUsuario }}</span>
             </a>
@@ -160,13 +160,13 @@
           style="margin-top: 15px; margin-left: 20px; padding: 15px; background-color: #e7f3ff; border-radius: 8px; position: relative;">
           <!-- Encabezado de la respuesta -->
           <div class="reply-header" style="display: flex; align-items: center; margin-bottom: 5px;">
-            <a [routerLink]="['/perfil', reply.usuario.id]"
+            <a [routerLink]="['/perfil', idEncryptorService.encodeId(reply.usuario.id)]"
               style="text-decoration: none; display: flex; align-items: center;">
               <img [src]="reply.usuario.fotoPerfil || '../assets/usuario.png'"
                 style="width: 30px; height: 30px; border-radius: 50%; margin-right: 8px; border: 1px solid #bbb;">
             </a>
             <div>
-              <a [routerLink]="['/perfil', reply.usuario.id]" style="text-decoration: none; color: #0056b3;">
+              <a [routerLink]="['/perfil', idEncryptorService.encodeId(reply.usuario.id)]" style="text-decoration: none; color: #0056b3;">
                 <span class="username" style="font-size: 12px; font-weight: bold;">{{ reply.usuario.nombreUsuario
                   }}</span>
               </a>
@@ -234,13 +234,13 @@
 
   <div class="modal-body likes-list-container" (scroll)="onScroll($event)">
     <div *ngFor="let usuario of usuariosLikes" class="like-item d-flex align-items-center p-2 border-bottom">
-      <a [routerLink]="['/perfil', usuario.id]" style="text-decoration: none; display: flex; align-items: center;"
+      <a [routerLink]="['/perfil', idEncryptorService.encodeId(usuario.id)]" style="text-decoration: none; display: flex; align-items: center;"
         (click)="cerrarModal()">
         >
         <img [src]="usuario.fotoPerfil ? usuario.fotoPerfil : '../../assets/usuario.png' "
           style="width: 30px; height: 30px; border-radius: 50%; margin-right: 8px;">
       </a>
-      <a [routerLink]="['/perfil', usuario.id]" style="text-decoration: none; color: #000000;" (click)="closeModal()">
+      <a [routerLink]="['/perfil', idEncryptorService.encodeId(usuario.id)]" style="text-decoration: none; color: #000000;" (click)="closeModal()">
         >
         <span class="username" style="font-size: 12px; font-weight: bold;">{{ usuario.nombreUsuario }}</span>
       </a>

@@ -6,6 +6,7 @@ import { DataPackage } from '../data-package';
 import { RutinaEstadoService } from './rutinaEstado.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { lastValueFrom } from 'rxjs';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
   selector: 'app-rutina-detail',
@@ -25,7 +26,9 @@ export class RutinaDetailComponent implements OnInit {
               private route: ActivatedRoute,
               private rutinaEstadoService: RutinaEstadoService,
               private snackBar: MatSnackBar,
-              private router: Router) { }
+              private router: Router,
+              private idEncryptorService: IdEncryptorService
+            ) { }
 
   ngOnInit(): void {
     const state = window.history.state;
@@ -34,7 +37,16 @@ export class RutinaDetailComponent implements OnInit {
         duration: 3000,
       });
     }
-    const id = (this.route.snapshot.paramMap.get('id')!);
+    //const id = (this.route.snapshot.paramMap.get('id')!);
+
+    const idCifrado = this.route.snapshot.paramMap.get('id');
+
+    let id: number | string = 'new'; // Inicializamos con 'new' para que la comparación funcione
+
+    if (idCifrado && idCifrado !== 'new') {
+        id = this.idEncryptorService.decodeId(idCifrado).toString();
+    }
+
 
     // Obtiene la rutina ordenada
     this.rutinaService.getRutinaOrdenada(id).subscribe((response: DataPackage) => {
@@ -66,13 +78,13 @@ export class RutinaDetailComponent implements OnInit {
         console.error('Error al iniciar la rutina', error);
       }
     );
-    this.router.navigate([`rutinas/hacer/${rutinaId}`]); 
+    this.router.navigate([`rutinas/hacer/`, this.idEncryptorService.encodeId(rutinaId)]); 
   }
 
   reiniciarRutina() {
     const rutinaId = Number(this.route.snapshot.paramMap.get('id')!);
     this.rutinaEstadoService.setReiniciarRutina(true); // Establece el estado de reinicio en el servicio
-    this.router.navigate([`rutinas/hacer/${rutinaId}`]); 
+    this.router.navigate([`rutinas/hacer/`,this.idEncryptorService.encodeId(rutinaId)]); 
   }
 
   // Método para determinar el texto del botón

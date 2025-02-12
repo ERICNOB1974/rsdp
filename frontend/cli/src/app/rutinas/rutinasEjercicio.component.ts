@@ -7,6 +7,7 @@ import { Ejercicio } from './ejercicio';
 import { DataPackage } from '../data-package';
 import { CommonModule, Location } from '@angular/common';
 import { RutinaEstadoService } from './rutinaEstado.component';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
     selector: 'app-ejercicios',
@@ -34,12 +35,22 @@ export class RutinasEjercicioComponent implements OnInit, OnDestroy {
         private rutinaService: RutinaService,
         private route: ActivatedRoute, 
         private rutinaEstadoService: RutinaEstadoService,
-        private location: Location
+        private location: Location,
+        private idEncryptorService: IdEncryptorService
+
     ) {}
 
     ngOnInit(): void {
-        const idRutina = Number(this.route.snapshot.paramMap.get('id'));
-    
+        let idRutina = 0;
+        const idCifrado = this.route.snapshot.paramMap.get('id');
+
+        let id: number | string = 'new'; // Inicializamos con 'new' para que la comparación funcione
+
+        if (idCifrado && idCifrado !== 'new') {
+            id = this.idEncryptorService.decodeId(idCifrado);
+        }
+        idRutina=Number(id);
+        
         // Verifica si se debe reiniciar la rutina
         if (this.rutinaEstadoService.getReiniciarRutina()) {
             console.info('Reiniciando rutina...');
@@ -55,12 +66,10 @@ export class RutinasEjercicioComponent implements OnInit, OnDestroy {
     }
     
     obtenerRutina(idRutina: number, diaActualId: number): void {
-        console.info('Solicitando rutina con ID:', idRutina);
         this.rutinaService.getRutinaYejercicios(idRutina).subscribe((dataPackage: DataPackage) => {
             if (dataPackage.status === 200) {
                 this.rutina = dataPackage.data as Rutina;
                 this.dias = this.rutina.dias || [];
-                console.info('Rutina obtenida:', this.rutina);
     
                 this.dias.sort((a, b) => (a.orden || 0) - (b.orden || 0));
     
@@ -107,8 +116,6 @@ export class RutinasEjercicioComponent implements OnInit, OnDestroy {
                     this.diaActual = this.dias[this.diaActualIndex];
                     this.ejercicioActualIndex = 0;
                     this.ejercicioActual = this.diaActual.ejercicios[this.ejercicioActualIndex] || null;
-                    console.info('Día actual después del reinicio:', this.diaActual);
-                    console.info('Ejercicio actual después del reinicio:', this.ejercicioActual);
                 } else {
                     this.diaActualIndex = 0;
                     this.diaActual = this.dias[this.diaActualIndex];

@@ -4,7 +4,7 @@
   <div *ngFor="let comunidad of results" class="event-item">
     <div class="event-card">
       <img [src]="comunidad.imagen ? comunidad.imagen : '../../assets/comunidad.jpg'" alt="{{ comunidad.nombre }}"
-        class="event-image"[routerLink]="['/comunidad-muro', comunidad.id]" />
+        class="event-image"[routerLink]="['/comunidad-muro', idEncryptorService.encodeId(comunidad.id)]" />
       <div class="event-content">
         <h3 class="event-name">{{ comunidad.nombre }}</h3>
         <p class="event-motive" *ngIf="motivos[comunidad.id]">

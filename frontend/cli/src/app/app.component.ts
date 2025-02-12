@@ -11,6 +11,7 @@ import { ThemeService } from './themeservice';
 import { UsuarioService } from './usuarios/usuario.service';
 import { Usuario } from './usuarios/usuario';
 import { WebSocketService } from './tiempoReal/webSocketService';
+import { IdEncryptorService } from './idEcnryptorService';
 
 
 //import { ToastrService } from 'ngx-toastr';
@@ -64,6 +65,7 @@ export class AppComponent {
     private authService: AuthService,
     private notificacionService: NotificacionService,
     private webSocketService: WebSocketService, // Inyectar el servicio
+    private idEncryptorService: IdEncryptorService
 
   ) { }
 
@@ -170,7 +172,10 @@ export class AppComponent {
   }
   navigateToMiPerfil() {
     if (this.idUsuarioAutenticado) {
-      this.router.navigate(['/perfil', this.idUsuarioAutenticado]); // Navega al perfil del usuario autenticado
+      const idCifrado = this.idEncryptorService.encodeId(this.idUsuarioAutenticado);
+      this.router.navigate(['/perfil', idCifrado]);
+
+     // this.router.navigate(['/perfil', this.idUsuarioAutenticado]); // Navega al perfil del usuario autenticado
     }
   }
 
@@ -212,65 +217,67 @@ export class AppComponent {
   navegarPorNotificacion(notificacion: Notificacion): void {
     // Determinar la URL de destino basado en el tipo de notificación
     let urlDestino: string;
+    const idCifrado = this.idEncryptorService.encodeId(notificacion.entidadId);
+
 
     switch (notificacion.tipo) {
       case 'ACEPTACION_PRIVADA':
-        urlDestino = `/comunidad-muro/${notificacion.entidadId}`;
+        urlDestino = `/comunidad-muro`;
         break;
       case 'UNION_PUBLICA':
-        urlDestino = `/comunidad-muro/${notificacion.entidadId}`;
+        urlDestino = `/comunidad-muro`;
         break;
       case 'INVITACION_COMUNIDAD':
-        urlDestino = `/comunidad-muro/${notificacion.entidadId}`;
+        urlDestino = `/comunidad-muro`;
         break;
       case 'EXPULSION_COMUNIDAD':
         // Notificaciones relacionadas con comunidades
-        urlDestino = `/comunidad-muro/${notificacion.entidadId}`;
+        urlDestino = `/comunidad-muro`;
         break;
 
       case 'INSCRIPCION_A_EVENTO':
-        urlDestino = `/eventos/${notificacion.entidadId}`;
+        urlDestino = `/eventos`;
         break;
       case 'RECORDATORIO_EVENTO_PROXIMO':
-        urlDestino = `/eventos/${notificacion.entidadId}`;
+        urlDestino = `/eventos`;
         break;
       case 'MODIFICACION_EVENTO':
-        urlDestino = `/eventos/${notificacion.entidadId}`;
+        urlDestino = `/eventos`;
         break;
       case 'INVITACION_EVENTO':
-        urlDestino = `/eventos/${notificacion.entidadId}`;
+        urlDestino = `/eventos`;
         break;
       case 'EXPULSION_EVENTO':
         // Notificaciones relacionadas con eventos
-        urlDestino = `/eventos/${notificacion.entidadId}`;
+        urlDestino = `/eventos`;
         break;
 
       case 'SOLICITUD_ENTRANTE':
-        urlDestino = `/perfil/${notificacion.entidadId}`;
+        urlDestino = `/perfil`;
         break;
       case 'SOLICITUD_ACEPTADA':
         // Notificaciones relacionadas con usuarios
-        urlDestino = `/perfil/${notificacion.entidadId}`;
+        urlDestino = `/perfil`;
         break;
 
       case 'LIKE':
-        urlDestino = `/publicacion/${notificacion.entidadId}`;
+        urlDestino = `/publicacion`;
         break;
       case 'ARROBA_PUBLICACION':
-        urlDestino = `/publicacion/${notificacion.entidadId}`;
+        urlDestino = `/publicacion`;
         break;
       case 'ARROBA_COMENTARIO':
-        urlDestino = `/publicacion/${notificacion.entidadId}`;
+        urlDestino = `/publicacion`;
         break;
       case 'LIKE_COMENTARIO':
-        urlDestino = `/publicacion/${notificacion.entidadId}`;
+        urlDestino = `/publicacion`;
         break;
       case 'RESPUESTA':
-        urlDestino = `/publicacion/${notificacion.entidadId}`;
+        urlDestino = `/publicacion`;
         break;
       case 'COMENTARIO':
         // Notificaciones relacionadas con publicaciones
-        urlDestino = `/publicacion/${notificacion.entidadId}`;
+        urlDestino = `/publicacion`;
         break;
 
       default:
@@ -279,7 +286,7 @@ export class AppComponent {
     }
 
     // Navegar a la URL de destino
-    this.router.navigate([urlDestino]);
+    this.router.navigate([urlDestino, idCifrado]);
   }
 
   getNotificacionesNoLeidas(): Notificacion[] {

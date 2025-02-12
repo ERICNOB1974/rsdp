@@ -20,6 +20,7 @@ import { MatInputModule } from '@angular/material/input';
 import { NgxMaskDirective } from 'ngx-mask';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
   selector: 'app-crearRutina',
@@ -53,10 +54,10 @@ export class CrearRutinaComponent implements OnInit {
   constructor(
     private rutinaService: RutinaService,
     private etiquetaService: EtiquetaService,
-    private formBuilder: FormBuilder,
     private cdr: ChangeDetectorRef,
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private idEncryptorService: IdEncryptorService
   ) {
 
   }
@@ -292,7 +293,7 @@ export class CrearRutinaComponent implements OnInit {
 
       this.rutinaService.guardarRutinaOptimizada(rutinaCompleta).subscribe(dataPackage => {
         this.idRutina = <number><unknown>dataPackage.data;
-        this.router.navigate([`rutinas/${this.idRutina}`], {
+        this.router.navigate([`rutinas`,this.idEncryptorService.encodeId(this.idRutina)], {
           state: { mensajeSnackBar: 'Rutina creada correctamente.' }
         });
       });

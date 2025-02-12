@@ -11,6 +11,7 @@ import { Usuario } from '../usuarios/usuario';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { Expulsado } from './expulsado';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
     selector: 'app-comunidad-admin',
@@ -65,7 +66,8 @@ export class ComunidadCreadorComponent implements OnInit {
         private router: Router,
         private authService: AuthService,  // Inyecta el AuthService
         private snackBar: MatSnackBar, // Para mostrar notificaciones
-        public modalService: NgbModal
+        public modalService: NgbModal,
+        private idEncryptorService: IdEncryptorService
     ) { }
 
     async ngOnInit(): Promise<void> {
@@ -192,7 +194,15 @@ export class ComunidadCreadorComponent implements OnInit {
 
 
     getComunidad(): void {
-        const id = this.route.snapshot.paramMap.get('id');
+        //const id = this.route.snapshot.paramMap.get('id');
+
+        const idCifrado = this.route.snapshot.paramMap.get('id');
+
+        let id: number | string = 'new'; // Inicializamos con 'new' para que la comparación funcione
+
+        if (idCifrado && idCifrado !== 'new') {
+            id = this.idEncryptorService.decodeId(idCifrado).toString();
+        }
         if (!id || isNaN(parseInt(id, 10))) {
             this.router.navigate(['comunidades/crearComunidad']);
         } else {
@@ -423,7 +433,9 @@ export class ComunidadCreadorComponent implements OnInit {
 
     // Método para editar la comunidad
     editarComunidad(): void {
-        this.router.navigate(['/editarComunidad/', this.comunidad.id]);
+        const idCifrado = this.idEncryptorService.encodeId(this.comunidad.id);
+
+        this.router.navigate(['/editarComunidad/', idCifrado]);
     }
 
     esAdministrador(idMiembro: number): boolean {
@@ -500,7 +512,9 @@ export class ComunidadCreadorComponent implements OnInit {
     }
 
     verPerfil(usuario: Usuario): void {
-        this.router.navigate(['/perfil', usuario.id]); // Navega al perfil del usuario
+        const idCifrado = this.idEncryptorService.encodeId(usuario.id);
+
+        this.router.navigate(['/perfil',idCifrado]); // Navega al perfil del usuario
     }
 
 

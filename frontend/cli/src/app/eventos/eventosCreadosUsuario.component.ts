@@ -7,6 +7,7 @@ import { Evento } from './evento';
 import { EventoService } from './evento.service';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
 import { debounceTime, Subject } from 'rxjs';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
   selector: 'app-eventos-usuario',
@@ -27,7 +28,9 @@ export class EventosCreadosUsuarioComponent implements OnInit {
   constructor(
     private eventoService: EventoService,
     private etiquetaService: EtiquetaService,
-    private router: Router
+    private router: Router,
+    private idEncryptorService: IdEncryptorService
+
   ) { }
 
   ngOnInit(): void {
@@ -167,7 +170,9 @@ export class EventosCreadosUsuarioComponent implements OnInit {
   }
 
   irADetallesDelEvento(id: number): void {
-    this.router.navigate(['/eventos', id]);
+    const idCifrado = this.idEncryptorService.encodeId(id);
+
+    this.router.navigate(['/eventos', idCifrado]);
   }
 
   onScroll(): void {

@@ -19,7 +19,7 @@
 
     <div *ngFor="let usuario of obtenerUsuariosParaMostrar()" class="event-item">
       <div class="event-card" >
-        <img [src]="usuario.fotoPerfil ? usuario.fotoPerfil : '../../assets/usuario.png'" alt="{{ usuario.nombreUsuario }}" class="event-image" [routerLink]="['/perfil', usuario.id]"/>
+        <img [src]="usuario.fotoPerfil ? usuario.fotoPerfil : '../../assets/usuario.png'" alt="{{ usuario.nombreUsuario }}" class="event-image" [routerLink]="['/perfil', idEncryptorService.encodeId(usuario.id)]"/>
         <div class="event-content">
           <h3>{{ usuario.nombreReal }}</h3>
           <p>{{ usuario.nombreUsuario }}</p>

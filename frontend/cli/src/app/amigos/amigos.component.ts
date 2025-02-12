@@ -7,6 +7,7 @@ import { Usuario } from '../usuarios/usuario';
 import { DataPackage } from '../data-package';
 import { AuthService } from '../autenticacion/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
   selector: 'app-amigos',
@@ -44,7 +45,9 @@ export class AmigosComponent implements OnInit {
     private authService: AuthService,  // Inyecta el AuthService
     private snackBar: MatSnackBar,
     private router: Router,
-    private cdr: ChangeDetectorRef // Inyectar ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private idEncryptorService: IdEncryptorService
+
   ) { }
 
   ngOnInit(): void {
@@ -225,7 +228,9 @@ export class AmigosComponent implements OnInit {
 
 
   verPerfil(usuario: Usuario): void {
-    this.router.navigate(['/perfil', usuario.id]); // Navega al perfil del usuario
+    const idCifrado = this.idEncryptorService.encodeId(usuario.id);
+
+    this.router.navigate(['/perfil', idCifrado]); // Navega al perfil del usuario
   }
 
   buscarUsuarios(texto: string): void {

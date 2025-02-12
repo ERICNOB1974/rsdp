@@ -17,6 +17,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { EventoService } from '../eventos/evento.service';
 import { Comentario } from '../comentarios/Comentario';
 import { Expulsado } from './expulsado';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
     selector: 'app-editar-comunidad',
@@ -122,7 +123,9 @@ export class MuroComunidadComponent implements OnInit {
         private snackBar: MatSnackBar,
         private cdr: ChangeDetectorRef,
         private dialog: MatDialog,
-        private eventoService: EventoService
+        private eventoService: EventoService,
+        protected idEncryptorService: IdEncryptorService
+
 
     ) { }
 
@@ -219,7 +222,9 @@ export class MuroComunidadComponent implements OnInit {
     }
 
     irADetalleEvento(eventoId: number): void {
-        this.router.navigate([`eventos/${eventoId}`]);
+        const idCifrado = this.idEncryptorService.encodeId(eventoId);
+
+        this.router.navigate([`/eventos`, idCifrado]);
     }
 
     abrirModalInvitarAmigos(): void {
@@ -522,13 +527,21 @@ export class MuroComunidadComponent implements OnInit {
 
     getComunidad(): Promise<void> {
         return new Promise((resolve) => {
-            const id = this.route.snapshot.paramMap.get('id');
+            //const id = this.route.snapshot.paramMap.get('id');
+            const idCifrado = this.route.snapshot.paramMap.get('id');
+
+            let id: number | string = 'new'; // Inicializamos con 'new' para que la comparación funcione
+        
+            if (idCifrado && idCifrado !== 'new') {
+                id = this.idEncryptorService.decodeId(idCifrado).toString();
+            }
+        
             if (!id || isNaN(parseInt(id, 10)) || id === 'new') {
                 this.router.navigate(['comunidades/crearComunidad']);
                 resolve();
             } else {
                 this.comunidadService.get(parseInt(id)).subscribe(async dataPackage => {
-                    this.comunidadService.puedeVer(parseInt(id)).subscribe(dataP => {
+                    this.comunidadService.puedeVer(Number(id)).subscribe(dataP => {
                         this.visible = <boolean><unknown>dataP.data
                     });
                     this.visible = true
@@ -555,14 +568,17 @@ export class MuroComunidadComponent implements OnInit {
 
 
     irADetallePublicacion(idPublicacion: number): void {
-        this.router.navigate(['/publicacion', idPublicacion]);
+        const idCifrado = this.idEncryptorService.encodeId(idPublicacion);
+        this.router.navigate(['/publicacion', idCifrado]);
     }
 
     publicarEnComunidad(): void {
+
         this.router.navigate(['/publicacion'], {
             queryParams: {
+                
                 tipo: 'comunidad',
-                idComunidad: this.idComunidad
+                idComunidad:  this.idEncryptorService.encodeId(this.idComunidad)
             }
         });
 
@@ -679,13 +695,18 @@ export class MuroComunidadComponent implements OnInit {
 
 
     gestionarComunidad() {
-        this.router.navigate(['/creadorComunidad', this.comunidad.id]);
+        const idCifrado = this.idEncryptorService.encodeId(this.comunidad.id);
+        this.router.navigate(['/creadorComunidad', idCifrado]);
     }
 
 
     crearEvento() {
         if (this.esParte) {
-            this.router.navigate([`/comunidades/${this.comunidad.id}/eventos/crearEvento`]);
+            const idCifrado = (this.idEncryptorService.encodeId(this.comunidad.id));
+            console.log(this.comunidad.id);
+            console.log(idCifrado);
+
+            this.router.navigate(['/comunidades', idCifrado, 'eventos', 'crearEvento']);
         }
     }
 
@@ -772,7 +793,9 @@ export class MuroComunidadComponent implements OnInit {
         // Aquí envías la actualización al backend para registrar el cambio.
     }
     goToPerfil(usuarioId: number) {
-        this.router.navigate(['/perfil', usuarioId]); // Ajusta la ruta según tu configuración de enrutamiento
+        const idCifrado = this.idEncryptorService.encodeId(usuarioId);
+
+        this.router.navigate(['/perfil', idCifrado]); // Ajusta la ruta según tu configuración de enrutamiento
     }
 
 
