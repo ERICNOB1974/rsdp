@@ -164,6 +164,12 @@ export class EventoService {
   return this.http.get<DataPackage>(url);
 
   }
+  busquedaEventosCreadosPorUsuarioGoogle(nombreEvento: string,page: number, size: number): Observable<DataPackage> {
+    const url = `${this.eventosUrl}/busquedaEventosCreadosPorUsuarioGoogle/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
+    (nombreEvento ? `&nombreEvento=${nombreEvento}` : '');  // Agregar solo si no está vacío
+  return this.http.get<DataPackage>(url);
+
+  }
   
   
  
