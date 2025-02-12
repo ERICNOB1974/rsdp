@@ -143,7 +143,7 @@
             {{ evento.genero === 'femenino' ? 'Femenino' :
                evento.genero === 'masculino' ? 'Masculino' :
                evento.genero === 'sinGenero' ? 'Sin género' :
-               evento.genero === 'otros' ? 'Otros' : 'Desconocido' }}
+               evento.genero === 'otro' ? 'Otro' : 'Desconocido' }}
           </p>          
           <p>{{ evento.fechaHora | date: 'MMM d, y, h:mm a' }}</p> <!-- Formato de fecha -->
           <div class="etiquetas-container">
@@ -175,7 +175,7 @@
             {{ evento.genero === 'femenino' ? 'Femenino' :
                evento.genero === 'masculino' ? 'Masculino' :
                evento.genero === 'sinGenero' ? 'Sin género' :
-               evento.genero === 'otros' ? 'Otros' : 'Desconocido' }}
+               evento.genero === 'otro' ? 'Otro' : 'Desconocido' }}
           </p>          
 
           <div class="etiquetas-container">

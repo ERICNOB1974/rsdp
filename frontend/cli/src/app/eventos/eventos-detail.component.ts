@@ -287,14 +287,12 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
 
   generoCompatible(): boolean {
     if (!this.evento || !this.generoUsuario) {
-      return false; // Si no hay datos aún, deshabilita el botón por defecto
+      return false;
     }
-    const generoEvento = this.evento.genero; // Asume que `this.evento.genero` contiene el género del evento
+    const generoEvento = this.evento.genero; 
     return !(
-      (this.generoUsuario === "masculino" && (generoEvento === "femenino" || generoEvento === "otros")) ||
-      (this.generoUsuario === "femenino" && (generoEvento === "masculino" || generoEvento === "otros")) ||
-      (this.generoUsuario === "otros" && (generoEvento === "masculino" || generoEvento === "femenino"))
-    );
+      (this.generoUsuario === "masculino" && (generoEvento === "femenino" || generoEvento === "otro")) ||
+      (this.generoUsuario === "femenino" && (generoEvento === "masculino" || generoEvento === "otro"))     );
   }
 
   botonInvitar(): boolean {

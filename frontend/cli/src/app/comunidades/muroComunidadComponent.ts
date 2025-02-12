@@ -57,6 +57,7 @@ export class MuroComunidadComponent implements OnInit {
     amigosEnComunidad: any[] = [];
     amigosYaInvitados: any[] = [];
     listaReferencia: any[] = [];
+    generoUsuario!: string;
     cantidadMiembros: number = 0;
     esFavorito: boolean = false;
     cargaInicial: number = 5; // Número inicial de elementos visibles
@@ -158,6 +159,9 @@ export class MuroComunidadComponent implements OnInit {
             }
             this.cargarAmigos();
         });
+        this.usuarioService.generoUsuario().subscribe((response: DataPackage) => {
+            this.generoUsuario = response.data as unknown as string; 
+          });
     }
 
     toggleMotivo() {
@@ -627,6 +631,15 @@ export class MuroComunidadComponent implements OnInit {
         });
     }
 
+    generoCompatible(): boolean {
+        if (!this.comunidad || !this.generoUsuario) {
+          return false;
+        }
+        const generoComunidad = this.comunidad.genero;
+        return !(
+          (this.generoUsuario === "masculino" && (generoComunidad === "femenino" || generoComunidad === "otro")) ||
+          (this.generoUsuario === "femenino" && (generoComunidad === "masculino" || generoComunidad === "otro"))     );
+      }
 
     salir(): void {
         this.isLoading = true; // Activar el estado de carga

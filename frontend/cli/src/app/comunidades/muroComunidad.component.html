@@ -30,29 +30,35 @@
         <i class="bi bi-geo-alt-fill"></i> Ubicación: {{ comunidad.ubicacion }}
       </div>
       <div>
-        <i class="bi" 
-          [ngClass]="comunidad.genero === 'femenino' ? 'bi-gender-female' :
+        <i class="bi" [ngClass]="comunidad.genero === 'femenino' ? 'bi-gender-female' :
                     comunidad.genero === 'masculino' ? 'bi-gender-male' :
                     comunidad.genero === 'sinGenero' ? 'bi-gender-ambiguous' :
-                    comunidad.genero === 'otros' ? 'bi-gender-trans' : 'bi-question-circle'">
-        </i> 
-        Género: 
+                    comunidad.genero === 'otro' ? 'bi-gender-trans' : 'bi-question-circle'">
+        </i>
+        Género:
         {{ comunidad.genero === 'femenino' ? 'Femenino' :
-           comunidad.genero === 'masculino' ? 'Masculino' :
-           comunidad.genero === 'sinGenero' ? 'Sin género' :
-           comunidad.genero === 'otros' ? 'Otros' : 'Desconocido' }}
+        comunidad.genero === 'masculino' ? 'Masculino' :
+        comunidad.genero === 'sinGenero' ? 'Sin género' :
+        comunidad.genero === 'otro' ? 'Otro' : 'Desconocido' }}
       </div>
     </div>
   </div>
 
-  <button *ngIf="!esCreador && !expulsado.estaExpulsado && !(comunidad.cantidadMaximaMiembros <= comunidad.miembros)"
-    class="btn btn-primary btn-block ingresar-button" [disabled]="isLoading || !(salirValid() || inscribirseValid())"
-    (click)="salirValid() ? salir() : (haSolicitadoIngreso ? cancelarSolicitud() : ingresar())">
+  <div [attr.data-bs-toggle]="!generoCompatible() ? 'tooltip' : null"
+    [attr.title]="!generoCompatible() ? 'No puedes inscribirte porque no es acorde a tu género' : null"
+    class="d-inline-block w-100">
 
-    {{ salirValid() ? 'Abandonar comunidad'
-    : haSolicitadoIngreso ? 'Cancelar solicitud de ingreso'
-    : (comunidad.esPrivada ? 'Solicitar ingreso' : 'Ingresar') }}
-  </button>
+    <button *ngIf="!esCreador && !expulsado.estaExpulsado && !(comunidad.cantidadMaximaMiembros <= comunidad.miembros)"
+      class="btn btn-primary btn-block ingresar-button"
+      [disabled]="isLoading || !(salirValid() || inscribirseValid()) || !generoCompatible()"
+      (click)="salirValid() ? salir() : (haSolicitadoIngreso ? cancelarSolicitud() : ingresar())">
+
+      {{ salirValid() ? 'Abandonar comunidad'
+      : haSolicitadoIngreso ? 'Cancelar solicitud de ingreso'
+      : (comunidad.esPrivada ? 'Solicitar ingreso' : 'Ingresar') }}
+    </button>
+  </div>
+
   <p style="margin-bottom: 15px;"></p>
 
 
