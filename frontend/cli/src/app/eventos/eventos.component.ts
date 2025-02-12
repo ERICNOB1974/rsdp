@@ -10,6 +10,7 @@ import { EventoService } from './evento.service';
 import { catchError, debounceTime, distinctUntilChanged, filter, lastValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../autenticacion/auth.service';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
   selector: 'app-eventos',
@@ -71,6 +72,8 @@ export class EventosComponent implements OnInit {
     private authService: AuthService,  // Inyecta el AuthService
     private cdr: ChangeDetectorRef,
     private etiquetaService: EtiquetaService,
+    private idEncryptorService: IdEncryptorService
+
   ) { }
 
 
@@ -215,15 +218,15 @@ export class EventosComponent implements OnInit {
         usuarioId: this.idUsuarioAutenticado,
         min: this.minParticipantes || 0,
       };
-  
+
       if (this.maxParticipantes !== undefined && this.maxParticipantes !== null) {
         params.max = this.maxParticipantes;
       }
-  
+
       const dataPackage = await lastValueFrom(
         this.eventoService.filtrarParticipantes(params)
       );
-  
+
       if (Array.isArray(dataPackage.data)) {
         return dataPackage.data;
       }
@@ -233,7 +236,7 @@ export class EventosComponent implements OnInit {
       return []; // Manejo de errores devolviendo una lista vacía
     }
   }
-  
+
 
   limpiarFiltroParticipantes(): void {
     this.minParticipantes = null;
@@ -251,7 +254,7 @@ export class EventosComponent implements OnInit {
     try {
       let minDate = this.fechaMinFiltro ? new Date(this.fechaMinFiltro).toISOString() : null;
       let maxDate = this.fechaMaxFiltro ? new Date(this.fechaMaxFiltro).toISOString() : null;
-  
+
       const dataPackage = await lastValueFrom(
         this.eventoService.filtrarFecha(
           this.tabSeleccionada,
@@ -260,7 +263,7 @@ export class EventosComponent implements OnInit {
           maxDate ?? ""  // Si maxDate es null, envía una cadena vacía
         )
       );
-  
+
       if (Array.isArray(dataPackage.data)) {
         return dataPackage.data;
       }
@@ -270,7 +273,7 @@ export class EventosComponent implements OnInit {
       return []; // Manejo de errores devolviendo una lista vacía
     }
   }
-  
+
 
 
 
@@ -467,7 +470,10 @@ export class EventosComponent implements OnInit {
   }
 
   irADetallesDelEvento(id: number): void {
-    this.router.navigate(['/eventos', id]); // Navega a la ruta /eventos/:id
+    const idCifrado = this.idEncryptorService.encodeId(id);
+    this.router.navigate(['/eventos', idCifrado]);
+
+    //this.router.navigate(['/eventos', id]); // Navega a la ruta /eventos/:id
   }
 
 
@@ -493,17 +499,17 @@ export class EventosComponent implements OnInit {
     if (this.filtroFechaActivo && this.fechaMinFiltro) {
       lista4 = await this.aplicarFiltroFecha();
       this.hayResultadosFiltrados = true;
-    }    
+    }
     this.eventosDisponiblesAMostrar = [];
     this.eventosParticipaUsuario = []
-    if (this.hayResultadosFiltrados) {      
+    if (this.hayResultadosFiltrados) {
       let listasActivas = [lista1, lista2, lista3, lista4].filter(lista => lista.length > 0);
-      
+
       if (listasActivas.length > 0) {
         // Realizamos la intersección de las listas
         this.resultadosFiltrados = listasActivas.reduce((interseccion, listaActual) => {
-          
-          let aux= interseccion.filter(item =>
+
+          let aux = interseccion.filter(item =>
             listaActual.some(actualItem => actualItem.id === item.id)
           );
           return aux;
@@ -548,11 +554,11 @@ export class EventosComponent implements OnInit {
     }
   }
 
-esContenidoLargo(evento: { descripcion: string; ubicacion: string; etiquetas?: { nombre: string }[] }): boolean {
-  const etiquetasTexto = evento.etiquetas?.map((e: { nombre: string }) => e.nombre).join(', ') || ''; 
-  const texto = `${evento.descripcion} ${evento.ubicacion} ${etiquetasTexto}`;
-  return texto.length > 150; // Ajusta este valor según lo necesario
-}
+  esContenidoLargo(evento: { descripcion: string; ubicacion: string; etiquetas?: { nombre: string }[] }): boolean {
+    const etiquetasTexto = evento.etiquetas?.map((e: { nombre: string }) => e.nombre).join(', ') || '';
+    const texto = `${evento.descripcion} ${evento.ubicacion} ${etiquetasTexto}`;
+    return texto.length > 150; // Ajusta este valor según lo necesario
+  }
 
 }
 

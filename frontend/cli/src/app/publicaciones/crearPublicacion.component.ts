@@ -19,6 +19,7 @@ import {
 } from 'rxjs/operators';
 import { ArrobarService } from '../arrobar/arrobar.service';
 import { Usuario } from '../usuarios/usuario';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
   selector: 'app-publicaciones',
@@ -48,7 +49,9 @@ export class CrearPublicacionComponent implements OnInit {
     private arrobaService: ArrobarService,
     private route: ActivatedRoute,
     private location: Location,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    protected idEncryptorService: IdEncryptorService
+
   ) {
     const tipoParam = this.route.snapshot.queryParamMap.get('tipo') as 'comunidad' | 'publicacion';
     this.tipo = tipoParam;
@@ -60,12 +63,25 @@ export class CrearPublicacionComponent implements OnInit {
       file: ''
     };
 
+
+
+
     this.route.queryParams.subscribe(params => {
       this.tipo = params['tipo'] as 'comunidad' | 'publicacion';
+      
       if (this.tipo === 'comunidad') {
-        this.idComunidad = +params['idComunidad']; // El '+' convierte el string a número
+        const idCifrado = params['idComunidad']; // Aquí tomamos el id desde queryParams
+    
+        let id: number | string = 'new'; // Inicializamos con 'new'
+    
+        if (idCifrado && idCifrado !== 'new') {
+          id = this.idEncryptorService.decodeId(idCifrado);
+        }
+    
+        this.idComunidad = Number(id); // Convertimos el resultado a número
       }
     });
+    
   }
 
   cancel(): void {

@@ -17,6 +17,7 @@ import { catchError, debounceTime, distinctUntilChanged, filter, firstValueFrom,
 import { EtiquetaPopularidadDTO } from '../etiqueta/etiquetaPopularidadDTO';
 import { DataPackage } from '../data-package';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
   selector: 'app-editar-comunidad',
@@ -58,7 +59,9 @@ export class EditarComunidadComponent implements OnInit {
     private router: Router,
     private cdr: ChangeDetectorRef,
     private etiquetaService: EtiquetaService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private idEncryptorService: IdEncryptorService
+
   ) {
 
     this.formComunidad = this.formBuilder.group(
@@ -87,7 +90,16 @@ export class EditarComunidadComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.idComunidad = Number(this.route.snapshot.paramMap.get('id'));
+    //this.idComunidad = Number(this.route.snapshot.paramMap.get('id'));
+
+    const idCifrado = this.route.snapshot.paramMap.get('id');
+
+    let id: number | string = 'new'; // Inicializamos con 'new' para que la comparación funcione
+
+    if (idCifrado && idCifrado !== 'new') {
+        id = this.idEncryptorService.decodeId(idCifrado);
+    }
+    this.idComunidad = Number(id);
     this.cargarComunidad();
     this.formComunidad.markAllAsTouched();
 
@@ -145,8 +157,9 @@ export class EditarComunidadComponent implements OnInit {
           await this.comunidadService.desetiquetar(this.comunidad.id, etiqueta.id).toPromise();
         }
       }
+      const idCifrado = this.idEncryptorService.encodeId(this.idComunidad);
 
-      this.router.navigate(['/comunidad-muro', this.idComunidad]);
+      this.router.navigate(['/comunidad-muro', idCifrado]);
     }, error => {
       console.error('Error al actualizar la comunidad', error);
       this.snackBar.open('Error al actualizar la comunidad', 'Cerrar', {

@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { UsuarioService } from '../usuarios/usuario.service';
-import { Usuario } from '../usuarios/usuario';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { AuthService } from '../autenticacion/auth.service';
-import { Observable } from 'rxjs';
 import { NgIf } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
+import { AuthService } from '../autenticacion/auth.service';
+import { Usuario } from '../usuarios/usuario';
+import { UsuarioService } from '../usuarios/usuario.service';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
   selector: 'app-perfil-detail',
@@ -35,7 +35,8 @@ export class PerfilDetailComponent implements OnInit {
     private usuarioService: UsuarioService,
     private authService: AuthService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private idEncryptorService: IdEncryptorService
   ) { }
 
   ngOnInit(): void {
@@ -62,7 +63,9 @@ export class PerfilDetailComponent implements OnInit {
         this.snackBar.open('Perfil actualizado con éxito', 'Cerrar', {
           duration: 3000,
         });
-        this.router.navigate(['/perfil/', this.usuario.id]);
+        const idCifrado = this.idEncryptorService.encodeId(this.usuario.id);
+
+        this.router.navigate(['/perfil/', idCifrado]);
       }, error => {
         console.error('Error al actualizar el perfil', error);
         this.snackBar.open('Error al actualizar el perfil', 'Cerrar', {
@@ -73,7 +76,7 @@ export class PerfilDetailComponent implements OnInit {
   }
 
   cancelar(): void {
-    this.router.navigate(['/perfil/', this.usuario.id]);
+    this.router.navigate(['/perfil/', this.idEncryptorService.encodeId(this.usuario.id)]);
   }
 
   onFileSelect(event: any) {

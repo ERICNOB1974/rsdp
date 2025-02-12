@@ -6,6 +6,7 @@ import { Comunidad } from '../comunidades/comunidad';
 import { ComunidadService } from '../comunidades/comunidad.service';
 import { DataPackage } from '../data-package';
 import { PaginationComponent } from '../pagination/pagination.component';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
     selector: 'app-sugerencias',
@@ -27,7 +28,8 @@ export class SugerenciasComunidadesComponent implements OnInit {
     comunidadSeleccionada: any = null; // Almacena la comunidad seleccionada
     constructor(
         private comunidadService: ComunidadService,
-        private router: Router) { }
+        protected idEncryptorService: IdEncryptorService
+      ) { }
 
     ngOnInit(): void {
         this.getComunidades()

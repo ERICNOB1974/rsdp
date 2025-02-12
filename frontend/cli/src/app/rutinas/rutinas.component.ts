@@ -9,6 +9,7 @@ import { Etiqueta } from '../etiqueta/etiqueta';
 import { catchError, debounceTime, distinctUntilChanged, filter, lastValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
   selector: 'app-rutinas',
@@ -66,7 +67,9 @@ export class RutinasComponent implements OnInit {
     private authService: AuthService,
     private etiquetaService: EtiquetaService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private idEncryptorService: IdEncryptorService
+
   ) { }
 
   ngOnInit(): void {
@@ -127,7 +130,7 @@ export class RutinasComponent implements OnInit {
 
   irADetallesDeLaRutina(rutinaId: number | undefined) {
     const id = rutinaId ?? 0; // Valor predeterminado si es undefined
-    this.router.navigate(['/rutinas', id]); // Navega a la ruta /rutinas/:id
+    this.router.navigate(['/rutinas', this.idEncryptorService.encodeId(id)]); // Navega a la ruta /rutinas/:id
   }
 
 

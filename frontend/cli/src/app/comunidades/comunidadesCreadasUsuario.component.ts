@@ -8,6 +8,7 @@ import { ComunidadService } from './comunidad.service'; // Crea este servicio
 import { AuthService } from '../autenticacion/auth.service';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
 import { debounceTime, Subject } from 'rxjs';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
   selector: 'app-comunidades-usuario',
@@ -33,6 +34,8 @@ export class ComunidadesCreadasUsuarioComponent implements OnInit {
     private comunidadService: ComunidadService,
     private etiquetaService: EtiquetaService,
     private router: Router,
+    private idEncryptorService: IdEncryptorService
+
   ) { }
 
   ngOnInit(): void {
@@ -153,7 +156,9 @@ export class ComunidadesCreadasUsuarioComponent implements OnInit {
 
 
   irADetallesDeComunidad(id: number): void {
-    this.router.navigate(['/comunidad-muro', id]);
+    const idCifrado = this.idEncryptorService.encodeId(id);
+
+    this.router.navigate(['/comunidad-muro', idCifrado]);
   }
 
   onScroll(): void {

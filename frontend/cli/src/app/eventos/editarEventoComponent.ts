@@ -21,6 +21,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
   selector: 'app-crear-evento',
@@ -75,7 +76,9 @@ export class EditarEventoComponent {
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private snackBar: MatSnackBar,
-    private location: Location
+    private location: Location,
+    private idEncryptorService: IdEncryptorService
+
   ) {
     this.formEvento = this.formBuilder.group(
       {
@@ -99,7 +102,18 @@ export class EditarEventoComponent {
   }
 
   async ngOnInit(): Promise<void> {
-    const id = this.route.snapshot.paramMap.get('id');
+    //const id = this.route.snapshot.paramMap.get('id');
+
+
+    const idCifrado = this.route.snapshot.paramMap.get('id');
+
+    let id: number | string = 'new'; // Inicializamos con 'new' para que la comparación funcione
+
+    if (idCifrado && idCifrado !== 'new') {
+      id = this.idEncryptorService.decodeId(idCifrado);
+    }
+    id=id.toString();
+
     if (id != "new" && id != null) {
       this.eventoService.get(id).subscribe(async (dataPackage) => {
         this.evento = <Evento>dataPackage.data;

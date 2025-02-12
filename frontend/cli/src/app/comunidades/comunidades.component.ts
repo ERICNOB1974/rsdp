@@ -9,6 +9,7 @@ import { Etiqueta } from '../etiqueta/etiqueta';
 import { catchError, debounceTime, distinctUntilChanged, filter, lastValueFrom, map, Observable, of, switchMap, tap } from 'rxjs';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 
 @Component({
@@ -59,7 +60,9 @@ export class ComunidadesComponent implements OnInit {
     private authService: AuthService,  // Inyecta el AuthService
     private router: Router,
     private etiquetaService: EtiquetaService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private idEncryptorService: IdEncryptorService
+
   ) { }
 
   ngOnInit(): void {
@@ -105,7 +108,8 @@ export class ComunidadesComponent implements OnInit {
   }
 
   irADetallesDeLaComunidad(id: number): void {
-    this.router.navigate(['/comunidad-muro', id]); // Navega a la ruta /comunidades/:id
+    const idCifrado = this.idEncryptorService.encodeId(id);
+    this.router.navigate(['/comunidad-muro', idCifrado]); // Navega a la ruta /comunidades/:id
   }
 
   agregarEtiqueta(event: any): void {
