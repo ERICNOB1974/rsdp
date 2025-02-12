@@ -17,6 +17,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, NgForm } from '@angular/forms';
 import * as L from 'leaflet';
 import { DataPackage } from '../data-package';
+import { IdEncryptorService } from '../idEcnryptorService';
 declare var bootstrap: any;  // Importa Bootstrap de forma global
 
 @Component({
@@ -83,7 +84,9 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
     private usuarioService: UsuarioService,
     private authService: AuthService,
     private cdr: ChangeDetectorRef,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    protected idEncryptorService: IdEncryptorService
+
   ) { }
 
   ngOnInit(): void {
@@ -145,7 +148,18 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
 
 
   getEvento(): void {
-    const id = this.route.snapshot.paramMap.get('id')!;
+    //const id = this.route.snapshot.paramMap.get('id')!;
+
+    const idCifrado = this.route.snapshot.paramMap.get('id');
+
+    let id: number | string = 'new'; // Inicializamos con 'new' para que la comparación funcione
+
+    if (idCifrado && idCifrado !== 'new') {
+      id = this.idEncryptorService.decodeId(idCifrado);
+    }
+    id=id.toString();
+
+
     if (!id || isNaN(parseInt(id, 10)) || id === 'new') {
       this.evento = <Evento>{};
       this.router.navigate(['eventos/crearEvento']);
@@ -306,7 +320,9 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
   }
 
   editarEvento(): void {
-    this.router.navigate(['/eventos/editarEvento/', this.evento.id]);
+    const idCifrado = this.idEncryptorService.encodeId(this.evento.id);
+
+    this.router.navigate(['/eventos/editarEvento/', idCifrado]);
   }
 
   traerMiembros(): void {

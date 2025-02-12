@@ -92,7 +92,7 @@
             <div class="members-list overflow-auto" (scroll)="onScroll()" style="max-height: 400px;">
               <div class="row">
                 <div *ngFor="let participante of participantesVisibles" class="col-lg-3 col-md-4 col-sm-6 col-12 mb-4">
-                  <div class="miembro-item text-center" [routerLink]="['/perfil', participante.id]">
+                  <div class="miembro-item text-center" [routerLink]="['/perfil',  idEncryptorService.encodeId(participante.id)]">
                     <img [src]="participante.fotoPerfil ? participante.fotoPerfil : '../../assets/usuario.png'"
                       alt="{{ participante.nombreUsuario }}" class="perfil-imagen rounded-circle mb-2"
                       style="width: 80px; height: 80px;" />

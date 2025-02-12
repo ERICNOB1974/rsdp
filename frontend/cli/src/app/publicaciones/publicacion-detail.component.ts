@@ -18,6 +18,7 @@ import { ArrobarService } from '../arrobar/arrobar.service';
 import { catchError, debounceTime, distinctUntilChanged, filter, forkJoin, map, Observable, of, switchMap, tap } from 'rxjs';
 import { ComentarioDTO } from '../comentarios/ComentarioDTO';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
   selector: 'app-publicaciones',
@@ -94,7 +95,9 @@ export class PublicacionDetailComponent implements OnInit {
     private dialog: MatDialog,
     private authService: AuthService,
     private arrobaService: ArrobarService,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    protected idEncryptorService: IdEncryptorService
+
 
   ) { }
 
@@ -327,7 +330,15 @@ export class PublicacionDetailComponent implements OnInit {
   }
 
   getPublicacion(): void {
-    const id = this.route.snapshot.paramMap.get('id')!;
+    //const id = this.route.snapshot.paramMap.get('id')!;
+    const idCifrado = this.route.snapshot.paramMap.get('id');
+
+    let id: number | string = 'new'; // Inicializamos con 'new' para que la comparación funcione
+
+    if (idCifrado && idCifrado !== 'new') {
+      id = this.idEncryptorService.decodeId(idCifrado).toString();
+    }
+
     if (!id || isNaN(parseInt(id, 10)) || id === 'new') {
       this.router.navigate(['publicacion/crear']);
     }
@@ -466,19 +477,19 @@ export class PublicacionDetailComponent implements OnInit {
 
   cargarRespuestas(comentario: Comentario): void {
     const paginacion = this.respuestaPaginacion[comentario.id];
-    
+
     if (paginacion.paginaActual !== 0) {
       this.loadedMoreReplies[comentario.id] = true;  // Marca que se ha cargado más respuestas
     }
-  
+
     this.comentarioService.getRespuestas(comentario.id, paginacion.paginaActual, this.pageSize)
       .subscribe({
         next: (dataPackage: DataPackage) => {
           const respuestas = dataPackage.data as Comentario[]; // Cast para acceder como un array de respuestas
-  
+
           if (Array.isArray(respuestas) && respuestas.length > 0) {
             const observablesMenciones: Observable<void>[] = [];
-  
+
             respuestas.forEach(respuesta => {
               // Obtener menciones en el texto de la respuesta
               const obs = this.getTextoConMenciones(respuesta.texto).pipe(
@@ -486,19 +497,19 @@ export class PublicacionDetailComponent implements OnInit {
                   respuesta.texto = textoConMenciones;
                 })
               );
-  
+
               observablesMenciones.push(obs);
-  
+
               // Cargar datos de likes para cada respuesta
               this.comentarioService.cantidadLikes(respuesta.id).subscribe(dataPackage => {
                 respuesta.cantidadLikes = dataPackage.data as unknown as number;
               });
-  
+
               this.comentarioService.estaLikeada(respuesta.id).subscribe(dataPackage => {
                 respuesta.estaLikeado = dataPackage.data as unknown as boolean;
               });
             });
-  
+
             // Esperamos que todas las menciones sean procesadas antes de actualizar las respuestas
             forkJoin(observablesMenciones).subscribe(() => {
               paginacion.respuestas.push(...respuestas);
@@ -511,7 +522,7 @@ export class PublicacionDetailComponent implements OnInit {
         }
       });
   }
-  
+
 
   contarRespuestas(comentario: Comentario) {
     this.comentarioService.contarRespuestas(comentario.id)
@@ -726,7 +737,7 @@ export class PublicacionDetailComponent implements OnInit {
       );
     });
 
-    console.info("entreaca3",texto);
+    console.info("entreaca3", texto);
 
     // Ejecutamos todas las verificaciones en paralelo y transformamos el texto
     return forkJoin(verificaciones).pipe(
@@ -752,33 +763,33 @@ export class PublicacionDetailComponent implements OnInit {
       return; // Evitar solicitudes innecesarias
     }
     this.loandingComentarios = true; // Iniciar indicador de carga
-  
+
     this.comentarioService.obtenerComentariosPaginados(this.publicacion.id, this.paginaActual, this.pageSizeComentario)
       .subscribe({
         next: (dataPackage: DataPackage) => {
           if (dataPackage && dataPackage.status === 200 && Array.isArray(dataPackage.data)) {
             const nuevosComentarios = dataPackage.data as ComentarioDTO[];
-  
+
             if (nuevosComentarios.length > 0) {
               const observablesMenciones: Observable<void>[] = [];
-  
+
               nuevosComentarios.forEach((comentarioDTO: ComentarioDTO) => {
                 const comentario = comentarioDTO.comentario;
                 console.info("entreaca", comentario.texto);
-  
+
                 // Agregar directamente los datos de like al comentario
                 comentario.estaLikeado = comentarioDTO.estaLikeado;
                 comentario.cantidadLikes = comentarioDTO.cantidadLikes;
-  
+
                 const obs = this.getTextoConMenciones(comentario.texto).pipe(
                   map((textoConMenciones) => {
                     console.info("entreac2"); // Ahora sí debería aparecer
                     comentario.texto = textoConMenciones;
                   })
                 );
-  
+
                 observablesMenciones.push(obs);
-  
+
                 this.respuestaPaginacion[comentario.id] = {
                   paginaActual: 0,
                   totalRespuestas: 0,
@@ -787,11 +798,11 @@ export class PublicacionDetailComponent implements OnInit {
                   estaLikeado: comentarioDTO.estaLikeado,
                   cantidadLikes: comentarioDTO.cantidadLikes
                 };
-  
+
                 this.contarRespuestas(comentario);
                 this.cargarRespuestas(comentario);
               });
-  
+
               // Esperar a que todos los observables de menciones terminen antes de actualizar la lista de comentarios
               forkJoin(observablesMenciones).subscribe(() => {
                 this.comentarios = [...this.comentarios, ...nuevosComentarios.map(c => c.comentario)];
@@ -813,7 +824,7 @@ export class PublicacionDetailComponent implements OnInit {
         }
       });
   }
-  
+
 
 
   @HostListener('window:scroll', [])

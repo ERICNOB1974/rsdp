@@ -367,7 +367,7 @@
 
         <!-- Lista de miembros -->
         <div class="perfil-miembros" (scroll)="onScrollMiembros()">
-          <div *ngFor="let miembro of miembros" class="miembro-item" [routerLink]="['/perfil', miembro.id]">
+          <div *ngFor="let miembro of miembros" class="miembro-item" [routerLink]="['/perfil',  idEncryptorService.encodeId(miembro.id)]">
             <div>
               <img [src]="(miembro.anonimos || !miembro.fotoPerfil) ? '../../assets/usuario.png' : miembro.fotoPerfil"
                 alt="{{ miembro.nombreUsuario }}" class="perfil-imagen" />

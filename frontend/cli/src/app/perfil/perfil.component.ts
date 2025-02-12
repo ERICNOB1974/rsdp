@@ -17,6 +17,7 @@ import { RutinaService } from '../rutinas/rutina.service';
 import { debounceTime, Subject } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
   selector: 'app-perfil',
@@ -71,12 +72,21 @@ export class PerfilComponent implements OnInit {
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef,
     private etiquetaService: EtiquetaService,
+    private idEncryptorService: IdEncryptorService
   ) { }
 
   ngOnInit(): void {
     const usuarioId = this.authService.getUsuarioId();
     this.idUsuarioAutenticado = Number(usuarioId);
-    this.idUsuario = Number(this.route.snapshot.paramMap.get('id'));
+
+    //this.idUsuario = Number(this.route.snapshot.paramMap.get('id'));
+
+
+    const idCifrado = this.route.snapshot.paramMap.get('id');
+    if (idCifrado) {
+      this.idUsuario = this.idEncryptorService.decodeId(idCifrado);
+    }
+    
     this.cargarPerfil();  // Cargar la información del perfil
     this.searchSubjectRutinas
       .pipe(debounceTime(500)) // Espera 1 segundo
@@ -90,6 +100,10 @@ export class PerfilComponent implements OnInit {
         this.buscarComunidades(nombre);
       });
   }
+
+
+
+
   onSearchInput(nombre: string): void {
     this.searchSubjectRutinas.next(nombre); // Emite el texto ingresado
   }
@@ -154,7 +168,7 @@ export class PerfilComponent implements OnInit {
 
   // Navega a la página de edición de perfil
   editarPerfil(): void {
-    this.router.navigate(['/perfilEditable', this.idUsuarioAutenticado]);
+    this.router.navigate(['/perfilEditable', this.idEncryptorService.encodeId(this.idUsuarioAutenticado)]);
   }
 
   verificarRelacion(): Promise<void> {
@@ -812,16 +826,16 @@ export class PerfilComponent implements OnInit {
   }
 
   irADetallePublicacion(idPublicacion: number): void {
-    this.router.navigate(['/publicacion', idPublicacion]);
+    this.router.navigate(['/publicacion', this.idEncryptorService.encodeId(idPublicacion)]);
   }
   irADetalleComunidad(idComunidad: number): void {
-    this.router.navigate(['/comunidad-muro', idComunidad]);
+    this.router.navigate(['/comunidad-muro', this.idEncryptorService.encodeId(idComunidad)]);
   }
   irADetalleRutina(idRutina: number): void {
-    this.router.navigate(['/rutinas', idRutina]);
+    this.router.navigate(['/rutinas', this.idEncryptorService.encodeId(idRutina)]);
   }
   irADetalleEvento(idEvento: number): void {
-    this.router.navigate(['/eventos', idEvento]);
+    this.router.navigate(['/eventos', this.idEncryptorService.encodeId(idEvento)]);
   }
 
   cargarMasRutinas(): void {

@@ -23,6 +23,7 @@ import { UbicacionService } from '../ubicacion.service'; // Importa tu servicio 
 import { Evento } from './evento';
 import { EventoService } from './evento.service';
 import { cantidadParticipantesValidator, dateValidator } from './validacionesEvento';
+import { IdEncryptorService } from '../idEcnryptorService';
 
 @Component({
   selector: 'app-crear-evento',
@@ -77,7 +78,9 @@ export class CrearEventoComponent {
     private router: Router,
     private ubicacionService: UbicacionService,
     private route: ActivatedRoute,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private idEncryptorService: IdEncryptorService
+
   ) {
     this.formEvento = this.formBuilder.group(
       {
@@ -116,7 +119,16 @@ export class CrearEventoComponent {
     this.buscarDireccionSubject.pipe(debounceTime(300)).subscribe((query: string) => {
       this.realizarBusqueda(query);
     });
-    this.comunidadId = this.route.snapshot.paramMap.get('comunidadId');
+
+    const idCifrado = this.route.snapshot.paramMap.get('comunidadId');
+    
+    let idComunidad: number | string = 'new'; // Inicializamos con 'new' para que la comparación funcione
+    
+    if (idCifrado && idCifrado !== 'new') {
+      idComunidad = this.idEncryptorService.decodeId(idCifrado);
+      this.comunidadId = idComunidad.toString();
+    }
+
   }
 
   private obtenerUbicacionYIniciarMapa(): void {
@@ -353,8 +365,10 @@ export class CrearEventoComponent {
         await this.eventoService.etiquetar(this.evento, etiquetaFinal.id).toPromise();
         this.guardandoEvento=false;
       }
+      
+      const idCifrado = this.idEncryptorService.encodeId(this.evento.id);
 
-      this.router.navigate([`eventos/${this.evento.id}`], {
+      this.router.navigate([`eventos`, idCifrado], {
         state: { mensajeSnackBar: 'Evento creado correctamente.' }
       });
 
