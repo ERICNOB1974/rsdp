@@ -719,25 +719,44 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
 
 
 
-
-
-       @Query("MATCH (u:Usuario)-[:CREADO_POR]-(e:Evento) " +
-       "WHERE id(u) = $idUsuario " +
-       "AND e.eliminado = false " +
-       "MATCH (e)-[:ETIQUETADO_CON]->(t:Etiqueta) " +
-       "WHERE  (toLower(e.nombre) CONTAINS toLower($query) " +
-       "     OR toLower(u.nombre) CONTAINS toLower($query) " +
-       "     OR toLower(e.ubicacion) CONTAINS toLower($query) " +
-       "     OR toLower(e.descripcion) CONTAINS toLower($query) " +
-       "     OR toLower(t.nombre) CONTAINS toLower($query) " +
-       "     OR $query = '') " +
-       "RETURN DISTINCT e " +
-       "ORDER BY abs(duration.between(date(), e.fechaHora).days) ASC, e.nombre DESC " +
-       "SKIP $skip " +
-       "LIMIT $limit")
-List<Evento> busquedaEventosCreadosPorUsuarioGoogle(@Param("idUsuario") Long idUsuario,
-                                               @Param("query") String query,
-                                               @Param("skip") int skip,
-                                               @Param("limit") int limit);
-
+       @Query("""
+              MATCH (u:Usuario)-[:CREADO_POR]-(e:Evento) 
+              WHERE id(u) = $idUsuario 
+              AND e.eliminado = false 
+              MATCH (e)-[:ETIQUETADO_CON]->(t:Etiqueta) 
+              WITH e, t,u, toString(e.fechaHora) AS fechaStr 
+              WITH e, u,t, datetime(fechaStr) AS fecha 
+              WHERE (toLower(e.nombre) CONTAINS toLower($query) 
+                   OR toLower(u.nombre) CONTAINS toLower($query) 
+                   OR toLower(e.ubicacion) CONTAINS toLower($query) 
+                   OR toLower(e.descripcion) CONTAINS toLower($query) 
+                   OR toLower(t.nombre) CONTAINS toLower($query) 
+                   OR toString(datetime(fecha).year) CONTAINS $query 
+                   OR toString(datetime(fecha).month) CONTAINS $query 
+                   OR toLower([
+                       'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
+                       'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+                   ][datetime(fecha).month-1]) CONTAINS toLower($query) 
+                   OR toString(datetime(fecha).day) CONTAINS $query 
+                   OR toLower([
+                       'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 
+                       'once', 'doce', 'trece', 'catorce', 'quince', 'dieciséis', 'diecisiete', 'dieciocho', 
+                       'diecinueve', 'veinte', 'veintiuno', 'veintidós', 'veintitrés', 'veinticuatro', 
+                       'veinticinco', 'veintiséis', 'veintisiete', 'veintiocho', 'veintinueve', 'treinta', 'treinta y uno'
+                   ][datetime(fecha).day-1]) CONTAINS toLower($query) 
+                   OR toLower([
+                       'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'
+                   ][datetime(fecha).dayOfWeek-1]) CONTAINS toLower($query) 
+                   OR $query = '') 
+              WITH e, fecha 
+              RETURN e 
+              ORDER BY abs(duration.between(date(), fecha).days) ASC, e.nombre DESC 
+              SKIP $skip 
+              LIMIT $limit
+              """)
+              List<Evento> busquedaEventosCreadosPorUsuarioGoogle(@Param("idUsuario") Long idUsuario,
+                                                                 @Param("query") String query,
+                                                                 @Param("skip") int skip,
+                                                                 @Param("limit") int limit);
+              
 }
