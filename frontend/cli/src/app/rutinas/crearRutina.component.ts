@@ -293,7 +293,7 @@ export class CrearRutinaComponent implements OnInit {
 
       this.rutinaService.guardarRutinaOptimizada(rutinaCompleta).subscribe(dataPackage => {
         this.idRutina = <number><unknown>dataPackage.data;
-        this.router.navigate([`rutinas/${this.idEncryptorService.encodeId(this.idRutina)}`], {
+        this.router.navigate([`rutinas`,this.idEncryptorService.encodeId(this.idRutina)], {
           state: { mensajeSnackBar: 'Rutina creada correctamente.' }
         });
       });
