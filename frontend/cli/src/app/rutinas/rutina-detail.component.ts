@@ -78,13 +78,13 @@ export class RutinaDetailComponent implements OnInit {
         console.error('Error al iniciar la rutina', error);
       }
     );
-    this.router.navigate([`rutinas/hacer/${this.idEncryptorService.encodeId(rutinaId)}`]); 
+    this.router.navigate([`rutinas/hacer/`, this.idEncryptorService.encodeId(rutinaId)]); 
   }
 
   reiniciarRutina() {
     const rutinaId = Number(this.route.snapshot.paramMap.get('id')!);
     this.rutinaEstadoService.setReiniciarRutina(true); // Establece el estado de reinicio en el servicio
-    this.router.navigate([`rutinas/hacer/${this.idEncryptorService.encodeId(rutinaId)}`]); 
+    this.router.navigate([`rutinas/hacer/`,this.idEncryptorService.encodeId(rutinaId)]); 
   }
 
   // Método para determinar el texto del botón
