@@ -108,7 +108,7 @@ export class EventosCreadosUsuarioComponent implements OnInit {
     this.loading = true;
 
     this.eventoService
-      .eventosCreadosPorUsuarioFiltrados(nombre, this.offset, this.limit)
+      .busquedaEventosCreadosPorUsuarioGoogle(nombre, this.offset, this.limit)
       .subscribe(
         async (dataPackage) => {
           const resultados = dataPackage.data as Evento[];

@@ -438,7 +438,7 @@ body {
 }
 
 .new-notifications {
-  animation: shake 2s ease-in-out infinite alternate;
+  animation: shake 3s ease-in-out infinite alternate;
   color: #f6b554;
 }
 
