@@ -48,7 +48,7 @@
     [attr.title]="!generoCompatible() ? 'No puedes inscribirte porque no es acorde a tu género' : null"
     class="d-inline-block w-100">
 
-    <button *ngIf="!esCreador && !expulsado.estaExpulsado && !(comunidad.cantidadMaximaMiembros <= comunidad.miembros)"
+    <button *ngIf="!esCreador && !expulsado?.estaExpulsado && !(comunidad.cantidadMaximaMiembros <= comunidad.miembros)"
       class="btn btn-primary btn-block ingresar-button"
       [disabled]="isLoading || !(salirValid() || inscribirseValid()) || !generoCompatible()"
       (click)="salirValid() ? salir() : (haSolicitadoIngreso ? cancelarSolicitud() : ingresar())">

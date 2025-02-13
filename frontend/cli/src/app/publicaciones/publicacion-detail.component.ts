@@ -737,7 +737,6 @@ export class PublicacionDetailComponent implements OnInit {
       );
     });
 
-    console.info("entreaca3", texto);
 
     // Ejecutamos todas las verificaciones en paralelo y transformamos el texto
     return forkJoin(verificaciones).pipe(
@@ -748,7 +747,7 @@ export class PublicacionDetailComponent implements OnInit {
           const usuario = resultados.find((r) => r.username === username);
           const idUsuario = usuario?.idUsuario;
           return idUsuario !== null
-            ? `<a href="/perfil/${idUsuario}" class="mention-link">${match}</a>`
+            ? `<a href="/perfil/${this.idEncryptorService.encodeId(idUsuario!)}" class="mention-link">${match}</a>`
             : match;
         });
       })
