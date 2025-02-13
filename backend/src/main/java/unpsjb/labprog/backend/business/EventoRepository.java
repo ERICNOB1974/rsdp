@@ -733,12 +733,12 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                        'veinticinco', 'veintiséis', 'veintisiete', 'veintiocho', 'veintinueve', 'treinta', 'treinta y uno'
                    ][datetime(fecha).day-1]) CONTAINS toLower($query) 
                    OR toLower([
-                       'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'
+                       'lunes', 'martes', 'miércoles', 'miercoles', 'jueves', 'viernes', 'sábado','sabado', 'domingo'
                    ][datetime(fecha).dayOfWeek-1]) CONTAINS toLower($query) 
                    OR $query = '') 
               WITH e, fecha 
-              RETURN e 
               ORDER BY abs(duration.between(date(), fecha).days) ASC, e.nombre DESC 
+              RETURN DISTINCT e 
               SKIP $skip 
               LIMIT $limit
               """)
