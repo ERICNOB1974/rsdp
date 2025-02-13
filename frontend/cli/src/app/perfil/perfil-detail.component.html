@@ -82,6 +82,15 @@
           </select>
         </div>
 
+        <input 
+        type="checkbox" 
+        id="borrarNotificacionesEventosPasados" 
+        [(ngModel)]="usuario.borrarNotificacionesEventosPasados" 
+        [checked]="usuario.borrarNotificacionesEventosPasados"
+        (change)="usuario.borrarNotificacionesEventosPasados = !usuario.borrarNotificacionesEventosPasados; onFieldChange()"
+        class="form-check-input">
+      
+
         <div class="mb-3">
           <label for="correoActual" class="form-label">Correo electrónico actual</label>
           <input type="email" class="form-control bg-light text-muted" style="opacity: 0.8; cursor: default;"

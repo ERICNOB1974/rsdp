@@ -14,4 +14,5 @@ export interface Usuario {
     privacidadPerfil?: 'Privada' | 'Solo amigos' | 'Pública';
     privacidadEventos?: 'Privada' | 'Solo amigos' | 'Pública';
     privacidadComunidades?: 'Privada' | 'Solo amigos' | 'Pública';
+    borrarNotificacionesEventosPasados: boolean;
 }

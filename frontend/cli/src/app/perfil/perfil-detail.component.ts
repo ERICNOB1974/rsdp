@@ -59,6 +59,7 @@ export class PerfilDetailComponent implements OnInit {
 
   guardarCambios(): void {
     if (this.verificarHabilitacionBotonGuardar()) {
+      console.info(this.usuario);
       this.usuarioService.save(this.usuario).subscribe(() => {
         this.snackBar.open('Perfil actualizado con éxito', 'Cerrar', {
           duration: 3000,
