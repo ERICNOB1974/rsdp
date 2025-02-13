@@ -240,6 +240,7 @@ export class PublicacionDetailComponent implements OnInit {
               genero: '',
               latitud: 0,
               longitud: 0,
+              borrarNotificacionesEventosPasados: false,
               fotoPerfil: this.usuario?.fotoPerfil || ''
             },
             cantidadLikes: 0,
@@ -415,6 +416,7 @@ export class PublicacionDetailComponent implements OnInit {
               genero: '',
               latitud: 0,
               longitud: 0,
+              borrarNotificacionesEventosPasados: false,
               fotoPerfil: this.usuario?.fotoPerfil || ''
             },
             respuestas: [], // Las respuestas no tienen sub-respuestas por defecto
