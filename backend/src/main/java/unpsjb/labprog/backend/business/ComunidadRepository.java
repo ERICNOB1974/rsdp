@@ -611,7 +611,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
     @Query("MATCH (u:Usuario)-[r:EXPULSADO_COMUNIDAD]->(c:Comunidad) " +
             "WHERE id(u) = $idUsuario AND id(c) = $idComunidad " +
             "RETURN r.motivoExpulsion AS motivoExpulsion " +
-            "ORDER BY r.fechaExpulsado DESC " +
+            "ORDER BY r.fechaHoraExpulsion DESC " +
             "LIMIT 1")
     String findMotivoExpulsion(@Param("idUsuario") Long idUsuario,
             @Param("idComunidad") Long idComunidad);
@@ -619,7 +619,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
     @Query("MATCH (u:Usuario)-[r:EXPULSADO_COMUNIDAD]->(c:Comunidad) " +
             "WHERE id(u) = $idUsuario AND id(c) = $idComunidad " +
             "RETURN r.tipo AS tipo " +
-            "ORDER BY r.fechaExpulsado DESC " +
+            "ORDER BY r.fechaHoraExpulsion DESC " +
             "LIMIT 1")
     String findTipoExpulsion(@Param("idUsuario") Long idUsuario,
             @Param("idComunidad") Long idComunidad);
@@ -627,7 +627,7 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
     @Query("MATCH (u:Usuario)-[r:EXPULSADO_COMUNIDAD]->(c:Comunidad) " +
             "WHERE id(u) = $idUsuario AND id(c) = $idComunidad " +
             "RETURN r.fechaHoraExpulsion AS fechaHoraExpulsion " +
-            "ORDER BY r.fechaExpulsado DESC " +
+            "ORDER BY r.fechaHoraExpulsion DESC " +
             "LIMIT 1")
     LocalDateTime findFechaHoraExpulsion(@Param("idUsuario") Long idUsuario,
             @Param("idComunidad") Long idComunidad);
@@ -637,6 +637,9 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
             MATCH (e:Comunidad) WHERE id(e)=$idComunidad
             MATCH (u)-[r:EXPULSADO_COMUNIDAD]-(e)
             RETURN r.motivoExpulsion
+            ORDER BY r.fechaHoraExpulsion DESC 
+            LIMIT 1
+
             """)
     String motivoExpulsion(Long idUsuario, Long idComunidad);
 

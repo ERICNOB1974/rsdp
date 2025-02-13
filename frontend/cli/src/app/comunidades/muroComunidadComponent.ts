@@ -401,7 +401,6 @@ export class MuroComunidadComponent implements OnInit {
         this.usuarioService.buscarMiembro(this.comunidad.id, this.searchTerm, this.page, this.size)
             .subscribe(async dataPackage => {
                 if (Array.isArray(dataPackage.data)) {
-                    console.info("datapackage ", dataPackage.data);
                     // Si es la primera página, reinicia la lista de miembros
                     if (this.page === 0) {
                         this.miembros = dataPackage.data;
