@@ -78,6 +78,14 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
     void crearNotificacionMotivoExpulsion(Long idUsuario, Long idEntidad, String tipo, LocalDateTime fecha,
             String mensaje);
 
+        @Query("""
+            MATCH (u:Usuario) WHERE id(u) = $idUsuario
+            MATCH (entidad) WHERE id(entidad) = $idEntidad
+            CREATE (entidad)-[:NOTIFICACION {tipo: $tipo, mensaje: $mensaje, fecha: $fecha, leida: false, entidadId: id(entidad)}]->(u)
+            """)
+    void crearNotificacionEliminacion(Long idUsuario, Long idEntidad, String tipo, LocalDateTime fecha,
+            String mensaje);
+
 
     @Query("""
                 MATCH (u:Usuario) WHERE id(u)=$idUsuarioReceptor
