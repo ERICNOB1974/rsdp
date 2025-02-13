@@ -223,13 +223,14 @@ List<Usuario> obtenerExpulsadosActivos(@Param("idComunidad") Long idComunidad,
             + "RETURN DISTINCT u")
     List<Usuario> inscriptosEvento(Long eventId);
 
-    @Query("MATCH (u:Usuario)-[r:MIEMBRO|CREADA_POR|ADMINISTRADA_POR]-(c:Comunidad) " +
+    @Query("MATCH (u:Usuario)-[r:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(c:Comunidad) " +
             "WHERE id(c) = $idComunidad " +
             "RETURN u, r " +
             "ORDER BY CASE " +
             "    WHEN type(r) = 'CREADA_POR' THEN 1 " +
             "    WHEN type(r) = 'ADMINISTRADA_POR' THEN 2 " +
-            "    WHEN type(r) = 'MIEMBRO' THEN 3 " +
+            "    WHEN type(r) = 'MODERADA_POR' THEN 3 "+
+            "    WHEN type(r) = 'MIEMBRO' THEN 4 " +
             "END")
     List<Usuario> miembros(Long idComunidad);
 

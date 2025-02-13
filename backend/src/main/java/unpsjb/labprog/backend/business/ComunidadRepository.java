@@ -97,11 +97,24 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
             "DELETE r ")
     void eliminarUsuario(Long idUsuario, Long idComunidad);
 
-    @Query("""
-            MATCH (c:Comunidad) WHERE id(c) = $idComunidad
-            SET c.eliminada = true
-            """)
-    void eliminar(Long idComunidad);
+
+        @Query("""
+        MATCH (c:Comunidad) WHERE id(c) = $idComunidad
+        SET c.eliminada = true
+
+        // Eliminar relaciones NOTIFICACION asociadas a usuarios del evento
+        WITH c
+        MATCH (u:Usuario)-[r:NOTIFICACION]-(c)
+        DELETE r
+
+        // Eliminar relaciones INVITACION_EVENTO que contienen el id del evento
+        WITH e
+        MATCH (u1:Usuario)-[rel:INVITACION_EVENTO]-(u2:Usuario)
+        WHERE rel.idComunidad = $idComunidad
+        DELETE rel
+        """)
+        void eliminar(Long idComunidad);
+
 
     @Query("MATCH (c:Comunidad)-[:CREADA_POR]->(u:Usuario) " +
             "WHERE id(u) = $idUsuario " +

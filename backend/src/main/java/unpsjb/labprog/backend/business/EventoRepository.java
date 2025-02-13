@@ -19,7 +19,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
        String generoDeUnEvento(Long idEvento);
 
        @Query("MATCH (evento:Evento) WHERE id(evento) = $id AND evento.eliminado = false RETURN evento")
-       Optional<Evento> findById(Long id);
+       Optional<Evento> findById(Long id);  
 
        @Query("MATCH (u:Usuario {nombreUsuario: $nombreUsuario})-[:PARTICIPA_EN]->(e:Evento)-[:ETIQUETADO_CON]->(et:Etiqueta) "
                      +
@@ -678,11 +678,23 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                                 """)
        void eliminarUsuario(Long idEvento, Long idUsuario, String motivoExpulsion);
 
-       @Query("""
-                     MATCH (e:Evento) WHERE id(e) = $idEvento
-                     SET e.eliminado = true
-                     """)
-       void eliminar(Long idEvento);
+        @Query("""
+            MATCH (e:Evento) WHERE id(e) = $idEvento
+            SET e.eliminado = true
+
+            // Eliminar relaciones NOTIFICACION asociadas a usuarios del evento
+            WITH e
+            MATCH (u:Usuario)-[r:NOTIFICACION]-(e)
+            DELETE r
+
+            // Eliminar relaciones INVITACION_EVENTO que contienen el id del evento
+            WITH e
+            MATCH (u1:Usuario)-[rel:INVITACION_EVENTO]-(u2:Usuario)
+            WHERE rel.idEvento = $idEvento
+            DELETE rel
+            """)
+        void eliminar(Long idEvento);
+
 
        @Query("""
                      MATCH (u:Usuario) WHERE id(u)=$idUsuario
