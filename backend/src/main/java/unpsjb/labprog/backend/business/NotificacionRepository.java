@@ -166,10 +166,11 @@ public interface NotificacionRepository extends Neo4jRepository<Notificacion, Lo
     void eliminarTodasLasNotificaciones(Long idUsuario);
 
 @Query("MATCH (e:Evento) "+ 
-       "WHERE e.fechaHora < localdatetime() "+
+       "WHERE e.fechaHora < datetime() "+
     
     // Eliminar notificaciones de eventos pasados
-    "MATCH (u:Usuario)-[n:NOTIFICACION]->(e) "+ 
+    "MATCH (u:Usuario)-[n:NOTIFICACION]-(e) "+ 
+    "WHERE u.borrarNotificacionesEventosPasados = true "+
     "DELETE n "+
     
     // Eliminar invitaciones a eventos pasados
