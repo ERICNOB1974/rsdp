@@ -474,7 +474,10 @@ public class EventoService {
     }
 
     public void eliminar(Long idEvento) {
+        Evento e = eventoRepository.findById(idEvento).get();
+        String notificacion = "Has sido eliminado del evento " + e.getNombre();
         this.eventoRepository.eliminar(idEvento);
+                this.notificacionService.notificarEliminacionEvento(notificacion, idEvento);
     }
 
     public List<Usuario> todosLosParticipantes(Long idEvento) {
@@ -483,7 +486,7 @@ public class EventoService {
 
     public void eliminarUsuario(String mensaje, Long idEvento, Long idUsuario) {
         Evento e = eventoRepository.findById(idEvento).get();
-        String notificacion = "Has sido eliminado del evento " + e.getNombre();
+        String notificacion = "Se ha eliminado el evento " + e.getNombre();
         this.notificacionService.notificarExpulsionEvento(notificacion, idEvento, idUsuario);
         this.eventoRepository.eliminarUsuario(idEvento, idUsuario, mensaje);
     }
