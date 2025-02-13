@@ -34,6 +34,7 @@ public class Usuario {
     private String privacidadEventos;
     private String privacidadComunidades;
     private String fotoPerfil;
+    private boolean borrarNotificacionesEventosPasados;
 
 
     
