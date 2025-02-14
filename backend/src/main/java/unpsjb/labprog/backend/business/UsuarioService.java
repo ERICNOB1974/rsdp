@@ -301,15 +301,14 @@ public class UsuarioService {
 
     public Long enviarInvitacionEvento(Long idUsuarioEmisor, Long idUsuarioReceptor, Long idEvento) {
         usuarioRepository.enviarInvitacionEvento(idUsuarioEmisor, idUsuarioReceptor, idEvento);
-        notificacionRepository.crearNotificacionInvitacionEvento(idUsuarioReceptor, idUsuarioEmisor, idEvento,
-                LocalDateTime.now());
+        notificacionService.crearNotificacionInvitacionEvento(idUsuarioEmisor,idUsuarioReceptor,idEvento);
         return idEvento;
     }
 
     public Long enviarInvitacionComunidad(Long idUsuarioEmisor, Long idUsuarioReceptor, Long idComunidad) {
         usuarioRepository.enviarInvitacionComunidad(idUsuarioEmisor, idUsuarioReceptor, idComunidad);
-        notificacionRepository.crearNotificacionInvitacionComunidad(idUsuarioReceptor, idUsuarioEmisor, idComunidad,
-                LocalDateTime.now());
+                notificacionService.crearNotificacionInvitacionComunidad(idUsuarioReceptor,idUsuarioEmisor,idComunidad);
+
         return idComunidad;
     }
 

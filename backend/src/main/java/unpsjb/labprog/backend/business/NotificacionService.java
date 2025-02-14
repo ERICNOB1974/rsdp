@@ -157,11 +157,45 @@ public class NotificacionService {
 
     }
 
+    public void crearNotificacionInvitacionComunidad(Long idUsuarioEmisor, Long idUsuarioReceptor, Long idComunidad) {
+        
+        notificacionRepository.crearNotificacionInvitacionComunidad(idUsuarioReceptor, idUsuarioEmisor, idComunidad,
+                LocalDateTime.now());
+        enviarEventoTiempoReal(idUsuarioReceptor, "INVITACION_COMUNIDAD");
+
+    }
+    
+
     public void notificarExpulsionComunidad(String mensaje, Long idComunidad, Long idUsuario) {
         this.notificacionRepository.crearNotificacionMotivoExpulsion(idUsuario, idComunidad, "EXPULSION_COMUNIDAD",
                 LocalDateTime.now(), mensaje);
         enviarEventoTiempoReal(idUsuario, "EXPULSION_COMUNIDAD");
+    }
+     public void crearNotificacionInvitacionEvento(Long idUsuarioEmisor, Long idUsuarioReceptor, Long idEvento) {
+            System.out.println("te estoy por mandar la notificacion");
+         notificacionRepository.crearNotificacionInvitacionEvento(idUsuarioReceptor, idUsuarioEmisor, idEvento,
+                LocalDateTime.now());
+                            System.out.println("te deberia haber mandado la noti");
+        enviarEventoTiempoReal(idUsuarioReceptor, "INVITACION_EVENTO");
 
+    }
+
+        public void notificarEliminacionComunidad(String mensaje, Long idComunidad) {
+              List<Usuario> miembros = usuarioRepository.miembros(idComunidad);
+        for(Usuario u:miembros){
+        this.notificacionRepository.crearNotificacionEliminacion(u.getId(), idComunidad, "ELIMINACION_COMUNIDAD",
+                LocalDateTime.now(), mensaje);
+        enviarEventoTiempoReal(u.getId(), "ELIMINACION_COMUNIDAD");
+        }
+    }
+
+        public void notificarEliminacionEvento(String mensaje, Long idEvento) {
+        List<Usuario> participantes = usuarioRepository.inscriptosEvento(idEvento);
+        for(Usuario u:participantes){
+        this.notificacionRepository.crearNotificacionEliminacion(u.getId(), idEvento, "ELIMINACION_EVENTO",
+                LocalDateTime.now(), mensaje);
+        enviarEventoTiempoReal(u.getId(), "ELIMINACION_EVENTO");
+        }
     }
 
     public void enviarEventoTiempoReal(Long idUsuario, String tipo) {
