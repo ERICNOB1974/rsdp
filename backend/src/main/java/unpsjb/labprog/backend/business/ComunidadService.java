@@ -361,6 +361,10 @@ public class ComunidadService {
         // Eliminar el usuario con el mensaje y la fecha de expulsión
         this.comunidadRepository.eliminarUsuario(idComunidad, idUsuario, motivo, tipo, fechaExpulsion,
                 LocalDateTime.now());
+                
+        if (esFavorita(idComunidad, idUsuario)) {
+            cambiarEstadoFavorita(idComunidad, idUsuario);
+        }
     }
 
     public void editarExpulsion(String motivo, String tipo, String fechaHoraExpulsion, Long idComunidad,
@@ -452,7 +456,7 @@ public class ComunidadService {
         expulsado.setMotivoExpulsion(this.comunidadRepository.motivoExpulsion(idUsuario, idComunidad));
         expulsado.setFechaHoraExpulsion(this.comunidadRepository.findFechaHoraExpulsion(idUsuario, idComunidad));
         expulsado.setTipo(this.comunidadRepository.findTipoExpulsion(idUsuario, idComunidad));
-        
+
         return expulsado;
     }
 }
