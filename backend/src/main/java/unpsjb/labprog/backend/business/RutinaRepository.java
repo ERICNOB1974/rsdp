@@ -8,6 +8,7 @@ import org.springframework.data.neo4j.repository.query.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Dia;
 import unpsjb.labprog.backend.model.Rutina;
 
@@ -372,6 +373,99 @@ public interface RutinaRepository extends Neo4jRepository<Rutina, Long> {
             @Param("nombreRutina") String nombreRutina,
             @Param("skip") int skip,
             @Param("limit") int limit);
+
+
+
+    @Query("""
+        MATCH (u:Usuario), (r:Rutina)
+        WHERE id(u) = $idUsuario 
+        AND NOT (u)-[:REALIZA_RUTINA]-(r) 
+
+        MATCH (r)-[:ETIQUETADA_CON]->(t:Etiqueta)
+        MATCH (r)-[:TIENE_DIA]->(d:Dia)
+
+        WITH r, t, u, d
+        WHERE (
+           apoc.text.clean(r.nombre) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(r.descripcion) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(t.nombre) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(d.nombre) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(d.descripcion) CONTAINS apoc.text.clean($query)
+       )
+        WITH r
+        ORDER BY r.nombre DESC  
+        RETURN DISTINCT r
+        SKIP $skip
+        LIMIT $limit
+
+                    """)
+
+List<Rutina> busquedaRutinasDisponiblesUsuarioGoogle(@Param("idUsuario") Long idUsuario,
+        @Param("query") String query,
+        @Param("skip") int skip,
+        @Param("limit") int limit);
+
+
+
+
+        @Query("""
+              MATCH (u:Usuario)-[:CREADA_POR]-(r:Rutina)
+              WHERE id(u) = $idUsuario 
+      
+              MATCH (r)-[:ETIQUETADA_CON]->(t:Etiqueta)
+              MATCH (r)-[:TIENE_DIA]->(d:Dia)
+      
+              WITH r, t, u, d
+              WHERE (
+                 apoc.text.clean(r.nombre) CONTAINS apoc.text.clean($query)
+                 OR apoc.text.clean(r.descripcion) CONTAINS apoc.text.clean($query)
+                 OR apoc.text.clean(t.nombre) CONTAINS apoc.text.clean($query)
+                 OR apoc.text.clean(d.nombre) CONTAINS apoc.text.clean($query)
+                 OR apoc.text.clean(d.descripcion) CONTAINS apoc.text.clean($query)
+             )
+              WITH r
+              ORDER BY r.nombre DESC  
+              RETURN DISTINCT r
+              SKIP $skip
+              LIMIT $limit
+      
+                          """)
+      
+      List<Rutina> busquedaRutinasCreadasUsuarioGoogle(@Param("idUsuario") Long idUsuario,
+              @Param("query") String query,
+              @Param("skip") int skip,
+              @Param("limit") int limit);
+
+
+        @Query("""
+              MATCH (u:Usuario)-[:REALIZA_RUTINA]-(r:Rutina)
+              WHERE id(u) = $idUsuario 
+      
+              MATCH (r)-[:ETIQUETADA_CON]->(t:Etiqueta)
+              MATCH (r)-[:TIENE_DIA]->(d:Dia)
+      
+              WITH r, t, u, d
+              WHERE (
+                 apoc.text.clean(r.nombre) CONTAINS apoc.text.clean($query)
+                 OR apoc.text.clean(r.descripcion) CONTAINS apoc.text.clean($query)
+                 OR apoc.text.clean(t.nombre) CONTAINS apoc.text.clean($query)
+                 OR apoc.text.clean(d.nombre) CONTAINS apoc.text.clean($query)
+                 OR apoc.text.clean(d.descripcion) CONTAINS apoc.text.clean($query)
+             )
+              WITH r
+              ORDER BY r.nombre DESC  
+              RETURN DISTINCT r
+              SKIP $skip
+              LIMIT $limit
+      
+                          """)
+      
+      List<Rutina> busquedaRutinasRealizaUsuarioGoogle(@Param("idUsuario") Long idUsuario,
+              @Param("query") String query,
+              @Param("skip") int skip,
+              @Param("limit") int limit);
+      
+
 
 
 
