@@ -104,7 +104,12 @@ public class ComunidadService {
 
     @Transactional
     public void deleteById(Long id) {
+        Comunidad c = comunidadRepository.findById(id).get();
+        String notificacion = "Se ha eliminado la comunidad " + c.getNombre();
         comunidadRepository.eliminar(id);
+
+        // Aquí, notificar la expulsión
+        this.notificacionService.notificarEliminacionComunidad(notificacion, id);
     }
 
     public Comunidad findById(Long id) {
