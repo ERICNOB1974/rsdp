@@ -15,190 +15,6 @@ import unpsjb.labprog.backend.model.Usuario;
 @Repository
 public interface EventoRepository extends Neo4jRepository<Evento, Long> {
 
-
-    @Query("""
-            MATCH (u:Usuario)-[:CREADO_POR]-(e:Evento)
-            WHERE id(u) = $idUsuario AND e.eliminado = false
-            MATCH (e)-[:ETIQUETADO_CON]->(t:Etiqueta)
-            WITH e, t, u, toString(e.fechaHora) AS fechaStr
-            WITH e, u, t, datetime(fechaStr) AS fecha
-            WHERE (apoc.text.clean(e.nombre) CONTAINS apoc.text.clean($query)
-               OR apoc.text.clean(u.nombre) CONTAINS apoc.text.clean($query)
-               OR apoc.text.clean(e.ubicacion) CONTAINS apoc.text.clean($query)
-               OR apoc.text.clean(e.descripcion) CONTAINS apoc.text.clean($query)
-               OR apoc.text.clean(t.nombre) CONTAINS apoc.text.clean($query)
-
-               OR toString(datetime(fecha).year) CONTAINS $query
-
-               OR toString(datetime(fecha).month) CONTAINS $query
-               OR apoc.text.clean([
-                   'enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'
-                 ][datetime(fecha).month-1]) CONTAINS apoc.text.clean($query)
-
-               OR toString(datetime(fecha).day) CONTAINS $query
-               OR apoc.text.clean([
-                   'uno','dos','tres','cuatro','cinco','seis','siete','ocho','nueve','diez','once','doce','trece','catorce','quince',
-                   'dieciseis','diecisiete','dieciocho','diecinueve','veinte','veintiuno','veintidos','veintitres','veinticuatro',
-                   'veinticinco','veintiseis','veintisiete','veintiocho','veintinueve','treinta','treinta y uno'
-                 ][datetime(fecha).day-1]) CONTAINS apoc.text.clean($query)
-               OR apoc.text.clean([
-                   'lunes','martes','miercoles','jueves','viernes','sabado','domingo'
-                 ][datetime(fecha).dayOfWeek-1]) CONTAINS apoc.text.clean($query)
-               OR $query = '')
-            WITH e, fecha
-            ORDER BY abs(duration.between(date(), fecha).days) ASC, e.nombre DESC
-            RETURN DISTINCT e
-            SKIP $skip
-            LIMIT $limit
-
-                        """)
-
-    List<Evento> busquedaEventosCreadosPorUsuarioGoogle(@Param("idUsuario") Long idUsuario,
-            @Param("query") String query,
-            @Param("skip") int skip,
-            @Param("limit") int limit);
-
-    @Query("""
-            MATCH (e:Evento), (u:Usuario)
-            WHERE NOT (e)-[:PARTICIPA_EN]-(u)
-            AND NOT (u)-[:EXPULSADO_EVENTO]-(e)
-            AND date(e.fechaHora) > date(datetime())
-            AND COALESCE(e.eliminado, false) = false
-            AND (
-                (u.genero = 'masculino' AND e.genero IN ['masculino', 'sinGenero']) OR
-                (u.genero = 'femenino' AND e.genero IN ['femenino', 'sinGenero']) OR
-                (u.genero = 'otro' AND e.genero IN ['masculino', 'femenino', 'otro', 'sinGenero'])
-            )
-            AND (
-                NOT e.esPrivadoParaLaComunidad OR
-                EXISTS {
-                    MATCH (e)-[:EVENTO_INTERNO]->(c:Comunidad)
-                    MATCH (u)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]->(c)
-                }
-            )
-            WITH e, u, COUNT { (e)<-[:PARTICIPA_EN]-() } AS numParticipantes
-            WHERE numParticipantes < e.cantidadMaximaParticipantes
-
-            MATCH (e)-[:ETIQUETADO_CON]->(t:Etiqueta)
-            WITH e, t, u, toString(e.fechaHora) AS fechaStr
-            WITH e, t, u, datetime(fechaStr) AS fecha
-            WHERE (apoc.text.clean(toLower(e.nombre)) CONTAINS apoc.text.clean(toLower($query))
-                 OR apoc.text.clean(toLower(u.nombre)) CONTAINS apoc.text.clean(toLower($query))
-                 OR apoc.text.clean(toLower(e.ubicacion)) CONTAINS apoc.text.clean(toLower($query))
-                 OR apoc.text.clean(toLower(e.descripcion)) CONTAINS apoc.text.clean(toLower($query))
-                 OR apoc.text.clean(toLower(t.nombre)) CONTAINS apoc.text.clean(toLower($query))
-                 OR toString(datetime(fecha).year) CONTAINS $query
-                 OR toString(datetime(fecha).month) CONTAINS $query
-                 OR apoc.text.clean(toLower([
-                     'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-                     'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
-                 ][datetime(fecha).month-1])) CONTAINS apoc.text.clean(toLower($query))
-                 OR toString(datetime(fecha).day) CONTAINS $query
-                 OR apoc.text.clean(toLower([
-                     'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez',
-                     'once', 'doce', 'trece', 'catorce', 'quince', 'dieciseis', 'diecisiete', 'dieciocho',
-                     'diecinueve', 'veinte', 'veintiuno', 'veintidos', 'veintitres', 'veinticuatro',
-                     'veinticinco', 'veintiseis', 'veintisiete', 'veintiocho', 'veintinueve', 'treinta', 'treinta y uno'
-                 ][datetime(fecha).day-1])) CONTAINS apoc.text.clean(toLower($query))
-                 OR apoc.text.clean(toLower([
-                     'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'
-                 ][datetime(fecha).dayOfWeek-1])) CONTAINS apoc.text.clean(toLower($query))
-                 OR $query = '')
-            WITH e, fecha
-            ORDER BY abs(duration.between(date(), fecha).days) ASC, e.nombre DESC
-            RETURN DISTINCT e
-            SKIP $skip
-            LIMIT $limit
-            """)
-    List<Evento> busquedaEventosDisponiblesGoogle(@Param("idUsuario") Long idUsuario,
-            @Param("query") String query,
-            @Param("skip") int skip,
-            @Param("limit") int limit);
-
-
-    @Query("""
-            MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento)
-            WHERE id(u) = $idUsuario
-            AND date(e.fechaHora) > date(datetime())
-            AND COALESCE(e.eliminado, false) = false
-            WITH e, u
-            MATCH (e)-[:ETIQUETADO_CON]->(t:Etiqueta)
-            WITH e, t, u, toString(e.fechaHora) AS fechaStr
-            WITH e, t, u, datetime(fechaStr) AS fecha
-            WHERE (apoc.text.clean(toLower(e.nombre)) CONTAINS apoc.text.clean(toLower($query))
-                 OR apoc.text.clean(toLower(u.nombre)) CONTAINS apoc.text.clean(toLower($query))
-                 OR apoc.text.clean(toLower(e.ubicacion)) CONTAINS apoc.text.clean(toLower($query))
-                 OR apoc.text.clean(toLower(e.descripcion)) CONTAINS apoc.text.clean(toLower($query))
-                 OR apoc.text.clean(toLower(t.nombre)) CONTAINS apoc.text.clean(toLower($query))
-                 OR toString(datetime(fecha).year) CONTAINS $query
-                 OR toString(datetime(fecha).month) CONTAINS $query
-                 OR apoc.text.clean(toLower([
-                     'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-                     'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
-                 ][datetime(fecha).month-1])) CONTAINS apoc.text.clean(toLower($query))
-                 OR toString(datetime(fecha).day) CONTAINS $query
-                 OR apoc.text.clean(toLower([
-                     'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez',
-                     'once', 'doce', 'trece', 'catorce', 'quince', 'dieciseis', 'diecisiete', 'dieciocho',
-                     'diecinueve', 'veinte', 'veintiuno', 'veintidos', 'veintitres', 'veinticuatro',
-                     'veinticinco', 'veintiseis', 'veintisiete', 'veintiocho', 'veintinueve', 'treinta', 'treinta y uno'
-                 ][datetime(fecha).day-1])) CONTAINS apoc.text.clean(toLower($query))
-                 OR apoc.text.clean(toLower([
-                     'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'
-                 ][datetime(fecha).dayOfWeek-1])) CONTAINS apoc.text.clean(toLower($query))
-                 OR $query = '')
-            WITH e, fecha
-            ORDER BY abs(duration.between(date(), fecha).days) ASC, e.nombre DESC
-            RETURN DISTINCT e
-            SKIP $skip
-            LIMIT $limit
-            """)
-    List<Evento> busquedaEventosParticipaFuturoGoogle(@Param("idUsuario") Long idUsuario,
-            @Param("query") String query,
-            @Param("skip") int skip,
-            @Param("limit") int limit);
-
-    @Query("""
-            MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento)
-            WHERE id(u) = $idUsuario
-            AND COALESCE(e.eliminado, false) = false
-            WITH e, u
-            MATCH (e)-[:ETIQUETADO_CON]->(t:Etiqueta)
-            WITH e, t, u, toString(e.fechaHora) AS fechaStr
-            WITH e, t, u, datetime(fechaStr) AS fecha
-            WHERE (apoc.text.clean(toLower(e.nombre)) CONTAINS apoc.text.clean(toLower($query))
-                 OR apoc.text.clean(toLower(u.nombre)) CONTAINS apoc.text.clean(toLower($query))
-                 OR apoc.text.clean(toLower(e.ubicacion)) CONTAINS apoc.text.clean(toLower($query))
-                 OR apoc.text.clean(toLower(e.descripcion)) CONTAINS apoc.text.clean(toLower($query))
-                 OR apoc.text.clean(toLower(t.nombre)) CONTAINS apoc.text.clean(toLower($query))
-                 OR toString(datetime(fecha).year) CONTAINS $query
-                 OR toString(datetime(fecha).month) CONTAINS $query
-                 OR apoc.text.clean(toLower([
-                     'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-                     'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
-                 ][datetime(fecha).month-1])) CONTAINS apoc.text.clean(toLower($query))
-                 OR toString(datetime(fecha).day) CONTAINS $query
-                 OR apoc.text.clean(toLower([
-                     'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez',
-                     'once', 'doce', 'trece', 'catorce', 'quince', 'dieciseis', 'diecisiete', 'dieciocho',
-                     'diecinueve', 'veinte', 'veintiuno', 'veintidos', 'veintitres', 'veinticuatro',
-                     'veinticinco', 'veintiseis', 'veintisiete', 'veintiocho', 'veintinueve', 'treinta', 'treinta y uno'
-                 ][datetime(fecha).day-1])) CONTAINS apoc.text.clean(toLower($query))
-                 OR apoc.text.clean(toLower([
-                     'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'
-                 ][datetime(fecha).dayOfWeek-1])) CONTAINS apoc.text.clean(toLower($query))
-                 OR $query = '')
-            WITH e, fecha
-            ORDER BY abs(duration.between(date(), fecha).days) ASC, e.nombre DESC
-            RETURN DISTINCT e
-            SKIP $skip
-            LIMIT $limit
-            """)
-    List<Evento> busquedaEventosParticipaHistoricoGoogle(@Param("idUsuario") Long idUsuario,
-            @Param("query") String query,
-            @Param("skip") int skip,
-            @Param("limit") int limit);
-
        @Query("MATCH (evento:Evento) WHERE id(evento) = $idEvento RETURN evento.genero")
        String generoDeUnEvento(Long idEvento);
 
@@ -901,4 +717,197 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
                      "DELETE r")
        void desetiquetarEvento(Long idEvento, Long etiquetaId);
 
+
+
+
+
+
+
+
+
+
+
+
+    @Query("""
+        MATCH (u:Usuario)-[:CREADO_POR]-(e:Evento)
+        WHERE id(u) = $idUsuario AND e.eliminado = false
+        MATCH (e)-[:ETIQUETADO_CON]->(t:Etiqueta)
+        WITH e, t, u, toString(e.fechaHora) AS fechaStr
+        WITH e, u, t, datetime(fechaStr) AS fecha
+        WHERE (apoc.text.clean(e.nombre) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(u.nombre) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(e.ubicacion) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(e.descripcion) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(t.nombre) CONTAINS apoc.text.clean($query)
+
+           OR toString(datetime(fecha).year) CONTAINS $query
+
+           OR toString(datetime(fecha).month) CONTAINS $query
+           OR apoc.text.clean([
+               'enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'
+             ][datetime(fecha).month-1]) CONTAINS apoc.text.clean($query)
+
+           OR toString(datetime(fecha).day) CONTAINS $query
+           OR apoc.text.clean([
+               'uno','dos','tres','cuatro','cinco','seis','siete','ocho','nueve','diez','once','doce','trece','catorce','quince',
+               'dieciseis','diecisiete','dieciocho','diecinueve','veinte','veintiuno','veintidos','veintitres','veinticuatro',
+               'veinticinco','veintiseis','veintisiete','veintiocho','veintinueve','treinta','treinta y uno'
+             ][datetime(fecha).day-1]) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean([
+               'lunes','martes','miercoles','jueves','viernes','sabado','domingo'
+             ][datetime(fecha).dayOfWeek-1]) CONTAINS apoc.text.clean($query)
+           OR $query = '')
+        WITH e, fecha
+        ORDER BY abs(duration.between(date(), fecha).days) ASC, e.nombre DESC
+        RETURN DISTINCT e
+        SKIP $skip
+        LIMIT $limit
+
+                    """)
+
+List<Evento> busquedaEventosCreadosPorUsuarioGoogle(@Param("idUsuario") Long idUsuario,
+        @Param("query") String query,
+        @Param("skip") int skip,
+        @Param("limit") int limit);
+
+@Query("""
+        MATCH (e:Evento), (u:Usuario)
+        WHERE NOT (e)-[:PARTICIPA_EN]-(u)
+        AND NOT (u)-[:EXPULSADO_EVENTO]-(e)
+        AND date(e.fechaHora) > date(datetime())
+        AND COALESCE(e.eliminado, false) = false
+        AND (
+            (u.genero = 'masculino' AND e.genero IN ['masculino', 'sinGenero']) OR
+            (u.genero = 'femenino' AND e.genero IN ['femenino', 'sinGenero']) OR
+            (u.genero = 'otro' AND e.genero IN ['masculino', 'femenino', 'otro', 'sinGenero'])
+        )
+        AND (
+            NOT e.esPrivadoParaLaComunidad OR
+            EXISTS {
+                MATCH (e)-[:EVENTO_INTERNO]->(c:Comunidad)
+                MATCH (u)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]->(c)
+            }
+        )
+        WITH e, u, COUNT { (e)<-[:PARTICIPA_EN]-() } AS numParticipantes
+        WHERE numParticipantes < e.cantidadMaximaParticipantes
+
+        MATCH (e)-[:ETIQUETADO_CON]->(t:Etiqueta)
+        WITH e, t, u, toString(e.fechaHora) AS fechaStr
+        WITH e, t, u, datetime(fechaStr) AS fecha
+        WHERE (apoc.text.clean(toLower(e.nombre)) CONTAINS apoc.text.clean(toLower($query))
+             OR apoc.text.clean(toLower(u.nombre)) CONTAINS apoc.text.clean(toLower($query))
+             OR apoc.text.clean(toLower(e.ubicacion)) CONTAINS apoc.text.clean(toLower($query))
+             OR apoc.text.clean(toLower(e.descripcion)) CONTAINS apoc.text.clean(toLower($query))
+             OR apoc.text.clean(toLower(t.nombre)) CONTAINS apoc.text.clean(toLower($query))
+             OR toString(datetime(fecha).year) CONTAINS $query
+             OR toString(datetime(fecha).month) CONTAINS $query
+             OR apoc.text.clean(toLower([
+                 'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+                 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+             ][datetime(fecha).month-1])) CONTAINS apoc.text.clean(toLower($query))
+             OR toString(datetime(fecha).day) CONTAINS $query
+             OR apoc.text.clean(toLower([
+                 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez',
+                 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciseis', 'diecisiete', 'dieciocho',
+                 'diecinueve', 'veinte', 'veintiuno', 'veintidos', 'veintitres', 'veinticuatro',
+                 'veinticinco', 'veintiseis', 'veintisiete', 'veintiocho', 'veintinueve', 'treinta', 'treinta y uno'
+             ][datetime(fecha).day-1])) CONTAINS apoc.text.clean(toLower($query))
+             OR apoc.text.clean(toLower([
+                 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'
+             ][datetime(fecha).dayOfWeek-1])) CONTAINS apoc.text.clean(toLower($query))
+             OR $query = '')
+        WITH e, fecha
+        ORDER BY abs(duration.between(date(), fecha).days) ASC, e.nombre DESC
+        RETURN DISTINCT e
+        SKIP $skip
+        LIMIT $limit
+        """)
+List<Evento> busquedaEventosDisponiblesGoogle(@Param("idUsuario") Long idUsuario,
+        @Param("query") String query,
+        @Param("skip") int skip,
+        @Param("limit") int limit);
+
+
+@Query("""
+        MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento)
+        WHERE id(u) = $idUsuario
+        AND date(e.fechaHora) > date(datetime())
+        AND COALESCE(e.eliminado, false) = false
+        WITH e, u
+        MATCH (e)-[:ETIQUETADO_CON]->(t:Etiqueta)
+        WITH e, t, u, toString(e.fechaHora) AS fechaStr
+        WITH e, t, u, datetime(fechaStr) AS fecha
+        WHERE (apoc.text.clean(toLower(e.nombre)) CONTAINS apoc.text.clean(toLower($query))
+             OR apoc.text.clean(toLower(u.nombre)) CONTAINS apoc.text.clean(toLower($query))
+             OR apoc.text.clean(toLower(e.ubicacion)) CONTAINS apoc.text.clean(toLower($query))
+             OR apoc.text.clean(toLower(e.descripcion)) CONTAINS apoc.text.clean(toLower($query))
+             OR apoc.text.clean(toLower(t.nombre)) CONTAINS apoc.text.clean(toLower($query))
+             OR toString(datetime(fecha).year) CONTAINS $query
+             OR toString(datetime(fecha).month) CONTAINS $query
+             OR apoc.text.clean(toLower([
+                 'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+                 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+             ][datetime(fecha).month-1])) CONTAINS apoc.text.clean(toLower($query))
+             OR toString(datetime(fecha).day) CONTAINS $query
+             OR apoc.text.clean(toLower([
+                 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez',
+                 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciseis', 'diecisiete', 'dieciocho',
+                 'diecinueve', 'veinte', 'veintiuno', 'veintidos', 'veintitres', 'veinticuatro',
+                 'veinticinco', 'veintiseis', 'veintisiete', 'veintiocho', 'veintinueve', 'treinta', 'treinta y uno'
+             ][datetime(fecha).day-1])) CONTAINS apoc.text.clean(toLower($query))
+             OR apoc.text.clean(toLower([
+                 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'
+             ][datetime(fecha).dayOfWeek-1])) CONTAINS apoc.text.clean(toLower($query))
+             OR $query = '')
+        WITH e, fecha
+        ORDER BY abs(duration.between(date(), fecha).days) ASC, e.nombre DESC
+        RETURN DISTINCT e
+        SKIP $skip
+        LIMIT $limit
+        """)
+List<Evento> busquedaEventosParticipaFuturoGoogle(@Param("idUsuario") Long idUsuario,
+        @Param("query") String query,
+        @Param("skip") int skip,
+        @Param("limit") int limit);
+
+@Query("""
+        MATCH (u:Usuario)-[:PARTICIPA_EN]->(e:Evento)
+        WHERE id(u) = $idUsuario
+        AND COALESCE(e.eliminado, false) = false
+        WITH e, u
+        MATCH (e)-[:ETIQUETADO_CON]->(t:Etiqueta)
+        WITH e, t, u, toString(e.fechaHora) AS fechaStr
+        WITH e, t, u, datetime(fechaStr) AS fecha
+        WHERE (apoc.text.clean(toLower(e.nombre)) CONTAINS apoc.text.clean(toLower($query))
+             OR apoc.text.clean(toLower(u.nombre)) CONTAINS apoc.text.clean(toLower($query))
+             OR apoc.text.clean(toLower(e.ubicacion)) CONTAINS apoc.text.clean(toLower($query))
+             OR apoc.text.clean(toLower(e.descripcion)) CONTAINS apoc.text.clean(toLower($query))
+             OR apoc.text.clean(toLower(t.nombre)) CONTAINS apoc.text.clean(toLower($query))
+             OR toString(datetime(fecha).year) CONTAINS $query
+             OR toString(datetime(fecha).month) CONTAINS $query
+             OR apoc.text.clean(toLower([
+                 'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+                 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+             ][datetime(fecha).month-1])) CONTAINS apoc.text.clean(toLower($query))
+             OR toString(datetime(fecha).day) CONTAINS $query
+             OR apoc.text.clean(toLower([
+                 'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez',
+                 'once', 'doce', 'trece', 'catorce', 'quince', 'dieciseis', 'diecisiete', 'dieciocho',
+                 'diecinueve', 'veinte', 'veintiuno', 'veintidos', 'veintitres', 'veinticuatro',
+                 'veinticinco', 'veintiseis', 'veintisiete', 'veintiocho', 'veintinueve', 'treinta', 'treinta y uno'
+             ][datetime(fecha).day-1])) CONTAINS apoc.text.clean(toLower($query))
+             OR apoc.text.clean(toLower([
+                 'lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'
+             ][datetime(fecha).dayOfWeek-1])) CONTAINS apoc.text.clean(toLower($query))
+             OR $query = '')
+        WITH e, fecha
+        ORDER BY abs(duration.between(date(), fecha).days) ASC, e.nombre DESC
+        RETURN DISTINCT e
+        SKIP $skip
+        LIMIT $limit
+        """)
+List<Evento> busquedaEventosParticipaHistoricoGoogle(@Param("idUsuario") Long idUsuario,
+        @Param("query") String query,
+        @Param("skip") int skip,
+        @Param("limit") int limit);
 }
