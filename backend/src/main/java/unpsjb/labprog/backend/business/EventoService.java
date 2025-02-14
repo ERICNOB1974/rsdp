@@ -544,4 +544,9 @@ public class EventoService {
         String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
         return eventoRepository.busquedaEventosCreadosPorUsuarioGoogle(idUsuario, filtroNombre, page, size);
     }
+       public List<Evento> busquedaEventosDisponiblesGoogle(Long idUsuario, String nombreEvento, int page, int size) {
+        //int skip = page * size; // Cálculo de los resultados a omitir
+        String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
+        return eventoRepository.busquedaEventosDisponiblesGoogle(idUsuario, filtroNombre, page, size);
+    }
 }
