@@ -738,6 +738,7 @@ public interface EventoRepository extends Neo4jRepository<Evento, Long> {
            OR apoc.text.clean(u.nombre) CONTAINS apoc.text.clean($query)
            OR apoc.text.clean(e.ubicacion) CONTAINS apoc.text.clean($query)
            OR apoc.text.clean(e.descripcion) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(e.genero) CONTAINS apoc.text.clean($query)
            OR apoc.text.clean(t.nombre) CONTAINS apoc.text.clean($query)
 
            OR toString(datetime(fecha).year) CONTAINS $query
@@ -795,9 +796,9 @@ List<Evento> busquedaEventosCreadosPorUsuarioGoogle(@Param("idUsuario") Long idU
         WITH e, t, u, toString(e.fechaHora) AS fechaStr
         WITH e, t, u, datetime(fechaStr) AS fecha
         WHERE (apoc.text.clean(toLower(e.nombre)) CONTAINS apoc.text.clean(toLower($query))
-             OR apoc.text.clean(toLower(u.nombre)) CONTAINS apoc.text.clean(toLower($query))
              OR apoc.text.clean(toLower(e.ubicacion)) CONTAINS apoc.text.clean(toLower($query))
              OR apoc.text.clean(toLower(e.descripcion)) CONTAINS apoc.text.clean(toLower($query))
+             OR apoc.text.clean(toLower(e.genero)) CONTAINS apoc.text.clean(toLower($query))
              OR apoc.text.clean(toLower(t.nombre)) CONTAINS apoc.text.clean(toLower($query))
              OR toString(datetime(fecha).year) CONTAINS $query
              OR toString(datetime(fecha).month) CONTAINS $query
@@ -838,9 +839,9 @@ List<Evento> busquedaEventosDisponiblesGoogle(@Param("idUsuario") Long idUsuario
         WITH e, t, u, toString(e.fechaHora) AS fechaStr
         WITH e, t, u, datetime(fechaStr) AS fecha
         WHERE (apoc.text.clean(toLower(e.nombre)) CONTAINS apoc.text.clean(toLower($query))
-             OR apoc.text.clean(toLower(u.nombre)) CONTAINS apoc.text.clean(toLower($query))
              OR apoc.text.clean(toLower(e.ubicacion)) CONTAINS apoc.text.clean(toLower($query))
              OR apoc.text.clean(toLower(e.descripcion)) CONTAINS apoc.text.clean(toLower($query))
+             OR apoc.text.clean(toLower(e.genero)) CONTAINS apoc.text.clean(toLower($query))
              OR apoc.text.clean(toLower(t.nombre)) CONTAINS apoc.text.clean(toLower($query))
              OR toString(datetime(fecha).year) CONTAINS $query
              OR toString(datetime(fecha).month) CONTAINS $query
@@ -879,9 +880,9 @@ List<Evento> busquedaEventosParticipaFuturoGoogle(@Param("idUsuario") Long idUsu
         WITH e, t, u, toString(e.fechaHora) AS fechaStr
         WITH e, t, u, datetime(fechaStr) AS fecha
         WHERE (apoc.text.clean(toLower(e.nombre)) CONTAINS apoc.text.clean(toLower($query))
-             OR apoc.text.clean(toLower(u.nombre)) CONTAINS apoc.text.clean(toLower($query))
              OR apoc.text.clean(toLower(e.ubicacion)) CONTAINS apoc.text.clean(toLower($query))
              OR apoc.text.clean(toLower(e.descripcion)) CONTAINS apoc.text.clean(toLower($query))
+             OR apoc.text.clean(toLower(e.genero)) CONTAINS apoc.text.clean(toLower($query))
              OR apoc.text.clean(toLower(t.nombre)) CONTAINS apoc.text.clean(toLower($query))
              OR toString(datetime(fecha).year) CONTAINS $query
              OR toString(datetime(fecha).month) CONTAINS $query

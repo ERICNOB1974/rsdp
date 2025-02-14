@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import unpsjb.labprog.backend.model.Comunidad;
+import unpsjb.labprog.backend.model.Evento;
 import unpsjb.labprog.backend.model.Usuario;
 import unpsjb.labprog.backend.model.DTO.ExpulsionDTO;
 
@@ -366,7 +367,7 @@ public class ComunidadService {
         // Eliminar el usuario con el mensaje y la fecha de expulsión
         this.comunidadRepository.eliminarUsuario(idComunidad, idUsuario, motivo, tipo, fechaExpulsion,
                 LocalDateTime.now());
-                
+
         if (esFavorita(idComunidad, idUsuario)) {
             cambiarEstadoFavorita(idComunidad, idUsuario);
         }
@@ -463,5 +464,22 @@ public class ComunidadService {
         expulsado.setTipo(this.comunidadRepository.findTipoExpulsion(idUsuario, idComunidad));
 
         return expulsado;
+    }
+
+    public List<Comunidad> busquedaComunidadesCreadasPorUsuarioGoogle(Long idUsuario, String nombreEvento, int page,
+            int size) {
+        String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
+        return comunidadRepository.busquedaComunidadesCreadasPorUsuarioGoogle(idUsuario, filtroNombre, page, size);
+    }
+
+    public List<Comunidad> busquedaComunidadesParticipaUsuarioGoogle(Long idUsuario, String nombreEvento, int page,
+            int size) {
+        String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
+        return comunidadRepository.busquedaComunidadesParticipaUsuarioGoogle(idUsuario, filtroNombre, page, size);
+    }
+    public List<Comunidad> busquedaComunidadesDisponiblesUsuarioGoogle(Long idUsuario, String nombreEvento, int page,
+            int size) {
+        String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
+        return comunidadRepository.busquedaComunidadesDisponiblesUsuarioGoogle(idUsuario, filtroNombre, page, size);
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import unpsjb.labprog.backend.model.Comunidad;
 import unpsjb.labprog.backend.model.Dia;
 import unpsjb.labprog.backend.model.Ejercicio;
 import unpsjb.labprog.backend.model.Etiqueta;
@@ -165,13 +166,15 @@ public class RutinaService {
                     ejercicio.setNombre(ejercicioDTO.getNombre());
                     ejercicio.setImagen(ejercicioDTO.getImagen());
                     ejercicio.setDescripcion(ejercicioDTO.getDescripcion());
-                    this.guardarEjercicioResistencia(diaId, ejercicio, ejercicioDTO.getOrden(), ejercicioDTO.getTiempo());
+                    this.guardarEjercicioResistencia(diaId, ejercicio, ejercicioDTO.getOrden(),
+                            ejercicioDTO.getTiempo());
                 } else {
                     Ejercicio ejercicio = new Ejercicio();
                     ejercicio.setNombre(ejercicioDTO.getNombre());
                     ejercicio.setImagen(ejercicioDTO.getImagen());
                     ejercicio.setDescripcion(ejercicioDTO.getDescripcion());
-                    this.guardarEjercicioSeries(diaId, ejercicio, ejercicioDTO.getOrden(), ejercicioDTO.getSeries(), ejercicioDTO.getRepeticiones());
+                    this.guardarEjercicioSeries(diaId, ejercicio, ejercicioDTO.getOrden(), ejercicioDTO.getSeries(),
+                            ejercicioDTO.getRepeticiones());
                 }
             }
         }
@@ -439,7 +442,7 @@ public class RutinaService {
 
     public List<Rutina> rutinasNombre(String nombre, String tipo, Long usuarioId) {
         List<Rutina> rutinas;
-    
+
         if ("disponibles".equalsIgnoreCase(tipo)) {
             rutinas = rutinaRepository.rutinasNombreDisponibles(nombre, usuarioId);
             // Filtrar rutinas que no cumplan con la condición
@@ -467,8 +470,7 @@ public class RutinaService {
             rutinas = rutinaRepository.rutinasNombre(nombre);
             return rutinas;
         }
-    
-    
+
     }
 
     public List<Rutina> rutinasCreadasPorUsuario(Long idUsuario, int offset, int limit) {
@@ -674,9 +676,27 @@ public class RutinaService {
         return rutinaRepository.listaFavoritas(idUsuario, filtroNombre, skip, size);
     }
 
-       public List<Rutina> rutinasCreadasPorUsuarioFiltradas(Long idUsuario, String nombreRutina, int page, int size) {
+    public List<Rutina> rutinasCreadasPorUsuarioFiltradas(Long idUsuario, String nombreRutina, int page, int size) {
         int skip = page * size; // Cálculo de los resultados a omitir
         String filtroNombre = (nombreRutina == null || nombreRutina.trim().isEmpty()) ? "" : nombreRutina;
         return rutinaRepository.rutinasCreadasPorUsuarioFiltradas(idUsuario, filtroNombre, skip, size);
+    }
+
+    public List<Rutina> busquedaRutinasDisponiblesUsuarioGoogle(Long idUsuario, String nombreEvento, int page,
+            int size) {
+        String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
+        return rutinaRepository.busquedaRutinasDisponiblesUsuarioGoogle(idUsuario, filtroNombre, page, size);
+    }
+
+    public List<Rutina> busquedaRutinasCreadasUsuarioGoogle(Long idUsuario, String nombreEvento, int page,
+            int size) {
+        String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
+        return rutinaRepository.busquedaRutinasCreadasUsuarioGoogle(idUsuario, filtroNombre, page, size);
+    }
+
+    public List<Rutina> busquedaRutinasRealizaUsuarioGoogle(Long idUsuario, String nombreEvento, int page,
+            int size) {
+        String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
+        return rutinaRepository.busquedaRutinasRealizaUsuarioGoogle(idUsuario, filtroNombre, page, size);
     }
 }

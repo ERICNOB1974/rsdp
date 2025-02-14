@@ -673,4 +673,109 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
             """)
     boolean estaExpulsado(Long idUsuario, Long idComunidad);
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    @Query("""
+        MATCH (u:Usuario)-[:CREADA_POR]-(c:Comunidad)
+        WHERE id(u) = $idUsuario AND c.eliminada = false
+        MATCH (c)-[:ETIQUETADA_CON]->(t:Etiqueta)
+        WITH c, t, u
+        WHERE (apoc.text.clean(c.nombre) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(u.nombre) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(c.ubicacion) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(c.descripcion) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(c.genero) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(t.nombre) CONTAINS apoc.text.clean($query))
+        WITH c
+        ORDER BY c.nombre DESC
+        RETURN DISTINCT c
+        SKIP $skip
+        LIMIT $limit
+
+                    """)
+
+List<Comunidad> busquedaComunidadesCreadasPorUsuarioGoogle(@Param("idUsuario") Long idUsuario,
+        @Param("query") String query,
+        @Param("skip") int skip,
+        @Param("limit") int limit);
+
+
+
+
+
+    @Query("""
+        MATCH (u:Usuario)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(c:Comunidad)
+        WHERE id(u) = $idUsuario AND c.eliminada = false
+        AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c)
+        MATCH (c)-[:ETIQUETADA_CON]->(t:Etiqueta)
+        WITH c, t, u
+        WHERE (apoc.text.clean(c.nombre) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(c.ubicacion) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(c.descripcion) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(c.genero) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(t.nombre) CONTAINS apoc.text.clean($query))
+        WITH c
+        ORDER BY c.nombre DESC  
+        RETURN DISTINCT c
+        SKIP $skip
+        LIMIT $limit
+
+                    """)
+
+List<Comunidad> busquedaComunidadesParticipaUsuarioGoogle(@Param("idUsuario") Long idUsuario,
+        @Param("query") String query,
+        @Param("skip") int skip,
+        @Param("limit") int limit);
+
+    @Query("""
+        MATCH (u:Usuario), (c:Comunidad)
+        WHERE id(u) = $idUsuario 
+        AND c.eliminada = false
+        AND NOT (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(u)
+        AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c)
+
+        OPTIONAL MATCH (u)-[r:EXPULSADO_COMUNIDAD]->(c) 
+        WHERE r IS NULL OR r.fechaHoraExpulsion < localdatetime() 
+
+        AND ( 
+        (u.genero = 'masculino' AND c.genero IN ['masculino', 'sinGenero']) OR 
+        (u.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR 
+        (u.genero = 'otro' AND c.genero IN ['masculino', 'femenino', 'otro', 'sinGenero']) 
+        )       
+        MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h) 
+        WITH c, COUNT(DISTINCT h) AS numParticipantes, u 
+        WHERE numParticipantes < c.cantidadMaximaMiembros
+        MATCH (c)-[:ETIQUETADA_CON]->(t:Etiqueta)
+        WITH c, t, u
+        WHERE (apoc.text.clean(c.nombre) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(c.ubicacion) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(c.descripcion) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(c.genero) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(t.nombre) CONTAINS apoc.text.clean($query))
+           WITH c
+        ORDER BY c.nombre DESC  
+        RETURN DISTINCT c
+        SKIP $skip
+        LIMIT $limit
+
+                    """)
+
+List<Comunidad> busquedaComunidadesDisponiblesUsuarioGoogle(@Param("idUsuario") Long idUsuario,
+        @Param("query") String query,
+        @Param("skip") int skip,
+        @Param("limit") int limit);
+
+
 }
