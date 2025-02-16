@@ -54,7 +54,7 @@ export class EventoService {
     return this.http.post<DataPackage>(url, evento);
   }
 
-  sugerencias(page:number, size:number): Observable<DataPackage> {
+  sugerencias(page: number, size: number): Observable<DataPackage> {
     const nombreUsuario = this.authService.getNombreUsuario();
 
     return this.http.get<DataPackage>(` ${this.eventosUrl}/sugerencias-combinadas/${nombreUsuario}?page=${page}&size=${size}`);
@@ -104,7 +104,7 @@ export class EventoService {
   //     return 'Ubicación no disponible';
   //   }
   // }
-  
+
   salir(idEvento: number): Observable<DataPackage> {
     const idUsuario = this.authService.getUsuarioId();
     return this.http.get<DataPackage>(`${this.eventosUrl}/desinscribirse/${idEvento}/${idUsuario}`);
@@ -115,17 +115,19 @@ export class EventoService {
       params: params,
     });
   }
-  
+
   filtrarNombre(nombre: string, tipoTab: string, usuarioId: number): Observable<DataPackage> {
-    return this.http.get<DataPackage>(`${this.eventosUrl}/filtrar/nombre`, 
-      { params: {
-        nombre: nombre,
-        tipo: tipoTab,
-        usuarioId: usuarioId}  
+    return this.http.get<DataPackage>(`${this.eventosUrl}/filtrar/nombre`,
+      {
+        params: {
+          nombre: nombre,
+          tipo: tipoTab,
+          usuarioId: usuarioId
+        }
       });
   }
 
-  filtrarFecha(tipo: string, usuarioId: number,min: string, max: string): Observable<DataPackage> {
+  filtrarFecha(tipo: string, usuarioId: number, min: string, max: string): Observable<DataPackage> {
     // Agregamos los parámetros min y max a la URL
     return this.http.get<DataPackage>(`${this.eventosUrl}/filtrar/fecha`, {
       params: {
@@ -147,54 +149,48 @@ export class EventoService {
     });
     return this.http.get<DataPackage>(`${this.eventosUrl}/filtrar/etiquetas`, { params });
   }
-  
+
   disponibles(page: number, size: number): Observable<DataPackage> {
     const nombreUsuario = this.authService.getNombreUsuario();
     return this.http.get<DataPackage>(` ${this.eventosUrl}/${nombreUsuario}/disponibles?page=${page}&size=${size}`);
   }
-  
+
   eventosCreadosPorUsuario(offset: number, limit: number): Observable<DataPackage> {
     const userId = this.authService.getUsuarioId();
     return this.http.get<DataPackage>(`${this.eventosUrl}/eventosCreadosPorUsuario/${userId}?offset=${offset}&limit=${limit}`);
   }
 
-  eventosCreadosPorUsuarioFiltrados(nombreEvento: string,page: number, size: number): Observable<DataPackage> {
+  eventosCreadosPorUsuarioFiltrados(nombreEvento: string, page: number, size: number): Observable<DataPackage> {
     const url = `${this.eventosUrl}/eventosCreadosPorUsuarioFiltrados/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
-    (nombreEvento ? `&nombreEvento=${nombreEvento}` : '');  // Agregar solo si no está vacío
-  return this.http.get<DataPackage>(url);
+      (nombreEvento ? `&nombreEvento=${nombreEvento}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
 
   }
-  busquedaEventosCreadosPorUsuarioGoogle(nombreEvento: string,page: number, size: number): Observable<DataPackage> {
-    const url = `${this.eventosUrl}/busquedaEventosCreadosPorUsuarioGoogle/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
-    (nombreEvento ? `&nombreEvento=${nombreEvento}` : '');  // Agregar solo si no está vacío
-  return this.http.get<DataPackage>(url);
 
-  }
-  
-  
- 
+
+
   participaUsuario(idUsuario: number, nombreEvento: string, page: number, size: number): Observable<DataPackage> {
     // Si nombreRutina está vacío, no lo incluimos en la URL
     const url = `${this.eventosUrl}/participa/${idUsuario}?page=${page}&size=${size}` +
-                (nombreEvento ? `&nombreEvento=${nombreEvento}` : '');  // Agregar solo si no está vacío
+      (nombreEvento ? `&nombreEvento=${nombreEvento}` : '');  // Agregar solo si no está vacío
     return this.http.get<DataPackage>(url);
-}
-participaUsuarioAFuturo(idUsuario: number, nombreEvento: string, page: number, size: number): Observable<DataPackage> {
+  }
+  participaUsuarioAFuturo(idUsuario: number, nombreEvento: string, page: number, size: number): Observable<DataPackage> {
     // Si nombreRutina está vacío, no lo incluimos en la URL
     const url = `${this.eventosUrl}/participaUsuarioAFuturo/${idUsuario}?page=${page}&size=${size}` +
-                (nombreEvento ? `&nombreEvento=${nombreEvento}` : '');  // Agregar solo si no está vacío
+      (nombreEvento ? `&nombreEvento=${nombreEvento}` : '');  // Agregar solo si no está vacío
     return this.http.get<DataPackage>(url);
-}
+  }
 
 
 
   eliminar(idEvento: number): Observable<DataPackage> {
     return this.http.delete<DataPackage>(` ${this.eventosUrl}/eliminar/${idEvento}`);
   }
-  
-  eliminarMiembro(idEvento: number, idUsuario:number, motivo:string): Observable<DataPackage> {
+
+  eliminarMiembro(idEvento: number, idUsuario: number, motivo: string): Observable<DataPackage> {
     return this.http.put<DataPackage>(` ${this.eventosUrl}/eliminarParticipante/${idEvento}/${idUsuario}`, motivo);
-  } 
+  }
 
   eventosFuturosPertenecientesAUnUsuario(): Observable<DataPackage> {
     const nombreUsuario = this.authService.getNombreUsuario();
@@ -205,11 +201,11 @@ participaUsuarioAFuturo(idUsuario: number, nombreEvento: string, page: number, s
     return this.http.get<DataPackage>(`${this.eventosUrl}/eventosDeUnaComunidad/${comunidadId}`);
   }
 
-  buscarCreadorDeUnEventoInterno(comunidadId: number, eventoId: number){
+  buscarCreadorDeUnEventoInterno(comunidadId: number, eventoId: number) {
     return this.http.get<DataPackage>(`${this.eventosUrl}/buscarCreadorDeUnEventoInterno/${comunidadId}/${eventoId}`);
   }
 
-  enviarNotificacionEvento(mensaje: string, asunto: string, usuarios: Usuario[], nombreActividad:string): Observable<DataPackage> {
+  enviarNotificacionEvento(mensaje: string, asunto: string, usuarios: Usuario[], nombreActividad: string): Observable<DataPackage> {
 
     const nombreUsuario = this.authService.getNombreUsuario();
 
@@ -230,6 +226,32 @@ participaUsuarioAFuturo(idUsuario: number, nombreEvento: string, page: number, s
 
   desetiquetar(evento: number, idEtiqueta: number): Observable<DataPackage> {
     return this.http.post<DataPackage>(` ${this.eventosUrl}/desetiquetar/${idEtiqueta}`, evento);
+  }
+
+
+  busquedaEventosCreadosPorUsuarioGoogle(nombreEvento: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.eventosUrl}/busquedaEventosCreadosPorUsuarioGoogle/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
+      (nombreEvento ? `&nombreEvento=${nombreEvento}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+
+  }
+
+  busquedaEventosDisponiblesGoogle(idUsuario: number, nombreEvento: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.eventosUrl}/busquedaEventosDisponiblesGoogle/${idUsuario}?page=${page}&size=${size}` +
+      (nombreEvento ? `&nombreEvento=${nombreEvento}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+  }
+
+  busquedaEventosParticipaFuturoGoogle(idUsuario: number, nombreEvento: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.eventosUrl}/busquedaEventosParticipaFuturoGoogle/${idUsuario}?page=${page}&size=${size}` +
+      (nombreEvento ? `&nombreEvento=${nombreEvento}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+  }
+
+  busquedaEventosParticipaHistoricoGoogle(idUsuario: number, nombreEvento: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.eventosUrl}/busquedaEventosParticipaHistoricoGoogle/${idUsuario}?page=${page}&size=${size}` +
+      (nombreEvento ? `&nombreEvento=${nombreEvento}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
   }
 
 }
