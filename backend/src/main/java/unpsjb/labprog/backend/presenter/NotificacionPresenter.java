@@ -16,10 +16,8 @@ import unpsjb.labprog.backend.business.NotificacionService;
 @RequestMapping("notificaciones")
 public class NotificacionPresenter {
 
-   
-   @Autowired
+    @Autowired
     NotificacionService notificacionService;
-
 
     @GetMapping("/notificaciones/{usuarioId}")
     public ResponseEntity<Object> obtenerNotificaciones(@PathVariable Long usuarioId) {
@@ -32,8 +30,8 @@ public class NotificacionPresenter {
 
     @PostMapping("/marcar-leida/{id}")
     public ResponseEntity<Object> marcarNotificacionLeida(@PathVariable Long id) {
-            return Response.ok(notificacionService.marcarLeida(id));
-        
+        return Response.ok(notificacionService.marcarLeida(id));
+
     }
 
     @RequestMapping(value = "/eliminarNotififacion/{id}", method = RequestMethod.DELETE)
@@ -46,21 +44,21 @@ public class NotificacionPresenter {
         return Response.ok("notificacion ", +id + " borrada con exito");
     }
 
-      @RequestMapping(value = "/eliminarTodas/{idUsuario}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/eliminarTodas/{idUsuario}", method = RequestMethod.DELETE)
     public ResponseEntity<Object> eliminarTodasLasNotificaciones(@PathVariable("idUsuario") Long idUsuario) {
         notificacionService.eliminarTodasLasNotificaciones(idUsuario);
         return Response.ok("notificaciones del usuario ", +idUsuario + " borradas con exito");
     }
 
     @PostMapping("/marcarTodasLeidas/{idUsuario}")
-        public ResponseEntity<Object> marcarLeidasTodasLasNotificaciones(@PathVariable Long idUsuario) {
+    public ResponseEntity<Object> marcarLeidasTodasLasNotificaciones(@PathVariable Long idUsuario) {
         return Response.ok(notificacionService.marcarLeidasTodasLasNotificaciones(idUsuario));
-        }
+    }
 
-          @RequestMapping(value = "/eliminarEventosPasado", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/eliminarEventosPasado", method = RequestMethod.DELETE)
     public ResponseEntity<Object> eliminarNotificacionesEventosPasados() {
         notificacionService.eliminarNotificacionesEventosPasados();
-        return Response.ok(null,"ok");
-    } 
+        return Response.ok(null, "ok");
+    }   
 
 }

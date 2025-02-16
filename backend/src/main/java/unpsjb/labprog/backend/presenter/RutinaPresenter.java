@@ -361,4 +361,13 @@ public class RutinaPresenter {
         return Response
                 .ok(rutinaService.busquedaRutinasRealizaUsuarioGoogle(idUsuario, termino, page, size));
     }
+    @RequestMapping(path = "/busquedaRutinasFavoritasUsuarioGoogle/{idUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> busquedaRutinasFavoritasUsuarioGoogle(
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String termino) {
+        return Response
+                .ok(rutinaService.busquedaRutinasFavoritasUsuarioGoogle(idUsuario, termino, page, size));
+    }
 }

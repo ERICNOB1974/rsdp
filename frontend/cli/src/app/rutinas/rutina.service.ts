@@ -139,13 +139,13 @@ export class RutinaService {
     return this.http.get<DataPackage>(`${this.rutinasUrl}/rutinasRealizaUsuarioSinPaginacion/${idUsuario}`).pipe(
       map((response: DataPackage) => {
         let rutinas = response.data as any[];
-  
+
         // No es necesario ordenar los días ni ejercicios, ya se hace en el backend
         return rutinas;
       })
     );
   }
-  
+
   obtenerDiasEnRutina(idRutina: number): Observable<DataPackage> {
     return this.http.get<DataPackage>(`${this.rutinasUrl}/obtenerDiasEnRutina/${idRutina}`);
   }
@@ -156,25 +156,27 @@ export class RutinaService {
 
 
   filtrarNombre(nombre: string, tipoTab: string, usuarioId: number): Observable<DataPackage> {
-    return this.http.get<DataPackage>(`${this.rutinasUrl}/filtrar/nombre`, 
-      { params: {
-        nombre: nombre,
-        tipo: tipoTab,
-        usuarioId: usuarioId}  
+    return this.http.get<DataPackage>(`${this.rutinasUrl}/filtrar/nombre`,
+      {
+        params: {
+          nombre: nombre,
+          tipo: tipoTab,
+          usuarioId: usuarioId
+        }
       });
   }
 
   filtrarEtiqueta(etiquetas: string[], tipo: string, usuarioId: number): Observable<DataPackage> {
     let params = new HttpParams().set('etiquetas', etiquetas.join(',')); // convierte el array a una cadena separada por comas
-    
+
     if (tipo) {
       params = params.set('tipo', tipo); // agrega el tipo si está definido
     }
-    
+
     if (usuarioId) {
       params = params.set('usuarioId', usuarioId.toString()); // agrega el idUsuario si está definido
     }
-  
+
     return this.http.get<DataPackage>(`${this.rutinasUrl}/filtrar/etiquetas`, { params });
   }
 
@@ -183,13 +185,13 @@ export class RutinaService {
     return this.http.get<DataPackage>(`${this.rutinasUrl}/rutinasCreadasPorUsuario/${userId}?offset=${offset}&limit=${limit}`);
   }
 
-  rutinasCreadasPorUsuarioFiltradas(nombreRutina: string,page: number, size: number): Observable<DataPackage> {
+  rutinasCreadasPorUsuarioFiltradas(nombreRutina: string, page: number, size: number): Observable<DataPackage> {
     const url = `${this.rutinasUrl}/rutinasCreadasPorUsuarioFiltradas/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
-    (nombreRutina ? `&nombreRutina=${nombreRutina}` : '');  // Agregar solo si no está vacío
-  return this.http.get<DataPackage>(url);
+      (nombreRutina ? `&nombreRutina=${nombreRutina}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
 
   }
-  
+
 
   rutinasRealizaUsuario(idUsuario: number, nombreRutina: string, page: number, size: number): Observable<DataPackage> {
     // Si nombreRutina está vacío, no lo incluimos en la URL
@@ -228,23 +230,29 @@ export class RutinaService {
   }
 
 
-  busquedaRutinasCreadasUsuarioGoogle( termino: string, page: number, size: number): Observable<DataPackage> {
+  busquedaRutinasCreadasUsuarioGoogle(termino: string, page: number, size: number): Observable<DataPackage> {
     const url = `${this.rutinasUrl}/busquedaRutinasCreadasUsuarioGoogle/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
       (termino ? `&termino=${termino}` : '');  // Agregar solo si no está vacío
     return this.http.get<DataPackage>(url);
 
   }
-  busquedaRutinasDisponiblesUsuarioGoogle( termino: string, page: number, size: number): Observable<DataPackage> {
+  busquedaRutinasDisponiblesUsuarioGoogle(termino: string, page: number, size: number): Observable<DataPackage> {
     const url = `${this.rutinasUrl}/busquedaRutinasDisponiblesUsuarioGoogle/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
       (termino ? `&termino=${termino}` : '');  // Agregar solo si no está vacío
     return this.http.get<DataPackage>(url);
 
   }
-  busquedaRutinasRealizaUsuarioGoogle( termino: string, page: number, size: number): Observable<DataPackage> {
-    const url = `${this.rutinasUrl}/busquedaRutinasRealizaUsuarioGoogle/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
+
+  busquedaRutinasRealizaUsuarioGoogle(idUsuario:number, termino: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.rutinasUrl}/busquedaRutinasRealizaUsuarioGoogle/${idUsuario}?page=${page}&size=${size}` +
       (termino ? `&termino=${termino}` : '');  // Agregar solo si no está vacío
     return this.http.get<DataPackage>(url);
+  }
 
+  busquedaRutinasFavoritasUsuarioGoogle(idUsuario:number, termino: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.rutinasUrl}/busquedaRutinasFavoritasUsuarioGoogle/${idUsuario}?page=${page}&size=${size}` +
+      (termino ? `&termino=${termino}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
   }
 }
 
