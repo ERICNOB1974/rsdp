@@ -22,7 +22,7 @@ export class RutinasCreadasUsuarioComponent implements OnInit, OnDestroy {
   offset: number = 0; // Inicializar el offset
   limit: number = 10; // Número de comunidades a cargar por solicitud
   loading: boolean = false; // Para manejar el estado de carga
-  noMasRutinas: boolean =false;
+  noMasRutinas: boolean = false;
   searchSubjectRutinas: Subject<string> = new Subject<string>();
   searchText: string = ""
   constructor(
@@ -34,10 +34,10 @@ export class RutinasCreadasUsuarioComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getRutinasUsuario(); // Cargar las comunidades creadas por el usuario al inicializar el componente
     this.searchSubjectRutinas
-    .pipe(debounceTime(500)) // Espera 0,5 segundo
-    .subscribe((nombre: string) => {
-      this.buscarRutinas(nombre); // Cargar las comunidades creadas por el usuario al inicializar el componente
-    });
+      .pipe(debounceTime(500)) // Espera 0,5 segundo
+      .subscribe((nombre: string) => {
+        this.buscarRutinas(nombre); // Cargar las comunidades creadas por el usuario al inicializar el componente
+      });
     window.addEventListener('scroll', this.onScroll.bind(this));
   }
 
@@ -83,13 +83,11 @@ export class RutinasCreadasUsuarioComponent implements OnInit, OnDestroy {
   private getRutinasUsuarioFiltradas(nombre: string): void {
     if (this.loading) return; // Evitar cargar si ya se está cargando
     this.loading = true; // Establecer estado de carga
-    console.info("Chi2");
 
-    this.rutinaService.rutinasCreadasPorUsuarioFiltradas(nombre,this.offset, this.limit).subscribe(
+    this.rutinaService.busquedaRutinasCreadasUsuarioGoogle(nombre, this.offset, this.limit).subscribe(
       (dataPackage) => {
         const responseData = dataPackage.data;
         if (Array.isArray(responseData)) {
-          console.info("Chi3",responseData);
 
           this.rutinasUsuario.push(...responseData); // Agregar comunidades a la lista existente
           this.traerDias(this.rutinasUsuario); // Llamar a traerDias después de cargar las rutinas
@@ -109,18 +107,18 @@ export class RutinasCreadasUsuarioComponent implements OnInit, OnDestroy {
 
   traerEtiquetas(rutinas: Rutina[]): void {
     for (let rutina of rutinas) {
-    this.rutinaService.obtenerEtiquetasDeRutina(rutina.id!).subscribe(
-      (dataPackage) => {
-        if (dataPackage && Array.isArray(dataPackage.data)) {
-          rutina.etiquetas = dataPackage.data; // Asignar el número de días
+      this.rutinaService.obtenerEtiquetasDeRutina(rutina.id!).subscribe(
+        (dataPackage) => {
+          if (dataPackage && Array.isArray(dataPackage.data)) {
+            rutina.etiquetas = dataPackage.data; // Asignar el número de días
+          }
+        },
+        (error) => {
+          console.error(`Error al traer las Etiqeutas días de la rutina ${rutina.id}:`, error);
         }
-      },
-      (error) => {
-        console.error(`Error al traer las Etiqeutas días de la rutina ${rutina.id}:`, error);
-      }
-    );
+      );
+    }
   }
-}
 
   traerDias(rutinas: Rutina[]): void {
     for (let rutina of rutinas) {
@@ -137,7 +135,7 @@ export class RutinasCreadasUsuarioComponent implements OnInit, OnDestroy {
       );
     }
   }
-  
+
 
   irADetallesDeComunidad(id: number): void {
     this.router.navigate(['/rutinas', this.idEncryptorService.encodeId(id)]); // Navega a la ruta /comunidades/:id
@@ -153,7 +151,7 @@ export class RutinasCreadasUsuarioComponent implements OnInit, OnDestroy {
     window.removeEventListener('scroll', this.onScroll.bind(this)); // Limpiar el listener
   }
 
-  
+
   onSearchInputRutinas(nombre: string): void {
     this.searchSubjectRutinas.next(nombre); // Emite el texto ingresado
 

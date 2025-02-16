@@ -166,10 +166,11 @@ public class EventoService {
     public void mail(Evento evento) throws MessagingException {
         Optional<Evento> eventoViejo = eventoRepository.findById(evento.getId());
         if (!eventoViejo.isEmpty()) {
-            boolean cambioUbicacion= (eventoViejo.get().getLatitud()!=evento.getLatitud()) || (eventoViejo.get().getLongitud()!=evento.getLongitud());
+            boolean cambioUbicacion = (eventoViejo.get().getLatitud() != evento.getLatitud())
+                    || (eventoViejo.get().getLongitud() != evento.getLongitud());
             boolean cambioFecha = !evento.getFechaHora()
                     .truncatedTo(ChronoUnit.SECONDS) // Elimina nanosegundos
-                    .equals(eventoViejo.get().getFechaHora().truncatedTo(ChronoUnit.SECONDS)); 
+                    .equals(eventoViejo.get().getFechaHora().truncatedTo(ChronoUnit.SECONDS));
             if (cambioFecha || cambioUbicacion) {
                 emailService.enviarMailCambio(cambioFecha, cambioUbicacion, evento);
             }
@@ -305,7 +306,7 @@ public class EventoService {
 
     public List<Evento> eventosDesdeFecha(String tipo, Long usuarioId, ZonedDateTime min) {
         ZonedDateTime fechaInicioUtc = min.withZoneSameInstant(ZoneOffset.UTC);
-        
+
         if ("disponibles".equalsIgnoreCase(tipo)) {
             return eventoRepository.eventosDesdeFechaDisponible(usuarioId, fechaInicioUtc);
         } else if ("participante".equalsIgnoreCase(tipo)) {
@@ -314,7 +315,6 @@ public class EventoService {
             return eventoRepository.eventosDesdeFecha(fechaInicioUtc, usuarioId);
         }
     }
-    
 
     public List<Evento> eventosParticipantes(String tipo, Long usuarioId, int min, int max) {
         if ("disponibles".equalsIgnoreCase(tipo)) {
@@ -336,6 +336,7 @@ public class EventoService {
         String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
         return eventoRepository.participaUsuario(idUsuario, filtroNombre, skip, size);
     }
+
     public List<Evento> participaUsuarioAFuturo(Long idUsuario, String nombreEvento, int page, int size) {
         int skip = page * size; // Cálculo de los resultados a omitir
         String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
@@ -477,7 +478,7 @@ public class EventoService {
         Evento e = eventoRepository.findById(idEvento).get();
         String notificacion = "Has sido eliminado del evento " + e.getNombre();
         this.eventoRepository.eliminar(idEvento);
-                this.notificacionService.notificarEliminacionEvento(notificacion, idEvento);
+        this.notificacionService.notificarEliminacionEvento(notificacion, idEvento);
     }
 
     public List<Usuario> todosLosParticipantes(Long idEvento) {
@@ -534,19 +535,35 @@ public class EventoService {
         eventoRepository.desetiquetarEvento(idEvento, etiqueta);
     }
 
-       public List<Evento> eventosCreadosPorUsuarioFiltrados(Long idUsuario, String nombreEvento, int page, int size) {
+    public List<Evento> eventosCreadosPorUsuarioFiltrados(Long idUsuario, String nombreEvento, int page, int size) {
         int skip = page * size; // Cálculo de los resultados a omitir
         String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
         return eventoRepository.eventosCreadosPorUsuarioFiltrados(idUsuario, filtroNombre, skip, size);
     }
-       public List<Evento> busquedaEventosCreadosPorUsuarioGoogle(Long idUsuario, String nombreEvento, int page, int size) {
-        //int skip = page * size; // Cálculo de los resultados a omitir
+
+    public List<Evento> busquedaEventosCreadosPorUsuarioGoogle(Long idUsuario, String nombreEvento, int page,
+            int size) {
+        // int skip = page * size; // Cálculo de los resultados a omitir
         String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
         return eventoRepository.busquedaEventosCreadosPorUsuarioGoogle(idUsuario, filtroNombre, page, size);
     }
-       public List<Evento> busquedaEventosDisponiblesGoogle(Long idUsuario, String nombreEvento, int page, int size) {
-        //int skip = page * size; // Cálculo de los resultados a omitir
+
+    public List<Evento> busquedaEventosDisponiblesGoogle(Long idUsuario, String nombreEvento, int page, int size) {
+        // int skip = page * size; // Cálculo de los resultados a omitir
         String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
         return eventoRepository.busquedaEventosDisponiblesGoogle(idUsuario, filtroNombre, page, size);
+    }
+
+    public List<Evento> busquedaEventosParticipaFuturoGoogle(Long idUsuario, String nombreEvento, int page, int size) {
+        // int skip = page * size; // Cálculo de los resultados a omitir
+        String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
+        return eventoRepository.busquedaEventosParticipaFuturoGoogle(idUsuario, filtroNombre, page, size);
+    }
+
+    public List<Evento> busquedaEventosParticipaHistoricoGoogle(Long idUsuario, String nombreEvento, int page,
+            int size) {
+        // int skip = page * size; // Cálculo de los resultados a omitir
+        String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
+        return eventoRepository.busquedaEventosParticipaHistoricoGoogle(idUsuario, filtroNombre, page, size);
     }
 }

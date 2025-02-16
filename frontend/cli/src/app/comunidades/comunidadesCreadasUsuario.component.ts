@@ -106,7 +106,7 @@ export class ComunidadesCreadasUsuarioComponent implements OnInit {
 
 
     this.comunidadService
-      .comunidadesCreadasPorUsuarioFiltradas(nombre, this.currentIndexComunidades,this.limit)
+      .busquedaComunidadesCreadasPorUsuarioGoogle(nombre, this.currentIndexComunidades,this.limit)
       .subscribe(
         async (dataPackage) => {
           const resultados = dataPackage.data as Comunidad[]
