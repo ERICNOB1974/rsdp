@@ -485,7 +485,7 @@ export class PerfilComponent implements OnInit {
 
     const serviceCall =
       this.subTabRutinasSeleccionada === 'todas'
-        ? this.rutinaService.rutinasRealizaUsuario(this.idUsuario, nombre, this.currentIndexComunidades, this.cantidadPorPagina)
+        ? this.rutinaService.busquedaRutinasRealizaUsuarioGoogle(nombre, this.currentIndexComunidades, this.cantidadPorPagina)
         : this.rutinaService.rutinasFavoritas(this.idUsuario, nombre, this.currentIndexComunidades, this.cantidadPorPagina);
 
 
@@ -606,7 +606,7 @@ export class PerfilComponent implements OnInit {
     this.loadingEventos = true;
 
 
-    this.eventoService.participaUsuario(this.idUsuario, nombre, this.currentIndexEventos, this.cantidadPorPagina).subscribe(
+    this.eventoService.busquedaEventosParticipaHistoricoGoogle(this.idUsuario, nombre, this.currentIndexEventos, this.cantidadPorPagina).subscribe(
       async (dataPackage) => {
         const responseData = dataPackage.data;
         if (Array.isArray(responseData) && responseData.length > 0) {
@@ -729,7 +729,7 @@ export class PerfilComponent implements OnInit {
 
     const serviceCall =
       this.subTabSeleccionada === 'todas'
-        ? this.comunidadService.miembroUsuario(this.idUsuario, nombre, this.currentIndexComunidades, this.cantidadPorPagina)
+        ? this.comunidadService.busquedaComunidadesParticipaUsuarioGoogle(nombre, this.currentIndexComunidades, this.cantidadPorPagina)
         : this.comunidadService.comunidadesFavoritas(this.idUsuario, nombre, this.currentIndexComunidades, this.cantidadPorPagina);
 
     serviceCall.subscribe(

@@ -226,6 +226,26 @@ export class RutinaService {
       (nombreRutina ? `&nombreRutina=${nombreRutina}` : '');  // Agregar solo si no está vacío
     return this.http.get<DataPackage>(url);
   }
+
+
+  busquedaRutinasCreadasUsuarioGoogle( termino: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.rutinasUrl}/busquedaRutinasCreadasUsuarioGoogle/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
+      (termino ? `&termino=${termino}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+
+  }
+  busquedaRutinasDisponiblesUsuarioGoogle( termino: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.rutinasUrl}/busquedaRutinasDisponiblesUsuarioGoogle/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
+      (termino ? `&termino=${termino}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+
+  }
+  busquedaRutinasRealizaUsuarioGoogle( termino: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.rutinasUrl}/busquedaRutinasRealizaUsuarioGoogle/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
+      (termino ? `&termino=${termino}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+
+  }
 }
 
 
