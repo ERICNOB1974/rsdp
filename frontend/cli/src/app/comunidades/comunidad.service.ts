@@ -132,31 +132,31 @@ export class ComunidadService {
     return this.http.post<DataPackage>(` ${this.comunidadesUrl}/eliminarUsuario/${idSuperUsuario}/${idMiembro}/${idComunidad}`, body);
   }
 
-  eliminarMiembroConMotivo(motivo: string, tipo: string,fechaHoraExpulsion: string, idMiembro: number, idComunidad: number): Observable<DataPackage> {
+  eliminarMiembroConMotivo(motivo: string, tipo: string, fechaHoraExpulsion: string, idMiembro: number, idComunidad: number): Observable<DataPackage> {
     const params = new HttpParams()
-        .set('motivo', motivo)
-        .set('tipo', tipo)
-        .set('fechaHoraExpulsion', fechaHoraExpulsion);
-
-    return this.http.put<DataPackage>(
-        `${this.comunidadesUrl}/eliminarParticipante/${idComunidad}/${idMiembro}`,
-        null,  // No es necesario enviar un cuerpo de solicitud.
-        { params }  // Pasamos los parámetros de consulta aquí.
-    );
-}
-
-editarExpulsionConMotivo(motivo: string, tipo: string, fechaHoraExpulsion: string, idMiembro: number, idComunidad: number): Observable<DataPackage> {
-  const params = new HttpParams()
       .set('motivo', motivo)
       .set('tipo', tipo)
       .set('fechaHoraExpulsion', fechaHoraExpulsion);
 
-  return this.http.put<DataPackage>(
+    return this.http.put<DataPackage>(
+      `${this.comunidadesUrl}/eliminarParticipante/${idComunidad}/${idMiembro}`,
+      null,  // No es necesario enviar un cuerpo de solicitud.
+      { params }  // Pasamos los parámetros de consulta aquí.
+    );
+  }
+
+  editarExpulsionConMotivo(motivo: string, tipo: string, fechaHoraExpulsion: string, idMiembro: number, idComunidad: number): Observable<DataPackage> {
+    const params = new HttpParams()
+      .set('motivo', motivo)
+      .set('tipo', tipo)
+      .set('fechaHoraExpulsion', fechaHoraExpulsion);
+
+    return this.http.put<DataPackage>(
       `${this.comunidadesUrl}/editarExpulsion/${idComunidad}/${idMiembro}`,  // Ruta para editar expulsión
       null,  // No es necesario enviar un cuerpo de solicitud.
       { params }  // Pasamos los parámetros de consulta aquí.
-  );
-}
+    );
+  }
 
   verificarExpulsion(idUsuarioAutenticado: number, idComunidad: number) {
     return this.http.get<DataPackage>(`${this.comunidadesUrl}/estaExpulsado/${idUsuarioAutenticado}/${idComunidad}`);
@@ -167,19 +167,19 @@ editarExpulsionConMotivo(motivo: string, tipo: string, fechaHoraExpulsion: strin
     return this.http.post<DataPackage>(` ${this.comunidadesUrl}/gestionarSolicitudIngreso/${idSuperUsuario}/${idMiembro}/${idComunidad}?aceptada=${aceptada}`, body);
   }
 
-  visualizarSolicitudes(idComunidad: number,term: string, page: number, size: number): Observable<DataPackage> {
+  visualizarSolicitudes(idComunidad: number, term: string, page: number, size: number): Observable<DataPackage> {
     const url = ` ${this.comunidadesUrl}/visualizarSolicitudes/${this.authService.getUsuarioId()}/${idComunidad}?page=${page}&size=${size}` +
-    (term ? `&term=${term}` : '');
-    return this.http.get<DataPackage>(url);
-    }
-    
-
-    obtenerExpulsadosActivos(idComunidad: number,term: string, page: number, size: number): Observable<DataPackage> {
-      const url = ` ${this.comunidadesUrl}/obtenerExpulsadosActivos/${this.authService.getUsuarioId()}/${idComunidad}?page=${page}&size=${size}` +
       (term ? `&term=${term}` : '');
-      return this.http.get<DataPackage>(url);
+    return this.http.get<DataPackage>(url);
+  }
 
-      }
+
+  obtenerExpulsadosActivos(idComunidad: number, term: string, page: number, size: number): Observable<DataPackage> {
+    const url = ` ${this.comunidadesUrl}/obtenerExpulsadosActivos/${this.authService.getUsuarioId()}/${idComunidad}?page=${page}&size=${size}` +
+      (term ? `&term=${term}` : '');
+    return this.http.get<DataPackage>(url);
+
+  }
 
 
 
@@ -210,7 +210,7 @@ editarExpulsionConMotivo(motivo: string, tipo: string, fechaHoraExpulsion: strin
     etiquetas.forEach(etiqueta => {
       params = params.append('etiquetas', etiqueta);
     });
-    
+
     if (tipo) {
       params = params.set('tipo', tipo); // agrega el tipo si está definido
     }
@@ -261,31 +261,50 @@ editarExpulsionConMotivo(motivo: string, tipo: string, fechaHoraExpulsion: strin
   }
 
 
-  eliminarBan(idComunidad: number, idExpulsado:number): Observable<DataPackage> {
+  eliminarBan(idComunidad: number, idExpulsado: number): Observable<DataPackage> {
     return this.http.delete<DataPackage>(`${this.comunidadesUrl}/eliminarBan/${idComunidad}/${idExpulsado}`)
   }
 
-eliminarSolicitudIngreso(idComunidad: number): Observable<DataPackage>{
-  return this.http.delete<DataPackage>(`${this.comunidadesUrl}/eliminarSolicitudIngreso/${this.authService.getUsuarioId()}/${idComunidad}`)
-}
+  eliminarSolicitudIngreso(idComunidad: number): Observable<DataPackage> {
+    return this.http.delete<DataPackage>(`${this.comunidadesUrl}/eliminarSolicitudIngreso/${this.authService.getUsuarioId()}/${idComunidad}`)
+  }
 
-otorgarRolModerador(idCreador: number, idMiembro: number, idComunidad: number): Observable<DataPackage> {
-  const body = {}
-  return this.http.post<DataPackage>(` ${this.comunidadesUrl}/otorgarRolModerador/${idCreador}/${idMiembro}/${idComunidad}`, body);
-}
+  otorgarRolModerador(idCreador: number, idMiembro: number, idComunidad: number): Observable<DataPackage> {
+    const body = {}
+    return this.http.post<DataPackage>(` ${this.comunidadesUrl}/otorgarRolModerador/${idCreador}/${idMiembro}/${idComunidad}`, body);
+  }
 
-quitarRolModerador(idCreador: number, idMiembro: number, idComunidad: number): Observable<DataPackage> {
-  const body = {}
-  return this.http.post<DataPackage>(` ${this.comunidadesUrl}/quitarRolModerador/${idCreador}/${idMiembro}/${idComunidad}`, body);
-}
+  quitarRolModerador(idCreador: number, idMiembro: number, idComunidad: number): Observable<DataPackage> {
+    const body = {}
+    return this.http.post<DataPackage>(` ${this.comunidadesUrl}/quitarRolModerador/${idCreador}/${idMiembro}/${idComunidad}`, body);
+  }
 
 
-comunidadesCreadasPorUsuarioFiltradas(nombreComunidad: string, page: number, size: number): Observable<DataPackage> {
-  // Si nombreRutina está vacío, no lo incluimos en la URL
-  const url = `${this.comunidadesUrl}/creadasFiltradas/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
-    (nombreComunidad ? `&nombreComunidad=${nombreComunidad}` : '');  // Agregar solo si no está vacío
-  return this.http.get<DataPackage>(url);
-}
+  comunidadesCreadasPorUsuarioFiltradas(nombreComunidad: string, page: number, size: number): Observable<DataPackage> {
+    // Si nombreRutina está vacío, no lo incluimos en la URL
+    const url = `${this.comunidadesUrl}/creadasFiltradas/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
+      (nombreComunidad ? `&nombreComunidad=${nombreComunidad}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+  }
 
+
+  busquedaComunidadesCreadasPorUsuarioGoogle( termino: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.comunidadesUrl}/busquedaComunidadesCreadasPorUsuarioGoogle/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
+      (termino ? `&termino=${termino}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+
+  }
+  busquedaComunidadesParticipaUsuarioGoogle( termino: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.comunidadesUrl}/busquedaComunidadesParticipaUsuarioGoogle/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
+      (termino ? `&termino=${termino}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+
+  }
+  busquedaComunidadesDisponiblesUsuarioGoogle( termino: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.comunidadesUrl}/busquedaComunidadesDisponiblesUsuarioGoogle/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
+      (termino ? `&termino=${termino}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
+
+  }
 
 }
