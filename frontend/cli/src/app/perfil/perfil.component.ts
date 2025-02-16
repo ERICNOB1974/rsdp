@@ -450,7 +450,7 @@ export class PerfilComponent implements OnInit {
     const serviceCall =
       this.subTabRutinasSeleccionada === 'todas'
         ? this.rutinaService.rutinasRealizaUsuario(this.idUsuario, "", this.currentIndexRutinas, this.cantidadPorPagina)
-        : this.rutinaService.rutinasFavoritas(this.idUsuario, "", this.currentIndexRutinas, this.cantidadPorPagina);
+        : this.rutinaService.busquedaRutinasFavoritasUsuarioGoogle(this.idUsuario, "", this.currentIndexRutinas, this.cantidadPorPagina);
 
 
     serviceCall.subscribe(
@@ -485,8 +485,8 @@ export class PerfilComponent implements OnInit {
 
     const serviceCall =
       this.subTabRutinasSeleccionada === 'todas'
-        ? this.rutinaService.busquedaRutinasRealizaUsuarioGoogle(nombre, this.currentIndexComunidades, this.cantidadPorPagina)
-        : this.rutinaService.rutinasFavoritas(this.idUsuario, nombre, this.currentIndexComunidades, this.cantidadPorPagina);
+        ? this.rutinaService.busquedaRutinasRealizaUsuarioGoogle(this.idUsuario, nombre, this.currentIndexComunidades, this.cantidadPorPagina)
+        : this.rutinaService.busquedaRutinasFavoritasUsuarioGoogle(this.idUsuario, nombre, this.currentIndexComunidades, this.cantidadPorPagina);
 
 
     serviceCall.subscribe((dataPackage) => {
@@ -684,7 +684,7 @@ export class PerfilComponent implements OnInit {
     const serviceCall =
       this.subTabSeleccionada === 'todas'
         ? this.comunidadService.miembroUsuario(this.idUsuario, "", this.currentIndexComunidades, this.cantidadPorPagina)
-        : this.comunidadService.comunidadesFavoritas(this.idUsuario, "", this.currentIndexComunidades, this.cantidadPorPagina);
+        : this.comunidadService.busquedaComunidadesFavoritasUsuarioGoogle(this.idUsuario, "", this.currentIndexComunidades, this.cantidadPorPagina);
 
     serviceCall.subscribe(
       async (dataPackage) => {
@@ -729,8 +729,8 @@ export class PerfilComponent implements OnInit {
 
     const serviceCall =
       this.subTabSeleccionada === 'todas'
-        ? this.comunidadService.busquedaComunidadesParticipaUsuarioGoogle(nombre, this.currentIndexComunidades, this.cantidadPorPagina)
-        : this.comunidadService.comunidadesFavoritas(this.idUsuario, nombre, this.currentIndexComunidades, this.cantidadPorPagina);
+        ? this.comunidadService.busquedaComunidadesParticipaUsuarioGoogle(this.idUsuario,nombre, this.currentIndexComunidades, this.cantidadPorPagina)
+        : this.comunidadService.busquedaComunidadesFavoritasUsuarioGoogle(this.idUsuario, nombre, this.currentIndexComunidades, this.cantidadPorPagina);
 
     serviceCall.subscribe(
       async (dataPackage) => {

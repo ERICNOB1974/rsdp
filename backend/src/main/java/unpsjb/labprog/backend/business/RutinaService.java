@@ -699,4 +699,10 @@ public class RutinaService {
         String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
         return rutinaRepository.busquedaRutinasRealizaUsuarioGoogle(idUsuario, filtroNombre, page, size);
     }
+
+    public List<Rutina> busquedaRutinasFavoritasUsuarioGoogle(Long idUsuario, String nombreEvento, int page,
+            int size) {
+        String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
+        return rutinaRepository.busquedaRutinasFavoritasUsuarioGoogle(idUsuario, filtroNombre, page, size);
+    }
 }

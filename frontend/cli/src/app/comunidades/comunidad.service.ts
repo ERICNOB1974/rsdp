@@ -288,23 +288,27 @@ export class ComunidadService {
   }
 
 
-  busquedaComunidadesCreadasPorUsuarioGoogle( termino: string, page: number, size: number): Observable<DataPackage> {
+  busquedaComunidadesCreadasPorUsuarioGoogle(termino: string, page: number, size: number): Observable<DataPackage> {
     const url = `${this.comunidadesUrl}/busquedaComunidadesCreadasPorUsuarioGoogle/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
       (termino ? `&termino=${termino}` : '');  // Agregar solo si no está vacío
     return this.http.get<DataPackage>(url);
 
   }
-  busquedaComunidadesParticipaUsuarioGoogle( termino: string, page: number, size: number): Observable<DataPackage> {
-    const url = `${this.comunidadesUrl}/busquedaComunidadesParticipaUsuarioGoogle/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
+  busquedaComunidadesParticipaUsuarioGoogle(idUsuario: number, termino: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.comunidadesUrl}/busquedaComunidadesParticipaUsuarioGoogle/${idUsuario}?page=${page}&size=${size}` +
       (termino ? `&termino=${termino}` : '');  // Agregar solo si no está vacío
     return this.http.get<DataPackage>(url);
 
   }
-  busquedaComunidadesDisponiblesUsuarioGoogle( termino: string, page: number, size: number): Observable<DataPackage> {
+  busquedaComunidadesDisponiblesUsuarioGoogle(termino: string, page: number, size: number): Observable<DataPackage> {
     const url = `${this.comunidadesUrl}/busquedaComunidadesDisponiblesUsuarioGoogle/${this.authService.getUsuarioId()}?page=${page}&size=${size}` +
       (termino ? `&termino=${termino}` : '');  // Agregar solo si no está vacío
     return this.http.get<DataPackage>(url);
-
+  }
+  busquedaComunidadesFavoritasUsuarioGoogle(idUsuario: number, termino: string, page: number, size: number): Observable<DataPackage> {
+    const url = `${this.comunidadesUrl}/busquedaComunidadesFavoritasUsuarioGoogle/${idUsuario}?page=${page}&size=${size}` +
+      (termino ? `&termino=${termino}` : '');  // Agregar solo si no está vacío
+    return this.http.get<DataPackage>(url);
   }
 
 }

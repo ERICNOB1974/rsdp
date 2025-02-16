@@ -477,9 +477,16 @@ public class ComunidadService {
         String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
         return comunidadRepository.busquedaComunidadesParticipaUsuarioGoogle(idUsuario, filtroNombre, page, size);
     }
+
     public List<Comunidad> busquedaComunidadesDisponiblesUsuarioGoogle(Long idUsuario, String nombreEvento, int page,
             int size) {
         String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
         return comunidadRepository.busquedaComunidadesDisponiblesUsuarioGoogle(idUsuario, filtroNombre, page, size);
+    }
+
+    public List<Comunidad> busquedaComunidadesFavoritasUsuarioGoogle(Long idUsuario, String nombreEvento, int page,
+            int size) {
+        String filtroNombre = (nombreEvento == null || nombreEvento.trim().isEmpty()) ? "" : nombreEvento;
+        return comunidadRepository.busquedaComunidadesFavoritasUsuarioGoogle(idUsuario, filtroNombre, page, size);
     }
 }
