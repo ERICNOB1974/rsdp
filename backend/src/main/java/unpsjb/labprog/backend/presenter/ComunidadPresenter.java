@@ -426,6 +426,7 @@ public class ComunidadPresenter {
         return Response
                 .ok(comunidadService.busquedaComunidadesCreadasPorUsuarioGoogle(idUsuario, termino, page, size));
     }
+
     @RequestMapping(path = "/busquedaComunidadesParticipaUsuarioGoogle/{idUsuario}", method = RequestMethod.GET)
     public ResponseEntity<Object> busquedaComunidadesParticipaUsuarioGoogle(
             @PathVariable Long idUsuario,
@@ -435,6 +436,7 @@ public class ComunidadPresenter {
         return Response
                 .ok(comunidadService.busquedaComunidadesParticipaUsuarioGoogle(idUsuario, termino, page, size));
     }
+
     @RequestMapping(path = "/busquedaComunidadesDisponiblesUsuarioGoogle/{idUsuario}", method = RequestMethod.GET)
     public ResponseEntity<Object> busquedaComunidadesDisponiblesUsuarioGoogle(
             @PathVariable Long idUsuario,
@@ -443,5 +445,15 @@ public class ComunidadPresenter {
             @RequestParam(required = false, defaultValue = "") String termino) {
         return Response
                 .ok(comunidadService.busquedaComunidadesDisponiblesUsuarioGoogle(idUsuario, termino, page, size));
+    }
+
+    @RequestMapping(path = "/busquedaComunidadesFavoritasUsuarioGoogle/{idUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> busquedaComunidadesFavoritasUsuarioGoogle(
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String termino) {
+        return Response
+                .ok(comunidadService.busquedaComunidadesFavoritasUsuarioGoogle(idUsuario, termino, page, size));
     }
 }

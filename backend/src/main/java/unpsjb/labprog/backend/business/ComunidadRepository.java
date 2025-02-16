@@ -680,17 +680,11 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
 
 
 
-
-
-
-
-
-
-
     @Query("""
         MATCH (u:Usuario)-[:CREADA_POR]-(c:Comunidad)
         WHERE id(u) = $idUsuario AND c.eliminada = false
         MATCH (c)-[:ETIQUETADA_CON]->(t:Etiqueta)
+
         WITH c, t, u
         WHERE (apoc.text.clean(c.nombre) CONTAINS apoc.text.clean($query)
            OR apoc.text.clean(u.nombre) CONTAINS apoc.text.clean($query)
@@ -720,12 +714,16 @@ List<Comunidad> busquedaComunidadesCreadasPorUsuarioGoogle(@Param("idUsuario") L
         WHERE id(u) = $idUsuario AND c.eliminada = false
         AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c)
         MATCH (c)-[:ETIQUETADA_CON]->(t:Etiqueta)
-        WITH c, t, u
+        MATCH (c)-[:CREADA_POR]->(creador:Usuario)
+
+        WITH c, t, u, creador
         WHERE (apoc.text.clean(c.nombre) CONTAINS apoc.text.clean($query)
            OR apoc.text.clean(c.ubicacion) CONTAINS apoc.text.clean($query)
            OR apoc.text.clean(c.descripcion) CONTAINS apoc.text.clean($query)
            OR apoc.text.clean(c.genero) CONTAINS apoc.text.clean($query)
-           OR apoc.text.clean(t.nombre) CONTAINS apoc.text.clean($query))
+           OR apoc.text.clean(t.nombre) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(creador.nombreUsuario) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(creador.nombreReal) CONTAINS apoc.text.clean($query))
         WITH c
         ORDER BY c.nombre DESC  
         RETURN DISTINCT c
@@ -740,14 +738,42 @@ List<Comunidad> busquedaComunidadesParticipaUsuarioGoogle(@Param("idUsuario") Lo
         @Param("limit") int limit);
 
     @Query("""
+        MATCH (u:Usuario)-[:COMUNIDAD_FAVORITA]-(c:Comunidad)
+        WHERE id(u) = $idUsuario AND c.eliminada = false
+        MATCH (c)-[:ETIQUETADA_CON]->(t:Etiqueta)
+        MATCH (c)-[:CREADA_POR]->(creador:Usuario)
+
+        WITH c, t, u, creador
+        WHERE (apoc.text.clean(c.nombre) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(c.ubicacion) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(c.descripcion) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(c.genero) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(t.nombre) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(creador.nombreUsuario) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(creador.nombreReal) CONTAINS apoc.text.clean($query))
+        WITH c
+        ORDER BY c.nombre DESC  
+        RETURN DISTINCT c
+        SKIP $skip
+        LIMIT $limit
+
+                    """)
+
+List<Comunidad> busquedaComunidadesFavoritasUsuarioGoogle(@Param("idUsuario") Long idUsuario,
+        @Param("query") String query,
+        @Param("skip") int skip,
+        @Param("limit") int limit);
+
+
+    @Query("""
         MATCH (u:Usuario), (c:Comunidad)
         WHERE id(u) = $idUsuario 
         AND c.eliminada = false
         AND NOT (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(u)
-        AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c)
 
-        OPTIONAL MATCH (u)-[r:EXPULSADO_COMUNIDAD]->(c) 
-        WHERE r IS NULL OR r.fechaHoraExpulsion < localdatetime() 
+        OPTIONAL MATCH (u)-[r:EXPULSADO_COMUNIDAD]->(c)
+        WITH u, c, r
+        WHERE r IS NULL OR datetime(r.fechaHoraExpulsion) < datetime() 
 
         AND ( 
         (u.genero = 'masculino' AND c.genero IN ['masculino', 'sinGenero']) OR 
@@ -758,13 +784,17 @@ List<Comunidad> busquedaComunidadesParticipaUsuarioGoogle(@Param("idUsuario") Lo
         WITH c, COUNT(DISTINCT h) AS numParticipantes, u 
         WHERE numParticipantes < c.cantidadMaximaMiembros
         MATCH (c)-[:ETIQUETADA_CON]->(t:Etiqueta)
-        WITH c, t, u
+        MATCH (c)-[:CREADA_POR]->(creador:Usuario)
+
+        WITH c, t, u, creador
         WHERE (apoc.text.clean(c.nombre) CONTAINS apoc.text.clean($query)
            OR apoc.text.clean(c.ubicacion) CONTAINS apoc.text.clean($query)
            OR apoc.text.clean(c.descripcion) CONTAINS apoc.text.clean($query)
            OR apoc.text.clean(c.genero) CONTAINS apoc.text.clean($query)
-           OR apoc.text.clean(t.nombre) CONTAINS apoc.text.clean($query))
-           WITH c
+           OR apoc.text.clean(t.nombre) CONTAINS apoc.text.clean($query)
+           OR apoc.text.clean(creador.nombreUsuario) CONTAINS apoc.text.clean($query)
+          OR apoc.text.clean(creador.nombreReal) CONTAINS apoc.text.clean($query))
+        WITH c
         ORDER BY c.nombre DESC  
         RETURN DISTINCT c
         SKIP $skip
