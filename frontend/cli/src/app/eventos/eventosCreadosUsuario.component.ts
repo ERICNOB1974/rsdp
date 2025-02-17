@@ -107,7 +107,7 @@ export class EventosCreadosUsuarioComponent implements OnInit {
 
   getEventosCreadosUsuarioFiltrados(nombre: string): void {
     if (this.loading || this.noMasEventos) return; // Evitar solicitudes mientras se cargan más comunidades o si ya no hay más
-
+    
     this.loading = true;
 
     this.eventoService
@@ -118,6 +118,7 @@ export class EventosCreadosUsuarioComponent implements OnInit {
 
           if (resultados && resultados.length > 0) {
             // Filtrar los resultados para evitar duplicados
+            console.info(resultados);
             const nuevosEventos = resultados.filter(
               (eventoNuevo) =>
                 !this.eventosUsuario.some(
@@ -178,7 +179,11 @@ export class EventosCreadosUsuarioComponent implements OnInit {
   onScroll(): void {
     const element = document.querySelector('.eventos-list') as HTMLElement;
     if (element.scrollTop + element.clientHeight >= element.scrollHeight - 1 && !this.loading) {
-      this.getEventosCreadosUsuario();
+      if (this.searchText) {
+        this.getEventosCreadosUsuarioFiltrados(this.searchText);
+      } else {
+        this.getEventosCreadosUsuario();
+      }
     }
   }
 

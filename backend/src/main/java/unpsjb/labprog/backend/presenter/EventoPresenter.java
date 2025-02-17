@@ -347,4 +347,31 @@ public class EventoPresenter {
         return Response.ok(eventoService.busquedaEventosCreadosPorUsuarioGoogle(idUsuario, nombreEvento, page, size));
     }
 
+    @RequestMapping(path = "/busquedaEventosDisponiblesGoogle/{idUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> busquedaEventosDisponiblesGoogle(
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String nombreEvento) {
+        return Response.ok(eventoService.busquedaEventosDisponiblesGoogle(idUsuario, nombreEvento, page, size));
+    }
+
+    @RequestMapping(path = "/busquedaEventosParticipaFuturoGoogle/{idUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> busquedaEventosParticipaFuturoGoogle(
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String nombreEvento) {
+        return Response.ok(eventoService.busquedaEventosParticipaFuturoGoogle(idUsuario, nombreEvento, page, size));
+    }
+
+    @RequestMapping(path = "/busquedaEventosParticipaHistoricoGoogle/{idUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> busquedaEventosParticipaHistoricoGoogle(
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String nombreEvento) {
+        return Response.ok(eventoService.busquedaEventosParticipaHistoricoGoogle(idUsuario, nombreEvento, page, size));
+    }
+
 }

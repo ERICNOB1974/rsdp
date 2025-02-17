@@ -109,18 +109,22 @@ public class RutinaPresenter {
     }
 
     // @PostMapping("/dias/{rutinaId}")
-    // public Long guardarDia(@PathVariable Long rutinaId, @RequestBody DiaDTO diaDTO) {
-    //     return rutinaService.guardarDia(rutinaId, diaDTO.getDia(), diaDTO.getOrden());
+    // public Long guardarDia(@PathVariable Long rutinaId, @RequestBody DiaDTO
+    // diaDTO) {
+    // return rutinaService.guardarDia(rutinaId, diaDTO.getDia(),
+    // diaDTO.getOrden());
     // }
 
     @PostMapping("/guardarRutinaCompleta/{usuarioId}")
-    public ResponseEntity<Object> guardarRutinaCompleta(@PathVariable Long usuarioId, @RequestBody RutinaCompletaDTO rutinaCompletaDTO) {
+    public ResponseEntity<Object> guardarRutinaCompleta(@PathVariable Long usuarioId,
+            @RequestBody RutinaCompletaDTO rutinaCompletaDTO) {
         try {
             return Response.ok(rutinaService.guardarRutinaCompleta(rutinaCompletaDTO, usuarioId));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap("error", "Error al guardar la rutina"));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("error", "Error al guardar la rutina"));
         }
-    }    
+    }
 
     @PostMapping("/dias/ejerciciosResistencia/{diaId}")
     public void guardarEjercicioResistencia(@PathVariable Long diaId,
@@ -319,7 +323,7 @@ public class RutinaPresenter {
         return Response.ok(rutinas);
     }
 
-               @RequestMapping(path = "/rutinasCreadasPorUsuarioFiltradas/{idUsuario}", method = RequestMethod.GET)
+    @RequestMapping(path = "/rutinasCreadasPorUsuarioFiltradas/{idUsuario}", method = RequestMethod.GET)
     public ResponseEntity<Object> rutinasCreadasPorUsuarioFiltradas(
             @PathVariable Long idUsuario,
             @RequestParam(defaultValue = "0") int page,
@@ -328,5 +332,42 @@ public class RutinaPresenter {
         return Response.ok(rutinaService.rutinasCreadasPorUsuarioFiltradas(idUsuario, nombreRutina, page, size));
     }
 
+    @RequestMapping(path = "/busquedaRutinasDisponiblesUsuarioGoogle/{idUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> busquedaComunidadesDisponiblesUsuarioGoogle(
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String termino) {
+        return Response
+                .ok(rutinaService.busquedaRutinasDisponiblesUsuarioGoogle(idUsuario, termino, page, size));
+    }
 
+    @RequestMapping(path = "/busquedaRutinasCreadasUsuarioGoogle/{idUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> busquedaRutinasCreadasUsuarioGoogle(
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String termino) {
+        return Response
+                .ok(rutinaService.busquedaRutinasCreadasUsuarioGoogle(idUsuario, termino, page, size));
+    }
+
+    @RequestMapping(path = "/busquedaRutinasRealizaUsuarioGoogle/{idUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> busquedaRutinasRealizaUsuarioGoogle(
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String termino) {
+        return Response
+                .ok(rutinaService.busquedaRutinasRealizaUsuarioGoogle(idUsuario, termino, page, size));
+    }
+    @RequestMapping(path = "/busquedaRutinasFavoritasUsuarioGoogle/{idUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> busquedaRutinasFavoritasUsuarioGoogle(
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String termino) {
+        return Response
+                .ok(rutinaService.busquedaRutinasFavoritasUsuarioGoogle(idUsuario, termino, page, size));
+    }
 }
