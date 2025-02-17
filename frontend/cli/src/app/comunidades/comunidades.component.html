@@ -16,13 +16,14 @@
   <div class="filtro-container filtro-nombre">
     <label class="filtro-label">
       <button (click)="toggleFiltroNombre()" class="filtro-toggle">
-        <i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
+        Búsqueda:<i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
+
       </button>
     </label>
 
     <div *ngIf="filtroNombreAbierto" class="filtro-content">
       <div class="search-container">
-        <label for="nombreEvento">Buscar comunidad:</label>
+        <label for="nombreEvento"></label>
         <input type="text" id="nombreEvento" class="form-control" [(ngModel)]="nombreEventoFiltro"
           (input)="onSearchInputComunidades()">
         <i class="fas fa-search search-icon"></i>
@@ -118,7 +119,8 @@
                comunidad.genero === 'otro' ? 'Otro' : 'Desconocido' }}
           </p>  
           <div class="creador-container" *ngIf="mapaCreadorComunidades.get(comunidad.id)">
-            <p class="creador-titulo">Creado por:</p>
+            <p class="creador-titulo">Creado por:&nbsp;</p>
+
             <div class="creador-info">
               <span class="creador-nombre">{{ mapaCreadorComunidades.get(comunidad.id)?.nombreUsuario }}</span>
               <img [src]="mapaCreadorComunidades.get(comunidad.id)?.fotoPerfil || '../../assets/usuario.png'" 
@@ -168,7 +170,8 @@
                comunidad.genero === 'otro' ? 'Otro' : 'Desconocido' }}
           </p>       
           <div class="creador-container" *ngIf="mapaCreadorComunidades.get(comunidad.id)">
-            <p class="creador-titulo">Creado por:</p>
+            <p class="creador-titulo">Creado por:&nbsp;</p>
+
             <div class="creador-info">
               <span class="creador-nombre">{{ mapaCreadorComunidades.get(comunidad.id)?.nombreUsuario }}</span>
               <img [src]="mapaCreadorComunidades.get(comunidad.id)?.fotoPerfil || '../../assets/usuario.png'" 

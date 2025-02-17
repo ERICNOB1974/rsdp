@@ -108,7 +108,8 @@
                     <div class="evento-detalles">
                         <h4 class="evento-nombre">{{ evento.nombre }}</h4>
                         <div class="creador-container" *ngIf="mapaCreadorEventos.get(evento.id)">
-                            <p class="creador-titulo">Creado por:</p>
+                            <p class="creador-titulo">Creado por:&nbsp;</p>
+
                             <div class="creador-info">
                               <span class="creador-nombre">{{ mapaCreadorEventos.get(evento.id)?.nombreUsuario }}</span>
                               <img [src]="mapaCreadorEventos.get(evento.id)?.fotoPerfil || '../../assets/usuario.png'" 
@@ -168,7 +169,8 @@
                     </div>
                     <h4>{{ rutina.nombre }}</h4>
                     <div class="creador-container" *ngIf="rutina.id !== undefined && mapaCreadorRutinas.get(rutina.id)">
-                        <p class="creador-titulo">Creado por:</p>
+                        <p class="creador-titulo">Creado por:&nbsp;</p>
+
                         <div class="creador-info">
                           <span class="creador-nombre">{{ mapaCreadorRutinas.get(rutina.id)?.nombreUsuario }}</span>
                           <img [src]="mapaCreadorRutinas.get(rutina.id)?.fotoPerfil || '../../assets/usuario.png'"
@@ -233,7 +235,8 @@
                   <div class="comunidad-detalles">
                     <h4 class="comunidad-nombre">{{ comunidad.nombre }}</h4>
                     <div class="creador-container" *ngIf="mapaCreadorComunidades.get(comunidad.id)">
-                        <p class="creador-titulo">Creado por:</p>
+                        <p class="creador-titulo">Creado por:&nbsp;</p>
+
                         <div class="creador-info">
                           <span class="creador-nombre">{{ mapaCreadorComunidades.get(comunidad.id)?.nombreUsuario }}</span>
                           <img [src]="mapaCreadorComunidades.get(comunidad.id)?.fotoPerfil || '../../assets/usuario.png'" 

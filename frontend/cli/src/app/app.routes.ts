@@ -35,6 +35,7 @@ import { EditarEventoComponent } from './eventos/editarEventoComponent';
 import { CalendarioEventosComponent } from './calendario/calendario-eventos.component';
 import { CambiarCorreoComponent } from './cambiarCorreo/cambiar-correo.component';
 import { NuevoCorreoComponent } from './cambiarCorreo/nuevo-correo.component';
+import { PaginaNoEncontrada } from './paginaNoEncontrada/paginaNoEncontrada.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuard] },
@@ -72,6 +73,8 @@ export const routes: Routes = [
   { path: 'verificar-codigo', component: VerificarCodigoComponent },
   { path: 'verificar-mail', component: VerificarMailComponent },
   { path: 'cambiar-contrasena', component: CambiarContrasenaComponent },
-  { path: 'comunidad-muro/:id', component: MuroComunidadComponent }
-  ,{ path: '**', redirectTo: 'login' }
+  { path: 'comunidad-muro/:id', component: MuroComunidadComponent },
+  { path: '**', component: PaginaNoEncontrada, canActivate: [AuthGuard] }
+
+
 ];
