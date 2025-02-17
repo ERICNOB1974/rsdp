@@ -68,6 +68,8 @@ export class EventosComponent implements OnInit {
   etiquetaSeleccionada: Etiqueta | null = null;
   filtersVisible: boolean = false;
   filtersAnimating: boolean = false;
+  private searchTimeout: any; // Variable para almacenar el timeout
+
   mapaCreadorEventos: Map<number, Usuario> = new Map();
 
   constructor(private eventoService: EventoService,
@@ -189,14 +191,48 @@ export class EventosComponent implements OnInit {
   }
 
 
+  /*   async aplicarFiltroNombre2(): Promise<Evento[]> {
+      try {
+        const dataPackage = await lastValueFrom(
+          this.eventoService.filtrarNombre(this.nombreEventoFiltro, this.tabSeleccionada, this.idUsuarioAutenticado)
+        );
+        return dataPackage.data as Evento[];
+      } catch (error) {
+        console.error('Error al filtrar eventos por nombre:', error);
+        return []; // Devuelve una lista vacía en caso de error
+      }
+    } */
+
+
   async aplicarFiltroNombre2(): Promise<Evento[]> {
     try {
-      const dataPackage = await lastValueFrom(
-        this.eventoService.filtrarNombre(this.nombreEventoFiltro, this.tabSeleccionada, this.idUsuarioAutenticado)
-      );
+      let dataPackage;
+
+      if (this.tabSeleccionada === 'disponibles') {
+        dataPackage = await lastValueFrom(
+          this.eventoService.busquedaEventosDisponiblesGoogle(
+            this.idUsuarioAutenticado,
+            this.nombreEventoFiltro,
+            0,
+            99999999
+          )
+        );
+      } else if (this.tabSeleccionada === 'miembro') {
+        dataPackage = await lastValueFrom(
+          this.eventoService.busquedaEventosParticipaFuturoGoogle(
+            this.idUsuarioAutenticado,
+            this.nombreEventoFiltro,
+            0,
+            99999999
+          )
+        );
+      } else {
+        throw new Error('Pestaña seleccionada inválida');
+      }
+
       return dataPackage.data as Evento[];
     } catch (error) {
-      console.error('Error al filtrar eventos por nombre:', error);
+      console.error('Error al filtrar comunidades por nombre:', error);
       return []; // Devuelve una lista vacía en caso de error
     }
   }
@@ -568,6 +604,15 @@ export class EventosComponent implements OnInit {
     return texto.length > 150; // Ajusta este valor según lo necesario
   }
 
+  onSearchInputComunidades(): void {
+    clearTimeout(this.searchTimeout); // Limpia cualquier timeout previo
+  
+    this.searchTimeout = setTimeout(() => {
+      this.filtroNombreActivo = true;
+      this.aplicarTodosLosFiltros(); // Emite el texto ingresado
+    }, 300); // Espera 300ms después del último input
+  }
+  
   async getCreadorEvento(evento: Evento): Promise<void> {
     return new Promise((resolve) => {
       this.usuarioService.usuarioCreadorEvento(evento.id).subscribe(dataPackage => {

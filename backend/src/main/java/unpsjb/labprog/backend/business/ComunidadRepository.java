@@ -214,7 +214,6 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
 
     @Query("MATCH (c:Comunidad),(u:Usuario {nombreUsuario:$nombreUsuario}) " +
             "WHERE NOT (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(u) " +
-            "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c) " +
             "MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h) " +
             "WITH c, COUNT(DISTINCT h) AS numParticipantes, u " +
             "WHERE numParticipantes < c.cantidadMaximaMiembros " +
@@ -224,10 +223,8 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
             "        (u.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR " +
             "        (u.genero = 'otro' AND c.genero IN ['masculino', 'femenino', 'otro', 'sinGenero']) " +
             ") " +
-            "OPTIONAL MATCH (u)-[r:EXPULSADO_COMUNIDAD]->(c) " + // Usamos OPTIONAL MATCH para manejar la ausencia o
-                                                                 // presencia de la expulsión
-            "WHERE r IS NULL OR r.fechaHoraExpulsion < localdatetime() " + // Verifica que la expulsión haya pasado si
-                                                                           // existe
+            "OPTIONAL MATCH (u)-[r:EXPULSADO_COMUNIDAD]->(c) " + 
+            "WHERE r IS NULL OR datetime(r.fechaHoraExpulsion) < datetime() " +                                     
             "RETURN c " +
             "ORDER BY numParticipantes DESC, c.nombre ASC " +
             "SKIP $skip " +
@@ -379,7 +376,11 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
             "} " +
 
             "AND id(u) = $idUsuario " +
-            "AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c) " +
+
+        " OPTIONAL MATCH (u)-[r:EXPULSADO_COMUNIDAD]->(c) "+
+        " WITH u, c, r, etiqueta "+
+        " WHERE r IS NULL OR datetime(r.fechaHoraExpulsion) < datetime() "+
+
             "WITH c, collect(etiqueta.nombre) AS etiquetasComunidad, c.eliminada AS eliminada, u " +
             "WHERE ALL(etiquetaBuscada IN $etiquetas WHERE etiquetaBuscada IN etiquetasComunidad) " +
             "AND eliminada = false " +
@@ -436,7 +437,9 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
             WHERE toUpper(c.nombre) CONTAINS toUpper($nombre)
               AND NOT (c)<-[:MIEMBRO]-(u)
               AND NOT (c)-[:CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]->(u)
-              AND NOT (u)-[:EXPULSADO_COMUNIDAD]-(c)
+         OPTIONAL MATCH (u)-[r:EXPULSADO_COMUNIDAD]->(c) 
+         WITH u, c, r 
+        WHERE r IS NULL OR datetime(r.fechaHoraExpulsion) < datetime() 
             WITH c, u
             WHERE NOT c.eliminada
             AND (
@@ -474,12 +477,15 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                 MATCH (c:Comunidad)
                 MATCH (us:Usuario)
                 WHERE id(us) = $usuarioId
-                AND NOT (us)-[:EXPULSADO_COMUNIDAD]-(c)
                 AND (
                     (us.genero = 'masculino' AND c.genero IN ['masculino', 'sinGenero']) OR
                     (us.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR
                     (us.genero = 'otro' AND c.genero IN ['masculino', 'femenino', 'otro', 'sinGenero'])
                 )
+                 OPTIONAL MATCH (us)-[r:EXPULSADO_COMUNIDAD]->(c) 
+                 WITH us, c, r
+                 WHERE r IS NULL OR datetime(r.fechaHoraExpulsion) < datetime() 
+
                 OPTIONAL MATCH (u:Usuario)-[r]-(c)
                 WHERE type(r) <> 'SOLICITUD_DE_INGRESO' AND type(r) <> 'NOTIFICACION' AND type(r) <> 'EXPULSADO_COMUNIDAD'
                 WITH c, count(DISTINCT u) AS totalUsuarios, us
@@ -499,12 +505,15 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
     @Query("""
                 MATCH (c:Comunidad), (us:Usuario)
                 WHERE id(us) = $usuarioId
-                AND NOT (us)-[:EXPULSADO_COMUNIDAD]-(c)
                 AND (
                     (us.genero = 'masculino' AND c.genero IN ['masculino', 'sinGenero']) OR
                     (us.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR
                     (us.genero = 'otro' AND c.genero IN ['masculino', 'femenino', 'otro', 'sinGenero'])
                 )
+                 OPTIONAL MATCH (us)-[r:EXPULSADO_COMUNIDAD]->(c) 
+                 WITH us, c, r
+                 WHERE r IS NULL OR datetime(r.fechaHoraExpulsion) < datetime() 
+
                 OPTIONAL MATCH (u:Usuario)-[r]-(c)
                 WHERE type(r) <> 'SOLICITUD_DE_INGRESO' AND type(r) <> 'NOTIFICACION' AND type(r) <> 'EXPULSADO_COMUNIDAD'
                 WITH c, count(DISTINCT u) AS totalUsuarios, us
@@ -527,6 +536,10 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
                     (us.genero = 'femenino' AND c.genero IN ['femenino', 'sinGenero']) OR
                     (us.genero = 'otro' AND c.genero IN ['masculino', 'femenino', 'otro', 'sinGenero'])
                 )
+                OPTIONAL MATCH (us)-[r:EXPULSADO_COMUNIDAD]->(c) 
+                 WITH us, c, r
+                 WHERE r IS NULL OR datetime(r.fechaHoraExpulsion) < datetime() 
+
                 OPTIONAL MATCH (u:Usuario)-[r]-(c)
                 WHERE type(r) <> 'SOLICITUD_DE_INGRESO' AND type(r) <> 'NOTIFICACION' AND type(r) <> 'EXPULSADO_COMUNIDAD'
                 WITH c, count(DISTINCT u) AS totalUsuarios
@@ -535,7 +548,8 @@ public interface ComunidadRepository extends Neo4jRepository<Comunidad, Long> {
              MATCH (c)-[:MIEMBRO|CREADA_POR|ADMINISTRADA_POR|MODERADA_POR]-(h)
             WITH c, COUNT(DISTINCT h) AS numParticipantes
             RETURN DISTINCT c, numParticipantes
-            ORDER BY numParticipantes DESC                         """)
+            ORDER BY numParticipantes DESC                        
+             """)
     List<Comunidad> comunidadesCantidadParticipantes(@Param("usuarioId") Long usuarioId,
             @Param("min") int min, @Param("max") int max);
 

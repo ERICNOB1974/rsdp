@@ -15,50 +15,47 @@
   <!-- Filtro por nombre -->
   <div class="filtro-container filtro-nombre">
     <label class="filtro-label">
-      <input type="checkbox" [(ngModel)]="filtroNombreActivo" (change)="aplicarTodosLosFiltros()">
       <button (click)="toggleFiltroNombre()" class="filtro-toggle">
-        Filtrar por nombre <i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
+        <i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
       </button>
     </label>
+
     <div *ngIf="filtroNombreAbierto" class="filtro-content">
+      <div class="search-container">
+        <label for="nombreEvento">Buscar comunidad:</label>
+        <input type="text" id="nombreEvento" class="form-control" [(ngModel)]="nombreEventoFiltro"
+          (input)="onSearchInputComunidades()">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Filtro por participantes -->
+  <div class="filtro-container filtro-participantes">
+    <label class="filtro-label">
+      <input type="checkbox" [(ngModel)]="filtroParticipantesActivo" (change)="aplicarTodosLosFiltros()">
+      <button (click)="toggleFiltroParticipantes()" class="filtro-toggle">
+        Filtrar por participantes <i [class]="filtroParticipantesAbierto ? 'arrow up' : 'arrow down'"></i>
+      </button>
+    </label>
+    <div *ngIf="filtroParticipantesAbierto" class="filtro-content">
       <div class="input-group">
         <div class="input-container">
-          <label for="nombreEvento">Nombre de la comunidad:</label>
-          <input type="text" id="nombreEvento" [(ngModel)]="nombreEventoFiltro">
+          <label for="minParticipantes">Mínimo:</label>
+          <input type="number" id="minParticipantes" [(ngModel)]="minParticipantes">
+        </div>
+        <div class="input-container">
+          <label for="maxParticipantes">Máximo:</label>
+          <input type="number" id="maxParticipantes" [(ngModel)]="maxParticipantes">
         </div>
       </div>
       <div class="button-group">
         <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar Filtro</button>
-        <button (click)="limpiarFiltroNombre()" class="limpiar-filtro">Limpiar Filtro</button>
+        <button (click)="limpiarFiltroParticipantes()" class="limpiar-filtro">Limpiar Filtro</button>
       </div>
-    </div>
-  </div>  
-
-  <!-- Filtro por participantes -->
-<div class="filtro-container filtro-participantes">
-  <label class="filtro-label">
-    <input type="checkbox" [(ngModel)]="filtroParticipantesActivo" (change)="aplicarTodosLosFiltros()">
-    <button (click)="toggleFiltroParticipantes()" class="filtro-toggle">
-      Filtrar por participantes <i [class]="filtroParticipantesAbierto ? 'arrow up' : 'arrow down'"></i>
-    </button>
-  </label>
-  <div *ngIf="filtroParticipantesAbierto" class="filtro-content">
-    <div class="input-group">
-      <div class="input-container">
-        <label for="minParticipantes">Mínimo:</label>
-        <input type="number" id="minParticipantes" [(ngModel)]="minParticipantes">
-      </div>
-      <div class="input-container">
-        <label for="maxParticipantes">Máximo:</label>
-        <input type="number" id="maxParticipantes" [(ngModel)]="maxParticipantes">
-      </div>
-    </div>
-    <div class="button-group">
-      <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar Filtro</button>
-      <button (click)="limpiarFiltroParticipantes()" class="limpiar-filtro">Limpiar Filtro</button>
     </div>
   </div>
-</div>
 
   <!-- Filtro por etiquetas -->
   <div class="filtro-container filtro-etiquetas">
@@ -84,7 +81,10 @@
       </div>
     </div>
   </div>
+
 </div>
+
+
 
 <div class="tabs-container">
   <!-- Botones de las pestañas -->
@@ -111,7 +111,7 @@
           <p>{{ comunidad.descripcion }}</p>
           <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
           <p>Ubicación: {{comunidad.ubicacion}}</p>
-          <p>Género: 
+          <p>Género:
             {{ comunidad.genero === 'femenino' ? 'Femenino' :
                comunidad.genero === 'masculino' ? 'Masculino' :
                comunidad.genero === 'sinGenero' ? 'Sin género' :
@@ -160,8 +160,9 @@
           <p>{{ comunidad.descripcion }}</p>
           <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
           <p>Ubicación: {{comunidad.ubicacion}}</p>
-          <p>Género: 
+          <p>Género:
             {{ comunidad.genero === 'femenino' ? 'Femenino' :
+
                comunidad.genero === 'masculino' ? 'Masculino' :
                comunidad.genero === 'sinGenero' ? 'Sin género' :
                comunidad.genero === 'otro' ? 'Otro' : 'Desconocido' }}
@@ -194,5 +195,5 @@
       </div>
     </div>
   </div>
-  
+
 </div>

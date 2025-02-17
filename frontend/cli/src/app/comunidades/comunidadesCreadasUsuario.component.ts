@@ -119,7 +119,7 @@ export class ComunidadesCreadasUsuarioComponent implements OnInit {
               ...this.comunidadesUsuario,
               ...resultados,
             ];
-            this.currentIndexComunidades++;  // Incrementamos el índice para la siguiente carga
+            this.currentIndexComunidades+=this.limit;  // Incrementamos el índice para la siguiente carga
             if (resultados.length < this.limit) {
               this.noMasComunidades = true;
             }

@@ -453,7 +453,7 @@ export class PerfilComponent implements OnInit {
     const serviceCall =
       this.subTabRutinasSeleccionada === 'todas'
         ? this.rutinaService.rutinasRealizaUsuario(this.idUsuario, "", this.currentIndexRutinas, this.cantidadPorPagina)
-        : this.rutinaService.busquedaRutinasFavoritasUsuarioGoogle(this.idUsuario, "", this.currentIndexRutinas, this.cantidadPorPagina);
+        : this.rutinaService.rutinasFavoritas(this.idUsuario, "", this.currentIndexRutinas, this.cantidadPorPagina);
 
 
     serviceCall.subscribe(
@@ -500,7 +500,7 @@ export class PerfilComponent implements OnInit {
         this.traerEtiquetasRutina(responseData);
         this.getCreadorRutina(responseData);
         this.historicoRutinas = [...this.historicoRutinas, ...responseData];  // Agregamos las nuevas rutinas
-        this.currentIndexRutinas++;  // Incrementamos el índice para la siguiente carga
+        this.currentIndexRutinas+=this.cantidadPorPagina;  // Incrementamos el índice para la siguiente carga
         if (responseData.length < this.cantidadPorPagina) {
           this.noMasRutinas = true;
         }
@@ -625,7 +625,7 @@ export class PerfilComponent implements OnInit {
           this.traerEtiquetasEvento(responseData);
           this.getCreadorEvento(responseData);
           this.historicoEventos = [...this.historicoEventos, ...responseData];  // Agregamos las nuevas rutinas
-          this.currentIndexEventos++;  // Incrementamos el índice para la siguiente carga
+          this.currentIndexEventos+=this.cantidadPorPagina;  // Incrementamos el índice para la siguiente carga
           if (responseData.length < this.cantidadPorPagina) {
             this.noMasEventos = true;
           }
@@ -669,7 +669,8 @@ export class PerfilComponent implements OnInit {
       this.currentIndexComunidades = 0;  // Reiniciamos la paginación al buscar
       this.noMasComunidades = false;  // Permitimos que se carguen más resultados
       this.historicoComunidades = [];  // Limpiamos los resultados previos
-      this.cargarComunidadesFiltradas(nombre); // Llamamos al método que carga las rutinas filtradas
+      this.cargarComunidadesFiltradas(nombre); 
+    
     } else {
       this.isSearching = false;  // Si no hay filtro, indicamos que no estamos buscando
       this.currentIndexComunidades = 0;  // Reiniciamos la paginación
@@ -691,7 +692,7 @@ export class PerfilComponent implements OnInit {
     const serviceCall =
       this.subTabSeleccionada === 'todas'
         ? this.comunidadService.miembroUsuario(this.idUsuario, "", this.currentIndexComunidades, this.cantidadPorPagina)
-        : this.comunidadService.busquedaComunidadesFavoritasUsuarioGoogle(this.idUsuario, "", this.currentIndexComunidades, this.cantidadPorPagina);
+        : this.comunidadService.comunidadesFavoritas(this.idUsuario, "", this.currentIndexComunidades, this.cantidadPorPagina);
 
     serviceCall.subscribe(
       async (dataPackage) => {
@@ -709,6 +710,7 @@ export class PerfilComponent implements OnInit {
           this.noMasComunidades = true;  // No hay más resultados
         }
         this.loadingComunidades = false;  // Desactivamos el indicador de carga
+
       },
       (error) => {
         console.error('Error al cargar todas las rutinas:', error);
@@ -738,7 +740,7 @@ export class PerfilComponent implements OnInit {
           this.traerEtiquetasComunidades(responseData);
           this.getCreadorComunidad(responseData);
           this.historicoComunidades = [...this.historicoComunidades, ...responseData];  // Agregamos las nuevas rutinas
-          this.currentIndexComunidades++;  // Incrementamos el índice para la siguiente carga
+          this.currentIndexComunidades+=this.cantidadPorPagina;  // Incrementamos el índice para la siguiente carga
           if (responseData.length < this.cantidadPorPagina) {
             this.noMasComunidades = true;
           }
