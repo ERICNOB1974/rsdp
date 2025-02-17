@@ -112,7 +112,7 @@
   /* Dos columnas */
   gap: 20px;
   margin-top: 20px;
-  height: 600px;
+  height: 125vh;
   overflow-y: auto;
   /* Permite el desplazamiento vertical */
 
@@ -130,7 +130,7 @@
   /* Para que la tarjeta no ocupe toda la pantalla, ajustable */
   margin: 10px;
   /* Añadido para separar las tarjetas */
-  height: 45vh;
+  height: 70vh;
 
   margin-bottom: 10px;
   padding: 10px;
@@ -314,6 +314,7 @@
   }
 
   .grid-item {
+    height: 70vh;
   }
 
   .section-title {
@@ -339,6 +340,7 @@
   }
 
   .grid-item {
+    height: 70vh;
     /* Tarjetas aún más pequeñas */
   }
 
