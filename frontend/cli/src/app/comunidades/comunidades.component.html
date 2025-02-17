@@ -104,7 +104,7 @@
       <div class="grid-item" *ngFor="let comunidad of comunidadesDisponiblesAMostrar"
         (click)="irADetallesDeLaComunidad(comunidad.id)"
         [ngStyle]="{'background-image': 'url(' + (comunidad.imagen || '../../assets/comunidad.jpg') + ')'}">
-        <div class="comunidad-card clickable">
+        <div class="comunidad-card clickable" [ngClass]="{ 'colapsado': esContenidoLargo(comunidad) }">
           <h3>{{ comunidad.nombre }}
             <i *ngIf="comunidad.esPrivada" class="fa fa-lock" aria-hidden="true"></i>
           </h3>
@@ -117,6 +117,15 @@
                comunidad.genero === 'sinGenero' ? 'Sin género' :
                comunidad.genero === 'otro' ? 'Otro' : 'Desconocido' }}
           </p>  
+          <div class="creador-container" *ngIf="mapaCreadorComunidades.get(comunidad.id)">
+            <p class="creador-titulo">Creado por:</p>
+            <div class="creador-info">
+              <span class="creador-nombre">{{ mapaCreadorComunidades.get(comunidad.id)?.nombreUsuario }}</span>
+              <img [src]="mapaCreadorComunidades.get(comunidad.id)?.fotoPerfil || '../../assets/usuario.png'" 
+              alt="Foto de perfil" 
+              class="creador-foto">
+            </div>
+          </div>
           <p>
             Moderación:
             <i class="fa"
@@ -157,6 +166,15 @@
                comunidad.genero === 'sinGenero' ? 'Sin género' :
                comunidad.genero === 'otro' ? 'Otro' : 'Desconocido' }}
           </p>       
+          <div class="creador-container" *ngIf="mapaCreadorComunidades.get(comunidad.id)">
+            <p class="creador-titulo">Creado por:</p>
+            <div class="creador-info">
+              <span class="creador-nombre">{{ mapaCreadorComunidades.get(comunidad.id)?.nombreUsuario }}</span>
+              <img [src]="mapaCreadorComunidades.get(comunidad.id)?.fotoPerfil || '../../assets/usuario.png'" 
+              alt="Foto de perfil" 
+              class="creador-foto">
+            </div>
+          </div>
           <p>
             Moderación:
             <i class="fa"

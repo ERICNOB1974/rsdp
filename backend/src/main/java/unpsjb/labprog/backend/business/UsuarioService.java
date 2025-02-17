@@ -221,6 +221,10 @@ public class UsuarioService {
         return usuarioRepository.creadorEvento(idEvento);
     }
 
+        public Usuario creadorRutina(Long idRutina) {
+        return usuarioRepository.creadorRutina(idRutina);
+    }
+
     public List<Usuario> miembrosComunidad(Long idComunidad) {
         return usuarioRepository.miembros(idComunidad);
     }

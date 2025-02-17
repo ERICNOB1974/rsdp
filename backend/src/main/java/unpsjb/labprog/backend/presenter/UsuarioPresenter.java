@@ -269,6 +269,11 @@ public class UsuarioPresenter {
         return Response.ok(usuarioService.creadorEvento(idEvento));
     }
 
+      @GetMapping("/creadorRutina/{idRutina}")
+    public ResponseEntity<Object> creadorRutina(@PathVariable Long idRutina) {
+        return Response.ok(usuarioService.creadorRutina(idRutina));
+    }
+
     @GetMapping("/miembrosComunidad/{idComunidad}")
     public ResponseEntity<Object> miembrosComunidad(@PathVariable Long idComunidad) {
         try {
