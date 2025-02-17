@@ -7,7 +7,7 @@ public class NominatimResponse {
     private String display_name;
     private Address address;
 
-    // Getter y Sette
+    // Getter y Setter
     public String getDisplay_name() {
         return display_name;
     }
