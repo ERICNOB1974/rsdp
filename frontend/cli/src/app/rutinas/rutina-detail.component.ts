@@ -23,12 +23,12 @@ export class RutinaDetailComponent implements OnInit {
   esFavorito: boolean = false;
 
   constructor(private rutinaService: RutinaService,
-              private route: ActivatedRoute,
-              private rutinaEstadoService: RutinaEstadoService,
-              private snackBar: MatSnackBar,
-              private router: Router,
-              private idEncryptorService: IdEncryptorService
-            ) { }
+    private route: ActivatedRoute,
+    private rutinaEstadoService: RutinaEstadoService,
+    private snackBar: MatSnackBar,
+    private router: Router,
+    private idEncryptorService: IdEncryptorService
+  ) { }
 
   ngOnInit(): void {
     const state = window.history.state;
@@ -44,7 +44,7 @@ export class RutinaDetailComponent implements OnInit {
     let id: number | string = 'new'; // Inicializamos con 'new' para que la comparación funcione
 
     if (idCifrado && idCifrado !== 'new') {
-        id = this.idEncryptorService.decodeId(idCifrado).toString();
+      id = this.idEncryptorService.decodeId(idCifrado).toString();
     }
 
 
@@ -55,22 +55,28 @@ export class RutinaDetailComponent implements OnInit {
       this.isDayVisible = new Array(this.dias.length).fill(false);
 
       // Llama a obtenerProgresoActual después de obtener los días de la rutina
-      this.rutinaService.obtenerProgresoActual(<number><unknown>id).subscribe((response: DataPackage) => {
+      this.rutinaService.obtenerProgresoActual(Number(id)).subscribe((response: DataPackage) => {
         this.progresoActual = response.data as unknown as number;
       });
       this.rutinaService.esFavorita(this.rutina.id).subscribe(dataPackage => {
         this.esFavorito = dataPackage.data as unknown as boolean;
-    });
+      });
     });
   }
 
   toggleDayVisibility(index: number): void {
     this.isDayVisible[index] = !this.isDayVisible[index];
   }
-  
+
   iniciarRutina() {
-    const rutinaId = Number(this.route.snapshot.paramMap.get('id')!);
-    this.rutinaService.crearRelacionRealizaRutina(rutinaId).subscribe(
+    const idCifrado = this.route.snapshot.paramMap.get('id');
+    let id: number | string = 'new'; // Inicializamos con 'new' para que la comparación funcione
+    if (idCifrado && idCifrado !== 'new') {
+      id = this.idEncryptorService.decodeId(idCifrado).toString();
+    }
+    id = Number(id)
+
+    this.rutinaService.crearRelacionRealizaRutina(id).subscribe(
       response => {
         console.log('Rutina iniciada exitosamente', response);
       },
@@ -78,13 +84,19 @@ export class RutinaDetailComponent implements OnInit {
         console.error('Error al iniciar la rutina', error);
       }
     );
-    this.router.navigate([`rutinas/hacer/`, this.idEncryptorService.encodeId(rutinaId)]); 
+    this.router.navigate([`rutinas/hacer/`, this.idEncryptorService.encodeId(id)]);
   }
 
   reiniciarRutina() {
-    const rutinaId = Number(this.route.snapshot.paramMap.get('id')!);
+    //const rutinaId = Number(this.route.snapshot.paramMap.get('id')!);
+    const idCifrado = this.route.snapshot.paramMap.get('id');
+    let rutinaId: number | string = 'new'; // Inicializamos con 'new' para que la comparación funcione
+    if (idCifrado && idCifrado !== 'new') {
+      rutinaId = this.idEncryptorService.decodeId(idCifrado).toString();
+    }
+    rutinaId = Number(rutinaId)
     this.rutinaEstadoService.setReiniciarRutina(true); // Establece el estado de reinicio en el servicio
-    this.router.navigate([`rutinas/hacer/`,this.idEncryptorService.encodeId(rutinaId)]); 
+    this.router.navigate([`rutinas/hacer/`, this.idEncryptorService.encodeId(rutinaId)]);
   }
 
   // Método para determinar el texto del botón
@@ -92,13 +104,13 @@ export class RutinaDetailComponent implements OnInit {
     if (this.progresoActual === -1 || this.progresoActual === this.dias[this.dias.length - 1].id) {
       return 'Iniciar rutina';
     }
-    
+
     for (let i = 0; i < this.dias.length; i++) {
       if (this.dias[i].id === this.progresoActual) {
         return `Continuar con día ${i + 2}`;
       }
     }
-  
+
     return 'Continuar';
   }
 
@@ -106,12 +118,12 @@ export class RutinaDetailComponent implements OnInit {
     this.esFavorito = !this.esFavorito;
     await lastValueFrom(this.rutinaService.marcarRutinaFavorita(this.rutina.id));
     const mensaje = this.esFavorito
-        ? 'Rutina marcada como favorita'
-        : 'Rutina quitada de favoritas';
+      ? 'Rutina marcada como favorita'
+      : 'Rutina quitada de favoritas';
 
     this.snackBar.open(mensaje, 'Cerrar', {
-        duration: 3000,
+      duration: 3000,
     });
     // Aquí envías la actualización al backend para registrar el cambio.
-}
+  }
 }

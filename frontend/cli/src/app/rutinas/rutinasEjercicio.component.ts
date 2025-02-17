@@ -42,14 +42,16 @@ export class RutinasEjercicioComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         let idRutina = 0;
+
         const idCifrado = this.route.snapshot.paramMap.get('id');
 
         let id: number | string = 'new'; // Inicializamos con 'new' para que la comparación funcione
-
+    
         if (idCifrado && idCifrado !== 'new') {
-            id = this.idEncryptorService.decodeId(idCifrado);
+            id = this.idEncryptorService.decodeId(idCifrado).toString();
         }
-        idRutina=Number(id);
+        idRutina=Number(id)
+    
         
         // Verifica si se debe reiniciar la rutina
         if (this.rutinaEstadoService.getReiniciarRutina()) {

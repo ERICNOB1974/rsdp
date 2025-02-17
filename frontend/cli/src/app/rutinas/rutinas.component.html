@@ -76,7 +76,7 @@
   <div *ngIf="tabSeleccionada === 'disponibles'" class="content-section">
     <h2 class="section-title">Explora Rutinas Disponibles</h2>
     <div class="grid" (scroll)="onScroll()">
-      <div class="grid-item" *ngFor="let rutina of rutinasDisponibles" (click)="irADetallesDeLaRutina(rutina.id)"
+      <div class="grid-item" *ngFor="let rutina of rutinasDisponibles" (click)="irADetallesDeLaRutina(rutina.id!)"
         [style.backgroundImage]="'url(' + '../../assets/ejercicio2.png' + ')'">
         <div class="grid-overlay">
           <h3>{{ rutina.nombre }}</h3>
@@ -112,7 +112,7 @@
   <div *ngIf="tabSeleccionada === 'realizaRutina'" class="content-section">
     <h2 class="section-title">Tus Rutinas Activas</h2>
     <div class="grid" (scroll)="onScroll()">
-      <div class="grid-item" *ngFor="let rutina of rutinasRealizaUsuario" (click)="irADetallesDeLaRutina(rutina.id)"
+      <div class="grid-item" *ngFor="let rutina of rutinasRealizaUsuario" (click)="irADetallesDeLaRutina(rutina.id!)"
         [style.backgroundImage]="'url(' + '../../assets/ejercicio2.png' + ')'">
         <div class="grid-overlay">
           <h3>{{ rutina.nombre }}</h3>
