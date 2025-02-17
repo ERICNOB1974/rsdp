@@ -15,50 +15,48 @@
   <!-- Filtro por nombre -->
   <div class="filtro-container filtro-nombre">
     <label class="filtro-label">
-      <input type="checkbox" [(ngModel)]="filtroNombreActivo" (change)="aplicarTodosLosFiltros()">
       <button (click)="toggleFiltroNombre()" class="filtro-toggle">
-        Filtrar por nombre <i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
+        Búsqueda:<i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
+
       </button>
     </label>
+
     <div *ngIf="filtroNombreAbierto" class="filtro-content">
+      <div class="search-container">
+        <label for="nombreEvento"></label>
+        <input type="text" id="nombreEvento" class="form-control" [(ngModel)]="nombreEventoFiltro"
+          (input)="onSearchInputComunidades()">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Filtro por participantes -->
+  <div class="filtro-container filtro-participantes">
+    <label class="filtro-label">
+      <input type="checkbox" [(ngModel)]="filtroParticipantesActivo" (change)="aplicarTodosLosFiltros()">
+      <button (click)="toggleFiltroParticipantes()" class="filtro-toggle">
+        Filtrar por participantes <i [class]="filtroParticipantesAbierto ? 'arrow up' : 'arrow down'"></i>
+      </button>
+    </label>
+    <div *ngIf="filtroParticipantesAbierto" class="filtro-content">
       <div class="input-group">
         <div class="input-container">
-          <label for="nombreEvento">Nombre de la comunidad:</label>
-          <input type="text" id="nombreEvento" [(ngModel)]="nombreEventoFiltro">
+          <label for="minParticipantes">Mínimo:</label>
+          <input type="number" id="minParticipantes" [(ngModel)]="minParticipantes">
+        </div>
+        <div class="input-container">
+          <label for="maxParticipantes">Máximo:</label>
+          <input type="number" id="maxParticipantes" [(ngModel)]="maxParticipantes">
         </div>
       </div>
       <div class="button-group">
         <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar Filtro</button>
-        <button (click)="limpiarFiltroNombre()" class="limpiar-filtro">Limpiar Filtro</button>
+        <button (click)="limpiarFiltroParticipantes()" class="limpiar-filtro">Limpiar Filtro</button>
       </div>
-    </div>
-  </div>  
-
-  <!-- Filtro por participantes -->
-<div class="filtro-container filtro-participantes">
-  <label class="filtro-label">
-    <input type="checkbox" [(ngModel)]="filtroParticipantesActivo" (change)="aplicarTodosLosFiltros()">
-    <button (click)="toggleFiltroParticipantes()" class="filtro-toggle">
-      Filtrar por participantes <i [class]="filtroParticipantesAbierto ? 'arrow up' : 'arrow down'"></i>
-    </button>
-  </label>
-  <div *ngIf="filtroParticipantesAbierto" class="filtro-content">
-    <div class="input-group">
-      <div class="input-container">
-        <label for="minParticipantes">Mínimo:</label>
-        <input type="number" id="minParticipantes" [(ngModel)]="minParticipantes">
-      </div>
-      <div class="input-container">
-        <label for="maxParticipantes">Máximo:</label>
-        <input type="number" id="maxParticipantes" [(ngModel)]="maxParticipantes">
-      </div>
-    </div>
-    <div class="button-group">
-      <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar Filtro</button>
-      <button (click)="limpiarFiltroParticipantes()" class="limpiar-filtro">Limpiar Filtro</button>
     </div>
   </div>
-</div>
 
   <!-- Filtro por etiquetas -->
   <div class="filtro-container filtro-etiquetas">
@@ -84,7 +82,10 @@
       </div>
     </div>
   </div>
+
 </div>
+
+
 
 <div class="tabs-container">
   <!-- Botones de las pestañas -->
@@ -108,8 +109,19 @@
           <h3>{{ comunidad.nombre }}
             <i *ngIf="comunidad.esPrivada" class="fa fa-lock" aria-hidden="true"></i>
           </h3>
+
+          <p>{{ comunidad.descripcion }}</p>
+          <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
+          <p>Ubicación: {{comunidad.ubicacion}}</p>
+          <p>Género:
+            {{ comunidad.genero === 'femenino' ? 'Femenino' :
+               comunidad.genero === 'masculino' ? 'Masculino' :
+               comunidad.genero === 'sinGenero' ? 'Sin género' :
+               comunidad.genero === 'otro' ? 'Otro' : 'Desconocido' }}
+          </p>  
           <div class="creador-container" *ngIf="mapaCreadorComunidades.get(comunidad.id)">
-            <p class="creador-titulo">Creado por:</p>
+            <p class="creador-titulo">Creado por:&nbsp;</p>
+
             <div class="creador-info">
               <span class="creador-nombre">{{ mapaCreadorComunidades.get(comunidad.id)?.nombreUsuario }}</span>
               <img [src]="mapaCreadorComunidades.get(comunidad.id)?.fotoPerfil || '../../assets/usuario.png'" 
@@ -157,8 +169,20 @@
           <h3>{{ comunidad.nombre }}
             <i *ngIf="comunidad.esPrivada" class="fa fa-lock" aria-hidden="true"></i>
           </h3>
+
+          <p>{{ comunidad.descripcion }}</p>
+          <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
+          <p>Ubicación: {{comunidad.ubicacion}}</p>
+          <p>Género:
+            {{ comunidad.genero === 'femenino' ? 'Femenino' :
+
+               comunidad.genero === 'masculino' ? 'Masculino' :
+               comunidad.genero === 'sinGenero' ? 'Sin género' :
+               comunidad.genero === 'otro' ? 'Otro' : 'Desconocido' }}
+          </p>       
           <div class="creador-container" *ngIf="mapaCreadorComunidades.get(comunidad.id)">
-            <p class="creador-titulo">Creado por:</p>
+            <p class="creador-titulo">Creado por:&nbsp;</p>
+
             <div class="creador-info">
               <span class="creador-nombre">{{ mapaCreadorComunidades.get(comunidad.id)?.nombreUsuario }}</span>
               <img [src]="mapaCreadorComunidades.get(comunidad.id)?.fotoPerfil || '../../assets/usuario.png'" 
@@ -194,5 +218,5 @@
       </div>
     </div>
   </div>
-  
+
 </div>

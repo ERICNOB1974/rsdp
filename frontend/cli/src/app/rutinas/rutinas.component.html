@@ -12,24 +12,23 @@
 
 <div *ngIf="filtersVisible || filtersAnimating"
   [ngClass]="{'fadeIn': filtersVisible, 'fadeOut': !filtersVisible && filtersAnimating}" class="filtros-container">
+
   <!-- Filtro por nombre -->
   <div class="filtro-container filtro-nombre">
     <label class="filtro-label">
-      <input type="checkbox" [(ngModel)]="filtroNombreActivo" (change)="aplicarTodosLosFiltros()">
       <button (click)="toggleFiltroNombre()" class="filtro-toggle">
-        Filtrar por nombre <i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
+        Búsqueda:<i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
+
       </button>
     </label>
+
     <div *ngIf="filtroNombreAbierto" class="filtro-content">
-      <div class="input-group">
-        <div class="input-container">
-          <label for="nombreEvento">Nombre de la comunidad:</label>
-          <input type="text" id="nombreEvento" [(ngModel)]="nombreEventoFiltro">
-        </div>
-      </div>
-      <div class="button-group">
-        <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar Filtro</button>
-        <button (click)="limpiarFiltroNombre()" class="limpiar-filtro">Limpiar Filtro</button>
+      <div class="search-container">
+        <label for="nombreEvento"></label>
+
+        <input type="text" id="nombreEvento" class="form-control" [(ngModel)]="nombreEventoFiltro"
+          (input)="onSearchInputComunidades()">
+        <i class="fas fa-search search-icon"></i>
       </div>
     </div>
   </div>
@@ -86,7 +85,8 @@
 
           <!-- Contenedor del creador de la rutina -->
           <div class="creador-container" *ngIf="rutina.id !== undefined && mapaCreadorRutinas.get(rutina.id)">
-            <p class="creador-titulo">Creado por:</p>
+            <p class="creador-titulo">Creado por:&nbsp;</p>
+
             <div class="creador-info">
               <span class="creador-nombre">{{ mapaCreadorRutinas.get(rutina.id)?.nombreUsuario }}</span>
               <img [src]="mapaCreadorRutinas.get(rutina.id)?.fotoPerfil || '../../assets/usuario.png'"
@@ -121,7 +121,8 @@
 
           <!-- Contenedor del creador de la rutina -->
           <div class="creador-container" *ngIf="rutina.id !== undefined && mapaCreadorRutinas.get(rutina.id)">
-            <p class="creador-titulo">Creado por:</p>
+            <p class="creador-titulo">Creado por:&nbsp;</p>
+
             <div class="creador-info">
               <span class="creador-nombre">{{ mapaCreadorRutinas.get(rutina.id)?.nombreUsuario }}</span>
               <img [src]="mapaCreadorRutinas.get(rutina.id)?.fotoPerfil || '../../assets/usuario.png'"

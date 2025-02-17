@@ -13,6 +13,7 @@
     transform: rotate(45deg);
   }
 
+
   .input-group {
     display: flex;
     justify-content: space-between;
@@ -223,6 +224,7 @@
       color: #f8f9fa;
     }
   }
+
   .evento-card.colapsado {
     font-size: 0.85em; /* Reduce la fuente en modo colapsado */
     line-height: 1.2; /* Ajusta el espaciado */

@@ -1,5 +1,4 @@
 
-
 .etiquetas-container {
   margin-top: 10px;
 }
@@ -37,6 +36,7 @@
 
 .text-success {
   color: rgb(2, 2, 2);
+
 }
 
 .comunidad-card {
@@ -48,10 +48,12 @@
 }
 
 
+
 .clickable {
   cursor: pointer;
   /* Cambia el cursor para indicar que es clickeable */
 }
+
 
 
 .comunidad-card {
@@ -103,6 +105,7 @@
 }
 
 
+
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -128,6 +131,7 @@
   margin: 10px;
   /* Añadido para separar las tarjetas */
   height: 45vh;
+
   margin-bottom: 10px;
   padding: 10px;
   border: 1px solid #ccc;
@@ -138,6 +142,29 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
+
+.grid-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 15px;
+  text-align: center;
+  transition: background 0.3s ease, max-height 0.3s ease;
+  max-height: 220px;
+  /* Incrementa la altura al hover */
+  overflow: hidden;
+  /* Oculta contenido excedente */
+  overflow-y: auto;
+  /* Scroll para contenido adicional */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* Espacio entre elementos */
+  justify-content: start;
+}
 
 /* Expande el contenido al pasar el mouse */
 .grid-item:hover .grid-overlay {
@@ -287,7 +314,6 @@
   }
 
   .grid-item {
-      /* Reduce el tamaño de las tarjetas */
   }
 
   .section-title {
@@ -321,6 +347,7 @@
     /* Reduce más el tamaño del título */
   }
 }
+
 
 
 .creador-container {
