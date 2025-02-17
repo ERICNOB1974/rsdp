@@ -17,12 +17,14 @@
     <label class="filtro-label">
       <button (click)="toggleFiltroNombre()" class="filtro-toggle">
         Búsqueda:<i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
+
       </button>
     </label>
 
     <div *ngIf="filtroNombreAbierto" class="filtro-content">
       <div class="search-container">
         <label for="nombreEvento"></label>
+
         <input type="text" id="nombreEvento" class="form-control" [(ngModel)]="nombreEventoFiltro"
           (input)="onSearchInputComunidades()">
         <i class="fas fa-search search-icon"></i>
@@ -149,6 +151,7 @@
             <!-- Contenedor del creador del evento -->
             <div class="creador-container" *ngIf="mapaCreadorEventos.get(evento.id)">
               <p class="creador-titulo">Creado por:&nbsp;</p>
+
               <div class="creador-info">
                 <span class="creador-nombre">{{ mapaCreadorEventos.get(evento.id)?.nombreUsuario }}</span>
                 <img [src]="mapaCreadorEventos.get(evento.id)?.fotoPerfil || '../../assets/usuario.png'" 
@@ -199,6 +202,7 @@
           </p>          
             <div class="creador-container" *ngIf="mapaCreadorEventos.get(evento.id)">
               <p class="creador-titulo">Creado por:&nbsp;</p>
+
               <div class="creador-info">
                 <span class="creador-nombre">{{ mapaCreadorEventos.get(evento.id)?.nombreUsuario }}</span>
                 <img [src]="mapaCreadorEventos.get(evento.id)?.fotoPerfil || '../../assets/usuario.png'" 
