@@ -107,6 +107,15 @@
                     </div>
                     <div class="evento-detalles">
                         <h4 class="evento-nombre">{{ evento.nombre }}</h4>
+                        <div class="creador-container" *ngIf="mapaCreadorEventos.get(evento.id)">
+                            <p class="creador-titulo">Creado por:</p>
+                            <div class="creador-info">
+                              <span class="creador-nombre">{{ mapaCreadorEventos.get(evento.id)?.nombreUsuario }}</span>
+                              <img [src]="mapaCreadorEventos.get(evento.id)?.fotoPerfil || '../../assets/usuario.png'" 
+                              alt="Foto de perfil" 
+                              class="creador-foto">
+                            </div>
+                          </div>
                         <p class="evento-descripcion">Descripción: {{ evento.descripcion }}</p>
                         <p class="evento-ubicacion">📍 Ubicación: {{ evento.ubicacion }}</p>
                         <p class="evento-fecha-hora">📅 Fecha y hora: {{ evento.fechaHora | date:'medium' }}</p>
@@ -158,6 +167,14 @@
                         <i class="fas fa-running"></i>
                     </div>
                     <h4>{{ rutina.nombre }}</h4>
+                    <div class="creador-container" *ngIf="rutina.id !== undefined && mapaCreadorRutinas.get(rutina.id)">
+                        <p class="creador-titulo">Creado por:</p>
+                        <div class="creador-info">
+                          <span class="creador-nombre">{{ mapaCreadorRutinas.get(rutina.id)?.nombreUsuario }}</span>
+                          <img [src]="mapaCreadorRutinas.get(rutina.id)?.fotoPerfil || '../../assets/usuario.png'"
+                            alt="Foto de perfil" class="creador-foto">
+                        </div>
+                      </div>
                     <p class="descripcion">{{ rutina.descripcion }}</p>
                     <p class="etiquetas">
                         <span *ngFor="let etiqueta of rutina.etiquetas" class="etiqueta">{{ etiqueta.nombre
@@ -215,6 +232,15 @@
                   <!-- Detalles de la comunidad -->
                   <div class="comunidad-detalles">
                     <h4 class="comunidad-nombre">{{ comunidad.nombre }}</h4>
+                    <div class="creador-container" *ngIf="mapaCreadorComunidades.get(comunidad.id)">
+                        <p class="creador-titulo">Creado por:</p>
+                        <div class="creador-info">
+                          <span class="creador-nombre">{{ mapaCreadorComunidades.get(comunidad.id)?.nombreUsuario }}</span>
+                          <img [src]="mapaCreadorComunidades.get(comunidad.id)?.fotoPerfil || '../../assets/usuario.png'" 
+                          alt="Foto de perfil" 
+                          class="creador-foto">
+                        </div>
+                      </div>
                     <p class="comunidad-descripcion">{{ comunidad.descripcion }}</p>
                     <p class="comunidad-miembros">👥 {{ comunidad.miembros }} / {{ comunidad.cantidadMaximaMiembros }} miembros</p>
                     <p class="comunidad-ubicacion">📍 {{ comunidad.ubicacion }}</p>

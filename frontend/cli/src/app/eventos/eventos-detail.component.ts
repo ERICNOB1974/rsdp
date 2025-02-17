@@ -209,13 +209,6 @@ export class EventoDetailComponent implements OnInit, AfterViewInit {
         }
         resolve(); // Resuelve la promesa después de procesar el estado
       });
-      this.usuarioService.usuarioCreadorEvento(this.evento.id).subscribe(dataPackage => {
-        this.creadorEvento = dataPackage.data as Usuario;
-        if (this.creadorEvento.id == this.idUsuarioAutenticado) {
-          this.creador = true;  // El usuario es el creador
-        }
-        resolve(); // Resuelve la promesa después de procesar el estado
-      });
     });
   }
 

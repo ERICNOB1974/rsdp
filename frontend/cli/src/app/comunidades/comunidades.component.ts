@@ -10,6 +10,8 @@ import { catchError, debounceTime, distinctUntilChanged, filter, lastValueFrom, 
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { IdEncryptorService } from '../idEcnryptorService';
+import { Usuario } from '../usuarios/usuario';
+import { UsuarioService } from '../usuarios/usuario.service';
 
 
 @Component({
@@ -57,13 +59,15 @@ export class ComunidadesComponent implements OnInit {
   filtersAnimating: boolean = false;
   private searchTimeout: any; // Variable para almacenar el timeout
 
+  mapaCreadorComunidades: Map<number, Usuario> = new Map();
 
   constructor(private comunidadService: ComunidadService,
     private authService: AuthService,  // Inyecta el AuthService
     private router: Router,
     private etiquetaService: EtiquetaService,
     private cdr: ChangeDetectorRef,
-    private idEncryptorService: IdEncryptorService
+    private idEncryptorService: IdEncryptorService,
+    private usuarioService: UsuarioService
 
   ) { }
 
@@ -376,24 +380,7 @@ export class ComunidadesComponent implements OnInit {
     this.loadingFiltrados = false;
   }
 
-  private async actualizarInformacionAdicional(): Promise<void> {
-    this.traerMiembros(this.resultadosFiltrados);
 
-    // for (const comunidad of this.resultadosFiltrados) {
-    //   if (comunidad.latitud && comunidad.longitud) {
-    //     try {
-    //       comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(
-    //         comunidad.latitud,
-    //         comunidad.longitud
-    //       );
-    //     } catch (error) {
-    //       comunidad.ubicacion = 'Ubicación desconocida';
-    //     }
-    //   } else {
-    //     comunidad.ubicacion = 'Ubicación desconocida';
-    //   }
-    // }
-  }
 
 
   seleccionarTab(tab: string) {
@@ -430,6 +417,7 @@ export class ComunidadesComponent implements OnInit {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerMiembros(resultados); // Llamar a traerParticipantes después de cargar los eventos
             this.traerEtiquetas(resultados);
+            this.getCreadorComunidad(resultados);
             this.comunidadesDisponiblesAMostrar = [...this.comunidadesDisponiblesAMostrar, ...resultados,];
             this.currentIndexComunidadesDisponibles++; // Aumentar el índice para la siguiente carga
 
@@ -460,6 +448,8 @@ export class ComunidadesComponent implements OnInit {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerMiembros(resultados); // Llamar a traerParticipantes después de cargar los eventos
             this.traerEtiquetas(resultados);
+            this.getCreadorComunidad(resultados);
+
             this.comunidadesMiembroUsuarioAMostrar = [
               ...this.comunidadesMiembroUsuarioAMostrar,
               ...resultados,
@@ -520,5 +510,23 @@ export class ComunidadesComponent implements OnInit {
     }, 300); // Espera 300ms después del último input
   }
   
+
+async getCreadorComunidad(comunidades: Comunidad[]): Promise<void> {
+  return new Promise((resolve) => {
+      for(let comunidad of comunidades){
+      this.usuarioService.usuarioCreadorComunidad(comunidad.id).subscribe(dataPackage => {
+        const creador = dataPackage.data as Usuario;
+        this.mapaCreadorComunidades.set(comunidad.id, creador); // Guardar en el mapa
+        resolve();
+      });
+    }
+    });
+}
+
+esContenidoLargo(comunidad: { descripcion: string; ubicacion: string; etiquetas?: { nombre: string }[] }): boolean {
+  const etiquetasTexto = comunidad.etiquetas?.map((e: { nombre: string }) => e.nombre).join(', ') || '';
+  const texto = `${comunidad.descripcion} ${comunidad.ubicacion} ${etiquetasTexto}`;
+  return texto.length > 150; // Ajusta este valor según lo necesario
+}
 
 }
