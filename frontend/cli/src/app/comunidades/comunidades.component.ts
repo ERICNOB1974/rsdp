@@ -142,7 +142,7 @@ export class ComunidadesComponent implements OnInit {
       return []; // Devuelve lista vacía si no es un array válido
     } catch (error) {
       console.error("Error al filtrar etiquetas:", error);
-      return []; // Manejo de errores devolviendo una lista vacía
+      return []; 
     }
   }
 
