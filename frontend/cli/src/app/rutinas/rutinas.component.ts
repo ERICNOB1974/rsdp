@@ -133,9 +133,10 @@ export class RutinasComponent implements OnInit {
     }
   }
 
-  irADetallesDeLaRutina(rutinaId: number | undefined) {
+  irADetallesDeLaRutina(rutinaId: number) {
+    console.log("id rutina ", rutinaId)
     const id = rutinaId ?? 0; // Valor predeterminado si es undefined
-    this.router.navigate(['/rutinas', this.idEncryptorService.encodeId(id)]); // Navega a la ruta /rutinas/:id
+    this.router.navigate(['/rutinas', this.idEncryptorService.encodeId(rutinaId)]); // Navega a la ruta /rutinas/:id
   }
 
 
@@ -477,6 +478,6 @@ export class RutinasComponent implements OnInit {
       }
     });
   }
-  
+
 
 }

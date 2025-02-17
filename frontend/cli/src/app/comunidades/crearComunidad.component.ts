@@ -117,11 +117,18 @@ export class CrearComunidadComponent {
     }
   }
   get(): void {
-    const id = this.route.snapshot.paramMap.get('id')!;
+    //const id = this.route.snapshot.paramMap.get('id')!;
+    const idCifrado = this.route.snapshot.paramMap.get('id');
+
+    let id: number | string = 'new'; // Inicializamos con 'new' para que la comparación funcione
+
+    if (idCifrado && idCifrado !== 'new') {
+        id = this.idEncryptorService.decodeId(idCifrado);
+    }
     if (id === 'new') {
       this.comunidad = <Comunidad>{};
     } else {
-      this.comunidadService.get(parseInt(id)).subscribe(dataPackage => this.comunidad = <Comunidad>dataPackage.data);
+      this.comunidadService.get(Number(id)).subscribe(dataPackage => this.comunidad = <Comunidad>dataPackage.data);
     }
   }
 
