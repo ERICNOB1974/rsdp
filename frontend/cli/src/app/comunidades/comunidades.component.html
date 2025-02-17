@@ -17,6 +17,7 @@
     <label class="filtro-label">
       <button (click)="toggleFiltroNombre()" class="filtro-toggle">
         Búsqueda:<i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
+
       </button>
     </label>
 
@@ -119,6 +120,7 @@
           </p>  
           <div class="creador-container" *ngIf="mapaCreadorComunidades.get(comunidad.id)">
             <p class="creador-titulo">Creado por:&nbsp;</p>
+
             <div class="creador-info">
               <span class="creador-nombre">{{ mapaCreadorComunidades.get(comunidad.id)?.nombreUsuario }}</span>
               <img [src]="mapaCreadorComunidades.get(comunidad.id)?.fotoPerfil || '../../assets/usuario.png'" 
@@ -169,6 +171,7 @@
           </p>       
           <div class="creador-container" *ngIf="mapaCreadorComunidades.get(comunidad.id)">
             <p class="creador-titulo">Creado por:&nbsp;</p>
+
             <div class="creador-info">
               <span class="creador-nombre">{{ mapaCreadorComunidades.get(comunidad.id)?.nombreUsuario }}</span>
               <img [src]="mapaCreadorComunidades.get(comunidad.id)?.fotoPerfil || '../../assets/usuario.png'" 

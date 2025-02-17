@@ -143,6 +143,7 @@ export class ComunidadesComponent implements OnInit {
     } catch (error) {
       console.error("Error al filtrar etiquetas:", error);
       return []; 
+
     }
   }
 

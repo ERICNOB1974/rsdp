@@ -76,4 +76,5 @@ export const routes: Routes = [
   { path: 'comunidad-muro/:id', component: MuroComunidadComponent },
   { path: '**', component: PaginaNoEncontrada, canActivate: [AuthGuard] }
 
+
 ];
