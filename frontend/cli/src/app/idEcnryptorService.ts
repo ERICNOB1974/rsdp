@@ -5,7 +5,7 @@ import * as CryptoJS from 'crypto-js';
   providedIn: 'root'
 })
 export class IdEncryptorService {
-  private secretKey = 'clave-secreta-super-segura-ñ-@#$$@^#%$234358694f'; // Cambia esto por una clave segura
+  private secretKey = 'clave-secreta-super-segura-ñ-@#$$@^#%$234358694f'; 
 
   encodeId(id: number): string {
     return CryptoJS.AES.encrypt(id.toString(), this.secretKey).toString();
