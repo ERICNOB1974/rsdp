@@ -1,0 +1,36 @@
+.error-container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+h1 {
+    color: #e74c3c;
+}
+
+.btn {
+    padding: 10px 20px;
+    background: #3498db;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.error-image {
+    max-width: 80%; /* Ajusta el tamaño máximo al 80% del ancho de la pantalla */
+    max-height: 50vh; /* Limita la altura para que no se corte */
+    object-fit: contain; /* Asegura que la imagen no se recorte */
+}
+
+@media (max-width: 768px) {
+    .error-image {
+        max-width: 90%;  /* Ajuste para dispositivos móviles */
+        max-height: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .error-image {
+        max-width: 100%;  /* Para pantallas muy pequeñas */
+        max-height: 250px;
+    }
+}
