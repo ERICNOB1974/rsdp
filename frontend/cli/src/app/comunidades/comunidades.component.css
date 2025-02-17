@@ -1,3 +1,4 @@
+
 .etiquetas-container {
   margin-top: 10px;
 }
@@ -35,49 +36,7 @@
 
 .text-success {
   color: rgb(2, 2, 2);
-}
 
-.carousel {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  /* Ajusta a toda la altura de la ventana */
-  overflow: hidden;
-}
-
-.carousel-container {
-  display: flex;
-  justify-content: center;
-  /* Centra los elementos cuando hay menos de 4 */
-  transition: transform 0.5s ease;
-  /* Para animar el desplazamiento */
-  height: auto;
-}
-
-.carousel-item {
-  flex: 0 0 25%;
-  /* Cada item ocupa un cuarto del ancho si hay 4 o más */
-  height: 100%;
-  display: flex;
-  align-items: center;
-  /* Centra el contenido verticalmente */
-  justify-content: center;
-  /* Centra el contenido horizontalmente */
-  position: relative;
-  box-sizing: border-box;
-  /* Incluye el padding y el borde en el ancho y altura */
-}
-
-.large-event {
-  flex: 0 0 100%;
-  /* La primer comunidad ocupa toda la pantalla */
-}
-
-.mini-event {
-  flex: 0 0 25%;
-  /* Las mini comunidades ocupan 1/4 de la pantalla */
-  height: 150px;
-  /* Altura fija para los mini comunidades */
 }
 
 .comunidad-card {
@@ -88,50 +47,14 @@
   border: 1px solid #ccc;
 }
 
-.comunidad-details {
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-}
 
-.carousel-control {
-  position: absolute;
-  top: 40%;
-  transform: translateY(-50%);
-  background-color: rgba(255, 255, 255, 0.5);
-  border: none;
-  padding: 20px;
-  cursor: pointer;
-  z-index: 1000;
-  /* Asegura que los botones estén por encima del contenido */
-}
-
-.prev {
-  left: 10px;
-}
-
-.next {
-  right: 10px;
-}
-
-.indice-actual {
-  margin-top: 10px;
-  text-align: center;
-  font-weight: bold;
-}
 
 .clickable {
   cursor: pointer;
   /* Cambia el cursor para indicar que es clickeable */
 }
 
-.carousel-item {
-  position: relative;
-  z-index: 1;
-  /* Asegura que los elementos sean interactivos */
-}
+
 
 .comunidad-card {
   padding: 20px;
@@ -146,33 +69,6 @@
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Centrado adecuado si hay 1 o 2 comunidades */
-.carousel-container.few-items {
-  justify-content: center;
-  /* Centra los elementos si hay pocos */
-}
-
-/* Ajuste para 1 sola comunidad */
-.carousel-item.single {
-  flex: 0 0 100%;
-  /* Si solo hay 1 comunidad, ocupa todo el ancho */
-}
-
-/* Ajuste para 2 comunidades */
-.carousel-item.double {
-  flex: 0 0 50%;
-  /* Si hay 2 comunidades, cada una ocupa la mitad del ancho */
-}
-
-/* Ajuste para 3 comunidades */
-.carousel-item.triple {
-  flex: 0 0 33.33%;
-  /* Si hay 3 comunidades, cada una ocupa un tercio del ancho */
-}
-
-
-
-/* Asegúrate de que la etiqueta .container no expanda el área clickeable */
 
 
 /* Oculta el input original */
@@ -182,34 +78,11 @@
   cursor: pointer;
 }
 
-/* Estilos del checkmark */
-.checkmark {
-  position: relative;
-  height: 1.3em;
-  width: 1.3em;
-  background-color: #2196F300;
-  border-radius: 0.25em;
-  transition: all 0.30s;
-}
-
 /* Cuando el checkbox está marcado */
 .container input:checked~.checkmark {
   background-color: #2196F3;
 }
 
-/* Estilos del checkmark/indicador */
-.checkmark:after {
-  content: "";
-  position: absolute;
-  transform: rotate(0deg);
-  border: 0.1em solid black;
-  left: 0;
-  top: 0;
-  width: 1.05em;
-  height: 1.05em;
-  border-radius: 0.25em;
-  transition: all 0.25s, border-width 0.1s;
-}
 
 /* Mostrar el checkmark cuando está marcado */
 .container input:checked~.checkmark:after {
@@ -231,22 +104,6 @@
   border-bottom: 2px solid transparent;
 }
 
-.tab-button.active {
-  border-bottom: 2px solid #007bff;
-  font-weight: bold;
-  background-color: #e9ecef;
-}
-
-.grid-container {
-  display: flex;
-  flex-direction: column;
-  height: 80%;
-  max-height: 600px;
-  /* Ajusta la altura máxima según sea necesario */
-  overflow-y: auto;
-  /* Permite el desplazamiento vertical */
-  padding: 10px;
-}
 
 
 .grid {
@@ -270,11 +127,11 @@
   cursor: pointer;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  max-width: 90%;
   /* Para que la tarjeta no ocupe toda la pantalla, ajustable */
   margin: 10px;
   /* Añadido para separar las tarjetas */
-  height: 300px;
+  height: 45vh;
+
   margin-bottom: 10px;
   padding: 10px;
   border: 1px solid #ccc;
@@ -284,6 +141,7 @@
   transform: scale(0.95);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
+
 
 .grid-overlay {
   position: absolute;
@@ -363,7 +221,6 @@
   right: 0;
   transition: transform 0.2s;
   border: 1px solid #ccc;
-  max-height: 300px;
   /* Ajusta el tamaño según tu diseño */
   overflow: hidden;
   justify-content: space-between;
@@ -414,12 +271,7 @@
   color: #ff6b6b;
 }
 
-.tab-button.active {
-  background: #fff;
-  color: #ff6b6b;
-  font-weight: bold;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-}
+
 
 /* Content Section */
 .content-container {
@@ -462,8 +314,6 @@
   }
 
   .grid-item {
-    height: 250px;
-    /* Reduce el tamaño de las tarjetas */
   }
 
   .section-title {
@@ -489,7 +339,6 @@
   }
 
   .grid-item {
-    height: 200px;
     /* Tarjetas aún más pequeñas */
   }
 
@@ -502,15 +351,16 @@
 
 
 .creador-container {
-  position: absolute;
-  top: 8vh;
-  right: 10px;
+ 
   display: flex;
   align-items: center;
-  background: rgba(0, 0, 0, 0.6); /* Fondo semitransparente */
+  background: rgba(0, 0, 0, 0.6);
+  /* Fondo semitransparente */
   padding: 5px 1px;
   border-radius: 15px;
-  max-width: 200px; /* Ajuste para no extenderse demasiado */
+  max-width: max-content;
+  /* Ajuste para no extenderse demasiado */
+  margin-top: inherit;
 }
 
 .creador-foto {
@@ -525,7 +375,8 @@
   color: white;
   font-size: 14px;
   font-weight: bold;
-  white-space: nowrap; /* Evitar que el texto se desborde */
+  white-space: nowrap;
+  /* Evitar que el texto se desborde */
 }
 
 .creador-titulo {
@@ -539,7 +390,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: nowrap; /* Evitar que los elementos se apilen en pantallas pequeñas */
+  flex-wrap: nowrap;
+  /* Evitar que los elementos se apilen en pantallas pequeñas */
 }
 
 /* Responsividad */
@@ -558,11 +410,13 @@
 
   .creador-nombre {
     font-size: 12px;
-    white-space: normal; /* Permitir que el texto se ajuste a varias líneas si es necesario */
+    white-space: normal;
+    /* Permitir que el texto se ajuste a varias líneas si es necesario */
   }
 
   .creador-info {
-    gap: 5px; /* Reducir el espacio entre la foto y el nombre */
+    gap: 5px;
+    /* Reducir el espacio entre la foto y el nombre */
   }
 }
 
@@ -580,23 +434,25 @@
     margin-right: 5px;
   }
 
-  .creador-nombre {
-    font-size: 10px;
-  }
+ 
 
   .creador-titulo {
     font-size: 10px;
   }
 
   .creador-info {
-    gap: 4px; /* Aumentar el gap entre los elementos */
-    flex-wrap: wrap; /* Permitir que los elementos se acomoden en varias líneas en pantallas muy pequeñas */
+    gap: 4px;
+    /* Aumentar el gap entre los elementos */
+    flex-wrap: wrap;
+    /* Permitir que los elementos se acomoden en varias líneas en pantallas muy pequeñas */
   }
 }
 
 .comunidad-card.colapsado {
-  font-size: 0.85em; /* Reduce la fuente en modo colapsado */
-  line-height: 1.2; /* Ajusta el espaciado */
+  font-size: 0.85em;
+  /* Reduce la fuente en modo colapsado */
+  line-height: 1.2;
+  /* Ajusta el espaciado */
 }
 
 .comunidad-card h3 {
@@ -604,5 +460,6 @@
 }
 
 .comunidad-card.colapsado h3 {
-  font-size: 1em; /* Reduce solo el título si está colapsado */
+  font-size: 1em;
+  /* Reduce solo el título si está colapsado */
 }

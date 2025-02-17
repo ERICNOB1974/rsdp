@@ -109,7 +109,6 @@ body {
   color: #fff;
   padding: 15px;
   transition: background 0.3s ease, max-height 0.3s ease;
-  max-height: 220px; /* Incrementa la altura al hover */
   overflow: hidden; /* Oculta contenido excedente */
   overflow-y: auto; /* Scroll para contenido adicional */
   display: flex;
@@ -191,9 +190,7 @@ body {
     padding: 10px 15px;
   }
 
-  .grid-item {
-    height: 250px; /* Reduce el tamaño de las tarjetas */
-  }
+
 
   .section-title {
     font-size: 24px; /* Reduce el tamaño del título */
@@ -213,18 +210,14 @@ body {
     gap: 10px;
   }
 
-  .grid-item {
-    height: 200px; /* Tarjetas aún más pequeñas */
-  }
+
 
   .section-title {
     font-size: 20px; /* Reduce más el tamaño del título */
   }
 }
 .creador-container {
-  position: absolute;
-  top: 8vh;
-  right: 10px;
+ 
   display: flex;
   align-items: center;
   background: rgba(0, 0, 0, 0.6); /* Fondo semitransparente */
