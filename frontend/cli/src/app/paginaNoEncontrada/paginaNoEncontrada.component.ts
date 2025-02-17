@@ -10,6 +10,6 @@ export class PaginaNoEncontrada {
   constructor(private router: Router) {}
 
   volverAlInicio(): void {
-    this.router.navigate(['']); // Navega a la ruta raíz
+    this.router.navigate(['']); 
   }
 }
