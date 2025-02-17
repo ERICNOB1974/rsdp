@@ -1,0 +1,164 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap');
+
+:root {
+    --primary-color: #6200ea;
+    --secondary-color: #03dac6;
+    --error-color: #b00020;
+    --background-color: #f5f5f5;
+    --card-background: #ffffff;
+    --text-color: #333;
+}
+
+.wrap-login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 40px; /* Ajusta para asegurar espacio desde la parte superior */
+}
+
+.password-field {
+    position: relative; /* Necesario para posicionar el botón */
+  }
+  
+  .toggle-password-visibility {
+    position: absolute; /* Posiciona el botón */
+    right: 10px; /* Ajusta la distancia desde el borde derecho */
+    top: 50%; /* Centra verticalmente */
+    transform: translateY(-50%); /* Ajusta el centrado vertical */
+    padding: 0; /* Elimina el padding para que no sea muy grande */
+    width: 24px; /* Ajusta el tamaño del botón */
+    height: 24px; /* Ajusta el tamaño del botón */
+  }
+
+.container {
+    background: #FFFFFF;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.29);
+    border-radius: 4px;
+    width: 100%;
+    max-width: 400px; /* Tamaño máximo para pantallas grandes */
+    padding: 20px;
+    box-sizing: border-box;
+    animation: fadeIn 0.5s;
+}
+
+@media(max-width:768px) {
+    .container {
+        padding: 22px;
+        width: 100%; /* Asegúrate de que ocupe el 100% en pantallas más pequeñas */
+        max-width: 100%; /* Asegúrate de que no haya un ancho máximo */
+    }
+}
+
+@media(max-width:430px) {
+    .container {
+        padding: 15px; /* Reducido padding para pantallas muy pequeñas */
+        width: 100%; /* Asegúrate de que ocupe el 100% en pantallas muy pequeñas */
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;  /* Asegura que los elementos dentro estén centrados verticalmente */
+    width: 100%;
+    max-width: 400px; /* Controla el tamaño máximo del formulario */
+    margin: 0 auto; /* Centra el div horizontalmente */
+}
+
+.login-box mat-card-header {
+    text-align: center; /* Centra el encabezado */
+    margin-bottom: 20px; /* Espacio debajo del encabezado */
+}
+
+.login-box mat-card-header img {
+    width: 100px; /* Tamaño de imagen ajustado */
+    height: 100px; /* Tamaño de imagen ajustado */
+    border-radius: 50%; /* Hace que la imagen sea circular */
+}
+
+.mat-mdc-card-content {
+    padding: 0;
+}
+
+.login-box mat-form-field {
+    margin-bottom: 16px; /* Espacio uniforme entre campos */
+    width: 100%;
+}
+
+.mdc-text-field--invalid .mdc-text-field__input,
+.mdc-text-field .mdc-text-field__input,
+.form-field {
+    caret-color: #B00020 !important;
+}
+
+.form-field {
+    font-size: 16px;
+    letter-spacing: 0.15px !important;
+    color: #000000BC !important;
+}
+
+.mat-mdc-form-field-error-wrapper {
+    height: 18px;
+}
+
+.login-box mat-label,
+.mat-mdc-form-field-error {
+    color: #B00020 !important;
+}
+
+.mat-mdc-raised-button:not(:disabled) {
+    background-color: #000000; /* Color de fondo del botón */
+    border-radius: 4px;
+    text-align: center; /* Centra el texto */
+    font-size: 16px; /* Aumenta el tamaño de la fuente */
+    font-weight: 500; /* Aumenta el grosor del texto */
+    padding: 10px 20px; /* Espaciado interno en el botón */
+    transition: background-color 0.3s; /* Efecto de transición */
+}
+
+.mat-mdc-raised-button:not(:disabled):hover {
+    background-color: #4d0011; /* Color de fondo al pasar el mouse */
+}
+
+mat-card-actions {
+    display: flex;
+    flex-direction: column; /* Organiza los botones en columna */
+    align-items: center; /* Centra los botones */
+    margin-bottom: 20px;
+}
+
+mat-card-actions button {
+    margin-top: 8px; /* Espacio entre los botones */
+    color: #00796b; /* Color de los botones secundarios */
+    font-size: 14px; /* Tamaño de fuente de los botones */
+}
+
+mat-card-actions button:hover {
+    text-decoration: underline; /* Subraya el texto al pasar el mouse */
+}
+
+.login-box mat-form-field:last-of-type {
+    margin-bottom: 30px; /* Aumenta el espacio debajo del campo */
+}
+
+.login-box mat-form-field:first-of-type {
+    margin-bottom: 10px; /* Ajusta el espacio debajo del campo de correo */
+}

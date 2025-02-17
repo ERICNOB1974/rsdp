@@ -1,0 +1,43 @@
+<h1 class="title">Descubre Nuevas Rutinas</h1>
+
+<section class="event-list">
+  <div *ngFor="let rutina of sugerencias" class="event-item">
+    <div class="event-card">
+      <!-- Imagen de fondo para la tarjeta -->
+      <div 
+        class="event-image" 
+        style="background-image: url('../../assets/ejercicio2.png')">
+      </div>
+      
+      <!-- Contenido de la tarjeta -->
+      <div class="event-content">
+        <h3 class="event-name">{{ rutina.nombre }}</h3>
+        <p class="event-description">{{ rutina.descripcion }}</p>
+        <div class="event-details">
+          <p *ngIf="rutina.dias && rutina.dias.length > 0">
+            Duración: {{ rutina.dias.length }} {{ rutina.dias.length === 1 ? 'día' : 'días' }}
+          </p>
+          <p class="event-tags" *ngIf="rutina.etiquetas && rutina.etiquetas.length">
+            Etiquetas: 
+            <span *ngFor="let etiqueta of rutina.etiquetas" class="tag">
+              {{ etiqueta.nombre }}
+            </span>
+          </p>
+        </div>
+        <p class="event-motive" *ngIf="rutina.id && motivos[rutina.id]?.length">
+          <span [innerHTML]="formatMotivo(motivos[rutina.id].toString())"></span>
+        </p>
+        <button (click)="irADetallesDeLaRutina(rutina.id)" class="btn-more">Ver Detalles</button>
+      </div>
+    </div>
+  </div>
+
+</section>
+  <!-- Paginación -->
+  <app-pagination 
+  [totalPages]="totalPages" 
+  [currentPage]="page+1" 
+  (pageChangeRequested)="onPageChangeRequested($event)"
+  [number]="page" 
+  [hidden]="elementos < 1 || totalPages <= 1">
+  </app-pagination>

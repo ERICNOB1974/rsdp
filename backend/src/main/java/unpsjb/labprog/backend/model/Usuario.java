@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 @Getter
@@ -27,17 +26,16 @@ public class Usuario {
     private LocalDate fechaDeCreacion;
     private String correoElectronico;
     private String contrasena;
+    private String genero;
     private String descripcion;
+    private double latitud;
+    private double longitud;
+    private String privacidadPerfil;
+    private String privacidadEventos;
+    private String privacidadComunidades;
+    private String fotoPerfil;
+    private boolean borrarNotificacionesEventosPasados;
 
-    @Relationship(type = "POSTEA")
-    private List<Publicacion> publicaciones;    
 
-
-    @Relationship(type = "REALIZA_RUTINA")
-    private List<RutinaComenzada> rutinasEmpezadas;
-
-
-    @Relationship(type = "ES_AMIGO_DE") 
-    private List<Usuario> amigos;
     
 }

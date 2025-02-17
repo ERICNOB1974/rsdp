@@ -1,7 +1,8 @@
 package unpsjb.labprog.backend.model;
 
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.neo4j.core.schema.*;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
 import lombok.Getter;
@@ -9,10 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.time.ZonedDateTime;
-
-import jakarta.annotation.Nullable;
 
 @Data
 @Getter
@@ -20,31 +18,28 @@ import jakarta.annotation.Nullable;
 @Node("Evento")
 @NoArgsConstructor
 public class Evento {
-    
+
     @Id
     @GeneratedValue
     private Long id;
 
     private String nombre;
     private LocalDate fechaDeCreacion;
-    private ZonedDateTime fechaHora; 
-    private String ubicacion;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
+    private ZonedDateTime fechaHora;
+
+    private double latitud;
+    private double longitud;
+
+    private String genero;
     private String descripcion;
+    private boolean eliminado;
     private int cantidadMaximaParticipantes;
     private boolean esPrivadoParaLaComunidad;
 
-    @Relationship(type = "CREADO_POR")
-    private Usuario creador;
+    private String imagen;
 
-    @Relationship(type = "PARTICIPA_EN")
-    private List<InscriptoEnEvento> participantes;
-
-    @Relationship(type = "ETIQUETADO_CON")
-    private List<Etiqueta> etiquetas;
-
-    @Nullable
-    @Relationship(type = "ORGANIZADO_POR")
-    private Comunidad organiza;
-
+    private String ubicacion;
 
 }

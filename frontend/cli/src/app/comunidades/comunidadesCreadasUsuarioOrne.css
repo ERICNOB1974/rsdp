@@ -1,0 +1,307 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body,
+html {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.comunidades-container{
+  max-height: 30vh; /* Mantén esta altura máxima */
+  min-height: 30vh; /* Fija una altura mínima igual para evitar saltos */
+}
+.comunidades-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 columnas */
+  gap: 20px; /* Espacio entre las tarjetas */
+
+  max-height: 75vh; /* Tamaño máximo para evitar desbordes */
+  min-height: 30vh; /* Altura mínima para evitar saltos */
+  overflow-y: auto; /* Habilita el scroll interno */
+
+  padding: 10px; /* Espaciado interno */
+  width: 80%; /* Controla el ancho del contenedor */
+  max-width: 1000px; /* Limita el tamaño máximo */
+  margin: 0 auto; /* Centra horizontalmente el contenedor */
+}
+.comunidad-card {
+  position: relative;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(0, 0, 0, 0.3));
+  /* Fondo semitransparente */
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-align: left;
+  background-size: cover;
+  background-position: center;
+  color: white;
+  overflow: hidden;
+  z-index: 1;
+  overflow-x: hidden; /* Oculta cualquier desbordamiento horizontal */
+  width: 100%;        /* Asegura que ocupe todo el espacio disponible */
+}
+
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  /* Asegura que la imagen cubra el contenedor sin estirarse */
+  background-position: center;
+  filter: blur(8px);
+  z-index: 0;
+  transition: filter 0.3s ease;
+}
+
+h2 {
+  position: relative;
+  top: 0;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  color: #f70909;
+  font-size: 2.5em;
+  font-family: 'Arial', sans-serif;
+}
+
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: contain;
+  /* Cambiado a 'contain' para que la imagen se ajuste al tamaño del contenedor */
+  background-position: center;
+  filter: blur(8px);
+  /* Aplica el desenfoque al fondo */
+  z-index: 0;
+  /* Asegura que la imagen esté detrás del contenido */
+  transition: filter 0.3s ease;
+  /* Transición suave para el desenfoque */
+}
+
+.comunidad-card:hover .background-image {
+  filter: blur(0);
+  /* Elimina el desenfoque del fondo al pasar el mouse */
+}
+
+.comunidad-card-content {
+  position: relative;
+  z-index: 2;
+  /* Asegura que el contenido esté por encima de la capa de desenfoque */
+}
+
+.comunidad-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  /* Da un efecto al hacer hover */
+}
+
+.comunidad-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  /* Filtro de sombra oscuro para el texto */
+  z-index: 1;
+  /* Asegura que esté detrás del contenido */
+}
+
+.comunidad-card h3 {
+  color: #007BFF;
+  font-size: 1.8em;
+  margin: 0;
+  z-index: 2;
+  /* Asegura que el contenido esté por encima de la capa de desenfoque */
+}
+
+.badge {
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.private {
+  background-color: #d9534f;
+  /* Rojo para comunidades privadas */
+}
+
+.public {
+  background-color: #5cb85c;
+  /* Verde para comunidades públicas */
+}
+
+.descripcion {
+  font-size: 1em;
+  color: #f5f5f5;
+  /* Un color blanco suave */
+  margin: 10px 0;
+  z-index: 2;
+  /* Asegura que el contenido esté por encima de la capa de desenfoque */
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+  /* Añade sombra al texto para mayor visibilidad */
+}
+
+.info {
+  font-size: 0.9em;
+  color: #e0e0e0;
+  /* Un gris claro */
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+  z-index: 2;
+  /* Asegura que el contenido esté por encima de la capa de desenfoque */
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+  /* Sombra en el texto */
+}
+
+.fecha-hora {
+  color: #f1f1f1;
+  /* Blanco claro */
+  font-size: 0.8em;
+  margin: 10px 0;
+  z-index: 2;
+  /* Asegura que el contenido esté por encima de la capa de desenfoque */
+  font-style: italic;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+  /* Sombra para mejorar la legibilidad */
+}
+
+.detalles-btn {
+  padding: 10px 15px;
+  background: #007BFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+  z-index: 2;
+  /* Asegura que el contenido esté por encima de la capa de desenfoque */
+}
+
+.detalles-btn:hover {
+  background: #0056b3;
+  transform: scale(1.05);
+}
+
+.no-comunidades {
+  text-align: center;
+  font-size: 1.5em;
+  color: #666;
+  padding: 40px;
+  background: #fff3cd;
+  border: 1px solid #ffeeba;
+  border-radius: 8px;
+}
+
+@media (max-width: 28.75em) {
+  html {
+    font-size: 55%;
+  }
+}
+
+@media (max-width: 61.25em) {
+  html {
+    font-size: 58%;
+  }
+}
+
+@media (max-width: 75em) {
+  html {
+    font-size: 60%;
+  }
+}
+
+@media (max-width: 30.625em) {
+  .comunidades-orne {
+    padding: 6rem 1rem;
+  }
+}
+
+@media (max-width: 30.625em) {
+  .comunidades-orne h2 {
+    padding: 0;
+  }
+}
+
+@media (max-width: 768px) {
+
+  /* Para dispositivos con pantalla más pequeña que 768px */
+  .comunidades-list {
+    grid-template-columns: 1fr;
+    /* 1 columna para pantallas pequeñas */
+  }
+}
+
+
+.etiquetas-container {
+  margin-top: 10px;
+}
+
+.etiqueta {
+  display: inline-block;
+  padding: 5px 12px;
+  margin: 5px 5px 0 0;
+  background-color: #a1a1a1;
+  color: white;
+  border-radius: 15px;
+  font-size: 14px;
+  text-transform: none;
+  transition: background-color 0.3s ease;
+}
+.etiquetas-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+
+.etiqueta:hover {
+  background-color: #0056b3;
+}
+
+.comunidad-card .fa {
+  margin-left: 5px;
+}
+
+
+/*BUSCADOR CSS */
+.search-container {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+
+.search-input {
+  width: 100%;
+  padding: 15px 20px;
+  padding-right: 40px;
+  border-radius: 25px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+.search-icon {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  font-size: 18px;
+}

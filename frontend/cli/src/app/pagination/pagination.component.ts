@@ -6,42 +6,27 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <nav aria-label="Page navigation">
-      <ul class="pagination pagination-dark justify-content-center">
-        <li class="page-item">
-          <a class="page-link" (click)="onPageChange(-2)">&laquo;</a>
-        </li>
-        <li class="page-item">
-          <a class="page-link" (click)="onPageChange(-1)">&lsaquo;</a>
-        </li>
-        <li *ngFor="let t of pages" [ngClass]="t === number ? 'active' : ''" class="page-item">
-          <a class="page-link" (click)="onPageChange(t + 1)">{{ t+1 }}</a>
-        </li>
-        <li class="page-item">
-          <a class="page-link" (click)="onPageChange(-3)">&rsaquo;</a>
-        </li>
-        <li class="page-item">
-          <a class="page-link" (click)="onPageChange(-4)">&raquo;</a>
-        </li>
-      </ul>
-    </nav>
-  `,
-  styles: `
-    .pagination-dark .page-link {
-      color: #fff;
-      background-color: #343a40;
-      border-color: #343a40;
-    }
-    .pagination-dark .page-link:hover {
-      color: #fff;
-      background-color: #23272b;
-      border-color: #23272b;
-    }
-    .pagination-dark .page-item.active .page-link {
-      background-color: #007bff;
-      border-color: #007bff;
-    }
-  `
+  <nav aria-label="Page navigation">
+    <ul class="pagination pagination-custom justify-content-center">
+      <li class="page-item">
+        <a class="page-link" (click)="onPageChange(-2)">&laquo;</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" (click)="onPageChange(-1)">&lsaquo;</a>
+      </li>
+      <li *ngFor="let t of pages" [ngClass]="t === number ? 'active' : ''" class="page-item">
+        <a class="page-link" (click)="onPageChange(t + 1)">{{ t + 1 }}</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" (click)="onPageChange(-3)">&rsaquo;</a>
+      </li>
+      <li class="page-item">
+        <a class="page-link" (click)="onPageChange(-4)">&raquo;</a>
+      </li>
+    </ul>
+  </nav>
+`,
+styleUrls: ['pagination.component.css']
 })
 export class PaginationComponent {
   @Input() totalPages: number = 0;
@@ -54,11 +39,14 @@ export class PaginationComponent {
   constructor(){}
 
   ngOnChanges(changes: SimpleChanges) {
+   
+  
     if(changes['totalPages']){
-      this.pages = Array.from(Array(this.totalPages).keys())
+      this.pages = Array.from(Array(this.totalPages).keys());
     }
     if (changes['currentPage']) {
-      if (this.currentPage == this.totalPages){
+      console.info('Updated Current Page:', this.currentPage);
+      if (this.currentPage === this.totalPages) {
         this.last = true;
       } else {
         this.last = false;
@@ -66,29 +54,23 @@ export class PaginationComponent {
     }
   }
 
+  
   onPageChange(pageId: number): void {
-    if (!this.currentPage){
-      this.currentPage = 1;
+
+    let page = this.currentPage; // Inicializa 'page' con el valor actual.
+    if (pageId === -2) {
+      page = 1; // Primera página
+    } else if (pageId === -1) {
+      page = this.currentPage > 1 ? this.currentPage - 1 : 1; // Página anterior
+    } else if (pageId === -3) {
+      page = this.currentPage < this.totalPages ? this.currentPage + 1 : this.totalPages; // Página siguiente
+    } else if (pageId === -4) {
+      page = this.totalPages; // Última página
+    } else if (pageId >= 1 && pageId <= this.totalPages) {
+      page = pageId; // Páginas específicas
     }
-    let page = pageId;
-    if (pageId === -2){
-      page = 1;
-    }
-    if (pageId === -1){
-      page = this.currentPage > 1 ? this.currentPage - 1 : 1;
-    }
-    if (pageId === -3){
-      page = !this.last ? this.currentPage + 1 : this.currentPage;
-    }
-    if (pageId === -4){
-      page = this.totalPages;
-    }
-    if (pageId > 1 && this.pages.length >= pageId){
-      page = this.pages[pageId - 1] + 1;
-    }
-    page = Math.min(page, this.totalPages);
     this.currentPage = page;
-    this.pageChangeRequested.emit(page);
+    this.pageChangeRequested.emit(page); // Emitir evento de cambio de página
   }
 }
 

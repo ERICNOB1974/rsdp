@@ -1,0 +1,26 @@
+.mapa-container {
+  position: relative;
+  padding: 20px; /* Agrega espacio alrededor del contenedor */
+}
+
+.input-container {
+  margin-bottom: 20px; /* Espacio entre el campo de texto y el mapa */
+}
+
+#map {
+  height: 500px; /* Altura fija o ajustable del mapa */
+  width: 300%;    /* El mapa ocupará el 90% del ancho de su contenedor */
+  margin: 0 auto; /* Para centrar el mapa horizontalmente */
+  border: 1px solid #ccc; /* Borde opcional */
+  box-sizing: border-box;  /* Asegura que el tamaño incluya el borde */
+}
+
+.list-group {
+  position: absolute;
+  z-index: 1000;
+  background-color: white;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+}

@@ -1,0 +1,125 @@
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+
+
+label {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 5px;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button.btn-primary {
+    background-color: #28a745;
+    color: white;
+}
+
+button.btn-primary:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+button.btn-secondary {
+    background-color: #dc3545;
+    color: white;
+}
+
+@media (max-width: 600px) {
+    .form-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    button {
+        width: 100%;
+    }
+}
+
+.mapa-container {
+    position: relative;
+    padding: 0px; /* Agrega espacio alrededor del contenedor */
+  }
+  
+  .input-container {
+    margin-bottom: 20px; /* Espacio entre el campo de texto y el mapa */
+  }
+  
+  #map {
+    height: 400px; /* Ajusta la altura según tus necesidades */
+    width: 100%;   /* El mapa ocupará todo el ancho del contenedor */
+    max-width: 100%; /* Asegura que no se salga del contenedor */
+    border: 1px solid #ccc;
+    box-sizing: border-box; /* Incluye el borde en el tamaño total */
+    border-radius: 8px; /* Opcional: agrega bordes redondeados */
+}
+  
+  .list-group {
+    position: relative;
+    z-index: 1000;
+    background-color: white;
+    width: 100%;
+    max-height: 200px;
+    border: 1px solid #ccc;
+  }
+  
+  .padding-top-20 {
+    padding-top: 20px;
+}
+
+
+
+.drag-drop-area {
+    max-width: 100%; /* Para que no sobresalga del contenedor */
+    max-height: 400px; /* Altura máxima ajustada */
+    overflow: hidden; /* Oculta contenido que sobresalga */
+    border: 2px dashed #ccc; /* Borde decorativo */
+    border-radius: 8px;
+    text-align: center; /* Centrar contenido */
+    padding: 20px; /* Espaciado interno */
+    box-sizing: border-box; /* Incluye padding y border en el tamaño total */
+    background-color: #f9f9f9; /* Fondo ligero */
+    position: relative;
+    margin-bottom: 8%;
+}
+.drag-drop-area img,
+.drag-drop-area video {
+    max-width: 60%; /* Ajusta al ancho disponible */
+    max-height: 60%; /* Ajusta al alto disponible */
+    object-fit: contain; /* Ajusta el contenido sin recortar ni distorsionar */
+    margin: auto; /* Centra el contenido */
+    display: block; /* Evita problemas con márgenes colapsados */
+}
+

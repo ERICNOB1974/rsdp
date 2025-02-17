@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap');
+
+:root {
+    --mdc-theme-error: #B00020;
+    --mdc-outlined-card-outline-width: 2px;
+}
+
+.wrap-registro {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 40px; /* Ajusta para asegurar espacio desde la parte superior */
+}
+
+.password-field {
+    position: relative; /* Necesario para posicionar el botón */
+  }
+  
+  .toggle-password-visibility {
+    position: absolute; /* Posiciona el botón */
+    right: 10px; /* Ajusta la distancia desde el borde derecho */
+    top: 50%; /* Centra verticalmente */
+    transform: translateY(-50%); /* Ajusta el centrado vertical */
+    padding: 0; /* Elimina el padding para que no sea muy grande */
+    width: 24px; /* Ajusta el tamaño del botón */
+    height: 24px; /* Ajusta el tamaño del botón */
+  }
+
+.container {
+    background: #FFFFFF;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.29);
+    border-radius: 4px;
+    width: 100%;
+    max-width: 400px; /* Tamaño máximo para pantallas grandes */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.registro-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;  /* Asegura que los elementos dentro estén centrados verticalmente */
+    width: 100%;
+    max-width: 400px; /* Controla el tamaño máximo del formulario */
+    margin: 0 auto; /* Centra el div horizontalmente */
+}
+
+.registro-box mat-card-header {
+    width: 100%;
+    max-width: 128px;
+    height: auto;
+    padding: 0;
+    margin: 0 auto 16px;
+    display: block;
+}
+
+.registro-box mat-card-header img {
+    width: 100%;
+    max-width: 128px;
+    height: auto;
+    border-radius: inherit;
+}
+
+.mat-mdc-card-content {
+    padding: 0;
+}
+
+.registro-box mat-form-field {
+    width: 100%;
+    margin-bottom: 20px;
+    border-color: rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+}
+
+.mdc-text-field--invalid .mdc-text-field__input,
+.mdc-text-field .mdc-text-field__input,
+.form-field {
+    caret-color: #B00020 !important;
+}
+
+.form-field {
+    font-size: 1rem;
+    letter-spacing: 0.15px;
+    color: #000000BC !important;
+}
+
+.mat-mdc-form-field-error-wrapper {
+    height: 18px;
+}
+
+.registro-box mat-label,
+.mat-mdc-form-field-error {
+    color: #B00020 !important;
+}
+
+.mdc-text-field--invalid .mdc-floating-label {
+    color: #B00020;
+    text-align: left;
+    font-family: 'Roboto';
+    letter-spacing: 0.15px;
+    border: 2px solid #B00020;
+}
+
+.mdc-text-field--focused {
+    border: 2px solid #B00020;
+}
+
+.registro-box .mat-form-field-invalid .mat-form-field-outline {
+    border-color: #B00020 !important;
+}
+
+.mdc-card__actions {
+    padding: 0;
+    min-height: 36px;
+}
+
+.mat-mdc-raised-button:not(:disabled) {
+    background-color: #217d94;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.29);
+    border-radius: 4px;
+    width: auto;
+    min-width: 120px;
+    text-align: center;
+    font-family: Roboto, Medium;
+    letter-spacing: 1.25px;
+    color: #FFFFFF;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    font-weight: 400;
+}
+
+mat-card-actions {
+    display: flex;
+    justify-content: space-between; /* Espacia los botones a los extremos */
+    width: 100%; /* Asegura que ocupen todo el ancho disponible */
+    align-items: center; /* Alinea los botones verticalmente al centro */
+}
+
+.btn-left, .btn-right {
+    flex: 1; /* Hace que ambos botones ocupen el mismo espacio */
+    margin: 0 5px; /* Espacio entre los botones */
+    min-width: 100px; /* Ancho mínimo para los botones */
+    height: 40px; /* Asegura que ambos botones tengan la misma altura */
+}
+
+.btn-left {
+    text-align: left; /* Alinea el texto del botón a la izquierda */
+}
+
+.btn-right {
+    text-align: right; /* Alinea el texto del botón a la derecha */
+}
+
+@media(max-width: 768px) {
+    .wrap-registro {
+        padding: 0 20px;
+    }
+
+    .container {
+        padding: 10px; /* Reduce el padding en pantallas pequeñas */
+    }
+
+    .registro-box {
+        max-width: 100%; /* Asegura que el formulario ocupe el 100% del ancho */
+        padding: 0 10px;
+    }
+
+    mat-card-actions {
+        flex-direction: row; /* Asegura que los botones se alineen en fila */
+        justify-content: space-between; /* Espacia los botones a los extremos */
+    }
+}
+
+@media(max-width: 425px) {
+    .btn-left, .btn-right {
+        flex: 1; /* Asegura que ambos botones ocupen el mismo espacio */
+        height: 40px; /* Asegura que ambos botones tengan la misma altura */
+    }
+}

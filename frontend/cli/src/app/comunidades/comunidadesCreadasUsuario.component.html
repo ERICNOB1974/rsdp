@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comunidades</title>
+</head>
+
+<body class="comunidades-orne">
+  <div class="comunidades-container">
+    <h2>Comunidades Creadas por Ti</h2>
+    <div class="search-container">
+      <input type="text" placeholder="Buscar comunidad" #searchInput
+        (input)="onSearchInputComunidades(searchInput.value)" class="form-control search-input"
+        [(ngModel)]="searchText" />
+      <i class="fas fa-search search-icon"></i>
+    </div>
+    <div class="comunidades-list" (scroll)="onScroll()" *ngIf="comunidadesUsuario.length > 0; else noComunidades">
+      <div class="comunidad-card" *ngFor="let comunidad of comunidadesUsuario">
+        <div class="background-image"
+          [ngStyle]="{'background-image': 'url(' + (comunidad.imagen || '../../assets/comunidad.jpg') + ')'}">
+        </div>
+        <div class="comunidad-card-content">
+          <div class="comunidad-header">
+            <h3>{{ comunidad.nombre }}</h3>
+            <span class="badge" [ngClass]="{'private': comunidad.esPrivada, 'public': !comunidad.esPrivada}">
+              {{ comunidad.esPrivada ? 'Privada' : 'Pública' }}
+            </span>
+
+          </div>
+          <p class="descripcion">{{ comunidad.descripcion }}</p>
+          <p class="info">
+            <span><strong>{{ comunidad.miembros }}</strong> Participantes</span>
+            <span><strong>{{ comunidad.cantidadMaximaMiembros }}</strong> Máx. Miembros</span>
+          </p>
+          <p class="fecha-hora">{{ comunidad.fechaDeCreacion | date: 'dd/MM/yyyy' }}</p>
+          <div class="etiquetas-container">
+            <h4 class="etiquetas-title">Etiquetas:</h4>
+            <span *ngFor="let etiqueta of comunidad.etiquetas" class="etiqueta">
+              {{ etiqueta.nombre }}
+            </span>
+          </div>
+          <p style="margin-bottom: 15px;"></p>
+          <button class="detalles-btn" (click)="irADetallesDeComunidad(comunidad.id)">Ver Detalles</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <ng-template #noComunidades>
+    <div class="no-creado">
+      <p class="mensaje-no-creado">No tienes comunidades creadas. ¡Anímate a crear una! 🚀</p>
+      <button class="btn-crear-comunidad" (click)="irACrearComunidad()">Crear comunidad</button>
+    </div>
+  </ng-template>
+
+</body>
+
+</html>

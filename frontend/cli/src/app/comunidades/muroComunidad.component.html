@@ -1,0 +1,483 @@
+<div class="perfil-container card shadow-lg">
+  <div class="muro-imagen-container">
+    <img *ngIf="comunidad.imagen && comunidad.imagen.startsWith('data:image')" [src]="comunidad.imagen"
+      class="muro-imagen">
+    <img *ngIf="!comunidad.imagen" src="../../assets/comunidad.jpg" class="muro-imagen">
+  </div>
+
+  <!-- Datos de la Comunidad -->
+  <div class="comunidad-info">
+    <div class="titulo-container">
+      <h1>{{ comunidad.nombre }}</h1>
+      <i *ngIf="esParte" class="bi" [ngClass]="{'bi-star-fill': esFavorito, 'bi-star': !esFavorito}"
+        [ngStyle]="{'color': esFavorito ? 'gold' : 'gray', 'cursor': 'pointer'}" (click)="toggleFavorito()">
+      </i>
+    </div>
+
+    <p class="descripcion">{{ comunidad.descripcion }}</p>
+
+    <div class="info-grid">
+      <div><i class="bi bi-calendar3"></i> Creada el: {{ comunidad.fechaDeCreacion | date: 'longDate' }}</div>
+      <div><i class="bi bi-people-fill"></i> Miembros: {{ comunidad.miembros }}/{{ comunidad.cantidadMaximaMiembros }}
+      </div>
+      <div><i class="bi" [ngClass]="comunidad.esPrivada ? 'bi-lock-fill' : 'bi-unlock-fill'"></i>
+        {{ comunidad.esPrivada ? 'Privada' : 'Pública' }}
+      </div>
+      <div><i class="bi" [ngClass]="comunidad.esModerada ? 'bi-shield-lock-fill' : 'bi-shield-check'"></i>
+        {{ comunidad.esModerada ? 'Moderada' : 'Abierta' }}
+      </div>
+      <div *ngIf="comunidad.ubicacion">
+        <i class="bi bi-geo-alt-fill"></i> Ubicación: {{ comunidad.ubicacion }}
+      </div>
+      <div>
+        <i class="bi" [ngClass]="comunidad.genero === 'femenino' ? 'bi-gender-female' :
+                    comunidad.genero === 'masculino' ? 'bi-gender-male' :
+                    comunidad.genero === 'sinGenero' ? 'bi-gender-ambiguous' :
+                    comunidad.genero === 'otro' ? 'bi-gender-trans' : 'bi-question-circle'">
+        </i>
+        Género:
+        {{ comunidad.genero === 'femenino' ? 'Femenino' :
+        comunidad.genero === 'masculino' ? 'Masculino' :
+        comunidad.genero === 'sinGenero' ? 'Sin género' :
+        comunidad.genero === 'otro' ? 'Otro' : 'Desconocido' }}
+      </div>
+    </div>
+  </div>
+
+  <div [attr.data-bs-toggle]="!generoCompatible() ? 'tooltip' : null"
+    [attr.title]="!generoCompatible() ? 'No puedes inscribirte porque no es acorde a tu género' : null"
+    class="d-inline-block w-100">
+
+    <button *ngIf="!esCreador && !expulsado?.estaExpulsado && !(comunidad.cantidadMaximaMiembros <= comunidad.miembros)"
+      class="btn btn-primary btn-block ingresar-button"
+      [disabled]="isLoading || !(salirValid() || inscribirseValid()) || !generoCompatible()"
+      (click)="salirValid() ? salir() : (haSolicitadoIngreso ? cancelarSolicitud() : ingresar())">
+
+      {{ salirValid() ? 'Abandonar comunidad'
+      : haSolicitadoIngreso ? 'Cancelar solicitud de ingreso'
+      : (comunidad.esPrivada ? 'Solicitar ingreso' : 'Ingresar') }}
+    </button>
+  </div>
+
+  <p style="margin-bottom: 15px;"></p>
+
+
+  <div *ngIf="expulsado?.estaExpulsado" class="alert alert-warning mt-4">
+    <p>Has sido expulsado de la comunidad.</p>
+
+    <!-- Mostrar razón de la expulsión -->
+    <button class="btn btn-info" (click)="toggleMotivo()">
+      ¿Por qué? <span [class]="mostrarMotivo ? 'arrow-up' : 'arrow-down'"></span>
+    </button>
+    <div *ngIf="mostrarMotivo" class="mt-2">
+      <strong>Motivo de expulsión:</strong> {{ expulsado.motivoExpulsion }}
+    </div>
+
+    <!-- Mostrar la fecha hasta que se considera expulsado, o si es permanente -->
+    <div class="mt-2" *ngIf="expulsado?.tipo === 'temporal'">
+      <strong>Expulsado hasta:</strong> {{ expulsado.fechaHoraExpulsion | date:'short' }}<br>
+    </div>
+
+    <!-- Mostrar que la expulsión es permanente -->
+    <div *ngIf="expulsado?.tipo === 'permanente'" class="mt-2">
+      <strong>Has sido expulsado permanentemente.</strong>
+    </div>
+  </div>
+  <div *ngIf="comunidad.cantidadMaximaMiembros<=comunidad.miembros && !esParte" class="alert alert-warning mt-4">
+    <p>No hay mas espacio en la comunidad.</p>
+
+  </div>
+  <button *ngIf="salirValid()" (click)="abrirModalInvitarAmigos()" class="btn btn-success btn-block"
+    [disabled]="isLoading">
+    Invitar amigos
+  </button>
+  <button *ngIf="esCreador || esAdministrador" class="btn2 btn2-primary btn2-block ingresar-button"
+    (click)="gestionarComunidad()">
+    Gestionar
+  </button>
+  <div class="tabs">
+    <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'publicaciones' }"
+      (click)="seleccionarTab('publicaciones')">Publicaciones</button>
+    <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'eventos' }"
+      (click)="seleccionarTab('eventos')">Eventos</button>
+    <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'miembros' }"
+      (click)="seleccionarTab('miembros')">Miembros</button>
+  </div>
+  <div *ngIf="visible">
+
+    <div class="tab-content">
+      <div *ngIf="tabSeleccionada === 'publicaciones'" class="perfil-publicaciones">
+        <h3>Publicaciones</h3>
+
+
+        <div class="tabs">
+          <button *ngIf="comunidad.esModerada" class="tab-button"
+            [ngClass]="{ active: subTabSeleccionada === 'publicacionesAprobadas' }"
+            (click)="seleccionarSubTabAdministrador('publicacionesAprobadas')">Publicaciones</button>
+          <button *ngIf="comunidad.esModerada && (esAdministrador || esCreador || esModerador)" class="tab-button"
+            [ngClass]="{ active: subTabSeleccionada === 'publicacionesPorAprobar' }"
+            (click)="seleccionarSubTabAdministrador('publicacionesPorAprobar')">Publicaciones por aprobar</button>
+
+          <button *ngIf="comunidad.esModerada && (!esCreador)" class="tab-button"
+            [ngClass]="{ active: subTabSeleccionada === 'publicacionesPendientes' }"
+            (click)="seleccionarSubTabAdministrador('publicacionesPendientes')">Mis publicaciones pendientes</button>
+          <button *ngIf="comunidad.esModerada && (!esCreador)" class="tab-button"
+            [ngClass]="{ active: subTabSeleccionada === 'publicacionesRechazadas' }"
+            (click)="seleccionarSubTabAdministrador('publicacionesRechazadas')">Mis publicaciones rechazadas</button>
+
+        </div>
+
+
+
+
+        <button *ngIf="esParte" class="btn2 primary" (click)="publicarEnComunidad()">
+          Publicar
+        </button>
+
+        <div class="tab-content">
+          <div *ngIf="subTabSeleccionada === 'publicacionesAprobadas'" class="perfil-publicaciones">
+
+            <div class="publicaciones-grid" (scroll)="onScroll('publicaciones')">
+              <div class="publicacion-item" *ngFor="let publicacion of publicaciones"
+                (click)="esParte ? irADetallePublicacion(publicacion.id): null">
+                <div class="publicacion-container">
+                  <div class="publicacion-header">
+                    <!-- Foto de perfil del usuario -->
+                    <div class="usuario-info">
+                      <img *ngIf="usuariosPublicadores[publicacion.id]?.fotoPerfil"
+                        [src]="usuariosPublicadores[publicacion.id].fotoPerfil" alt="Foto de perfil"
+                        class="foto-perfil" />
+                      <p *ngIf="usuariosPublicadores[publicacion.id]" class="usuario-publicador">
+                        Publicado por:
+                        <a (click)="goToPerfil(usuariosPublicadores[publicacion.id].id); $event.stopPropagation();"
+                          class="publicacion-usuario">
+                          {{ usuariosPublicadores[publicacion.id].nombreUsuario }}
+                        </a>
+                      </p>
+                    </div>
+                    <!-- Fecha de creación -->
+                    <div class="publicacion-fecha">
+                      {{ publicacion.fechaDeCreacion | date:'medium' }}
+                    </div>
+                  </div>
+                  <!-- Contenido de la publicación -->
+                  <p class="publicacion-texto">{{ publicacion.texto }}</p>
+                  <!-- Imagen de la publicación -->
+                  <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
+                    <img [src]="publicacion.file" alt="Imagen de la publicación" class="publicacion-imagen" />
+                  </div>
+                  <!-- Video de la publicación -->
+                  <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
+                    <video [src]="publicacion.file" controls class="publicacion-video"></video>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+
+
+          <div *ngIf="subTabSeleccionada === 'publicacionesPorAprobar'" class="perfil-publicaciones">
+
+            <div class="publicaciones-grid" (scroll)="onScroll('publicacionesPorAprobar')">
+              <div class="publicacion-item" *ngFor="let publicacion of publicacionesPorAprobar">
+                <div class="publicacion-container">
+                  <div class="publicacion-header">
+                    <!-- Foto de perfil del usuario -->
+                    <div class="usuario-info">
+                      <img *ngIf="usuariosPublicadores[publicacion.id]?.fotoPerfil"
+                        [src]="usuariosPublicadores[publicacion.id].fotoPerfil" alt="Foto de perfil"
+                        class="foto-perfil" />
+                      <p *ngIf="usuariosPublicadores[publicacion.id]" class="usuario-publicador">
+                        Publicado por:
+                        <a (click)="goToPerfil(usuariosPublicadores[publicacion.id].id); $event.stopPropagation();"
+                          class="publicacion-usuario">
+                          {{ usuariosPublicadores[publicacion.id].nombreUsuario }}
+                        </a>
+                      </p>
+                    </div>
+                    <!-- Fecha de creación -->
+                    <div class="publicacion-fecha">
+                      {{ publicacion.fechaDeCreacion | date:'medium' }}
+                    </div>
+                  </div>
+                  <!-- Contenido de la publicación -->
+                  <p class="publicacion-texto">{{ publicacion.texto }}</p>
+                  <!-- Imagen de la publicación -->
+                  <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
+                    <img [src]="publicacion.file" alt="Imagen de la publicación" class="publicacion-imagen" />
+                  </div>
+                  <!-- Video de la publicación -->
+                  <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
+                    <video [src]="publicacion.file" controls class="publicacion-video"></video>
+                  </div>
+
+                </div>
+                <!-- Botones Aprobar y Rechazar -->
+                <div class="publicacion-acciones">
+                  <button class="btn aprobar" (click)="aprobarPublicacion(publicacion)">Aprobar</button>
+                  <button class="btn rechazar" (click)="rechazarPublicacion(publicacion)">Rechazar</button>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+        <!--tab pendientes-->
+        <div class="tab-content">
+          <div *ngIf="subTabSeleccionada === 'publicacionesPendientes'" class="perfil-publicaciones">
+            <div class="publicaciones-grid" (scroll)="onScroll('publicacionesPendientes')">
+              <div class="publicacion-item" *ngFor="let publicacion of misPublicacionesPendientes">
+                <div class="publicacion-container">
+                  <div class="publicacion-header">
+                    <!-- Foto de perfil del usuario -->
+                    <div class="usuario-info">
+                      <img *ngIf="usuariosPublicadores[publicacion.id]?.fotoPerfil"
+                        [src]="usuariosPublicadores[publicacion.id].fotoPerfil" alt="Foto de perfil"
+                        class="foto-perfil" />
+                      <p *ngIf="usuariosPublicadores[publicacion.id]" class="usuario-publicador">
+                        Publicado por:
+                        <a (click)="goToPerfil(usuariosPublicadores[publicacion.id].id); $event.stopPropagation();"
+                          class="publicacion-usuario">
+                          {{ usuariosPublicadores[publicacion.id].nombreUsuario }}
+                        </a>
+                      </p>
+                    </div>
+                    <!-- Fecha de creación -->
+                    <div class="publicacion-fecha">
+                      {{ publicacion.fechaDeCreacion | date:'medium' }}
+                    </div>
+                  </div>
+                  <!-- Contenido de la publicación -->
+                  <p class="publicacion-texto">{{ publicacion.texto }}</p>
+                  <!-- Imagen de la publicación -->
+                  <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
+                    <img [src]="publicacion.file" alt="Imagen de la publicación" class="publicacion-imagen" />
+                  </div>
+                  <!-- Video de la publicación -->
+                  <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
+                    <video [src]="publicacion.file" controls class="publicacion-video"></video>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--tab rechazadas-->
+        <div class="tab-content">
+          <div *ngIf="subTabSeleccionada === 'publicacionesRechazadas'" class="perfil-publicaciones">
+            <div class="publicaciones-grid" (scroll)="onScroll('publicacionesRechazadas')">
+              <div class="publicacion-item" *ngFor="let publicacion of misPublicacionesRechazadas">
+                <div class="publicacion-container">
+                  <div class="publicacion-header">
+                    <!-- Foto de perfil del usuario -->
+                    <div class="usuario-info">
+                      <img *ngIf="usuariosPublicadores[publicacion.id]?.fotoPerfil"
+                        [src]="usuariosPublicadores[publicacion.id].fotoPerfil" alt="Foto de perfil"
+                        class="foto-perfil" />
+                      <p *ngIf="usuariosPublicadores[publicacion.id]" class="usuario-publicador">
+                        Publicado por:
+                        <a (click)="goToPerfil(usuariosPublicadores[publicacion.id].id); $event.stopPropagation();"
+                          class="publicacion-usuario">
+                          {{ usuariosPublicadores[publicacion.id].nombreUsuario }}
+                        </a>
+                      </p>
+                    </div>
+                    <!-- Fecha de creación -->
+                    <div class="publicacion-fecha">
+                      {{ publicacion.fechaDeCreacion | date:'medium' }}
+                    </div>
+                  </div>
+                  <!-- Contenido de la publicación -->
+                  <p class="publicacion-texto">{{ publicacion.texto }}</p>
+                  <!-- Imagen de la publicación -->
+                  <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
+                    <img [src]="publicacion.file" alt="Imagen de la publicación" class="publicacion-imagen" />
+                  </div>
+                  <!-- Video de la publicación -->
+                  <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
+                    <video [src]="publicacion.file" controls class="publicacion-video"></video>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+      </div>
+
+      <div *ngIf="tabSeleccionada === 'eventos'" class="perfil-eventos">
+        <h3 class="titulo-eventos">Eventos</h3>
+
+        <button *ngIf="esParte" (click)="crearEvento()" class="btn2 btn2-crear-evento">
+          Crear Evento
+        </button>
+
+        <div class="eventos-grid">
+          <div class="evento-item" *ngFor="let evento of eventos" [class.clickeable]="esParte"
+            (click)="esParte && irADetalleEvento(evento.id)">
+            <!-- Imagen del evento como fondo -->
+            <div class="evento-imagen"
+              [style.backgroundImage]="'url(' +  (evento.imagen || '../../assets/evento.webp') + ')'"></div>
+
+            <!-- Contenido principal (visible siempre) -->
+            <div class="evento-contenido">
+              <h4 class="evento-nombre">{{ evento.nombre }}</h4>
+              <p class="evento-fecha">{{ evento.fechaHora | date:'medium' }}</p>
+              <p>Participantes: {{ evento.participantes }} / {{ evento.cantidadMaximaParticipantes }}</p>
+              <p *ngIf="evento.creador">Creador: {{ evento.creador.nombreUsuario }}</p>
+            </div>
+
+            <!-- Detalles adicionales (visibles al hacer hover) -->
+            <div class="evento-detalles">
+              <p class="evento-ubicacion">{{ evento.ubicacion }}</p>
+              <p>Descripción: {{ evento.descripcion }}</p>
+              <p *ngIf="evento.esPrivadoParaLaComunidad">Evento privado</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Caja de búsqueda -->
+
+      <div *ngIf="tabSeleccionada === 'miembros'" class="perfil-miembros-contenedor">
+        <!-- Buscador fuera de la grilla -->
+        <div class="buscador-contenedor">
+          <input type="text" [(ngModel)]="searchTerm" (input)="buscarMiembros()" placeholder="🔍 Buscar miembros..."
+            class="buscador-input" />
+        </div>
+
+        <!-- Mostrar la cantidad de usuarios anónimos fuera de la grilla -->
+        <div *ngIf="usuariosAnonimos > 0" class="usuarios-anonimos-info">
+          <img src="../../assets/usuario.png" alt="Usuario anónimo" class="usuarios-anonimos-img" />
+          <p>{{ usuariosAnonimos }} Usuario{{ usuariosAnonimos > 1 ? 's' : '' }} anónimo{{ usuariosAnonimos > 1 ?
+            's' : '' }}</p>
+        </div>
+
+        <!-- Lista de miembros -->
+        <div class="perfil-miembros" (scroll)="onScrollMiembros()">
+          <div *ngFor="let miembro of miembros" class="miembro-item" [routerLink]="['/perfil',  idEncryptorService.encodeId(miembro.id)]">
+            <div>
+              <img [src]="(miembro.anonimos || !miembro.fotoPerfil) ? '../../assets/usuario.png' : miembro.fotoPerfil"
+                alt="{{ miembro.nombreUsuario }}" class="perfil-imagen" />
+              <h4>{{ miembro.nombreUsuario }}</h4>
+              <span [ngClass]="{
+                  creador: obtenerRol(miembro) === 'Creador',
+                  administrador: obtenerRol(miembro) === 'Administrador',
+                  miembro: obtenerRol(miembro) === 'Miembro'
+                }" class="rol">
+                {{ obtenerRol(miembro) }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div *ngIf="tabSeleccionada === 'miembros' && !visible" class="miembro-item">
+    <h3>Creador</h3>
+    <img [src]="creadorComunidad.fotoPerfil" alt="{{ creadorComunidad.nombreUsuario }}" class="perfil-imagen">
+    <span>{{ creadorComunidad.nombreUsuario }}</span>
+    <h3>Cantidad de miembros anonimos</h3>
+    <h1>{{ usuariosAnonimos }}</h1>
+  </div>
+</div>
+
+
+<ng-template #modalInvitarAmigos>
+  <div class="modal-header">
+    <h5 class="modal-title">Invitar amigos a la comunidad</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="cerrarModal()"></button>
+  </div>
+  <div class="modal-body">
+    <!-- Buscador -->
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" placeholder="Buscar amigos..." [(ngModel)]="buscador"
+        (input)="filtrarAmigos()" />
+      <span class="input-group-text"><i class="bi bi-search"></i></span>
+    </div>
+
+    <!-- Amigos que aún no están en la comunidad -->
+    <div *ngIf="mostrarAmigosNoEnComunidad">
+      <h6 class="text-primary">Amigos que aún no están en la comunidad</h6>
+      <div *ngIf="amigosNoEnComunidadFiltrados.length > 0">
+        <div *ngFor="let amigo of amigosNoEnComunidadFiltrados | slice:0:mostrarMasAmigosNoEnComunidad"
+          class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
+          <span>{{ amigo.nombreUsuario }}</span>
+          <button class="btn btn-outline-primary btn-sm" (click)="invitarAmigo(amigo.id)">
+            Invitar a la comunidad
+          </button>
+        </div>
+        <button *ngIf="amigosNoEnComunidadFiltrados.length > mostrarMasAmigosNoEnComunidad"
+          class="btn btn-link text-primary" (click)="verMasAmigos('noEnComunidad')">
+          Ver más
+        </button>
+      </div>
+      <p *ngIf="amigosNoEnComunidadFiltrados.length === 0" class="text-muted">
+        No se encontraron amigos disponibles para invitar.
+      </p>
+    </div>
+
+    <!-- Amigos ya en la comunidad -->
+    <div *ngIf="mostrarAmigosEnComunidad" class="mt-4">
+      <h6 class="text-success">Amigos ya en la comunidad</h6>
+      <div *ngIf="amigosEnComunidadFiltrados.length > 0">
+        <div *ngFor="let amigo of amigosEnComunidadFiltrados | slice:0:mostrarMasAmigosEnComunidad"
+          class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
+          <span>{{ amigo.nombreUsuario }}</span>
+          <span class="badge bg-success">En la comunidad</span>
+        </div>
+        <button *ngIf="amigosEnComunidadFiltrados.length > mostrarMasAmigosEnComunidad"
+          class="btn btn-link text-success" (click)="verMasAmigos('enComunidad')">
+          Ver más
+        </button>
+      </div>
+      <p *ngIf="amigosEnComunidadFiltrados.length === 0" class="text-muted">
+        No se encontraron amigos en la comunidad.
+      </p>
+    </div>
+
+    <!-- Amigos ya invitados -->
+    <div *ngIf="mostrarAmigosYaInvitados" class="mt-4">
+      <h6 class="text-warning">Amigos ya invitados</h6>
+      <div *ngIf="amigosYaInvitadosFiltrados.length > 0">
+        <div *ngFor="let amigo of amigosYaInvitadosFiltrados | slice:0:mostrarMasAmigosYaInvitados"
+          class="d-flex justify-content-between align-items-center mb-2 p-2 border-bottom">
+          <span>{{ amigo.nombreUsuario }}</span>
+          <span class="badge bg-warning">Ya invitado</span>
+        </div>
+        <button *ngIf="amigosYaInvitadosFiltrados.length > mostrarMasAmigosYaInvitados"
+          class="btn btn-link text-warning" (click)="verMasAmigos('yaInvitados')">
+          Ver más
+        </button>
+      </div>
+      <p *ngIf="amigosYaInvitadosFiltrados.length === 0" class="text-muted">
+        No se encontraron amigos ya invitados.
+      </p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="cerrarModal()">
+      Cerrar
+    </button>
+  </div>
+</ng-template>

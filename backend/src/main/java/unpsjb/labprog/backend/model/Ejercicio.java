@@ -22,8 +22,6 @@ public class Ejercicio {
 
     private String nombre;
     private String descripcion;
-    private String cantidadRepeticiones;
-    private int cantidadTiempo;
-    private boolean esPorTiempo;
+    private String imagen;
 
 }

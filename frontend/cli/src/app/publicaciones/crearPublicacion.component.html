@@ -1,0 +1,74 @@
+<div class="form-container">
+  <h2>{{ tipo === 'comunidad' ? 'Nueva publicación en comunidad' : 'Nueva publicación' }}</h2>
+  <form #form="ngForm" class="evento-form">
+    <div class="form-group">
+
+      <!--      
+      <label for="descripcion">Descripción</label>
+
+
+      <input [(ngModel)]="publicacion.texto" name="descripcion" (input)="onTextChange($event)"
+        placeholder="Escribe tu publicación con @ para mencionar usuarios..." class="input-publicacion" />
+ -->
+
+      <label for="descripcion">Descripción</label>
+      <textarea [(ngModel)]="publicacion.texto" name="descripcion" (input)="onTextChange($event)"
+        placeholder="Escribe tu publicación con @ para mencionar usuarios..." class="input-publicacion"
+        rows="1"></textarea>
+
+      <!-- Lista de usuarios sugeridos -->
+      <div *ngIf="usuariosFiltrados.length > 0" class="suggestions-container">
+        <ul class="suggestions">
+          <li *ngFor="let usuario of usuariosFiltrados" (click)="addUsuario(usuario)" class="suggestion-item">
+
+            <div class="user-avatar">
+              <img [src]="usuario.usuario.fotoPerfil || '../assets/usuario.png'" alt="Avatar">
+            </div>
+
+            <div class="user-info">
+              <span class="username">{{ usuario.usuario.nombreUsuario }}</span>
+              <span class="real-name"> {{ usuario.usuario.nombreReal }}</span>
+            </div>
+
+            <div class="user-status">
+              <span *ngIf="usuario.esAmigo" class="friend-label">✔ Amigo</span>
+              <span *ngIf="!usuario.esAmigo" class="non-friend-label">➖ No es tu amigo</span>
+            </div>
+
+          </li>
+        </ul>
+      </div>
+    </div>
+
+
+    <!-- Área de arrastrar y soltar o eliminar archivo -->
+    <div *ngIf="!formatoValido" class="drag-drop-area" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+      <p>Arrastra y suelta una imagen o video aquí, o selecciona uno desde tus archivos.</p>
+      <input type="file" id="archivo" (change)="onFileSelect($event)" hidden #fileInput />
+      <button type="button" (click)="fileInput.click()">Seleccionar archivo</button>
+    </div>
+
+    <!-- Vista previa y botón de eliminar -->
+    <div *ngIf="formatoValido">
+      <img *ngIf="tipoArchivo === 'image'" [src]="vistaPreviaArchivo" class="vista-previa-imagen"
+        alt="Vista previa de la imagen" />
+      <video *ngIf="tipoArchivo === 'video'" [src]="vistaPreviaArchivo" class="vista-previa-imagen" controls></video>
+      <button type="button" (click)="eliminarArchivo()" class="btn btn-danger mt-2">Eliminar archivo</button>
+    </div>
+
+    <div class="form-buttons">
+      <button type="button" (click)="savePublicacion()" class="btn btn-success"
+        [disabled]="!publicacionValida() || isLoading">
+
+        <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+
+        <ng-container *ngIf="isLoading; else publicarTexto">Publicando...</ng-container>
+
+        <ng-template #publicarTexto>Publicar</ng-template>
+      </button>
+
+
+      <button type="button" (click)="cancel()" class="btn btn-secondary">Cancelar</button>
+    </div>
+  </form>
+</div>

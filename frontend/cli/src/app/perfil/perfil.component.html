@@ -1,0 +1,275 @@
+<div class="perfil-container" *ngIf="usuario">
+    <div class="perfil-header">
+        <h2>{{ esMiPerfil ? 'Mi Perfil' : usuario.nombreUsuario }}</h2>
+    </div>
+
+    <div class="perfil-info">
+        <div class="perfil-avatar">
+
+            <img *ngIf="usuario.fotoPerfil" [src]="usuario.fotoPerfil" alt="Foto de perfil" class="avatar" />
+            <img *ngIf="!usuario.fotoPerfil" src="../../assets/usuario.png" alt="Foto de perfil" class="avatar" />
+        </div>
+        <div class="perfil-details">
+            <h2>{{ usuario.nombreUsuario }}</h2>
+            <p class="descripcion">{{ usuario.descripcion }}</p>
+
+            <!-- Si es mi perfil, muestra el botón de editar -->
+            <button *ngIf="esMiPerfil" class="btn-editar" (click)="editarPerfil()">Editar perfil</button>
+
+            <!-- Si no es mi perfil -->
+            <div *ngIf="!esMiPerfil">
+                <!-- Caso 1: No son amigos, muestra botón para enviar solicitud -->
+                <button *ngIf="relacion === 'noSonAmigos'" class="btn-solicitud" (click)="enviarSolicitudDeAmistad()">
+                    Enviar solicitud de amistad
+                </button>
+
+                <!-- Caso 2: Ya son amigos, muestra texto de 'Amigos' (no clickeable) -->
+                <button *ngIf="relacion === 'amigos'" class="btn-eliminar-amigo" (click)="eliminarAmigo()">
+                    Eliminar amigo
+                </button>
+                <!-- Caso 3: Solicitud ya enviada, muestra botón no clickeable -->
+                <button *ngIf="relacion === 'solicitudEnviada'" class="btn-cancelar-solicitud"
+                    (click)="cancelarSolicitudDeAmistad()">
+                    Cancelar solicitud de amistad
+                </button>
+
+                <!-- Caso 4: Solicitud pendiente, muestra botones para aceptar/rechazar -->
+                <div *ngIf="relacion === 'solicitudPendiente'">
+                    <button class="btn-aceptar" (click)="gestionarSolicitud(true)">Aceptar</button>
+                    <button class="btn-rechazar" (click)="gestionarSolicitud(false)">Rechazar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Solapas para navegar entre Publicaciones, Rutinas, Eventos y Comunidades -->
+    <div class="tabs">
+        <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'publicaciones' }"
+            (click)="seleccionarTab('publicaciones')">Publicaciones</button>
+        <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'rutinas' }"
+            (click)="seleccionarTab('rutinas')">Rutinas</button>
+        <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'eventos' }"
+            (click)="seleccionarTab('eventos')">Eventos</button>
+        <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'comunidades' }"
+            (click)="seleccionarTab('comunidades')">Comunidades</button>
+    </div>
+
+    <div class="tab-content">
+        <div *ngIf="tabSeleccionada === 'publicaciones'" class="perfil-publicaciones">
+            <h3>Publicaciones</h3>
+            <!-- Botón para agregar una nueva publicación -->
+            <div class="boton-nueva-publicacion">
+                <button *ngIf="esMiPerfil" (click)="irAPublicar()" class="btn-publicar">
+                    + Nueva Publicación
+                </button>
+            </div>
+
+            <div class="publicaciones-container">
+                <div class="publicaciones-grid">
+                    <div class="publicacion-item" *ngFor="let publicacion of publicaciones"
+                        (click)="irADetallePublicacion(publicacion.id)">
+                        <div class="publicacion-contenido">
+                            <p>{{ publicacion.texto }}</p>
+                            <div *ngIf="publicacion.file && publicacion.file.startsWith('data:image')">
+                                <img [src]="publicacion.file" alt="Imagen de la publicación" class="publicacion-imagen">
+                            </div>
+                            <div *ngIf="publicacion.file && publicacion.file.startsWith('data:video')">
+                                <video [src]="publicacion.file" controls class="publicacion-video"></video>
+                            </div>
+                            <div class="publicacion-fecha">{{ publicacion.fechaDeCreacion | date:'medium' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button (click)="getPublicacionesPaginadas()"
+                [disabled]="loadingPublicaciones || noMasPublicaciones || publicaciones.length<1">
+                {{ loadingPublicaciones ? 'Cargando...' : noMasPublicaciones ? 'No hay más publicaciones' : 'Cargar más'
+                }}
+            </button>
+
+        </div>
+
+        <!-- Eventos -->
+        <div *ngIf="tabSeleccionada === 'eventos'" class="perfil-eventos">
+            <h3><i class="fas fa-dumbbell"></i> Eventos</h3>
+            <!-- Campo de búsqueda -->
+            <div class="search-container">
+                <input type="text" placeholder="Buscar eventos" #searchInput
+                    (input)="buscarEventos(searchInput.value)" class="form-control search-input"
+                    [(ngModel)]="searchText" />
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <div class="eventos-grid">
+                <div class="evento-item" *ngFor="let evento of historicoEventos" (click)="irADetalleEvento(evento.id)">
+                    <div class="evento-imagen">
+                        <img [src]="evento.imagen ? evento.imagen : '../../assets/evento.webp'"
+                            alt="Imagen de {{ evento.nombre }}" class="evento-imagen-default">
+                    </div>
+                    <div class="evento-detalles">
+                        <h4 class="evento-nombre">{{ evento.nombre }}</h4>
+                        <div class="creador-container" *ngIf="mapaCreadorEventos.get(evento.id)">
+                            <p class="creador-titulo">Creado por:&nbsp;</p>
+                            <div class="creador-info">
+                              <span class="creador-nombre">{{ mapaCreadorEventos.get(evento.id)?.nombreUsuario }}</span>
+                              <img [src]="mapaCreadorEventos.get(evento.id)?.fotoPerfil || '../../assets/usuario.png'" 
+                              alt="Foto de perfil" 
+                              class="creador-foto">
+                            </div>
+                          </div>
+                        <p class="evento-descripcion">Descripción: {{ evento.descripcion }}</p>
+                        <p class="evento-ubicacion">📍 Ubicación: {{ evento.ubicacion }}</p>
+                        <p class="evento-fecha-hora">📅 Fecha y hora: {{ evento.fechaHora | date:'medium' }}</p>
+                        <p class="evento-participantes">👥 Participantes: {{ evento.participantes }} / {{
+                            evento.cantidadMaximaParticipantes }}</p>
+                        <div class="etiquetas-container">
+                            <h4 class="etiquetas-title">Etiquetas:</h4>
+                            <span *ngFor="let etiqueta of evento.etiquetas" class="etiqueta">
+                                {{ etiqueta.nombre }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button (click)="cargarMasEventos()"
+                [disabled]="loadingEventos || noMasEventos || historicoEventos.length<1">
+                {{ loadingEventos ? 'Cargando...' : noMasEventos ? 'No hay más eventos' : 'Cargar más' }}
+            </button>
+        </div>
+
+        <!-- Rutinas -->
+        <div *ngIf="tabSeleccionada === 'rutinas'" class="perfil-rutinas">
+            <h3><i class="fas fa-dumbbell"></i> Rutinas de Entrenamiento</h3>
+
+            <!-- Sub-tabs -->
+            <div *ngIf="esMiPerfil" class="sub-tabs">
+                <button [class.active]="subTabRutinasSeleccionada === 'todas'" (click)="cambiarSubTabRutinas('todas')">
+                    Todas
+                </button>
+                <button [class.active]="subTabRutinasSeleccionada === 'favoritas'"
+                    (click)="cambiarSubTabRutinas('favoritas')">
+                    Favoritas
+                </button>
+            </div>
+
+            <!-- Campo de búsqueda -->
+            <div class="search-container">
+                <input type="text" placeholder="Buscar rutinas" #searchInput
+                    (input)="onSearchInput(searchInput.value)" class="form-control search-input"
+                    [(ngModel)]="searchText" />
+                <i class="fas fa-search search-icon"></i>
+            </div>
+
+            <!-- Lista de rutinas -->
+            <div class="rutinas-grid">
+                <div class="rutina-item" *ngFor="let rutina of historicoRutinas"
+                    (click)="irADetalleRutina(rutina.id ?? 0)">
+                    <div class="icono-rutina">
+                        <i class="fas fa-running"></i>
+                    </div>
+                    <h4>{{ rutina.nombre }}</h4>
+                    <div class="creador-container" *ngIf="rutina.id !== undefined && mapaCreadorRutinas.get(rutina.id)">
+                        <p class="creador-titulo">Creado por:&nbsp;</p>
+                        <div class="creador-info">
+                          <span class="creador-nombre">{{ mapaCreadorRutinas.get(rutina.id)?.nombreUsuario }}</span>
+                          <img [src]="mapaCreadorRutinas.get(rutina.id)?.fotoPerfil || '../../assets/usuario.png'"
+                            alt="Foto de perfil" class="creador-foto">
+                        </div>
+                      </div>
+                    <p class="descripcion">{{ rutina.descripcion }}</p>
+                    <p class="etiquetas">
+                        <span *ngFor="let etiqueta of rutina.etiquetas" class="etiqueta">{{ etiqueta.nombre
+                            }}</span>
+                    </p>
+                    <div *ngIf="rutina.dias !== undefined" class="dias">
+                        <i class="fas fa-calendar-alt"></i> Total de días: {{ rutina.dias }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botón de cargar más -->
+            <button (click)="cargarMasRutinas()"
+                [disabled]="loadingRutinas || noMasRutinas || historicoRutinas.length < 1">
+                {{ loadingRutinas ? 'Cargando...' : noMasRutinas ? 'No hay más rutinas' : 'Cargar más' }}
+            </button>
+        </div>
+
+
+
+        <!-- Comunidades -->
+        <div *ngIf="tabSeleccionada === 'comunidades'" class="perfil-comunidades">
+            <h3><i class="fas fa-dumbbell"></i>Comunidades</h3>
+
+            <div *ngIf="esMiPerfil" class="sub-tabs">
+                <button [class.active]="subTabSeleccionada === 'todas'" (click)="cambiarSubTab('todas')">
+                    Todas
+                </button>
+                <button [class.active]="subTabSeleccionada === 'favoritas'" (click)="cambiarSubTab('favoritas')">
+                    Favoritas
+                </button>
+            </div>
+
+
+            <!-- Search bar -->
+
+            <div class="search-container">
+                <input type="text" placeholder="Buscar comunidades" #searchInput
+                    (input)="onSearchInputComunidades(searchInput.value)" class="form-control search-input"
+                    [(ngModel)]="searchText" />
+                <i class="fas fa-search search-icon"></i>
+            </div>
+            <!-- Contenido de comunidades según el tab seleccionado -->
+            <div class="comunidades-grid">
+                <div class="comunidad-item" *ngFor="let comunidad of historicoComunidades"
+                    (click)="irADetalleComunidad(comunidad.id)">
+
+                    
+                  <!-- Imagen de la comunidad -->
+                  <div class="comunidad-imagen">
+                    <img [src]="comunidad.imagen ? comunidad.imagen : '../../assets/comunidad.jpg'"
+                        alt="Imagen de {{ comunidad.nombre }}" class="muro-imagen">
+                  </div>
+              
+                  <!-- Detalles de la comunidad -->
+                  <div class="comunidad-detalles">
+                    <h4 class="comunidad-nombre">{{ comunidad.nombre }}</h4>
+                    <div class="creador-container" *ngIf="mapaCreadorComunidades.get(comunidad.id)">
+                        <p class="creador-titulo">Creado por:&nbsp;</p>
+                        <div class="creador-info">
+                          <span class="creador-nombre">{{ mapaCreadorComunidades.get(comunidad.id)?.nombreUsuario }}</span>
+                          <img [src]="mapaCreadorComunidades.get(comunidad.id)?.fotoPerfil || '../../assets/usuario.png'" 
+                          alt="Foto de perfil" 
+                          class="creador-foto">
+                        </div>
+                      </div>
+                    <p class="comunidad-descripcion">{{ comunidad.descripcion }}</p>
+                    <p class="comunidad-miembros">👥 {{ comunidad.miembros }} / {{ comunidad.cantidadMaximaMiembros }} miembros</p>
+                    <p class="comunidad-ubicacion">📍 {{ comunidad.ubicacion }}</p>
+                    <p class="comunidad-fecha">📅 Creada el: {{ comunidad.fechaDeCreacion | date:'medium' }}</p>
+                    <p *ngIf="comunidad.esPrivada" class="comunidad-privada">🔒 Comunidad privada</p>
+                    <p *ngIf="comunidad.esModerada" class="comunidad-moderada">⚠️ Comunidad moderada</p>
+              
+                    <!-- Contenedor de etiquetas -->
+                    <div class="etiquetas-container">
+                      <h4 class="etiquetas-title">Etiquetas:</h4>
+                      <div class="etiquetas">
+                        <span *ngFor="let etiqueta of comunidad.etiquetas" class="etiqueta">
+                          {{ etiqueta.nombre }}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+
+
+
+            <!-- Botón de carga -->
+            <button (click)="cargarMasComunidades()"
+                [disabled]="loadingComunidades || noMasComunidades || historicoComunidades.length < 1">
+                {{ loadingComunidades ? 'Cargando...' : noMasComunidades ? 'No hay más comunidades' : 'Cargar más'
+                }}
+            </button>
+        </div>
+
+    </div>

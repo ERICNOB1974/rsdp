@@ -1,0 +1,43 @@
+<div class="rutinas-container" >
+  <h2>Rutinas Creadas por Ti</h2>
+  <div class="search-container">
+    <input type="text" placeholder="Buscar rutinas" #searchInput
+        (input)="onSearchInputRutinas(searchInput.value)" class="form-control search-input"
+        [(ngModel)]="searchText" />
+    <i class="fas fa-search search-icon"></i>
+</div>
+  <div class="rutinas-list" *ngIf="rutinasUsuario.length > 0; else noRutinas">
+    <div class="rutina-card" *ngFor="let rutina of rutinasUsuario">
+      <div class="rutina-header">
+        <h3>{{ rutina.nombre }}</h3>
+      </div>
+      <p class="descripcion">{{ rutina.descripcion }}</p>
+      <p class="info">
+        <span><strong>{{ rutina.etiquetas?.length || 0 }}</strong> Etiquetas</span>
+        <span><strong>{{ rutina.dias || 0 }}</strong> Días</span>
+      </p>
+
+      <!-- Mostrar etiquetas -->
+      <div class="etiquetas" *ngIf="rutina.etiquetas && rutina.etiquetas.length > 0">
+        <span *ngFor="let etiqueta of rutina.etiquetas" class="etiqueta">
+          {{ etiqueta.nombre }}
+        </span>
+      </div>
+
+      <button
+        class="detalles-btn"
+        *ngIf="rutina.id !== undefined"
+        (click)="irADetallesDeComunidad(rutina.id!)"
+      >
+        Ver Detalles
+      </button>
+    </div>
+  </div>
+</div>
+
+<ng-template #noRutinas>
+  <div class="no-creado">
+    <p class="mensaje-no-creado">No tienes rutinas creadas. ¡Anímate a crear una! 🚀</p>
+    <button class="btn-crear-comunidad" (click)="irACrearRutina()">Crear rutina</button>
+  </div>
+</ng-template>

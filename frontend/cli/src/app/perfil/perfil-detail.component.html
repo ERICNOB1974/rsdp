@@ -1,0 +1,115 @@
+<div class="container mt-5" *ngIf="usuario">
+  <div class="card shadow">
+    <div class="card-header bg-primary text-white">
+      <h2 class="mb-0">Editar Perfil</h2>
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="guardarCambios()" #perfilForm="ngForm">
+
+        <div class="drag-drop-area" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+          <img [src]="usuario.fotoPerfil" alt="Vista previa de la imagen" class="vista-previa-imagen">
+          <input type="file" id="archivo" (change)="onFileSelect($event); onFieldChange()" hidden #fileInput>
+          <button type="button" (click)="fileInput.click()">Cambiar foto de perfil</button>
+        </div>
+
+
+
+        <div class="mb-3">
+          <label for="nombreUsuario" class="form-label">Nombre de Usuario</label>
+          <input type="text" class="form-control" id="nombreUsuario" name="nombreUsuario"
+            [(ngModel)]="usuario.nombreUsuario" (input)="onFieldChange()"
+            [class.is-invalid]="!nombreUsuarioValido && usuario.nombreUsuario.length > 0"
+            placeholder="Ingresa tu nombre de usuario" required>
+          <div class="invalid-feedback" *ngIf="!nombreUsuarioValido && usuario.nombreUsuario.length > 0">
+            El nombre de usuario debe tener al menos 3 caracteres y no estar en uso.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="nombreReal" class="form-label">Nombre Real</label>
+          <input type="text" class="form-control" id="nombreReal" name="nombreReal" [(ngModel)]="usuario.nombreReal"
+            (input)="onFieldChange()" [class.is-invalid]="!nombreRealValido && usuario.nombreReal.length > 0"
+            placeholder="Ingresa tu nombre real" required>
+          <div class="invalid-feedback" *ngIf="!nombreRealValido && usuario.nombreReal.length > 0">
+            El nombre real debe tener al menos 3 caracteres.
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="descripcion" class="form-label">Descripción</label>
+          <textarea class="form-control" id="descripcion" name="descripcion" rows="3" [(ngModel)]="usuario.descripcion"
+            (input)="onFieldChange()" placeholder="Ingresa una descripción"></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label for="genero" class="form-label">Género</label>
+          <select class="form-select" id="genero" name="genero" [(ngModel)]="usuario.genero" (change)="onFieldChange()">
+            <option [value]="'masculino'">Masculino</option>
+            <option [value]="'femenino'">Femenino</option>
+            <option [value]="'otro'">Otro</option>
+          </select>
+        </div>
+
+        <h4 class="mt-4 mb-3">Configuración de Privacidad</h4>
+
+        <div class="mb-3">
+          <label for="privacidadPerfil" class="form-label">Privacidad del Perfil</label>
+          <select class="form-select" id="privacidadPerfil" name="privacidadPerfil"
+            [(ngModel)]="usuario.privacidadPerfil" (change)="onFieldChange()">
+            <option value="Privada">Privada</option>
+            <option value="Solo amigos">Solo amigos</option>
+            <option value="Pública">Pública</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="privacidadEventos" class="form-label">Privacidad de Participación en Eventos</label>
+          <select class="form-select" id="privacidadEventos" name="privacidadEventos"
+            [(ngModel)]="usuario.privacidadEventos" (change)="onFieldChange()">
+            <option value="Privada">Privada</option>
+            <option value="Solo amigos">Solo amigos</option>
+            <option value="Pública">Pública</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="privacidadComunidades" class="form-label">Privacidad de Participación en Comunidades</label>
+          <select class="form-select" id="privacidadComunidades" name="privacidadComunidades"
+            [(ngModel)]="usuario.privacidadComunidades" (change)="onFieldChange()">
+            <option value="Privada">Privada</option>
+            <option value="Solo amigos">Solo amigos</option>
+            <option value="Pública">Pública</option>
+          </select>
+        </div>
+
+        <div>
+          <input type="checkbox" id="borrarNotificacionesEventosPasados"
+            [(ngModel)]="usuario.borrarNotificacionesEventosPasados"
+            [checked]="usuario.borrarNotificacionesEventosPasados"
+            (change)="usuario.borrarNotificacionesEventosPasados = !usuario.borrarNotificacionesEventosPasados; onFieldChange()"
+            class="form-check-input">
+          Borrar automaticamente las notificaciones de eventos pasados
+        </div>
+
+        <div class="mb-3">
+          <label for="correoActual" class="form-label">Correo electrónico actual</label>
+          <input type="email" class="form-control bg-light text-muted" style="opacity: 0.8; cursor: default;"
+            id="correoActual" [value]="usuario.correoElectronico" readonly>
+        </div>
+
+        <div class="mb-3">
+          <button type="button" class="btn btn-info w-100" (click)="irACambiarCorreo()">
+            Cambiar Correo Electrónico
+          </button>
+        </div>
+
+        <div class="d-grid gap-2 mt-4">
+          <button type="submit" class="btn btn-primary" [disabled]="!verificarHabilitacionBotonGuardar()">
+            Guardar cambios
+          </button>
+          <button type="button" class="btn btn-secondary" (click)="cancelar()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

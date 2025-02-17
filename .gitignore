@@ -1,5 +1,7 @@
 .vscode
 .lpl
 .docker-compose.yml
+./backend/src/main/resources/application.properties
+./backend/src/main/resources/email.properties
 ./frontend/cli/package-lock.json
 ./frontend/cli/package.json

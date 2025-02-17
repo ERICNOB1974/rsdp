@@ -1,0 +1,480 @@
+/* Evitar el scroll lateral en todo el componente */
+.mt-4 {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* Contenedor de la lista de participantes */
+.members-list {
+  max-height: 400px; /* Altura máxima para el scroll */
+  overflow-y: auto; /* Permitir scroll solo en Y */
+  overflow-x: hidden; /* Evitar scroll lateral */
+  padding-right: 20px; /* Espacio para evitar que se corte contenido */
+}
+
+/* Ajustar el tamaño de las columnas en diferentes tamaños de pantalla */
+.miembro-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+}
+
+/* Ajustar imágenes para que no desborden */
+.perfil-imagen {
+  max-width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+
+.modal {
+  position: fixed !important;
+  z-index: 9999 !important;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Asegura que el modal no se desborde */
+.modal-body {
+  max-height: 70vh; /* Limita la altura del contenido para dispositivos pequeños */
+  overflow-y: auto; /* Activa el scroll cuando el contenido es muy largo */
+}
+
+/* Estilos para el modal de notificación */
+.modal-dialog {
+  max-width: 600px; /* Ancho máximo por defecto */
+}
+
+
+/* Estilos para el modal de invitar amigos */
+.modal-dialog {
+  max-width: 700px; /* Ancho máximo por defecto */
+}
+
+
+/* Asegura que el contenedor ocupe toda la pantalla */
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Arial, sans-serif;
+}
+
+/* Elimina bordes y establece el fondo oscuro en todos los niveles del modal */
+#notificacionModal {
+  display: block !important; /* Para asegurar que se muestre correctamente */
+  background-color: rgba(0, 0, 0, 0.8); /* Fondo oscuro con transparencia */
+  border: none; /* Sin bordes */
+  box-shadow: none; /* Elimina sombras adicionales */
+}
+
+/* Asegúrate de que el modal-content no tenga bordes o sombras */
+.modal-content {
+  border: none;
+  box-shadow: none;
+  background-color: #15202b; /* Color uniforme oscuro */
+}
+
+/* Opcional: Si la línea blanca es parte del "fade" */
+.modal.fade.show {
+  background-color: transparent !important; /* Asegura que el fondo no sea blanco */
+}
+
+.modal-dialog {
+  margin-top: 0; /* Asegura que no haya separación entre el modal y la pantalla */
+}
+
+/* Fondo general del modal */
+.bg-dark-custom {
+  background-color: #15202b; /* Color base oscuro */
+  color: #e1e8ed; /* Texto claro */
+}
+
+/* Fondo de los inputs */
+.bg-dark-input {
+  background-color: #192734; /* Más oscuro que el fondo principal */
+  color: #e1e8ed; /* Texto claro */
+}
+
+/* Resaltar el título */
+.text-highlight {
+  color: #1da1f2; /* Azul vibrante para destacar */
+}
+
+/* Botón cancelar */
+.btn-cancel {
+  background-color: #657786; /* Gris oscuro */
+  color: #e1e8ed;
+  border: 1px solid #657786;
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+}
+
+.btn-cancel:hover {
+  background-color: #57606a; /* Más oscuro al pasar el cursor */
+  color: #ffffff;
+}
+
+/* Botón enviar */
+.btn-highlight {
+  background-color: #1da1f2; /* Azul brillante */
+  color: #ffffff;
+  border: none;
+  border-radius: 0.25rem;
+  padding: 0.5rem 1rem;
+}
+
+.btn-highlight:hover {
+  background-color: #0d95e8; /* Más brillante al pasar el cursor */
+}
+
+/* Bordes de sección del modal */
+.modal-header, .modal-footer {
+  border-color: #39444d; /* Gris oscuro */
+}
+
+
+.modal-header .btn-close {
+  position: absolute;
+  top: 0.5rem; /* Ajusta la distancia desde la parte superior */
+  right: 0.5rem; /* Ajusta la distancia desde la derecha */
+}
+
+.btn-cancel {
+  background-color: #f8f9fa; /* Fondo similar a btn-secondary */
+  color: #212529; /* Texto oscuro */
+  border: 1px solid #ced4da; /* Borde claro */
+  padding: 0.5rem 1rem; /* Ajustar el relleno */
+  border-radius: 0.25rem; /* Bordes redondeados */
+}
+
+.btn-cancel:hover {
+  background-color: #e2e6ea; /* Fondo más oscuro al pasar el cursor */
+  color: #212529;
+}
+
+.modal-footer {
+  justify-content: flex-start; /* Alinear contenido a la izquierda */
+}
+
+
+.evento-detail-container {
+
+  background-color: #ffffff;
+  border-radius: 8vh;
+  margin: 0; /* Elimina el margen */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box; /* Para que el padding no afecte el tamaño total */
+  padding: 3vw; /* Usa valores relativos */
+  height: auto; /* Cambia a auto para ajustarse al contenido */
+  max-width: 100%;
+  width: 90%; /* Ajusta al ancho total */
+}
+
+/* .evento-detail-container {
+  padding: 50px; 
+  width: 190%; 
+  height: 100%; 
+} */
+
+.mx-auto {
+  display: block;
+  margin: 0 auto;
+}
+
+.modal-header {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-close {
+  position: absolute;
+  right: 0;
+  font-size: 1.2rem;
+  color: #6c757d;
+}
+
+.btn-close:hover {
+  color: #dc3545;
+}
+
+.evento-detail {
+  width: 100%; /* Ocupa el ancho completo */
+  max-width: 600px; /* Limita el contenido internamente */
+}
+
+.evento-detail h2 {
+  text-align: center;
+  color: #000000;
+}
+
+.evento-detail p {
+  font-size: 1.1em;
+  margin-bottom: 8px;
+  text-align: center; /* Centra el texto */
+}
+
+.inscribirse-button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-size: 1.2em;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.inscribirse-button:hover {
+  background-color: #0056b3;
+}
+
+.btn-personalizado {
+  display: block;
+  margin: 10px auto;
+}
+
+/* Estilo para el botón de invitación */
+.animate-btn {
+  transition: transform 0.2s ease-in-out;
+}
+.animate-btn:active {
+  transform: scale(1.1);
+}
+
+/* Estilo para la ventana modal */
+.modal-body {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+.modal-title {
+  font-weight: bold;
+  font-size: 1.5rem;
+  color: #007bff;
+}
+
+.perfil-imagen {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+  vertical-align: middle;
+}
+
+.miembro-item {
+  background-color: #e3f2fd;
+  border-radius: 10px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s, box-shadow 0.2s;
+  
+  /* Propiedades de Flexbox */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.miembro-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.25);
+}
+.miembro-item h4 {
+  font-size: 1em;
+  color: #333;
+  margin: 0;
+}
+.members-list {
+  overflow-y: auto;
+  max-height: 400px;  /* Puedes ajustar este valor según el diseño */
+}
+
+.mapa-container {
+  position: relative;
+  padding: 0px; /* Agrega espacio alrededor del contenedor */
+}
+
+.input-container {
+  margin-bottom: 20px; /* Espacio entre el campo de texto y el mapa */
+}
+
+#map {
+  height: 400px; /* Ajusta la altura según tus necesidades */
+  width: 100%;   /* El mapa ocupará todo el ancho del contenedor */
+  max-width: 100%; /* Asegura que no se salga del contenedor */
+  border: 1px solid #ccc;
+  box-sizing: border-box; /* Incluye el borde en el tamaño total */
+  border-radius: 8px; /* Opcional: agrega bordes redondeados */
+}
+
+.list-group {
+  position: relative;
+  z-index: 1000;
+  background-color: white;
+  width: 100%;
+  max-height: 200px;
+  border: 1px solid #ccc;
+}
+
+.padding-top-20 {
+  padding-top: 20px;
+}
+
+.padding-bottom-20 {
+  padding-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .evento-detail-container {
+    width: 95%; /* Ajuste en pantallas pequeñas */
+    padding: 5vw; /* Menos padding para que se ajuste mejor */
+  }
+
+  .card-body {
+    padding: 1.5rem; /* Ajusta el padding de la tarjeta */
+  }
+
+  .card-title {
+    font-size: 1.8rem; /* Ajustar el tamaño del título */
+  }
+
+  .btn-cancel, .btn-highlight {
+    padding: 0.4rem 1rem; /* Botones más pequeños */
+  }
+
+  .inscribirse-button {
+    padding: 2.5vw 5vw; /* Ajusta el tamaño del botón */
+  }
+
+  .perfil-imagen {
+    width: 30vw; /* Ajusta las imágenes de perfil */
+    height: 30vw; /* Ajusta las imágenes de perfil */
+  }
+
+  /* Ajustes a las imágenes del evento */
+  .img-fluid {
+    max-width: 90%; /* Ajusta el tamaño de la imagen */
+    height: auto; /* Mantiene la proporción de la imagen */
+  }
+
+  /* Modal headers */
+  .modal-header {
+    padding: 1rem;
+  }
+
+  /* Ajuste de los participantes */
+  .miembro-item {
+    text-align: center;
+  }
+
+  /* Ajuste en las filas de participantes */
+  .members-list .col-md-3 {
+    flex: 0 0 50%; /* Cambia el ancho de las columnas */
+    max-width: 50%;
+  }
+
+  .btn-success, .btn-warning {
+    width: 100%; /* Botones ocupan todo el ancho */
+    margin-top: 1rem;
+  }
+
+  /* Ajuste mapa */
+  #map {
+    height: 50vh;
+  }
+}
+
+@media (max-width: 576px) {
+  .evento-detail-container {
+    width: 100%; /* Uso de pantalla completa en móviles */
+    padding: 3vw; /* Ajuste de padding para pantallas muy pequeñas */
+  }
+
+  .evento-detail h2 {
+    font-size: 1.4rem; /* Ajusta el tamaño del título en pantallas muy pequeñas */
+  }
+
+  .inscribirse-button {
+    padding: 4vw 8vw; /* Ajusta el tamaño del botón */
+  }
+
+  .perfil-imagen {
+    width: 40vw; /* Aumenta el tamaño de la imagen de perfil */
+    height: 40vw; /* Mantiene la proporción */
+  }
+
+  /* Ajuste mapa */
+  #map {
+    height: 40vh;
+  }
+
+  .card-title {
+    font-size: 1.5rem; /* Ajusta el tamaño de los títulos */
+  }
+
+  .miembro-item {
+    margin: 0.5rem; /* Ajusta el margen de los participantes */
+  }
+
+  /* Ajustes para los botones */
+  .btn-block {
+    width: 100%; /* Botones de ancho completo */
+    margin-top: 1rem;
+  }
+
+  .d-flex.justify-content-center {
+    margin-bottom: 1rem; /* Ajusta el margen inferior */
+  }
+}
+
+
+@media (max-width: 768px) {
+  .modal-dialog {
+    max-width: 90%; /* Reducir el ancho en pantallas pequeñas */
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-dialog {
+    max-width: 90%; /* Reducir el ancho en pantallas pequeñas */
+  }
+}
+
+@media (max-width: 576px) {
+  /* Ajustes específicos para pantallas muy pequeñas */
+  .modal-header h5 {
+    font-size: 16px; /* Reducir el tamaño de la fuente */
+  }
+
+  .modal-body {
+    padding: 15px; /* Reducir el padding */
+  }
+}
+
+/* Para pantallas pequeñas, ajustar el tamaño del modal */
+@media (max-width: 576px) {
+  .modal-dialog {
+    width: 100%;
+    margin: 0;
+  }
+}
+
+/* Puedes ajustar el tamaño de la fuente y el contenido para pantallas más pequeñas */
+@media (max-width: 768px) {
+  .modal-title {
+    font-size: 1.25rem
+  }
+
+  .input-group input {
+    font-size: 0.9rem;
+  }
+}

@@ -1,0 +1,233 @@
+<div class="container">
+  <h1 class="title">Administración de la Comunidad: {{ comunidad.nombre }}</h1>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button [class.active]="estadoActual === 'miembros'" (click)="cambiarVista('miembros')">Miembros</button>
+    <button *ngIf="comunidad.esPrivada" [class.active]="estadoActual === 'solicitudes'"
+      (click)="cambiarVista('solicitudes')">Solicitudes</button>
+    <button [class.active]="estadoActual === 'expulsiones'" (click)="cambiarVista('expulsiones')">Expulsiones</button>
+  </div>
+
+
+
+
+  <!-- Contenido de los tabs -->
+  <div class="tab-content">
+    <!-- Tab de Miembros -->
+    <div *ngIf="estadoActual === 'miembros'" class="tab miembros-tab">
+      <h2>Miembros</h2>
+      <div class="buscador-contenedor">
+        <input type="text" [(ngModel)]="searchTerm" (input)="buscarUsuarios()" placeholder="🔍 Buscar miembros..."
+          class="buscador-input" />
+      </div>
+      <ul class="members-list" (scroll)="onScrollMiembros()">
+        <li *ngFor="let miembro of miembros" class="miembro-item">
+          <img [src]="miembro.fotoPerfil ? miembro.fotoPerfil : '../../assets/usuario.png'"
+            alt="Foto de {{ miembro.nombreUsuario }}" class="avatar-circular" (click)="verPerfil(miembro)">
+          <span class="name" (click)="verPerfil(miembro)">{{ miembro.nombreUsuario }}</span>
+          <div class="actions">
+
+            <button *ngIf="esCreador && miembro.id !== idUsuarioAutenticado && esAdministrador(miembro.id)"
+              class="btn btn-warning btn-sm" (click)="quitarRolOrganizador(miembro.id)">Quitar Rol de Admin</button>
+            <button *ngIf="esCreador && miembro.id !== idUsuarioAutenticado && !esAdministrador(miembro.id)"
+              class="btn btn-success btn-sm" (click)="otorgarRolOrganizador(miembro.id)">Hacer Admin</button>
+
+
+            <button
+              *ngIf="esCreador && miembro.id !== idUsuarioAutenticado && esModerador(miembro.id) && !esAdministrador(miembro.id)"
+              class="btn btn-warning btn-sm" (click)="quitarRolModerador(miembro.id)">Quitar Rol de Moderador</button>
+
+            <button
+              *ngIf="esCreador && comunidad.esModerada && miembro.id !== idUsuarioAutenticado && !esModerador(miembro.id) && !esAdministrador(miembro.id)"
+              class="btn btn-success btn-sm" (click)="otorgarRolModerador(miembro.id)">Hacer Moderador</button>
+
+
+            <button
+              *ngIf="(esCreador || esAdmin) && miembro.id !== creadorComunidad.id && miembro.id !== idUsuarioAutenticado && (!esAdministrador(miembro.id) || esCreador)"
+              class="btn btn-danger btn-sm" (click)="abrirModalExpulsion(miembro)">
+              Eliminar
+            </button>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+
+
+
+
+
+    <!-- Tab de Solicitudes -->
+    <div *ngIf="estadoActual === 'solicitudes'" class="tab solicitudes-tab">
+      <h2>Solicitudes Pendientes</h2>
+      <div class="buscador-contenedor">
+        <input type="text" [(ngModel)]="searchTerm" (input)="buscarUsuarios()" placeholder="🔍 Buscar solicitudes..."
+          class="buscador-input" />
+      </div>
+      <ul class="solicitudes-list" (scroll)="onScrollSolicitudes()">
+        <li *ngFor="let solicitud of solicitudesPendientes" class="solicitud-item">
+          <img [src]="solicitud.fotoPerfil ? solicitud.fotoPerfil : '../../assets/usuario.png'"
+            alt="Foto de {{ solicitud.nombreUsuario }}" class="avatar-circular" (click)="verPerfil(solicitud)">
+          <span class="name" (click)="verPerfil(solicitud)">{{ solicitud.nombreUsuario }}</span>
+          <div class="actions">
+            <button class="btn btn-success btn-sm" (click)="gestionarSolicitud(solicitud.id, true)">Aceptar</button>
+            <button class="btn btn-danger btn-sm" (click)="gestionarSolicitud(solicitud.id, false)">Rechazar</button>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Tab de Expulsiones -->
+    <div *ngIf="estadoActual === 'expulsiones'" class="tab expulsiones-tab">
+      <h2>Expulsiones</h2>
+      <div class="buscador-contenedor">
+        <input type="text" [(ngModel)]="searchTerm" (input)="buscarUsuarios()"
+          placeholder="🔍 Buscar miembros expulsados..." class="buscador-input" />
+      </div>
+      <ul class="expulsiones-list" (scroll)="onScrollExpulsados()">
+        <li *ngFor="let expulsado of expulsados" class="expulsado-item">
+          <img [src]="expulsado.fotoPerfil ? expulsado.fotoPerfil : '../../assets/usuario.png'"
+            alt="Foto de {{ expulsado.nombreUsuario }}" class="avatar-circular" (click)="verPerfil(expulsado)">
+          <span class="name" (click)="verPerfil(expulsado)">{{ expulsado.nombreUsuario }}</span>
+          <div class="actions">
+            <button class="btn btn-danger btn-sm" (click)="sacarExpulsion(expulsado.id)">Sacar expulsion</button>
+            <button
+              *ngIf="esCreador || (esAdmin && !esAdministrador(expulsado.id) && expulsado.id !== creadorComunidad.id) && expulsado.id !== idUsuarioAutenticado"
+              class="btn btn-danger btn-sm" (click)="abrirModalExpulsion(expulsado)">
+              Editar Expulsion
+            </button>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <button *ngIf="esCreador" class="delete-button btn-yellow" (click)="editarComunidad()">Editar Comunidad</button>
+
+  <button *ngIf="esCreador" class="delete-button" (click)="abrirModal(modalEliminar)">
+    Eliminar Comunidad
+  </button>
+  <!-- Regresar -->
+  <button class="btn btn-light" (click)="goBack()">Regresar</button>
+</div>
+
+
+
+
+
+<ng-template #modalNotificacion>
+  <div class="modal" id="notificacionModal" tabindex="-1" aria-labelledby="notificacionModalLabel" aria-hidden="true"
+    role="dialog">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content bg-dark-custom text-light">
+        <div class="modal-header border-bottom border-secondary">
+          <h5 class="modal-title text-highlight" id="notificacionModalLabel">Enviar notificación a los miembros de la
+            comunidad</h5>
+          <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="closeModal()"></button>
+        </div>
+        <div class="modal-body">
+          <form #notificacionForm="ngForm" class="p-3">
+            <div class="mb-3">
+              <label for="motivo" class="form-label text-light">Motivo de la notificación</label>
+              <input type="text" class="form-control border-secondary bg-dark-input text-light" id="motivo"
+                [(ngModel)]="motivo" name="motivo" placeholder="Escribe el motivo" required>
+              <div *ngIf="!motivo && notificacionForm.submitted" class="text-danger mt-1">
+                El motivo es obligatorio.
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="mensaje" class="form-label text-light">Mensaje</label>
+              <textarea class="form-control border-secondary bg-dark-input text-light" id="mensaje"
+                [(ngModel)]="mensaje" name="mensaje" rows="4" placeholder="Escribe el mensaje" required>
+                </textarea>
+              <div *ngIf="!mensaje && notificacionForm.submitted" class="text-danger mt-1">
+                El mensaje es obligatorio.
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer border-top border-secondary d-flex justify-content-between">
+          <button type="button" class="btn btn-cancel" (click)="closeModal()">Cancelar</button>
+          <button type="button" class="btn btn-primary btn-highlight" [disabled]="!motivo || !mensaje"
+            (click)="enviarNotificacion()">Enviar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+
+
+<!-- Plantilla del modal -->
+<ng-template #modalExpulsion let-modal>
+  <div class="modal-header">
+    <h5 class="modal-title">Motivo de expulsión</h5>
+    <button type="button" class="btn-close" aria-label="Cerrar" (click)="modal.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <p>Por favor, ingresa el motivo por el que estás expulsando a {{ usuarioEliminar.nombreUsuario }}.</p>
+      <textarea [(ngModel)]="motivoExpulsion" class="form-control" placeholder="Escribe aquí el motivo"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="expulsionTipo">Tipo de expulsión:</label>
+      <select id="expulsionTipo" [(ngModel)]="tipoExpulsion" class="form-control">
+        <option value="permanente">Expulsión permanente</option>
+        <option value="temporal">Expulsión temporal</option>
+      </select>
+    </div>
+
+    <div *ngIf="tipoExpulsion === 'temporal'">
+      <div class="form-group">
+        <label for="fechaExpulsion">Expulsado hasta el dia:</label>
+        <input type="date" id="fechaExpulsion" [(ngModel)]="fechaExpulsion" class="form-control" />
+      </div>
+
+      <div class="form-group">
+        <label for="horaExpulsion">Hasta la hora:</label>
+        <input type="time" id="horaExpulsion" [(ngModel)]="horaExpulsion" class="form-control" />
+      </div>
+
+      <div *ngIf="fechaExpulsion && horaExpulsion">
+        <p><strong>Fecha y hora seleccionada:</strong>
+          {{ fechaExpulsion | date: 'shortDate' }} {{ horaExpulsion }}
+        </p>
+      </div>
+    </div>
+
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancelar</button>
+    <button type="button" class="btn btn-danger" (click)="confirmarExpulsion(); modal.close()"
+      [disabled]="!motivoExpulsion || (tipoExpulsion === 'temporal' && (!fechaExpulsion || !horaExpulsion))">
+      {{ expulsado?.estaExpulsado ? 'Editar expulsión' : 'Eliminar usuario' }}
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #modalEliminar let-modal>
+  <div class="modal-content custom-modal">
+    <div class="modal-header bg-danger text-white">
+      <h5 class="modal-title">
+        <i class="bi bi-exclamation-triangle-fill"></i> Confirmación
+      </h5>
+      <button type="button" class="btn-close btn-close-dark" aria-label="Cerrar" (click)="modal.dismiss()"></button>
+    </div>
+
+    <div class="modal-body text-center">
+      <i class="bi bi-trash-fill text-danger fs-1"></i>
+      <p class="mt-3">¿Estás seguro de que deseas eliminar la comunidad <strong>{{ comunidad.nombre }}</strong>?</p>
+      <p class="text-muted">Esta acción no se puede deshacer.</p>
+    </div>
+
+    <div class="modal-footer d-flex justify-content-center">
+      <button type="button" class="btn btn-light border" (click)="modal.dismiss()">Cancelar</button>
+      <button type="button" class="btn btn-danger shadow-sm" (click)="eliminarComunidad(); modal.close()">
+        <i class="bi bi-check-circle"></i> Eliminar
+      </button>
+    </div>
+  </div>
+</ng-template>

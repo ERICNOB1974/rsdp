@@ -1,0 +1,33 @@
+<h1 class="title">Sugerencias de Eventos</h1>
+
+<section class="event-list">
+  <div *ngFor="let evento of results" class="event-item">
+    <div class="event-card">
+      <img [src]="evento.imagen ? evento.imagen : '../../assets/evento.webp'" alt="{{ evento.nombre }}"
+        class="event-image" [routerLink]="['/eventos', idEncryptorService.encodeId(evento.id)]" />
+      <div class="event-content">
+        <h3 class="event-name">{{ evento.nombre }}</h3>
+        <p class="event-date">Fecha: {{ evento.fechaHora | date: 'medium' }}</p>
+        <p class="event-motive" *ngIf="motivos[evento.id]">
+          <i class="fa fa-search event-icon" (click)="openMotivoModal(evento.id)"></i>
+          Motivo: "{{ formatMotivo(motivos[evento.id].toString()) }}"
+        </p>
+        <p class="event-motive" *ngIf="!motivos[evento.id]">Motivo no disponible</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Paginación con el componente de paginación -->
+</section>
+
+<div *ngIf="isModalOpen" class="modal-overlay" (click)="closeMotivoModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h3>Motivo de {{ eventoSeleccionado?.nombre }}</h3>
+    <p><span [innerHTML]="formatMotivo(motivos[eventoSeleccionado?.id].toString())"></span></p>
+    <button class="close-btn" (click)="closeMotivoModal()">Cerrar</button>
+  </div>
+</div>
+<app-pagination [totalPages]="totalPages" [currentPage]="page+1" (pageChangeRequested)="onPageChangeRequested($event)"
+  [number]="page" [hidden]="elementos < 1 || totalPages <= 1">
+</app-pagination>

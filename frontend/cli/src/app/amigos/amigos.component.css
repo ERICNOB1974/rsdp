@@ -1,0 +1,238 @@
+.container {
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    max-width: 800px;
+    margin: 0 auto; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    font-size: 2em;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.tabs button {
+    flex: 1;
+    padding: 10px;
+    margin: 0 5px;
+    border: none;
+    background-color: #e6e6e6;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s;
+    font-weight: bold;
+}
+
+.tabs button.active, .tabs button:hover {
+    background-color: #007bff;
+    color: white;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.lista h2 {
+    color: #555;
+    margin-top: 20px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.clickable {
+    cursor: pointer;
+    color: blue;
+    /* Color opcional */
+    text-decoration: underline;
+}
+
+
+.avatar-circular {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    vertical-align: middle;
+    margin-right: 15px;
+    object-fit: cover;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+}
+
+li:hover {
+    background-color: #f9f9f9;
+}
+
+.acciones-solicitud {
+    margin-left: auto;
+    display: flex;
+    gap: 10px;
+}
+
+.btn-aceptar, .btn-rechazar {
+    padding: 5px 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-aceptar {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-aceptar:hover {
+    background-color: #218838;
+}
+
+.btn-rechazar {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-rechazar:hover {
+    background-color: #c82333;
+}
+
+
+
+/*BUSCADOR CSS */
+.search-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+
+.search-input {
+    width: 100%;
+    padding: 15px 20px;
+    padding-right: 40px;
+    border-radius: 25px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    box-shadow: inset 0 4px 6px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+.search-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #888;
+    font-size: 18px;
+}
+
+
+
+.user-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    background-color: #f8f9fa;
+}
+
+.user-list {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+.friend-item, .request-item, .sent-request-item, .user-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-radius: 15px;
+    background-color: #ffffff;
+    margin-bottom: 10px;
+    transition: background-color 0.3s;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.friend-item:hover, .request-item:hover, .sent-request-item:hover, .user-item:hover {
+    background-color: #f9f9f9;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    .title {
+        font-size: 1.8em;
+    }
+
+    .tabs button {
+        padding: 8px;
+        font-size: 14px;
+    }
+}
+
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.tabs button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.tabs button.active {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+}
+
+.tab-content {
+    margin-top: 20px;
+}
+
+.scrollable-list {
+    max-height: 600px; /* Define la altura máxima del área visible */
+    overflow-y: auto; /* Habilita el scroll vertical */
+    border: 1px solid #ccc; /* Opcional, para ver el área delimitada */
+    padding: 0;
+    margin: 0;
+}

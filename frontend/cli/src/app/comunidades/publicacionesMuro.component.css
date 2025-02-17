@@ -1,0 +1,246 @@
+/* Contenedor principal */
+
+
+.publicaciones-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  /* Contenedor de las publicaciones */
+  .perfil-publicaciones {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Grid de publicaciones */
+  .publicaciones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+  }
+  
+  /* Contenedor de cada publicación */
+  .publicacion-item {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .publicacion-item:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Cabecera de la publicación */
+  .publicacion-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .perfil-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  .foto-usuario {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 10px;
+  }
+  
+  .foto-usuario img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .nombres-container {
+    flex-grow: 1;
+  }
+  
+  .nombre-usuario {
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+    cursor: pointer;
+  }
+  
+  .nombre-usuario:hover {
+    text-decoration: underline;
+  }
+  
+  .publicacion-fecha {
+    font-size: 12px;
+    color: #888;
+    text-align: right;
+  }
+  
+  /* Contenido de la publicación */
+  .publicacion-content {
+    padding: 15px;
+  }
+  
+  .publicacion-texto {
+    font-size: 16px;
+    color: #333;
+    line-height: 1.5;
+    margin-bottom: 15px;
+  }
+  
+  /* Contenedor de imágenes y videos */
+  .publicacion-imagen-container,
+  .publicacion-video {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+  
+  .publicacion-imagen {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .publicacion-video {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  /* Sección de interacciones */
+  .publicacion-interactions {
+    padding: 15px;
+    border-top: 1px solid #f0f0f0;
+  }
+  
+  /* Likes */
+  .likes-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .like-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #f44336;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .like-button.liked {
+    color: #d32f2f;
+  }
+  
+  .likes-count {
+    font-size: 14px;
+    color: #555;
+    margin-left: 10px;
+  }
+  
+  /* Comentarios */
+  .comments-section {
+    margin-top: 15px;
+  }
+  
+  .comment {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .usuario-publicador {
+    font-size: 14px;
+    font-weight: bold;
+    color: #007bff;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  
+  .usuario-publicador:hover {
+    text-decoration: underline;
+  }
+  
+  .publicacion-texto {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.5;
+  }
+  
+  .publicacion-texto {
+    margin-left: 10px;
+  }
+  
+  .publicacion-texto:hover {
+    cursor: pointer;
+  }
+  
+  .comment-input-section {
+    display: flex;
+    align-items: center;
+  }
+  
+  .comment-button {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #007bff;
+    cursor: pointer;
+  }
+  
+  .comment-input-container {
+    display: flex;
+    align-items: center;
+    margin-left: 10px;
+    flex-grow: 1;
+  }
+  
+  .publicacion-input {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    margin-right: 10px;
+  }
+  
+  .publicacion-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    font-size: 14px;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  
+  .publicacion-button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Mostrar más comentarios */
+  .publicacion-texto {
+    font-size: 14px;
+    color: #8e8e8e;
+    cursor: pointer;
+  }
+  
+  /* Indicador de carga */
+  .loading-indicator {
+    text-align: center;
+    padding: 20px;
+    font-size: 16px;
+    color: #888;
+  }

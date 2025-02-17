@@ -1,0 +1,28 @@
+<div class="wrap-login">
+  <div class="container login-box">
+    <div class="codigo-container">
+      <h2>Verificación de correo</h2>
+      <p>Se ha enviado un código de verificación a tu correo. Ingrésalo abajo:</p>
+      <form [formGroup]="codigoForm" (ngSubmit)="onSubmit()">
+        <div class="codigo-inputs">
+          <input #codigoInput formControlName="codigo1" maxlength="1" class="form-control" />
+          <input #codigoInput formControlName="codigo2" maxlength="1" class="form-control" />
+          <input #codigoInput formControlName="codigo3" maxlength="1" class="form-control" />
+          <input #codigoInput formControlName="codigo4" maxlength="1" class="form-control" />
+          <input #codigoInput formControlName="codigo5" maxlength="1" class="form-control" />
+          <input #codigoInput formControlName="codigo6" maxlength="1" class="form-control" />
+        </div>
+        <mat-card-actions>
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit" 
+          class="btn-right" 
+          [disabled]="!codigoForm.valid">
+          Verificar
+        </button>
+      </mat-card-actions>
+      </form>
+    </div>
+  </div>
+</div>

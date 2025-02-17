@@ -1,0 +1,378 @@
+/* Estilo general */
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f9f9f9fa;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+
+/* Título */
+.title {
+  text-align: center;
+  margin-top: 2rem;
+  text-transform: uppercase;
+  word-wrap: break-word;
+    color: #000000;
+    font-size: 3rem;
+    text-align: center;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    font-weight: 800;
+    letter-spacing: 2px;
+  
+}
+
+/* Sección de la lista de eventos */
+.event-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Centra las tarjetas */
+  gap: 30px;
+  width: 100%;
+  margin-bottom: 50px;
+}
+
+
+
+/* Estilo de cada tarjeta de evento */
+.event-item {
+  flex: 1 1 280px; /* Base mínima de 280px, pero puede crecer */
+  max-width: 350px; /* Limitar el tamaño máximo de las tarjetas */
+  margin: 0 15px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 15px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+.event-card {
+  position: relative;
+  display: block;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+
+.event-card:hover .event-content {
+  transform: scale(1.05);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.event-image {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  filter: brightness(70%);
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.event-card:hover .event-image {
+  transform: scale(1.1);
+  filter: brightness(50%);
+}
+
+/* Superposición de texto */
+.event-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(68, 68, 68, 0.2);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 15px;
+  text-align: left;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+
+
+
+.event-name {
+  font-size: 1.6rem;
+  margin: 0.5rem 0;
+  color: #fff;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.event-date, 
+.event-motive {
+  margin: 0.3rem 0;
+  opacity: 0.9;
+  font-size: 1rem;
+  line-height: 1.4;
+  max-height: 3rem; /* Limitar la altura para motivos largos */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* Mantener en una sola línea */
+  margin-top: 5px;
+}
+
+/* Controles de paginación */
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 30px;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.pagination-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #ff5722;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background-color: #ff8a50;
+  transform: scale(1.1);
+}
+
+.pagination-button:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+.page-indicator {
+  font-size: 1.1rem;
+  color: #555;
+  font-weight: 600;
+}
+
+/* Responsividad: Ajustes para dispositivos móviles */
+@media (max-width: 768px) {
+  .title {
+      font-size: 2rem;
+      margin-top: 1.5rem;
+  }
+
+  .event-list {
+      grid-template-columns: 1fr;
+      gap: 15px;
+  }
+
+  .event-image {
+      height: 180px;
+  }
+
+  .event-name {
+      font-size: 1.4rem;
+  }
+
+  .event-date, .event-motive {
+      font-size: 1rem;
+  }
+
+  .pagination-button {
+      padding: 8px 16px;
+      font-size: 0.9rem;
+  }
+
+  .page-indicator {
+      font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+      font-size: 1.6rem;
+      margin-top: 1rem;
+  }
+
+  .event-list {
+      grid-template-columns: 1fr;
+      gap: 10px;
+  }
+
+  .event-image {
+      height: 160px;
+  }
+
+  .event-name {
+      font-size: 1.2rem;
+  }
+
+  .event-date, .event-motive {
+      font-size: 0.9rem;
+  }
+
+  .pagination-button {
+      padding: 6px 14px;
+      font-size: 0.9rem;
+  }
+
+  .page-indicator {
+      font-size: 0.9rem;
+  }
+}
+
+.event-content {
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.6); /* Fondo oscuro semitransparente */
+  color: #fff;
+  padding: 10px;
+  text-align: center;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+  position: relative;
+  animation: fadeIn 0.3s ease;
+}
+
+.close-btn {
+  background: #ff5722;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 15px;
+}
+
+.close-btn:hover {
+  background: #ff8a50;
+}
+
+/* Animación */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.event-icon:hover {
+  transform: scale(1.2);
+  color: #ff8a50;
+}
+
+.event-icon {
+  margin-left: 10px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: #fff;
+  transition: transform 0.2s;
+}
+
+.card {
+  position: relative; /* Necesario para que los elementos absolutos dentro de esta se posicionen correctamente */
+  flex: 0 0 calc(100% / 4 - 20px);
+  max-width: calc(100% / 4 - 20px);
+  height: 250px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: 1; /* Coloca la imagen detrás del contenido */
+  filter: brightness(70%); /* Oscurece ligeramente la imagen para mejorar la legibilidad del texto */
+}
+
+/* Detalles del evento */
+.evento-details {
+  position: relative;
+  z-index: 2; /* Coloca los detalles sobre la imagen */
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+  color: white;
+  padding: 10px;
+  border-radius: 0 0 10px 10px;
+  text-align: center;
+}
+
+/* Efecto hover */
+.card:hover {
+  transform: scale(1.05);
+}
+
+/* Motivo estilizado */
+.motivo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.motivo-icon {
+  font-size: 1.2rem;
+  color: #ffd700; /* Cambia a un color más vibrante */
+  margin-right: 5px;
+}
+
+.motivo-text {
+  font-style: italic;
+  color: #fff;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+  .card {
+    flex: 0 0 calc(100% / 2 - 15px);
+    max-width: calc(100% / 2 - 15px);
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}

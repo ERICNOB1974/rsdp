@@ -1,11 +1,10 @@
 package unpsjb.labprog.backend.model;
 
-import java.util.List;
+import java.time.ZonedDateTime;
 
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
 import org.springframework.data.neo4j.core.schema.Id;
 import org.springframework.data.neo4j.core.schema.Node;
-import org.springframework.data.neo4j.core.schema.Relationship;
 
 import lombok.Data;
 import lombok.Getter;
@@ -23,11 +22,10 @@ public class Publicacion {
     @GeneratedValue
     private Long id;
 
-    private Long cantidadLikes;
+    private String texto;
 
-    private String descripcion; 
+    private ZonedDateTime fechaDeCreacion;
     
-    @Relationship(type = "COMENTA")
-    private List<Comentario> comentarios;
+    private String file;
 
 }

@@ -1,0 +1,41 @@
+<div class="wrap-login">
+  <div class="container">
+    <form [formGroup]="recoverForm" (ngSubmit)="onSubmit()">
+      <mat-card class="login-box">
+        <mat-card-header>
+          <h2>Ingrese su correo electrónico</h2>
+        </mat-card-header>
+
+        <mat-card-content>
+          <mat-form-field appearance="outline">
+            <mat-label>Correo electrónico</mat-label>
+            <input
+              matInput
+              type="email"
+              formControlName="correoElectronico"
+              required
+            />
+            <mat-error *ngIf="recoverForm.get('correoElectronico')?.hasError('required')">
+              El correo electrónico es requerido
+            </mat-error>
+            <mat-error *ngIf="recoverForm.get('correoElectronico')?.hasError('email')">
+              Formato de correo electrónico inválido
+            </mat-error>
+            <mat-error *ngIf="recoverForm.get('correoElectronico')?.hasError('correoNoExistente')">
+              El correo electrónico no está registrado
+            </mat-error>
+          </mat-form-field>
+        </mat-card-content>
+
+        <mat-card-actions class="action-buttons">
+          <button mat-flat-button color="accent" (click)="router.navigate(['/login'])">
+              Atrás
+          </button>
+          <button mat-raised-button color="primary" type="submit" [disabled]="!recoverForm.valid">
+              Enviar Código
+          </button>
+      </mat-card-actions>
+      </mat-card>
+    </form>
+  </div>
+</div>

@@ -1,66 +1,462 @@
-/* You can add global styles to this file, and also import other style files */
+/* Importaciones y estilos globales */
 @import 'bootstrap/dist/css/bootstrap.min.css';
 @import "font-awesome/css/font-awesome.css";
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+@import url('https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap');
+@import 'bootstrap-icons/font/bootstrap-icons.css';
 
-  .container {
-    background-color: #222;
-    color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-  }
-  .btn-black {
-    background-color: #222;
-    color: #fff;
-    border: 1px solid #222;
-  }
-  .btn-black:hover {
-    background-color: #444;
-    border-color: #444;
-  }
-  .btn-danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
-  }
-  .btn-danger:hover {
-    background-color: #c82333;
-    border-color: #bd2130;
-  }
-  .form-group {
-    margin-bottom: 20px;
-  }
-  label {
-    font-weight: bold;
-  }
-  .arrow {
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid #666; 
-  }
-  .btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-  }
-  .btn-primary:hover {
-    background-color: #0056b3;
-    border-color: #0056b3;
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+
+
+body {
+  min-height: 100%;
+  background: #e9e6e6;
+  /* Cambié el color de fondo a uno más suave */
+}
+
+/* Estilos del submenú */
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  display: inline;
+  background: #7a7a7a;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  padding: 0;
+  max-width: 100%;
+}
+
+.dropdown-item {
+  white-space: normal;
+  /* Permite que el texto se ajuste y no se corte */
+  padding: 10px;
+  /* Espaciado interno */
+}
+
+.dropdown-menu li a {
+  padding: 10px 12px;
+  color: #333;
+  white-space: normal;
+}
+
+.dropdown:hover .dropdown-menu,
+.dropdown:focus-within .dropdown-menu {
+  display: block;
+}
+
+.dropdown-menu li a:hover {
+  background-color: #ec8626;
+  /* Color más atractivo al pasar el mouse */
+}
+
+
+
+/* Estilos del modal */
+.modal-backdrop.show {
+  opacity: 0.75;
+  background-color: rgba(0, 0, 0, 0.75);
+}
+
+.modal-content {
+  border-radius: 10px;
+  background: #fff;
+  /* Fondo blanco más limpio */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  /* Sombra más ligera */
+}
+
+.modal-header {
+  background-color: #343a40;
+  color: white;
+  border-bottom: none;
+  /* Sin borde inferior */
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+.modal-footer {
+  padding: 1rem;
+}
+
+.lead {
+  font-size: 1.25rem;
+}
+
+.alert {
+  font-size: 1rem;
+}
+
+
+
+/* Ajustar el main-content para la nueva navbar */
+
+/* Contenido principal */
+
+.main-content.full-width {
+  margin-left: 20vw;
+  /* Ajuste el margen cuando la barra está oculta */
+}
+
+.sidebar.collapsed ~ .main-content {
+  margin-left: 70px;
+}
+
+.main-content {
+  margin-left: 250px;
+  margin-top: calc(60px + env(safe-area-inset-top)); /* Ajusta este valor según la altura de tu barra de navegación */
+
+}
+
+
+.profile-image {
+  width: 5vw;
+  /* Ajusta el tamaño de la imagen en relación al ancho de la ventana */
+  height: auto;
+  /* Mantiene la proporción de la imagen */
+  max-width: 50px;
+  /* Tamaño máximo para pantallas grandes */
+  max-height: 50px;
+  /* Tamaño máximo para pantallas grandes */
+  border-radius: 50%;
+  /* Para que sea circular */
+  margin-right: 5px;
+  /* Espacio entre la imagen y el texto */
+  cursor: pointer;
+}
+
+.router-outlet-component {
+  width: 80%; /* Ajusta el tamaño que prefieras */
+  height: auto;
+}
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  padding: 0 10px;
+  margin-left: 20vw;
+  overflow-y: auto;
+  transition: margin-left 0.3s ease;
+  flex-grow: 1;
+  flex: 1;
+  justify-content: flex-start; /* Evita el centrado dinámico */
+  align-items: stretch; /* Estira elementos para usar todo el ancho */
+  min-height: 100vh; 
+  /*
+   Asegura que ocupe la altura de la ventana */
   
-  .custom-date-input {
-    width: 200px;
+}
+
+.white-island {
+  width: 80%; /* Ajusta según necesites */
+  height: auto;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  padding: 2%;
+  position: relative;
+  transition: transform 0.3s; /* Suaviza el movimiento */
+  overflow-y: auto;
+    align-items: center;
+
+}
+
+.notifications-header {
+  background: #f5f5f5;
+  padding: 5px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+  font-size: 16px;
+}
+
+.notifications-header .actions {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin-top: 5px;
+}
+
+.notifications-header .action-link {
+  color: #2196f3; /* Azul brillante */
+  font-size: 14px;
+  font-weight: 600; /* Fuente un poco más gruesa */
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  transition: all 0.3s ease; /* Transición suave */
+  padding: 5px 0; /* Un poco de espacio alrededor */
+}
+
+.notifications-header .action-link:hover {
+  color: #1976d2; /* Color más oscuro al pasar el mouse */
+}
+
+.notifications-header .action-link:before {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: 0;
+  left: 50%;
+  background-color: #1976d2;
+  transition: width 0.3s ease, left 0.3s ease; /* Efecto suave de expansión */
+  transform: translateX(-50%);
+}
+
+.notifications-header .action-link:hover:before {
+  width: 100%; /* Expande la línea cuando se pasa el mouse */
+  
+}
+
+.notifications-header .action-link:active {
+  color: #1565c0;
+  transform: translateY(1px); /* Desplazamiento al hacer clic */
+}
+
+.notifications-header .action-link:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.5); /* Contorno sutil al hacer foco */
+}
+
+
+
+
+@media (max-width: 768px) {
+  .notifications-menu {
+    width: 70%; /* Ocupa el 80% del ancho disponible */
+    left: -20%; /* Centra el menú */
+    right: auto; /* Elimina ajustes desde el borde derecho */
+    max-height: 50vh; /* Limita la altura en pantallas pequeñas */
+    overflow-y: auto; /* Permite desplazamiento si hay muchas notificaciones */
   }
 
-  .custom-select-wrapper {
-    position: relative;
+  .notification-item p {
+    font-size: 14px; /* Tamaño de fuente más pequeño para mejor legibilidad */
+    margin-right: 20px; /* Espacio suficiente para evitar solapamiento con íconos */
   }
 
-  .custom-select:disabled {
-    opacity: 0.6; 
+  .notification-badge {
+    top: 5px; /* Ajusta la posición superior del badge */
+    right: 10px; /* Ajusta la posición derecha del badge */
+    font-size: 10px; /* Tamaño de fuente reducido */
+    min-width: 15px; /* Reduce el tamaño mínimo del badge */
   }
+
+  .delete-icon {
+    font-size: 18px; /* Reduce el tamaño del ícono de eliminación */
+    right: 8px; /* Ajusta la posición para pantallas pequeñas */
+    top: 50%; /* Centra verticalmente */
+    transform: translateY(-50%); /* Mantiene el centro vertical */
+  }
+
+  .notification-item {
+    padding: 8px 40px 8px 10px; /* Espacio adecuado para íconos y texto */
+    border-radius: 5px; /* Mantiene bordes suaves */
+  }
+}
+
+.notifications-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 250px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  max-height: 400px;
+  overflow-y: auto;
+  border-radius: 4px;
+  display: block;
+  color: rgb(0, 0, 0);
+}
+
+.notifications-dropdown {
+  position: relative;
+  padding: 0 25px;
+  margin-left: auto;
+  color: white;
+}
+
+.notification-item {
+  padding: 10px 15px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  position: relative;
+  background-color: #f5f5f5;
+  /* Fondo claro para no leídas */
+  margin: 5px 0;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+
+.notification-item:not(.leida):hover {
+  background-color: #d0f0d0;
+  /* Verde claro para destacar no leídas */
+  transform: scale(0.98);
+  /* Ligeramente más grande */
+}
+
+.notification-item.leida {
+  background-color: #e0e0e0;
+  /* Fondo gris más oscuro para leídas */
+}
+
+.notification-item.leida:hover {
+  background-color: #c0c0c0;
+  /* Gris más claro para leídas */
+  transform: scale(1.01);
+  /* Ligeramente más grande */
+}
+
+/* .new-notification-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #ff4444;
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 5px;
+  margin-right: 8px;
+} */
+
+.new-notification-dot {
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.nav-link {
+  position: relative;
+  display: inline-block;
+}
+
+.no-notifications {
+  padding: 15px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+}
+
+.notificacion-count {
+  position: absolute;
+  top: -10px;
+  right: -9px;
+  background-color: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 5px;
+  font-size: 12px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.notificacion-item:last-child {
+  border-bottom: none;
+}
+
+.notification-icon {
+  font-size: 20px;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.notification-item p {
+  margin: 0;
+  flex: 1;
+}
+
+.delete-icon {
+  cursor: pointer;
+  color: #f40c0c;
+  font-size: 20px;
+  margin-top: 5px;
+  align-self: flex-end; /* Alinea el ícono a la izquierda */
+  margin-bottom: 5px; /* Añade un pequeño margen para que no quede pegado al borde inferior */
+}
+
+.notification-badge {
+  position: absolute;
+  top: -8px;
+  right: 10px;
+  padding: 2px 6px;
+  background-color: #ff4444;
+  color: white;
+  border-radius: 50%;
+  font-size: 12px;
+  min-width: 18px;
+  text-align: center;
+}
+
+.fa-bell {
+  font-size: 20px;
+  color: #ffffff;
+  margin-right: 12px;
+  position: relative;
+  left: 0px;
+}
+
+.mark-all-read-button,
+.delete-all-button {
+  padding: 10px;
+  background-color: #ff4444;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 5px;
+  margin-top: 10px;
+  width: 100%;
+  text-align: center;
+}
+
+.mark-all-read-button:hover,
+.delete-all-button:hover {
+  background-color: #cc3333;
+}
+
+.mark-all-read-button:active,
+.delete-all-button:active {
+  transform: scale(0.98);
+}
+
+.new-notifications {
+  animation: shake 3s ease-in-out infinite alternate;
+  color: #f6b554;
+}
+
+@keyframes shake {
+  0% { transform: rotate(0); }
+  20% { transform: rotate(-5deg); }
+  40% { transform: rotate(5deg); }
+  60% { transform: rotate(-5deg); }
+  80% { transform: rotate(5deg); }
+  100% { transform: rotate(0); }
+}
+
+.notification-content {
+  flex: 1; /* Asegura que el contenido ocupe el espacio disponible */
+  margin-bottom: 20px; /* Para dejar espacio para el ícono */
+}
+
+.notifications-list {
+  display: flex;
+  flex-direction: column;
+}

@@ -1,0 +1,49 @@
+<div class="wrap-login">
+  <div class="container">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <mat-card class="login-box">
+        <mat-card-header>
+          <h2>Ingresar</h2>
+        </mat-card-header>
+
+        <mat-card-content>
+          <mat-form-field appearance="outline">
+            <mat-label>Email o nombre de usuario</mat-label>
+            <input matInput type="email" placeholder="Ingrese su email o nombre de usuario" formControlName="email" required (input)="convertToLower($event)">
+            <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+              Este campo es obligatorio
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="password-field">
+            <mat-label>Contraseña</mat-label>
+            <input matInput id="passwordInput" [type]="passwordVisible ? 'text' : 'password'" placeholder="Ingrese su contraseña" formControlName="password" required>
+            <button mat-icon-button type="button" (click)="togglePasswordVisibility()" class="toggle-password-visibility">
+              <mat-icon>{{ passwordVisible ? 'visibility_off' : 'visibility' }}</mat-icon>
+            </button>
+            <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+              La contraseña es obligatoria
+            </mat-error>
+          </mat-form-field>
+        </mat-card-content>
+
+        <mat-card-actions>
+          <button mat-raised-button color="primary" type="submit" [disabled]="!loginForm.valid">
+            Ingresar
+          </button>
+        </mat-card-actions>
+
+        <mat-card-actions> 
+            
+          <button mat-button (click)="forgotPassword()">
+            He olvidado mi contraseña
+          </button>
+
+          <button mat-button (click)="goToRegister()">
+            ¿No tienes cuenta? Créala aquí.
+          </button></mat-card-actions>
+
+      </mat-card>
+    </form>
+  </div>
+</div>

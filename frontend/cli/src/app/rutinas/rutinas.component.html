@@ -1,0 +1,142 @@
+<div class="container">
+  <div class="row justify-content-center align-items-center mb-4">
+    <div class="col-auto">
+      <button class="tab-button d-flex align-items-center" [ngClass]="{ active: tabSeleccionada === 'filtros' }"
+        (click)="toggleFilters()">
+        <span class="material-icons me-2">filter_list</span>
+        Filtros
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="filtersVisible || filtersAnimating"
+  [ngClass]="{'fadeIn': filtersVisible, 'fadeOut': !filtersVisible && filtersAnimating}" class="filtros-container">
+
+  <!-- Filtro por nombre -->
+  <div class="filtro-container filtro-nombre">
+    <label class="filtro-label">
+      <button (click)="toggleFiltroNombre()" class="filtro-toggle">
+        Búsqueda:<i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
+      </button>
+    </label>
+
+    <div *ngIf="filtroNombreAbierto" class="filtro-content">
+      <div class="search-container">
+        <label for="nombreEvento"></label>
+        <input type="text" id="nombreEvento" class="form-control" [(ngModel)]="nombreEventoFiltro"
+          (input)="onSearchInputComunidades()">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtro por etiquetas -->
+  <div class="filtro-container filtro-etiquetas">
+    <label class="filtro-label">
+      <input type="checkbox" [(ngModel)]="filtroEtiquetasActivo" (change)="aplicarTodosLosFiltros()">
+      <button (click)="toggleFiltroEtiquetas()" class="filtro-toggle">
+        Filtrar por etiquetas <i [class]="filtroEtiquetasAbierto ? 'arrow up' : 'arrow down'"></i>
+      </button>
+    </label>
+    <div *ngIf="filtroEtiquetasAbierto" class="filtro-content">
+      <input id="etiquetas" class="form-control" [(ngModel)]="etiquetaSeleccionada" [ngbTypeahead]="searchEtiqueta"
+        [resultFormatter]="resultFormatEtiqueta" [inputFormatter]="inputFormatEtiqueta"
+        (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada" placeholder="Buscar etiqueta" />
+      <div class="selected-tags">
+        <span *ngFor="let etiqueta of etiquetasSeleccionadas" class="tag">
+          {{ etiqueta.nombre }}
+          <button (click)="removerEtiqueta(etiqueta)" class="remove-tag">&times;</button>
+        </span>
+      </div>
+      <div class="button-group">
+        <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar Filtro</button>
+        <button (click)="limpiarFiltroEtiquetas()" class="limpiar-filtro">Limpiar Filtro</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="tabs-container">
+  <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'disponibles' }"
+    (click)="seleccionarTab('disponibles')">
+    🌟 Rutinas Disponibles
+  </button>
+  <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'realizaRutina' }"
+    (click)="seleccionarTab('realizaRutina')">
+    🏋️‍♂️ Tus Rutinas
+  </button>
+</div>
+
+<div class="content-container">
+  <!-- Comunidades Disponibles -->
+  <div *ngIf="tabSeleccionada === 'disponibles'" class="content-section">
+    <h2 class="section-title">Explora Rutinas Disponibles</h2>
+    <div class="grid" (scroll)="onScroll()">
+      <div class="grid-item" *ngFor="let rutina of rutinasDisponibles" (click)="irADetallesDeLaRutina(rutina.id)"
+        [style.backgroundImage]="'url(' + '../../assets/ejercicio2.png' + ')'">
+        <div class="grid-overlay">
+          <h3>{{ rutina.nombre }}</h3>
+          <p>{{ rutina.descripcion }}</p>
+          <p>Días: {{ rutina.dias }}</p>
+
+          <!-- Contenedor del creador de la rutina -->
+          <div class="creador-container" *ngIf="rutina.id !== undefined && mapaCreadorRutinas.get(rutina.id)">
+            <p class="creador-titulo">Creado por:&nbsp;</p>
+            <div class="creador-info">
+              <span class="creador-nombre">{{ mapaCreadorRutinas.get(rutina.id)?.nombreUsuario }}</span>
+              <img [src]="mapaCreadorRutinas.get(rutina.id)?.fotoPerfil || '../../assets/usuario.png'"
+                alt="Foto de perfil" class="creador-foto">
+            </div>
+          </div>
+
+          <div class="tags">
+            <span *ngFor="let etiqueta of rutina.etiquetas" class="tag">
+              #{{ etiqueta.nombre }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="rutinasDisponibles.length==0">
+        No hay rutinas disponibles para mostrar con los filtros seleccionados
+      </div>
+    </div>
+  </div>
+
+  <!-- Comunidades en las que el usuario participa -->
+  <div *ngIf="tabSeleccionada === 'realizaRutina'" class="content-section">
+    <h2 class="section-title">Tus Rutinas Activas</h2>
+    <div class="grid" (scroll)="onScroll()">
+      <div class="grid-item" *ngFor="let rutina of rutinasRealizaUsuario" (click)="irADetallesDeLaRutina(rutina.id)"
+        [style.backgroundImage]="'url(' + '../../assets/ejercicio2.png' + ')'">
+        <div class="grid-overlay">
+          <h3>{{ rutina.nombre }}</h3>
+          <p>{{ rutina.descripcion }}</p>
+          <p>Días: {{ rutina.dias }}</p>
+
+          <!-- Contenedor del creador de la rutina -->
+          <div class="creador-container" *ngIf="rutina.id !== undefined && mapaCreadorRutinas.get(rutina.id)">
+            <p class="creador-titulo">Creado por:&nbsp;</p>
+            <div class="creador-info">
+              <span class="creador-nombre">{{ mapaCreadorRutinas.get(rutina.id)?.nombreUsuario }}</span>
+              <img [src]="mapaCreadorRutinas.get(rutina.id)?.fotoPerfil || '../../assets/usuario.png'"
+                alt="Foto de perfil" class="creador-foto">
+            </div>
+          </div>
+
+          <div class="tags">
+            <span *ngFor="let etiqueta of rutina.etiquetas" class="tag">
+              #{{ etiqueta.nombre }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="rutinasRealizaUsuario.length==0">
+        No hay rutinas que hayas realizado o realices que cumplan con los filtros seleccionados
+      </div>
+    </div>
+  </div>
+</div>

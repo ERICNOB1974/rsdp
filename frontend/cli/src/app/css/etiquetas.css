@@ -1,0 +1,82 @@
+.selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.tag {
+  background-color: #e0e0e0;
+  border-radius: 16px;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.remove-tag {
+  background: none;
+  border: none;
+  color: #ff0000;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-left: 4px;
+  padding: 0 4px;
+}
+
+.remove-tag:hover {
+  background-color: rgba(255, 0, 0, 0.1);
+  border-radius: 50%;
+}
+
+.etiquetas-container {
+  margin-top: 10px;
+}
+
+.etiqueta {
+  display: inline-block;
+  padding: 5px 12px;
+  margin: 5px 5px 0 0;
+  background-color: #a1a1a1;
+  color: white;
+  border-radius: 15px;
+  font-size: 14px;
+  text-transform: none;
+  transition: background-color 0.3s ease;
+}
+
+.etiquetas-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 10px;
+}
+
+.etiqueta:hover {
+  background-color: #0056b3;
+}
+
+@media screen and (max-width: 768px) {
+  .etiqueta {
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 12px;
+  }
+
+  .etiquetas-title {
+    font-size: 12px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .etiqueta {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 10px;
+  }
+
+  .etiquetas-title {
+    font-size: 10px;
+  }
+}

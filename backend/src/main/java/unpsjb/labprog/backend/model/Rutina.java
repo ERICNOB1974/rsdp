@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @Data
 @Getter
 @Setter
@@ -22,14 +20,5 @@ public class Rutina {
 
     private String nombre;
     private String descripcion;
-    private int duracionMinutosPorDia;
-    
-    private Dificultad dificultad;
-
-    @Relationship(type = "TIENE")
-    private List<Ejercicio> ejercicios;
-
-    @Relationship(type = "ETIQUETADA_CON")
-    private List<Etiqueta> etiquetas;
 
 }

@@ -1,0 +1,224 @@
+<div class="container">
+  <div class="row justify-content-center align-items-center mb-4">
+    <div class="col-auto">
+      <button class="tab-button d-flex align-items-center" [ngClass]="{ active: tabSeleccionada === 'filtros' }"
+        (click)="toggleFilters()">
+        <span class="material-icons me-2">filter_list</span>
+        Filtros
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="filtersVisible || filtersAnimating"
+  [ngClass]="{'fadeIn': filtersVisible, 'fadeOut': !filtersVisible && filtersAnimating}" class="filtros-container">
+  <!-- Filtro por nombre -->
+  <div class="filtro-container filtro-nombre">
+    <label class="filtro-label">
+      <button (click)="toggleFiltroNombre()" class="filtro-toggle">
+        Búsqueda:<i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
+      </button>
+    </label>
+
+    <div *ngIf="filtroNombreAbierto" class="filtro-content">
+      <div class="search-container">
+        <label for="nombreEvento"></label>
+        <input type="text" id="nombreEvento" class="form-control" [(ngModel)]="nombreEventoFiltro"
+          (input)="onSearchInputComunidades()">
+        <i class="fas fa-search search-icon"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtro por participantes -->
+  <div class="filtro-container filtro-participantes">
+    <label class="filtro-label">
+      <input type="checkbox" [(ngModel)]="filtroParticipantesActivo" (change)="aplicarTodosLosFiltros()">
+      <span class="checkmark"></span>
+      <button (click)="toggleFiltroParticipantes()" class="filtro-toggle">
+        Filtrar por participantes <i [class]="filtroParticipantesAbierto ? 'arrow up' : 'arrow down'"></i>
+      </button>
+    </label>
+    <div *ngIf="filtroParticipantesAbierto" class="filtro-content">
+      <div class="input-group">
+        <div class="input-container">
+          <label for="minParticipantes">Mínimo:</label>
+          <input type="number" id="minParticipantes" [(ngModel)]="minParticipantes">
+        </div>
+        <div class="input-container">
+          <label for="maxParticipantes">Máximo:</label>
+          <input type="number" id="maxParticipantes" [(ngModel)]="maxParticipantes">
+        </div>
+      </div>
+      <div class="button-group">
+        <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar Filtro</button>
+        <button (click)="limpiarFiltroParticipantes()" class="limpiar-filtro">Limpiar Filtro</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtro por fecha -->
+  <div class="filtro-container filtro-fecha">
+    <label class="filtro-label">
+      <input type="checkbox" [(ngModel)]="filtroFechaActivo" (change)="aplicarTodosLosFiltros()">
+      <span class="checkmark"></span>
+      <button (click)="toggleFiltroFecha()" class="filtro-toggle">
+        Filtrar por fecha <i [class]="filtroFechaAbierto ? 'arrow up' : 'arrow down'"></i>
+      </button>
+    </label>
+    <div *ngIf="filtroFechaAbierto" class="filtro-content">
+      <div class="input-group">
+        <div class="input-container">
+          <label for="fechaMin">Fecha mínima:</label>
+          <input type="date" id="fechaMin" [(ngModel)]="fechaMinFiltro">
+        </div>
+        <div class="input-container">
+          <label for="fechaMax">Fecha máxima:</label>
+          <input type="date" id="fechaMax" [(ngModel)]="fechaMaxFiltro">
+        </div>
+      </div>
+      <div class="button-group">
+        <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar</button>
+        <button (click)="limpiarFiltroFecha()" class="limpiar-filtro">Limpiar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filtro por etiquetas -->
+  <div class="filtro-container filtro-etiquetas">
+    <label class="filtro-label">
+      <input type="checkbox" [(ngModel)]="filtroEtiquetasActivo" (change)="aplicarTodosLosFiltros()">
+      <span class="checkmark"></span>
+      <button (click)="toggleFiltroEtiquetas()" class="filtro-toggle">
+        Filtrar por etiquetas <i [class]="filtroEtiquetasAbierto ? 'arrow up' : 'arrow down'"></i>
+      </button>
+    </label>
+    <div *ngIf="filtroEtiquetasAbierto" class="filtro-content">
+      <input id="etiquetas" class="form-control" [(ngModel)]="etiquetaSeleccionada" [ngbTypeahead]="searchEtiqueta"
+        [resultFormatter]="resultFormatEtiqueta" [inputFormatter]="inputFormatEtiqueta"
+        (selectItem)="agregarEtiqueta($event)" name="etiquetaSeleccionada" placeholder="Buscar etiqueta" />
+      <div class="selected-tags">
+        <span *ngFor="let etiqueta of etiquetasSeleccionadas" class="tag">
+          {{ etiqueta.nombre }}
+          <button (click)="removerEtiqueta(etiqueta)" class="remove-tag">&times;</button>
+        </span>
+      </div>
+      <div class="button-group">
+        <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar Filtro</button>
+        <button (click)="limpiarFiltroEtiquetas()" class="limpiar-filtro">Limpiar Filtro</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<div class="tabs-container">
+  <!-- Botones de las pestañas -->
+  <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'disponibles' }"
+    (click)="seleccionarTab('disponibles')">Eventos Disponibles</button>
+  <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'participante' }"
+    (click)="seleccionarTab('participante')">Eventos en los que estas inscripto</button>
+</div>
+
+
+<div class="content-container">
+
+  <div *ngIf="tabSeleccionada === 'disponibles'" class="content-section">
+    <h2 class="section-title">Explora Eventos Disponibles</h2>
+    <div class="grid" (scroll)="onScroll()">
+      <div class="grid-item" *ngFor="let evento of eventosDisponiblesAMostrar" 
+           (click)="irADetallesDelEvento(evento.id)"
+           [ngStyle]="{'background-image': 'url(' + (evento.imagen || '../../assets/evento.webp') + ')'}">
+        
+        <div class="evento-card clickable" [ngClass]="{ 'colapsado': esContenidoLargo(evento) }">
+          <h3>{{ evento.nombre }}</h3>
+          
+          <p>{{ evento.descripcion }}</p>
+          <p>Participantes: {{ evento.participantes }}/{{evento.cantidadMaximaParticipantes}}</p>
+          <p>Ubicación: {{evento.ubicacion}}</p>
+
+          <p>{{ evento.fechaHora | date: 'MMM d, y, h:mm a' }}</p>
+          <div>
+          <p>Género: 
+            {{ evento.genero === 'femenino' ? 'Femenino' :
+            evento.genero === 'masculino' ? 'Masculino' :
+            evento.genero === 'sinGenero' ? 'Sin género' :
+            evento.genero === 'otro' ? 'Otro' : 'Desconocido' }}
+            
+            <!-- Contenedor del creador del evento -->
+            <div class="creador-container" *ngIf="mapaCreadorEventos.get(evento.id)">
+              <p class="creador-titulo">Creado por:&nbsp;</p>
+              <div class="creador-info">
+                <span class="creador-nombre">{{ mapaCreadorEventos.get(evento.id)?.nombreUsuario }}</span>
+                <img [src]="mapaCreadorEventos.get(evento.id)?.fotoPerfil || '../../assets/usuario.png'" 
+                alt="Foto de perfil" 
+                class="creador-foto">
+              </div>
+            </div>
+          </div>
+  
+          <!-- Etiquetas -->
+          <div class="etiquetas-container">
+            <h4 class="etiquetas-title">Etiquetas:</h4>
+            <span *ngFor="let etiqueta of evento.etiquetas" class="etiqueta">
+              {{ etiqueta.nombre }}
+            </span>
+          </div>
+        </div>
+      </div>
+  
+      <div *ngIf="eventosDisponiblesAMostrar.length == 0">
+        No hay eventos disponibles para mostrar con los filtros seleccionados
+      </div>
+    </div>
+  </div>
+  
+  <div *ngIf="tabSeleccionada === 'participante'" class="content-section">
+    <h2 class="section-title">Eventos en los que estas inscripto</h2>
+    <div class="grid" (scroll)="onScroll()">
+      <div class="grid-item" *ngFor="let evento of eventosParticipaUsuario" (click)="irADetallesDelEvento(evento.id)"
+        [ngStyle]="{'background-image': 'url(' + (evento.imagen || '../../assets/evento.webp') + ')'}">
+        <div class="evento-card clickable">
+          
+          <h3>{{ evento.nombre }}</h3>
+          
+          <!-- Contenedor del creador del evento -->
+          <p>{{ evento.descripcion }}</p>
+          <p>Participantes: {{ evento.participantes }}/{{evento.cantidadMaximaParticipantes}}</p>
+          <p>Ubicación: {{evento.ubicacion}}</p>
+          <p>{{ evento.fechaHora | date: 'MMM d, y, h:mm a' }}</p> <!-- Formato de fecha -->
+
+          <div>
+          <p>Género: 
+            {{ evento.genero === 'femenino' ? 'Femenino' :
+            evento.genero === 'masculino' ? 'Masculino' :
+            evento.genero === 'sinGenero' ? 'Sin género' :
+            evento.genero === 'otro' ? 'Otro' : 'Desconocido' }}
+
+          </p>          
+            <div class="creador-container" *ngIf="mapaCreadorEventos.get(evento.id)">
+              <p class="creador-titulo">Creado por:&nbsp;</p>
+              <div class="creador-info">
+                <span class="creador-nombre">{{ mapaCreadorEventos.get(evento.id)?.nombreUsuario }}</span>
+                <img [src]="mapaCreadorEventos.get(evento.id)?.fotoPerfil || '../../assets/usuario.png'" 
+                alt="Foto de perfil" 
+                class="creador-foto">
+              </div>
+            </div>
+          </div>
+
+          <div class="etiquetas-container">
+            <h4 class="etiquetas-title">Etiquetas:</h4>
+            <span *ngFor="let etiqueta of evento.etiquetas" class="etiqueta">
+              {{ etiqueta.nombre }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="eventosParticipaUsuario.length==0">
+        No hay eventos en los que participes que cumplan con los filtros seleccionados
+      </div>
+    </div>
+  </div>
+</div>
