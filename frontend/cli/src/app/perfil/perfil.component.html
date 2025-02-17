@@ -94,7 +94,7 @@
             <h3><i class="fas fa-dumbbell"></i> Eventos</h3>
             <!-- Campo de búsqueda -->
             <div class="search-container">
-                <input type="text" placeholder="Buscar evento por nombre" #searchInput
+                <input type="text" placeholder="Buscar eventos" #searchInput
                     (input)="buscarEventos(searchInput.value)" class="form-control search-input"
                     [(ngModel)]="searchText" />
                 <i class="fas fa-search search-icon"></i>
@@ -153,7 +153,7 @@
 
             <!-- Campo de búsqueda -->
             <div class="search-container">
-                <input type="text" placeholder="Buscar rutina por nombre" #searchInput
+                <input type="text" placeholder="Buscar rutinas" #searchInput
                     (input)="onSearchInput(searchInput.value)" class="form-control search-input"
                     [(ngModel)]="searchText" />
                 <i class="fas fa-search search-icon"></i>
@@ -212,7 +212,7 @@
             <!-- Search bar -->
 
             <div class="search-container">
-                <input type="text" placeholder="Buscar comunidad por nombre" #searchInput
+                <input type="text" placeholder="Buscar comunidades" #searchInput
                     (input)="onSearchInputComunidades(searchInput.value)" class="form-control search-input"
                     [(ngModel)]="searchText" />
                 <i class="fas fa-search search-icon"></i>
@@ -220,7 +220,7 @@
             <!-- Contenido de comunidades según el tab seleccionado -->
             <div class="comunidades-grid">
                 <div class="comunidad-item" *ngFor="let comunidad of historicoComunidades"
-                    (click)="irADetalleComunidad(comunidad.id ?? 0)">
+                    (click)="irADetalleComunidad(comunidad.id)">
 
                     
                   <!-- Imagen de la comunidad -->

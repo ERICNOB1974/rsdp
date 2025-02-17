@@ -57,6 +57,8 @@ export class ComunidadesComponent implements OnInit {
   etiquetaSeleccionada: Etiqueta | null = null;
   filtersVisible: boolean = false;
   filtersAnimating: boolean = false;
+  private searchTimeout: any; // Variable para almacenar el timeout
+
   mapaCreadorComunidades: Map<number, Usuario> = new Map();
 
   constructor(private comunidadService: ComunidadService,
@@ -151,15 +153,15 @@ export class ComunidadesComponent implements OnInit {
         usuarioId: this.idUsuarioAutenticado,
         min: this.minParticipantes || 0,
       };
-  
+
       if (this.maxParticipantes !== undefined && this.maxParticipantes !== null) {
         params.max = this.maxParticipantes;
       }
-  
+
       const dataPackage = await lastValueFrom(
         this.comunidadService.filtrarParticipantes(params)
       );
-  
+
       if (Array.isArray(dataPackage.data)) {
         return dataPackage.data;
       }
@@ -170,11 +172,32 @@ export class ComunidadesComponent implements OnInit {
     }
   }
 
+
   async aplicarFiltroNombre2(): Promise<Comunidad[]> {
     try {
-      const dataPackage = await lastValueFrom(
-        this.comunidadService.filtrarNombre(this.nombreEventoFiltro, this.tabSeleccionada, this.idUsuarioAutenticado)
-      );
+      let dataPackage;
+
+      if (this.tabSeleccionada === 'disponibles') {
+        dataPackage = await lastValueFrom(
+          this.comunidadService.busquedaComunidadesDisponiblesUsuarioGoogle(
+            this.nombreEventoFiltro,
+            0,
+            99999999
+          )
+        );
+      } else if (this.tabSeleccionada === 'miembro') {
+        dataPackage = await lastValueFrom(
+          this.comunidadService.busquedaComunidadesParticipaUsuarioGoogle(
+            this.idUsuarioAutenticado,
+            this.nombreEventoFiltro,
+            0,
+            99999999
+          )
+        );
+      } else {
+        throw new Error('Pestaña seleccionada inválida');
+      }
+
       return dataPackage.data as Comunidad[];
     } catch (error) {
       console.error('Error al filtrar comunidades por nombre:', error);
@@ -297,7 +320,6 @@ export class ComunidadesComponent implements OnInit {
     this.comunidadesDisponiblesAMostrar = [];
     this.comunidadesMiembroUsuarioAMostrar = []
     if (this.hayResultadosFiltrados) {
-
 
       let listasActivas = [lista1, lista2, lista3].filter(lista => lista.length > 0);
 
@@ -479,6 +501,15 @@ export class ComunidadesComponent implements OnInit {
     }
   }
 
+  onSearchInputComunidades(): void {
+    clearTimeout(this.searchTimeout); // Limpia cualquier timeout previo
+  
+    this.searchTimeout = setTimeout(() => {
+      this.filtroNombreActivo = true;
+      this.aplicarTodosLosFiltros(); // Emite el texto ingresado
+    }, 300); // Espera 300ms después del último input
+  }
+  
 
 async getCreadorComunidad(comunidades: Comunidad[]): Promise<void> {
   return new Promise((resolve) => {
