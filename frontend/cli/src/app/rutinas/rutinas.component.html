@@ -12,28 +12,25 @@
 
 <div *ngIf="filtersVisible || filtersAnimating"
   [ngClass]="{'fadeIn': filtersVisible, 'fadeOut': !filtersVisible && filtersAnimating}" class="filtros-container">
+
   <!-- Filtro por nombre -->
   <div class="filtro-container filtro-nombre">
     <label class="filtro-label">
-      <input type="checkbox" [(ngModel)]="filtroNombreActivo" (change)="aplicarTodosLosFiltros()">
       <button (click)="toggleFiltroNombre()" class="filtro-toggle">
-        Filtrar por nombre <i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
+        <i [class]="filtroNombreAbierto ? 'arrow up' : 'arrow down'"></i>
       </button>
     </label>
+
     <div *ngIf="filtroNombreAbierto" class="filtro-content">
-      <div class="input-group">
-        <div class="input-container">
-          <label for="nombreEvento">Nombre de la comunidad:</label>
-          <input type="text" id="nombreEvento" [(ngModel)]="nombreEventoFiltro">
-        </div>
-      </div>
-      <div class="button-group">
-        <button (click)="aplicarTodosLosFiltros()" class="aplicar-filtro">Aplicar Filtro</button>
-        <button (click)="limpiarFiltroNombre()" class="limpiar-filtro">Limpiar Filtro</button>
+      <div class="search-container">
+        <label for="nombreEvento">Buscar rutina:</label>
+        <input type="text" id="nombreEvento" class="form-control" [(ngModel)]="nombreEventoFiltro"
+          (input)="onSearchInputComunidades()">
+        <i class="fas fa-search search-icon"></i>
       </div>
     </div>
   </div>
-  
+
   <!-- Filtro por etiquetas -->
   <div class="filtro-container filtro-etiquetas">
     <label class="filtro-label">
@@ -62,15 +59,11 @@
 </div>
 
 <div class="tabs-container">
-  <button 
-    class="tab-button" 
-    [ngClass]="{ active: tabSeleccionada === 'disponibles' }" 
+  <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'disponibles' }"
     (click)="seleccionarTab('disponibles')">
     🌟 Rutinas Disponibles
   </button>
-  <button 
-    class="tab-button" 
-    [ngClass]="{ active: tabSeleccionada === 'realizaRutina' }" 
+  <button class="tab-button" [ngClass]="{ active: tabSeleccionada === 'realizaRutina' }"
     (click)="seleccionarTab('realizaRutina')">
     🏋️‍♂️ Tus Rutinas
   </button>
@@ -81,10 +74,7 @@
   <div *ngIf="tabSeleccionada === 'disponibles'" class="content-section">
     <h2 class="section-title">Explora Rutinas Disponibles</h2>
     <div class="grid" (scroll)="onScroll()">
-      <div 
-        class="grid-item" 
-        *ngFor="let rutina of rutinasDisponibles" 
-        (click)="irADetallesDeLaRutina(rutina.id)"
+      <div class="grid-item" *ngFor="let rutina of rutinasDisponibles" (click)="irADetallesDeLaRutina(rutina.id)"
         [style.backgroundImage]="'url(' + '../../assets/ejercicio2.png' + ')'">
         <div class="grid-overlay">
           <h3>{{ rutina.nombre }}</h3>
@@ -107,10 +97,7 @@
   <div *ngIf="tabSeleccionada === 'realizaRutina'" class="content-section">
     <h2 class="section-title">Tus Rutinas Activas</h2>
     <div class="grid" (scroll)="onScroll()">
-      <div 
-        class="grid-item" 
-        *ngFor="let rutina of rutinasRealizaUsuario" 
-        (click)="irADetallesDeLaRutina(rutina.id)"
+      <div class="grid-item" *ngFor="let rutina of rutinasRealizaUsuario" (click)="irADetallesDeLaRutina(rutina.id)"
         [style.backgroundImage]="'url(' + '../../assets/ejercicio2.png' + ')'">
         <div class="grid-overlay">
           <h3>{{ rutina.nombre }}</h3>

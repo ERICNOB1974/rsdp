@@ -48,7 +48,7 @@
             <option [value]="'femenino'">Femenino</option>
             <option [value]="'otro'">Otro</option>
           </select>
-        </div>        
+        </div>
 
         <h4 class="mt-4 mb-3">Configuración de Privacidad</h4>
 
@@ -82,14 +82,14 @@
           </select>
         </div>
 
-        <input 
-        type="checkbox" 
-        id="borrarNotificacionesEventosPasados" 
-        [(ngModel)]="usuario.borrarNotificacionesEventosPasados" 
-        [checked]="usuario.borrarNotificacionesEventosPasados"
-        (change)="usuario.borrarNotificacionesEventosPasados = !usuario.borrarNotificacionesEventosPasados; onFieldChange()"
-        class="form-check-input">
-      
+        <div>
+          <input type="checkbox" id="borrarNotificacionesEventosPasados"
+            [(ngModel)]="usuario.borrarNotificacionesEventosPasados"
+            [checked]="usuario.borrarNotificacionesEventosPasados"
+            (change)="usuario.borrarNotificacionesEventosPasados = !usuario.borrarNotificacionesEventosPasados; onFieldChange()"
+            class="form-check-input">
+          Borrar automaticamente las notificaciones de eventos pasados
+        </div>
 
         <div class="mb-3">
           <label for="correoActual" class="form-label">Correo electrónico actual</label>

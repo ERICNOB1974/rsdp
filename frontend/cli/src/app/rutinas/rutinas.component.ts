@@ -62,6 +62,8 @@ export class RutinasComponent implements OnInit {
   etiquetaSeleccionada: Etiqueta | null = null;
   filtersVisible: boolean = false;
   filtersAnimating: boolean = false;
+  private searchTimeout: any; // Variable para almacenar el timeout
+
 
   constructor(private rutinaService: RutinaService,
     private authService: AuthService,
@@ -82,9 +84,9 @@ export class RutinasComponent implements OnInit {
 
   toggleFilters() {
     if (this.filtersAnimating) return;
-  
+
     this.filtersAnimating = true;
-  
+
     if (this.filtersVisible) {
       this.filtersVisible = false;
       setTimeout(() => {
@@ -97,7 +99,7 @@ export class RutinasComponent implements OnInit {
       }, 500);
     }
   }
-  
+
   traerDias(rutinas: Rutina[]): void {
     for (let rutina of rutinas) {
       this.rutinaService.obtenerDiasEnRutina(rutina.id!).subscribe(
@@ -150,7 +152,7 @@ export class RutinasComponent implements OnInit {
   async aplicarFiltroEtiquetas2(): Promise<Rutina[]> {
     try {
       const etiquetasIds = this.etiquetasSeleccionadas.map(e => e.nombre);
-      const dataPackage = await lastValueFrom(this.rutinaService.filtrarEtiqueta(etiquetasIds,this.tabSeleccionada,this.idUsuarioAutenticado));
+      const dataPackage = await lastValueFrom(this.rutinaService.filtrarEtiqueta(etiquetasIds, this.tabSeleccionada, this.idUsuarioAutenticado));
       if (Array.isArray(dataPackage.data)) {
         return dataPackage.data;
       }
@@ -211,14 +213,47 @@ export class RutinasComponent implements OnInit {
     this.filtroNombreAbierto = !this.filtroNombreAbierto;
   }
 
+  /*   async aplicarFiltroNombre2(): Promise<Rutina[]> {
+      try {
+        const dataPackage = await lastValueFrom(
+          this.rutinaService.filtrarNombre(this.nombreEventoFiltro, this.tabSeleccionada,this.idUsuarioAutenticado)
+        );
+        return dataPackage.data as Rutina[];
+      } catch (error) {
+        console.error('Error al filtrar rutinas por nombre:', error);
+        return []; // Devuelve una lista vacía en caso de error
+      }
+    } */
+
+
   async aplicarFiltroNombre2(): Promise<Rutina[]> {
     try {
-      const dataPackage = await lastValueFrom(
-        this.rutinaService.filtrarNombre(this.nombreEventoFiltro, this.tabSeleccionada,this.idUsuarioAutenticado)
-      );
+      let dataPackage;
+
+      if (this.tabSeleccionada === 'disponibles') {
+        dataPackage = await lastValueFrom(
+          this.rutinaService.busquedaRutinasDisponiblesUsuarioGoogle(
+            this.nombreEventoFiltro,
+            0,
+            99999999
+          )
+        );
+      } else if (this.tabSeleccionada === 'miembro') {
+        dataPackage = await lastValueFrom(
+          this.rutinaService.busquedaRutinasRealizaUsuarioGoogle(
+            this.idUsuarioAutenticado,
+            this.nombreEventoFiltro,
+            0,
+            99999999
+          )
+        );
+      } else {
+        throw new Error('Pestaña seleccionada inválida');
+      }
+
       return dataPackage.data as Rutina[];
     } catch (error) {
-      console.error('Error al filtrar rutinas por nombre:', error);
+      console.error('Error al filtrar comunidades por nombre:', error);
       return []; // Devuelve una lista vacía en caso de error
     }
   }
@@ -236,7 +271,7 @@ export class RutinasComponent implements OnInit {
 
     // Restaurar todos los resultados
     this.currentIndexRutinasDisponibles = 0;
-    this.currentIndexRutinasMiembro=0;
+    this.currentIndexRutinasMiembro = 0;
   }
 
 
@@ -247,56 +282,56 @@ export class RutinasComponent implements OnInit {
     this.hayResultadosFiltrados = false; // Inicializar en false
 
     if (this.filtroNombreActivo && this.nombreEventoFiltro) {
-        lista1 = await this.aplicarFiltroNombre2();
-        this.hayResultadosFiltrados = true; // Entró en el if
-      }
+      lista1 = await this.aplicarFiltroNombre2();
+      this.hayResultadosFiltrados = true; // Entró en el if
+    }
 
     if (this.filtroEtiquetasActivo && this.etiquetasSeleccionadas.length > 0) {
       lista2 = await this.aplicarFiltroEtiquetas2();
       this.hayResultadosFiltrados = true; // Entró en el if
     }
-    this.rutinasDisponibles=[];
-    this.rutinasRealizaUsuario=[]
-    if(this.hayResultadosFiltrados){
-      
-      
+    this.rutinasDisponibles = [];
+    this.rutinasRealizaUsuario = []
+    if (this.hayResultadosFiltrados) {
+
+
       let listasActivas = [lista1, lista2].filter(lista => lista.length > 0);
 
       if (listasActivas.length > 0) {
         // Realizamos la intersección de las listas
         this.resultadosFiltrados = listasActivas.reduce((interseccion, listaActual) => {
-        return interseccion.filter(item => 
-          listaActual.some(actualItem => actualItem.id === item.id)
-        );
-      });
-      this.traerEtiquetas(this.resultadosFiltrados);
+          return interseccion.filter(item =>
+            listaActual.some(actualItem => actualItem.id === item.id)
+          );
+        });
+        this.traerEtiquetas(this.resultadosFiltrados);
 
+      } else {
+        this.resultadosFiltrados = [];
+      }
+      this.currentIndexFiltrados = 0;
+      this.noMasResultadosFiltrados = false;
+      //await this.actualizarInformacionAdicional();
+      this.cargarMasResultadosFiltrados(); // Cargar la primera página de resultados
     } else {
-      this.resultadosFiltrados = [];
-    }
-    this.currentIndexFiltrados = 0;
-    this.noMasResultadosFiltrados = false;
-    //await this.actualizarInformacionAdicional();
-    this.cargarMasResultadosFiltrados(); // Cargar la primera página de resultados
-  }else{
-    this.currentIndexRutinasDisponibles=0;
-    this.currentIndexRutinasMiembro=0;
-    if (this.tabSeleccionada === 'disponibles') {
-      this.cargarRutinasDisponibles();
-    } else if (this.tabSeleccionada === 'realizaRutina') {
-      this.cargarRutinasRealizaUsuario();
+      this.currentIndexRutinasDisponibles = 0;
+      this.currentIndexRutinasMiembro = 0;
+      if (this.tabSeleccionada === 'disponibles') {
+        this.cargarRutinasDisponibles();
+      } else if (this.tabSeleccionada === 'realizaRutina') {
+        this.cargarRutinasRealizaUsuario();
+      }
     }
   }
-}
   cargarMasResultadosFiltrados(): void {
     if (this.loadingFiltrados || this.noMasResultadosFiltrados) return;
-  
+
     this.loadingFiltrados = true;
     const inicio = this.currentIndexFiltrados * this.cantidadPorPagina;
     const fin = inicio + this.cantidadPorPagina;
-  
+
     const nuevosResultados = this.resultadosFiltrados.slice(inicio, fin);
-  
+
     if (nuevosResultados.length > 0) {
       this.traerDias(nuevosResultados); // Agregar datos adicionales como ubicación y miembros
       this.traerEtiquetas(nuevosResultados);
@@ -315,7 +350,7 @@ export class RutinasComponent implements OnInit {
     } else {
       this.noMasResultadosFiltrados = true;
     }
-  
+
     this.loadingFiltrados = false;
   }
 
@@ -405,7 +440,7 @@ export class RutinasComponent implements OnInit {
 
   onScroll(): void {
     const element = document.querySelector('.grid') as HTMLElement;
-    if (element.scrollTop + element.clientHeight >= element.scrollHeight-10) {
+    if (element.scrollTop + element.clientHeight >= element.scrollHeight - 10) {
       if (this.hayResultadosFiltrados) {
         this.cargarMasResultadosFiltrados();
       } else {
@@ -417,5 +452,13 @@ export class RutinasComponent implements OnInit {
       }
     }
   }
+  onSearchInputComunidades(): void {
+    clearTimeout(this.searchTimeout); // Limpia cualquier timeout previo
+    this.searchTimeout = setTimeout(() => {
+      this.filtroNombreActivo = true;
+      this.aplicarTodosLosFiltros(); // Emite el texto ingresado
+    }, 300); // Espera 300ms después del último input
+  }
+
 
 }
