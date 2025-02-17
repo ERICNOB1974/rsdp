@@ -449,3 +449,110 @@
     font-size: 20px; /* Reduce más el tamaño del título */
   }
 }
+
+
+.creador-container {
+  position: absolute;
+  top: 8vh;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.6); /* Fondo semitransparente */
+  padding: 5px 1px;
+  border-radius: 15px;
+  max-width: 200px; /* Ajuste para no extenderse demasiado */
+}
+
+.creador-foto {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
+}
+
+.creador-nombre {
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  white-space: nowrap; /* Evitar que el texto se desborde */
+}
+
+.creador-titulo {
+  font-size: 12px;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+
+.creador-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap; /* Evitar que los elementos se apilen en pantallas pequeñas */
+}
+
+/* Responsividad */
+@media screen and (max-width: 768px) {
+  .creador-container {
+    top: 2vh;
+    right: 5px;
+    padding: 3px 6px;
+    max-width: 180px;
+  }
+
+  .creador-foto {
+    width: 25px;
+    height: 25px;
+  }
+
+  .creador-nombre {
+    font-size: 12px;
+    white-space: normal; /* Permitir que el texto se ajuste a varias líneas si es necesario */
+  }
+
+  .creador-info {
+    gap: 5px; /* Reducir el espacio entre la foto y el nombre */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .creador-container {
+    top: 5vh;
+    right: 5px;
+    padding: 4px;
+    max-width: 160px;
+  }
+
+  .creador-foto {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+  }
+
+  .creador-nombre {
+    font-size: 10px;
+  }
+
+  .creador-titulo {
+    font-size: 10px;
+  }
+
+  .creador-info {
+    gap: 4px; /* Aumentar el gap entre los elementos */
+    flex-wrap: wrap; /* Permitir que los elementos se acomoden en varias líneas en pantallas muy pequeñas */
+  }
+}
+
+.comunidad-card.colapsado {
+  font-size: 0.85em; /* Reduce la fuente en modo colapsado */
+  line-height: 1.2; /* Ajusta el espaciado */
+}
+
+.comunidad-card h3 {
+  font-size: 1.2em;
+}
+
+.comunidad-card.colapsado h3 {
+  font-size: 1em; /* Reduce solo el título si está colapsado */
+}
