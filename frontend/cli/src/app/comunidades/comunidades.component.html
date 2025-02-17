@@ -108,15 +108,6 @@
           <h3>{{ comunidad.nombre }}
             <i *ngIf="comunidad.esPrivada" class="fa fa-lock" aria-hidden="true"></i>
           </h3>
-          <p>{{ comunidad.descripcion }}</p>
-          <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
-          <p>Ubicación: {{comunidad.ubicacion}}</p>
-          <p>Género: 
-            {{ comunidad.genero === 'femenino' ? 'Femenino' :
-               comunidad.genero === 'masculino' ? 'Masculino' :
-               comunidad.genero === 'sinGenero' ? 'Sin género' :
-               comunidad.genero === 'otro' ? 'Otro' : 'Desconocido' }}
-          </p>  
           <div class="creador-container" *ngIf="mapaCreadorComunidades.get(comunidad.id)">
             <p class="creador-titulo">Creado por:</p>
             <div class="creador-info">
@@ -126,6 +117,15 @@
               class="creador-foto">
             </div>
           </div>
+          <p>{{ comunidad.descripcion }}</p>
+          <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
+          <p>Ubicación: {{comunidad.ubicacion}}</p>
+          <p>Género: 
+            {{ comunidad.genero === 'femenino' ? 'Femenino' :
+               comunidad.genero === 'masculino' ? 'Masculino' :
+               comunidad.genero === 'sinGenero' ? 'Sin género' :
+               comunidad.genero === 'otro' ? 'Otro' : 'Desconocido' }}
+          </p>  
           <p>
             Moderación:
             <i class="fa"
@@ -157,15 +157,6 @@
           <h3>{{ comunidad.nombre }}
             <i *ngIf="comunidad.esPrivada" class="fa fa-lock" aria-hidden="true"></i>
           </h3>
-          <p>{{ comunidad.descripcion }}</p>
-          <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
-          <p>Ubicación: {{comunidad.ubicacion}}</p>
-          <p>Género: 
-            {{ comunidad.genero === 'femenino' ? 'Femenino' :
-               comunidad.genero === 'masculino' ? 'Masculino' :
-               comunidad.genero === 'sinGenero' ? 'Sin género' :
-               comunidad.genero === 'otro' ? 'Otro' : 'Desconocido' }}
-          </p>       
           <div class="creador-container" *ngIf="mapaCreadorComunidades.get(comunidad.id)">
             <p class="creador-titulo">Creado por:</p>
             <div class="creador-info">
@@ -175,6 +166,15 @@
               class="creador-foto">
             </div>
           </div>
+          <p>{{ comunidad.descripcion }}</p>
+          <p>Miembros: {{ comunidad.miembros }}/{{comunidad.cantidadMaximaMiembros}}</p>
+          <p>Ubicación: {{comunidad.ubicacion}}</p>
+          <p>Género: 
+            {{ comunidad.genero === 'femenino' ? 'Femenino' :
+               comunidad.genero === 'masculino' ? 'Masculino' :
+               comunidad.genero === 'sinGenero' ? 'Sin género' :
+               comunidad.genero === 'otro' ? 'Otro' : 'Desconocido' }}
+          </p>       
           <p>
             Moderación:
             <i class="fa"
