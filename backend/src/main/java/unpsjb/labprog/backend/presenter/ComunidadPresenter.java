@@ -101,8 +101,6 @@ public class ComunidadPresenter {
         }
     }
 
-
-
     @PostMapping("/gestionarSolicitudIngreso/{idSuperUsuario}/{idMiembro}/{idComunidad}")
     public ResponseEntity<Object> gestionarSolicitudIngreso(@PathVariable Long idSuperUsuario,
             @PathVariable Long idMiembro, @PathVariable Long idComunidad, @RequestParam boolean aceptada) {
@@ -135,46 +133,42 @@ public class ComunidadPresenter {
         }
     }
 
-
- 
-     @GetMapping("/visualizarSolicitudes/{idSuperUsuario}/{idComunidad}")
-        public ResponseEntity<Object> visualizarSolicitudes(
+    @GetMapping("/visualizarSolicitudes/{idSuperUsuario}/{idComunidad}")
+    public ResponseEntity<Object> visualizarSolicitudes(
             @PathVariable Long idSuperUsuario,
             @PathVariable Long idComunidad,
             @RequestParam(required = false) String term,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-        ) {
-               try {
-            return Response.ok(usuarioComunidadService.visualizarSolicitudes(idSuperUsuario, idComunidad,term, page, size));
-                    } catch (Exception e) {
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            return Response
+                    .ok(usuarioComunidadService.visualizarSolicitudes(idSuperUsuario, idComunidad, term, page, size));
+        } catch (Exception e) {
             return Response.error("", "Error al visualizar las solicitudes de la comunidad: " + e.getMessage() + e);
-                    }            
         }
+    }
 
-             @GetMapping("/obtenerExpulsadosActivos/{idSuperUsuario}/{idComunidad}")
-        public ResponseEntity<Object> obtenerExpulsadosActivos(
+    @GetMapping("/obtenerExpulsadosActivos/{idSuperUsuario}/{idComunidad}")
+    public ResponseEntity<Object> obtenerExpulsadosActivos(
             @PathVariable Long idSuperUsuario,
             @PathVariable Long idComunidad,
             @RequestParam(required = false) String term,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
-        ) {
-               try {
-            return Response.ok(usuarioComunidadService.obtenerExpulsadosActivos(idSuperUsuario, idComunidad,term, page, size));
-                    } catch (Exception e) {
+            @RequestParam(defaultValue = "10") int size) {
+        try {
+            return Response.ok(
+                    usuarioComunidadService.obtenerExpulsadosActivos(idSuperUsuario, idComunidad, term, page, size));
+        } catch (Exception e) {
             return Response.error("", "Error al visualizar los expulsados de la comunidad: " + e.getMessage() + e);
-                    }            
         }
-
-
-
+    }
 
     @PostMapping("/etiquetar/{idEtiqueta}")
     public ResponseEntity<Object> etiquetarComunidad(@RequestBody Comunidad comunidad, @PathVariable Long idEtiqueta) {
         comunidadService.etiquetarComunidad(comunidad, idEtiqueta);
         return Response.ok("ok");
     }
+
     @PostMapping("/desetiquetar/{idEtiqueta}")
     public ResponseEntity<Object> desetiquetarComunidad(@RequestBody Long comunidad, @PathVariable Long idEtiqueta) {
         comunidadService.desetiquetarComunidad(comunidad, idEtiqueta);
@@ -217,7 +211,7 @@ public class ComunidadPresenter {
         return Response.ok(comunidadService.miembroUsuario(idUsuario, nombreComunidad, page, size));
     }
 
-        @RequestMapping(path = "/creadasFiltradas/{idUsuario}", method = RequestMethod.GET)
+    @RequestMapping(path = "/creadasFiltradas/{idUsuario}", method = RequestMethod.GET)
     public ResponseEntity<Object> creadasFiltradas(
             @PathVariable Long idUsuario,
             @RequestParam(defaultValue = "0") int page,
@@ -233,8 +227,9 @@ public class ComunidadPresenter {
         return Response.ok(sugerenciasDeComunidadesBasadasEnAmigos);
     }
 
-     @GetMapping("/sugerenciasDeComunidadesBasadasEnAmigosSinEtiquetas2/{nombreUsuario}")
-    public ResponseEntity<Object> sugerenciasDeComunidadesBasadasEnAmigosSinEtiquetas2(@PathVariable String nombreUsuario) {
+    @GetMapping("/sugerenciasDeComunidadesBasadasEnAmigosSinEtiquetas2/{nombreUsuario}")
+    public ResponseEntity<Object> sugerenciasDeComunidadesBasadasEnAmigosSinEtiquetas2(
+            @PathVariable String nombreUsuario) {
         List<ScoreComunidad> sugerenciasDeComunidadesBasadasEnAmigosSinEtiquetas = comunidadService
                 .obtenerSugerenciasDeComunidadesBasadasEnAmigosSinEtiquetas2(nombreUsuario);
         return Response.ok(sugerenciasDeComunidadesBasadasEnAmigosSinEtiquetas);
@@ -302,7 +297,7 @@ public class ComunidadPresenter {
             @RequestParam(name = "tipo", required = false) String tipo,
             @RequestParam(name = "usuarioId", required = false) Long usuarioId) {
         return Response.ok(comunidadService.comunidadesEtiquetas(etiquetas, tipo, usuarioId));
-    }    
+    }
 
     @GetMapping("/filtrar/nombre")
     public ResponseEntity<Object> comunidadesPorNombre(
@@ -318,11 +313,11 @@ public class ComunidadPresenter {
             @RequestParam(required = false) Long usuarioId,
             @RequestParam int min,
             @RequestParam(required = false) Integer max) {
-    
+
         if (max == null) {
             max = Integer.MAX_VALUE; // Si no se pasa max, usamos el valor máximo posible
         }
-    
+
         return Response.ok(comunidadService.comunidadesParticipantes(tipo, usuarioId, min, max));
     }
 
@@ -348,8 +343,7 @@ public class ComunidadPresenter {
         return Response.ok(comunidades);
     }
 
-
-@DeleteMapping("/eliminarSolicitudIngreso/{idUsuario}/{idComunidad}")
+    @DeleteMapping("/eliminarSolicitudIngreso/{idUsuario}/{idComunidad}")
     public ResponseEntity<Object> eliminarSolicitudIngreso(@PathVariable Long idUsuario,
             @PathVariable Long idComunidad) {
         try {
@@ -360,25 +354,25 @@ public class ComunidadPresenter {
         }
     }
 
-@PutMapping("/eliminarParticipante/{idComunidad}/{idUsuario}")
-public ResponseEntity<Object> eliminarParticipante(@PathVariable Long idComunidad, 
-                                                   @PathVariable Long idUsuario,
-                                                   @RequestParam String motivo,
-                                                   @RequestParam String tipo,
-                                                   @RequestParam String fechaHoraExpulsion) {
-    comunidadService.eliminarUsuario(motivo, tipo, fechaHoraExpulsion, idComunidad, idUsuario);
-    return Response.ok(null, "Participante eliminado con exito.");
-}
+    @PutMapping("/eliminarParticipante/{idComunidad}/{idUsuario}")
+    public ResponseEntity<Object> eliminarParticipante(@PathVariable Long idComunidad,
+            @PathVariable Long idUsuario,
+            @RequestParam String motivo,
+            @RequestParam String tipo,
+            @RequestParam String fechaHoraExpulsion) {
+        comunidadService.eliminarUsuario(motivo, tipo, fechaHoraExpulsion, idComunidad, idUsuario);
+        return Response.ok(null, "Participante eliminado con exito.");
+    }
 
-@PutMapping("/editarExpulsion/{idComunidad}/{idUsuario}")
-public ResponseEntity<Object> editarExpulsion(@PathVariable Long idComunidad, 
-                                              @PathVariable Long idUsuario,
-                                              @RequestParam String motivo,
-                                              @RequestParam String tipo,
-                                              @RequestParam String fechaHoraExpulsion) {
-    comunidadService.editarExpulsion(motivo, tipo, fechaHoraExpulsion, idComunidad, idUsuario);
-    return Response.ok(null, "Expulsión editada con éxito");
-}
+    @PutMapping("/editarExpulsion/{idComunidad}/{idUsuario}")
+    public ResponseEntity<Object> editarExpulsion(@PathVariable Long idComunidad,
+            @PathVariable Long idUsuario,
+            @RequestParam String motivo,
+            @RequestParam String tipo,
+            @RequestParam String fechaHoraExpulsion) {
+        comunidadService.editarExpulsion(motivo, tipo, fechaHoraExpulsion, idComunidad, idUsuario);
+        return Response.ok(null, "Expulsión editada con éxito");
+    }
 
     @PostMapping("/actualizarUbicaciones")
     public ResponseEntity<Object> actualizarUbicaciones() {
@@ -386,13 +380,13 @@ public ResponseEntity<Object> editarExpulsion(@PathVariable Long idComunidad,
         return Response.ok("Ubicaciones actualizadas correctamente.");
     }
 
- @DeleteMapping("/eliminarBan/{idComunidad}/{idUsuario}")
-    public ResponseEntity<Object> eliminarBan(@PathVariable Long idComunidad,@PathVariable Long idUsuario) {
-        comunidadService.eliminarBan(idComunidad,idUsuario);
+    @DeleteMapping("/eliminarBan/{idComunidad}/{idUsuario}")
+    public ResponseEntity<Object> eliminarBan(@PathVariable Long idComunidad, @PathVariable Long idUsuario) {
+        comunidadService.eliminarBan(idComunidad, idUsuario);
         return Response.ok("Expulsion eliminada correctamente");
     }
 
-  @PostMapping("/otorgarRolModerador/{idCreador}/{idMiembro}/{idComunidad}")
+    @PostMapping("/otorgarRolModerador/{idCreador}/{idMiembro}/{idComunidad}")
     public ResponseEntity<Object> otorgarRolModerador(@PathVariable Long idCreador, @PathVariable Long idMiembro,
             @PathVariable Long idComunidad) {
         try {
@@ -414,14 +408,52 @@ public ResponseEntity<Object> editarExpulsion(@PathVariable Long idComunidad,
         }
     }
 
-
-
     @GetMapping("/estaExpulsado/{idUsuario}/{idComunidad}")
     public ResponseEntity<Object> comunidadesFuturosPertenecientesAUnUsuario(@PathVariable Long idUsuario,
             @PathVariable Long idComunidad) {
 
-        ExpulsionDTO expulsion= comunidadService.expulsionUsuario(idUsuario, idComunidad);
+        ExpulsionDTO expulsion = comunidadService.expulsionUsuario(idUsuario, idComunidad);
 
         return Response.ok(expulsion);
+    }
+
+    @RequestMapping(path = "/busquedaComunidadesCreadasPorUsuarioGoogle/{idUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> busquedaComunidadesCreadasPorUsuarioGoogle(
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String termino) {
+        return Response
+                .ok(comunidadService.busquedaComunidadesCreadasPorUsuarioGoogle(idUsuario, termino, page, size));
+    }
+
+    @RequestMapping(path = "/busquedaComunidadesParticipaUsuarioGoogle/{idUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> busquedaComunidadesParticipaUsuarioGoogle(
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String termino) {
+        return Response
+                .ok(comunidadService.busquedaComunidadesParticipaUsuarioGoogle(idUsuario, termino, page, size));
+    }
+
+    @RequestMapping(path = "/busquedaComunidadesDisponiblesUsuarioGoogle/{idUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> busquedaComunidadesDisponiblesUsuarioGoogle(
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String termino) {
+        return Response
+                .ok(comunidadService.busquedaComunidadesDisponiblesUsuarioGoogle(idUsuario, termino, page, size));
+    }
+
+    @RequestMapping(path = "/busquedaComunidadesFavoritasUsuarioGoogle/{idUsuario}", method = RequestMethod.GET)
+    public ResponseEntity<Object> busquedaComunidadesFavoritasUsuarioGoogle(
+            @PathVariable Long idUsuario,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false, defaultValue = "") String termino) {
+        return Response
+                .ok(comunidadService.busquedaComunidadesFavoritasUsuarioGoogle(idUsuario, termino, page, size));
     }
 }
