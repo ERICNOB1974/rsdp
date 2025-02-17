@@ -59,6 +59,9 @@ export class PerfilComponent implements OnInit {
 
   searchSubjectRutinas: Subject<string> = new Subject<string>();
   searchSubjectComunidades: Subject<string> = new Subject<string>();
+  mapaCreadorEventos: Map<number, Usuario> = new Map();
+  mapaCreadorComunidades: Map<number, Usuario> = new Map();
+  mapaCreadorRutinas: Map<number, Usuario> = new Map();
 
   constructor(
     private route: ActivatedRoute,
@@ -86,7 +89,7 @@ export class PerfilComponent implements OnInit {
     if (idCifrado) {
       this.idUsuario = this.idEncryptorService.decodeId(idCifrado);
     }
-    
+
     this.cargarPerfil();  // Cargar la información del perfil
     this.searchSubjectRutinas
       .pipe(debounceTime(500)) // Espera 1 segundo
@@ -459,6 +462,7 @@ export class PerfilComponent implements OnInit {
         if (Array.isArray(responseData) && responseData.length > 0) {
           this.traerDias(responseData);
           this.traerEtiquetasRutina(responseData);
+          this.getCreadorRutina(responseData);
           this.historicoRutinas = [...this.historicoRutinas, ...responseData];  // Agregamos las nuevas rutinas
           this.currentIndexRutinas++;  // Incrementamos el índice para la siguiente carga
           if (responseData.length < this.cantidadPorPagina) {
@@ -494,6 +498,7 @@ export class PerfilComponent implements OnInit {
       if (Array.isArray(responseData) && responseData.length > 0) {
         this.traerDias(responseData);
         this.traerEtiquetasRutina(responseData);
+        this.getCreadorRutina(responseData);
         this.historicoRutinas = [...this.historicoRutinas, ...responseData];  // Agregamos las nuevas rutinas
         this.currentIndexRutinas+=this.cantidadPorPagina;  // Incrementamos el índice para la siguiente carga
         if (responseData.length < this.cantidadPorPagina) {
@@ -576,6 +581,7 @@ export class PerfilComponent implements OnInit {
         if (Array.isArray(responseData) && responseData.length > 0) {
           this.traerParticipantes(responseData);
           this.traerEtiquetasEvento(responseData);
+          this.getCreadorEvento(responseData);
           responseData.forEach((evento) => {
             evento.fechaDeCreacion = new Date(evento.fechaDeCreacion);
             const fechaUTC = new Date(evento.fechaHora);
@@ -617,6 +623,7 @@ export class PerfilComponent implements OnInit {
           });
           this.traerParticipantes(responseData);
           this.traerEtiquetasEvento(responseData);
+          this.getCreadorEvento(responseData);
           this.historicoEventos = [...this.historicoEventos, ...responseData];  // Agregamos las nuevas rutinas
           this.currentIndexEventos+=this.cantidadPorPagina;  // Incrementamos el índice para la siguiente carga
           if (responseData.length < this.cantidadPorPagina) {
@@ -692,15 +699,8 @@ export class PerfilComponent implements OnInit {
         const responseData = dataPackage.data;
         if (Array.isArray(responseData) && responseData.length > 0) {
           this.traerMiembros(responseData); // Llamar a traerParticipantes después de cargar los eventos
-
-          // for (const comunidad of responseData) {
-          //   if (comunidad.latitud && comunidad.longitud) {
-          //     comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
-          //   } else {
-          //     comunidad.ubicacion = 'Ubicación desconocida';
-          //   }
-          // }
           this.traerEtiquetasComunidades(responseData);
+          this.getCreadorComunidad(responseData);
           this.historicoComunidades = [...this.historicoComunidades, ...responseData];  // Agregamos las nuevas rutinas
           this.currentIndexComunidades++;  // Incrementamos el índice para la siguiente carga
           if (responseData.length < this.cantidadPorPagina) {
@@ -737,15 +737,8 @@ export class PerfilComponent implements OnInit {
         if (Array.isArray(responseData) && responseData.length > 0) {
 
           this.traerMiembros(responseData); // Llamar a traerParticipantes después de cargar los eventos
-
-          // for (const comunidad of responseData) {
-          //   if (comunidad.latitud && comunidad.longitud) {
-          //     comunidad.ubicacion = await this.comunidadService.obtenerUbicacion(comunidad.latitud, comunidad.longitud);
-          //   } else {
-          //     comunidad.ubicacion = 'Ubicación desconocida';
-          //   }
-          // }
           this.traerEtiquetasComunidades(responseData);
+          this.getCreadorComunidad(responseData);
           this.historicoComunidades = [...this.historicoComunidades, ...responseData];  // Agregamos las nuevas rutinas
           this.currentIndexComunidades+=this.cantidadPorPagina;  // Incrementamos el índice para la siguiente carga
           if (responseData.length < this.cantidadPorPagina) {
@@ -896,4 +889,44 @@ export class PerfilComponent implements OnInit {
       );
     }
   }
+  async getCreadorComunidad(comunidades: Comunidad[]): Promise<void> {
+    return new Promise((resolve) => {
+      for (let comunidad of comunidades) {
+        this.usuarioService.usuarioCreadorComunidad(comunidad.id).subscribe(dataPackage => {
+          const creador = dataPackage.data as Usuario;
+          this.mapaCreadorComunidades.set(comunidad.id, creador); // Guardar en el mapa
+          resolve();
+        });
+      }
+    });
+  }
+
+  async getCreadorEvento(eventos: Evento[]): Promise<void> {
+    return new Promise((resolve) => {
+      for (let evento of eventos) {
+        this.usuarioService.usuarioCreadorEvento(evento.id).subscribe(dataPackage => {
+          const creador = dataPackage.data as Usuario;
+          this.mapaCreadorEventos.set(evento.id, creador); // Guardar en el mapa
+          resolve();
+        });
+      }
+    });
+  }
+
+  async getCreadorRutina(rutinas: Rutina[]): Promise<void> {
+    return new Promise((resolve) => {
+      for (let rutina of rutinas) {
+        if (rutina.id !== undefined) { // Validamos que id no sea undefined
+          this.usuarioService.usuarioCreadorRutina(rutina.id).subscribe(dataPackage => {
+            const creador = dataPackage.data as Usuario;
+            this.mapaCreadorRutinas.set(rutina.id!, creador); // Se usa `!` porque ya validamos que no es undefined
+            resolve();
+          });
+        }
+      }
+    });
+  }
+
 }
+
+

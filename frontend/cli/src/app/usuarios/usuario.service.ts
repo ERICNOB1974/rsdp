@@ -161,6 +161,10 @@ export class UsuarioService {
     return this.http.get<DataPackage>(` ${this.usuariosUrl}/creadorComunidad/${idComunidad}`);
   }
 
+  usuarioCreadorRutina(idRutina: number): Observable<DataPackage> {
+    return this.http.get<DataPackage>(` ${this.usuariosUrl}/creadorRutina/${idRutina}`);
+  }
+
   buscar(term: string, page: number, size: number): Observable<DataPackage> {
     const url = `${this.usuariosUrl}/buscar/${this.authService.getNombreUsuario()}?page=${page}&size=${size}` +
       (term ? `&term=${term}` : '');  // Agregar solo si no está vacío

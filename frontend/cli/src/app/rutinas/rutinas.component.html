@@ -79,7 +79,18 @@
         <div class="grid-overlay">
           <h3>{{ rutina.nombre }}</h3>
           <p>{{ rutina.descripcion }}</p>
-          <p><strong>Días:</strong> {{ rutina.dias }}</p>
+          <p>Días: {{ rutina.dias }}</p>
+
+          <!-- Contenedor del creador de la rutina -->
+          <div class="creador-container" *ngIf="rutina.id !== undefined && mapaCreadorRutinas.get(rutina.id)">
+            <p class="creador-titulo">Creado por:</p>
+            <div class="creador-info">
+              <span class="creador-nombre">{{ mapaCreadorRutinas.get(rutina.id)?.nombreUsuario }}</span>
+              <img [src]="mapaCreadorRutinas.get(rutina.id)?.fotoPerfil || '../../assets/usuario.png'"
+                alt="Foto de perfil" class="creador-foto">
+            </div>
+          </div>
+
           <div class="tags">
             <span *ngFor="let etiqueta of rutina.etiquetas" class="tag">
               #{{ etiqueta.nombre }}
@@ -87,6 +98,7 @@
           </div>
         </div>
       </div>
+
       <div *ngIf="rutinasDisponibles.length==0">
         No hay rutinas disponibles para mostrar con los filtros seleccionados
       </div>
@@ -102,7 +114,18 @@
         <div class="grid-overlay">
           <h3>{{ rutina.nombre }}</h3>
           <p>{{ rutina.descripcion }}</p>
-          <p><strong>Días:</strong> {{ rutina.dias }}</p>
+          <p>Días: {{ rutina.dias }}</p>
+
+          <!-- Contenedor del creador de la rutina -->
+          <div class="creador-container" *ngIf="rutina.id !== undefined && mapaCreadorRutinas.get(rutina.id)">
+            <p class="creador-titulo">Creado por:</p>
+            <div class="creador-info">
+              <span class="creador-nombre">{{ mapaCreadorRutinas.get(rutina.id)?.nombreUsuario }}</span>
+              <img [src]="mapaCreadorRutinas.get(rutina.id)?.fotoPerfil || '../../assets/usuario.png'"
+                alt="Foto de perfil" class="creador-foto">
+            </div>
+          </div>
+
           <div class="tags">
             <span *ngFor="let etiqueta of rutina.etiquetas" class="tag">
               #{{ etiqueta.nombre }}
@@ -110,6 +133,7 @@
           </div>
         </div>
       </div>
+
       <div *ngIf="rutinasRealizaUsuario.length==0">
         No hay rutinas que hayas realizado o realices que cumplan con los filtros seleccionados
       </div>

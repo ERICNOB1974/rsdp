@@ -11,6 +11,8 @@ import { catchError, debounceTime, distinctUntilChanged, filter, lastValueFrom, 
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from '../autenticacion/auth.service';
 import { IdEncryptorService } from '../idEcnryptorService';
+import { UsuarioService } from '../usuarios/usuario.service';
+import { Usuario } from '../usuarios/usuario';
 
 @Component({
   selector: 'app-eventos',
@@ -68,13 +70,15 @@ export class EventosComponent implements OnInit {
   filtersAnimating: boolean = false;
   private searchTimeout: any; // Variable para almacenar el timeout
 
+  mapaCreadorEventos: Map<number, Usuario> = new Map();
 
   constructor(private eventoService: EventoService,
     private router: Router,
     private authService: AuthService,  // Inyecta el AuthService
     private cdr: ChangeDetectorRef,
     private etiquetaService: EtiquetaService,
-    private idEncryptorService: IdEncryptorService
+    private idEncryptorService: IdEncryptorService,
+    private usuarioService: UsuarioService
 
   ) { }
 
@@ -394,10 +398,11 @@ export class EventosComponent implements OnInit {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerParticipantes(resultados); // Llamar a traerParticipantes después de cargar los eventos
             this.traerEtiquetas(resultados);
-            resultados.forEach((evento) => {
+            resultados.forEach(async (evento) => {
               evento.fechaDeCreacion = new Date(evento.fechaDeCreacion);
               const fechaUTC = new Date(evento.fechaHora);
               evento.fechaHora = new Date(fechaUTC.getTime() + 3 * 60 * 60 * 1000);
+              await this.getCreadorEvento(evento);
             });
             this.eventosDisponiblesAMostrar = [
               ...this.eventosDisponiblesAMostrar,
@@ -430,10 +435,12 @@ export class EventosComponent implements OnInit {
           if (resultados && resultados.length > 0) {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerParticipantes(resultados); // Llamar a traerParticipantes después de cargar los eventos
-            resultados.forEach((evento) => {
+            resultados.forEach(async (evento) => {
               evento.fechaDeCreacion = new Date(evento.fechaDeCreacion);
               const fechaUTC = new Date(evento.fechaHora);
               evento.fechaHora = new Date(fechaUTC.getTime() + 3 * 60 * 60 * 1000);
+              await this.getCreadorEvento(evento);
+
             });
             this.traerEtiquetas(resultados);
             this.eventosParticipaUsuario = [
@@ -464,10 +471,11 @@ export class EventosComponent implements OnInit {
     const nuevosResultados = this.resultadosFiltrados.slice(inicio, fin);
 
     if (nuevosResultados.length > 0) {
-      nuevosResultados.forEach((evento) => {
+      nuevosResultados.forEach(async (evento) => {
         evento.fechaDeCreacion = new Date(evento.fechaDeCreacion);
         const fechaUTC = new Date(evento.fechaHora);
         evento.fechaHora = new Date(fechaUTC.getTime() + 3 * 60 * 60 * 1000);
+        await this.getCreadorEvento(evento);
       });
       this.traerParticipantes(nuevosResultados); // Agregar datos adicionales como ubicación y miembros
       if (this.tabSeleccionada === 'disponibles') {
@@ -605,5 +613,15 @@ export class EventosComponent implements OnInit {
     }, 300); // Espera 300ms después del último input
   }
   
+  async getCreadorEvento(evento: Evento): Promise<void> {
+    return new Promise((resolve) => {
+      this.usuarioService.usuarioCreadorEvento(evento.id).subscribe(dataPackage => {
+        const creador = dataPackage.data as Usuario;
+        this.mapaCreadorEventos.set(evento.id, creador); // Guardar en el mapa
+        resolve();
+      });
+    });
+  }
+
 }
 

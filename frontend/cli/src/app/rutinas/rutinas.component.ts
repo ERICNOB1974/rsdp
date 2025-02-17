@@ -10,6 +10,8 @@ import { catchError, debounceTime, distinctUntilChanged, filter, lastValueFrom, 
 import { EtiquetaService } from '../etiqueta/etiqueta.service';
 import { NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { IdEncryptorService } from '../idEcnryptorService';
+import { Usuario } from '../usuarios/usuario';
+import { UsuarioService } from '../usuarios/usuario.service';
 
 @Component({
   selector: 'app-rutinas',
@@ -64,14 +66,15 @@ export class RutinasComponent implements OnInit {
   filtersAnimating: boolean = false;
   private searchTimeout: any; // Variable para almacenar el timeout
 
+  mapaCreadorRutinas: Map<number, Usuario> = new Map();
 
   constructor(private rutinaService: RutinaService,
     private authService: AuthService,
     private etiquetaService: EtiquetaService,
     private router: Router,
     private cdr: ChangeDetectorRef,
-    private idEncryptorService: IdEncryptorService
-
+    private idEncryptorService: IdEncryptorService,
+    private usuarioService: UsuarioService
   ) { }
 
   ngOnInit(): void {
@@ -384,7 +387,7 @@ export class RutinasComponent implements OnInit {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerDias(resultados); // Llamar a traerDias para las rutinas del usuario
             this.traerEtiquetas(resultados); // Llamar a traerEtiquetas después de cargar las rutinas
-
+            this.getCreadorRutina(resultados);
             this.rutinasDisponibles = [...this.rutinasDisponibles, ...resultados,];
             this.currentIndexRutinasDisponibles++; // Aumentar el índice para la siguiente carga
 
@@ -415,7 +418,7 @@ export class RutinasComponent implements OnInit {
             // Agregar las comunidades obtenidas a la lista que se muestra
             this.traerDias(resultados); // Llamar a traerDias para las rutinas del usuario
             this.traerEtiquetas(resultados); // Llamar a traerEtiquetas después de cargar las rutinas
-
+            this.getCreadorRutina(resultados);
 
             this.rutinasRealizaUsuario = [
               ...this.rutinasRealizaUsuario,
@@ -460,5 +463,20 @@ export class RutinasComponent implements OnInit {
     }, 300); // Espera 300ms después del último input
   }
 
+
+  async getCreadorRutina(rutinas: Rutina[]): Promise<void> {
+    return new Promise((resolve) => {
+      for (let rutina of rutinas) {
+        if (rutina.id !== undefined) { // Validamos que id no sea undefined
+          this.usuarioService.usuarioCreadorRutina(rutina.id).subscribe(dataPackage => {
+            const creador = dataPackage.data as Usuario;
+            this.mapaCreadorRutinas.set(rutina.id!, creador); // Se usa `!` porque ya validamos que no es undefined
+            resolve();
+          });
+        }
+      }
+    });
+  }
+  
 
 }

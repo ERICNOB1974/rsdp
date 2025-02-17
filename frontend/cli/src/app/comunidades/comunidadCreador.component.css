@@ -270,11 +270,14 @@ h2 {
   margin-bottom: 15px;
 }
 
-/* Botones 
-*/
-button {
+/* Botones */
+
+.btn-light{
+  background-color: #007bff;
+}
+.btn {
+
   padding: 10px 20px;
-  background-color: #4a90e2;
   border: none;
   border-radius: 5px;
   color: #fff;
@@ -283,9 +286,7 @@ button {
   transition: background-color 0.3s ease;
 }
 
-button:hover {
-  background-color: #357ABD;
-}
+
 
 /* Lista de miembros */
 .members-list {
@@ -438,11 +439,6 @@ body {
 .solicitudes-list li button {
   font-size: 0.8rem;
   padding: 5px 10px;
-  background-color: #e57373;
-}
-
-.solicitudes-list li button:hover {
-  background-color: #d32f2f;
 }
 
 
