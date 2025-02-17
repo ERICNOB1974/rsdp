@@ -192,9 +192,7 @@
       padding: 10px 15px;
     }
 
-    .grid-item {
-      height: 250px; /* Reduce el tamaño de las tarjetas */
-    }
+
 
     .section-title {
       font-size: 24px; /* Reduce el tamaño del título */
@@ -215,9 +213,6 @@
       gap: 10px;
     }
 
-    .grid-item {
-      height: 200px; /* Tarjetas aún más pequeñas */
-    }
 
     .section-title {
       font-size: 18px; /* Reduce más el tamaño del título */
