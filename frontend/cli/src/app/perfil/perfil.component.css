@@ -682,3 +682,75 @@ perfil-eventos {
 .btn-publicar:hover {
     background-color: #0056b3;
 }
+
+.creador-container {
+    display: flex;
+    align-items: baseline;
+    padding: 5px 1px;
+    border-radius: 15px;
+    gap: 5px;
+  }
+  
+  .creador-foto {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 8px;
+  }
+  
+  .creador-nombre {
+    color: #42a4ff;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  
+
+  .creador-titulo {
+    font-size: 12px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 4px;
+  }
+  
+  .creador-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  /* Responsividad */
+  @media screen and (max-width: 768px) {
+    .creador-container {
+      right: 5px;
+      padding: 3px 6px;
+    }
+  
+    .creador-foto {
+      width: 25px;
+      height: 25px;
+    }
+  
+    .creador-nombre {
+      font-size: 12px;
+    }
+  }
+  
+  @media screen and (max-width: 480px) {
+    .creador-container {
+      align-items: center;
+      padding: 4px;
+    }
+  
+    .creador-foto {
+      width: 20px;
+      height: 20px;
+      margin-right: 0;
+      margin-bottom: 2px;
+    }
+  
+    .creador-nombre {
+      font-size: 10px;
+    }
+  }
+  

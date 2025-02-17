@@ -149,6 +149,11 @@ public interface UsuarioRepository extends Neo4jRepository<Usuario, Long> {
             + "RETURN u")
     Usuario creadorEvento(Long idEvento);
 
+        @Query("MATCH (u:Usuario)<-[r:CREADA_POR]-(ru:Rutina) "
+            + "WHERE id(ru) = $idRutina "
+            + "RETURN u")
+    Usuario creadorRutina(Long idRutina);
+
     @Query("MATCH (u:Usuario)-[r:ADMINISTRADA_POR]-(c:Comunidad) "
             + "WHERE id(u) = $idMiembro AND id(c) = $idComunidad "
             + "RETURN COUNT(r) > 0")
